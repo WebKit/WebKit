@@ -1,0 +1,3009 @@
+Tests that -2^31/-1 does the right thing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2
+PASS myOtherDivByNeg1(w) is -4
+PASS myOtherDivNeg2ToThe31(v) is -1073741824
+PASS myOtherMod(w, v) is 0
+PASS myOtherModByNeg1(w) is 0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS myDiv(x, y) is 2147483648
+PASS myDivByNeg1(x) is 2147483648
+PASS myDivNeg2ToThe31(y) is 2147483648
+PASS myMod(x, y) is -0
+PASS myMod(x, z) is -2
+PASS myModByNeg1(x) is -0
+PASS myModNeg2ToThe31(y) is -0
+PASS myOtherDiv(w, v) is 2147483648
+PASS myOtherDivByNeg1(w) is 2147483648
+PASS myOtherDivNeg2ToThe31(v) is 2147483648
+PASS myOtherMod(w, v) is -0
+PASS myOtherModByNeg1(w) is -0
+PASS myOtherModNeg2ToThe31(v) is -0
+PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
