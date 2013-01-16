@@ -1784,9 +1784,6 @@ webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure 
 # New test introduced in r138756 is failing.
 webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ Failure ]
 
-# [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
-webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html [ Failure ]
-
 # Fail after r139145 on MAC, EFL, QT, GTK.
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
@@ -1810,3 +1807,11 @@ webkit.org/b/106743 media/video-controls-captions.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=106883
 inspector/editor/text-editor-formatter.html
 
+# Fail to generate proper pixel results - let's wait with rebaselining.
+webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
+webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure ]
+webkit.org/b/106992 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
+webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
+
+webkit.org/b/106997 fast/dom/MicroData/propertiescollection-crash.html [ Failure ]
+webkit.org/b/106997 fast/dom/MicroData/properties-collection-namedgetter-with-invalid-name.html [ Failure ]
