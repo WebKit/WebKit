@@ -34,17 +34,23 @@ function getUserMedia(constraints, callback) {
 function onTrackEnded() {
     testPassed('Track onended callback succeeded.');
 
+    shouldBeEqualToString('track.readyState', 'ended');
+
     finishJSTest();
 }
 
 function onTrackUnmute() {
     testPassed('Track onunmute callback succeeded.');
 
+    shouldBeEqualToString('track.readyState', 'live');
+
     stream.stop();
 }
 
 function onTrackMute() {
     testPassed('Track onmute callback succeeded.');
+
+    shouldBeEqualToString('track.readyState', 'muted');
 
     track.enabled = true;
 }
@@ -54,6 +60,8 @@ function gotStream(s) {
 
     stream = s;
     track = stream.getVideoTracks()[0];
+
+    shouldBeEqualToString('track.readyState', 'live');
 
     track.onunmute = onTrackUnmute;
     track.onmute = onTrackMute;

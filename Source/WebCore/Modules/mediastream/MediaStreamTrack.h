@@ -43,12 +43,6 @@ class MediaStreamComponent;
 
 class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
 public:
-    enum ReadyState {
-        LIVE = 0,
-        MUTED = 1,
-        ENDED = 2
-    };
-
     static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
     virtual ~MediaStreamTrack();
 
@@ -59,7 +53,7 @@ public:
     bool enabled() const;
     void setEnabled(bool);
 
-    ReadyState readyState() const;
+    String readyState() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
@@ -67,6 +61,7 @@ public:
 
     MediaStreamDescriptor* streamDescriptor();
     MediaStreamComponent* component();
+    bool ended() const;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;
