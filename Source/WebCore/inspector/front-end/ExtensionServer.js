@@ -109,11 +109,6 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification(WebInspector.extensionAPI.Events.InspectedURLChanged, url);
     },
 
-    _mainFrameNavigated: function(event)
-    {
-        this._postNotification(WebInspector.extensionAPI.Events.Reset);
-    },
-
     startAuditRun: function(category, auditRun)
     {
         this._clientObjects[auditRun.id] = auditRun;
@@ -610,7 +605,6 @@ WebInspector.ExtensionServer.prototype = {
 
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged,
             this._inspectedURLChanged, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
         this._initDone = true;
         if (this._pendingExtensions) {
             this._pendingExtensions.forEach(this._innerAddExtension, this);

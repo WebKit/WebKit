@@ -63,7 +63,6 @@ function defineCommonExtensionSymbols(apiPrivate)
         ConsoleMessageAdded: "console-message-added",
         ElementsPanelObjectSelected: "panel-objectSelected-elements",
         NetworkRequestFinished: "network-request-finished",
-        Reset: "reset",
         OpenResource: "open-resource",
         PanelSearch: "panel-search-",
         Reload: "Reload",
@@ -183,8 +182,6 @@ function InspectorExtensionAPI()
     defineDeprecatedProperty(this, "webInspector", "resources", "network");
     this.timeline = new Timeline();
     this.console = new ConsoleAPI();
-
-    this.onReset = new EventSink(events.Reset);
 }
 
 /**

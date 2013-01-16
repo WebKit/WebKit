@@ -36,10 +36,6 @@ RUNNING TEST: extension_testAPI
             removeListener : <function>
         }
     }
-    onReset : {
-        addListener : <function>
-        removeListener : <function>
-    }
     panels : {
         elements : {
             createSidebarPane : <function>
