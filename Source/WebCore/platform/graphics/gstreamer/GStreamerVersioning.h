@@ -36,6 +36,13 @@ GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad*);
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
 #endif
 GstBuffer* createGstBuffer(GstBuffer*);
+int getGstBufferSize(GstBuffer*);
+void setGstBufferSize(GstBuffer*, int newSize);
+char* getGstBufferDataPointer(GstBuffer*);
+#ifdef GST_API_VERSION_1
+void mapGstBuffer(GstBuffer*);
+void unmapGstBuffer(GstBuffer*);
+#endif
 void setGstElementClassMetadata(GstElementClass*, const char* name, const char* longName, const char* description, const char* author);
 bool gstObjectIsFloating(GstObject*);
 void notifyGstTagsOnPad(GstElement*, GstPad*, GstTagList*);
