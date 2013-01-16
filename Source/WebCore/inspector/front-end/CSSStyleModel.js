@@ -41,7 +41,7 @@ WebInspector.CSSStyleModel = function()
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
     this._resourceBinding = new WebInspector.CSSStyleModelResourceBinding();
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameCreatedOrNavigated, this._mainFrameCreatedOrNavigated, this);
     this._namedFlowCollections = {};
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._resetNamedFlowCollections, this);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
@@ -58,7 +58,7 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
         result.push(WebInspector.CSSRule.parsePayload(ruleArray[i]));
     return result;
 }
-
+    
 /**
  * @param {Array.<CSSAgent.RuleMatch>} matchArray
  */
@@ -482,7 +482,7 @@ WebInspector.CSSStyleModel.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _inspectedURLChanged: function(event)
+    _mainFrameCreatedOrNavigated: function(event)
     {
         this._resetSourceMappings();
         this._resourceBinding._reset();

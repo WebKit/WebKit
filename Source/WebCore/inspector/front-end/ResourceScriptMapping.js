@@ -39,7 +39,7 @@ WebInspector.ResourceScriptMapping = function(workspace)
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
-    this._debuggerReset();
+    this._initialize();
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -179,12 +179,48 @@ WebInspector.ResourceScriptMapping.prototype = {
         uiSourceCode.setSourceMapping(this);
     },
 
-    _debuggerReset: function()
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {Array.<WebInspector.Script>} scripts
+     */
+    _unbindUISourceCodeFromScripts: function(uiSourceCode, scripts)
+    {
+        console.assert(scripts.length);
+        var scriptFile = /** @type {WebInspector.ResourceScriptFile} */ (uiSourceCode.scriptFile());
+        scriptFile.dispose();
+        uiSourceCode.setScriptFile(null);
+        uiSourceCode.setSourceMapping(null);
+    },
+
+    _initialize: function()
     {
         /** @type {!Object.<string, !Array.<!WebInspector.UISourceCode>>} */
         this._inlineScriptsForSourceURL = {};
         /** @type {!Object.<string, !Array.<!WebInspector.UISourceCode>>} */
         this._nonInlineScriptsForSourceURL = {};
+    },
+
+    _debuggerReset: function()
+    {
+        /**
+         * @param {!Object.<string, !Array.<!WebInspector.UISourceCode>>} scriptsForSourceURL
+         */
+        function unbindUISourceCodes(scriptsForSourceURL)
+        {
+            for (var sourceURL in scriptsForSourceURL) {
+                var scripts = scriptsForSourceURL[sourceURL];
+                if (!scripts.length)
+                    continue;
+                var uiSourceCode = this._workspaceUISourceCodeForScript(scripts[0]);
+                if (!uiSourceCode)
+                    continue;
+                this._unbindUISourceCodeFromScripts(uiSourceCode, scripts);
+            }
+        }
+
+        unbindUISourceCodes.call(this, this._inlineScriptsForSourceURL);
+        unbindUISourceCodes.call(this, this._nonInlineScriptsForSourceURL);
+        this._initialize();
     },
 }
 
@@ -301,6 +337,12 @@ WebInspector.ResourceScriptFile.prototype = {
     isDivergingFromVM: function()
     {
         return this._isDivergingFromVM;
+    },
+
+    dispose: function()
+    {
+        this._uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._workingCopyCommitted, this);
+        this._uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._workingCopyChanged, this);
     },
 
     __proto__: WebInspector.Object.prototype
