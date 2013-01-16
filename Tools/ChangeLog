@@ -1,3 +1,13 @@
+2013-01-16  Eric Seidel  <eric@webkit.org>
+
+        Remove webkitpy Visual Studio files, as core developers are not interested in maintaining them
+        https://bugs.webkit.org/show_bug.cgi?id=106036
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/webkitpy.pyproj: Removed.
+        * Scripts/webkitpy/webkitpy.sln: Removed.
+
 2013-01-16  Chris Hopman  <cjhopman@chromium.org>
 
         [Chromium] Remove hardcoded chromium_*.jar in gyp files
