@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.runTestSuite([
+        function testHighlightApi(next)
+        {
+            var text = [
+                "foo();",
+                "foo_1; foor; foo_;",
+                "foo_",
+                "global_foo",
+                "global_foo2",
+                "some_other_foo_X"
+            ];
+            var textEditor = InspectorTest.createTestEditor();
+            textEditor.setText(text.join("\n"));
+            InspectorTest.addResult("\nBefore highlight");
+            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            textEditor.highlightRegex(/foo_./, "some-css-class");
+            InspectorTest.addResult("\nAdd highlight for regexp /foo_./");
+            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            InspectorTest.addResult("\nRemove highlight for regexp /foo_./");
+            textEditor.removeRegexHighlight(/foo_./);
+            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            next();
+        },
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test editor highlight regexp API.
+</p>
+</body>
+</html>

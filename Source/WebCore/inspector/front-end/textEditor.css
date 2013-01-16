@@ -30,6 +30,13 @@
     -webkit-user-select: text;
 }
 
+.text-editor-overlay-highlight {
+    position: absolute;
+    pointer-events: none;
+    -webkit-user-select: none;
+    z-index: -1;
+}
+
 .text-editor-contents .inner-container {
     position: absolute;
     top: 0;
@@ -183,6 +190,7 @@
 .debug-fadeout {
     -webkit-animation: "debug-fadeout" 1s 0s;
     border: 1px solid white;
+    margin: -1px;
 }
 
 @-webkit-keyframes debug-fadeout {
