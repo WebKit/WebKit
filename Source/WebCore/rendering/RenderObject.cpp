@@ -446,7 +446,7 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
 {
     if (obj->hasLayer()) {
         if (!beforeChild && newObject) {
-            // We need to figure out the layer that follows newObject.  We only do
+            // We need to figure out the layer that follows newObject. We only do
             // this the first time we find a child layer, and then we update the
             // pointer values for newObject and beforeChild used by everyone else.
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
@@ -505,7 +505,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
 RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint,
                                          bool checkParent)
 {
-    // Error check the parent layer passed in.  If it's null, we can't find anything.
+    // Error check the parent layer passed in. If it's null, we can't find anything.
     if (!parentLayer)
         return 0;
 
@@ -525,7 +525,7 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
         }
     }
 
-    // Step 3: If our layer is the desired parent layer, then we're finished.  We didn't
+    // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
     // find anything.
     if (parentLayer == ourLayer)
         return 0;
