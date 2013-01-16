@@ -3687,7 +3687,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             }
             
             // Paint the background.
-            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, false, paintingRootForRenderer, localPaintingInfo.region, 0);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
             renderer()->paint(paintInfo, paintOffset);
 
             if (useClipRect) {
@@ -3714,7 +3714,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             
             PaintInfo paintInfo(context, pixelSnappedIntRect(clipRectToApply.rect()),
                                 selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                                forceBlackText, paintingRootForRenderer, localPaintingInfo.region, 0);
+                                forceBlackText ? PaintBehaviorForceBlackText : PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
             renderer()->paint(paintInfo, paintOffset);
             if (!selectionOnly) {
                 paintInfo.phase = PaintPhaseFloat;
@@ -3734,7 +3734,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
             // Paint our own outline
-            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, false, paintingRootForRenderer, localPaintingInfo.region, 0);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
             clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
             renderer()->paint(paintInfo, paintOffset);
             restoreClip(context, localPaintingInfo.paintDirtyRect, outlineRect);
@@ -3770,7 +3770,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
         
         // Paint the mask.
-        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, localPaintingInfo.region, 0);
+        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
         renderer()->paint(paintInfo, paintOffset);
         
         if (useClipRect) {
