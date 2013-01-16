@@ -232,7 +232,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(MAC)
-    if (WebContext::applicationIsOccluded())
+    if (WebContext::applicationIsOccluded() && WebContext::processSuppressionEnabledForGlobalChildProcesses())
         m_connection->send(Messages::PluginProcess::SetApplicationIsOccluded(true), 0);
 #endif
 }

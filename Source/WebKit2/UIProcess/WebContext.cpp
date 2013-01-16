@@ -106,9 +106,6 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
-#if PLATFORM(MAC)
-    WebContext::initializeProcessSuppressionSupport();
-#endif
     return adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, injectedBundlePath));
 }
 
@@ -143,6 +140,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
+#endif
+#if PLATFORM(MAC)
+    , m_processSuppressionEnabled(false)
 #endif
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)

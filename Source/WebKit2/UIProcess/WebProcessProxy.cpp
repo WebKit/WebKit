@@ -516,7 +516,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Con
     m_context->processDidFinishLaunching(this);
 
 #if PLATFORM(MAC)
-    if (WebContext::applicationIsOccluded())
+    if (WebContext::applicationIsOccluded() && m_context->processSuppressionEnabled())
         connection()->send(Messages::WebProcess::SetApplicationIsOccluded(true), 0);
 #endif
 }

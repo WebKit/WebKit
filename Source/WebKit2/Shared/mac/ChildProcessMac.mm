@@ -60,6 +60,7 @@ void ChildProcess::platformInitialize()
     setpriority(PRIO_DARWIN_PROCESS, 0, 0);
     initializeTimerCoalescingPolicy();
 #endif
+    // Starting as unoccluded.  The proxy for this process will set the actual value from didFinishLaunching().
     setApplicationIsOccluded(false);
 }
 

@@ -270,7 +270,11 @@ public:
 
 
 #if PLATFORM(MAC)
-    static bool applicationIsOccluded() { return s_applicationIsOccluded; }
+    void setProcessSuppressionEnabled(bool);
+    bool processSuppressionEnabled() const { return m_processSuppressionEnabled; }
+    void updateChildProcessesApplicationOcclusionState();
+    static bool applicationIsOccluded();
+    static bool processSuppressionEnabledForGlobalChildProcesses();
 #endif
 
     static void willStartUsingPrivateBrowsing();
@@ -343,10 +347,7 @@ private:
     String platformDefaultCookieStorageDirectory() const;
 
 #if PLATFORM(MAC)
-    static void applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t);
-    static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t);
-    static void initializeProcessSuppressionSupport();
-    static void registerOcclusionNotificationHandlers();
+    void processSuppressionEnabledChanged();
     void registerNotificationObservers();
     void unregisterNotificationObservers();
 #endif
@@ -448,7 +449,7 @@ private:
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
 
 #if PLATFORM(MAC)
-    static bool s_applicationIsOccluded;
+    bool m_processSuppressionEnabled;
 #endif
 
 #if USE(SOUP)

@@ -1,3 +1,75 @@
+2013-01-16  Kiran Muppala  <cmuppala@apple.com>
+
+        Groundwork to enable process suppression by default on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=106513
+
+        Reviewed by Alexey Proskuryakov.
+
+        Process suppression has so far been controlled by a user default and
+        disabled by default.  This patch provides the groundwork to enable it by
+        default and adds a private API to enable/disable it on a per-context
+        basis.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize): Add comment about
+        initilization of application occlusion state.
+        * UIProcess/API/C/mac/WKContextPrivateMac.cpp: Added.
+        (WKContextGetProcessSuppressionEnabled):
+        (WKContextSetProcessSuppressionEnabled):
+        Add private API to enable/disable process suppression on a per-context
+        basis.
+        * UIProcess/API/C/mac/WKContextPrivateMac.h: Added.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Check if owning
+        context has process suppression enabled before updating application
+        occlusion state.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching): Ditto.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Check if
+        process suppression is enabled for global child processes before
+        updating application occlusion state.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        (WebKit::SharedWorkerProcessProxy::didFinishLaunching): Ditto.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::create): Remove call to
+        initializeProcessSuppressionSupport, since platformInitialize has been
+        modified to perform initialization.
+        (WebKit::WebContext::WebContext): Initialize new member variable
+        m_processSuppressionEnabled to false.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::processSuppressionEnabled): Remove "Support"
+        from the method name.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::updateGlobalChildProcessesApplicationOcclusionState):
+        (WebKit::applicationOcclusionStateChanged): Update the application
+        occlusion state of child processes having process suppresion enabled.
+        (WebKit::applicationBecameVisible):
+        (WebKit::applicationBecameOccluded):
+        Simplify by moving code to applicationOcclusionStateChanged.
+        (WebKit::registerOcclusionNotificationHandlers): Fix typos.
+        (WebKit::unregisterOcclusionNotificationHandlers): Add
+        method to unregister occlusion notification handlers when no context
+        has process suppression enabled.
+        (WebKit::enableOcclusionNotifications):
+        (WebKit::disableOcclusionNotifications):
+        (WebKit::enableProcessSuppressionForGlobalChildProcesses):
+        (WebKit::disableProcessSuppressionForGlobalChildProcesses):
+        (WebKit::processSuppressionIsEnabledForAnyContext):
+        (WebKit::processSuppressionIsEnabledForAllContexts):
+        (WebKit::WebContext::platformInitialize): Disable process suppression
+        for global child processes since process suppression is disabled for a
+        context on construction.
+        (WebKit::WebContext::setProcessSuppressionEnabled):
+        (WebKit::WebContext::updateChildProcessesApplicationOcclusionState):
+        (WebKit::WebContext::applicationIsOccluded):
+        (WebKit::WebContext::processSuppressionEnabledForGlobalChildProcesses):
+        (WebKit::WebContext::processSuppressionEnabledChanged): Update child
+        processes application occlusion state, enable/disable occlusion
+        notifications and enable/disable process suppression for global child
+        processes.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-15  Anders Carlsson  <andersca@apple.com>
 
         Merge LayerTreeHostCA and LayerTreeHostMac

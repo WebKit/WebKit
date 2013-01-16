@@ -65,7 +65,9 @@ namespace WebKit {
 NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
 NSString *SchemeForCustomProtocolUnregisteredNotificationName = @"WebKitSchemeForCustomProtocolUnregisteredNotification";
 
-bool WebContext::s_applicationIsOccluded = false;
+static bool s_applicationIsOccluded = false;
+static bool s_occlusionNotificationHandlersRegistered = false;
+static bool s_processSuppressionEnabledForGlobalChildProcesses = true;
 
 static void registerUserDefaultsIfNeeded()
 {
@@ -83,10 +85,151 @@ static void registerUserDefaultsIfNeeded()
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
 
+static void updateGlobalChildProcessesApplicationOcclusionState()
+{
+    // The plan is to have all child processes become context specific.  This function
+    // can be removed once that is complete.
+#if ENABLE(PLUGIN_PROCESS) || ENABLE(SHARED_WORKER_PROCESS)
+    bool isOccludedForGlobalChildProcesses = s_processSuppressionEnabledForGlobalChildProcesses && s_applicationIsOccluded;
+#endif
+#if ENABLE(PLUGIN_PROCESS)
+    PluginProcessManager::shared().setApplicationIsOccluded(isOccludedForGlobalChildProcesses);
+#endif
+#if ENABLE(SHARED_WORKER_PROCESS)
+    SharedWorkerProcessManager::shared().setApplicationIsOccluded(isOccludedForGlobalChildProcesses);
+#endif
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+static void applicationOcclusionStateChanged()
+{
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i) {
+        if (contexts[i]->processSuppressionEnabled())
+            contexts[i]->updateChildProcessesApplicationOcclusionState();
+    }
+
+    if (s_processSuppressionEnabledForGlobalChildProcesses)
+        updateGlobalChildProcessesApplicationOcclusionState();
+}
+
+static void applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (!s_applicationIsOccluded)
+        return;
+    s_applicationIsOccluded = false;
+    applicationOcclusionStateChanged();
+}
+
+static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (s_applicationIsOccluded)
+        return;
+    s_applicationIsOccluded = true;
+    applicationOcclusionStateChanged();
+}
+#endif
+
+static void registerOcclusionNotificationHandlers()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible)) {
+        WTFLogAlways("Registration of \"Application Became Visible\" notification handler failed.\n");
+        return;
+    }
+    
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded))
+        WTFLogAlways("Registration of \"Application Became Occluded\" notification handler failed.\n");
+#endif
+}
+
+static void unregisterOcclusionNotificationHandlers()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded)) {
+        WTFLogAlways("Unregistration of \"Application Became Occluded\" notification handler failed.\n");
+        return;
+    }
+    
+    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameVisible))
+        WTFLogAlways("Unregistration of \"Application Became Visible\" notification handler failed.\n");
+#endif
+}
+
+static void enableOcclusionNotifications()
+{
+    if (s_occlusionNotificationHandlersRegistered)
+        return;
+
+    static bool shouldOmitProcessSuppression = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKit2OmitProcessSuppression"];
+    if (shouldOmitProcessSuppression)
+        return;
+
+    s_occlusionNotificationHandlersRegistered = true;
+    registerOcclusionNotificationHandlers();
+}
+
+static void disableOcclusionNotifications()
+{
+    if (!s_occlusionNotificationHandlersRegistered)
+        return;
+
+    s_occlusionNotificationHandlersRegistered = false;
+    unregisterOcclusionNotificationHandlers();
+}
+
+static void enableProcessSuppressionForGlobalChildProcesses()
+{
+    if (s_processSuppressionEnabledForGlobalChildProcesses)
+        return;
+
+    s_processSuppressionEnabledForGlobalChildProcesses = true;
+    if (s_applicationIsOccluded)
+        updateGlobalChildProcessesApplicationOcclusionState();
+}
+
+static void disableProcessSuppressionForGlobalChildProcesses()
+{
+    if (!s_processSuppressionEnabledForGlobalChildProcesses)
+        return;
+
+    s_processSuppressionEnabledForGlobalChildProcesses = false;
+    if (s_applicationIsOccluded)
+        updateGlobalChildProcessesApplicationOcclusionState();
+}
+
+static bool processSuppressionIsEnabledForAnyContext()
+{
+    bool result = false;
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i) {
+        if (contexts[i]->processSuppressionEnabled()) {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
+static bool processSuppressionIsEnabledForAllContexts()
+{
+    bool result = true;
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i) {
+        if (!contexts[i]->processSuppressionEnabled()) {
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
+
 void WebContext::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
+    ASSERT(!m_processSuppressionEnabled);
+    disableProcessSuppressionForGlobalChildProcesses();
 }
 
 String WebContext::applicationCacheDirectory()
@@ -297,80 +440,51 @@ void WebContext::setPasteboardBufferForType(const String& pasteboardName, const 
     PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-void WebContext::applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t)
+void WebContext::setProcessSuppressionEnabled(bool enabled)
 {
-    if (s_applicationIsOccluded) {
-        s_applicationIsOccluded = false;
-
-        const Vector<WebContext*>& contexts = WebContext::allContexts();
-        for (size_t i = 0, count = contexts.size(); i < count; ++i) {
-#if ENABLE(NETWORK_PROCESS)
-            if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
-                contexts[i]->networkProcess()->setApplicationIsOccluded(false);
-#endif
-
-            contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(false));
-        }
-
-#if ENABLE(PLUGIN_PROCESS)
-        PluginProcessManager::shared().setApplicationIsOccluded(false);
-#endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-        SharedWorkerProcessManager::shared().setApplicationIsOccluded(false);
-#endif
-    }
-}
-
-void WebContext::applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t)
-{
-    if (!s_applicationIsOccluded) {
-        s_applicationIsOccluded = true;
-        const Vector<WebContext*>& contexts = WebContext::allContexts();
-        for (size_t i = 0, count = contexts.size(); i < count; ++i) {
-#if ENABLE(NETWORK_PROCESS)
-            if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
-                contexts[i]->networkProcess()->setApplicationIsOccluded(true);
-#endif
-
-            contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(true));
-        }
-
-#if ENABLE(PLUGIN_PROCESS)
-        PluginProcessManager::shared().setApplicationIsOccluded(true);
-#endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-        SharedWorkerProcessManager::shared().setApplicationIsOccluded(true);
-#endif
-    }
-}
-
-void WebContext::initializeProcessSuppressionSupport()
-{
-    static bool didInitialize = false;
-    if (didInitialize)
+    if (m_processSuppressionEnabled == enabled)
         return;
-
-    didInitialize = true;
-    // A temporary default until process suppression is enabled by default, at which point a context setting can be added with the
-    // interpretation that any context disabling process suppression disables it for plugin/network and shared worker processes.
-    bool processSuppressionSupportEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitProcessSuppressionSupportEnabled"];
-    if (processSuppressionSupportEnabled)
-        registerOcclusionNotificationHandlers();
+    m_processSuppressionEnabled = enabled;
+    processSuppressionEnabledChanged();
 }
 
-void WebContext::registerOcclusionNotificationHandlers()
+void WebContext::updateChildProcessesApplicationOcclusionState()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible)) {
-        WTFLogAlways("Registeration of \"App Became Visible\" notification handler failed.\n");
-        return;
-    }
+    bool isOccludedForChildProcesses = m_processSuppressionEnabled && s_applicationIsOccluded;
 
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded))
-        WTFLogAlways("Registeration of \"App Became Occluded\" notification handler failed.\n");
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess() && networkProcess())
+        networkProcess()->setApplicationIsOccluded(isOccludedForChildProcesses);
 #endif
+    sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(isOccludedForChildProcesses));
 }
-    
+
+bool WebContext::applicationIsOccluded()
+{
+    return s_applicationIsOccluded;
+}
+
+bool WebContext::processSuppressionEnabledForGlobalChildProcesses()
+{
+    return s_processSuppressionEnabledForGlobalChildProcesses;
+}
+
+void WebContext::processSuppressionEnabledChanged()
+{
+    if (s_applicationIsOccluded)
+        updateChildProcessesApplicationOcclusionState();
+
+    if (processSuppressionIsEnabledForAnyContext())
+        enableOcclusionNotifications();
+    else
+        disableOcclusionNotifications();
+
+    if (processSuppressionIsEnabledForAllContexts())
+        enableProcessSuppressionForGlobalChildProcesses();
+    else
+        disableProcessSuppressionForGlobalChildProcesses();
+}
+
 void WebContext::registerNotificationObservers()
 {
     m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
