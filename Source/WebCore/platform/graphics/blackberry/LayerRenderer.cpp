@@ -612,9 +612,6 @@ void LayerRenderer::drawHolePunchRect(LayerCompositingThread* layer)
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     checkGLError();
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-    IntRect holeWC = toWebKitWindowCoordinates(hole.boundingBox());
-    m_lastRenderingResults.addHolePunchRect(holeWC);
 }
 
 void LayerRenderer::prepareFrameRecursive(LayerCompositingThread* layer, double animationTime, bool isContextCurrent)
@@ -1196,24 +1193,6 @@ bool LayerRenderer::initializeSharedGLObjects()
     m_checkerSurfaceHeightLocation = glGetUniformLocation(m_checkerProgramObject, "surfaceHeight");
 
     return true;
-}
-
-IntRect LayerRenderingResults::holePunchRect(unsigned index) const
-{
-    if (index >= m_holePunchRects.size())
-        return IntRect();
-
-    return m_holePunchRects.at(index);
-}
-
-void LayerRenderingResults::addHolePunchRect(const IntRect& rect)
-{
-#if DEBUG_CLIPPING
-    printf("LayerRenderingResults::addHolePunchRect (%d,%d %dx%d)\n", rect.x(), rect.y(), rect.width(), rect.height());
-    fflush(stdout);
-#endif
-    if (!rect.isEmpty())
-        m_holePunchRects.append(rect);
 }
 
 void LayerRenderingResults::addDirtyRect(const IntRect& rect)

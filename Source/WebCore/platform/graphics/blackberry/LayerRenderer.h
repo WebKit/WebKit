@@ -56,10 +56,6 @@ class LayerRenderingResults {
 public:
     LayerRenderingResults() : wasEmpty(true), needsAnimationFrame(false) { }
 
-    void addHolePunchRect(const IntRect&);
-    IntRect holePunchRect(size_t index) const;
-    size_t holePunchRectSize() { return m_holePunchRects.size(); }
-
     static const int NumberOfDirtyRects = 3;
     const IntRect& dirtyRect(int i) const { return m_dirtyRects[i]; }
     void addDirtyRect(const IntRect& dirtyRect);
@@ -72,7 +68,6 @@ public:
     bool needsAnimationFrame;
 
 private:
-    Vector<IntRect> m_holePunchRects; // Rects are in compositing surface coordinates.
     IntRect m_dirtyRects[NumberOfDirtyRects];
 };
 
