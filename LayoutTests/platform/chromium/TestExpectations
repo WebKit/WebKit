@@ -4092,9 +4092,6 @@ webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker
 
 webkit.org/b/104993 [ XP ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Failure ]
 
-# Need rebaseline
-webkit.org/b/106983 fast/forms/time/time-appearance-basic.html [ Failure ]
-
 webkit.org/b/106518 compositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
 webkit.org/b/106518 platform/chromium/virtual/softwarecompositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
 
