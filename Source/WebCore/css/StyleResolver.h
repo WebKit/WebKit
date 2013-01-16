@@ -342,10 +342,14 @@ private:
         bool isCacheable;
     };
 
-    struct MatchOptions {
-        MatchOptions(bool includeEmptyRules, const ContainerNode* scope = 0) : scope(scope), includeEmptyRules(includeEmptyRules) { }
+    struct MatchRequest {
+        MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0)
+            : ruleSet(ruleSet)
+            , includeEmptyRules(includeEmptyRules)
+            , scope(scope) { }
+        const RuleSet* ruleSet;
+        const bool includeEmptyRules;
         const ContainerNode* scope;
-        bool includeEmptyRules;
     };
 
     static void addMatchedProperties(MatchResult&, const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, bool inRegionRule = false);
@@ -358,9 +362,11 @@ private:
     void matchUserRules(MatchResult&, bool includeEmptyRules);
     void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
     void matchHostRules(MatchResult&, bool includeEmptyRules);
-    void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
-    void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
-    void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
+
+    void collectMatchingRules(const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
+    void collectMatchingRulesForRegion(const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
+    void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
+
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
     void sortAndTransferMatchedRules(MatchResult&);
