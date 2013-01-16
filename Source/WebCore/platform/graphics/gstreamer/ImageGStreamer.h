@@ -60,6 +60,11 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
         ImageGStreamer(GstBuffer*, GstCaps*);
         RefPtr<BitmapImage> m_image;
         FloatRect m_cropRect;
+
+#if USE(CAIRO) && defined(GST_API_VERSION_1)
+        GRefPtr<GstBuffer> m_buffer;
+        GstMapInfo m_mapInfo;
+#endif
     };
 }
 

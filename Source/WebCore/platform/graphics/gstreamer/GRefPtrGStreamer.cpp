@@ -165,5 +165,23 @@ template <> void derefGPtr<GstElementFactory>(GstElementFactory* ptr)
         gst_object_unref(ptr);
 }
 
+template<> GRefPtr<GstBuffer> adoptGRef(GstBuffer* ptr)
+{
+    return GRefPtr<GstBuffer>(ptr, GRefPtrAdopt);
+}
+
+template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr)
+{
+    if (ptr)
+        gst_buffer_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstBuffer>(GstBuffer* ptr)
+{
+    if (ptr)
+        gst_buffer_unref(ptr);
+}
 }
 #endif // USE(GSTREAMER)
