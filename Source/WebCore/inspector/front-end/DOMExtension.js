@@ -217,6 +217,9 @@ Element.prototype.remove = function()
         this.parentElement.removeChild(this);
 }
 
+CharacterData.prototype.remove = Element.prototype.remove;
+DocumentType.prototype.remove = Element.prototype.remove;
+
 /**
  * @param {Node} fromNode
  * @param {Node} toNode
