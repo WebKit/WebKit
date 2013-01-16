@@ -139,7 +139,7 @@ WebInspector.RequestHeadersView.prototype = {
             if (value.indexOf("%") >= 0) {
                 try {
                     value = decodeURIComponent(value);
-                } catch(e) {
+                } catch (e) {
                     errorDecoding = true;
                 }
             }
@@ -202,7 +202,12 @@ WebInspector.RequestHeadersView.prototype = {
             this._refreshParams(WebInspector.UIString("Form Data"), formParameters, formData, this._formDataTreeElement);
         } else {
             this._requestPayloadTreeElement.hidden = false;
-            this._populateTreeElementWithSourceText(this._requestPayloadTreeElement, formData)
+            try {
+                var json = JSON.parse(formData);
+                this._refreshRequestJSONPayload(json, formData, false);
+            } catch (e) {
+                this._populateTreeElementWithSourceText(this._requestPayloadTreeElement, formData);
+            }
         }
     },
 
@@ -239,10 +244,7 @@ WebInspector.RequestHeadersView.prototype = {
             this._refreshParams(title, params, sourceText, paramsTreeElement);
         }
 
-        var viewSourceToggleTitle = paramsTreeElement._viewSource ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
-        var viewSourceToggleButton = this._createToggleButton(viewSourceToggleTitle);
-        viewSourceToggleButton.addEventListener("click", toggleViewSource.bind(this));
-        paramsTreeElement.listItemElement.appendChild(viewSourceToggleButton);
+        paramsTreeElement.listItemElement.appendChild(this._createViewSourceToggle(paramsTreeElement._viewSource, toggleViewSource.bind(this)));
         
         if (paramsTreeElement._viewSource) {
             this._populateTreeElementWithSourceText(paramsTreeElement, sourceText);
@@ -265,6 +267,46 @@ WebInspector.RequestHeadersView.prototype = {
             parmTreeElement.selectable = false;
             paramsTreeElement.appendChild(parmTreeElement);
         }
+    },
+
+    /**
+     * @param {Object} parsedObject
+     * @param {string} sourceText
+     * @param {boolean} viewSource
+     */
+    _refreshRequestJSONPayload: function(parsedObject, sourceText, viewSource)
+    {
+        this._requestPayloadTreeElement.removeChildren();
+
+        var listItem = this._requestPayloadTreeElement.listItemElement;
+        listItem.removeChildren();
+        listItem.appendChild(document.createTextNode(this._requestPayloadTreeElement.title));
+
+        var setViewSource = this._refreshRequestJSONPayload.bind(this, parsedObject, sourceText);
+
+        if (viewSource) {
+            listItem.appendChild(this._createViewSourceToggle(true, setViewSource.bind(this, false)));
+            this._populateTreeElementWithSourceText(this._requestPayloadTreeElement, sourceText);
+        } else {
+            listItem.appendChild(this._createViewSourceToggle(false, setViewSource.bind(this, true)));
+            var object = WebInspector.RemoteObject.fromLocalObject(parsedObject);
+            var section = new WebInspector.ObjectPropertiesSection(object, object.description);
+            section.expand();
+            section.editable = false;
+            listItem.appendChild(section.element);
+        }
+    },
+
+    /**
+     * @param {boolean} viewSource
+     * @param {Function} handler
+     */
+    _createViewSourceToggle: function(viewSource, handler)
+    {
+        var viewSourceToggleTitle = viewSource ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
+        var viewSourceToggleButton = this._createToggleButton(viewSourceToggleTitle);
+        viewSourceToggleButton.addEventListener("click", handler);
+        return viewSourceToggleButton;
     },
 
     _toggleURLDecoding: function(event)

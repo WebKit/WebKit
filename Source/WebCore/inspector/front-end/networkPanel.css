@@ -146,6 +146,10 @@
     font-weight: bold;
 }
 
+.resource-headers-view .outline-disclosure .parent .section * {
+    font-weight: normal;
+}
+
 .resource-headers-view .outline-disclosure .children li {
     white-space: nowrap;
 }
