@@ -1,3 +1,18 @@
+2013-01-16  Chris Hopman  <cjhopman@chromium.org>
+
+        [Chromium] Remove hardcoded chromium_*.jar in gyp files
+        https://bugs.webkit.org/show_bug.cgi?id=104049
+
+        Reviewed by Eric Seidel.
+
+        Targets with dependencies (direct/indirect) on a java target receive
+        the chromium_*.jar paths in the variable input_jars_paths. Targets
+        should use that rather than hardcoding where they think the jar will
+        be. These can be passed directly to ant as INPUT_JARS_PATHS rather
+        than as --jars to generate_native_test.py.
+
+        * WebKitUnitTests.gyp:
+
 2013-01-16  Dominic Cooney   <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

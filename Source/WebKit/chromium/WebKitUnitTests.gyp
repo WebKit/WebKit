@@ -150,10 +150,6 @@
                 ],
                 'variables': {
                     'input_shlib_path': '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)webkit_unit_tests<(SHARED_LIB_SUFFIX)',
-                    'input_jars_paths': [
-                        '<(PRODUCT_DIR)/lib.java/chromium_base.jar',
-                        '<(PRODUCT_DIR)/lib.java/chromium_net.jar',
-                    ],
                     'conditions': [
                         ['inside_chromium_build==1', {
                             'ant_build_to_chromium_src': '<(ant_build_out)/../../',
@@ -181,8 +177,6 @@
                         '<(chromium_src_dir)/testing/android/generate_native_test.py',
                         '--native_library',
                         '<(input_shlib_path)',
-                        '--jars',
-                        '">@(input_jars_paths)"',
                         '--output',
                         '<(PRODUCT_DIR)/webkit_unit_tests_apk',
                         '--strip-binary=<(android_strip)',
@@ -204,6 +198,8 @@
                         '-DPRODUCT_DIR=<(ant_build_out)',
                         '--ant-args',
                         '-DCHROMIUM_SRC=<(ant_build_to_chromium_src)',
+                        '--ant-args',
+                        '-DINPUT_JARS_PATHS=>@(input_jars_paths)',
                         '--app_abi',
                         '<(android_app_abi)',
                     ],
