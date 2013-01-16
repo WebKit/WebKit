@@ -116,13 +116,13 @@ class ExecutiveTest(unittest.TestCase):
     def test_auto_stringify_args(self):
         executive = Executive()
         executive.run_command(command_line('echo', 1))
-        executive.popen(command_line('echo', 1)).wait()
+        executive.popen(command_line('echo', 1), stdout=executive.PIPE).wait()
         self.assertEqual('echo 1', executive.command_for_printing(['echo', 1]))
 
     def test_popen_args(self):
         executive = Executive()
         # Explicitly naming the 'args' argument should not thow an exception.
-        executive.popen(args=command_line('echo', 1)).wait()
+        executive.popen(args=command_line('echo', 1), stdout=executive.PIPE).wait()
 
     def test_run_command_with_unicode(self):
         """Validate that it is safe to pass unicode() objects

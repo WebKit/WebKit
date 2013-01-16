@@ -1,5 +1,19 @@
 2013-01-15  Dirk Pranke  <dpranke@chromium.org>
 
+        remove extraneous output in test-webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=106971
+
+        Reviewed by Ojan Vafai.
+
+        We weren't ignoring or capturing the echoed output from
+        these two tests, and getting noise in the logs as a result.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_auto_stringify_args):
+        (ExecutiveTest.test_popen_args):
+
+2013-01-15  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy.layout_tests.servers.http_server_unittest.TestHttpServer.test_win32_start_and_stop is flaky
         https://bugs.webkit.org/show_bug.cgi?id=106974
 
