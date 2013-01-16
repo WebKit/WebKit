@@ -1,0 +1,3 @@
+EVENT(webkitfullscreenchange) TEST(video2.clientWidth==document.body.clientWidth) OK
+END OF TEST
+
