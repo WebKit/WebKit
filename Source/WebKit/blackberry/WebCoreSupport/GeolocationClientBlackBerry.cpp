@@ -130,8 +130,6 @@ void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
 
     // Remove the geolocation from the pending permission map.
     HashMap<String, Vector<RefPtr<Geolocation> > >::iterator it = m_geolocationRequestMap.find(origin);
-
-    ASSERT(it != m_geolocationRequestMap.end());
     if (it == m_geolocationRequestMap.end())
         return;
 

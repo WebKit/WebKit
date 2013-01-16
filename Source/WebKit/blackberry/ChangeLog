@@ -1,3 +1,19 @@
+2013-01-16  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Remove bogus assert in GeolocationClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=105651
+
+        Reviewed by Darin Adler.
+
+        GeolocationClientBlackBerry::cancelPermissionRequest contains an ASSERT that the origin is
+        in m_geolocationRequestMap. But it's perfectly valid for the origin to not be in the map -
+        for instance, if GeolocationClientBlackBerry::requestPermission returned immediately,
+        without putting it in the map, because geolocation was disabled. In this case the correct
+        thing to do is just return - there is nothing to be done to cancel the permission.
+
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp:
+        (GeolocationClientBlackBerry::cancelPermissionRequest):
+
 2013-01-15  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Don't overwrite field dir with current locale.
