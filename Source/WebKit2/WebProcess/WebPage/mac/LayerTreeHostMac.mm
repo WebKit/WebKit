@@ -26,11 +26,16 @@
 #import "config.h"
 #import "LayerTreeHostMac.h"
 
+#import "DrawingAreaImpl.h"
 #import "LayerHostingContext.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
-#import <WebCore/GraphicsLayer.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/PlatformCALayer.h>
+#import <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -48,31 +53,23 @@ PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage)
 }
 
 LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
-    : LayerTreeHostCA(webPage)
+    : LayerTreeHost(webPage)
+    , m_isValid(true)
+    , m_notifyAfterScheduledLayerFlush(false)
     , m_layerFlushScheduler(this)
 {
 }
 
 LayerTreeHostMac::~LayerTreeHostMac()
 {
+    ASSERT(!m_isValid);
+    ASSERT(!m_rootLayer);
     ASSERT(!m_layerHostingContext);
 }
 
-void LayerTreeHostMac::platformInitialize()
+const LayerTreeContext& LayerTreeHostMac::layerTreeContext()
 {
-    switch (m_webPage->layerHostingMode()) {
-    case LayerHostingModeDefault:
-        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
-        break;
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    case LayerHostingModeInWindowServer:
-        m_layerHostingContext = LayerHostingContext::createForWindowServer();        
-        break;
-#endif
-    }
-
-    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
-    m_layerTreeContext.contextID = m_layerHostingContext->contextID();
+    return m_layerTreeContext;
 }
 
 void LayerTreeHostMac::scheduleLayerFlush()
@@ -88,61 +85,120 @@ void LayerTreeHostMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
         m_layerFlushScheduler.suspend();
 }
 
+void LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
+{
+    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
+}
+
+void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+{
+    m_nonCompositedContentLayer->removeAllChildren();
+
+    // Add the accelerated layer tree hierarchy.
+    if (graphicsLayer)
+        m_nonCompositedContentLayer->addChild(graphicsLayer);
+}
+
 void LayerTreeHostMac::invalidate()
 {
-    m_layerFlushScheduler.invalidate();
+    ASSERT(m_isValid);
+
+    m_isValid = false;
+
+    m_rootLayer = nullptr;
 
     m_layerHostingContext->invalidate();
     m_layerHostingContext = nullptr;
-
-    LayerTreeHostCA::invalidate();
+    m_layerFlushScheduler.invalidate();
 }
 
-void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
+void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
-    LayerTreeHostCA::sizeDidChange(newSize);
-    [CATransaction flush];
-    [CATransaction synchronize];
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    setNonCompositedContentsNeedDisplay(scrollRect);
 }
 
 void LayerTreeHostMac::forceRepaint()
 {
-    LayerTreeHostCA::forceRepaint();
+    scheduleLayerFlush();
+    flushPendingLayerChanges();
+
     [CATransaction flush];
     [CATransaction synchronize];
 }
 
+void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
+{
+    m_rootLayer->setSize(newSize);
+
+    // If the newSize exposes new areas of the non-composited content a setNeedsDisplay is needed
+    // for those newly exposed areas.
+    FloatSize oldSize = m_nonCompositedContentLayer->size();
+    m_nonCompositedContentLayer->setSize(newSize);
+
+    if (newSize.width() > oldSize.width()) {
+        float height = std::min(static_cast<float>(newSize.height()), oldSize.height());
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(oldSize.width(), 0, newSize.width() - oldSize.width(), height));
+    }
+
+    if (newSize.height() > oldSize.height())
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
+
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setSize(newSize);
+
+    scheduleLayerFlush();
+    flushPendingLayerChanges();
+
+    [CATransaction flush];
+    [CATransaction synchronize];
+}
+
+void LayerTreeHostMac::deviceScaleFactorDidChange()
+{
+    // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
+    m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
+}
+
+void LayerTreeHostMac::didInstallPageOverlay()
+{
+    createPageOverlayLayer();
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::didUninstallPageOverlay()
+{
+    destroyPageOverlayLayer();
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::setPageOverlayNeedsDisplay(const IntRect& rect)
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+    scheduleLayerFlush();
+}
+
 void LayerTreeHostMac::pauseRendering()
 {
-    CALayer* root = rootLayer()->platformLayer();
+    CALayer* root = m_rootLayer->platformLayer();
     [root setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
 }
 
 void LayerTreeHostMac::resumeRendering()
 {
-    CALayer* root = rootLayer()->platformLayer();
+    CALayer* root = m_rootLayer->platformLayer();
     [root setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
-}
-
-bool LayerTreeHostMac::flushLayers()
-{
-    performScheduledLayerFlush();
-    return true;
-}
-
-void LayerTreeHostMac::didPerformScheduledLayerFlush()
-{
-    LayerTreeHostCA::didPerformScheduledLayerFlush();
-}
-
-bool LayerTreeHostMac::flushPendingLayerChanges()
-{
-    if (m_layerFlushScheduler.isSuspended())
-        return false;
-
-    return LayerTreeHostCA::flushPendingLayerChanges();
 }
 
 void LayerTreeHostMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
@@ -168,10 +224,142 @@ void LayerTreeHostMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
 #endif
     }
 
-    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
+    m_layerHostingContext->setRootLayer(m_rootLayer->platformLayer());
     m_layerTreeContext.contextID = m_layerHostingContext->contextID();
 
     scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+{
+}
+
+void LayerTreeHostMac::notifyFlushRequired(const WebCore::GraphicsLayer*)
+{
+}
+
+void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+{
+    if (graphicsLayer == m_nonCompositedContentLayer) {
+        m_webPage->drawRect(graphicsContext, clipRect);
+        return;
+    }
+
+    if (graphicsLayer == m_pageOverlayLayer) {
+        m_webPage->drawPageOverlay(graphicsContext, clipRect);
+        return;
+    }
+}
+
+float LayerTreeHostMac::deviceScaleFactor() const
+{
+    return m_webPage->corePage()->deviceScaleFactor();
+}
+
+bool LayerTreeHostMac::flushLayers()
+{
+    performScheduledLayerFlush();
+    return true;
+}
+
+void LayerTreeHostMac::initialize()
+{
+    // Create a root layer.
+    m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+#ifndef NDEBUG
+    m_rootLayer->setName("LayerTreeHost root layer");
+#endif
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(m_webPage->size());
+    static_cast<GraphicsLayerCA*>(m_rootLayer.get())->platformCALayer()->setGeometryFlipped(true);
+
+    m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+    static_cast<GraphicsLayerCA*>(m_nonCompositedContentLayer.get())->setAllowTiledLayer(false);
+#ifndef NDEBUG
+    m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
+#endif
+    m_nonCompositedContentLayer->setDrawsContent(true);
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
+    m_nonCompositedContentLayer->setSize(m_webPage->size());
+    if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
+        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
+
+    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+
+    if (m_webPage->hasPageOverlay())
+        createPageOverlayLayer();
+
+    switch (m_webPage->layerHostingMode()) {
+        case LayerHostingModeDefault:
+            m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+            break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+        case LayerHostingModeInWindowServer:
+            m_layerHostingContext = LayerHostingContext::createForWindowServer();
+            break;
+#endif
+    }
+
+    m_layerHostingContext->setRootLayer(m_rootLayer->platformLayer());
+    m_layerTreeContext.contextID = m_layerHostingContext->contextID();
+
+    setLayerFlushSchedulingEnabled(!m_webPage->drawingArea() || !m_webPage->drawingArea()->layerTreeStateIsFrozen());
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::performScheduledLayerFlush()
+{
+    {
+        RefPtr<LayerTreeHostMac> protect(this);
+        m_webPage->layoutIfNeeded();
+
+        if (!m_isValid)
+            return;
+    }
+
+    if (!flushPendingLayerChanges())
+        return;
+
+    if (m_notifyAfterScheduledLayerFlush) {
+        // Let the drawing area know that we've done a flush of the layer changes.
+        static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        m_notifyAfterScheduledLayerFlush = false;
+    }
+}
+
+bool LayerTreeHostMac::flushPendingLayerChanges()
+{
+    if (m_layerFlushScheduler.isSuspended())
+        return false;
+
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
+
+    return m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+}
+
+void LayerTreeHostMac::createPageOverlayLayer()
+{
+    ASSERT(!m_pageOverlayLayer);
+
+    m_pageOverlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+#ifndef NDEBUG
+    m_pageOverlayLayer->setName("LayerTreeHost page overlay content");
+#endif
+
+    m_pageOverlayLayer->setDrawsContent(true);
+    m_pageOverlayLayer->setSize(m_webPage->size());
+
+    m_rootLayer->addChild(m_pageOverlayLayer.get());
+}
+
+void LayerTreeHostMac::destroyPageOverlayLayer()
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->removeFromParent();
+    m_pageOverlayLayer = nullptr;
 }
 
 } // namespace WebKit

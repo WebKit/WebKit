@@ -1,3 +1,47 @@
+2013-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Merge LayerTreeHostCA and LayerTreeHostMac
+        https://bugs.webkit.org/show_bug.cgi?id=106967
+
+        Reviewed by Sam Weinig.
+
+        There's no need to have a LayerTreeHostCA base class anymore, just merge it into LayerTreeHostMac.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp: Removed.
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h: Removed.
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        (LayerTreeHostMac):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        (WebKit::LayerTreeHostMac::~LayerTreeHostMac):
+        (WebKit::LayerTreeHostMac::layerTreeContext):
+        (WebKit::LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit):
+        (WebKit::LayerTreeHostMac::setRootCompositingLayer):
+        (WebKit::LayerTreeHostMac::invalidate):
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostMac::scrollNonCompositedContents):
+        (WebKit::LayerTreeHostMac::forceRepaint):
+        (WebKit::LayerTreeHostMac::sizeDidChange):
+        (WebKit::LayerTreeHostMac::deviceScaleFactorDidChange):
+        (WebKit::LayerTreeHostMac::didInstallPageOverlay):
+        (WebKit::LayerTreeHostMac::didUninstallPageOverlay):
+        (WebKit::LayerTreeHostMac::setPageOverlayNeedsDisplay):
+        (WebKit::LayerTreeHostMac::pauseRendering):
+        (WebKit::LayerTreeHostMac::resumeRendering):
+        (WebKit::LayerTreeHostMac::setLayerHostingMode):
+        (WebKit::LayerTreeHostMac::notifyAnimationStarted):
+        (WebKit::LayerTreeHostMac::notifyFlushRequired):
+        (WebKit::LayerTreeHostMac::paintContents):
+        (WebKit::LayerTreeHostMac::deviceScaleFactor):
+        (WebKit::LayerTreeHostMac::flushLayers):
+        (WebKit::LayerTreeHostMac::initialize):
+        (WebKit::LayerTreeHostMac::performScheduledLayerFlush):
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostMac::createPageOverlayLayer):
+        (WebKit::LayerTreeHostMac::destroyPageOverlayLayer):
+
 2013-01-15  Tim Horton  <timothy_horton@apple.com>
 
         Clamp TileCache visibleRect to WKView's visibleRect

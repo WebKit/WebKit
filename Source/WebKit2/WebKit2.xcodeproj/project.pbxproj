@@ -988,13 +988,11 @@
 		C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */; };
 		C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */; };
 		C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */; };
-		C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */ = {isa = PBXBuildFile; fileRef = C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */; };
 		C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06C6093124C14430001682F /* WebPageCreationParameters.cpp */; };
 		C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C09AE5E8125257C20025825D /* WKNativeEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */; };
 		C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */; };
 		C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */; };
-		C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */; };
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
@@ -2288,8 +2286,6 @@
 		C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformTouchPoint.cpp; sourceTree = "<group>"; };
 		C06C6093124C14430001682F /* WebPageCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageCreationParameters.cpp; sourceTree = "<group>"; };
 		C06C6094124C14430001682F /* WebPageCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageCreationParameters.h; sourceTree = "<group>"; };
-		C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostCA.h; sourceTree = "<group>"; };
-		C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostCA.cpp; sourceTree = "<group>"; };
 		C09AE5E8125257C20025825D /* WKNativeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNativeEvent.h; sourceTree = "<group>"; };
 		C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPage.messages.in; sourceTree = "<group>"; };
 		C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3461,7 +3457,6 @@
 		BC032D5E10F4372B0058C15A /* WebPage */ = {
 			isa = PBXGroup;
 			children = (
-				C098A052133BE1C500B199A4 /* ca */,
 				BC963D6C113DD19500574BE2 /* mac */,
 				93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */,
 				93FC679E12D3CC7400A60610 /* DecoderAdapter.h */,
@@ -4280,23 +4275,6 @@
 			path = cg;
 			sourceTree = "<group>";
 		};
-		C03A136A133BEBF900D767D1 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
-		C098A052133BE1C500B199A4 /* ca */ = {
-			isa = PBXGroup;
-			children = (
-				C03A136A133BEBF900D767D1 /* mac */,
-				C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */,
-				C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */,
-			);
-			path = ca;
-			sourceTree = "<group>";
-		};
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -4650,7 +4628,6 @@
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
-				C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
@@ -5628,7 +5605,6 @@
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
-				C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,
 				5160BFE113381DF900918999 /* Logging.mac.mm in Sources */,
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,

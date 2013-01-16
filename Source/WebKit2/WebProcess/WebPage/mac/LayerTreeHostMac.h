@@ -26,7 +26,8 @@
 #ifndef LayerTreeHostMac_h
 #define LayerTreeHostMac_h
 
-#include "LayerTreeHostCA.h"
+#include "LayerTreeHost.h"
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
 
@@ -34,7 +35,7 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class LayerTreeHostMac : public LayerTreeHostCA, public WebCore::LayerFlushSchedulerClient {
+class LayerTreeHostMac : public LayerTreeHost, private WebCore::GraphicsLayerClient, private WebCore::LayerFlushSchedulerClient {
 public:
     static PassRefPtr<LayerTreeHostMac> create(WebPage*);
     virtual ~LayerTreeHostMac();
@@ -43,24 +44,52 @@ private:
     explicit LayerTreeHostMac(WebPage*);
 
     // LayerTreeHost.
-    virtual void scheduleLayerFlush();
-    virtual void setLayerFlushSchedulingEnabled(bool);
-    virtual void invalidate();
-    virtual void sizeDidChange(const WebCore::IntSize& newSize);
-    virtual void forceRepaint();
-    virtual void pauseRendering();
-    virtual void resumeRendering();
+    virtual const LayerTreeContext& layerTreeContext() OVERRIDE;
+    virtual void scheduleLayerFlush() OVERRIDE;
+    virtual void setLayerFlushSchedulingEnabled(bool) OVERRIDE;
+    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) OVERRIDE;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void invalidate() OVERRIDE;
+    virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
+    virtual void forceRepaint() OVERRIDE;
+    virtual void sizeDidChange(const WebCore::IntSize& newSize) OVERRIDE;
+    virtual void deviceScaleFactorDidChange() OVERRIDE;
+
+    virtual void didInstallPageOverlay() OVERRIDE;
+    virtual void didUninstallPageOverlay() OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+
+    virtual void pauseRendering() OVERRIDE;
+    virtual void resumeRendering() OVERRIDE;
 
     virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 
-    // LayerTreeHostCA
-    virtual void platformInitialize();
-    virtual void didPerformScheduledLayerFlush();
-
-    virtual bool flushPendingLayerChanges();
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
+    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
+    virtual float deviceScaleFactor() const OVERRIDE;
+    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const OVERRIDE { }
 
     // LayerFlushSchedulerClient
     virtual bool flushLayers();
+
+    void initialize();
+    void performScheduledLayerFlush();
+    bool flushPendingLayerChanges();
+
+    void createPageOverlayLayer();
+    void destroyPageOverlayLayer();
+
+    bool m_isValid;
+    bool m_notifyAfterScheduledLayerFlush;
+
+    LayerTreeContext m_layerTreeContext;
+
+    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
+    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     OwnPtr<LayerHostingContext> m_layerHostingContext;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
