@@ -36,7 +36,7 @@ namespace WebCore {
 class ElementRareData : public NodeRareData {
 public:
     ElementRareData();
-    virtual ~ElementRareData();
+    ~ElementRareData();
 
     void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
     PseudoElement* pseudoElement(PseudoId) const;
@@ -94,7 +94,8 @@ public:
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+    // Manually called by Node::reportMemoryUsage.
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     ElementShadow* shadow() const { return m_shadow.get(); }
     void setShadow(PassOwnPtr<ElementShadow> shadow) { m_shadow = shadow; }
@@ -160,6 +161,7 @@ private:
 #endif
 
     LayoutSize m_minimumSizeForResizing;
+    IntSize m_savedLayerScrollOffset;
     RefPtr<RenderStyle> m_computedStyle;
 
     OwnPtr<DatasetDOMStringMap> m_dataset;
@@ -170,9 +172,6 @@ private:
     RefPtr<PseudoElement> m_generatedBefore;
     RefPtr<PseudoElement> m_generatedAfter;
 
-    IntSize m_savedLayerScrollOffset;
-
-private:
     void releasePseudoElement(PseudoElement*);
 };
 

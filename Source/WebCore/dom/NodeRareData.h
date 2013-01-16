@@ -280,9 +280,6 @@ public:
     NodeRareData()
     { }
 
-    virtual ~NodeRareData()
-    { }
-
     void clearNodeLists() { m_nodeLists.clear(); }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
     NodeListsNodeData* ensureNodeLists()
@@ -309,7 +306,8 @@ public:
     }
 #endif
 
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+    // This member function is intentionially not virtual to avoid adding a vtable pointer.
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     OwnPtr<NodeListsNodeData> m_nodeLists;

@@ -471,7 +471,10 @@ void Node::clearRareData()
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 
     RenderObject* renderer = m_data.m_rareData->renderer();
-    delete m_data.m_rareData;
+    if (isElementNode())
+        delete static_cast<ElementRareData*>(m_data.m_rareData);
+    else
+        delete m_data.m_rareData;
     m_data.m_renderer = renderer;
     clearFlag(HasRareDataFlag);
 }
@@ -2581,8 +2584,12 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_next);
     info.addMember(m_previous);
     info.addMember(this->renderer());
-    if (hasRareData())
-        info.addMember(rareData());
+    if (hasRareData()) {
+        if (isElementNode())
+            info.addMember(static_cast<ElementRareData*>(rareData()));
+        else
+            info.addMember(rareData());
+    }
 }
 
 void Node::textRects(Vector<IntRect>& rects) const

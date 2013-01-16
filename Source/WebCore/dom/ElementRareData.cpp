@@ -36,6 +36,16 @@
 
 namespace WebCore {
 
+struct SameSizeAsElementRareData : NodeRareData {
+    short indices[2];
+    unsigned bitfields;
+    LayoutSize sizeForResizing;
+    IntSize scrollOffset;
+    void* pointers[7];
+};
+
+COMPILE_ASSERT(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), ElementRareDataShouldStaySmall);
+
 void ElementRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);

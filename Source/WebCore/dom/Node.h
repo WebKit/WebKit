@@ -115,9 +115,9 @@ public:
     RenderObject* renderer() const { return m_renderer; }
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
 
-    virtual ~NodeRareDataBase() { }
 protected:
     NodeRareDataBase() { }
+
 private:
     RenderObject* m_renderer;
 };
