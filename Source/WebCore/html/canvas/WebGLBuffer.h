@@ -95,9 +95,9 @@ private:
     void clearCachedMaxIndices();
 
     // Helper function called by the three associateBufferData().
-    bool associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLength);
+    bool associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOffset, GC3Dsizeiptr byteLength);
     // Helper function called by the two associateBufferSubData().
-    bool associateBufferSubDataImpl(GC3Dintptr offset, const void* data, GC3Dsizeiptr byteLength);
+    bool associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* array, GC3Dintptr arrayByteOffset, GC3Dsizeiptr byteLength);
 };
 
 } // namespace WebCore
