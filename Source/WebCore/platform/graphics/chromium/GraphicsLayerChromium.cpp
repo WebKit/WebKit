@@ -735,7 +735,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_layer->layer()->setPosition(FloatPoint::zero());
 
         m_layer->layer()->setAnchorPoint(FloatPoint(0.5f, 0.5f));
-        m_layer->layer()->setTransform(SkMatrix44());
+        m_layer->layer()->setTransform(SkMatrix44::I());
 
         // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         m_layer->layer()->setOpacity(1);
