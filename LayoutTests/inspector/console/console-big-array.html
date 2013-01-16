@@ -33,9 +33,13 @@ function onload()
         e[i] = i;
     e[123] = 123;
     e[-123] = -123;
+    e[3.14] = 3.14;
     e[4294967295] = 4294967295;
     e[4294967296] = 4294967296;
-    console.dir(e);
+    e[Infinity] = Infinity;
+    e[-Infinity] = -Infinity;
+    e[NaN] = NaN;
+    console.log("%O", e);
 
     runTest();
 }
