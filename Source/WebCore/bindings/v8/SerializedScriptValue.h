@@ -80,10 +80,11 @@ public:
 
     // Deserializes the value (in the current context). Returns a null value in
     // case of failure.
-    v8::Handle<v8::Value> deserialize(MessagePortArray* = 0, v8::Isolate* = 0);
+    v8::Handle<v8::Value> deserialize(MessagePortArray* = 0);
+    v8::Handle<v8::Value> deserialize(v8::Isolate*, MessagePortArray* = 0);
 
 #if ENABLE(INSPECTOR)
-    ScriptValue deserializeForInspector(ScriptState*, v8::Isolate* = 0);
+    ScriptValue deserializeForInspector(ScriptState*);
 #endif
 
     const Vector<String>& blobURLs() const { return m_blobURLs; }

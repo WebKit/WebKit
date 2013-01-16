@@ -2468,7 +2468,12 @@ SerializedScriptValue::SerializedScriptValue(const String& wireData)
     m_data = wireData.isolatedCopy();
 }
 
-v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messagePorts, v8::Isolate* isolate)
+v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messagePorts)
+{
+    return deserialize(v8::Isolate::GetCurrent(), messagePorts);
+}
+
+v8::Handle<v8::Value> SerializedScriptValue::deserialize(v8::Isolate* isolate, MessagePortArray* messagePorts)
 {
     if (!m_data.impl())
         return v8NullWithCheck(isolate);
@@ -2479,12 +2484,12 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messa
 }
 
 #if ENABLE(INSPECTOR)
-ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState, v8::Isolate* isolate)
+ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(scriptState->context());
 
-    return ScriptValue(deserialize(0, isolate));
+    return ScriptValue(deserialize(scriptState->isolate()));
 }
 #endif
 

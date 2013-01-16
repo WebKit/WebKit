@@ -63,6 +63,13 @@ public:
         return v8::Local<v8::Context>::New(m_context.get());
     }
 
+    v8::Isolate* isolate()
+    {
+        if (!m_isolate)
+            m_isolate = v8::Isolate::GetCurrent();
+        return m_isolate;
+    }
+
     DOMWindow* domWindow() const;
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -81,6 +88,7 @@ private:
 
     v8::Local<v8::Value> m_exception;
     ScopedPersistent<v8::Context> m_context;
+    v8::Isolate* m_isolate;
 };
 
 class EmptyScriptState : public ScriptState {
