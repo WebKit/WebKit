@@ -171,7 +171,7 @@ WebInspector.CookieParser.prototype = {
             this._lastCookie.setSize(keyValue.position - this._lastCookiePosition);
         // Mozilla bug 169091: Mozilla, IE and Chrome treat single token (w/o "=") as
         // specifying a value for a cookie with empty name.
-        this._lastCookie = keyValue.value ? new WebInspector.Cookie(keyValue.key, keyValue.value, type) :
+        this._lastCookie = typeof keyValue.value === "string" ? new WebInspector.Cookie(keyValue.key, keyValue.value, type) :
             new WebInspector.Cookie("", keyValue.key, type);
         this._lastCookiePosition = keyValue.position;
         this._cookies.push(this._lastCookie);

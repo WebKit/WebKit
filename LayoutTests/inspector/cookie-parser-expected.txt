@@ -130,4 +130,16 @@ name: Cookie2, value: value2, httpOnly: true, secure: true, session: true, path:
     path : "/foo"
     secure : undefined
 }
+source: cooke1; Path=/; Domain=.example.com;
+name: , value: cooke1, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 36
+{
+    domain : ".example.com"
+    path : "/"
+}
+source: cooke1=; Path=/; Domain=.example.com;
+name: cooke1, value: , httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 37
+{
+    domain : ".example.com"
+    path : "/"
+}
 

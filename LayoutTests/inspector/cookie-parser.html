@@ -60,6 +60,8 @@ var test = function()
     InspectorTest.parseAndDumpSetCookie("cooke1 = value; Path=/; Domain=  .example.com \nCookie2 = value2; Path = /foo; Domain = foo.example.com");
     InspectorTest.parseAndDumpSetCookie("cooke1 = value; expires = Mon, Oct 18 2010 17:00 GMT+0000; Domain   =.example.com\nCookie2 = value2; Path = /foo; DOMAIN = foo.example.com; HttpOnly; Secure; Discard;");
     InspectorTest.parseAndDumpSetCookie("cooke1 = value; max-age= 1440; Domain   =.example.com\n Cookie2 = value2; Path = /foo; DOMAIN = foo.example.com; HttpOnly; Secure; Discard;");
+    InspectorTest.parseAndDumpSetCookie("cooke1; Path=/; Domain=.example.com;");
+    InspectorTest.parseAndDumpSetCookie("cooke1=; Path=/; Domain=.example.com;");
     InspectorTest.completeTest();
 }
 
