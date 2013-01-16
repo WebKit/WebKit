@@ -1,3 +1,17 @@
+2013-01-15  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy.layout_tests.servers.http_server_unittest.TestHttpServer.test_win32_start_and_stop is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=106974
+
+        Reviewed by Ryosuke Niwa.
+
+        I forgot to stub out the call to check to ensure that the ports were
+        available, so this test could fail if something was listening on 8000 or
+        8443 on the machine.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_win32_start_and_stop):
+
 2013-01-15  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed, rolling out r139792.

@@ -78,6 +78,7 @@ class TestHttpServer(unittest.TestCase):
                           additional_dirs={
                               "/mock/one-additional-dir": "/mock-checkout/one-additional-dir",
                               "/mock/another-additional-dir": "/mock-checkout/one-additional-dir"})
+        server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
 
         server.start()
