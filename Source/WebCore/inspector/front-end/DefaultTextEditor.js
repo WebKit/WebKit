@@ -1944,7 +1944,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {Element} lineRow
      * @param {string} line
      * @param {RegExp} regex
-     * @return {Array.<{left: number, width: number, height: number}>}
+     * @return {Array.<{left: number, width: number}>}
      */
     _measureRegex: function(lineRow, line, regex)
     {
@@ -1961,8 +1961,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         for(var i = 0; i < ranges.length; ++i)
             metrics.push({
                 left: spans[i].offsetLeft,
-                width: spans[i].offsetWidth,
-                height: spans[i].offsetHeight
+                width: spans[i].offsetWidth
             });
         return metrics;
     },
@@ -1982,7 +1981,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
             highlight.style.marginLeft = (metrics[i].left - highlight.offsetLeft - extraWidth) + "px";
             highlight.style.width = (metrics[i].width + extraWidth * 2) + "px";
-            highlight.style.height = metrics[i].height + "px";
             highlight.addStyleClass("text-editor-overlay-highlight");
         }
     },

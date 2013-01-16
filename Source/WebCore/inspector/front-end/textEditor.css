@@ -32,6 +32,7 @@
 
 .text-editor-overlay-highlight {
     position: absolute;
+    height: 100%;
     pointer-events: none;
     -webkit-user-select: none;
     z-index: -1;
@@ -53,6 +54,10 @@
 .text-editor-read-only {
     -webkit-user-modify: read-only;
     background-color: rgb(240, 240, 240);
+}
+
+.webkit-line-content {
+    position: relative;
 }
 
 .webkit-line-decorations {

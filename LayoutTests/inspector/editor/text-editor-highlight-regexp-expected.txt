@@ -17,11 +17,11 @@ Add highlight for regexp /foo_./
 
 <div class="inner-container" tabindex="0">
 <div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -127px; width: 37px; height: 14px;"></span><span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px; height: 14px;"></span></div>
+<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -127px; width: 37px;"></span><span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px;"></span></div>
 <div class="webkit-line-content">foo_</div>
 <div class="webkit-line-content">global_foo</div>
 <div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px; height: 14px;"></span></div></div>
+<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px;"></span></div></div>
 
 Remove highlight for regexp /foo_./
 
