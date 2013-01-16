@@ -20,13 +20,13 @@ function test()
             var textEditor = InspectorTest.createTestEditor();
             textEditor.setText(text.join("\n"));
             InspectorTest.addResult("\nBefore highlight");
-            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            InspectorTest.dumpEditorHTML(textEditor, true);
             textEditor.highlightRegex(/foo_./, "some-css-class");
             InspectorTest.addResult("\nAdd highlight for regexp /foo_./");
-            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            InspectorTest.dumpEditorHTML(textEditor, true);
             InspectorTest.addResult("\nRemove highlight for regexp /foo_./");
             textEditor.removeRegexHighlight(/foo_./);
-            InspectorTest.addResult(textEditor._mainPanel.element.innerHTML.replace(/<div/g, "\n<div"));
+            InspectorTest.dumpEditorHTML(textEditor, true);
             next();
         },
     ]);

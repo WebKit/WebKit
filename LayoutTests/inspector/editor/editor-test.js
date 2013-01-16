@@ -69,6 +69,13 @@ InspectorTest.dumpEditorDOM = function(textEditor)
     }
 };
 
+InspectorTest.dumpEditorHTML = function(textEditor, mainPanelOnly)
+{
+    var element = mainPanelOnly ? textEditor._mainPanel.element : textEditor.element;
+    var dumpedHTML = element.innerHTML.replace(/<div/g, "\n<div");
+    InspectorTest.addResult(dumpedHTML);
+};
+
 InspectorTest.getLineElement = function(textEditor, lineNumber)
 {
     return textEditor._mainPanel.chunkForLine(lineNumber).expandedLineRow(lineNumber);
