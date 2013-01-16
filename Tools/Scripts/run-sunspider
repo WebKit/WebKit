@@ -38,9 +38,6 @@ my $configuration = configuration();
 
 my $root;
 my $testRuns = 10; # This number may be different from what sunspider defaults to (that's OK)
-my $runShark = 0;
-my $runShark20 = 0;
-my $runSharkCache = 0;
 my $runInstruments = 0;
 my $suite = "";
 my $ubench = 0;
@@ -59,9 +56,6 @@ Usage: $programName [options] [options to pass to build system]
   --root            Path to root tools build
   --runs            Number of times to run tests (default: $testRuns)
   --tests           Only run tests matching provided pattern
-  --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
-  --shark20         Like --shark, but with a 20 microsecond sampling interval
-  --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
   --instruments     Sample with the Mac OS X "Instruments" tool (Time Profile) (implies --runs=1)
   --suite           Select a specific benchmark suite. The default is sunspider-0.9.1
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
@@ -73,9 +67,6 @@ EOF
 GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurationProductDir(Cwd::abs_path($root)); },
            'runs=i' => \$testRuns,
            'set-baseline' => \$setBaseline,
-           'shark' => \$runShark,
-           'shark20' => \$runShark20,
-           'shark-cache' => \$runSharkCache,
            'instruments' => \$runInstruments,
            'suite=s' => \$suite,
            'ubench' => \$ubench,
@@ -125,9 +116,6 @@ setupEnvironmentForExecution($productDir);
 my @args = ("--shell", jscPath($productDir), "--runs", $testRuns);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 push @args, "--set-baseline" if $setBaseline;
-push @args, "--shark" if $runShark;
-push @args, "--shark20" if $runShark20;
-push @args, "--shark-cache" if $runSharkCache;
 push @args, "--instruments" if $runInstruments;
 push @args, "--suite=${suite}" if $suite;
 push @args, "--ubench" if $ubench;

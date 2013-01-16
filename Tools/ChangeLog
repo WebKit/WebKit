@@ -1,5 +1,14 @@
 2013-01-16  Eric Seidel  <eric@webkit.org>
 
+        Remove --shark* support from sunspider/run-sunspider now that Shark is dead
+        https://bugs.webkit.org/show_bug.cgi?id=99512
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-sunspider:
+
+2013-01-16  Eric Seidel  <eric@webkit.org>
+
         Remove webkitpy Visual Studio files, as core developers are not interested in maintaining them
         https://bugs.webkit.org/show_bug.cgi?id=106036
 

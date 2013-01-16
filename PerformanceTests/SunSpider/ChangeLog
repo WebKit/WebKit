@@ -1,3 +1,15 @@
+2013-01-16  Eric Seidel  <eric@webkit.org>
+
+        Remove --shark* support from sunspider/run-sunspider now that Shark is dead
+        https://bugs.webkit.org/show_bug.cgi?id=99512
+
+        Reviewed by Darin Adler.
+
+        I tried to use --instruments, but that also seems broken (in the same way before/after this patch).
+
+        * sunspider:
+        (runTestsOnce):
+
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, revert debugging stuff I landed in http://trac.webkit.org/changeset/124557
