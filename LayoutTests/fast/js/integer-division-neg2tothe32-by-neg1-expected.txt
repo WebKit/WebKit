@@ -2803,6 +2803,7 @@ PASS myOtherMod(w, v) is -0
 PASS myOtherModByNeg1(w) is -0
 PASS myOtherModNeg2ToThe31(v) is -0
 PASS myOtherModNeg2ToThe31(3) is -2
+PASS myDivExpectingInt(x, y) is x
 PASS successfullyParsed is true
 
 TEST COMPLETE

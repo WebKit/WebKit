@@ -3318,11 +3318,11 @@ void SpeculativeJIT::compileIntegerArithDivForX86(Node& node)
         speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
     } else {
         JITCompiler::Jump zero = m_jit.branchTest32(JITCompiler::Zero, op2GPR);
-        JITCompiler::Jump notNeg2ToThe31 = m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1));
+        JITCompiler::Jump isNeg2ToThe31 = m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1));
         zero.link(&m_jit);
         m_jit.move(TrustedImm32(0), eax.gpr());
+        isNeg2ToThe31.link(&m_jit);
         done = m_jit.jump();
-        notNeg2ToThe31.link(&m_jit);
     }
     
     safeDenominator.link(&m_jit);

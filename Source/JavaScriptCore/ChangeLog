@@ -1,3 +1,17 @@
+2013-01-15  Michael Saboff  <msaboff@apple.com>
+
+        DFG X86: division in the used-as-int case doesn't correctly check for -2^31/-1
+        https://bugs.webkit.org/show_bug.cgi?id=106978
+
+        Reviewed by Filip Pizlo.
+
+        Changed the numerator equal to -2^31 check to just return if we expect an integer
+        result, since the check is after we have determined that the denominator is -1.
+        The int result of -2^31 / -1 is -2^31, so just return the numerator as the result.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForX86):
+
 2013-01-15  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed, rolling out r139792.

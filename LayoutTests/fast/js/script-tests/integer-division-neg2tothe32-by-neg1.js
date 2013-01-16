@@ -50,6 +50,10 @@ function myOtherModNeg2ToThe31(b) {
     return -2147483648 % b;
 }
 
+function myDivExpectingInt(a, b) {
+    return (a / b) | 0;
+}
+
 var w = 4;
 var v = 2;
 var x = -2147483648;
@@ -76,5 +80,6 @@ for (var i = 0; i < 200; ++i) {
     shouldBe("myOtherModByNeg1(w)", i > 100 ? "-0" : "0");
     shouldBe("myOtherModNeg2ToThe31(v)", "-0");
     shouldBe("myOtherModNeg2ToThe31(3)", "-2");
+    shouldBe("myDivExpectingInt(x, y)", "x");
 }
 
