@@ -439,6 +439,11 @@ private:
             m_xPixmap = 0;
         }
 
+        if (m_surface) {
+            XDestroyWindow(m_display, m_surface);
+            m_surface = 0;
+        }
+
         if (m_glContext) {
             glXDestroyContext(m_display, m_glContext);
             m_glContext = 0;
