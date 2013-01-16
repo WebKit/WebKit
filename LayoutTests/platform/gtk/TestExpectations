@@ -58,7 +58,7 @@ webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html [ WontFix ]
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 # Modal dialogs will not be supported in WebKit1. These expectations should eventually
 # be moved into WebKit1-specific TestExpectations file (once it's created).

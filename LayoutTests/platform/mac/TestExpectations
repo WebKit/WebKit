@@ -518,7 +518,7 @@ fast/events/constructors/media-key-event-constructor.html
 css3/font-feature-settings-rendering.html
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=67716
 media/media-controls-invalid-url.html

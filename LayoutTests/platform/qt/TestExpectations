@@ -2068,7 +2068,7 @@ fast/dom/HTMLDocument/hasFocus.html
 fast/loader/form-submission-after-beforeunload-cancel.html
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 # [Qt] fast/text/line-initial-and-final-swashes.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=69719

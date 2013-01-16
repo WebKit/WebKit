@@ -595,7 +595,7 @@ webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
 # Taken from Chromium, this test verifies that a mismatch reftest will fail if both results are the
 # same.  Because the whole point is that this test should fail when run, it's
 # not SKIP, just WONTFIX.
-webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ]
+webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=105437
 webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-03-f.svg [ ImageOnlyFailure Pass ]
