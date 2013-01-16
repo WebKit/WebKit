@@ -134,7 +134,7 @@ Usage: $programName [options] [options to pass to build system]
   --minimal                         No optional features, unless explicitly enabled
 
   --only-webkit                     Build only the WebKit project
-  --no-webkit1                      Omit WebKit1 code from the build (Qt/EFL only)
+  --no-webkit1                      Omit WebKit1 code from the build (Qt/EFL/GTK only)
   --no-webkit2                      Omit WebKit2 code from the build
 
 EOF

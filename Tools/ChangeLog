@@ -1,3 +1,12 @@
+2013-01-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r139769.
+
+        Note that omitting the WebKit1 code from the build now
+        works for GTK as well.
+
+        * Scripts/build-webkit:
+
 2013-01-15  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: truncate output to the terminal width when necessary
