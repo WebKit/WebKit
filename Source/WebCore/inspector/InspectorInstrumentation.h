@@ -191,10 +191,6 @@ public:
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
-    static void frameStartedLoading(Frame*);
-    static void frameStoppedLoading(Frame*);
-    static void frameScheduledNavigation(Frame*, double delay);
-    static void frameClearedScheduledNavigation(Frame*);
     static void willDestroyCachedResource(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
@@ -394,10 +390,6 @@ private:
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
-    static void frameStartedLoadingImpl(InstrumentingAgents*, Frame*);
-    static void frameStoppedLoadingImpl(InstrumentingAgents*, Frame*);
-    static void frameScheduledNavigationImpl(InstrumentingAgents*, Frame*, double delay);
-    static void frameClearedScheduledNavigationImpl(InstrumentingAgents*, Frame*);
     static void willDestroyCachedResourceImpl(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine, Frame*);
@@ -1656,38 +1648,6 @@ inline void InspectorInstrumentation::loaderDetachedFromFrame(Frame* frame, Docu
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(loader);
-#endif
-}
-
-inline void InspectorInstrumentation::frameStartedLoading(Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameStartedLoadingImpl(instrumentingAgents, frame);
-#endif
-}
-
-inline void InspectorInstrumentation::frameStoppedLoading(Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameStoppedLoadingImpl(instrumentingAgents, frame);
-#endif
-}
-
-inline void InspectorInstrumentation::frameScheduledNavigation(Frame* frame, double delay)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameScheduledNavigationImpl(instrumentingAgents, frame, delay);
-#endif
-}
-
-inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameClearedScheduledNavigationImpl(instrumentingAgents, frame);
 #endif
 }
 

@@ -494,39 +494,6 @@
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
                 ],
                 "hidden": true
-            },
-            {
-                "name": "frameStartedLoading",
-                "description": "Fired when frame has started loading.",
-                "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has started loading." }
-                ],
-                "hidden": true
-            },
-            {
-                "name": "frameStoppedLoading",
-                "description": "Fired when frame has stopped loading.",
-                "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has stopped loading." }
-                ],
-                "hidden": true
-            },
-            {
-                "name": "frameScheduledNavigation",
-                "description": "Fired when frame schedules a potential navigation.",
-                "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has scheduled a navigation." },
-                    { "name": "delay", "type": "number", "description": "Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start." }
-                ],
-                "hidden": true
-            },
-            {
-                "name": "frameClearedScheduledNavigation",
-                "description": "Fired when frame no longer has a scheduled navigation.",
-                "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
-                ],
-                "hidden": true
             }
         ]
     },
