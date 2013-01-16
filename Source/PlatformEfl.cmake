@@ -1,4 +1,4 @@
-add_subdirectory(${WEBKIT_DIR}/efl/DefaultTheme)
+add_subdirectory(${WEBCORE_DIR}/platform/efl/DefaultTheme)
 
 if (ENABLE_INSPECTOR)
     add_custom_target(

@@ -1,5 +1,5 @@
 macro(GENERATE_THEME _target_name _name _option)
-    set(DefaultTheme_DIR "${WEBKIT_DIR}/efl/DefaultTheme")
+    set(DefaultTheme_DIR "${WEBCORE_DIR}/platform/efl/DefaultTheme")
 
     add_custom_command(
         OUTPUT ${THEME_BINARY_DIR}/${_name}
