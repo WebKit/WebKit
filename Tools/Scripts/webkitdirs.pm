@@ -2130,7 +2130,7 @@ sub jhbuildWrapperPrefixIfNeeded()
         return @prefix;
     }
 
-    return "";
+    return ();
 }
 
 sub removeCMakeCache()

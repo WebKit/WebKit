@@ -1,3 +1,18 @@
+2013-01-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] build-webkit fails if the jhbuild wrapper is not used
+        https://bugs.webkit.org/show_bug.cgi?id=106769
+
+        Reviewed by Martin Robinson.
+
+        Return an empty array instead of "" in
+        jhbuildWrapperPrefixIfNeeded() because otherwise that empty string
+        will not be recognized as a valid command when the returned array
+        is directly passed to perl's system() call.
+
+        * Scripts/webkitdirs.pm:
+        (jhbuildWrapperPrefixIfNeeded):
+
 2013-01-16  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add title text direction attribute to TestRunner
