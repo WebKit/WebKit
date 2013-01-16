@@ -448,12 +448,16 @@ void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run,
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
-    drawImage(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op, shouldRespectImageOrientation);
+    if (!image)
+        return;
+    drawImage(image, styleColorSpace, p, IntRect(IntPoint(), image->size()), op, shouldRespectImageOrientation);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
-    drawImage(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, shouldRespectImageOrientation, useLowQualityScale);
+    if (!image)
+        return;
+    drawImage(image, styleColorSpace, r, IntRect(IntPoint(), image->size()), op, shouldRespectImageOrientation, useLowQualityScale);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
@@ -471,24 +475,16 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
     drawImage(image, styleColorSpace, FloatRect(dest), src, op, BlendModeNormal, shouldRespectImageOrientation, useLowQualityScale);
 }
 
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest)
+{
+    if (!image)
+        return;
+    drawImage(image, styleColorSpace, dest, FloatRect(IntRect(IntPoint(), image->size())));
+}
+
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {    if (paintingDisabled() || !image)
         return;
-
-    float tsw = src.width();
-    float tsh = src.height();
-    float tw = dest.width();
-    float th = dest.height();
-
-    if (tsw == -1)
-        tsw = image->width();
-    if (tsh == -1)
-        tsh = image->height();
-
-    if (tw == -1)
-        tw = image->width();
-    if (th == -1)
-        th = image->height();
 
     InterpolationQuality previousInterpolationQuality = InterpolationDefault;
 
@@ -502,7 +498,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 #endif
     }
 
-    image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op, blendMode, shouldRespectImageOrientation);
+    image->draw(this, dest, src, styleColorSpace, op, blendMode, shouldRespectImageOrientation);
 
     if (useLowQualityScale)
         setImageInterpolationQuality(previousInterpolationQuality);
@@ -545,12 +541,16 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, BlendMode blendMode)
 {
-    drawImageBuffer(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op, blendMode);
+    if (!image)
+        return;
+    drawImageBuffer(image, styleColorSpace, p, IntRect(IntPoint(), image->logicalSize()), op, blendMode);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
-    drawImageBuffer(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, blendMode, useLowQualityScale);
+    if (!image)
+        return;
+    drawImageBuffer(image, styleColorSpace, r, IntRect(IntPoint(), image->logicalSize()), op, blendMode, useLowQualityScale);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, BlendMode blendMode)
@@ -563,25 +563,17 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
     drawImageBuffer(image, styleColorSpace, FloatRect(dest), srcRect, op, blendMode, useLowQualityScale);
 }
 
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest)
+{
+    if (!image)
+        return;
+    drawImageBuffer(image, styleColorSpace, dest, FloatRect(IntRect(IntPoint(), image->logicalSize())));
+}
+
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
-
-    float tsw = src.width();
-    float tsh = src.height();
-    float tw = dest.width();
-    float th = dest.height();
-
-    if (tsw == -1)
-        tsw = image->logicalSize().width();
-    if (tsh == -1)
-        tsh = image->logicalSize().height();
-
-    if (tw == -1)
-        tw = image->logicalSize().width();
-    if (th == -1)
-        th = image->logicalSize().height();
 
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
@@ -591,10 +583,10 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
         // FIXME (49002): Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
 #endif
-        image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, blendMode, useLowQualityScale);
+        image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else
-        image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, blendMode, useLowQualityScale);
+        image->draw(this, styleColorSpace, dest, src, op, blendMode, useLowQualityScale);
 }
 
 #if !PLATFORM(QT)

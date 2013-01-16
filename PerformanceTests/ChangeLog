@@ -1,3 +1,17 @@
+2013-01-16  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        inconsistency in drawImage with target rect negative dimensions.
+        https://bugs.webkit.org/show_bug.cgi?id=100026
+
+        Reviewed by Dean Jackson.
+
+        Create a drawImage performance test. There is no significative change
+        in performance: 27144.6851528 runs/s without the patch; 27153.517612
+        runs/s with the patch. Test is currently skipped.
+
+        * Canvas/drawimage.html: Added.
+        * Skipped:
+
 2013-01-15  Dominic Cooney  <dominicc@chromium.org>
 
         Allow zero values as results from the runFunction.

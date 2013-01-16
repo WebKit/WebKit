@@ -51,9 +51,8 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
         {
             if (!m_cropRect.isEmpty())
                 return FloatRect(m_cropRect);
-
-            // Default rectangle used by GraphicsContext::drawImage().
-            return FloatRect(0, 0, -1, -1);
+            ASSERT(m_image);
+            return FloatRect(0, 0, m_image->size().width(), m_image->size().height());
         }
 
     private:

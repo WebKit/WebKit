@@ -62,3 +62,5 @@ SVG/SvgNestedUse.html
 
 # Bug 102646 - ShadowDOM is not enabled in some ports.
 ShadowDOM
+
+Canvas/drawimage.html
