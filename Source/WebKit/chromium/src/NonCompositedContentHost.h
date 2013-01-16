@@ -37,6 +37,7 @@
 namespace WebCore {
 class Color;
 class GraphicsLayer;
+class GraphicsLayerFactory;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
@@ -48,9 +49,9 @@ class WebViewImpl;
 class NonCompositedContentHost : public WebCore::GraphicsLayerClient {
 WTF_MAKE_NONCOPYABLE(NonCompositedContentHost);
 public:
-    static PassOwnPtr<NonCompositedContentHost> create(WebViewImpl* webView)
+    static PassOwnPtr<NonCompositedContentHost> create(WebViewImpl* webView, WebCore::GraphicsLayerFactory* graphicsLayerFactory)
     {
-        return adoptPtr(new NonCompositedContentHost(webView));
+        return adoptPtr(new NonCompositedContentHost(webView, graphicsLayerFactory));
     }
     virtual ~NonCompositedContentHost();
 
@@ -64,7 +65,7 @@ public:
     void setShowDebugBorders(bool);
 
 protected:
-    explicit NonCompositedContentHost(WebViewImpl*);
+    NonCompositedContentHost(WebViewImpl*, WebCore::GraphicsLayerFactory*);
 
 private:
     // GraphicsLayerClient

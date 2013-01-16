@@ -1,3 +1,42 @@
+2013-01-15  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Create GraphicsLayerChromiums using a factory
+        https://bugs.webkit.org/show_bug.cgi?id=103635
+
+        Reviewed by James Robinson.
+
+        Refactor graphics layer creation for chromium to go through a factory.
+
+        * src/ChromeClientImpl.cpp:
+        (WebCore):
+        (GraphicsLayerFactoryChromium):
+        (WebCore::GraphicsLayerFactoryChromium::~GraphicsLayerFactoryChromium):
+        (WebKit::ChromeClientImpl::ChromeClientImpl):
+        (WebKit::ChromeClientImpl::graphicsLayerFactory):
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (WebCore):
+        (ChromeClientImpl):
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * src/NonCompositedContentHost.h:
+        (WebCore):
+        (WebKit::NonCompositedContentHost::create):
+        (NonCompositedContentHost):
+        * src/PageOverlay.cpp:
+        (WebKit::PageOverlay::update):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::graphicsLayerFactory):
+        (WebKit):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        * tests/ImageLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2013-01-15  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move SocketStreamHandle and SocketStreamHandleInternal to WebCore/platform

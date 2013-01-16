@@ -84,15 +84,13 @@ namespace WebCore {
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
 {
-    if (!factory)
-        return adoptPtr(new GraphicsLayerChromium(client));
-
     return factory->createGraphicsLayer(client);
 }
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return adoptPtr(new GraphicsLayerChromium(client));
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)

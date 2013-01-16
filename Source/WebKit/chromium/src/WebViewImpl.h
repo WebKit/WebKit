@@ -68,6 +68,7 @@ class DocumentLoader;
 class FloatSize;
 class Frame;
 class GraphicsContext3D;
+class GraphicsLayerFactory;
 class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
@@ -543,6 +544,7 @@ public:
     void paintRootLayer(WebCore::GraphicsContext&, const WebCore::IntRect& contentRect);
     NonCompositedContentHost* nonCompositedContentHost();
     void setBackgroundColor(const WebCore::Color&);
+    WebCore::GraphicsLayerFactory* graphicsLayerFactory() const;
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();

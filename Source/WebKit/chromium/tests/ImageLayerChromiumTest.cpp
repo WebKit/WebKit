@@ -110,7 +110,7 @@ private:
 TEST(ImageLayerChromiumTest, opaqueImages)
 {
     MockGraphicsLayerClient client;
-    OwnPtr<GraphicsLayerChromium> graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&client));
+    OwnPtr<GraphicsLayerChromium> graphicsLayer = adoptPtr(new GraphicsLayerChromium(&client));
     ASSERT_TRUE(graphicsLayer.get());
 
     RefPtr<Image> opaqueImage = TestImage::create(IntSize(100, 100), true);

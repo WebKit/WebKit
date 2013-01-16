@@ -3947,6 +3947,11 @@ void WebViewImpl::setBackgroundColor(const WebCore::Color& color)
     m_layerTreeView->setBackgroundColor(webDocumentBackgroundColor);
 }
 
+WebCore::GraphicsLayerFactory* WebViewImpl::graphicsLayerFactory() const
+{
+    return m_chromeClientImpl.graphicsLayerFactory();
+}
+
 WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
 {
     return m_rootGraphicsLayer;
@@ -4030,7 +4035,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.defaultTileSize = settingsImpl()->defaultTileSize();
         layerTreeViewSettings.maxUntiledLayerSize = settingsImpl()->maxUntiledLayerSize();
 
-        m_nonCompositedContentHost = NonCompositedContentHost::create(this);
+        m_nonCompositedContentHost = NonCompositedContentHost::create(this, graphicsLayerFactory());
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 

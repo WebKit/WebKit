@@ -39,11 +39,11 @@
 
 namespace WebKit {
 
-NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
+NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView, WebCore::GraphicsLayerFactory* graphicsLayerFactory)
     : m_webView(webView)
     , m_showDebugBorders(false)
 {
-    m_graphicsLayer = WebCore::GraphicsLayer::create(0, this);
+    m_graphicsLayer = WebCore::GraphicsLayer::create(graphicsLayerFactory, this);
 #ifndef NDEBUG
     m_graphicsLayer->setName("non-composited content");
 #endif

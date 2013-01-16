@@ -57,7 +57,8 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "Geolocation.h"
-#include "GraphicsLayer.h"
+#include "GraphicsLayerChromium.h"
+#include "GraphicsLayerFactory.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -111,6 +112,20 @@
 
 using namespace WebCore;
 
+namespace {
+
+class GraphicsLayerFactoryChromium : public GraphicsLayerFactory {
+public:
+    virtual ~GraphicsLayerFactoryChromium() { }
+
+    virtual PassOwnPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient* client) OVERRIDE
+    {
+        return adoptPtr(new GraphicsLayerChromium(client));
+    }
+};
+
+} // namespace
+
 namespace WebKit {
 
 // Converts a WebCore::PopupContainerType to a WebKit::WebPopupType.
@@ -144,6 +159,9 @@ ChromeClientImpl::ChromeClientImpl(WebViewImpl* webView)
     , m_nextNewWindowNavigationPolicy(WebNavigationPolicyIgnore)
 #if ENABLE(PAGE_POPUP)
     , m_pagePopupDriver(webView)
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+    , m_graphicsLayerFactory(adoptPtr(new GraphicsLayerFactoryChromium))
 #endif
 {
 }
@@ -932,6 +950,11 @@ bool ChromeClientImpl::paintCustomOverhangArea(GraphicsContext* context, const I
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+GraphicsLayerFactory* ChromeClientImpl::graphicsLayerFactory() const
+{
+    return m_graphicsLayerFactory.get();
+}
+
 void ChromeClientImpl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     m_webView->setRootGraphicsLayer(graphicsLayer);

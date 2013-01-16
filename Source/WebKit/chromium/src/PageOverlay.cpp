@@ -126,7 +126,7 @@ void PageOverlay::update()
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_layer) {
         m_layerClient = OverlayGraphicsLayerClientImpl::create(m_viewImpl, m_overlay);
-        m_layer = GraphicsLayer::create(m_layerClient.get());
+        m_layer = GraphicsLayer::create(m_viewImpl->graphicsLayerFactory(), m_layerClient.get());
         m_layer->setName("WebViewImpl page overlay content");
         m_layer->setDrawsContent(true);
     }
