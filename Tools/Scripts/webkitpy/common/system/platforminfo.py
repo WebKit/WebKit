@@ -155,7 +155,7 @@ class PlatformInfo(object):
 
     def _win_version_tuple_from_cmd(self):
         # Note that this should only ever be called on windows, so this should always work.
-        ver_output = self._executive.run_command(['cmd', '/c', 'ver'])
+        ver_output = self._executive.run_command(['cmd', '/c', 'ver'], decode_output=False)
         match_object = re.search(r'(?P<major>\d)\.(?P<minor>\d)\.(?P<build>\d+)', ver_output)
         assert match_object, 'cmd returned an unexpected version string: ' + ver_output
         return tuple(map(int, match_object.groups()))

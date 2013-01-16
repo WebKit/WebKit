@@ -1,3 +1,13 @@
+2013-01-16  Xueqing Huang  <huangxueqing@baidu.com>
+
+        check-webkit-style script cannot running in Chinese windows.
+        https://bugs.webkit.org/show_bug.cgi?id=87548
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._win_version_tuple_from_cmd):
+
 2013-01-16  Dirk Pranke  <dpranke@chromium.org>
 
         Delete an extraneous print statement.
