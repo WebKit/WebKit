@@ -1,3 +1,12 @@
+2013-01-16  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [CMake] Report actual values for feature configuration (instead of the default)
+        https://bugs.webkit.org/show_bug.cgi?id=107010
+
+        Reviewed by Laszlo Gombos.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2013-01-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Move 'DefaultTheme' folder to WebCore/platform/efl

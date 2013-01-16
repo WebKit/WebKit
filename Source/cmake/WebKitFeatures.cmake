@@ -169,7 +169,7 @@ macro(WEBKIT_OPTION_END)
             set(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${_name}")
         endif ()
 
-        set(_MESSAGE "${_MESSAGE} ${_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name}}")
+        set(_MESSAGE "${_MESSAGE} ${${_name}}")
         message(STATUS "${_MESSAGE}")
     endforeach ()
 endmacro()
