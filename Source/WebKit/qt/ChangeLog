@@ -1,5 +1,26 @@
 2013-01-16  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Use the shared HistoryItem serialization for QWebHistory
+        https://bugs.webkit.org/show_bug.cgi?id=106671
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Bump the serialization version and change the code to abort the
+        restore of a previous stream version rather than trying to keep the
+        support of restoring previous versions. This is mainly to simplify
+        things given that HistoryItem itself aborts in that case.
+ 
+        * Api/qwebhistory.cpp:
+        (operator<<):
+        (operator>>):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::serialize_2): Modify the test to cover same-document navigations.
+        (tst_QWebHistory::restoreIncompatibleVersion1): Add a previous version
+        hard-coded stream to verify that the deserialization doesn't hang or
+        crash.
+
+2013-01-16  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Crash in WebCore::CachedFrame::destroy
         https://bugs.webkit.org/show_bug.cgi?id=104525
 

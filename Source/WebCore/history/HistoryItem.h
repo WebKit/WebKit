@@ -201,7 +201,7 @@ public:
     QVariant userData() const { return m_userData; }
     void setUserData(const QVariant& userData) { m_userData = userData; }
 
-    bool restoreState(QDataStream& buffer, int version);
+    static PassRefPtr<HistoryItem> restoreState(QDataStream& buffer, int version);
     QDataStream& saveState(QDataStream& out, int version) const;
 #endif
 

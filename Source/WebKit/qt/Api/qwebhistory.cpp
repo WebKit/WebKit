@@ -35,10 +35,7 @@
 #include <QSharedData>
 #include <QDebug>
 
-enum {
-    InitialHistoryVersion = 1,
-    DefaultHistoryVersion = InitialHistoryVersion
-};
+static const int HistoryStreamVersion = 2;
 
 /*!
   \class QWebHistoryItem
@@ -496,7 +493,7 @@ QDataStream& operator<<(QDataStream& target, const QWebHistory& history)
 {
     QWebHistoryPrivate* d = history.d;
 
-    int version = DefaultHistoryVersion;
+    int version = HistoryStreamVersion;
 
     target << version;
     target << history.count() << history.currentItemIndex();
@@ -521,29 +518,42 @@ QDataStream& operator<<(QDataStream& target, const QWebHistory& history)
 QDataStream& operator>>(QDataStream& source, QWebHistory& history)
 {
     QWebHistoryPrivate* d = history.d;
+    // Clear first, to have the same behavior if our version doesn't match and if the HistoryItem's version doesn't.
+    history.clear();
 
+    // This version covers every field we serialize in qwebhistory.cpp and HistoryItemQt.cpp (like the HistoryItem::userData()).
+    // HistoryItem has its own version in the stream covering the work done in encodeBackForwardTree.
+    // If any of those two stream version changes, the effect should be the same and the QWebHistory should fail to restore.
     int version;
-
     source >> version;
+    if (version != HistoryStreamVersion) {
+        // We do not try to decode previous history stream versions.
+        // Make sure that our history is cleared and mark the rest of the stream as invalid.
+        ASSERT(history.count() == 1);
+        source.setStatus(QDataStream::ReadCorruptData);
+        return source;
+    }
 
-    if (version == 1) {
-        int count;
-        int currentIndex;
-        source >> count >> currentIndex;
+    int count;
+    int currentIndex;
+    source >> count >> currentIndex;
 
-        history.clear();
-        // only if there are elements
-        if (count) {
-            // after clear() is new clear HistoryItem (at the end we had to remove it)
-            WebCore::HistoryItem* nullItem = d->lst->currentItem();
-            for (int i = 0; i < count; i++) {
-                WTF::PassRefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create();
-                item->restoreState(source, version);
-                d->lst->addItem(item);
+    // only if there are elements
+    if (count) {
+        // after clear() is new clear HistoryItem (at the end we had to remove it)
+        WebCore::HistoryItem* nullItem = d->lst->currentItem();
+        for (int i = 0; i < count; i++) {
+            WTF::RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::restoreState(source, version);
+            if (!item) {
+                // The HistoryItem internal version might have changed, do the same as when our own version change.
+                history.clear();
+                source.setStatus(QDataStream::ReadCorruptData);
+                return source;
             }
-            d->lst->removeItem(nullItem);
-            history.goToItem(history.itemAt(currentIndex));
+            d->lst->addItem(item);
         }
+        d->lst->removeItem(nullItem);
+        history.goToItem(history.itemAt(currentIndex));
     }
 
     d->page()->updateNavigationActions();

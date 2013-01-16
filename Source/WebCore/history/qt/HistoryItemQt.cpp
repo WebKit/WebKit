@@ -21,22 +21,13 @@
 #include "HistoryItem.h"
 
 #include "FormData.h"
+#include <wtf/Decoder.h>
+#include <wtf/Encoder.h>
 #include <wtf/text/CString.h>
 
-static QDataStream& operator<<(QDataStream& stream, const WebCore::IntPoint& point)
-{
-    stream << point.x() << point.y();
-    return stream;
-}
+using namespace WTF;
 
-static QDataStream& operator>>(QDataStream& stream, WebCore::IntPoint& point)
-{
-    int x, y;
-    stream >> x >> y;
-    point.setX(x);
-    point.setY(y);
-    return stream;
-}
+namespace WebCore {
 
 static QDataStream& operator<<(QDataStream& stream, const String& str)
 {
@@ -54,117 +45,190 @@ static QDataStream& operator>>(QDataStream& stream, String& str)
     return stream;
 }
 
-template<typename T>
-QDataStream& operator<<(QDataStream& stream, const Vector<T>& data)
+class QDataStreamCoder : public WTF::Encoder, public WTF::Decoder {
+public:
+    QDataStreamCoder(QDataStream&);
+
+private:
+    virtual void encodeBytes(const uint8_t*, size_t);
+    virtual void encodeBool(bool);
+    virtual void encodeUInt32(uint32_t);
+    virtual void encodeUInt64(uint64_t);
+    virtual void encodeInt32(int32_t);
+    virtual void encodeInt64(int64_t);
+    virtual void encodeFloat(float);
+    virtual void encodeDouble(double);
+    virtual void encodeString(const String&);
+
+    virtual bool decodeBytes(Vector<uint8_t>&);
+    virtual bool decodeBool(bool&);
+    virtual bool decodeUInt32(uint32_t&);
+    virtual bool decodeUInt64(uint64_t&);
+    virtual bool decodeInt32(int32_t&);
+    virtual bool decodeInt64(int64_t&);
+    virtual bool decodeFloat(float&);
+    virtual bool decodeDouble(double&);
+    virtual bool decodeString(String&);
+
+    QDataStream& m_stream;
+};
+
+QDataStreamCoder::QDataStreamCoder(QDataStream& stream)
+    : m_stream(stream)
 {
-    stream << qint64(data.size());
-    foreach (const T& i, data)
-        stream << i;
-    return stream;
 }
 
-template<typename T>
-QDataStream& operator>>(QDataStream& stream, Vector<T>& data)
+void QDataStreamCoder::encodeBytes(const uint8_t* bytes, size_t size)
 {
-    data.clear();
+    m_stream << qint64(size);
+    for (; size > 0; --size)
+        m_stream << bytes++;
+}
+
+void QDataStreamCoder::encodeBool(bool value)
+{
+    m_stream << value;
+}
+
+void QDataStreamCoder::encodeUInt32(uint32_t value)
+{
+    m_stream << value;
+}
+
+void QDataStreamCoder::encodeUInt64(uint64_t value)
+{
+    m_stream << static_cast<quint64>(value);
+}
+
+void QDataStreamCoder::encodeInt32(int32_t value)
+{
+    m_stream << value;
+}
+
+void QDataStreamCoder::encodeInt64(int64_t value)
+{
+    m_stream << static_cast<qint64>(value);
+}
+
+void QDataStreamCoder::encodeFloat(float value)
+{
+    m_stream << value;
+}
+
+void QDataStreamCoder::encodeDouble(double value)
+{
+    m_stream << value;
+}
+
+void QDataStreamCoder::encodeString(const String& value)
+{
+    m_stream << value;
+}
+
+bool QDataStreamCoder::decodeBytes(Vector<uint8_t>& out)
+{
+    out.clear();
     qint64 count;
-    T item;
-    stream >> count;
-    data.reserveCapacity(count);
+    uint8_t byte;
+    m_stream >> count;
+    out.reserveCapacity(count);
     for (qint64 i = 0; i < count; ++i) {
-        stream >> item;
-        data.append(item);
+        m_stream >> byte;
+        out.append(byte);
     }
-    return stream;
+    return m_stream.status() == QDataStream::Ok;
 }
 
-bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
+bool QDataStreamCoder::decodeBool(bool& out)
 {
-    // we only support version 1 for now
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
 
-    if (version != 1)
-        return false;
+bool QDataStreamCoder::decodeUInt32(uint32_t& out)
+{
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
 
-    WTF::String url;
-    WTF::String title;
-    WTF::String altTitle;
-    WTF::String orginalUrl;
-    WTF::String referrer;
-    WTF::String target;
-    WTF::String parrent;
-    double lastVisitedTime;
-    bool validUserData;
-    WTF::String parent;
-    bool lastVisitWasHTTPNonGet;
-    bool lastVisitWasFailure;
-    bool isTargetItem;
-    int visitCount;
-    WTF::Vector<WTF::String> documentState;
-    WebCore::IntPoint scrollPoint;
-    qreal pageScaleFactor;
-    WTF::Vector<int> weeklyVisitCounts;
-    WTF::Vector<int> dailyVisitCounts;
-    // bool loadFormdata;
-    // WTF::String formContentType;
-    // WTF::Vector<char> formData;
+bool QDataStreamCoder::decodeUInt64(uint64_t& out)
+{
+    quint64 tmp;
+    m_stream >> tmp;
+    // quint64 is defined to "long long unsigned", incompatible with uint64_t defined as "long unsigned" on 64bits archs.
+    out = tmp;
+    return m_stream.status() == QDataStream::Ok;
+}
 
-    in >> url >> title >> altTitle >> lastVisitedTime >> orginalUrl >> referrer >> target >> parent;
-    in >> lastVisitWasHTTPNonGet >> lastVisitWasFailure >> isTargetItem >> visitCount >> documentState;
-    in >> scrollPoint >> pageScaleFactor >> dailyVisitCounts >> weeklyVisitCounts;
-    /*in >> loadFormdata;
-    if (loadFormdata) {
-        in >> formContentType >> formData;
-        // direct assigned (!)
-        m_formContentType = formContentType;
-        m_formData = FormData::create(CString(formData));
-    }*/
-    // use setters
-    adoptVisitCounts(dailyVisitCounts, weeklyVisitCounts);
-    setScrollPoint(scrollPoint);
-    setPageScaleFactor(pageScaleFactor);
-    setDocumentState(documentState);
-    setVisitCount(visitCount);
-    setIsTargetItem(isTargetItem);
-    setLastVisitWasFailure(lastVisitWasFailure);
-    setLastVisitWasHTTPNonGet(lastVisitWasHTTPNonGet);
-    setParent(parent);
-    setTarget(target);
-    setReferrer(referrer);
-    setOriginalURLString(orginalUrl);
-    setURLString(url);
-    setLastVisitedTime(lastVisitedTime);
-    setTitle(title);
-    setAlternateTitle(altTitle);
+bool QDataStreamCoder::decodeInt32(int32_t& out)
+{
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
+
+bool QDataStreamCoder::decodeInt64(int64_t& out)
+{
+    qint64 tmp;
+    m_stream >> tmp;
+    // qint64 is defined to "long long", incompatible with int64_t defined as "long" on 64bits archs.
+    out = tmp;
+    return m_stream.status() == QDataStream::Ok;
+}
+
+bool QDataStreamCoder::decodeFloat(float& out)
+{
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
+
+bool QDataStreamCoder::decodeDouble(double& out)
+{
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
+
+bool QDataStreamCoder::decodeString(String& out)
+{
+    m_stream >> out;
+    return m_stream.status() == QDataStream::Ok;
+}
+
+PassRefPtr<HistoryItem> HistoryItem::restoreState(QDataStream& in, int version)
+{
+    ASSERT(version == 2);
+
+    String url;
+    String title;
+    String originalURL;
+    in >> url >> title >> originalURL;
+
+    QDataStreamCoder decoder(in);
+    RefPtr<HistoryItem> item = decodeBackForwardTree(url, title, originalURL, decoder);
+    // decodeBackForwardTree has its own stream version. An incompatible input stream version will return null here.
+    if (!item)
+        return 0;
 
     // at the end load userData
+    bool validUserData;
     in >> validUserData;
     if (validUserData) {
         QVariant tmp;
         in >> tmp;
-        setUserData(tmp);
+        item->setUserData(tmp);
     }
 
-    return in.status() == QDataStream::Ok;
+    return item;
 }
 
 QDataStream& WebCore::HistoryItem::saveState(QDataStream& out, int version) const
 {
-    // we only support version 1 for now.
-    if (version != 1)
-        return out;
+    ASSERT(version == 2);
 
-    out << urlString() << title() << alternateTitle() << lastVisitedTime();
-    out << originalURLString() << referrer() << target() << parent();
-    out << lastVisitWasHTTPNonGet() << lastVisitWasFailure() << isTargetItem();
-    out << visitCount() << documentState() << scrollPoint();
-    out << qreal(pageScaleFactor()) << dailyVisitCounts() << weeklyVisitCounts();
-    /*if (m_formData) {
-        out << true;
-        out << formContentType();
-        out << m_formData->flatten();
-    } else {
-        out << false;
-    }*/
+    out << urlString() << title() << originalURLString();
+
+    QDataStreamCoder encoder(out);
+    encodeBackForwardTree(encoder);
+
     // save user data
     if (userData().isValid())
         out << true << userData();
@@ -174,3 +238,4 @@ QDataStream& WebCore::HistoryItem::saveState(QDataStream& out, int version) cons
     return out;
 }
 
+} // namespace WebCore
