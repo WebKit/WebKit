@@ -265,8 +265,7 @@ void RenderListItem::updateMarkerLocation()
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, firstNonMarkerChild(lineBoxParent));
-            if (m_marker->preferredLogicalWidthsDirty())
-                m_marker->computePreferredLogicalWidths();
+            m_marker->updateMarginsAndContent();
             // If markerPar is an anonymous block that has lost all its children, destroy it.
             if (markerPar && markerPar->isAnonymousBlock() && !markerPar->firstChild() && !toRenderBlock(markerPar)->continuation())
                 markerPar->destroy();

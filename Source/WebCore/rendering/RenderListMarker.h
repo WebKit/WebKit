@@ -38,8 +38,6 @@ public:
     RenderListMarker(RenderListItem*);
     virtual ~RenderListMarker();
 
-    virtual void computePreferredLogicalWidths();
-
     const String& text() const { return m_text; }
     String suffix() const;
 
@@ -47,8 +45,11 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+    void updateMarginsAndContent();
+
 private:
     virtual const char* renderName() const { return "RenderListMarker"; }
+    virtual void computePreferredLogicalWidths() OVERRIDE;
 
     virtual bool isListMarker() const { return true; }
 
@@ -71,6 +72,7 @@ private:
     virtual bool canBeSelectionLeaf() const { return true; }
 
     void updateMargins();
+    void updateContent();
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
