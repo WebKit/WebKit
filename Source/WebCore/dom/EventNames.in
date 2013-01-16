@@ -36,6 +36,7 @@ RTCDataChannelEvent conditional=MEDIA_STREAM
 SpeechInputEvent conditional=INPUT_SPEECH
 SpeechRecognitionError conditional=SCRIPTED_SPEECH
 SpeechRecognitionEvent conditional=SCRIPTED_SPEECH
+SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS
 WebGLContextEvent conditional=WEBGL
 StorageEvent
 SVGEvents interfaceName=Event, conditional=SVG

@@ -212,6 +212,9 @@ namespace WebCore {
     macro(nomatch) \
     macro(start) \
     macro(end) \
+    macro(mark) \
+    macro(boundary) \
+    macro(resume) \
     \
     macro(webglcontextlost) \
     macro(webglcontextrestored) \

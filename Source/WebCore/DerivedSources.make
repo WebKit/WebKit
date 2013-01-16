@@ -34,6 +34,7 @@ VPATH = \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/quota \
+    $(WebCore)/Modules/speech \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
@@ -118,6 +119,11 @@ BINDING_IDLS = \
     $(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
     $(WebCore)/Modules/quota/StorageInfoQuotaCallback.idl \
     $(WebCore)/Modules/quota/StorageInfoUsageCallback.idl \
+    $(WebCore)/Modules/speech/DOMWindowSpeechSynthesis.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesis.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \

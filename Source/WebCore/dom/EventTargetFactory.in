@@ -30,6 +30,7 @@ SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition conditional=SCRIPTED_SPEECH
+SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 SVGElementInstance conditional=SVG
 TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
