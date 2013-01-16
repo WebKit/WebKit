@@ -118,7 +118,7 @@ function test()
     WorkspaceMock.prototype = {
         _addUISourceCode: function(url)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(this, url, url, WebInspector.resourceTypes.Script, false);
+            var uiSourceCode = new WebInspector.UISourceCode(this, url, url, url, WebInspector.resourceTypes.Script, false);
             uiSourceCode.setSourceMapping(defaultMapping);
             uiSourceCodes[url] = uiSourceCode;
             this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
@@ -127,7 +127,7 @@ function test()
 
         _addTemporaryUISourceCode: function(url)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(this, "temporary:" + url, url, WebInspector.resourceTypes.Script, false);
+            var uiSourceCode = new WebInspector.UISourceCode(this, "temporary:" + url, url, url, WebInspector.resourceTypes.Script, false);
             uiSourceCode.setSourceMapping(defaultMapping);
             uiSourceCodes[url] = uiSourceCode;
             temporaryUISourceCodes[url] = uiSourceCode;
@@ -170,13 +170,13 @@ function test()
     {
         var breakpoint = event.data.breakpoint;
         var uiLocation = event.data.uiLocation;
-        InspectorTest.addResult("    breakpointAdded(" + [uiLocation.uiSourceCode.url, uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled()].join(", ") + ")");
+        InspectorTest.addResult("    breakpointAdded(" + [uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled()].join(", ") + ")");
     }
 
     function breakpointRemoved(event)
     {
         var uiLocation = event.data.uiLocation;
-        InspectorTest.addResult("    breakpointRemoved(" + [uiLocation.uiSourceCode.url, uiLocation.lineNumber].join(", ") + ")");
+        InspectorTest.addResult("    breakpointRemoved(" + [uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber].join(", ") + ")");
     }
 
     InspectorTest.addSniffer(WebInspector.Script.prototype, "createLiveLocation", function(rawLocation)
@@ -239,13 +239,13 @@ function test()
 
     function setBreakpoint(breakpointManager, uiSourceCode, lineNumber, condition, enabled)
     {
-        InspectorTest.addResult("  Setting breakpoint at " + uiSourceCode.url + ":" + lineNumber + " enabled:" + enabled + " condition:" + condition);
+        InspectorTest.addResult("  Setting breakpoint at " + uiSourceCode.originURL() + ":" + lineNumber + " enabled:" + enabled + " condition:" + condition);
         return breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
     }
 
     function removeBreakpoint(breakpointManager, uiSourceCode, lineNumber)
     {
-        InspectorTest.addResult("  Removing breakpoint at " + uiSourceCode.url + ":" + lineNumber);
+        InspectorTest.addResult("  Removing breakpoint at " + uiSourceCode.originURL() + ":" + lineNumber);
         breakpointManager.findBreakpoint(uiSourceCode, lineNumber).remove();
     }
 

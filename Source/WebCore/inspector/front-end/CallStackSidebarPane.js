@@ -174,7 +174,7 @@ WebInspector.CallStackSidebarPane.Placard = function(callFrame, pane)
 WebInspector.CallStackSidebarPane.Placard.prototype = {
     _update: function(uiLocation)
     {
-        this.subtitle = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber).trimMiddle(100);
+        this.subtitle = WebInspector.formatLinkText(uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber).trimMiddle(100);
     },
 
     _placardContextMenu: function(event)

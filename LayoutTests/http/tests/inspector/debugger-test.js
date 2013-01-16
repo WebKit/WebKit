@@ -313,8 +313,8 @@ InspectorTest.checkRawLocation = function(script, lineNumber, columnNumber, loca
 
 InspectorTest.checkUILocation = function(uiSourceCode, lineNumber, columnNumber, location)
 {
-    InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode, "Incorrect uiSourceCode, expected '" + (uiSourceCode ? uiSourceCode.url : null) + "'," +
-                                                                    " but got '" + (location.uiSourceCode ? location.uiSourceCode.url : null) + "'");
+    InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode, "Incorrect uiSourceCode, expected '" + (uiSourceCode ? uiSourceCode.originURL() : null) + "'," +
+                                                                    " but got '" + (location.uiSourceCode ? location.uiSourceCode.originURL() : null) + "'");
     InspectorTest.assertEquals(lineNumber, location.lineNumber, "Incorrect lineNumber, expected '" + lineNumber + "', but got '" + location.lineNumber + "'");
     InspectorTest.assertEquals(columnNumber, location.columnNumber, "Incorrect columnNumber, expected '" + columnNumber + "', but got '" + location.columnNumber + "'");
 };

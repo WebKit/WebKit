@@ -62,7 +62,7 @@ WebInspector.StylesSourceMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
-        return new WebInspector.CSSLocation(uiSourceCode.contentURL() || "", lineNumber);
+        return new WebInspector.CSSLocation(uiSourceCode.url || "", lineNumber);
     },
 
     _uiSourceCodeAddedToWorkspace: function(event)

@@ -94,7 +94,7 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
     addFile: function(uri, url, contentProvider, isEditable, isContentScript, isSnippet)
     {
         console.assert(!this._contentProviders[uri]);
-        var fileDescriptor = new WebInspector.FileDescriptor(uri, url, contentProvider.contentType(), isEditable, isContentScript, isSnippet);
+        var fileDescriptor = new WebInspector.FileDescriptor(uri, url, url, contentProvider.contentType(), isEditable, isContentScript, isSnippet);
         this._contentProviders[uri] = contentProvider;
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
         return this._workspace.uiSourceCodeForURI(uri);

@@ -629,7 +629,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
             action: WebInspector.UserMetrics.UserActionNames.SetBreakpoint,
-            url: this._uiSourceCode.url,
+            url: this._uiSourceCode.originURL(),
             line: lineNumber,
             enabled: enabled
         });

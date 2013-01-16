@@ -113,7 +113,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
   
             for (var i = 0; i < infos.length; ++i) {
                 var info = infos[i];
-                if (info.sourceURL === this._uiSourceCode.contentURL()) {
+                if (info.sourceURL === this._uiSourceCode.url) {
                     WebInspector.CSSStyleSheet.createForId(info.styleSheetId, didGetStyleSheet.bind(this));
                     return;
                 }

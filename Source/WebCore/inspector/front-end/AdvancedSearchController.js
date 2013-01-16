@@ -511,7 +511,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
     {
         var anchor = document.createElement("a");
         anchor.preferredPanel = "scripts";
-        anchor.href = sanitizeHref(uiSourceCode.url);
+        anchor.href = sanitizeHref(uiSourceCode.originURL());
         anchor.uiSourceCode = uiSourceCode;
         anchor.lineNumber = lineNumber;
         return anchor;
@@ -526,7 +526,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         var uiSourceCode = searchResult.uiSourceCode;
         var searchMatches = searchResult.searchMatches;
 
-        var fileTreeElement = this._addFileTreeElement(uiSourceCode.url, searchMatches.length, this._searchResults.length - 1);
+        var fileTreeElement = this._addFileTreeElement(uiSourceCode.originURL(), searchMatches.length, this._searchResults.length - 1);
     },
 
     /**

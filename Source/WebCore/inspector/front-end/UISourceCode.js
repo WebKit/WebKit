@@ -39,12 +39,13 @@
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
  */
-WebInspector.UISourceCode = function(workspace, uri, url, contentType, isEditable)
+WebInspector.UISourceCode = function(workspace, uri, originURL, url, contentType, isEditable)
 {
     this._workspace = workspace;
     this._uri = uri;
+    this._originURL = originURL;
     this._url = url;
-    this._parsedURL = new WebInspector.ParsedURL(url);
+    this._parsedURL = new WebInspector.ParsedURL(originURL);
     this._contentType = contentType;
     this._isEditable = isEditable;
     /**
@@ -98,12 +99,21 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    originURL: function()
+    {
+        return this._originURL;
+    },
+
+    /**
      * @param {string} url
      */
     urlChanged: function(url)
     {
         this._url = url;
-        this._parsedURL = new WebInspector.ParsedURL(this._url);
+        this._originURL = url;
+        this._parsedURL = new WebInspector.ParsedURL(url);
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.TitleChanged, null);
     },
 
@@ -120,7 +130,7 @@ WebInspector.UISourceCode.prototype = {
      */
     contentURL: function()
     {
-        return this._url;
+        return this.originURL();
     },
 
     /**
@@ -828,7 +838,7 @@ WebInspector.Revision.prototype = {
      */
     contentURL: function()
     {
-        return this._uiSourceCode.url;
+        return this._uiSourceCode.originURL();
     },
 
     /**

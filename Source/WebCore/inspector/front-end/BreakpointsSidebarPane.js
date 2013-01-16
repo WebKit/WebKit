@@ -96,7 +96,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         checkbox.addEventListener("click", this._breakpointCheckboxClicked.bind(this, breakpoint), false);
         element.appendChild(checkbox);
 
-        var labelElement = document.createTextNode(WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber));
+        var labelElement = document.createTextNode(WebInspector.formatLinkText(uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber));
         element.appendChild(labelElement);
 
         var snippetElement = document.createElement("div");
@@ -255,7 +255,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
 
     _compareBreakpoints: function(b1, b2)
     {
-        return this._compare(b1.url, b2.url) || this._compare(b1.lineNumber, b2.lineNumber);
+        return this._compare(b1.uiSourceCode.originURL(), b2.uiSourceCode.originURL()) || this._compare(b1.lineNumber, b2.lineNumber);
     },
 
     reset: function()

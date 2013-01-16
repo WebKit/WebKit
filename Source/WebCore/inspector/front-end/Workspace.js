@@ -50,15 +50,17 @@ WebInspector.WorkspaceController.prototype = {
 /**
  * @constructor
  * @param {string} uri
+ * @param {string} originURL
  * @param {string} url
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
  * @param {boolean=} isContentScript
  * @param {boolean=} isSnippet
  */
-WebInspector.FileDescriptor = function(uri, url, contentType, isEditable, isContentScript, isSnippet)
+WebInspector.FileDescriptor = function(uri, originURL, url, contentType, isEditable, isContentScript, isSnippet)
 {
     this.uri = uri;
+    this.originURL = originURL;
     this.url = url;
     this.contentType = contentType;
     this.isEditable = isEditable;
@@ -162,7 +164,7 @@ WebInspector.Project.prototype = {
             // FIXME: Implement
             return;
         }
-        uiSourceCode = new WebInspector.UISourceCode(this._workspace, fileDescriptor.uri, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
+        uiSourceCode = new WebInspector.UISourceCode(this._workspace, fileDescriptor.uri, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
         uiSourceCode.isSnippet = fileDescriptor.isSnippet;
         this._uiSourceCodes.push(uiSourceCode);
@@ -193,6 +195,19 @@ WebInspector.Project.prototype = {
     {
         for (var i = 0; i < this._uiSourceCodes.length; ++i) {
             if (this._uiSourceCodes[i].url === url)
+                return this._uiSourceCodes[i];
+        }
+        return null;
+    },
+
+    /**
+     * @param {string} originURL
+     * @return {?WebInspector.UISourceCode}
+     */
+    uiSourceCodeForOriginURL: function(originURL)
+    {
+        for (var i = 0; i < this._uiSourceCodes.length; ++i) {
+            if (this._uiSourceCodes[i].originURL() === originURL)
                 return this._uiSourceCodes[i];
         }
         return null;
@@ -276,6 +291,15 @@ WebInspector.Workspace.Events = {
 }
 
 WebInspector.Workspace.prototype = {
+    /**
+     * @param {string} originURL
+     * @return {?WebInspector.UISourceCode}
+     */
+    uiSourceCodeForOriginURL: function(originURL)
+    {
+        return this._projects[WebInspector.projectNames.Network].uiSourceCodeForOriginURL(originURL);
+    },
+
     /**
      * @param {string} url
      * @return {?WebInspector.UISourceCode}

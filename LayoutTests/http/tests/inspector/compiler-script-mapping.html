@@ -177,8 +177,8 @@ function test()
 
             function afterScriptAdded(uiSourceCode)
             {
-                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source1.js");
-                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source2.js");
+                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/source1.js");
+                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/source2.js");
 
                 InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
                 InspectorTest.checkUILocation(uiSourceCode1, 5, 4, script.rawLocationToUILocation(0, 93));
@@ -238,8 +238,8 @@ function test()
 
             function afterScriptAdded(uiSourceCode)
             {
-                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source1.js");
-                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source2.js");
+                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/source1.js");
+                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/source2.js");
 
                 InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
                 InspectorTest.checkUILocation(uiSourceCode1, 5, 4, script.rawLocationToUILocation(0, 93));
@@ -291,7 +291,7 @@ function test()
             resourceScriptMapping.addScript(script);
             mapping.addScript(script);
 
-            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForURL("source.js");
+            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("source.js");
 
             InspectorTest.checkUILocation(uiSourceCode, 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
             InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCode, 2, 4));
@@ -319,7 +319,7 @@ function test()
             console.error = function() {}; // Error message is platform dependent.
             debuggerScriptMapping._parsedScriptSource({data:script});
             var uiLocation = script.rawLocationToUILocation(0, 0);
-            InspectorTest.addResult(uiLocation.uiSourceCode.url);
+            InspectorTest.addResult(uiLocation.uiSourceCode.originURL());
             next();
         }
     ]);

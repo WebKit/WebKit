@@ -557,7 +557,7 @@ WebInspector.NavigatorSourceTreeElement = function(navigatorView, uiSourceCode, 
     WebInspector.BaseNavigatorTreeElement.call(this, title, ["navigator-" + uiSourceCode.contentType().name() + "-tree-item"], false);
     this._navigatorView = navigatorView;
     this._uiSourceCode = uiSourceCode;
-    this.tooltip = uiSourceCode.url;
+    this.tooltip = uiSourceCode.originURL();
 }
 
 WebInspector.NavigatorSourceTreeElement.prototype = {

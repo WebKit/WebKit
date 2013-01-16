@@ -39,7 +39,7 @@ function test()
     InspectorTest.runTestSuite([
         function testAddRevisionsRevertToOriginal(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri", "url", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri", "originURL", "url", WebInspector.resourceTypes.Script);
             uiSourceCode.setWorkingCopy("content1");
             uiSourceCode.setWorkingCopy("content2");
             uiSourceCode.commitWorkingCopy(function() { });
@@ -60,7 +60,7 @@ function test()
 
         function testAddRevisionsRevertAndClearHistory(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri2", "url2", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri2", "originURL2", "url2", WebInspector.resourceTypes.Script);
 
             uiSourceCode.setWorkingCopy("content1");
             uiSourceCode.setWorkingCopy("content2");
@@ -86,7 +86,7 @@ function test()
 
         function testAddRevisionsRevertToPrevious(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri3", "url3", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri3", "originURL3", "url3", WebInspector.resourceTypes.Script);
 
             uiSourceCode.setWorkingCopy("content1");
             uiSourceCode.setWorkingCopy("content2");
@@ -108,7 +108,7 @@ function test()
 
         function testRequestContentAddRevisionsRevertToOriginal(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri4", "url4", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri4", "originURL4", "url4", WebInspector.resourceTypes.Script);
             uiSourceCode.requestContent(contentReceived);
 
             function contentReceived()
@@ -136,7 +136,7 @@ function test()
 
         function testRequestContentAddRevisionsRevertAndClearHistory(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri5", "url5", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri5", "originURL5", "url5", WebInspector.resourceTypes.Script);
             uiSourceCode.requestContent(contentReceived);
 
             function contentReceived()
@@ -168,7 +168,7 @@ function test()
 
         function testRequestContentAddRevisionsRevertToPrevious(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri6", "url6", WebInspector.resourceTypes.Script);
+            var uiSourceCode = new WebInspector.UISourceCode(createMockWorkspace(), "uri6", "originURL6", "url6", WebInspector.resourceTypes.Script);
             uiSourceCode.requestContent(contentReceived);
 
             function contentReceived()

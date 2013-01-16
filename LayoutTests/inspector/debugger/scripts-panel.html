@@ -27,7 +27,7 @@ function test()
         workspace.addProject(WebInspector.projectNames.Debugger, workspace.debuggerWorkspaceProvider);
         workspace.requestFileContent = function(uiSourceCode, callback)
         {
-            InspectorTest.addResult("Source requested for " + uiSourceCode.url);
+            InspectorTest.addResult("Source requested for " + uiSourceCode.originURL());
             callback("");
         };
         workspace.networkWorkspaceProvider = networkWorkspaceProvider;
@@ -51,7 +51,7 @@ function test()
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Select "baz.js".
-            panel._showFile(workspace.uiSourceCodeForURL("baz.js"));
+            panel._showFile(workspace.uiSourceCodeForOriginURL("baz.js"));
             panel.detach();
 
             next();

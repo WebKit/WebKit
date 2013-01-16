@@ -113,7 +113,7 @@ WebInspector.Linkifier.prototype = {
     _updateAnchor: function(anchor, uiLocation)
     {
         anchor.preferredPanel = "scripts";
-        anchor.href = sanitizeHref(uiLocation.uiSourceCode.url);
+        anchor.href = sanitizeHref(uiLocation.uiSourceCode.originURL());
         anchor.uiSourceCode = uiLocation.uiSourceCode;
         anchor.lineNumber = uiLocation.lineNumber;
         this._formatter.formatLiveAnchor(anchor, uiLocation);
@@ -137,12 +137,12 @@ WebInspector.Linkifier.DefaultFormatter.prototype = {
      */
     formatLiveAnchor: function(anchor, uiLocation)
     {
-        var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
+        var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber);
         if (this._maxLength)
             text = text.trimMiddle(this._maxLength);
         anchor.textContent = text;
 
-        var titleText = uiLocation.uiSourceCode.url;
+        var titleText = uiLocation.uiSourceCode.originURL();
         if (typeof uiLocation.lineNumber === "number")
             titleText += ":" + (uiLocation.lineNumber + 1);
         anchor.title = titleText;

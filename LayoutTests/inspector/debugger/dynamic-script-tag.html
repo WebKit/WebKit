@@ -72,7 +72,7 @@ var test = function()
 
             function uiSourceCodeDumped()
             {
-                InspectorTest.assertTrue(!seenUISourceCodes.get(uiSourceCode), "UISourceCode matches two scripts: " + uiSourceCode.url);
+                InspectorTest.assertTrue(!seenUISourceCodes.get(uiSourceCode), "UISourceCode matches two scripts: " + uiSourceCode.originURL());
                 seenUISourceCodes.put(uiSourceCode, uiSourceCode);
                 ++index;
                 dumpNextUISourceCode();

@@ -47,7 +47,7 @@ function test()
                 var panel = WebInspector.panel("scripts");
                 var uiSourceCodes = panel._workspace.uiSourceCodes();
                 for (var i = 0; i < uiSourceCodes.length; ++i)
-                    InspectorTest.assertTrue(uiSourceCodes[i].url.indexOf("inlineScriptURL.js") === -1, "sourceURL comment in inline script was used as a script name");
+                    InspectorTest.assertTrue(uiSourceCodes[i].originURL().indexOf("inlineScriptURL.js") === -1, "sourceURL comment in inline script was used as a script name");
                 forEachScriptMatchingURL("source-url-comment.html", checkScriptDoesNotHaveSourceURL)
                 next();
             }

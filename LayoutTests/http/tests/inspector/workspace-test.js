@@ -37,7 +37,7 @@ InspectorTest._defaultUISourceCodeProviderEventHandler = function(event)
 
 InspectorTest.dumpUISourceCode = function(uiSourceCode, callback)
 {
-    var url = uiSourceCode.url.replace(/.*LayoutTests/, "LayoutTests");
+    var url = uiSourceCode.originURL().replace(/.*LayoutTests/, "LayoutTests");
     InspectorTest.addResult("UISourceCode: " + url);
     InspectorTest.addResult("UISourceCode is editable: " + uiSourceCode.isEditable());
     if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document)

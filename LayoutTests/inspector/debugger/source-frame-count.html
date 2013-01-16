@@ -34,9 +34,9 @@ function test()
                 var alreadyShownURLs = {};
                 function didCreateSourceFrame()
                 {
-                    if (!alreadyShownURLs[this._uiSourceCode.url])
+                    if (!alreadyShownURLs[this._uiSourceCode.originURL()])
                         sourceFrameCount += 1;
-                    alreadyShownURLs[this._uiSourceCode.url] = true;
+                    alreadyShownURLs[this._uiSourceCode.originURL()] = true;
                 }
                 InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "wasShown", didCreateSourceFrame, true);
                 InspectorTest.reloadPage(didReload);
@@ -49,7 +49,7 @@ function test()
 
             function didShowScriptSourceAgain()
             {
-                InspectorTest.assertTrue(panel._editorContainer.visibleView._uiSourceCode.url.indexOf("script3.js") !== -1);
+                InspectorTest.assertTrue(panel._editorContainer.visibleView._uiSourceCode.originURL().indexOf("script3.js") !== -1);
                 // There should be maximum 3 source frames shown:
                 //  - first one is the first shown (first tab added)
                 //  - second one is the last viewed ("script2.js")

@@ -33,14 +33,8 @@ function test()
                 break;
             }
         }
-        var uiSourceCodes = WebInspector.panels.scripts._workspace.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i) {
-            if (uiSourceCodes[i].url === WebInspector.inspectedPageURL) {
-                uiSourceCode = uiSourceCodes[i];
-                break;
-            }
-        }
-
+        
+        uiSourceCode = WebInspector.workspace.uiSourceCodeForOriginURL(WebInspector.inspectedPageURL);
         var linkifyMe = "at triggerError (http://localhost/show/:22:11)";
         var fragment = WebInspector.linkifyStringAsFragment(linkifyMe);
         var anchor = fragment.querySelector('a');

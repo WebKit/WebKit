@@ -21,7 +21,7 @@ function test()
             {
                 function visitUISourceCodes(currentUISourceCode)
                 {
-                    if (currentUISourceCode.url.indexOf("styles-history.css") === -1)
+                    if (currentUISourceCode.originURL().indexOf("styles-history.css") === -1)
                         return;
                     uiSourceCode = currentUISourceCode;
                     next();

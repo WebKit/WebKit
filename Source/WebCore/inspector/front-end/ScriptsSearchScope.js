@@ -110,12 +110,12 @@ WebInspector.ScriptsSearchScope.prototype = {
     {
         function filterOutAnonymous(uiSourceCode)
         {
-            return !!uiSourceCode.url;
+            return !!uiSourceCode.originURL();
         }
         
         function comparator(a, b)
         {
-            return a.url.localeCompare(b.url);   
+            return a.originURL().localeCompare(b.originURL());   
         }
         
         var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();

@@ -266,7 +266,7 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _tooltipForFile: function(uiSourceCode)
     {
-        return uiSourceCode.url;
+        return uiSourceCode.originURL();
     },
 
     /**

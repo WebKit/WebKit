@@ -40,7 +40,7 @@ function test()
             var uiLocation = locations[i].uiLocation;
             var uiSourceCode = uiLocation.uiSourceCode;
             var project = WebInspector.workspace.projectForUISourceCode(uiSourceCode);
-            InspectorTest.addResult("        url: " + pathToFileName(uiSourceCode.url) + ", lineNumber: " + uiLocation.lineNumber + ", project name: " + project.name());
+            InspectorTest.addResult("        url: " + pathToFileName(uiSourceCode.originURL()) + ", lineNumber: " + uiLocation.lineNumber + ", project name: " + project.name());
         }
     }
 

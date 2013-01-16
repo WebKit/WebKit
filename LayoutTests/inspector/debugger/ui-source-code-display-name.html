@@ -7,7 +7,7 @@ function test()
     WebInspector.showPanel("scripts");
     function dumpUISourceCodeDisplayName(url)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, null);
+        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, url, null);
         InspectorTest.addResult("UISourceCode display name for url \"" + url + "\" is \"" + WebInspector.TabbedEditorContainer.prototype._titleForFile(uiSourceCode) + "\".");
     }
 

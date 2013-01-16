@@ -29,7 +29,7 @@ function test()
             WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, snippetName);
             InspectorTest.assertEquals(1, workspace.uiSourceCodes().length, "Only one snippet uiSourceCode should be present.");
             var uiSourceCode = workspace.uiSourceCodes()[0];
-            if (uiSourceCode.url.indexOf(snippetName) === -1)
+            if (uiSourceCode.originURL().indexOf(snippetName) === -1)
                 return;
             InspectorTest.addResult("Snippet uiSourceCode url is correct.");
             next();

@@ -9,7 +9,7 @@ function test()
     InspectorTest.runTestSuite([
         function testUISourceCode(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, "uri", "url", WebInspector.resourceTypes.Script, true);
+            var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, "uri", "originURL", "url", WebInspector.resourceTypes.Script, true);
             WebInspector.workspace.requestFileContent = function(path, callback)
             {
                 InspectorTest.addResult("Content is requested from SourceCodeProvider.");
