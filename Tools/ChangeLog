@@ -1,3 +1,23 @@
+2013-01-16  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        NRWT still confused about test count with --repeat-each and --iterations
+        https://bugs.webkit.org/show_bug.cgi?id=106562
+
+        Reviewed by Dirk Pranke.
+
+        Fix the printed unique test count and skipped count. This
+        seems to have broken in r127688 ("NRWT lies about the number
+        of tests that it's skipping when used with --repeat-each").
+
+        Also add a test for print_found()
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_details):
+        (Testprinter):
+        (Testprinter.test_found):
+
 2013-01-15  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r139769.

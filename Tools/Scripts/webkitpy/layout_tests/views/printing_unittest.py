@@ -175,3 +175,13 @@ class  Testprinter(unittest.TestCase):
         printer.print_started_test('passes/image.html')
         printer.print_finished_test(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
+
+    def test_print_found(self):
+        printer, err = self.get_printer()
+
+        printer.print_found(100, 10, 1, 1)
+        self.assertWritten(err, ["Found 100 tests; running 10, skipping 90.\n"])
+
+        self.reset(err)
+        printer.print_found(100, 10, 2, 3)
+        self.assertWritten(err, ["Found 100 tests; running 10 (6 times each: --repeat-each=2 --iterations=3), skipping 90.\n"])

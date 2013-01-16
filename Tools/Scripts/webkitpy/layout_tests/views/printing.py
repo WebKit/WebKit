@@ -98,12 +98,12 @@ class Printer(object):
         self._print_default('')
 
     def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):
-        num_unique_tests = num_to_run / (repeat_each * iterations)
-        found_str = 'Found %s; running %d' % (grammar.pluralize('test', num_all_test_files), num_unique_tests)
+        found_str = 'Found %s; running %d' % (grammar.pluralize('test', num_all_test_files), num_to_run)
         if repeat_each * iterations > 1:
             found_str += ' (%d times each: --repeat-each=%d --iterations=%d)' % (repeat_each * iterations, repeat_each, iterations)
-        found_str += ', skipping %d' % (num_all_test_files - num_unique_tests)
+        found_str += ', skipping %d' % (num_all_test_files - num_to_run)
         self._print_default(found_str + '.')
+        print (found_str)
 
     def print_expected(self, run_results, tests_with_result_type_callback):
         self._print_expected_results_of_type(run_results, test_expectations.PASS, "passes", tests_with_result_type_callback)
