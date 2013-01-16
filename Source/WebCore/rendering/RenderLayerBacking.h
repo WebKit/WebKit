@@ -101,7 +101,7 @@ public:
     bool hasMaskLayer() const { return m_maskLayer != 0; }
 
     GraphicsLayer* parentForSublayers() const;
-    GraphicsLayer* childForSuperlayers() const { return m_ancestorClippingLayer ? m_ancestorClippingLayer.get() : m_graphicsLayer.get(); }
+    GraphicsLayer* childForSuperlayers() const;
 
     // RenderLayers with backing normally short-circuit paintLayer() because
     // their content is rendered via callbacks from GraphicsLayer. However, the document
@@ -204,6 +204,7 @@ private:
     bool updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip);
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     bool updateForegroundLayer(bool needsForegroundLayer);
+    bool updateBackgroundLayer(bool needsBackgroundLayer);
     bool updateMaskLayer(bool needsMaskLayer);
     bool requiresHorizontalScrollbarLayer() const;
     bool requiresVerticalScrollbarLayer() const;
@@ -264,8 +265,10 @@ private:
     RenderLayer* m_owningLayer;
 
     OwnPtr<GraphicsLayer> m_ancestorClippingLayer; // Only used if we are clipped by an ancestor which is not a stacking context.
+    OwnPtr<GraphicsLayer> m_contentsContainmentLayer; // Only used if we have a background layer; takes the transform.
     OwnPtr<GraphicsLayer> m_graphicsLayer;
     OwnPtr<GraphicsLayer> m_foregroundLayer; // Only used in cases where we need to draw the foreground separately.
+    OwnPtr<GraphicsLayer> m_backgroundLayer; // Only used in cases where we need to draw the background separately.
     OwnPtr<GraphicsLayer> m_childContainmentLayer; // Only used if we have clipping on a stacking context with compositing children, or if the layer has a tile cache.
     OwnPtr<GraphicsLayer> m_maskLayer; // Only used if we have a mask.
 

@@ -2626,7 +2626,7 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
     if (!viewLayer->isComposited())
         return;
 
-    if (GraphicsLayer* rootLayer = viewLayer->backing()->graphicsLayer())
+    if (GraphicsLayer* rootLayer = viewLayer->backing()->childForSuperlayers())
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
