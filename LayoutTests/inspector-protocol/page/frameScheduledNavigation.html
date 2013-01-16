@@ -1,0 +1,43 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+function load()
+{
+    document.querySelector("iframe").src = "../resources/blank.html";
+}
+
+function test()
+{
+    InspectorTest.eventHandler["Page.frameScheduledNavigation"] = onScheduled;
+    InspectorTest.eventHandler["Page.frameStartedLoading"] = onStarted;
+    InspectorTest.eventHandler["Page.frameClearedScheduledNavigation"] = onCleared;
+    InspectorTest.sendCommand("Page.enable", {});
+
+    function onScheduled(msg)
+    {
+        InspectorTest.log("Scheduled navigation with delay " + msg.params.delay);
+    }
+
+    function onStarted(msg)
+    {
+        // This event should be received before the scheduled navigation is cleared.
+        InspectorTest.log("Started loading");
+    }
+
+    function onCleared(msg)
+    {
+        InspectorTest.log("Cleared scheduled navigation");
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "load()" });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<iframe>
+</body>
+</html>

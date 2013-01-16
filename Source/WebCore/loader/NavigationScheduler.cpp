@@ -45,6 +45,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HistoryItem.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
@@ -286,6 +287,8 @@ bool NavigationScheduler::locationChangePending()
 
 void NavigationScheduler::clear()
 {
+    if (m_timer.isActive())
+        InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
     m_timer.stop();
     m_redirect.clear();
 }
@@ -411,11 +414,14 @@ void NavigationScheduler::timerFired(Timer<NavigationScheduler>*)
 {
     if (!m_frame->page())
         return;
-    if (m_frame->page()->defersLoading())
+    if (m_frame->page()->defersLoading()) {
+        InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
         return;
+    }
 
     OwnPtr<ScheduledNavigation> redirect(m_redirect.release());
     redirect->fire(m_frame);
+    InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
 }
 
 void NavigationScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
@@ -458,10 +464,13 @@ void NavigationScheduler::startTimer()
 
     m_timer.startOneShot(m_redirect->delay());
     m_redirect->didStartTimer(m_frame, &m_timer);
+    InspectorInstrumentation::frameScheduledNavigation(m_frame, m_redirect->delay());
 }
 
 void NavigationScheduler::cancel(bool newLoadInProgress)
 {
+    if (m_timer.isActive())
+        InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
     m_timer.stop();
 
     OwnPtr<ScheduledNavigation> redirect(m_redirect.release());

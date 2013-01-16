@@ -900,6 +900,26 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)
         m_loaderToIdentifier.remove(iterator);
 }
 
+void InspectorPageAgent::frameStartedLoading(Frame* frame)
+{
+    m_frontend->frameStartedLoading(frameId(frame));
+}
+
+void InspectorPageAgent::frameStoppedLoading(Frame* frame)
+{
+    m_frontend->frameStoppedLoading(frameId(frame));
+}
+
+void InspectorPageAgent::frameScheduledNavigation(Frame* frame, double delay)
+{
+    m_frontend->frameScheduledNavigation(frameId(frame), delay);
+}
+
+void InspectorPageAgent::frameClearedScheduledNavigation(Frame* frame)
+{
+    m_frontend->frameClearedScheduledNavigation(frameId(frame));
+}
+
 void InspectorPageAgent::applyScreenWidthOverride(long* width)
 {
     long widthOverride = m_state->getLong(PageAgentState::pageAgentScreenWidthOverride);
