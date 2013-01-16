@@ -1049,12 +1049,7 @@ String RenderThemeWin::extraFullScreenStyleSheet()
 
 bool RenderThemeWin::supportsClosedCaptioning() const
 {
-        // We rely on QuickTime to render captions so only enable the button for a video element.
-#if SAFARI_THEME_VERSION >= 4
     return true;
-#else
-    return false;
-#endif
 }
 
 bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)

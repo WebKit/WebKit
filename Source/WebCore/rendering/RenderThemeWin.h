@@ -25,7 +25,6 @@
 #define RenderThemeWin_h
 
 #include "RenderTheme.h"
-#include <SafariTheme/SafariThemeConstants.h>
 
 #if WIN32
 typedef void* HANDLE;
