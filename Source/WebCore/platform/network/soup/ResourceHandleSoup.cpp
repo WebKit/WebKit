@@ -560,8 +560,8 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     }
 
     if (d->m_buffer) {
+        g_slice_free1(READ_BUFFER_SIZE, d->m_buffer);
         d->m_buffer = 0;
-        d->m_bufferSize = 0;
     }
 
     if (d->m_timeoutSource) {
@@ -633,9 +633,7 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
         return;
     }
 
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
         G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -699,6 +697,8 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
+    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
+
     if (soupMessage && d->m_response.isMultipart()) {
         d->m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(soupMessage, inputStream.get()));
         soup_multipart_input_stream_next_part_async(d->m_multipartInputStream.get(), G_PRIORITY_DEFAULT,
@@ -707,12 +707,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
     d->m_inputStream = inputStream;
-
-    ASSERT(!d->m_buffer);
-
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -1367,9 +1362,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
         return;
     }
 
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
                               d->m_cancellable.get(), readCallback, handle.get());
 }
 
