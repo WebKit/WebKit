@@ -1365,6 +1365,8 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Failure ]
 
+webkit.org/b/106991 fast/js/integer-division-neg2tothe32-by-neg1.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
