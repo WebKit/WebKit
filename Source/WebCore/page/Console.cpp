@@ -201,7 +201,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
 
     String message;
     bool gotMessage = arguments->getFirstArgumentAsString(message);
-    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments.release());
+    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments);
 
     if (!page->settings() || page->settings()->privateBrowsingEnabled())
         return;
@@ -210,14 +210,14 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
         page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
     if (printExceptions) {
-        printSourceURLAndLine(lastCaller.sourceURL(), 0);
+        printSourceURLAndLine(lastCaller.sourceURL(), lastCaller.lineNumber());
         printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
 
         for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
-            String argAsString;
-            if (arguments->argumentAt(i).getString(arguments->globalState(), argAsString))
-                printf(" %s", argAsString.utf8().data());
+            String argAsString = arguments->argumentAt(i).toString(arguments->globalState());
+            printf(" %s", argAsString.utf8().data());
         }
+
         printf("\n");
     }
 
