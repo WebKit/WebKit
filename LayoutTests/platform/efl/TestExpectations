@@ -1816,3 +1816,5 @@ webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiatio
 
 webkit.org/b/106997 fast/dom/MicroData/propertiescollection-crash.html [ Failure ]
 webkit.org/b/106997 fast/dom/MicroData/properties-collection-namedgetter-with-invalid-name.html [ Failure ]
+
+webkit.org/b/107001 compositing/layer-creation/overlap-animation-container.html [ Failure ]
