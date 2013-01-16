@@ -60,7 +60,7 @@ inline v8::Handle<v8::Object> wrap(TestCustomNamedGetter* impl, v8::Handle<v8::O
     return V8TestCustomNamedGetter::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
@@ -87,7 +87,7 @@ inline v8::Handle<v8::Value> toV8Fast(PassRefPtr< TestCustomNamedGetter > impl, 
     return toV8Fast(impl.get(), container, wrappable);
 }
 
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

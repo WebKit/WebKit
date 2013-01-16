@@ -63,7 +63,7 @@ v8::Handle<v8::Value>  WebBlob::toV8Value()
 {
     if (!m_private.get())
         return v8::Handle<v8::Value>();
-    return toV8(m_private.get());
+    return toV8(m_private.get(), v8::Handle<v8::Object>());
 }
 #endif
 

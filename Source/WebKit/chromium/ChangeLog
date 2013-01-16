@@ -1,3 +1,26 @@
+2013-01-16  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make a creationContext parameter of toV8() mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=107020
+
+        Reviewed by Adam Barth.
+
+        We pass Handle<Object>() to a creationContext parameter of
+        toV8() when we do not have a creationContext.
+
+        No tests. No change in behavior.
+
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        * src/WebArrayBuffer.cpp:
+        (WebKit::WebArrayBuffer::toV8Value):
+        * src/WebBlob.cpp:
+        (WebKit::WebBlob::toV8Value):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        (WebKit::WebFrameImpl::createSerializableFileSystem):
+        (WebKit::WebFrameImpl::createFileEntry):
+
 2013-01-16  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move WebArrayBufferView and WebSerializedScriptValue out of public/platform/

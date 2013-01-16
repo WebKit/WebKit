@@ -63,9 +63,9 @@ bool V8MutationCallback::handleEvent(MutationRecordArray* mutations, MutationObs
 
     v8::Local<v8::Array> mutationsArray = v8::Array::New(mutations->size());
     for (size_t i = 0; i < mutations->size(); ++i)
-        mutationsArray->Set(deprecatedV8Integer(i), toV8(mutations->at(i).get()));
+        mutationsArray->Set(deprecatedV8Integer(i), toV8(mutations->at(i).get(), v8::Handle<v8::Object>()));
 
-    v8::Handle<v8::Value> observerHandle = toV8(observer);
+    v8::Handle<v8::Value> observerHandle = toV8(observer, v8::Handle<v8::Object>());
     if (observerHandle.IsEmpty()) {
         if (!isScriptControllerTerminating())
             CRASH();

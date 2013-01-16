@@ -55,8 +55,8 @@ bool V8SQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
 
     v8::Context::Scope scope(v8Context);
 
-    v8::Handle<v8::Value> transactionHandle = toV8(transaction);
-    v8::Handle<v8::Value> errorHandle = toV8(error);
+    v8::Handle<v8::Value> transactionHandle = toV8(transaction, v8::Handle<v8::Object>());
+    v8::Handle<v8::Value> errorHandle = toV8(error, v8::Handle<v8::Object>());
     if (transactionHandle.IsEmpty() || errorHandle.IsEmpty()) {
         if (!isScriptControllerTerminating())
             CRASH();

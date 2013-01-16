@@ -76,7 +76,7 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
 
     if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), node))
         return ScriptValue(v8::Null());
-    return ScriptValue(toV8(node));
+    return ScriptValue(toV8(node, v8::Handle<v8::Object>()));
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Arguments& args)

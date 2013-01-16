@@ -96,7 +96,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
     v8::Context::Scope scope(v8Context);
 
     // Get the V8 wrapper for the event object.
-    v8::Handle<v8::Value> jsEvent = toV8(event);
+    v8::Handle<v8::Value> jsEvent = toV8(event, v8::Handle<v8::Object>());
     ASSERT(!jsEvent.IsEmpty());
 
     invokeEventHandler(context, event, jsEvent);
@@ -188,7 +188,7 @@ v8::Local<v8::Object> V8AbstractEventListener::getReceiverObject(Event* event)
         return v8::Local<v8::Object>::New(m_listener.get());
 
     EventTarget* target = event->currentTarget();
-    v8::Handle<v8::Value> value = toV8(target);
+    v8::Handle<v8::Value> value = toV8(target, v8::Handle<v8::Object>());
     if (value.IsEmpty())
         return v8::Local<v8::Object>();
     return v8::Local<v8::Object>::New(v8::Handle<v8::Object>::Cast(value));

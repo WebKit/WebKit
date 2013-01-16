@@ -354,7 +354,7 @@ void V8DOMWindowShell::updateDocumentProperty()
     // FIXME: Should we use a new Local handle here?
     v8::Context::Scope contextScope(m_context.get());
 
-    v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document());
+    v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document(), v8::Handle<v8::Object>());
     ASSERT(documentWrapper == m_document.get() || m_document.isEmpty());
     if (m_document.isEmpty())
         updateDocumentWrapper(v8::Handle<v8::Object>::Cast(documentWrapper));

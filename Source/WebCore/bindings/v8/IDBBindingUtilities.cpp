@@ -241,7 +241,7 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState*, PassRefPtr<IDBKey> key, Scrip
     if (parent.IsEmpty())
         return false;
 
-    if (!set(parent, keyPathElements.last(), toV8(key.get())))
+    if (!set(parent, keyPathElements.last(), toV8(key.get(), v8::Handle<v8::Object>())))
         return false;
 
     return true;
@@ -267,7 +267,7 @@ ScriptValue idbKeyToScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key)
 {
     ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
-    v8::Handle<v8::Value> v8Value(toV8(key.get()));
+    v8::Handle<v8::Value> v8Value(toV8(key.get(), v8::Handle<v8::Object>()));
     return ScriptValue(v8Value);
 }
 

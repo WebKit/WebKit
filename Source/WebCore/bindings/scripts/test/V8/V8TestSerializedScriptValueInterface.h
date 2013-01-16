@@ -62,7 +62,7 @@ inline v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface* impl, v8:
     return V8TestSerializedScriptValueInterface::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
@@ -89,7 +89,7 @@ inline v8::Handle<v8::Value> toV8Fast(PassRefPtr< TestSerializedScriptValueInter
     return toV8Fast(impl.get(), container, wrappable);
 }
 
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

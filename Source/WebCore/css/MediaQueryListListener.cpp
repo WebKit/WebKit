@@ -42,7 +42,7 @@ void MediaQueryListListener::queryChanged(ScriptState* state, MediaQueryList* qu
     if (context.IsEmpty())
        return; // JS may not be enabled.
     v8::Context::Scope scope(context);
-    callback.appendArgument(toV8(query));
+    callback.appendArgument(toV8(query, v8::Handle<v8::Object>()));
 #endif
     callback.call();
 }

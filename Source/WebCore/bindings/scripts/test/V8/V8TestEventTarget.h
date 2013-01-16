@@ -62,7 +62,7 @@ inline v8::Handle<v8::Object> wrap(TestEventTarget* impl, v8::Handle<v8::Object>
     return V8TestEventTarget::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
@@ -89,7 +89,7 @@ inline v8::Handle<v8::Value> toV8Fast(PassRefPtr< TestEventTarget > impl, const 
     return toV8Fast(impl.get(), container, wrappable);
 }
 
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

@@ -73,14 +73,14 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::NewSymbol(name), toV8(value));
+    scope.global()->Set(v8::String::NewSymbol(name), toV8(value, v8::Handle<v8::Object>()));
     return scope.success();
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::NewSymbol(name), toV8(value));
+    scope.global()->Set(v8::String::NewSymbol(name), toV8(value, v8::Handle<v8::Object>()));
     return scope.success();
 }
 #endif
