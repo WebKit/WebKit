@@ -7327,6 +7327,203 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList* valueList, Ref
     return true;
 }
 
+bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
+{
+    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, CSSLinearGradient);
+
+    CSSParserValueList* args = valueList->current()->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    CSSParserValue* a = args->current();
+    if (!a)
+        return false;
+
+    bool expectComma = false;
+    // Look for angle.
+    if (validUnit(a, FAngle, CSSStrictMode)) {
+        result->setAngle(createPrimitiveNumericValue(a));
+
+        args->next();
+        expectComma = true;
+    } else if (a->unit == CSSPrimitiveValue::CSS_IDENT && equalIgnoringCase(a->string, "to")) {
+        // to [ [left | right] || [top | bottom] ]
+        a = args->next();
+        if (!a)
+            return false;
+
+        RefPtr<CSSPrimitiveValue> endX, endY;
+        RefPtr<CSSPrimitiveValue> location;
+        bool isHorizontal = false;
+
+        location = valueFromSideKeyword(a, isHorizontal);
+        if (!location)
+            return false;
+
+        if (isHorizontal)
+            endX = location;
+        else
+            endY = location;
+
+        a = args->next();
+        if (!a)
+            return false;
+
+        location = valueFromSideKeyword(a, isHorizontal);
+        if (location) {
+            if (isHorizontal) {
+                if (endX)
+                    return false;
+                endX = location;
+            } else {
+                if (endY)
+                    return false;
+                endY = location;
+            }
+
+            args->next();
+        }
+
+        expectComma = true;
+        result->setFirstX(endX.release());
+        result->setFirstY(endY.release());
+    }
+
+    if (!parseGradientColorStops(args, result.get(), expectComma))
+        return false;
+
+    if (!result->stopCount())
+        return false;
+
+    gradient = result.release();
+    return true;
+}
+
+bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
+{
+    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSRadialGradient);
+
+    CSSParserValueList* args = valueList->current()->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    CSSParserValue* a = args->current();
+    if (!a)
+        return false;
+
+    bool expectComma = false;
+
+    RefPtr<CSSPrimitiveValue> shapeValue;
+    RefPtr<CSSPrimitiveValue> sizeValue;
+    RefPtr<CSSPrimitiveValue> horizontalSize;
+    RefPtr<CSSPrimitiveValue> verticalSize;
+
+    // First part of grammar, the size/shape clause:
+    // [ circle || <length> ] |
+    // [ ellipse || [ <length> | <percentage> ]{2} ] |
+    // [ [ circle | ellipse] || <size-keyword> ]
+    for (int i = 0; i < 3; ++i) {
+        if (a->unit == CSSPrimitiveValue::CSS_IDENT) {
+            bool badIdent = false;
+            switch (a->id) {
+            case CSSValueCircle:
+            case CSSValueEllipse:
+                if (shapeValue)
+                    return false;
+                shapeValue = cssValuePool().createIdentifierValue(a->id);
+                break;
+            case CSSValueClosestSide:
+            case CSSValueClosestCorner:
+            case CSSValueFarthestSide:
+            case CSSValueFarthestCorner:
+                if (sizeValue || horizontalSize)
+                    return false;
+                sizeValue = cssValuePool().createIdentifierValue(a->id);
+                break;
+            default:
+                badIdent = true;
+            }
+
+            if (badIdent)
+                break;
+
+            a = args->next();
+            if (!a)
+                return false;
+        } else if (validUnit(a, FLength | FPercent)) {
+
+            if (sizeValue || horizontalSize)
+                return false;
+            horizontalSize = createPrimitiveNumericValue(a);
+
+            a = args->next();
+            if (!a)
+                return false;
+
+            if (validUnit(a, FLength | FPercent)) {
+                verticalSize = createPrimitiveNumericValue(a);
+                ++i;
+                a = args->next();
+                if (!a)
+                    return false;
+            }
+        } else
+            break;
+    }
+
+    // You can specify size as a keyword or a length/percentage, not both.
+    if (sizeValue && horizontalSize)
+        return false;
+    // Circles must have 0 or 1 lengths.
+    if (shapeValue && shapeValue->getIdent() == CSSValueCircle && verticalSize)
+        return false;
+    // Ellipses must have 0 or 2 length/percentages.
+    if (shapeValue && shapeValue->getIdent() == CSSValueEllipse && horizontalSize && !verticalSize)
+        return false;
+    // If there's only one size, it must be a length.
+    if (!verticalSize && horizontalSize && horizontalSize->isPercentage())
+        return false;
+
+    result->setShape(shapeValue);
+    result->setSizingBehavior(sizeValue);
+    result->setEndHorizontalSize(horizontalSize);
+    result->setEndVerticalSize(verticalSize);
+
+    // Second part of grammar, the center-position clause:
+    // at <position>
+    RefPtr<CSSValue> centerX;
+    RefPtr<CSSValue> centerY;
+    if (equalIgnoringCase(a->string, "at")) {
+        a = args->next();
+        if (!a)
+            return false;
+
+        parseFillPosition(args, centerX, centerY);
+        ASSERT(centerX->isPrimitiveValue());
+        ASSERT(centerY->isPrimitiveValue());
+        if (!(centerX && centerY))
+            return false;
+
+        a = args->current();
+        if (!a)
+            return false;
+        result->setFirstX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+        result->setFirstY(static_cast<CSSPrimitiveValue*>(centerY.get()));
+        // Right now, CSS radial gradients have the same start and end centers.
+        result->setSecondX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+        result->setSecondY(static_cast<CSSPrimitiveValue*>(centerY.get()));
+    }
+
+    if (shapeValue || sizeValue || horizontalSize || centerX || centerY)
+        expectComma = true;
+
+    if (!parseGradientColorStops(args, result.get(), expectComma))
+        return false;
+
+    gradient = result.release();
+    return true;
+}
+
 bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradientValue* gradient, bool expectComma)
 {
     CSSParserValue* a = valueList->current();
@@ -7372,9 +7569,13 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
 
     return equalIgnoringCase(val->function->name, "-webkit-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-linear-gradient(")
+        || equalIgnoringCase(val->function->name, "linear-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient(")
+        || equalIgnoringCase(val->function->name, "repeating-linear-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-radial-gradient(")
+        || equalIgnoringCase(val->function->name, "radial-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient(")
+        || equalIgnoringCase(val->function->name, "repeating-radial-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-canvas(")
         || equalIgnoringCase(val->function->name, "-webkit-cross-fade(");
 }
@@ -7392,14 +7593,26 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSVal
     if (equalIgnoringCase(val->function->name, "-webkit-linear-gradient("))
         return parseDeprecatedLinearGradient(valueList, value, NonRepeating);
 
+    if (equalIgnoringCase(val->function->name, "linear-gradient("))
+        return parseLinearGradient(valueList, value, NonRepeating);
+
     if (equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient("))
         return parseDeprecatedLinearGradient(valueList, value, Repeating);
+
+    if (equalIgnoringCase(val->function->name, "repeating-linear-gradient("))
+        return parseLinearGradient(valueList, value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-radial-gradient("))
         return parseDeprecatedRadialGradient(valueList, value, NonRepeating);
 
+    if (equalIgnoringCase(val->function->name, "radial-gradient("))
+        return parseRadialGradient(valueList, value, NonRepeating);
+
     if (equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient("))
         return parseDeprecatedRadialGradient(valueList, value, Repeating);
+
+    if (equalIgnoringCase(val->function->name, "repeating-radial-gradient("))
+        return parseRadialGradient(valueList, value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-canvas("))
         return parseCanvas(valueList, value);

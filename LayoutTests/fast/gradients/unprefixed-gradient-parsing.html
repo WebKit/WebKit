@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+function testGradient(css)
+{
+    var div = document.createElement('div');
+    div.setAttribute('style', css);
+    document.body.appendChild(div);
+
+    var result = getComputedStyle(div).backgroundImage;
+    document.body.removeChild(div);
+    return result;
+}
+
+debug('<p>linear-gradient</p>');
+
+shouldBe('testGradient("background-image: linear-gradient(black 0%)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(top)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to top)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(10deg)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(10deg black, white)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to black, white)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to left black, white)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to top center, black 0%, white)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(10px 20%, black 0%)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to left left)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to left center)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(to left 10deg, black 0%, white)")', '"none"');
+shouldBe('testGradient("background-image: linear-gradient(black)")', '"none"');
+
+shouldBe('testGradient("background-image: linear-gradient(black, white)")', '"linear-gradient(black, white)"');
+shouldBe('testGradient("background-image: linear-gradient(black 0, white)")', '"linear-gradient(black 0px, white)"');
+shouldBe('testGradient("background-image: linear-gradient(black 0%, white)")', '"linear-gradient(black 0%, white)"');
+shouldBe('testGradient("background-image: linear-gradient(black 0%, white)")', '"linear-gradient(black 0%, white)"');
+shouldBe('testGradient("background-image: linear-gradient(black 10px, white 20px)")', '"linear-gradient(black 10px, white 20px)"');
+shouldBe('testGradient("background-image: linear-gradient(to top left, black 0%, white)")', '"linear-gradient(to left top, black 0%, white)"');
+shouldBe('testGradient("background-image: linear-gradient(to top, black 0%, white)")', '"linear-gradient(to top, black 0%, white)"');
+shouldBe('testGradient("background-image: linear-gradient(10deg, black 0%, white)")', '"linear-gradient(10deg, black 0%, white)"');
+
+debug('<p>repeating-linear-gradient</p>');
+shouldBe('testGradient("background-image: repeating-linear-gradient(black, white)")', '"repeating-linear-gradient(black, white)"');
+
+debug('<p>radial-gradient</p>');
+
+shouldBe('testGradient("background-image: radial-gradient(white, black)")', '"radial-gradient(white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(at bottom right, white, black)")', '"radial-gradient(at 100% 100%, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(farthest-corner, white, black)")', '"radial-gradient(white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(closest-side, white, black)")', '"radial-gradient(closest-side, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse, white, black)")', '"radial-gradient(white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse farthest-corner, white, black)")', '"radial-gradient(white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse closest-side, white, black)")', '"radial-gradient(closest-side, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle, white, black)")', '"radial-gradient(circle, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle farthest-corner, white, black)")', '"radial-gradient(circle, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle closest-side, white, black)")', '"radial-gradient(circle closest-side, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle closest-side at top, white, black)")', '"radial-gradient(circle closest-side at 50% 0%, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle closest-side at top left, white, black)")', '"radial-gradient(circle closest-side at 0% 0%, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle closest-side at 10px 20%, white, black)")', '"radial-gradient(circle closest-side at 10px 20%, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(at 10px 20% circle closest-side, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(circle at 10px 20% circle, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(circle 10px closest-side, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(circle 10%, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(circle 10px 10px, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse 10%, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse 10px, white, black)")', '"none"');
+shouldBe('testGradient("background-image: radial-gradient(ellipse 10px 20px, white, black)")', '"radial-gradient(10px 20px, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(circle 10px, white, black)")', '"radial-gradient(10px, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, black)")', '"radial-gradient(10px 10px at 50% 50%, white, black)"');
+
+debug('<p>repeating-radial-gradient</p>');
+shouldBe('testGradient("background-image: repeating-radial-gradient(white, black)")', '"repeating-radial-gradient(white, black)"');
+  
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

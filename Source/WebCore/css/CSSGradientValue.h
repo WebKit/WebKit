@@ -117,7 +117,7 @@ protected:
 
     void reportBaseClassMemoryUsage(MemoryObjectInfo*) const;
 
-    // Points. Some of these may be null for linear gradients.
+    // Points. Some of these may be null.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
 
@@ -222,7 +222,7 @@ private:
     RefPtr<CSSPrimitiveValue> m_firstRadius;
     RefPtr<CSSPrimitiveValue> m_secondRadius;
 
-    // The below are only used for non-deprecated gradients.
+    // The below are only used for non-deprecated gradients. Any of them may be null.
     RefPtr<CSSPrimitiveValue> m_shape;
     RefPtr<CSSPrimitiveValue> m_sizingBehavior;
 
