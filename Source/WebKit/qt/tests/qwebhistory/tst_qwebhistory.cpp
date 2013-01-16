@@ -56,9 +56,12 @@ private Q_SLOTS:
     void serialize_1(); //QWebHistory countity
     void serialize_2(); //QWebHistory index
     void serialize_3(); //QWebHistoryItem
+    // Those tests shouldn't crash
     void saveAndRestore_crash_1();
     void saveAndRestore_crash_2();
     void saveAndRestore_crash_3();
+    void saveAndRestore_crash_4();
+
     void popPushState_data();
     void popPushState();
     void clear();
@@ -308,7 +311,6 @@ static void restoreHistory(QWebHistory* history, QByteArray* out)
     load >> *history;
 }
 
-/** The test shouldn't crash */
 void tst_QWebHistory::saveAndRestore_crash_1()
 {
     QByteArray buffer;
@@ -319,7 +321,6 @@ void tst_QWebHistory::saveAndRestore_crash_1()
     }
 }
 
-/** The test shouldn't crash */
 void tst_QWebHistory::saveAndRestore_crash_2()
 {
     QByteArray buffer;
@@ -333,7 +334,6 @@ void tst_QWebHistory::saveAndRestore_crash_2()
     delete page2;
 }
 
-/** The test shouldn't crash */
 void tst_QWebHistory::saveAndRestore_crash_3()
 {
     QByteArray buffer;
@@ -351,6 +351,27 @@ void tst_QWebHistory::saveAndRestore_crash_3()
         hist2->clear();
     }
     delete page2;
+}
+
+void tst_QWebHistory::saveAndRestore_crash_4()
+{
+    QByteArray buffer;
+    saveHistory(hist, &buffer);
+
+    QWebPage* page2 = new QWebPage(this);
+    // The initial crash was in PageCache.
+    page2->settings()->setMaximumPagesInCache(3);
+
+    // Load the history in a new page, waiting for the load to finish.
+    QEventLoop waitForLoadFinished;
+    QObject::connect(page2, SIGNAL(loadFinished(bool)), &waitForLoadFinished, SLOT(quit()), Qt::QueuedConnection);
+    QDataStream load(&buffer, QIODevice::ReadOnly);
+    load >> *page2->history();
+    waitForLoadFinished.exec();
+
+    delete page2;
+    // Give some time for the PageCache cleanup 0-timer to fire.
+    QTest::qWait(50);
 }
 
 void tst_QWebHistory::popPushState_data()

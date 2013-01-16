@@ -1,3 +1,21 @@
+2013-01-16  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Crash in WebCore::CachedFrame::destroy
+        https://bugs.webkit.org/show_bug.cgi?id=104525
+
+        Reviewed by Adam Barth.
+
+        Remove the call to HistoryController::setCurrentItem which is ultimately
+        causing the initial empty document of a page to be added to the page cache.
+
+        This re-introduce the bug that was fixed by this line, which will be
+        properly fixed in a follow-up patch.
+
+        * Api/qwebhistory.cpp:
+        (operator>>):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::saveAndRestore_crash_4): Cover the crash.
+
 2013-01-11  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Rename current[Transform|Opacity|Filters] in TextureMapperLayer.
