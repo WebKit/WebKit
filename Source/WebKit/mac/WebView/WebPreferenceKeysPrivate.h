@@ -129,6 +129,7 @@
 #define WebKitScreenFontSubstitutionEnabledKey @"WebKitScreenFontSubstitutionEnabled"
 #define WebKitStorageBlockingPolicyKey @"WebKitStorageBlockingPolicy"
 #define WebKitPlugInSnapshottingEnabledPreferenceKey @"WebKitPlugInSnapshottingEnabled"
+#define WebKitQTKitEnabledPreferenceKey @"WebKitQTKitEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

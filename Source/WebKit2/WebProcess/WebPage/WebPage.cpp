@@ -2370,6 +2370,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setAVFoundationEnabled(store.getBoolValueForKey(WebPreferencesKey::isAVFoundationEnabledKey()));
 #endif
 
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+    settings->setQTKitEnabled(store.getBoolValueForKey(WebPreferencesKey::isQTKitEnabledKey()));
+#endif
+
 #if ENABLE(WEB_AUDIO)
     settings->setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
 #endif

@@ -419,6 +419,7 @@ public:
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
+        [NSNumber numberWithBool:YES],  WebKitQTKitEnabledPreferenceKey,
         nil];
 
 
@@ -1576,6 +1577,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isAVFoundationEnabled
 {
     return [self _boolValueForKey:WebKitAVFoundationEnabledKey];
+}
+
+- (void)setQTKitEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitQTKitEnabledPreferenceKey];
+}
+
+- (BOOL)isQTKitEnabled
+{
+    return [self _boolValueForKey:WebKitQTKitEnabledPreferenceKey];
 }
 
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag

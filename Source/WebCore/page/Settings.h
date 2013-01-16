@@ -256,8 +256,13 @@ namespace WebCore {
         bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
 
 #if USE(AVFOUNDATION)
-        static void setAVFoundationEnabled(bool flag) { gAVFoundationEnabled = flag; }
+        static void setAVFoundationEnabled(bool flag);
         static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+        static void setQTKitEnabled(bool flag);
+        static bool isQTKitEnabled() { return gQTKitEnabled; }
 #endif
 
         static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
@@ -376,6 +381,11 @@ namespace WebCore {
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;
 #endif
+
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+        static bool gQTKitEnabled;
+#endif
+        
         static bool gMockScrollbarsEnabled;
         static bool gUsesOverlayScrollbars;
 

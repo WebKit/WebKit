@@ -1539,6 +1539,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setAVFoundationEnabled(false);
 #endif
 #endif
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+    settings->setQTKitEnabled([preferences isQTKitEnabled]);
+#endif
     settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings->setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);

@@ -310,6 +310,7 @@ public:
     static void getSitesInMediaCache(Vector<String>&);
     static void clearMediaCache();
     static void clearMediaCacheForSite(const String&);
+    static void requeryMediaEngines();
 
     bool isPlaying() const { return m_playing; }
 

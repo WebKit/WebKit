@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLMediaElement.h"
 #include "HistoryItem.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -91,6 +92,10 @@ bool Settings::gShouldPaintNativeControls = true;
 
 #if USE(AVFOUNDATION)
 bool Settings::gAVFoundationEnabled = false;
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+bool Settings::gQTKitEnabled = true;
 #endif
 
 bool Settings::gMockScrollbarsEnabled = false;
@@ -634,6 +639,28 @@ void Settings::setTiledBackingStoreEnabled(bool enabled)
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif
 }
+
+#if USE(AVFOUNDATION)
+void Settings::setAVFoundationEnabled(bool enabled)
+{
+    if (gAVFoundationEnabled == enabled)
+        return;
+
+    gAVFoundationEnabled = enabled;
+    HTMLMediaElement::requeryMediaEngines();
+}
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+void Settings::setQTKitEnabled(bool enabled)
+{
+    if (gQTKitEnabled == enabled)
+        return;
+
+    gQTKitEnabled = enabled;
+    HTMLMediaElement::requeryMediaEngines();
+}
+#endif
 
 void Settings::setScrollingPerformanceLoggingEnabled(bool enabled)
 {

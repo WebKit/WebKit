@@ -1,3 +1,20 @@
+2013-01-15  Jer Noble  <jer.noble@apple.com>
+
+        Add a Setting to disable QTKit media engine.
+        https://bugs.webkit.org/show_bug.cgi?id=106972
+
+        Reviewed by Eric Carlson.
+
+        Add a WebKit2 API to access WebCore QTKitEnabled settings.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetQTKitEnabled): Pass through to WebCore.
+        (WKPreferencesGetQTKitEnabled): Ditto.
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Synchronize WebKit2/WebCore settings.
+
 2013-01-16  Kiran Muppala  <cmuppala@apple.com>
 
         Groundwork to enable process suppression by default on Mac

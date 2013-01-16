@@ -2202,6 +2202,12 @@ __ZN7WebCore6Editor14capitalizeWordEv
 
 #if USE(AVFOUNDATION)
 __ZN7WebCore8Settings20gAVFoundationEnabledE
+__ZN7WebCore8Settings22setAVFoundationEnabledEb
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+__ZN7WebCore8Settings13gQTKitEnabledE
+__ZN7WebCore8Settings15setQTKitEnabledEb
 #endif
 
 #if USE(CFNETWORK)

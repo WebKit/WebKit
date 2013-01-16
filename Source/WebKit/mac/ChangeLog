@@ -1,3 +1,21 @@
+2013-01-15  Jer Noble  <jer.noble@apple.com>
+
+        Add a Setting to disable QTKit media engine.
+        https://bugs.webkit.org/show_bug.cgi?id=106972
+
+        Reviewed by Eric Carlson.
+
+        Add WebKit API to set QTKit enabled setting from user defaults.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set WebCore settings based on user defaults.
+        (-[WebPreferences setQTKitEnabled:]): Pass through to WebCore.
+        (-[WebPreferences isQTKitEnabled]): Ditto.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Synchronize WebKit/WebCore settings.
+
 2013-01-15  Enrica Casucci  <enrica@apple.com>
 
         Add a new set of WebKit2 APIs for text search and
