@@ -5147,6 +5147,7 @@
             'inspector/front-end/ExtensionServer.js',
             'inspector/front-end/ExtensionView.js',
             'inspector/front-end/FileManager.js',
+            'inspector/front-end/FileMapping.js',
             'inspector/front-end/FileSystemMapping.js',
             'inspector/front-end/FileSystemModel.js',
             'inspector/front-end/FileUtils.js',

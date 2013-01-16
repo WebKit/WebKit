@@ -39,7 +39,7 @@ WebInspector.StylesSourceMapping = function(workspace)
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
 
-    this._uiSourceCodeForURL = {};
+    this._mappedURLs = {};
 }
 
 WebInspector.StylesSourceMapping.prototype = {
@@ -50,7 +50,8 @@ WebInspector.StylesSourceMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var location = /** @type WebInspector.CSSLocation */ (rawLocation);
-        var uiSourceCode = this._uiSourceCodeForURL[location.url];
+        var uri = WebInspector.fileMapping.uriForURL(location.url);
+        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
         return new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
     },
 
@@ -68,22 +69,13 @@ WebInspector.StylesSourceMapping.prototype = {
     _uiSourceCodeAddedToWorkspace: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
-        if (!uiSourceCode.url || this._uiSourceCodeForURL[uiSourceCode.url])
-            return;
         if (uiSourceCode.contentType() !== WebInspector.resourceTypes.Stylesheet)
             return;
-        if (!WebInspector.resourceForURL(uiSourceCode.url))
+        if (!uiSourceCode.url || !WebInspector.resourceForURL(uiSourceCode.url))
             return;
-
-        this._addUISourceCode(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _addUISourceCode: function(uiSourceCode)
-    {
-        this._uiSourceCodeForURL[uiSourceCode.url] = uiSourceCode;
+        if (this._mappedURLs[uiSourceCode.url])
+            return;
+        this._mappedURLs[uiSourceCode.url] = true;
         uiSourceCode.setSourceMapping(this);
         var styleFile = new WebInspector.StyleFile(uiSourceCode);
         uiSourceCode.setStyleFile(styleFile);
@@ -95,7 +87,7 @@ WebInspector.StylesSourceMapping.prototype = {
         var project = event.data;
         var uiSourceCodes = project.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes; ++i)
-            delete this._uiSourceCodeForURL[uiSourceCodes[i].url];
+            delete this._mappedURLs[uiSourceCodes[i].url];
     }
 }
 
@@ -266,7 +258,8 @@ WebInspector.StyleContentBinding.prototype = {
             if (typeof styleSheetURL !== "string")
                 return;
 
-            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(styleSheetURL);
+            var uri = WebInspector.fileMapping.uriForURL(styleSheetURL);
+            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURI(uri);
             if (!uiSourceCode)
                 return;
 

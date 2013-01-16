@@ -74,6 +74,7 @@
     <file>ExtensionView.js</file>
     <file>FileContentView.js</file>
     <file>FileManager.js</file>
+    <file>FileMapping.js</file>
     <file>FileSystemMapping.js</file>
     <file>FileSystemModel.js</file>
     <file>FileSystemView.js</file>

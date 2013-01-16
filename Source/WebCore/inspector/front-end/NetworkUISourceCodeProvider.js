@@ -114,6 +114,9 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
      */
     _addFile: function(url, contentProvider, isContentScript)
     {
+        if (WebInspector.fileMapping.hasMappingForURL(url))
+            return;
+
         var type = contentProvider.contentType();
         if (type !== WebInspector.resourceTypes.Stylesheet && type !== WebInspector.resourceTypes.Document && type !== WebInspector.resourceTypes.Script)
             return;

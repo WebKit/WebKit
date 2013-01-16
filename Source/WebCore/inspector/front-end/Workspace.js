@@ -188,19 +188,6 @@ WebInspector.Project.prototype = {
     },
 
     /**
-     * @param {string} url
-     * @return {?WebInspector.UISourceCode}
-     */
-    uiSourceCodeForURL: function(url)
-    {
-        for (var i = 0; i < this._uiSourceCodes.length; ++i) {
-            if (this._uiSourceCodes[i].url === url)
-                return this._uiSourceCodes[i];
-        }
-        return null;
-    },
-
-    /**
      * @param {string} originURL
      * @return {?WebInspector.UISourceCode}
      */
@@ -298,15 +285,6 @@ WebInspector.Workspace.prototype = {
     uiSourceCodeForOriginURL: function(originURL)
     {
         return this._projects[WebInspector.projectNames.Network].uiSourceCodeForOriginURL(originURL);
-    },
-
-    /**
-     * @param {string} url
-     * @return {?WebInspector.UISourceCode}
-     */
-    uiSourceCodeForURL: function(url)
-    {
-        return this._projects[WebInspector.projectNames.Network].uiSourceCodeForURL(url);
     },
 
     /**

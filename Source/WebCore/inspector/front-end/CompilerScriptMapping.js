@@ -37,6 +37,7 @@
 WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvider)
 {
     this._workspace = workspace;
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
     this._networkWorkspaceProvider = networkWorkspaceProvider;
     /** @type {Object.<string, WebInspector.PositionBasedSourceMap>} */
     this._sourceMapForSourceMapURL = {};
@@ -62,7 +63,11 @@ WebInspector.CompilerScriptMapping.prototype = {
         var entry = sourceMap.findEntry(lineNumber, columnNumber);
         if (entry.length === 2)
             return null;
-        var uiSourceCode = this._workspace.uiSourceCodeForURL(entry[2]);
+        var url = entry[2];
+        var uri = WebInspector.fileMapping.uriForURL(url);
+        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        if (!uiSourceCode)
+            return null;
         return new WebInspector.UILocation(uiSourceCode, entry[3], entry[4]);
     },
 
@@ -74,7 +79,11 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
+        if (!uiSourceCode.url)
+            return null;
         var sourceMap = this._sourceMapForURL[uiSourceCode.url];
+        if (!sourceMap)
+            return null;
         var entry = sourceMap.findEntryReversed(uiSourceCode.url, lineNumber);
         return WebInspector.debuggerModel.createRawLocation(this._scriptForSourceMap.get(sourceMap), entry[0], entry[1]);
     },
@@ -95,23 +104,47 @@ WebInspector.CompilerScriptMapping.prototype = {
         var sourceURLs = sourceMap.sources();
         for (var i = 0; i < sourceURLs.length; ++i) {
             var sourceURL = sourceURLs[i];
-            if (this._workspace.uiSourceCodeForURL(sourceURL))
+            var uri = WebInspector.fileMapping.uriForURL(sourceURL);
+            if (this._sourceMapForURL[sourceURL])
                 continue;
             this._sourceMapForURL[sourceURL] = sourceMap;
-            var sourceContent = sourceMap.sourceContent(sourceURL);
-            var contentProvider;
-            if (sourceContent)
-                contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
-            else
-                contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            var uiSourceCode = this._networkWorkspaceProvider.addFileForURL(sourceURL, contentProvider, true);
-            uiSourceCode.setSourceMapping(this);
-            uiSourceCode.isContentScript = script.isContentScript;
+            if (!WebInspector.fileMapping.hasMappingForURL(sourceURL) && !this._workspace.uiSourceCodeForURI(uri)) {
+                var sourceContent = sourceMap.sourceContent(sourceURL);
+                var contentProvider;
+                if (sourceContent)
+                    contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
+                else
+                    contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
+                this._networkWorkspaceProvider.addFileForURL(sourceURL, contentProvider, true);
+            }
+            var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+            if (uiSourceCode) {
+                this._bindUISourceCode(this._workspace.uiSourceCodeForURI(uri));
+                uiSourceCode.isContentScript = script.isContentScript;
+            }
         }
-
         this._sourceMapForScriptId[script.scriptId] = sourceMap;
         this._scriptForSourceMap.put(sourceMap, script);
         script.pushSourceMapping(this);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _bindUISourceCode: function(uiSourceCode)
+    {
+        uiSourceCode.setSourceMapping(this);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeAddedToWorkspace: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
+        if (!uiSourceCode.url || !this._sourceMapForURL[uiSourceCode.url])
+            return;
+        this._bindUISourceCode(uiSourceCode);
     },
 
     /**

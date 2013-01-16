@@ -432,6 +432,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel();
     this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemModel);
+    this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemModel.mapping());
     this.workspace = new WebInspector.Workspace();
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
     this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);

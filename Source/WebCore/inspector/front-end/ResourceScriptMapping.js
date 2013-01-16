@@ -138,7 +138,8 @@ WebInspector.ResourceScriptMapping.prototype = {
         // FIXME: workaround for script.isDynamicScript() being unreliable.
         if (!script.isInlineScript() && this._inlineScriptsForSourceURL[script.sourceURL])
             return null;
-        return this._workspace.uiSourceCodeForURL(script.sourceURL);
+        var uri = WebInspector.fileMapping.uriForURL(script.sourceURL);
+        return this._workspace.uiSourceCodeForURI(uri);
     },
 
     /**
@@ -158,6 +159,8 @@ WebInspector.ResourceScriptMapping.prototype = {
         default:
             return [];
         }
+        if (!uiSourceCode.url)
+            return [];
         var scriptsForSourceURL = isInlineScript ? this._inlineScriptsForSourceURL : this._nonInlineScriptsForSourceURL;
         return scriptsForSourceURL[uiSourceCode.url] || [];
     },

@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    function MockFileSystemMapping() {}
+    MockFileSystemMapping.prototype = {
+        uriForPath: function(path) {
+            return "uri:" + path;
+        }
+    };
+    
+    function createMockMappingEntry(urlPrefix, pathPrefix)
+    {
+        var result = {};
+        result.urlPrefix = urlPrefix;
+        result.pathPrefix = pathPrefix;
+        return result;
+    }
+
+    // At first fill file mapping with entries.
+    var fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());
+    var mappingEntries = [];
+    mappingEntries.push(createMockMappingEntry("http://localhost", "/var/www"));
+    mappingEntries.push(createMockMappingEntry("http://www.example.com", "/home/example.com"));
+    fileMapping.setMappings(mappingEntries);
+
+    // Then create another file mapping to make sure it is correctly restored from the settings.
+    fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());
+
+    // Now test all FileMapping methods.
+    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://www.example.com"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://www.example.com/"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://localhost/index.html"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://localhost/foo/index.html"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.assertTrue(!fileMapping.hasMappingForURL("https://localhost"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.assertTrue(!fileMapping.hasMappingForURL("http://example.com"), "fileMapping.hasMappingForURL failed.");
+
+    InspectorTest.addResult(fileMapping.uriForURL("http://www.example.com"));
+    InspectorTest.addResult(fileMapping.uriForURL("http://www.example.com/"));
+    InspectorTest.addResult(fileMapping.uriForURL("http://localhost/index.html"));
+    InspectorTest.addResult(fileMapping.uriForURL("http://localhost/foo/index.html"));
+    InspectorTest.addResult(fileMapping.uriForURL("https://localhost"));
+    InspectorTest.addResult(fileMapping.uriForURL("http://example.com"));
+
+    InspectorTest.addResult(fileMapping.urlForURI("uri:/home/example.com"));
+    InspectorTest.addResult(fileMapping.urlForURI("uri:/home/example.com/"));
+    InspectorTest.addResult(fileMapping.urlForURI("uri:/var/www/index.html"));
+    InspectorTest.addResult(fileMapping.urlForURI("uri:/var/www/foo/index.html"));
+    InspectorTest.addResult(fileMapping.urlForURI("https://localhost"));
+    InspectorTest.addResult(fileMapping.urlForURI("http://example.com"));
+
+    InspectorTest.addResult("All mappings were correct.");
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests FileMapping</p>
+</body>
+</html>

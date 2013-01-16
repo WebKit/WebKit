@@ -76717,6 +76717,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FileMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FileSystemMapping.js"
 					>
 				</File>

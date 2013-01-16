@@ -1,0 +1,16 @@
+Tests FileMapping
+
+uri:/home/example.com
+uri:/home/example.com/
+uri:/var/www/index.html
+uri:/var/www/foo/index.html
+https://localhost
+http://example.com
+http://www.example.com
+http://www.example.com/
+http://localhost/index.html
+http://localhost/foo/index.html
+null
+null
+All mappings were correct.
+
