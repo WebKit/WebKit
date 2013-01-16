@@ -1,3 +1,14 @@
+2013-01-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Doesn't build with GCC 4.7+
+        https://bugs.webkit.org/show_bug.cgi?id=106999
+
+        Reviewed by Csaba Osztrogonác.
+
+        Correct __GNU_C_MINOR__ macro to __GNUC_MINOR__.
+
+        * src/compiler/preprocessor/ExpressionParser.y:
+
 2013-01-15  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Add SUPPORTED_PLATFORMS to Base.xcconfig

@@ -26,7 +26,7 @@ WHICH GENERATES THE GLSL ES preprocessor expression parser.
 // Turn off uninitialized variable warnings triggered by the auto-generated pplval variable.
 // On gcc 4.7+, The flag is called "-Wmaybe-uninitialized".
 // On clang and gcc < 4.7, the flag is called "-Wuninitialized".
-#if !defined(__clang__) && ((__GNUC__ == 4 && __GNU_C_MINOR__ >= 7) || __GNUC__ >= 5)
+#if !defined(__clang__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || __GNUC__ >= 5)
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #else
 #pragma GCC diagnostic ignored "-Wuninitialized"
