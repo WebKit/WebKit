@@ -103,7 +103,6 @@ class Printer(object):
             found_str += ' (%d times each: --repeat-each=%d --iterations=%d)' % (repeat_each * iterations, repeat_each, iterations)
         found_str += ', skipping %d' % (num_all_test_files - num_to_run)
         self._print_default(found_str + '.')
-        print (found_str)
 
     def print_expected(self, run_results, tests_with_result_type_callback):
         self._print_expected_results_of_type(run_results, test_expectations.PASS, "passes", tests_with_result_type_callback)

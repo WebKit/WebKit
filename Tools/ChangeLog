@@ -1,3 +1,13 @@
+2013-01-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Delete an extraneous print statement.
+        https://bugs.webkit.org/show_bug.cgi?id=106562
+
+        Delete the extraneous print statement introduced in r139841.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+
 2013-01-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Please reinstate --pixel
