@@ -341,6 +341,19 @@ void TiledCoreAnimationDrawingArea::resumePainting()
         m_webPage->corePage()->resumeScriptedAnimations();
 }
 
+void TiledCoreAnimationDrawingArea::setExposedRect(const IntRect& exposedRect)
+{
+    // FIXME: This should be mapped through the scroll offset, but we need to keep it up to date.
+    m_exposedRect = exposedRect;
+
+    mainFrameTiledBacking()->setExposedRect(exposedRect);
+}
+
+void TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged(bool isScrollable)
+{
+    mainFrameTiledBacking()->setClipsToExposedRect(!isScrollable);
+}
+
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, double minimumLayoutWidth)
 {
     m_inUpdateGeometry = true;
@@ -362,7 +375,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, doub
     m_webPage->layoutIfNeeded();
 
     if (m_pageOverlayLayer)
-        m_pageOverlayLayer->setSize(viewSize);
+        m_pageOverlayLayer->setSize(size);
 
     if (!m_layerTreeStateIsFrozen)
         flushLayers();
@@ -370,7 +383,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, doub
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    m_rootLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
+    m_rootLayer.get().frame = CGRectMake(0, 0, size.width(), size.height());
 
     [CATransaction commit];
     
@@ -450,8 +463,11 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     if (m_pageOverlayLayer)
         [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
 
-    if (TiledBacking* tiledBacking = mainFrameTiledBacking())
+    if (TiledBacking* tiledBacking = mainFrameTiledBacking()) {
         tiledBacking->setAggressivelyRetainsTiles(m_webPage->corePage()->settings()->aggressiveTileRetentionEnabled());
+        tiledBacking->setExposedRect(m_exposedRect);
+        tiledBacking->setClipsToExposedRect(!m_webPage->mainFrameIsScrollable());
+    }
 
     updateDebugInfoLayer(m_webPage->corePage()->settings()->showTiledScrollingIndicator());
 

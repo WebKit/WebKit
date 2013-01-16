@@ -239,6 +239,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_asynchronousPluginInitializationEnabledForAllPlugins(false)
     , m_artificialPluginInitializationDelayEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
+    , m_mainFrameIsScrollable(true)
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_windowIsVisible(false)
@@ -2914,7 +2915,7 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
         (*it)->setWindowIsVisible(windowIsVisible);
 }
 
-void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates)
+void WebPage::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates, const IntPoint& accessibilityViewCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
     m_viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
@@ -2925,6 +2926,22 @@ void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInSc
         (*it)->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
 }
 #endif
+
+void WebPage::viewExposedRectChanged(const IntRect& exposedRect)
+{
+    m_drawingArea->setExposedRect(exposedRect);
+}
+
+void WebPage::setMainFrameIsScrollable(bool isScrollable)
+{
+    m_mainFrameIsScrollable = isScrollable;
+    m_drawingArea->mainFrameScrollabilityChanged(isScrollable);
+
+    if (FrameView* frameView = m_mainFrame->coreFrame()->view()) {
+        frameView->setCanHaveScrollbars(isScrollable);
+        frameView->setProhibitsScrolling(!isScrollable);
+    }
+}
 
 bool WebPage::windowIsFocused() const
 {
@@ -3298,7 +3315,7 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
 }
 
 #if PLATFORM(MAC)
-void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, uint64_t callbackID)
+void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, uint64_t callbackID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;

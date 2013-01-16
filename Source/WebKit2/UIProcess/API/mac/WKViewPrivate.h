@@ -51,5 +51,6 @@
 + (void)hideWordDefinitionWindow;
 
 @property (readwrite) CGFloat minimumLayoutWidth;
+@property (readwrite) CGFloat minimumWidthForAutoLayout;
 
 @end

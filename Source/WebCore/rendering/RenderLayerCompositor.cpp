@@ -2222,8 +2222,8 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
     if (m_renderView->document()->ownerElement())
         return false;
 
-    // We do want a layer if we have a scrolling coordinator.
-    if (scrollingCoordinator() && m_renderView->frameView()->hasOpaqueBackground())
+    // We do want a layer if we have a scrolling coordinator and can scroll.
+    if (scrollingCoordinator() && m_renderView->frameView()->hasOpaqueBackground() && !m_renderView->frameView()->prohibitsScrolling())
         return true;
 
     // Chromium always wants a layer.
@@ -2241,8 +2241,8 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
         return false;
 
 #if PLATFORM(MAC)
-    // On Mac, we want a content shadow layer if we have a scrolling coordinator.
-    if (scrollingCoordinator())
+    // On Mac, we want a content shadow layer if we have a scrolling coordinator and can scroll.
+    if (scrollingCoordinator() && !m_renderView->frameView()->prohibitsScrolling())
         return true;
 #endif
 

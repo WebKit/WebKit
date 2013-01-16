@@ -47,6 +47,9 @@ public:
     virtual void setVisibleRect(const IntRect&) = 0;
     virtual IntRect visibleRect() const = 0;
 
+    virtual void setExposedRect(const IntRect&) = 0;
+    virtual void setClipsToExposedRect(bool) = 0;
+
     virtual void prepopulateRect(const IntRect&) = 0;
 
     virtual void setIsInWindow(bool) = 0;

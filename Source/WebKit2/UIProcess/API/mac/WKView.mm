@@ -210,6 +210,7 @@ struct WKViewInterpretKeyEventsParameters {
     String _promisedURL;
 
     NSSize _intrinsicContentSize;
+    BOOL _expandsToFitContentViaAutoLayout;
 }
 
 @end
@@ -362,9 +363,12 @@ struct WKViewInterpretKeyEventsParameters {
         _data->_windowHasValidBackingStore = NO;
 
     [super setFrameSize:size];
-    
-    if (![self frameSizeUpdatesDisabled])
+
+    if (![self frameSizeUpdatesDisabled]) {
+        if (_data->_expandsToFitContentViaAutoLayout)
+            _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
         [self _setDrawingAreaSize:size];
+    }
 }
 
 - (void)_updateWindowAndViewFrames
@@ -377,6 +381,8 @@ struct WKViewInterpretKeyEventsParameters {
     NSPoint accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
     
     _data->_page->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates), IntPoint(accessibilityPosition));
+    if (_data->_expandsToFitContentViaAutoLayout)
+        _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
 }
 
 - (void)renewGState
@@ -2944,6 +2950,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
+    _data->_expandsToFitContentViaAutoLayout = NO;
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
@@ -3030,8 +3037,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if (!_data->_frameSizeUpdatesDisabledCount)
         return;
     
-    if (!(--_data->_frameSizeUpdatesDisabledCount))
+    if (!(--_data->_frameSizeUpdatesDisabledCount)) {
+        if (_data->_expandsToFitContentViaAutoLayout)
+            _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
         [self _setDrawingAreaSize:[self frame].size];
+    }
 }
 
 - (BOOL)frameSizeUpdatesDisabled
@@ -3055,12 +3065,44 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (CGFloat)minimumLayoutWidth
 {
+    static BOOL loggedDeprecationWarning = NO;
+
+    if (!loggedDeprecationWarning) {
+        NSLog(@"Please use minimumWidthForAutoLayout instead of minimumLayoutWidth.");
+        loggedDeprecationWarning = YES;
+    }
+
     return _data->_page->minimumLayoutWidth();
 }
 
 - (void)setMinimumLayoutWidth:(CGFloat)minimumLayoutWidth
 {
+    static BOOL loggedDeprecationWarning = NO;
+
+    if (!loggedDeprecationWarning) {
+        NSLog(@"Please use minimumWidthForAutoLayout instead of minimumLayoutWidth.");
+        loggedDeprecationWarning = YES;
+    }
+
+    [self setMinimumWidthForAutoLayout:minimumLayoutWidth];
+}
+
+- (CGFloat)minimumWidthForAutoLayout
+{
+    return _data->_page->minimumLayoutWidth();
+}
+
+- (void)setMinimumWidthForAutoLayout:(CGFloat)minimumLayoutWidth
+{
+    BOOL expandsToFit = minimumLayoutWidth > 0;
+
+    _data->_expandsToFitContentViaAutoLayout = expandsToFit;
     _data->_page->setMinimumLayoutWidth(minimumLayoutWidth);
+
+    if (expandsToFit)
+        _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
+
+    _data->_page->setMainFrameIsScrollable(!expandsToFit);
 }
 
 @end

@@ -71,6 +71,9 @@ private:
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
+    virtual void setExposedRect(const WebCore::IntRect&) OVERRIDE;
+    virtual void mainFrameScrollabilityChanged(bool) OVERRIDE;
+
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
 
     // WebCore::GraphicsLayerClient
@@ -112,6 +115,8 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     bool m_isPaintingSuspended;
+
+    WebCore::IntRect m_exposedRect;
 
     double m_minimumLayoutWidth;
     WebCore::IntSize m_lastSentIntrinsicContentSize;

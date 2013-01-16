@@ -1,3 +1,59 @@
+2013-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Clamp TileCache visibleRect to WKView's visibleRect
+        https://bugs.webkit.org/show_bug.cgi?id=106601
+        <rdar://problem/12843164>
+
+        Reviewed by Simon Fraser.
+
+        Some clients expand the WKView to be much larger than what is visible on screen, and
+        control scrolling with their own view. Currently, we will create tiles for the entire
+        view, consuming a great deal of memory, and can sometimes factor scrollbars which can
+        never exist into layout. Piggyback on WKView SPI (the property minimumWidthForAutoLayout,
+        renamed from minimumLayoutWidth) to drop into a mode where we disable main frame scrolling
+        and respect the WKView's visibleRect when creating tiles.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]): Update the page's viewExposedRect from our visibleRect.
+        (-[WKView _updateWindowAndViewFrames]): Update the page's viewExposedRect from our visibleRect.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]): The main frame is scrollable by default.
+        (-[WKView enableFrameSizeUpdates]): If frame size updates become enabled, update the
+        page's viewExposedRect from our visibleRect.
+        (-[WKView setMinimumLayoutWidth:]): Rename minimumLayoutWidth property to minimumWidthForAutoLayout.
+        Warn once if the old one is used.
+        (-[WKView minimumWidthForAutoLayout]):
+        (-[WKView setMinimumWidthForAutoLayout:]): Adjust the minimum layout width, whether the main frame
+        is scrollable, and update the page's viewExposedRect if needed.
+        * UIProcess/API/mac/WKViewPrivate.h: Added minimumWidthForAutoLayout property.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add viewExposedRectChanged/setMainFrameIsScrollable.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::viewExposedRectChanged): Forward viewExposedRectChanged to WebPage.
+        (WebKit::WebPageProxy::setMainFrameIsScrollable): Forward setMainFrameIsScrollable to WebPage.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Disable scrollbars and scrolling if
+        main frame scrollability is disabled.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setExposedRect): Added empty default implementation.
+        (WebKit::DrawingArea::mainFrameScrollabilityChanged): Added empty default implementation.
+        (DrawingArea):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged): We don't need the WebCore:: namespace.
+        (WebKit::WebPage::viewExposedRectChanged): Forward exposed rect changes to DrawingArea (only TiledCoreAnimationDrawingArea cares, for now).
+        (WebKit::WebPage::setMainFrameIsScrollable): Forward scrollability changes to DrawingArea and the main FrameView.
+        (WebKit::WebPage::drawRectToImage): We don't need the WebCore:: namespace.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add mainFrameIsScrollable, viewExposedRectChanged, setMainFrameIsScrollable, and storage for m_mainFrameIsScrollable.
+        (WebKit::WebPage::mainFrameIsScrollable):
+        * WebProcess/WebPage/WebPage.messages.in: Add ViewExposedRectChanged and SetMainFrameIsScrollable messages.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect): Forward new exposed rect to TiledBacking (only TileCache cares, for now).
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged): Ask TiledBacking to clip to the exposedRect if main frame scrolling is disabled.
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry): Use size instead of viewSize in case we've changed it because of m_minimumLayoutWidth.
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer): Update exposedRect and clipsToExposedRect.
+
 2013-01-15  Enrica Casucci  <enrica@apple.com>
 
         Add a new set of WebKit2 APIs for text search and

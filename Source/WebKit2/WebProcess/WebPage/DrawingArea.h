@@ -84,6 +84,9 @@ public:
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
+    virtual void setExposedRect(const WebCore::IntRect&) { }
+    virtual void mainFrameScrollabilityChanged(bool) { }
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;

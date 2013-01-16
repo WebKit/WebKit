@@ -109,6 +109,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer)
     , m_unparentsOffscreenTiles(false)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
+    , m_clipsToExposedRect(false)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(ThreadedScrollingIndication)
 {
@@ -305,6 +306,27 @@ void TileCache::setVisibleRect(const IntRect& visibleRect)
     revalidateTiles();
 }
 
+void TileCache::setExposedRect(const IntRect& exposedRect)
+{
+    if (m_exposedRect == exposedRect)
+        return;
+
+    m_exposedRect = exposedRect;
+    revalidateTiles();
+}
+
+void TileCache::setClipsToExposedRect(bool clipsToExposedRect)
+{
+    if (m_clipsToExposedRect == clipsToExposedRect)
+        return;
+
+    m_clipsToExposedRect = clipsToExposedRect;
+
+    // Going from not clipping to clipping, we don't need to revalidate right away.
+    if (clipsToExposedRect)
+        revalidateTiles();
+}
+
 void TileCache::prepopulateRect(const IntRect& rect)
 {
     ensureTilesForRect(rect);
@@ -393,17 +415,22 @@ void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft
 
 IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) const
 {
+    IntRect visibleRect = m_visibleRect;
+
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
+
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
     // Furthermore, if the page can't have scrollbars (for example if its body element has overflow:hidden) it's very unlikely that the
     // page will ever be scrolled so we limit the tile coverage rect as well.
     if (!m_isInWindow || m_tileCoverage & CoverageForSlowScrolling)
-        return m_visibleRect;
+        return visibleRect;
 
-    bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !m_visibleRect.intersects(previousVisibleRect);
+    bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !visibleRect.intersects(previousVisibleRect);
     
     // FIXME: look at how far the document can scroll in each dimension.
-    int coverageHorizontalSize = m_visibleRect.width();
-    int coverageVerticalSize = m_visibleRect.height();
+    int coverageHorizontalSize = visibleRect.width();
+    int coverageVerticalSize = visibleRect.height();
     
     // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
     // These values were chosen because it's more common to have tall pages and to scroll vertically,
@@ -416,11 +443,11 @@ IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) c
 
     // Don't extend coverage before 0 or after the end.
     IntRect coverageBounds = bounds();
-    int coverageLeft = m_visibleRect.x() - (coverageHorizontalSize - m_visibleRect.width()) / 2;
+    int coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
     coverageLeft = min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
     coverageLeft = max(coverageLeft, coverageBounds.x());
 
-    int coverageTop = m_visibleRect.y() - (coverageVerticalSize - m_visibleRect.height()) / 2;
+    int coverageTop = visibleRect.y() - (coverageVerticalSize - visibleRect.height()) / 2;
     coverageTop = min(coverageTop, coverageBounds.maxY() - coverageVerticalSize);
     coverageTop = max(coverageTop, coverageBounds.y());
 
@@ -547,7 +574,12 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
     if (!platformLayer)
         return;
 
-    if (m_visibleRect.isEmpty() || bounds().isEmpty())
+    IntRect visibleRect = m_visibleRect;
+
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
+
+    if (visibleRect.isEmpty() || bounds().isEmpty())
         return;
     
     TileValidationPolicyFlags validationPolicy = m_isInWindow ? foregroundValidationPolicy : backgroundValidationPolicy;
@@ -653,7 +685,7 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
     if (m_tiledScrollingIndicatorLayer)
         updateTileCoverageMap();
 
-    m_visibleRectAtLastRevalidate = m_visibleRect;
+    m_visibleRectAtLastRevalidate = visibleRect;
 
     if (dirtyRects.isEmpty())
         return;

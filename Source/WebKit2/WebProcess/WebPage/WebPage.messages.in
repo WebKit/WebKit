@@ -262,6 +262,8 @@ messages -> WebPage {
 
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates, WebCore::IntPoint accessibilityViewCoordinates)
+    ViewExposedRectChanged(WebCore::IntRect exposedRect)
+    SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
     GetStringSelectionForPasteboard() -> (WTF::String stringValue)
     GetDataSelectionForPasteboard(WTF::String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)

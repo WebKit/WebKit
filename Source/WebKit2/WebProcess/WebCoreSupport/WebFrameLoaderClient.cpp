@@ -1228,26 +1228,29 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
     bool isTransparent = !webPage->drawsBackground();
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
+    bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
+    bool shouldHideScrollbars = shouldUseFixedLayout || shouldDisableScrolling;
     IntRect currentFixedVisibleContentRect = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->fixedVisibleContentRect() : IntRect();
 
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
     m_frameHasCustomRepresentation = isMainFrame && webPage->shouldUseCustomRepresentationForResponse(response);
     m_frameCameFromPageCache = false;
 
+    ScrollbarMode defaultScrollbarMode = shouldHideScrollbars ? ScrollbarAlwaysOff : ScrollbarAuto;
+
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
+        IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
+        defaultScrollbarMode, /* lock */ shouldHideScrollbars, defaultScrollbarMode, /* lock */ shouldHideScrollbars);
+
+    m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
+
 #if USE(TILED_BACKING_STORE)
     if (shouldUseFixedLayout) {
-        m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
-            IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
-            ScrollbarAlwaysOff, /* lock */ true, ScrollbarAlwaysOff, /* lock */ true);
-
         m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
         m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
         return;
     }
 #endif
-
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
-        IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout);
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

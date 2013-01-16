@@ -137,6 +137,22 @@ void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreen
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
+void WebPageProxy::viewExposedRectChanged(const IntRect& exposedRect)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::ViewExposedRectChanged(exposedRect), m_pageID);
+}
+
+void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_pageID);
+}
+
 void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
     if (!isValid()) {
