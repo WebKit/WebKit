@@ -12,7 +12,7 @@ EXPECTED (captionsButtonElement.disabled == 'false') OK
 ** The captions track should be listed in textTracks, but not yet loaded. **
 EXPECTED (video.textTracks.length == '1') OK
 EXPECTED (video.textTracks[0].mode == 'disabled') OK
-Failed to find text track container element
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 ** Captions track should load and captions should become visible after button is clicked **
 *** Click the CC button.

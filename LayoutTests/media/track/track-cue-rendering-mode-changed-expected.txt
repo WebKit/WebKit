@@ -1,0 +1,26 @@
+Test that cues are rendered when only the track mode is changed
+EVENT(canplaythrough)
+
+Add 'Arabic' text track with one cue
+Add 'English' text track with one cue
+
+Set the mode of the 'Arabic' track to showing
+Set the mode of the 'English' track to hidden
+
+** Both cues should be active **
+EXPECTED (testTrackEnglish.activeCues.length == '1') OK
+EXPECTED (testTrackEnglish.activeCues[0].text == 'English') OK
+EXPECTED (testTrackArabic.activeCues.length == '1') OK
+EXPECTED (testTrackArabic.activeCues[0].text == 'Arabic') OK
+
+** Only one cue should be visible **
+EXPECTED (testCueDisplayBox.innerText == 'Arabic') OK
+EXPECTED (testCueDisplayBox.nextSibling == 'null') OK
+
+Set the mode of the 'English' track to showing
+
+** Both cues shold be visible. **
+EXPECTED (testCueDisplayBox.innerText == 'Arabic') OK
+EXPECTED (testCueDisplayBox.innerText == 'English') OK
+END OF TEST
+

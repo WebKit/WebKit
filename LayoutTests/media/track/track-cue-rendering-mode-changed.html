@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var testTrackArabic;
+        var testTrackEnglish;
+        var testCueDisplayBox;
+
+        function addTracks()
+        {
+            consoleWrite("");
+
+            consoleWrite("Add 'Arabic' text track with one cue");
+            testTrackArabic = video.addTextTrack('captions', 'Arabic', 'ar');
+            testTrackArabic.addCue(new TextTrackCue(0.0, 10.0, 'Arabic'));
+
+            consoleWrite("Add 'English' text track with one cue");
+            testTrackEnglish = video.addTextTrack('captions', 'English', 'en');
+            testTrackEnglish.addCue(new TextTrackCue(0.0, 10.0, 'English'));
+
+            consoleWrite("");
+            consoleWrite("Set the mode of the 'Arabic' track to showing");
+            testTrackArabic.mode = "showing";
+
+            consoleWrite("Set the mode of the 'English' track to hidden");
+            testTrackEnglish.mode = "hidden";
+        }
+
+        function testCueActiveState()
+        {
+            consoleWrite("");
+            consoleWrite("** Both cues should be active **");
+            testExpected("testTrackEnglish.activeCues.length", 1);
+            testExpected("testTrackEnglish.activeCues[0].text", "English");
+
+            testExpected("testTrackArabic.activeCues.length", 1);
+            testExpected("testTrackArabic.activeCues[0].text", "Arabic");
+        }
+
+        function testCueVisibility()
+        {
+            consoleWrite("");
+            consoleWrite("** Only one cue should be visible **");
+            testCueDisplayBox = textTrackDisplayElement(video, 'display', 0);
+            testExpected("testCueDisplayBox.innerText", "Arabic");
+            testExpected("testCueDisplayBox.nextSibling", null);
+
+            consoleWrite("");
+            consoleWrite("Set the mode of the 'English' track to showing");
+            testTrackEnglish.mode = "showing";
+
+            consoleWrite("");
+            consoleWrite("** Both cues shold be visible. **");
+            testCueDisplayBox = textTrackDisplayElement(video, 'display', 0);
+            testExpected("testCueDisplayBox.innerText", "Arabic");
+
+            testCueDisplayBox = textTrackDisplayElement(video, 'display', 1);
+            testExpected("testCueDisplayBox.innerText", "English");
+        }
+
+        function runTests() {
+            addTracks();
+            testCueActiveState();
+            testCueVisibility();
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that cues are rendered when only the track mode is changed");
+
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            waitForEvent('canplaythrough', runTests);
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls ></video>
+    </body>
+</html>

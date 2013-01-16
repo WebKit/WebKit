@@ -1166,8 +1166,15 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
             activeSetChanged = true;
     }
 
-    if (!activeSetChanged)
+    if (!activeSetChanged) {
+        // Even though the active set has not changed, it is possible that the
+        // the mode of a track has changed from 'hidden' to 'showing' and the
+        // cues have not yet been rendered.
+        if (hasMediaControls())
+            mediaControls()->updateTextTrackDisplay();
+
         return;
+    }
 
     // 7 - If the time was reached through the usual monotonic increase of the
     // current playback position during normal playback, and there are cues in
@@ -1361,6 +1368,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     }
 
     configureTextTrackDisplay();
+    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
