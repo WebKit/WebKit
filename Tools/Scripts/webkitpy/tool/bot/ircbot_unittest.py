@@ -88,8 +88,11 @@ class IRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_logs=expected_logs)
 
     def test_help(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Available commands: create-bug, help, hi, restart, roll-chromium-deps, rollout, sheriffs, whois\n"
+        expected_logs = 'MOCK: irc.post: mock_nick: Available commands: create-bug, help, hi, restart, roll-chromium-deps, rollout, sheriffs, whois\nMOCK: irc.post: mock_nick: Type "sheriffbot: help COMMAND" for help on individual commands.\n'
         OutputCapture().assert_outputs(self, run, args=["help"], expected_logs=expected_logs)
+        expected_logs = 'MOCK: irc.post: mock_nick: Usage: hi\nMOCK: irc.post: mock_nick: Retrieves a random quip from Bugzilla.\nMOCK: irc.post: mock_nick: Aliases: hello\n'
+        OutputCapture().assert_outputs(self, run, args=["help hi"], expected_logs=expected_logs)
+        OutputCapture().assert_outputs(self, run, args=["help hello"], expected_logs=expected_logs)
 
     def test_restart(self):
         expected_logs = "MOCK: irc.post: Restarting...\n"

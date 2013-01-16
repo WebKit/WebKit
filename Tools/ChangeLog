@@ -1,3 +1,40 @@
+2013-01-15  Alan Cutter  <alancutter@chromium.org>
+
+        Extend sheriffbot's "help" command to be able to get help on individual commands
+        https://bugs.webkit.org/show_bug.cgi?id=106629
+
+        Reviewed by Eric Seidel.
+
+        Added a help command to sheriffbot.
+        Fixed some style issues and ordered the commands alphabetically.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (IRCCommand):
+        (IRCCommand.execute):
+        (IRCCommand.usage):
+        (IRCCommand.help):
+        (CreateBug):
+        (CreateBug.execute):
+        (Help):
+        (Help.execute):
+        (Help._post_command_help):
+        (Hi):
+        (Hi.execute):
+        (Restart):
+        (RollChromiumDEPS):
+        (RollChromiumDEPS._parse_args):
+        (RollChromiumDEPS._expand_irc_nickname):
+        (RollChromiumDEPS.execute):
+        (Rollout):
+        (Rollout._extract_revisions):
+        (Rollout.execute):
+        (Sheriffs):
+        (Sheriffs.execute):
+        (Whois):
+        (Whois.execute):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help):
+
 2013-01-15  Enrica Casucci  <enrica@apple.com>
 
         Add a new set of WebKit2 APIs for text search and

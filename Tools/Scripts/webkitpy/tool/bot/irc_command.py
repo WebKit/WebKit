@@ -49,19 +49,128 @@ def _post_error_and_check_for_bug_url(tool, nicks_string, exception):
 
 # FIXME: Merge with Command?
 class IRCCommand(object):
+    usage_string = None
+    help_string = None
+
     def execute(self, nick, args, tool, sheriff):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError("subclasses must implement")
+
+    @classmethod
+    def usage(cls, nick):
+        return "%s: Usage: %s" % (nick, cls.usage_string)
+
+    @classmethod
+    def help(cls, nick):
+        return "%s: %s" % (nick, cls.help_string)
+
+
+class CreateBug(IRCCommand):
+    usage_string = "create-bug BUG_TITLE"
+    help_string = "Creates a Bugzilla bug with the given title."
+
+    def execute(self, nick, args, tool, sheriff):
+        if not args:
+            return self.usage(nick)
+
+        bug_title = " ".join(args)
+        bug_description = "%s\nRequested by %s on %s." % (bug_title, nick, config_irc.channel)
+
+        # There happens to be a committers list hung off of Bugzilla, so
+        # re-using that one makes things easiest for now.
+        requester = tool.bugs.committers.contributor_by_irc_nickname(nick)
+        requester_email = requester.bugzilla_email() if requester else None
+
+        try:
+            bug_id = tool.bugs.create_bug(bug_title, bug_description, cc=requester_email, assignee=requester_email)
+            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+            return "%s: Created bug: %s" % (nick, bug_url)
+        except Exception, e:
+            return "%s: Failed to create bug:\n%s" % (nick, e)
+
+
+class Help(IRCCommand):
+    usage_string = "help [COMMAND]"
+    help_string = "Provides help on individual sheriffbot commands."
+
+    def execute(self, nick, args, tool, sheriff):
+        if args:
+            for command_name in args:
+                if command_name in commands:
+                    self._post_command_help(nick, tool, commands[command_name])
+        else:
+            tool.irc().post("%s: Available commands: %s" % (nick, ", ".join(sorted(visible_commands.keys()))))
+            tool.irc().post('%s: Type "sheriffbot: help COMMAND" for help on individual commands.' % nick)
+
+    def _post_command_help(self, nick, tool, command):
+        tool.irc().post(command.usage(nick))
+        tool.irc().post(command.help(nick))
+        aliases = " ".join(sorted(filter(lambda alias: commands[alias] == command and alias not in visible_commands, commands)))
+        if aliases:
+            tool.irc().post("%s: Aliases: %s" % (nick, aliases))
+
+
+class Hi(IRCCommand):
+    usage_string = "hi"
+    help_string = "Retrieves a random quip from Bugzilla."
+
+    def execute(self, nick, args, tool, sheriff):
+        quips = tool.bugs.quips()
+        quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
+        return random.choice(quips)
 
 
 class Restart(IRCCommand):
+    usage_string = "restart"
+    help_string = "Restarts sherrifbot.  Will update its WebKit checkout, and re-join the channel momentarily."
+
     def execute(self, nick, args, tool, sheriff):
         tool.irc().post("Restarting...")
         raise TerminateQueue()
 
 
-class Rollout(IRCCommand):
-    def _extract_revisions(self, arg):
+class RollChromiumDEPS(IRCCommand):
+    usage_string = "roll-chromium-deps [REVISION]"
+    help_string = "Rolls WebKit's Chromium DEPS to the given revision or defaults to LKGR. Creates a patch and provides the bug URL."
 
+    def _parse_args(self, args):
+        if not args:
+            return
+        revision = args[0].lstrip("r")
+        if not revision.isdigit():
+            return
+        return revision
+
+    def _expand_irc_nickname(self, nick):
+        contributor = CommitterList().contributor_by_irc_nickname(nick)
+        if contributor:
+            return str(contributor)
+        return nick
+
+    def execute(self, nick, args, tool, sheriff):
+        revision = self._parse_args(args)
+
+        roll_target = "r%s" % revision if revision else "last-known good revision"
+        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
+        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via sheriffbot.\n\n" % (roll_target, self._expand_irc_nickname(nick))
+
+        try:
+            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target, changelog_message)
+            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+            tool.irc().post("%s: Created DEPS roll: %s" % (nick, bug_url))
+        except ScriptError, e:
+            match = re.search(r"Current Chromium DEPS revision \d+ is newer than \d+\.", e.output)
+            if match:
+                tool.irc().post("%s: %s" % (nick, match.group(0)))
+                return
+            tool.irc().post("%s: Failed to create DEPS roll:" % nick)
+            _post_error_and_check_for_bug_url(tool, nick, e)
+
+
+class Rollout(IRCCommand):
+    usage_string = "rollout SVN_REVISION [SVN_REVISIONS] REASON"
+    help_string = "Opens a rollout bug, CCing author + reviewer, and attaching the reverse-diff of the given revisions marked as commit-queue=?."
+
+    def _extract_revisions(self, arg):
         revision_list = []
         possible_revisions = arg.split(",")
         for revision in possible_revisions:
@@ -118,8 +227,7 @@ class Rollout(IRCCommand):
         svn_revision_list, rollout_reason = self._parse_args(args)
 
         if (not svn_revision_list or not rollout_reason):
-            # return is equivalent to an irc().post(), but makes for easier unit testing.
-            return "%s: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON" % nick
+            return self.usage(nick)
 
         revision_urls_string = join_with_separators([urls.view_revision_url(revision) for revision in svn_revision_list])
         tool.irc().post("%s: Preparing rollout for %s ..." % (nick, revision_urls_string))
@@ -142,6 +250,9 @@ class Rollout(IRCCommand):
 
 
 class Sheriffs(IRCCommand):
+    usage_string = "sheriffs"
+    help_string = "Retrieves who the current Chromium WebKit sheriffs are from: %s" % urls.chromium_webkit_sheriff_url
+
     def _retrieve_webkit_sheriffs(self, url):
         try:
             sheriff_js = Web().get_binary(url, True)
@@ -176,54 +287,10 @@ class Sheriffs(IRCCommand):
         return "%s: The current %ss are: %s" % (nick, sheriff_name, sheriffs)
 
 
-class RollChromiumDEPS(IRCCommand):
-    def _parse_args(self, args):
-        if not args:
-            return
-        revision = args[0].lstrip("r")
-        if not revision.isdigit():
-            return
-        return revision
-
-    def _expand_irc_nickname(self, nick):
-        contributor = CommitterList().contributor_by_irc_nickname(nick)
-        if contributor:
-            return str(contributor)
-        return nick
-
-    def execute(self, nick, args, tool, sheriff):
-        revision = self._parse_args(args)
-
-        roll_target = "r%s" % revision if revision else "last-known good revision"
-        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
-        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via sheriffbot.\n\n" % (roll_target, self._expand_irc_nickname(nick))
-
-        try:
-            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target, changelog_message)
-            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
-            tool.irc().post("%s: Created DEPS roll: %s" % (nick, bug_url))
-        except ScriptError, e:
-            match = re.search(r"Current Chromium DEPS revision \d+ is newer than \d+\.", e.output)
-            if match:
-                tool.irc().post("%s: %s" % (nick, match.group(0)))
-                return
-            tool.irc().post("%s: Failed to create DEPS roll:" % nick)
-            _post_error_and_check_for_bug_url(tool, nick, e)
-
-
-class Help(IRCCommand):
-    def execute(self, nick, args, tool, sheriff):
-        return "%s: Available commands: %s" % (nick, ", ".join(sorted(visible_commands.keys())))
-
-
-class Hi(IRCCommand):
-    def execute(self, nick, args, tool, sheriff):
-        quips = tool.bugs.quips()
-        quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
-        return random.choice(quips)
-
-
 class Whois(IRCCommand):
+    usage_string = "whois SEARCH_STRING"
+    help_string = "Searches known contributors and returns any matches with irc, email and full name."
+
     def _nick_or_full_record(self, contributor):
         if contributor.irc_nicknames:
             return ', '.join(contributor.irc_nicknames)
@@ -231,7 +298,7 @@ class Whois(IRCCommand):
 
     def execute(self, nick, args, tool, sheriff):
         if len(args) != 1:
-            return "%s: Usage: whois SEARCH_STRING" % nick
+            return self.usage(nick)
         search_string = args[0]
         # FIXME: We should get the ContributorList off the tool somewhere.
         contributors = CommitterList().contributors_by_search_string(search_string)
@@ -253,37 +320,16 @@ class Whois(IRCCommand):
         return "%s: I'm not sure who you mean?  %s could be '%s'." % (nick, contributors_string, search_string)
 
 
-class CreateBug(IRCCommand):
-    def execute(self, nick, args, tool, sheriff):
-        if not args:
-            return "%s: Usage: create-bug BUG_TITLE" % nick
-
-        bug_title = " ".join(args)
-        bug_description = "%s\nRequested by %s on %s." % (bug_title, nick, config_irc.channel)
-
-        # There happens to be a committers list hung off of Bugzilla, so
-        # re-using that one makes things easiest for now.
-        requester = tool.bugs.committers.contributor_by_irc_nickname(nick)
-        requester_email = requester.bugzilla_email() if requester else None
-
-        try:
-            bug_id = tool.bugs.create_bug(bug_title, bug_description, cc=requester_email, assignee=requester_email)
-            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
-            return "%s: Created bug: %s" % (nick, bug_url)
-        except Exception, e:
-            return "%s: Failed to create bug:\n%s" % (nick, e)
-
-
 # FIXME: Lame.  We should have an auto-registering CommandCenter.
 visible_commands = {
+    "create-bug": CreateBug,
     "help": Help,
     "hi": Hi,
     "restart": Restart,
+    "roll-chromium-deps": RollChromiumDEPS,
     "rollout": Rollout,
     "sheriffs": Sheriffs,
     "whois": Whois,
-    "create-bug": CreateBug,
-    "roll-chromium-deps": RollChromiumDEPS,
 }
 
 # Add revert as an "easter egg" command. Why?
@@ -297,3 +343,5 @@ commands["gardeners"] = Sheriffs
 commands["sherriffs"] = Sheriffs
 commands["sherifs"] = Sheriffs
 commands["sherrifs"] = Sheriffs
+# "hello" Alias for "hi" command for the purposes of testing aliases
+commands["hello"] = Hi
