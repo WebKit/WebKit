@@ -1990,7 +1990,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     /**
      * @param {Element} lineRow
      * @param {string} line
-     * @param {Array.<{startColumn: number, endColumn: number, cssClass: string}>} ranges
+     * @param {Array.<{startColumn: number, endColumn: number, token: ?string}>} ranges
      */
     _renderRanges: function(lineRow, line, ranges)
     {

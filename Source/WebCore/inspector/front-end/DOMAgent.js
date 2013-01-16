@@ -135,7 +135,7 @@ WebInspector.DOMNode.prototype = {
      */
     hasChildNodes: function()
     {
-        return this._childNodeCount > 0 || !!this._shadowRoots.length || this._templateContent;
+        return this._childNodeCount > 0 || !!this._shadowRoots.length || !!this._templateContent;
     },
 
     /**
@@ -297,7 +297,7 @@ WebInspector.DOMNode.prototype = {
                 callback(this.children);
         }
 
-        DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
+        DOMAgent.requestChildNodes(this.id, undefined, mycallback.bind(this));
     },
 
     /**

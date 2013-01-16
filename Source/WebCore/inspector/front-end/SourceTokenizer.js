@@ -34,6 +34,8 @@
  */
 WebInspector.SourceTokenizer = function()
 {
+    /** @type {?string} */
+    this.tokenType = null;
 }
 
 WebInspector.SourceTokenizer.prototype = {
@@ -61,6 +63,10 @@ WebInspector.SourceTokenizer.prototype = {
         this.condition.lexCondition = lexCondition;
     },
 
+    /**
+     * @param {number} cursor
+     * @return {string}
+     */
     _charAt: function(cursor)
     {
         return cursor < this._line.length ? this._line.charAt(cursor) : "\n";
@@ -70,6 +76,10 @@ WebInspector.SourceTokenizer.prototype = {
     {
     },
 
+    /**
+     * @param {number} cursor
+     * @return {number}
+     */
     nextToken: function(cursor)
     {
     }
@@ -88,6 +98,9 @@ WebInspector.SourceTokenizer.Registry = function() {
     };
 }
 
+/**
+ * @return {WebInspector.SourceTokenizer.Registry}
+ */
 WebInspector.SourceTokenizer.Registry.getInstance = function()
 {
     if (!WebInspector.SourceTokenizer.Registry._instance)
@@ -96,6 +109,10 @@ WebInspector.SourceTokenizer.Registry.getInstance = function()
 }
 
 WebInspector.SourceTokenizer.Registry.prototype = {
+    /**
+     * @param {string} mimeType
+     * @return {WebInspector.SourceTokenizer}
+     */
     getTokenizer: function(mimeType)
     {
         if (!this._tokenizerConstructors[mimeType])

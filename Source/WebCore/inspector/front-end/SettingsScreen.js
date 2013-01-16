@@ -424,7 +424,7 @@ WebInspector.OverridesSettingsTab = function()
     WebInspector.SettingsTab.call(this, WebInspector.UIString("Overrides"), "overrides-tab-content");
     this._view = new WebInspector.OverridesView();
     this.containerElement.parentElement.appendChild(this._view.containerElement);
-    this.containerElement.remove();
+    this.containerElement.removeSelf();
     this.containerElement = this._view.containerElement;
 }
 
