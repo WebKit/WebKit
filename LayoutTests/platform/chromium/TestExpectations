@@ -3720,6 +3720,7 @@ webkit.org/b/94353 compositing/overflow/overflow-overlay-with-touch.html [ Failu
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 
 webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Pass Slow ]
+webkit.org/b/90488 [ Win ] inspector/extensions/extensions-reload.html [ Pass Slow ]
 
 webkit.org/b/94521 [ Linux ] fast/loader/loadInProgress.html [ Crash Pass ]
 
