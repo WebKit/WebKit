@@ -1,3 +1,11 @@
+2013-01-16  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Roll Chromium to r177080.
+
+        * DEPS:
+
 2013-01-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Create GraphicsLayerChromiums using a factory
