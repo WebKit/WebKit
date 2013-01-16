@@ -474,7 +474,7 @@ void Node::clearRareData()
     if (isElementNode())
         delete static_cast<ElementRareData*>(m_data.m_rareData);
     else
-        delete m_data.m_rareData;
+        delete static_cast<NodeRareData*>(m_data.m_rareData);
     m_data.m_renderer = renderer;
     clearFlag(HasRareDataFlag);
 }
