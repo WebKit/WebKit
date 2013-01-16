@@ -407,9 +407,6 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* parent = coreObject->parentObjectUnignored();
 
-    if (!parent)
-        return -1;
-
     if (!parent && isRootObject(coreObject)) {
         AtkObject* atkParent = atkParentOfRootObject(object);
         if (!atkParent)
@@ -429,6 +426,9 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     // rows won't be exposed to assistive technologies.
     if (parent && parent->isTableRow() && coreObject->isTableCell())
         return getIndexInParentForCellInRow(coreObject);
+
+    if (!parent)
+        return -1;
 
     size_t index = parent->children().find(coreObject);
     return (index == WTF::notFound) ? -1 : index;
