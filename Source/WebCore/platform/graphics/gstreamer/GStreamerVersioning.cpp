@@ -147,7 +147,7 @@ void setGstBufferSize(GstBuffer* buffer, int newSize)
 char* getGstBufferDataPointer(GstBuffer* buffer)
 {
 #ifdef GST_API_VERSION_1
-    static char* webkitGstMapInfoQuarkString = "webkit-gst-map-info";
+    static const char* webkitGstMapInfoQuarkString = "webkit-gst-map-info";
     GstMiniObject* miniObject = reinterpret_cast<GstMiniObject*>(buffer);
     GstMapInfo* mapInfo = static_cast<GstMapInfo*>(gst_mini_object_get_qdata(miniObject, g_quark_from_static_string(webkitGstMapInfoQuarkString)));
     return reinterpret_cast<char*>(mapInfo->data);
