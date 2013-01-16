@@ -133,9 +133,9 @@ def parse_args(args):
     ]))
 
     option_group_definitions.append(("Results Options", [
-        optparse.make_option("-p", "--pixel-tests", action="store_true",
+        optparse.make_option("-p", "--pixel", "--pixel-tests", action="store_true",
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
-        optparse.make_option("--no-pixel-tests", action="store_false",
+        optparse.make_option("--no-pixel", "--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-sample-on-timeout", action="store_false",
             dest="sample_on_timeout", help="Don't run sample on timeout (Mac OS X only)"),

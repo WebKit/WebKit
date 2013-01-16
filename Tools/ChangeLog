@@ -1,3 +1,17 @@
+2013-01-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Please reinstate --pixel
+        https://bugs.webkit.org/show_bug.cgi?id=101995
+
+        Reviewed by Dirk Pranke.
+
+        Add the '--pixel' and '--no-pixel' options for NRWT as aliases for
+        the '--pixel-tests' (or '-p') and '--no-pixel-tests' options respectively.
+        Some developers are still used to these options that were available in the ORWT.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2013-01-16  Eric Seidel  <eric@webkit.org>
 
         Remove --shark* support from sunspider/run-sunspider now that Shark is dead
