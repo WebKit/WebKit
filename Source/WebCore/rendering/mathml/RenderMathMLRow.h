@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Node*);
+    RenderMathMLRow(ContainerNode*);
     static RenderMathMLRow* createAnonymousWithParentRenderer(const RenderObject*);
     
     virtual bool isRenderMathMLRow() const { return true; }

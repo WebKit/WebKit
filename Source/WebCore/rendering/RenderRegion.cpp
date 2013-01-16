@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
+RenderRegion::RenderRegion(ContainerNode* node, RenderFlowThread* flowThread)
     : RenderReplaced(node, IntSize())
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(0)

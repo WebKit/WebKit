@@ -32,7 +32,7 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
-    RenderTextControlSingleLine(Node*);
+    RenderTextControlSingleLine(ContainerNode*);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
@@ -110,7 +110,7 @@ void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
 class RenderTextControlInnerBlock : public RenderBlock {
 public:
-    RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
+    RenderTextControlInnerBlock(ContainerNode* node) : RenderBlock(node) { }
 
 private:
     virtual bool hasLineIfEmpty() const { return true; }

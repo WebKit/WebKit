@@ -43,7 +43,7 @@ namespace WebCore {
 // come before and after the span.
 class RenderMultiColumnSet : public RenderRegionSet {
 public:
-    RenderMultiColumnSet(Node*, RenderFlowThread*);
+    RenderMultiColumnSet(ContainerNode*, RenderFlowThread*);
     
     virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
 

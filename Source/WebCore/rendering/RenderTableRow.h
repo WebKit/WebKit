@@ -34,7 +34,7 @@ static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 class RenderTableRow : public RenderBox {
 public:
-    explicit RenderTableRow(Node*);
+    explicit RenderTableRow(ContainerNode*);
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
     RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }

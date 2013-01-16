@@ -31,7 +31,7 @@ class FlexBoxIterator;
 
 class RenderDeprecatedFlexibleBox : public RenderBlock {
 public:
-    RenderDeprecatedFlexibleBox(Node*);
+    RenderDeprecatedFlexibleBox(ContainerNode*);
     virtual ~RenderDeprecatedFlexibleBox();
 
     virtual const char* renderName() const;

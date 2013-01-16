@@ -42,7 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyRun::RenderRubyRun(Node* node)
+RenderRubyRun::RenderRubyRun(ContainerNode* node)
     : RenderBlock(node)
 {
     setReplaced(true);

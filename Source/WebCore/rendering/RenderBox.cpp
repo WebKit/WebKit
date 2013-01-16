@@ -83,7 +83,7 @@ static OverrideSizeMap* gOverrideContainingBlockLogicalWidthMap = 0;
 
 bool RenderBox::s_hadOverflowClip = false;
 
-RenderBox::RenderBox(Node* node)
+RenderBox::RenderBox(ContainerNode* node)
     : RenderBoxModelObject(node)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)

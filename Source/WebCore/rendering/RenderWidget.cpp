@@ -85,7 +85,7 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(Node* node)
+RenderWidget::RenderWidget(ContainerNode* node)
     : RenderReplaced(node)
     , m_widget(0)
     , m_frameView(node->document()->view())

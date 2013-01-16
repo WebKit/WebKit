@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node)
+RenderTextControlMultiLine::RenderTextControlMultiLine(ContainerNode* node)
     : RenderTextControl(node)
 {
 }

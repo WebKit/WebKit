@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderListItem::RenderListItem(Node* node)
+RenderListItem::RenderListItem(ContainerNode* node)
     : RenderBlock(node)
     , m_marker(0)
     , m_hasExplicitValue(false)

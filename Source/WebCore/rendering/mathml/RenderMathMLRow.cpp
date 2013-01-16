@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLRow::RenderMathMLRow(Node* node)
+RenderMathMLRow::RenderMathMLRow(ContainerNode* node)
     : RenderMathMLBlock(node)
 {
 }

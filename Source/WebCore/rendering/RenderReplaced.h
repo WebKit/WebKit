@@ -28,8 +28,8 @@ namespace WebCore {
 
 class RenderReplaced : public RenderBox {
 public:
-    RenderReplaced(Node*);
-    RenderReplaced(Node*, const LayoutSize& intrinsicSize);
+    RenderReplaced(ContainerNode*);
+    RenderReplaced(ContainerNode*, const LayoutSize& intrinsicSize);
     virtual ~RenderReplaced();
 
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;

@@ -36,7 +36,7 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    RenderImage(Node*);
+    RenderImage(ContainerNode*);
     virtual ~RenderImage();
 
     void setImageResource(PassOwnPtr<RenderImageResource>);

@@ -88,7 +88,7 @@ public:
     template <class> friend struct ValueToString;
 #endif
 
-    RenderBlock(Node*);
+    RenderBlock(ContainerNode*);
     virtual ~RenderBlock();
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }

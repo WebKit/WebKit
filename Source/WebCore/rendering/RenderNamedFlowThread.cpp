@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread::RenderNamedFlowThread(Node* node, PassRefPtr<WebKitNamedFlow> namedFlow)
+RenderNamedFlowThread::RenderNamedFlowThread(ContainerNode* node, PassRefPtr<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(node)
     , m_namedFlow(namedFlow)
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)

@@ -35,7 +35,7 @@ class RenderScrollbar;
 
 class RenderScrollbarPart : public RenderBlock {
 public:
-    RenderScrollbarPart(Node*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
+    RenderScrollbarPart(ContainerNode*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
     virtual ~RenderScrollbarPart();
 
     virtual const char* renderName() const { return "RenderScrollbarPart"; }

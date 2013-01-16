@@ -39,7 +39,7 @@ class RenderRubyRun;
 
 class RenderRubyBase : public RenderBlock {
 public:
-    RenderRubyBase(Node*);
+    RenderRubyBase(ContainerNode*);
     virtual ~RenderRubyBase();
 
     virtual const char* renderName() const { return "RenderRubyBase (anonymous)"; }

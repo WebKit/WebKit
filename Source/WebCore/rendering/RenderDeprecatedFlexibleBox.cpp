@@ -119,7 +119,7 @@ private:
     int m_ordinalIteration;
 };
 
-RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Node* node)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(ContainerNode* node)
     : RenderBlock(node)
 {
     setChildrenInline(false); // All of our children must be block-level

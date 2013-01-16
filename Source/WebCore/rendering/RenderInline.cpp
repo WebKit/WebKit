@@ -49,7 +49,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderInline::RenderInline(Node* node)
+RenderInline::RenderInline(ContainerNode* node)
     : RenderBoxModelObject(node)
     , m_alwaysCreateLineBoxes(false)
 {

@@ -36,7 +36,7 @@ class HTMLDialogElement;
 
 class RenderDialog : public RenderBlock {
 public:
-    explicit RenderDialog(Node* node)
+    explicit RenderDialog(ContainerNode* node)
         : RenderBlock(node)
     { }
 

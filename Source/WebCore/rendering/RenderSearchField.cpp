@@ -53,7 +53,7 @@ using namespace HTMLNames;
 
 // ----------------------------
 
-RenderSearchField::RenderSearchField(Node* node)
+RenderSearchField::RenderSearchField(ContainerNode* node)
     : RenderTextControlSingleLine(node)
     , m_searchPopupIsVisible(false)
     , m_searchPopup(0)

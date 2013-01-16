@@ -95,8 +95,8 @@ HTMLElement* sliderTrackElementOf(Node* node)
 
 // --------------------------------
 
-RenderSliderThumb::RenderSliderThumb(Node* node)
-    : RenderBlock(node)
+RenderSliderThumb::RenderSliderThumb(SliderThumbElement* element)
+    : RenderBlock(element)
 {
 }
 
@@ -127,8 +127,8 @@ bool RenderSliderThumb::isSliderThumb() const
 // http://webkit.org/b/62535
 class RenderSliderContainer : public RenderFlexibleBox {
 public:
-    RenderSliderContainer(Node* node)
-        : RenderFlexibleBox(node) { }
+    RenderSliderContainer(SliderContainerElement* element)
+        : RenderFlexibleBox(element) { }
 public:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 

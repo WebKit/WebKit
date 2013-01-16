@@ -41,7 +41,7 @@ class RenderMathMLOperator;
 
 class RenderMathMLBlock : public RenderFlexibleBox {
 public:
-    RenderMathMLBlock(Node* container);
+    RenderMathMLBlock(ContainerNode*);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     
     virtual bool isRenderMathMLBlock() const { return true; }
@@ -132,7 +132,7 @@ void toRenderMathMLBlock(const RenderMathMLBlock*);
 
 class RenderMathMLTable : public RenderTable {
 public:
-    explicit RenderMathMLTable(Node* node) : RenderTable(node) { }
+    explicit RenderMathMLTable(Element* element) : RenderTable(element) { }
     
     virtual int firstLineBoxBaseline() const OVERRIDE;
     

@@ -43,7 +43,7 @@ class RenderRubyText;
 
 class RenderRubyRun : public RenderBlock {
 public:
-    RenderRubyRun(Node*);
+    RenderRubyRun(ContainerNode*);
     virtual ~RenderRubyRun();
 
     bool hasRubyText() const;

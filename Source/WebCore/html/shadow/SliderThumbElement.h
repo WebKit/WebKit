@@ -106,7 +106,7 @@ HTMLElement* sliderTrackElementOf(Node*);
 
 class RenderSliderThumb : public RenderBlock {
 public:
-    RenderSliderThumb(Node*);
+    RenderSliderThumb(SliderThumbElement*);
     void updateAppearance(RenderStyle* parentStyle);
 
 private:

@@ -33,7 +33,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderMultiColumnBlock::RenderMultiColumnBlock(Node* node)
+RenderMultiColumnBlock::RenderMultiColumnBlock(ContainerNode* node)
     : RenderBlock(node)
     , m_flowThread(0)
     , m_columnCount(1)

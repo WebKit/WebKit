@@ -89,7 +89,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
 }
 
 
-RenderTableSection::RenderTableSection(Node* node)
+RenderTableSection::RenderTableSection(ContainerNode* node)
     : RenderBox(node)
     , m_cCol(0)
     , m_cRow(0)

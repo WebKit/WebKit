@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-RenderReplica::RenderReplica(Node* n)
-: RenderBox(n)
+RenderReplica::RenderReplica(ContainerNode* node)
+    : RenderBox(node)
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the
     // renderers being replicated, so they always report that they are inline, non-replaced.
@@ -44,7 +44,8 @@ RenderReplica::RenderReplica(Node* n)
 }
 
 RenderReplica::~RenderReplica()
-{}
+{
+}
     
 void RenderReplica::layout()
 {

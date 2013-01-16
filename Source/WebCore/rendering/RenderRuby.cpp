@@ -109,7 +109,7 @@ static inline RenderRubyRun* findRubyRunParent(RenderObject* child)
 
 //=== ruby as inline object ===
 
-RenderRubyAsInline::RenderRubyAsInline(Node* node)
+RenderRubyAsInline::RenderRubyAsInline(ContainerNode* node)
     : RenderInline(node)
 {
 }
@@ -216,7 +216,7 @@ void RenderRubyAsInline::removeChild(RenderObject* child)
 
 //=== ruby as block object ===
 
-RenderRubyAsBlock::RenderRubyAsBlock(Node* node)
+RenderRubyAsBlock::RenderRubyAsBlock(ContainerNode* node)
     : RenderBlock(node)
 {
 }

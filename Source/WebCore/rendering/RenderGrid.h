@@ -34,7 +34,7 @@ class GridTrack;
 
 class RenderGrid : public RenderBlock {
 public:
-    RenderGrid(Node*);
+    RenderGrid(ContainerNode*);
     virtual ~RenderGrid();
 
     virtual const char* renderName() const OVERRIDE;

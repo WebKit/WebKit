@@ -37,7 +37,7 @@ enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
 class RenderTableCell : public RenderBlock {
 public:
-    explicit RenderTableCell(Node*);
+    explicit RenderTableCell(ContainerNode*);
     
     unsigned colSpan() const
     {

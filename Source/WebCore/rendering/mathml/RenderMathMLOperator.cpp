@@ -47,7 +47,7 @@ RenderMathMLOperator::RenderMathMLOperator(Element* element)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Node* node, UChar operatorChar)
+RenderMathMLOperator::RenderMathMLOperator(ContainerNode* node, UChar operatorChar)
     : RenderMathMLBlock(node)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))

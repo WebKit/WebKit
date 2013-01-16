@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-RenderFlowThread::RenderFlowThread(Node* node)
+RenderFlowThread::RenderFlowThread(ContainerNode* node)
     : RenderBlock(node)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)

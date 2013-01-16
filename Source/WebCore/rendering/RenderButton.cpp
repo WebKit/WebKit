@@ -33,8 +33,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderButton::RenderButton(Node* node)
-    : RenderDeprecatedFlexibleBox(node)
+RenderButton::RenderButton(Element* element)
+    : RenderDeprecatedFlexibleBox(element)
     , m_buttonText(0)
     , m_inner(0)
     , m_default(false)

@@ -42,7 +42,7 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-RenderMathMLBlock::RenderMathMLBlock(Node* container) 
+RenderMathMLBlock::RenderMathMLBlock(ContainerNode* container)
     : RenderFlexibleBox(container)
     , m_ignoreInAccessibilityTree(false)
     , m_intrinsicPaddingBefore(0)

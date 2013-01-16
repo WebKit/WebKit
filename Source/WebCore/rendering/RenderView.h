@@ -44,7 +44,7 @@ class CustomFilterGlobalContext;
 
 class RenderView : public RenderBlock {
 public:
-    RenderView(Node*, FrameView*);
+    RenderView(Document*);
     virtual ~RenderView();
 
     bool hitTest(const HitTestRequest&, HitTestResult&);

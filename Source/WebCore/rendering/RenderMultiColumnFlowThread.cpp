@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Node* node)
+RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(ContainerNode* node)
     : RenderFlowThread(node)
 {
 }

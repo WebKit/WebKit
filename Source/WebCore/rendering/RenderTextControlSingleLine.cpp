@@ -49,7 +49,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
+RenderTextControlSingleLine::RenderTextControlSingleLine(ContainerNode* node)
     : RenderTextControl(node)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextHeight(-1)

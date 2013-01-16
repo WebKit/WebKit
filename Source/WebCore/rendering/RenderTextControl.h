@@ -38,7 +38,7 @@ public:
     VisiblePosition visiblePositionForIndex(int index) const;
 
 protected:
-    RenderTextControl(Node*);
+    RenderTextControl(ContainerNode*);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     HTMLElement* innerTextElement() const;

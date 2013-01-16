@@ -52,7 +52,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Node* node)
+RenderImage::RenderImage(ContainerNode* node)
     : RenderReplaced(node, IntSize())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)

@@ -49,7 +49,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(Node* node)
+RenderTable::RenderTable(ContainerNode* node)
     : RenderBlock(node)
     , m_head(0)
     , m_foot(0)

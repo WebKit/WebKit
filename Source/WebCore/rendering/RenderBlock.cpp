@@ -195,7 +195,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
 
 // -------------------------------------------------------------------------------------------------------
 
-RenderBlock::RenderBlock(Node* node)
+RenderBlock::RenderBlock(ContainerNode* node)
       : RenderBox(node)
       , m_lineHeight(-1)
       , m_beingDestroyed(false)

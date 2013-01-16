@@ -45,7 +45,7 @@ public:
     LayoutUnit m_maxBreadth;
 };
 
-RenderGrid::RenderGrid(Node* node)
+RenderGrid::RenderGrid(ContainerNode* node)
     : RenderBlock(node)
 {
     // All of our children must be block level.

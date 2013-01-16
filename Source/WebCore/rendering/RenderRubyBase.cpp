@@ -38,7 +38,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyBase::RenderRubyBase(Node* node)
+RenderRubyBase::RenderRubyBase(ContainerNode* node)
     : RenderBlock(node)
 {
     setInline(false);

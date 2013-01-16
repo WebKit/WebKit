@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyText::RenderRubyText(Node* node)
+RenderRubyText::RenderRubyText(ContainerNode* node)
     : RenderBlock(node)
 {
 }

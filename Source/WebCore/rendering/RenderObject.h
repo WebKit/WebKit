@@ -294,7 +294,7 @@ public:
     void showRenderTreeAndMark(const RenderObject* markedObject1 = 0, const char* markedLabel1 = 0, const RenderObject* markedObject2 = 0, const char* markedLabel2 = 0, int depth = 0) const;
 #endif
 
-    static RenderObject* createObject(Node*, RenderStyle*);
+    static RenderObject* createObject(Element*, RenderStyle*);
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.

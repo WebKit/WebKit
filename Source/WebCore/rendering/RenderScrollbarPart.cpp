@@ -35,7 +35,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderScrollbarPart::RenderScrollbarPart(Node* node, RenderScrollbar* scrollbar, ScrollbarPart part)
+RenderScrollbarPart::RenderScrollbarPart(ContainerNode* node, RenderScrollbar* scrollbar, ScrollbarPart part)
     : RenderBlock(node)
     , m_scrollbar(scrollbar)
     , m_part(part)

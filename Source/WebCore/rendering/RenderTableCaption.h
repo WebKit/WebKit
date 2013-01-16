@@ -28,7 +28,7 @@ class RenderTable;
 
 class RenderTableCaption : public RenderBlock {
 public:
-    explicit RenderTableCaption(Node*);
+    explicit RenderTableCaption(ContainerNode*);
     virtual ~RenderTableCaption();
     virtual LayoutUnit containingBlockLogicalWidthForContent() const OVERRIDE;
     

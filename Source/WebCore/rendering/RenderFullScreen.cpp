@@ -55,8 +55,8 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
     RenderBlock::willBeDestroyed();
 }
 
-RenderFullScreen::RenderFullScreen(Node* node) 
-    : RenderDeprecatedFlexibleBox(node)
+RenderFullScreen::RenderFullScreen(Document* document)
+    : RenderDeprecatedFlexibleBox(document)
     , m_placeholder(0)
 { 
     setReplaced(false); 

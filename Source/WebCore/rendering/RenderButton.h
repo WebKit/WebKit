@@ -34,7 +34,7 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton : public RenderDeprecatedFlexibleBox {
 public:
-    explicit RenderButton(Node*);
+    explicit RenderButton(Element*);
     virtual ~RenderButton();
 
     virtual const char* renderName() const { return "RenderButton"; }

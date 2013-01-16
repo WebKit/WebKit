@@ -36,7 +36,7 @@ using std::max;
 
 namespace WebCore {
 
-RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThread)
+RenderMultiColumnSet::RenderMultiColumnSet(ContainerNode* node, RenderFlowThread* flowThread)
     : RenderRegionSet(node, flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
