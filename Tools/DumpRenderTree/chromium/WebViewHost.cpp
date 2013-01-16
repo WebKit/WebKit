@@ -854,7 +854,6 @@ void WebViewHost::didClearWindowObject(WebFrame* frame)
 void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
 {
     setPageTitle(title);
-    testRunner()->setTitleTextDirection(direction);
 }
 
 void WebViewHost::didFailLoad(WebFrame* frame, const WebURLError& error)

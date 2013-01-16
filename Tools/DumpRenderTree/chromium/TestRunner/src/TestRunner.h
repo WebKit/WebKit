@@ -90,6 +90,7 @@ public:
     virtual bool sweepHorizontally() const OVERRIDE;
     virtual bool isPrinting() const OVERRIDE;
     virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const OVERRIDE;
+    virtual void setTitleTextDirection(WebKit::WebTextDirection) OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -369,6 +370,9 @@ private:
 
     // Bound variable to return the name of this platform (chromium).
     CppVariant m_platformName;
+
+    // Bound variable tracking the directionality of the <title> tag.
+    CppVariant m_titleTextDirection;
 
     // If true, the test_shell will write a descriptive line for each editing
     // command.

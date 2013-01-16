@@ -152,7 +152,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     // Shared properties.
     // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
-    bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
 }
 
@@ -394,7 +393,6 @@ void DRTTestRunner::reset()
         m_shell->webViewHost()->setDeviceScaleFactor(1);
     m_waitUntilDone = false;
     m_webHistoryItemCount.set(0);
-    m_titleTextDirection.set("ltr");
     m_interceptPostMessage.set(false);
 
     webkit_support::SetAcceptAllCookies(false);

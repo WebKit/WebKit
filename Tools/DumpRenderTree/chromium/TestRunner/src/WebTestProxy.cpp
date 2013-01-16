@@ -580,7 +580,7 @@ void WebTestProxyBase::didCommitProvisionalLoad(WebFrame* frame, bool)
     }
 }
 
-void WebTestProxyBase::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection)
+void WebTestProxyBase::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
 {
     WebCString title8 = title.utf8();
 
@@ -592,6 +592,8 @@ void WebTestProxyBase::didReceiveTitle(WebFrame* frame, const WebString& title, 
     if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpTitleChanges())
         m_delegate->printMessage(string("TITLE CHANGED: '") + title8.data() + "'\n");
 
+    if (m_testInterfaces->testRunner())
+        m_testInterfaces->testRunner()->setTitleTextDirection(direction);
 }
 
 void WebTestProxyBase::didFinishDocumentLoad(WebFrame* frame)

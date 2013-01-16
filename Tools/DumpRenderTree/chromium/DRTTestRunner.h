@@ -44,7 +44,6 @@
 
 #include "TestRunner/src/TestRunner.h"
 #include "WebTask.h"
-#include "WebTextDirection.h"
 #include "platform/WebArrayBufferView.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
@@ -173,10 +172,6 @@ public:
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
-    void setTitleTextDirection(WebKit::WebTextDirection dir)
-    {
-        m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
-    }
 
     bool shouldInterceptPostMessage()
     {
@@ -267,9 +262,6 @@ private:
 
     // Bound variable counting the number of top URLs visited.
     CppVariant m_webHistoryItemCount;
-
-    // Bound variable tracking the directionality of the <title> tag.
-    CppVariant m_titleTextDirection;
 
     // Bound variable to set whether postMessages should be intercepted or not
     CppVariant m_interceptPostMessage;
