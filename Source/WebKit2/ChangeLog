@@ -1,3 +1,26 @@
+2013-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove CoreIPCMessageKinds.h
+        https://bugs.webkit.org/show_bug.cgi?id=107048
+
+        Reviewed by Beth Dakin.
+
+        Use named IPC messages instead.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncReply):
+        (CoreIPC::Connection::processIncomingMessage):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/CoreIPCMessageKinds.h: Removed.
+        * Platform/CoreIPC/MessageID.h:
+        (MessageID):
+        (CoreIPC::MessageID::stripMostSignificantBit):
+        (CoreIPC::MessageID::operator==):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-15  Jer Noble  <jer.noble@apple.com>
 
         Add a Setting to disable QTKit media engine.

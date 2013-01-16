@@ -646,7 +646,6 @@
 		BC111B51112F619200337BAB /* PageClientImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B4C112F619200337BAB /* PageClientImpl.mm */; };
 		BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B5B112F629800337BAB /* WebEventFactory.h */; };
 		BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B5C112F629800337BAB /* WebEventFactory.mm */; };
-		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
 		BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */; };
 		BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */; };
 		BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */; };
@@ -1933,7 +1932,6 @@
 		BC111B5C112F629800337BAB /* WebEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEventFactory.mm; sourceTree = "<group>"; };
 		BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcess.xcconfig; sourceTree = "<group>"; };
 		BC122FA61327087400F7EAC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = PluginProcess/Info.plist; sourceTree = "<group>"; };
-		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
 		BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleScriptWorld.h; sourceTree = "<group>"; };
 		BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleScriptWorld.cpp; sourceTree = "<group>"; };
 		BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleScriptWorld.cpp; sourceTree = "<group>"; };
@@ -2983,7 +2981,6 @@
 				1AC41AC51263C88300054E94 /* BinarySemaphore.h */,
 				BC032DA210F437D10058C15A /* Connection.cpp */,
 				BC032DA310F437D10058C15A /* Connection.h */,
-				BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */,
 				1A8EFDFD1253CB6E00F7067F /* DataReference.cpp */,
 				1A8EFDF91253CAA200F7067F /* DataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
@@ -4570,7 +4567,6 @@
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,
 				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
-				BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,

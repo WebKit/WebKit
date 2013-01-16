@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "CoreIPCMessageKinds.h"
 #include "DataReference.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
@@ -38,7 +37,6 @@
 #include <xpc/xpc.h>
 #endif
 
-using namespace std;
 using namespace WebCore;
 
 namespace CoreIPC {
@@ -116,15 +114,15 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "", 0);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(CoreIPCMessage::InitializeConnection), encoder.release());
+        sendMessage(MessageID(), encoder.release());
 
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
     }
-    
+
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
@@ -135,10 +133,10 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
 
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "", 0);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(CoreIPCMessage::SetExceptionPort), encoder.release());
+        sendMessage(MessageID(), encoder.release());
     }
 
     return true;
@@ -368,7 +366,7 @@ void Connection::receiveSourceEventHandler()
     OwnPtr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
 
-    if (messageID == MessageID(CoreIPCMessage::InitializeConnection)) {
+    if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "InitializeConnection") {
         ASSERT(m_isServer);
         ASSERT(!m_isConnected);
         ASSERT(!m_sendPort);
@@ -393,7 +391,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    if (messageID == MessageID(CoreIPCMessage::SetExceptionPort)) {
+    if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         MachPort exceptionPort;
         if (!decoder->decode(exceptionPort))
             return;

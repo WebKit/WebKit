@@ -27,7 +27,6 @@
 #include "Connection.h"
 
 #include "BinarySemaphore.h"
-#include "CoreIPCMessageKinds.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
@@ -338,7 +337,7 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> enc
 
 bool Connection::sendSyncReply(PassOwnPtr<MessageEncoder> encoder)
 {
-    return sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), encoder);
+    return sendMessage(MessageID(), encoder);
 }
 
 PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout)
@@ -572,8 +571,7 @@ void Connection::processIncomingSyncReply(PassOwnPtr<MessageDecoder> decoder)
 
 void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<MessageDecoder> decoder)
 {
-    // Check if this is a sync reply.
-    if (messageID == MessageID(CoreIPCMessage::SyncMessageReply)) {
+    if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SyncMessageReply") {
         processIncomingSyncReply(decoder);
         return;
     }
@@ -697,7 +695,7 @@ void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decode
         return;
     }
 
-    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "", syncRequestID);
+    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(this, messageID, decoder, replyEncoder);
