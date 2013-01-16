@@ -203,7 +203,23 @@ bool EventTarget::fireEventListeners(Event* event)
         fireEventListeners(event, d, *listenerUnprefixedVector);
     else if (listenerPrefixedVector)
         fireEventListeners(createMatchingPrefixedEvent(event).get(), d, *listenerPrefixedVector);
-    
+
+    if (!prefixedTypeName.isEmpty()) {
+        ScriptExecutionContext* context = scriptExecutionContext();
+        if (context && context->isDocument()) {
+            Document* document = static_cast<Document*>(context);
+            if (document->domWindow()) {
+                if (listenerPrefixedVector)
+                    if (listenerUnprefixedVector)
+                        FeatureObserver::observe(document->domWindow(), FeatureObserver::PrefixedAndUnprefixedTransitionEndEvent);
+                    else
+                        FeatureObserver::observe(document->domWindow(), FeatureObserver::PrefixedTransitionEndEvent);
+                else if (listenerUnprefixedVector)
+                    FeatureObserver::observe(document->domWindow(), FeatureObserver::UnprefixedTransitionEndEvent);
+            }
+        }
+    }
+
     return !event->defaultPrevented();
 }
         

@@ -57,6 +57,9 @@ public:
         ContentSecurityPolicy,
         ContentSecurityPolicyReportOnly,
         PrefixedContentSecurityPolicyReportOnly,
+        PrefixedTransitionEndEvent,
+        UnprefixedTransitionEndEvent,
+        PrefixedAndUnprefixedTransitionEndEvent,
         // Add new features above this line.
         NumberOfFeatures, // This enum value must be last.
     };
