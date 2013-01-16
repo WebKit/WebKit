@@ -40,6 +40,11 @@
 #include <stdio.h>
 #endif
 
+#if !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+// MADV_FREE_REUSABLE does not work for JIT memory on older OSes so use MADV_FREE in that case.
+#define WTF_USE_MADV_FREE_FOR_JIT_MEMORY 1
+#endif
+
 using namespace WTF;
 
 namespace JSC {
@@ -74,7 +79,7 @@ protected:
     
     virtual void notifyNeedPage(void* page)
     {
-#if OS(DARWIN)
+#if USE(MADV_FREE_FOR_JIT_MEMORY)
         UNUSED_PARAM(page);
 #else
         m_reservation.commit(page, pageSize());
@@ -83,7 +88,7 @@ protected:
     
     virtual void notifyPageIsFree(void* page)
     {
-#if OS(DARWIN)
+#if USE(MADV_FREE_FOR_JIT_MEMORY)
         for (;;) {
             int result = madvise(page, pageSize(), MADV_FREE);
             if (!result)

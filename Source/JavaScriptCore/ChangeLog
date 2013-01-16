@@ -1,3 +1,17 @@
+2013-01-15  Pratik Solanki  <psolanki@apple.com>
+
+        Use MADV_FREE_REUSABLE to return JIT memory to OS
+        https://bugs.webkit.org/show_bug.cgi?id=106830
+        <rdar://problem/11437701>
+
+        Reviewed by Geoffrey Garen.
+
+        Use MADV_FREE_REUSABLE to return JIT memory on OSes that have the underlying madvise bug
+        fixed.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::notifyPageIsFree):
+
 2013-01-15  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed, rolling out r139790.
