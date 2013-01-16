@@ -452,17 +452,16 @@ NodeRareData* Node::ensureRareData()
     if (hasRareData())
         return rareData();
 
-    NodeRareData* data = createRareData().leakPtr();
+    NodeRareData* data;
+    if (isElementNode())
+        data = ElementRareData::create(m_data.m_renderer).leakPtr();
+    else
+        data = NodeRareData::create(m_data.m_renderer).leakPtr();
     ASSERT(data);
-    data->setRenderer(m_data.m_renderer);
+
     m_data.m_rareData = data;
     setFlag(HasRareDataFlag);
     return data;
-}
-
-PassOwnPtr<NodeRareData> Node::createRareData()
-{
-    return adoptPtr(new NodeRareData());
 }
 
 void Node::clearRareData()

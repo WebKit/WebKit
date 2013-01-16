@@ -276,9 +276,8 @@ private:
 
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
-public:    
-    NodeRareData()
-    { }
+public:
+    static PassOwnPtr<NodeRareData> create(RenderObject* renderer) { return adoptPtr(new NodeRareData(renderer)); }
 
     void clearNodeLists() { m_nodeLists.clear(); }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -308,6 +307,11 @@ public:
 
     // This member function is intentionially not virtual to avoid adding a vtable pointer.
     void reportMemoryUsage(MemoryObjectInfo*) const;
+
+protected:
+    NodeRareData(RenderObject* renderer)
+        : NodeRareDataBase(renderer)
+    { }
 
 private:
     OwnPtr<NodeListsNodeData> m_nodeLists;

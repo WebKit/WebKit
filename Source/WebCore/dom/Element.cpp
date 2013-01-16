@@ -223,11 +223,6 @@ inline ElementRareData* Element::ensureElementRareData()
     return static_cast<ElementRareData*>(ensureRareData());
 }
 
-PassOwnPtr<NodeRareData> Element::createRareData()
-{
-    return adoptPtr(new ElementRareData());
-}
-
 void Element::clearTabIndexExplicitlyIfNeeded()
 {
     if (hasRareData())

@@ -116,7 +116,9 @@ public:
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
 
 protected:
-    NodeRareDataBase() { }
+    NodeRareDataBase(RenderObject* renderer)
+        : m_renderer(renderer)
+    { }
 
 private:
     RenderObject* m_renderer;
@@ -784,8 +786,6 @@ private:
 
     virtual void refEventTarget();
     virtual void derefEventTarget();
-
-    virtual PassOwnPtr<NodeRareData> createRareData();
 
     virtual RenderStyle* nonRendererStyle() const { return 0; }
 

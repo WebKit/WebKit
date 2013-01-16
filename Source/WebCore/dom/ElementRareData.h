@@ -35,7 +35,8 @@ namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    ElementRareData();
+    static PassOwnPtr<ElementRareData> create(RenderObject* renderer) { return adoptPtr(new ElementRareData(renderer)); }
+
     ~ElementRareData();
 
     void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
@@ -172,6 +173,7 @@ private:
     RefPtr<PseudoElement> m_generatedBefore;
     RefPtr<PseudoElement> m_generatedAfter;
 
+    ElementRareData(RenderObject*);
     void releasePseudoElement(PseudoElement*);
 };
 
@@ -180,8 +182,9 @@ inline IntSize defaultMinimumSizeForResizing()
     return IntSize(LayoutUnit::max(), LayoutUnit::max());
 }
 
-inline ElementRareData::ElementRareData()
-    : m_tabIndex(0)
+inline ElementRareData::ElementRareData(RenderObject* renderer)
+    : NodeRareData(renderer)
+    , m_tabIndex(0)
     , m_childIndex(0)
     , m_tabIndexWasSetExplicitly(false)
     , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
