@@ -25601,6 +25601,50 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="speech"
+				>
+				<File
+					RelativePath="..\Modules\speech\DOMWindowSpeechSynthesis.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\DOMWindowSpeechSynthesis.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesis.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesis.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisEvent.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisEvent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisUtterance.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisUtterance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisVoice.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\speech\SpeechSynthesisVoice.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="accessibility"
@@ -32685,6 +32729,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\NetworkingContext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\NetworkStateNotifier.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\NetworkStateNotifier.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\NetworkStorageSession.h"
 					>
 				</File>
@@ -32723,18 +32779,6 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\platform\network\NetworkingContext.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\NetworkStateNotifier.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\NetworkStateNotifier.h"
-					>
 				</File>
 				<File
 					RelativePath="..\platform\network\ParsedContentType.cpp"
@@ -32785,15 +32829,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ResourceHandleTypes.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\network\ResourceHandleClient.h"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\network\ResourceHandleInternal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\ResourceHandleTypes.h"
 					>
 				</File>
 				<File
@@ -38810,15 +38854,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\ExclusionSRectangle.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\ExclusionShapeOutsideInfo.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\rendering\ExclusionShapeOutsideInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\ExclusionSRectangle.h"
 				>
 			</File>
 			<File
@@ -53609,11 +53653,11 @@
 				RelativePath="..\dom\NodeRenderingContext.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\dom\NodeTraversal.cpp"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\dom\NodeTraversal.h"
 				>
 			</File>
@@ -64545,19 +64589,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\parser\CSSPreloadScanner.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\parser\CSSPreloadScanner.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\parser\CompactHTMLToken.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\html\parser\CompactHTMLToken.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\CSSPreloadScanner.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\CSSPreloadScanner.h"
 					>
 				</File>
 				<File
@@ -64689,15 +64733,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\parser\HTMLTokenTypes.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\parser\HTMLTokenizer.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\html\parser\HTMLTokenizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTokenTypes.h"
 					>
 				</File>
 				<File
@@ -71636,7 +71680,7 @@
 						/>
 					</FileConfiguration>
 				</File>
-                                <File
+				<File
 					RelativePath="..\bindings\js\JSWorkerContextBase.cpp"
 					>
 					<FileConfiguration
@@ -77009,10 +77053,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JSHeapSnapshot.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
@@ -77026,6 +77066,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\jsdifflib.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\JSHeapSnapshot.js"
 					>
 				</File>
 				<File
@@ -77049,11 +77093,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\nativeMemoryProfiler.css"
+					RelativePath="..\inspector\front-end\NativeHeapGraph.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NativeHeapGraph.js"
+					RelativePath="..\inspector\front-end\nativeMemoryProfiler.css"
 					>
 				</File>
 				<File
