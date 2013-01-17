@@ -29,6 +29,7 @@
 #include "RemoteLayerTreeContext.h"
 #include "RemoteLayerTreeTransaction.h"
 
+#include <WebCore/FloatRect.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

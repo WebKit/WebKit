@@ -1,3 +1,14 @@
+2013-01-17  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mac build sans ENABLE(CSS_FILTERS)
+
+        Reviewed by Darin Adler.
+
+        Include FloatRect in RemoteGraphicsLayer.mm; it's included by chance currently,
+        via something that must be compiled out without CSS_FILTERS (or SVG, or shaders, or something).
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+
 2013-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         Don't use NSApplication run loop in NetworkProcess
