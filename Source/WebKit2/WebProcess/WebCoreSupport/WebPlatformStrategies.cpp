@@ -216,6 +216,11 @@ ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
 
 void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
+    if (!WebProcess::shared().usesNetworkProcess()) {
+        LoaderStrategy::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
+        return;
+    }
+
     CoreIPC::DataReference dataReference;
 
     NetworkResourceLoadParameters loadParameters(request, ResourceLoadPriorityHighest, SniffContent, storedCredentials, context->storageSession().isPrivateBrowsingSession());

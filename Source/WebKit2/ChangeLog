@@ -1,5 +1,16 @@
 2013-01-16  Sam Weinig  <sam@webkit.org>
 
+        Fix crashes on the bots.
+
+        The WebKit LoaderStrategy for loading synchronously was only implemented
+        for the case where you have a network process. When you don't, we should
+        be using the base implementation.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+
+2013-01-16  Sam Weinig  <sam@webkit.org>
+
         Update Owners file.
 
         * Owners:
