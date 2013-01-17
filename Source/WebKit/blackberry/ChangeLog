@@ -1,3 +1,24 @@
+2013-01-16  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Need to adjust the scale and scroll position after leaving fullscreen mode if there's
+        device rotation in fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=107085
+
+        Reviewed by George STaikos.
+        Also internally reviewed by Jacky Jiang.
+
+        We saved the scale and scroll position before entering full screen mode, so that we can restore
+        them after leaving fullscreen mode, because entering fullscreen mode automatically changes the 
+       scale to make the video to fit to the viewport. But if there's device rotation during the fullscreen,
+       the scale and scroll position saved before may or may not apply anymore, we need to adjust the
+       scale and/or scroll position if needed to make sure no over-scale or over-scroll in the new orientation.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-01-16  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Remove bogus assert in GeolocationClientBlackBerry

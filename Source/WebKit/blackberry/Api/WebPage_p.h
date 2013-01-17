@@ -528,6 +528,7 @@ public:
 #if ENABLE(VIDEO)
     double m_scaleBeforeFullScreen;
     WebCore::IntPoint m_scrollPositionBeforeFullScreen;
+    int m_orientationBeforeFullScreen;
 #endif
 #endif
 
