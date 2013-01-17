@@ -103,6 +103,13 @@ static void failedAccessCheckCallbackInMainThread(v8::Local<v8::Object> host, v8
     targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeDOMWindow(BindingState::instance())));
 }
 
+static void initializeV8Common()
+{
+    v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
+    v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
+    v8::V8::IgnoreOutOfMemoryException();
+}
+
 void V8Initializer::initializeMainThreadIfNeeded(v8::Isolate* isolate)
 {
     ASSERT(isMainThread());
@@ -112,20 +119,15 @@ void V8Initializer::initializeMainThreadIfNeeded(v8::Isolate* isolate)
         return;
     initialized = true;
 
-    v8::V8::IgnoreOutOfMemoryException();
+    initializeV8Common();
+
     v8::V8::SetFatalErrorHandler(reportFatalErrorInMainThread);
-    v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
-    v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
     v8::V8::AddMessageListener(messageHandlerInMainThread);
     v8::V8::SetFailedAccessCheckCallbackFunction(failedAccessCheckCallbackInMainThread);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptProfiler::initialize();
 #endif
     V8PerIsolateData::ensureInitialized(isolate);
-
-    // FIXME: Remove the following 2 lines when V8 default has changed.
-    const char es5ReadonlyFlag[] = "--es5_readonly";
-    v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
 }
 
 static void reportFatalErrorInWorker(const char* location, const char* message)
@@ -158,16 +160,10 @@ static const int kWorkerMaxStackSize = 500 * 1024;
 
 void V8Initializer::initializeWorker(v8::Isolate* isolate)
 {
+    initializeV8Common();
+
     v8::V8::AddMessageListener(messageHandlerInWorker);
-    v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInWorker);
-
-    v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
-    v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
-
-    // FIXME: Remove the following 2 lines when V8 default has changed.
-    const char es5ReadonlyFlag[] = "--es5_readonly";
-    v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
 
     v8::ResourceConstraints resourceConstraints;
     uint32_t here;
