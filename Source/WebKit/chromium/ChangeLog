@@ -1,3 +1,15 @@
+2013-01-16  Kristian Monsen  <kristianm@google.com>
+
+        Fix build break for Android webview.
+        https://bugs.webkit.org/show_bug.cgi?id=107072
+
+        Reviewed by Steve Block.
+
+        Add extra guards when checking for OS=="Android" to make sure it is not included
+        for webview.
+
+        * WebKitUnitTests.gyp:
+
 2013-01-16  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

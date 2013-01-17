@@ -138,7 +138,7 @@
                 'cflags_cc': ['-Wno-c++0x-compat'],
             },
         }],
-        ['OS=="android" and gtest_target_type == "shared_library"', {
+        ['OS=="android" and android_build_type==0 and gtest_target_type == "shared_library"', {
             # Wrap libwebkit_unit_tests.so into an android apk for execution.
             'targets': [{
                 'target_name': 'webkit_unit_tests_apk',
