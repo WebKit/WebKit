@@ -350,11 +350,14 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     _highlightItems: function(query)
     {
         var regex = this._createSearchRegExp(query, true);
+        var elementsToHighlight = [];
         for (var i = 0; i < this._delegate.itemsCount(); ++i) {
             var itemElement = this._itemElements[i];
             if (this._itemElementVisible(itemElement) && this._itemElementInViewport(itemElement))
-                this._highlightItem(itemElement, regex);
+                elementsToHighlight.push(itemElement);
         }
+        for (var i = 0; i < elementsToHighlight.length; ++i)
+            this._highlightItem(elementsToHighlight[i], regex);
     },
 
     _clearHighlight: function()
@@ -631,7 +634,11 @@ WebInspector.OpenResourceDialog = function(panel)
 
     function compareFunction(uiSourceCode1, uiSourceCode2)
     {
-        return uiSourceCode1.parsedURL.lastPathComponent.localeCompare(uiSourceCode2.parsedURL.lastPathComponent);
+        if (uiSourceCode1.parsedURL.lastPathComponent < uiSourceCode2.parsedURL.lastPathComponent)
+            return -1;
+        if (uiSourceCode1.parsedURL.lastPathComponent > uiSourceCode2.parsedURL.lastPathComponent)
+            return 1;
+        return 0;
     }
     this._uiSourceCodes.sort(compareFunction);
 }
