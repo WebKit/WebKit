@@ -321,6 +321,12 @@ public:
         return m_data;
     }
 
+    const DataVector& data() const
+    {
+        ASSERT(m_type == TypeSet::Character || m_type == TypeSet::Comment || m_type == TypeSet::StartTag || m_type == TypeSet::EndTag);
+        return m_data;
+    }
+
     bool isAll8BitData() const
     {
         return (m_orAllData <= 0xff);

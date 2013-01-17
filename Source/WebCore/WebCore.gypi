@@ -3335,6 +3335,8 @@
             'html/canvas/WebGLVertexArrayObjectOES.h',
             'html/parser/CSSPreloadScanner.cpp',
             'html/parser/CSSPreloadScanner.h',
+            'html/parser/CompactHTMLToken.cpp',
+            'html/parser/CompactHTMLToken.h',
             'html/parser/HTMLConstructionSite.cpp',
             'html/parser/HTMLConstructionSite.h',
             'html/parser/HTMLDocumentParser.cpp',

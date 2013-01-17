@@ -3624,6 +3624,8 @@
 		977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B37221228721700B81FF8 /* HTMLTreeBuilder.h */; };
 		977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3849122883E900B81FF8 /* CSSPreloadScanner.cpp */; };
 		977B3863122883E900B81FF8 /* CSSPreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384A122883E900B81FF8 /* CSSPreloadScanner.h */; };
+		977B3862122883E900B81FF9 /* CompactHTMLToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3849122883E900B81FF9 /* CompactHTMLToken.cpp */; };
+		977B3863122883E900B81FF9 /* CompactHTMLToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384A122883E900B81FF9 /* CompactHTMLToken.h */; };
 		977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B384B122883E900B81FF8 /* HTMLConstructionSite.cpp */; };
 		977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384C122883E900B81FF8 /* HTMLConstructionSite.h */; };
 		977B3866122883E900B81FF8 /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */; };
@@ -11000,6 +11002,8 @@
 		977B37221228721700B81FF8 /* HTMLTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLTreeBuilder.h; path = parser/HTMLTreeBuilder.h; sourceTree = "<group>"; };
 		977B3849122883E900B81FF8 /* CSSPreloadScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSPreloadScanner.cpp; path = parser/CSSPreloadScanner.cpp; sourceTree = "<group>"; };
 		977B384A122883E900B81FF8 /* CSSPreloadScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSPreloadScanner.h; path = parser/CSSPreloadScanner.h; sourceTree = "<group>"; };
+		977B3849122883E900B81FF9 /* CompactHTMLToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompactHTMLToken.cpp; path = parser/CompactHTMLToken.cpp; sourceTree = "<group>"; };
+		977B384A122883E900B81FF9 /* CompactHTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompactHTMLToken.h; path = parser/CompactHTMLToken.h; sourceTree = "<group>"; };
 		977B384B122883E900B81FF8 /* HTMLConstructionSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLConstructionSite.cpp; path = parser/HTMLConstructionSite.cpp; sourceTree = "<group>"; };
 		977B384C122883E900B81FF8 /* HTMLConstructionSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLConstructionSite.h; path = parser/HTMLConstructionSite.h; sourceTree = "<group>"; };
 		977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLDocumentParser.cpp; path = parser/HTMLDocumentParser.cpp; sourceTree = "<group>"; };

@@ -64545,6 +64545,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\CompactHTMLToken.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\CompactHTMLToken.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLConstructionSite.cpp"
 					>
 				</File>

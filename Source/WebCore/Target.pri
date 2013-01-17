@@ -708,6 +708,7 @@ SOURCES += \
     html/canvas/CanvasStyle.cpp \
     html/canvas/DataView.cpp \
     html/parser/CSSPreloadScanner.cpp \
+    html/parser/CompactHTMLToken.cpp \
     html/parser/HTMLConstructionSite.cpp \
     html/parser/HTMLDocumentParser.cpp \
     html/parser/HTMLElementStack.cpp \
@@ -1882,6 +1883,7 @@ HEADERS += \
     html/TypeAhead.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \
+    html/parser/CompactHTMLToken.h \
     html/parser/HTMLConstructionSite.h \
     html/parser/HTMLDocumentParser.h \
     html/parser/HTMLElementStack.h \

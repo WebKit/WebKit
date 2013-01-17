@@ -3532,6 +3532,8 @@ webcore_sources += \
 	Source/WebCore/html/NumberInputType.h \
 	Source/WebCore/html/parser/CSSPreloadScanner.cpp \
 	Source/WebCore/html/parser/CSSPreloadScanner.h \
+	Source/WebCore/html/parser/CompactHTMLToken.cpp \
+	Source/WebCore/html/parser/CompactHTMLToken.h \
 	Source/WebCore/html/parser/HTMLConstructionSite.cpp \
 	Source/WebCore/html/parser/HTMLConstructionSite.h \
 	Source/WebCore/html/parser/HTMLDocumentParser.cpp \

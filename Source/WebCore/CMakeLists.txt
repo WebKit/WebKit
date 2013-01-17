@@ -1527,6 +1527,7 @@ set(WebCore_SOURCES
     html/canvas/WebGLVertexArrayObjectOES.cpp
 
     html/parser/CSSPreloadScanner.cpp
+    html/parser/CompactHTMLToken.cpp
     html/parser/HTMLConstructionSite.cpp
     html/parser/HTMLDocumentParser.cpp
     html/parser/HTMLElementStack.cpp
