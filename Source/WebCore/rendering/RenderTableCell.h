@@ -102,7 +102,6 @@ public:
         return max(styleLogicalHeight, adjustedLogicalHeight);
     }
 
-    virtual void computePreferredLogicalWidths();
 
     void setCellLogicalWidth(int constrainedLogicalWidth);
 
@@ -207,6 +206,7 @@ public:
 #endif
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void computePreferredLogicalWidths();
 
 private:
     virtual const char* renderName() const { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)" : "RenderTableCell"; }

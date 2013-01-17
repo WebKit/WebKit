@@ -115,7 +115,7 @@ void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderTableCol::computePreferredLogicalWidths()
+void RenderTableCol::clearPreferredLogicalWidthsDirtyBits()
 {
     setPreferredLogicalWidthsDirty(false);
 

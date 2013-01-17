@@ -50,9 +50,12 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* maxContributor = 0;
 
     for (RenderObject* child = m_table->children()->firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderTableCol())
-            toRenderTableCol(child)->computePreferredLogicalWidths();
-        else if (child->isTableSection()) {
+        if (child->isRenderTableCol()){
+            // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
+            // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
+            // ancestors as dirty.
+            toRenderTableCol(child)->clearPreferredLogicalWidthsDirtyBits();
+        } else if (child->isTableSection()) {
             RenderTableSection* section = toRenderTableSection(child);
             unsigned numRows = section->numRows();
             for (unsigned i = 0; i < numRows; i++) {
@@ -72,8 +75,6 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
 
                 if (cell->colSpan() == 1) {
-                    if (cell->preferredLogicalWidthsDirty())
-                        cell->computePreferredLogicalWidths();
                     columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
                     if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
                         columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();

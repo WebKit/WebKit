@@ -88,7 +88,10 @@ int FixedTableLayout::calcWidthArray(int)
 
     unsigned currentEffectiveColumn = 0;
     for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
-        col->computePreferredLogicalWidths();
+        // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
+        // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
+        // ancestors as dirty.
+        col->clearPreferredLogicalWidthsDirtyBits();
 
         // Width specified by column-groups that have column child does not affect column width in fixed layout tables
         if (col->isTableColumnGroupWithColumnChildren())
@@ -138,12 +141,12 @@ int FixedTableLayout::calcWidthArray(int)
             continue;
 
         RenderTableCell* cell = toRenderTableCell(child);
-        if (cell->preferredLogicalWidthsDirty())
-            cell->computePreferredLogicalWidths();
 
         Length logicalWidth = cell->styleOrColLogicalWidth();
         unsigned span = cell->colSpan();
         int fixedBorderBoxLogicalWidth = 0;
+        // FIXME: Support other length types. If the width is non-auto, it should probably just use
+        // RenderBox::computeLogicalWidthInRegionUsing to compute the width.
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
             fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth.value());
             logicalWidth.setValue(fixedBorderBoxLogicalWidth);
@@ -161,6 +164,12 @@ int FixedTableLayout::calcWidthArray(int)
             usedSpan += eSpan;
             ++currentColumn;
         }
+
+        // FixedTableLayout doesn't use min/maxPreferredLogicalWidths, but we need to clear the
+        // dirty bit on the cell so that we'll correctly mark its ancestors dirty
+        // in case we later call setPreferredLogicalWidthsDirty(true) on it later.
+        if (cell->preferredLogicalWidthsDirty())
+            cell->setPreferredLogicalWidthsDirty(false);
     }
 
     return usedWidth;
