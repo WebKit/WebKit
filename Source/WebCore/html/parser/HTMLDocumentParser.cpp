@@ -130,6 +130,10 @@ void HTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
     m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
+#if ENABLE(THREADED_HTML_PARSER)
+    if (m_haveBackgroundParser)
+        stopBackgroundParser();
+#endif
 }
 
 // This kicks off "Once the user agent stops parsing" as described by:
