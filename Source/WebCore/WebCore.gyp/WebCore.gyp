@@ -1146,6 +1146,7 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
             '<(bison_exe)',
           ],
+          'msvs_cygwin_shell': 1,
         },
         {
           'rule_name': 'gperf',
