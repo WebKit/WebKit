@@ -113,11 +113,16 @@ private:
     virtual void watchForLoad(CachedResource*);
     virtual void stopWatchingForLoad(CachedResource*);
     virtual HTMLInputStream& inputStream() { return m_input; }
-    virtual bool hasPreloadScanner() const { return m_preloadScanner.get(); }
+    virtual bool hasPreloadScanner() const { return m_preloadScanner.get() && !shouldUseThreading(); }
     virtual void appendCurrentInputStreamToPreloadScannerAndScan();
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
+
+#if ENABLE(THREADED_HTML_PARSER)
+    void startBackgroundParser();
+    void stopBackgroundParser();
+#endif
 
     enum SynchronousMode {
         AllowYield,
@@ -138,6 +143,8 @@ private:
     void endIfDelayed();
     void attemptToRunDeferredScriptsAndEnd();
     void end();
+
+    bool shouldUseThreading() const { return m_options.useThreading && !isParsingFragment(); }
 
     bool isParsingFragment() const;
     bool isScheduledForResume() const;
@@ -160,6 +167,7 @@ private:
     XSSAuditor m_xssAuditor;
 
     bool m_endWasDelayed;
+    bool m_haveBackgroundParser;
     unsigned m_pumpSessionNestingLevel;
 };
 
