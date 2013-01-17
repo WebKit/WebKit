@@ -712,6 +712,15 @@ public:
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;
 
+    bool canContainFixedPositionObjects() const
+    {
+        return isRenderView() || (hasTransform() && isRenderBlock())
+#if ENABLE(SVG)
+                || isSVGForeignObject()
+#endif
+                || isRenderFlowThread();
+    }
+
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If UseTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
     FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), MapCoordinatesFlags = 0) const;

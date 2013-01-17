@@ -753,19 +753,8 @@ RenderBlock* RenderObject::containingBlock() const
         o = toRenderScrollbarPart(this)->rendererOwningScrollbar();
     if (!isText() && m_style->position() == FixedPosition) {
         while (o) {
-            if (o->isRenderView())
+            if (o->canContainFixedPositionObjects())
                 break;
-            if (o->hasTransform() && o->isRenderBlock())
-                break;
-            // The render flow thread is the top most containing block
-            // for the fixed positioned elements.
-            if (o->isRenderFlowThread())
-                break;
-#if ENABLE(SVG)
-            // foreignObject is the containing block for its contents.
-            if (o->isSVGForeignObject())
-                break;
-#endif
             o = o->parent();
         }
         ASSERT(!o || !o->isAnonymousBlock());

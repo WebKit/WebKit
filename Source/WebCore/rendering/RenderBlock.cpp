@@ -2589,8 +2589,13 @@ bool RenderBlock::simplifiedLayout()
         simplifiedNormalFlowLayout();
 
     // Lay out our positioned objects if our positioned child bit is set.
-    if (posChildNeedsLayout())
-        layoutPositionedObjects(false);
+    // Also, if an absolute position element inside a relative positioned container moves, and the absolute element has a fixed position
+    // child, neither the fixed element nor its container learn of the movement since posChildNeedsLayout() is only marked as far as the 
+    // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
+    // are statically positioned and thus need to move with their absolute ancestors.
+    bool canContainFixedPosObjects = canContainFixedPositionObjects();
+    if (posChildNeedsLayout() || canContainFixedPosObjects)
+        layoutPositionedObjects(false, !posChildNeedsLayout() && canContainFixedPosObjects);
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only
@@ -2610,7 +2615,37 @@ bool RenderBlock::simplifiedLayout()
     return true;
 }
 
-void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
+void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderObject* child)
+{
+    if (child->style()->position() != FixedPosition)
+        return;
+
+    bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontalWritingMode());
+    bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontalWritingMode());
+    if (!hasStaticBlockPosition && !hasStaticInlinePosition)
+        return;
+
+    RenderObject* o = child->parent();
+    while (o && !o->isRenderView() && o->style()->position() != AbsolutePosition)
+        o = o->parent();
+    if (o->style()->position() != AbsolutePosition)
+        return;
+
+    RenderBox* box = toRenderBox(child);
+    if (hasStaticInlinePosition) {
+        LayoutUnit oldLeft = box->logicalLeft();
+        box->updateLogicalWidth();
+        if (box->logicalLeft() != oldLeft)
+            child->setChildNeedsLayout(true, MarkOnlyThis);
+    } else if (hasStaticBlockPosition) {
+        LayoutUnit oldTop = box->logicalTop();
+        box->updateLogicalHeight();
+        if (box->logicalTop() != oldTop)
+            child->setChildNeedsLayout(true, MarkOnlyThis);
+    }
+}
+
+void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
     TrackedRendererListHashSet* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
@@ -2623,6 +2658,14 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
     TrackedRendererListHashSet::iterator end = positionedDescendants->end();
     for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         r = *it;
+
+        // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
+        // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
+        // it has static position.
+        markFixedPositionObjectForLayoutIfNeeded(r);
+        if (fixedPositionObjectsOnly)
+            continue;
+
         // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
         // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is

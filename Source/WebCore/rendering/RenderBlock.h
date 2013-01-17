@@ -465,7 +465,8 @@ protected:
 
     virtual void layout();
 
-    void layoutPositionedObjects(bool relayoutChildren);
+    void layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly = false);
+    void markFixedPositionObjectForLayoutIfNeeded(RenderObject* child);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
