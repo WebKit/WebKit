@@ -1317,7 +1317,7 @@ void GraphicsContext::setLineJoin(LineJoin join)
     }
 }
 
-void GraphicsContext::clip(const Path& path)
+void GraphicsContext::clip(const Path& path, WindRule fillRule)
 {
     if (paintingDisabled())
         return;
@@ -1331,14 +1331,17 @@ void GraphicsContext::clip(const Path& path)
     else {
         CGContextBeginPath(context);
         CGContextAddPath(context, path.platformPath());
-        CGContextClip(context);
+        if (fillRule == RULE_EVENODD)
+            CGContextClip(context);
+        else
+            CGContextEOClip(context);
     }
     m_data->clip(path);
 }
 
-void GraphicsContext::canvasClip(const Path& path)
+void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
-    clip(path);
+    clip(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)

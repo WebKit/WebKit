@@ -379,7 +379,8 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
     m_data->setCompositeOperation(op);
 }
 
-void GraphicsContext::clip(const Path& path)
+// FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=107064
+void GraphicsContext::clip(const Path& path, WindRule)
 {
     if (paintingDisabled())
         return;
@@ -387,9 +388,9 @@ void GraphicsContext::clip(const Path& path)
     m_data->clipPath(path, PainterOpenVG::IntersectClip, m_state.fillRule);
 }
 
-void GraphicsContext::canvasClip(const Path& path)
+void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
-    clip(path);
+    clip(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)

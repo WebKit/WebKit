@@ -408,12 +408,12 @@ namespace WebCore {
         void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
         CompositeOperator compositeOperation() const;
 
-        void clip(const Path&);
+        void clip(const Path&, WindRule = RULE_EVENODD);
 
         // This clip function is used only by <canvas> code. It allows
         // implementations to handle clipping on the canvas differently since
         // the discipline is different.
-        void canvasClip(const Path&);
+        void canvasClip(const Path&, WindRule = RULE_EVENODD);
         void clipOut(const Path&);
 
         void scale(const FloatSize&);

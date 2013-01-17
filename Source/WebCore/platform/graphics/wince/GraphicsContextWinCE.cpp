@@ -1192,14 +1192,14 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendM
     notImplemented();
 }
 
-void GraphicsContext::clip(const Path& path)
+void GraphicsContext::clip(const Path& path, WindRule)
 {
     notImplemented();
 }
 
-void GraphicsContext::canvasClip(const Path& path)
+void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
-    clip(path);
+    clip(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path&)

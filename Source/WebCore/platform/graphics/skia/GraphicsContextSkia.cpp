@@ -314,7 +314,8 @@ void GraphicsContext::clip(const FloatRect& rect)
     platformContext()->clipRect(rect);
 }
 
-void GraphicsContext::clip(const Path& path)
+// FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=106872
+void GraphicsContext::clip(const Path& path, WindRule)
 {
     if (paintingDisabled() || path.isEmpty())
         return;
@@ -337,7 +338,8 @@ void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
     platformContext()->clipRRect(r, PlatformContextSkia::AntiAliased);
 }
 
-void GraphicsContext::canvasClip(const Path& path)
+// FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=106872
+void GraphicsContext::canvasClip(const Path& path, WindRule)
 {
     if (paintingDisabled())
         return;

@@ -997,7 +997,8 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendM
     cairo_set_operator(platformContext()->cr(), cairo_op);
 }
 
-void GraphicsContext::clip(const Path& path)
+// FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=107065
+void GraphicsContext::clip(const Path& path, WindRule)
 {
     if (paintingDisabled())
         return;
@@ -1015,9 +1016,9 @@ void GraphicsContext::clip(const Path& path)
     m_data->clip(path);
 }
 
-void GraphicsContext::canvasClip(const Path& path)
+void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
-    clip(path);
+    clip(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)
