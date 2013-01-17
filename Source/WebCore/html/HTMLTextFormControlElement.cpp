@@ -639,7 +639,9 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
 {
     ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
-        || position.containerNode() || !position.anchorNode()->shadowHost());
+        || position.containerNode() || !position.anchorNode()->shadowHost()
+        || (position.anchorNode()->parentNode() && position.anchorNode()->parentNode()->isShadowRoot()));
+        
     Node* container = position.containerNode();
     if (!container)
         return 0;
