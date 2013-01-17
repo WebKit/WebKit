@@ -356,12 +356,6 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::createIndex");
-    // FIXME: Temporary code to determine if null contexts are plausible during frame destruction.
-    // https://bugs.webkit.org/show_bug.cgi?id=107050
-    ASSERT(context);
-    if (!context)
-        return 0;
-
     if (!m_transaction->isVersionChange() || m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
