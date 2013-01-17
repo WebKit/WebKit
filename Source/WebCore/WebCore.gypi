@@ -3356,6 +3356,8 @@
             'html/parser/HTMLParserOptions.h',
             'html/parser/HTMLParserScheduler.cpp',
             'html/parser/HTMLParserScheduler.h',
+            'html/parser/HTMLParserThread.cpp',
+            'html/parser/HTMLParserThread.h',
             'html/parser/HTMLPreloadScanner.cpp',
             'html/parser/HTMLPreloadScanner.h',
             'html/parser/HTMLScriptRunner.cpp',

@@ -64629,6 +64629,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLParserThread.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLParserThread.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLPreloadScanner.cpp"
 					>
 				</File>

@@ -3556,6 +3556,8 @@
 		973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 973E325510883B7C005BC493 /* ResourceLoadNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		973F418A169B95FF0006BF60 /* HTMLParserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F4188169B95EF0006BF60 /* HTMLParserOptions.h */; };
 		973F418B169B96030006BF60 /* HTMLParserOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */; };
+		974187D316A7932700FA77A7 /* HTMLParserThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 974187D016A7932200FA77A7 /* HTMLParserThread.cpp */; };
+		974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 974187D116A7932200FA77A7 /* HTMLParserThread.h */; };
 		9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */; };
 		9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1414F4DDE6003E7A70 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1614F4DDE6003E7A70 /* GeolocationController.cpp */; };
@@ -10921,6 +10923,8 @@
 		973E325510883B7C005BC493 /* ResourceLoadNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadNotifier.h; sourceTree = "<group>"; };
 		973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLParserOptions.cpp; path = parser/HTMLParserOptions.cpp; sourceTree = "<group>"; };
 		973F4188169B95EF0006BF60 /* HTMLParserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserOptions.h; path = parser/HTMLParserOptions.h; sourceTree = "<group>"; };
+		974187D016A7932200FA77A7 /* HTMLParserThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLParserThread.cpp; path = parser/HTMLParserThread.cpp; sourceTree = "<group>"; };
+		974187D116A7932200FA77A7 /* HTMLParserThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserThread.h; path = parser/HTMLParserThread.h; sourceTree = "<group>"; };
 		9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Geolocation.cpp; path = Modules/geolocation/Geolocation.cpp; sourceTree = "<group>"; };
 		9746AF1414F4DDE6003E7A70 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geolocation.h; path = Modules/geolocation/Geolocation.h; sourceTree = "<group>"; };
 		9746AF1514F4DDE6003E7A70 /* Geolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Geolocation.idl; path = Modules/geolocation/Geolocation.idl; sourceTree = "<group>"; };
@@ -14734,12 +14738,12 @@
 				A9D247F90D757E4100FDF959 /* Plugins */,
 				89F60B17157F6A020075E157 /* Quota */,
 				BC9854460CD3DA5F00069BC1 /* Ranges */,
+				AA7FEE9B16A491A1004C0C33 /* Speech */,
 				A83B79150CCB0078000B0825 /* Storage */,
 				A83B790A0CCAFF47000B0825 /* SVG */,
 				417DA71213735D90007C57FB /* Testing */,
 				E1C8BE4B0E8BD0D10064CB7D /* Threads */,
 				BC9854530CD3DA8F00069BC1 /* Traversal */,
-				AA7FEE9B16A491A1004C0C33 /* Speech */,
 				FDA15E7B12B03E04003A583A /* WebAudio */,
 				5DA5E0F9102B950400088CF9 /* WebSockets */,
 				BC9854430CD3D9D000069BC1 /* Window */,
@@ -16218,6 +16222,7 @@
 				BCE1C41A0D982980003B02F2 /* Location.cpp */,
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
+				BC59DEFA169DEDD80016AC34 /* make_settings.pl */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
 				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
 				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
@@ -16279,7 +16284,6 @@
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				BC59DEF8169DEDC30016AC34 /* Settings.in */,
-				BC59DEFA169DEDD80016AC34 /* make_settings.pl */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,
 				626CDE0D1140424C001E5A68 /* SpatialNavigation.h */,
 				7578F90811DDF26900D933C5 /* SpeechInput.cpp */,
@@ -18550,6 +18554,8 @@
 				973F4188169B95EF0006BF60 /* HTMLParserOptions.h */,
 				977B3857122883E900B81FF8 /* HTMLParserScheduler.cpp */,
 				977B3858122883E900B81FF8 /* HTMLParserScheduler.h */,
+				974187D016A7932200FA77A7 /* HTMLParserThread.cpp */,
+				974187D116A7932200FA77A7 /* HTMLParserThread.h */,
 				977B3859122883E900B81FF8 /* HTMLPreloadScanner.cpp */,
 				977B385A122883E900B81FF8 /* HTMLPreloadScanner.h */,
 				977B385B122883E900B81FF8 /* HTMLScriptRunner.cpp */,
@@ -18559,9 +18565,9 @@
 				977E2DCC12F0E28300C13379 /* HTMLSourceTracker.h */,
 				97C1F552122855CB00EDE615 /* HTMLStackItem.h */,
 				97C1F552122855CB00EDE616 /* HTMLToken.h */,
-				97C1F552122855CB00EDE617 /* HTMLTokenTypes.h */,
 				977B385E122883E900B81FF8 /* HTMLTokenizer.cpp */,
 				977B385F122883E900B81FF8 /* HTMLTokenizer.h */,
+				97C1F552122855CB00EDE617 /* HTMLTokenTypes.h */,
 				977B37211228721700B81FF8 /* HTMLTreeBuilder.cpp */,
 				977B37221228721700B81FF8 /* HTMLTreeBuilder.h */,
 				977B3860122883E900B81FF8 /* HTMLViewSourceParser.cpp */,
@@ -21650,8 +21656,8 @@
 				BC53C6910DA591140021EB5D /* CSSGradientValue.h */,
 				FCEBCD711623A7910029965E /* CSSGrammar.y.in */,
 				FCEBCD721623A7910029965E /* CSSGrammar.y.includes */,
-				FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */,
 				FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */,
+				FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */,
 				BC772B360C4EA91E0083285F /* CSSHelper.h */,
 				BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */,
 				BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */,
@@ -23911,8 +23917,8 @@
 				9712A5AE15004EDA0048AF10 /* DOMWindowIndexedDatabase.h in Headers */,
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
-				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
+				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
 				A8CCBB49151F831600AB7CE9 /* DOMWindowWebDatabase.h in Headers */,
 				BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */,
 				1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */,
@@ -24249,6 +24255,7 @@
 				973F418A169B95FF0006BF60 /* HTMLParserOptions.h in Headers */,
 				449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */,
 				977B3871122883E900B81FF8 /* HTMLParserScheduler.h in Headers */,
+				974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */,
 				A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */,
 				4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */,
 				A8EA7CB00A192B9C00A8EF5F /* HTMLPreElement.h in Headers */,
@@ -25453,6 +25460,7 @@
 				514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */,
 				514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */,
 				514C767B0CE923A1007EF3CD /* ResourceHandleInternal.h in Headers */,
+				51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */,
 				656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */,
 				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
 				492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */,
@@ -26231,7 +26239,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26795,6 +26802,7 @@
 				BC02A6460E09AAE9004B6D2B /* CSSFunctionValue.cpp in Sources */,
 				BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */,
 				650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */,
+				FBF89045169E9F1F0052D86E /* CSSGroupingRule.cpp in Sources */,
 				BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */,
 				9393E5FF151A99F200066F06 /* CSSImageSetValue.cpp in Sources */,
 				A80E6CFE0A1989CA007FB8C5 /* CSSImageValue.cpp in Sources */,
@@ -27522,6 +27530,7 @@
 				93E2A306123E9DC0009FE12A /* HTMLParserIdioms.cpp in Sources */,
 				973F418B169B96030006BF60 /* HTMLParserOptions.cpp in Sources */,
 				977B3870122883E900B81FF8 /* HTMLParserScheduler.cpp in Sources */,
+				974187D316A7932700FA77A7 /* HTMLParserThread.cpp in Sources */,
 				A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */,
 				4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */,
 				A8EA7CAD0A192B9C00A8EF5F /* HTMLPreElement.cpp in Sources */,
@@ -29376,7 +29385,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				FBF89045169E9F1F0052D86E /* CSSGroupingRule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
