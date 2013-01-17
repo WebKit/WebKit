@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<style>
+.grid {
+    display: -webkit-grid;
+    -webkit-grid-columns: 70% 30%;
+    -webkit-grid-rows: 40% 60%;
+    background-color: grey;
+    width: 400px;
+    height: 300px;
+}
+
+#a {
+    background-color: blue;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 1;
+    width: 100%;
+    height: 15px;
+}
+#b {
+    background-color: green;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 1;
+    width: 15px;
+    height: 100%;
+}
+#c {
+    background-color: purple;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 2;
+    width: 50%;
+    height: 50%;
+}
+#d {
+    background-color: orange;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 2;
+    width: -webkit-calc(100%);
+    height: -webkit-calc(100%);
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<script>
+function changeGridDefinitionsAndCheckValues()
+{
+    var grid0 = document.getElementsByClassName("grid")[0];
+    var grid1 = document.getElementsByClassName("grid")[1];
+    var grid2 = document.getElementsByClassName("grid")[2];
+    document.body.offsetLeft;
+    grid0.style.webkitGridColumns = "40% 60%";
+
+    grid1.style.webkitGridRows = "30% 70%";
+
+    grid2.style.webkitGridColumns = "40% 60%";
+    grid2.style.webkitGridRows = "30% 70%";
+
+    checkLayout('.grid');
+}
+window.addEventListener("load", changeGridDefinitionsAndCheckValues, false);
+</script>
+<body>
+
+<p>Test that changing percentage sized grid tracks make the grid items relayouts.</p>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="160" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="120"></div>
+    <div id="c" data-expected-width="80" data-expected-height="90"></div>
+    <div id="d" data-expected-width="240" data-expected-height="180"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="280" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="90"></div>
+    <div id="c" data-expected-width="140" data-expected-height="105"></div>
+    <div id="d" data-expected-width="120" data-expected-height="210"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="160" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="90"></div>
+    <div id="c" data-expected-width="80" data-expected-height="105"></div>
+    <div id="d" data-expected-width="240" data-expected-height="210"></div>
+</div>
+</div>
+
+</body>
+</html>

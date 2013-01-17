@@ -230,8 +230,15 @@ void RenderGrid::layoutGridItems()
         if (columnTrack < columnTracks.size() && rowTrack < rowTracks.size()) {
             // Because the grid area cannot be styled, we don't need to adjust
             // the grid breadth to account for 'box-sizing'.
+            LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
+            LayoutUnit oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
+
+            if (oldOverrideContainingBlockContentLogicalWidth != columnTracks[columnTrack].m_usedBreadth || oldOverrideContainingBlockContentLogicalHeight != rowTracks[rowTrack].m_usedBreadth)
+                child->setNeedsLayout(true, MarkOnlyThis);
+
             child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
             child->setOverrideContainingBlockContentLogicalHeight(rowTracks[rowTrack].m_usedBreadth);
+
         }
 
         // FIXME: Grid items should stretch to fill their cells. Once we

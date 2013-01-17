@@ -438,7 +438,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         }
 
         if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
-            && rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
+            || rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
             return StyleDifferenceLayout;
 
 #if !USE(ACCELERATED_COMPOSITING)
