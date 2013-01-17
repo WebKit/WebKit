@@ -103,7 +103,7 @@ public:
     {
         Node& node = at(nodeIndex);
         // If the value (before incrementing) was at refCount zero then we need to ref its children.
-        if (node.ref())
+        if (!node.postfixRef())
             refChildren(nodeIndex);
     }
     void ref(Edge nodeUse)
@@ -113,9 +113,7 @@ public:
     
     void deref(NodeIndex nodeIndex)
     {
-        if (!at(nodeIndex).refCount())
-            dump();
-        if (at(nodeIndex).deref())
+        if (at(nodeIndex).postfixDeref() == 1)
             derefChildren(nodeIndex);
     }
     void deref(Edge nodeUse)

@@ -488,18 +488,18 @@ void Graph::collectGarbage()
                 if (!m_varArgChildren[childIdx])
                     continue;
                 NodeIndex childNodeIndex = m_varArgChildren[childIdx].index();
-                if (!at(childNodeIndex).ref())
+                if (at(childNodeIndex).postfixRef())
                     continue;
                 worklist.append(childNodeIndex);
             }
         } else if (node.child1()) {
-            if (at(node.child1()).ref())
+            if (!at(node.child1()).postfixRef())
                 worklist.append(node.child1().index());
             if (node.child2()) {
-                if (at(node.child2()).ref())
+                if (!at(node.child2()).postfixRef())
                     worklist.append(node.child2().index());
                 if (node.child3()) {
-                    if (at(node.child3()).ref())
+                    if (!at(node.child3()).postfixRef())
                         worklist.append(node.child3().index());
                 }
             }
