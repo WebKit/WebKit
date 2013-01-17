@@ -1597,10 +1597,23 @@ WebInspector.NetworkPanel.prototype = {
         var rules = [];
 
         var columns = WebInspector.NetworkLogView._defaultColumnsVisivility;
-        var columnSelectors = [];
-        for (var columnId in columns)
-            columnSelectors.push("#network-container .hide-" + columnId + "-column ." + columnId + "-column");
-        rules.push(columnSelectors.join(", ") + "{border-right: 0 none transparent;}");
+
+        var hideSelectors = [];
+        var bgSelectors = [];
+        for (var columnId in columns) {
+            hideSelectors.push("#network-container .hide-" + columnId + "-column ." + columnId + "-column");
+            bgSelectors.push(".network-log-grid.data-grid td." + columnId + "-column");
+        }
+        rules.push(hideSelectors.join(", ") + "{border-right: 0 none transparent;}");
+        rules.push(bgSelectors.join(", ") + "{background-color: rgba(0, 0, 0, 0.07);}");
+
+        var filterSelectors = [];
+        for (var typeId in WebInspector.resourceTypes) {
+            var typeName = WebInspector.resourceTypes[typeId].name();
+            filterSelectors.push(".network-log-grid.data-grid.filter-" + typeName + " table.data tr.revealed.network-type-" + typeName + ":not(.filtered-out)");
+        }
+        filterSelectors.push(".network-log-grid.data-grid.filter-all table.data tr.revealed.network-item:not(.filtered-out)");
+        rules.push(filterSelectors.join(", ") + "{display: table-row;}");
 
         style.textContent = rules.join("\n");
         document.head.appendChild(style);
