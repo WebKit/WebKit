@@ -6607,17 +6607,31 @@ RootInlineBox* RenderBlock::lineAtIndex(int i) const
     return 0;
 }
 
-int RenderBlock::lineCount() const
+int RenderBlock::lineCount(const RootInlineBox* stopRootInlineBox, bool* found) const
 {
     int count = 0;
+
     if (style()->visibility() == VISIBLE) {
         if (childrenInline())
-            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
+            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox()) {
                 count++;
+                if (box == stopRootInlineBox) {
+                    if (found)
+                        *found = true;
+                    break;
+                }
+            }
         else
             for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
-                if (shouldCheckLines(obj))
-                    count += toRenderBlock(obj)->lineCount();
+                if (shouldCheckLines(obj)) {
+                    bool recursiveFound = false;
+                    count += toRenderBlock(obj)->lineCount(stopRootInlineBox, &recursiveFound);
+                    if (recursiveFound) {
+                        if (found)
+                            *found = true;
+                        break;
+                    }
+                }
     }
     return count;
 }
@@ -7171,7 +7185,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         }
         LayoutUnit totalLogicalHeight = lineHeight + max<LayoutUnit>(0, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
-        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineCount()))
+        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineCount(lineBox)))
             && !isOutOfFlowPositioned() && !isTableCell())
             setPaginationStrut(remainingLogicalHeight + max<LayoutUnit>(0, logicalOffset));
         else {

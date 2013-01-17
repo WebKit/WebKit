@@ -241,7 +241,7 @@ public:
 
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
-    int lineCount() const;
+    int lineCount(const RootInlineBox* = 0, bool* = 0) const;
     int heightForLineCount(int);
     void clearTruncation();
 
