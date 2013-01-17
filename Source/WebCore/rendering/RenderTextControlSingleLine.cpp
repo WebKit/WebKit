@@ -49,13 +49,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Element* element)
-    : RenderTextControl(element)
+RenderTextControlSingleLine::RenderTextControlSingleLine(ContainerNode* node)
+    : RenderTextControl(node)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextHeight(-1)
 {
-    ASSERT(element->isHTMLElement());
-    ASSERT(element->toInputElement());
+    ASSERT(node->isHTMLElement());
+    ASSERT(node->toInputElement());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()

@@ -89,8 +89,8 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
 }
 
 
-RenderTableSection::RenderTableSection(Element* element)
-    : RenderBox(element)
+RenderTableSection::RenderTableSection(ContainerNode* node)
+    : RenderBox(node)
     , m_cCol(0)
     , m_cRow(0)
     , m_outerBorderStart(0)
@@ -1415,8 +1415,7 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
 RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP);
-    RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(0);
-    newSection->setDocumentForAnonymous(parent->document());
+    RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(parent->document() /* is anonymous */);
     newSection->setStyle(newStyle.release());
     return newSection;
 }

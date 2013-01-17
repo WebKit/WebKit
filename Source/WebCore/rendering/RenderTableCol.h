@@ -35,7 +35,7 @@ class RenderTableCell;
 
 class RenderTableCol : public RenderBox {
 public:
-    explicit RenderTableCol(Element*);
+    explicit RenderTableCol(ContainerNode*);
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
     RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }

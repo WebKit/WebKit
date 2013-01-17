@@ -36,10 +36,10 @@ using namespace std;
 
 namespace WebCore {
 
-RenderTextControl::RenderTextControl(Element* element)
-    : RenderBlock(element)
+RenderTextControl::RenderTextControl(ContainerNode* node)
+    : RenderBlock(node)
 {
-    ASSERT(toTextFormControl(element));
+    ASSERT(toTextFormControl(node));
 }
 
 RenderTextControl::~RenderTextControl()

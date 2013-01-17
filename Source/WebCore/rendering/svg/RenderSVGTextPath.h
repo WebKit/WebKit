@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderSVGTextPath : public RenderSVGInline {
 public:
-    RenderSVGTextPath(Element*);
+    RenderSVGTextPath(ContainerNode*);
 
     Path layoutPath() const;
     float startOffset() const;

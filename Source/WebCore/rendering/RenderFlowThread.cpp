@@ -45,10 +45,8 @@
 
 namespace WebCore {
 
-// FIXME: RenderFlowThread should either be anonymous or be associated with some Element.
-// It should not be constructed as a renderer for the Document.
-RenderFlowThread::RenderFlowThread(Document* document)
-    : RenderBlock(document)
+RenderFlowThread::RenderFlowThread(ContainerNode* node)
+    : RenderBlock(node)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
@@ -57,7 +55,8 @@ RenderFlowThread::RenderFlowThread(Document* document)
     , m_dispatchRegionLayoutUpdateEvent(false)
     , m_pageLogicalHeightChanged(false)
 {
-    ASSERT(document->cssRegionsEnabled());
+    ASSERT(node->document()->cssRegionsEnabled());
+    setIsAnonymous(false);
     setInRenderFlowThread();
 }
 

@@ -42,15 +42,15 @@ namespace WebCore {
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
-RenderReplaced::RenderReplaced(Element* element)
-    : RenderBox(element)
+RenderReplaced::RenderReplaced(ContainerNode* node)
+    : RenderBox(node)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplaced(true);
 }
 
-RenderReplaced::RenderReplaced(Element* element, const LayoutSize& intrinsicSize)
-    : RenderBox(element)
+RenderReplaced::RenderReplaced(ContainerNode* node, const LayoutSize& intrinsicSize)
+    : RenderBox(node)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplaced(true);

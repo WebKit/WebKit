@@ -35,8 +35,8 @@ class RenderMultiColumnFlowThread;
 
 class RenderMultiColumnBlock : public RenderBlock {
 public:
-    RenderMultiColumnBlock(Element*);
-
+    RenderMultiColumnBlock(ContainerNode*);
+    
     LayoutUnit columnHeight() const { return m_columnHeight; }
     void setColumnHeight(LayoutUnit columnHeight) { m_columnHeight = columnHeight; }
 

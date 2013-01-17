@@ -47,7 +47,7 @@ class RenderFlowThread;
 
 class RenderRegionSet : public RenderRegion {
 public:
-    RenderRegionSet(Element*, RenderFlowThread*);
+    RenderRegionSet(ContainerNode*, RenderFlowThread*);
     
 private:
     virtual void installFlowThread() OVERRIDE;

@@ -33,7 +33,7 @@ class SearchPopupMenu;
 
 class RenderSearchField : public RenderTextControlSingleLine, private PopupMenuClient {
 public:
-    RenderSearchField(Element*);
+    RenderSearchField(ContainerNode*);
     virtual ~RenderSearchField();
 
     void updateCancelButtonVisibility() const;

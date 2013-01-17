@@ -42,7 +42,7 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderReplaced {
 public:
-    explicit RenderRegion(Element*, RenderFlowThread*);
+    explicit RenderRegion(ContainerNode*, RenderFlowThread*);
 
     virtual bool isRenderRegion() const { return true; }
 

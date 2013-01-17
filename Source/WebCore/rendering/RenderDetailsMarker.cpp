@@ -31,8 +31,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderDetailsMarker::RenderDetailsMarker(Element* element)
-    : RenderBlock(element)
+RenderDetailsMarker::RenderDetailsMarker(ContainerNode* node)
+    : RenderBlock(node)
 {
 }
 

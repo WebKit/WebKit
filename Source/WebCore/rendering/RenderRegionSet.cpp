@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-RenderRegionSet::RenderRegionSet(Element* element, RenderFlowThread* flowThread)
-    : RenderRegion(element, flowThread)
+RenderRegionSet::RenderRegionSet(ContainerNode* node, RenderFlowThread* flowThread)
+    : RenderRegion(node, flowThread)
 {
 }
 

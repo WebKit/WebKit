@@ -33,16 +33,12 @@ class Position;
 
 class RenderInline : public RenderBoxModelObject {
 public:
-    explicit RenderInline(Element*);
-
-    static RenderInline* createAnonymous(Document*);
+    explicit RenderInline(ContainerNode*);
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
     RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-
-    Element* node() const { return toElement(RenderBoxModelObject::node()); }
 
     virtual LayoutUnit marginLeft() const;
     virtual LayoutUnit marginRight() const;

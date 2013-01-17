@@ -1055,7 +1055,7 @@ String listMarkerText(EListStyleType type, int value)
 }
 
 RenderListMarker::RenderListMarker(RenderListItem* item)
-    : RenderBox(0)
+    : RenderBox(item->document())
     , m_listItem(item)
 {
     // init RenderObject attributes
@@ -1067,14 +1067,6 @@ RenderListMarker::~RenderListMarker()
 {
     if (m_image)
         m_image->removeClient(this);
-}
-
-RenderListMarker* RenderListMarker::createAnonymous(RenderListItem* item)
-{
-    Document* document = item->document();
-    RenderListMarker* renderer = new (document->renderArena()) RenderListMarker(item);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 void RenderListMarker::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

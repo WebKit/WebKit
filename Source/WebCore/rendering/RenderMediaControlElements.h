@@ -38,7 +38,7 @@ namespace WebCore {
 
 class RenderMediaVolumeSliderContainer : public RenderBlock {
 public:
-    RenderMediaVolumeSliderContainer(Element*);
+    RenderMediaVolumeSliderContainer(ContainerNode*);
 
 private:
     virtual void layout();
@@ -48,7 +48,7 @@ private:
 
 class RenderMediaControlTimeDisplay : public RenderDeprecatedFlexibleBox {
 public:
-    RenderMediaControlTimeDisplay(Element*);
+    RenderMediaControlTimeDisplay(ContainerNode*);
 
 private:
     virtual void layout();
@@ -60,7 +60,7 @@ private:
 
 class RenderTextTrackContainerElement : public RenderBlock {
 public:
-    RenderTextTrackContainerElement(Element*);
+    RenderTextTrackContainerElement(ContainerNode*);
 
 private:
     virtual void layout();

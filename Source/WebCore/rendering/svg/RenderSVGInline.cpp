@@ -32,8 +32,8 @@
 
 namespace WebCore {
     
-RenderSVGInline::RenderSVGInline(Element* element)
-    : RenderInline(element)
+RenderSVGInline::RenderSVGInline(ContainerNode* node)
+    : RenderInline(node)
 {
     setAlwaysCreateLineBoxes();
 }

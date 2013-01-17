@@ -69,6 +69,10 @@ RenderView::RenderView(Document* document)
     , m_renderCounterCount(0)
     , m_layoutPhase(RenderViewNormalLayout)
 {
+    // Clear our anonymous bit, set because RenderObject assumes
+    // any renderer with document as the node is anonymous.
+    setIsAnonymous(false);
+
     // init RenderObject attributes
     setInline(false);
     

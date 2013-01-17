@@ -73,7 +73,7 @@ public:
     void deref(RenderArena*);
 
 protected:
-    RenderWidget(Element*);
+    RenderWidget(ContainerNode*);
 
     FrameView* frameView() const { return m_frameView; }
 

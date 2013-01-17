@@ -85,10 +85,10 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(Element* element)
-    : RenderReplaced(element)
+RenderWidget::RenderWidget(ContainerNode* node)
+    : RenderReplaced(node)
     , m_widget(0)
-    , m_frameView(element->document()->view())
+    , m_frameView(node->document()->view())
     // Reference counting is used to prevent the widget from being
     // destroyed while inside the Widget code, which might not be
     // able to handle that.

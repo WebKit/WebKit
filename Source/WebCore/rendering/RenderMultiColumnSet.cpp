@@ -36,8 +36,8 @@ using std::max;
 
 namespace WebCore {
 
-RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread* flowThread)
-    : RenderRegionSet(0, flowThread)
+RenderMultiColumnSet::RenderMultiColumnSet(ContainerNode* node, RenderFlowThread* flowThread)
+    : RenderRegionSet(node, flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)
@@ -47,14 +47,6 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread* flowThread)
     , m_maximumDistanceBetweenForcedBreaks(0)
     , m_forcedBreakOffset(0)
 {
-}
-
-RenderMultiColumnSet* RenderMultiColumnSet::createAnonymous(RenderFlowThread* flowThread)
-{
-    Document* document = flowThread->document();
-    RenderMultiColumnSet* renderer = new (document->renderArena()) RenderMultiColumnSet(flowThread);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) const

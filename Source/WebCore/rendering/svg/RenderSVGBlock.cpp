@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-RenderSVGBlock::RenderSVGBlock(SVGElement* element)
-    : RenderBlock(element)
+RenderSVGBlock::RenderSVGBlock(SVGElement* node) 
+    : RenderBlock(node)
 {
 }
 

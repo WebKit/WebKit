@@ -37,7 +37,7 @@ namespace WebCore {
 
 class RenderFlexibleBox : public RenderBlock {
 public:
-    RenderFlexibleBox(Element*);
+    RenderFlexibleBox(ContainerNode*);
     virtual ~RenderFlexibleBox();
 
     virtual const char* renderName() const OVERRIDE;

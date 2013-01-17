@@ -43,6 +43,7 @@ class RenderRubyText;
 
 class RenderRubyRun : public RenderBlock {
 public:
+    RenderRubyRun(ContainerNode*);
     virtual ~RenderRubyRun();
 
     bool hasRubyText() const;
@@ -70,8 +71,6 @@ protected:
     RenderRubyBase* createRubyBase() const;
 
 private:
-    RenderRubyRun();
-
     virtual bool isRubyRun() const { return true; }
     virtual const char* renderName() const { return "RenderRubyRun (anonymous)"; }
     virtual bool createsAnonymousWrapper() const { return true; }

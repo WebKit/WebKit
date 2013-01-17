@@ -42,7 +42,7 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-RenderMathMLBlock::RenderMathMLBlock(Element* container)
+RenderMathMLBlock::RenderMathMLBlock(ContainerNode* container)
     : RenderFlexibleBox(container)
     , m_ignoreInAccessibilityTree(false)
     , m_preferredLogicalHeight(preferredLogicalHeightUnset)
@@ -64,8 +64,7 @@ void RenderMathMLBlock::computePreferredLogicalWidths()
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
-    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(0);
-    newBlock->setDocumentForAnonymous(document());
+    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(document() /* is anonymous */);
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }

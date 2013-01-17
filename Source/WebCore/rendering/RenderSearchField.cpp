@@ -53,14 +53,14 @@ using namespace HTMLNames;
 
 // ----------------------------
 
-RenderSearchField::RenderSearchField(Element* element)
-    : RenderTextControlSingleLine(element)
+RenderSearchField::RenderSearchField(ContainerNode* node)
+    : RenderTextControlSingleLine(node)
     , m_searchPopupIsVisible(false)
     , m_searchPopup(0)
 {
-    ASSERT(element->isHTMLElement());
-    ASSERT(element->toInputElement());
-    ASSERT(element->toInputElement()->isSearchField());
+    ASSERT(node->isHTMLElement());
+    ASSERT(node->toInputElement());
+    ASSERT(node->toInputElement()->isSearchField());
 }
 
 RenderSearchField::~RenderSearchField()

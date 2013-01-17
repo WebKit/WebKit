@@ -62,7 +62,7 @@ class RenderTableRow;
 
 class RenderTableSection : public RenderBox {
 public:
-    RenderTableSection(Element*);
+    RenderTableSection(ContainerNode*);
     virtual ~RenderTableSection();
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }

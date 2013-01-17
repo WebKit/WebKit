@@ -69,7 +69,7 @@ PassOwnPtr<ContentData> ContentData::clone() const
 
 RenderObject* ImageContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
 {
-    RenderImage* image = RenderImage::createAnonymous(doc);
+    RenderImage* image = new (doc->renderArena()) RenderImage(doc);
     image->setPseudoStyle(pseudoStyle);
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(m_image.get()));
