@@ -56,15 +56,8 @@ WebInspector.CPUProfileView = function(profile)
 
     this.viewSelectComboBox = new WebInspector.StatusBarComboBox(this._changeView.bind(this));
 
-    var heavyViewOption = document.createElement("option");
-    heavyViewOption.label = WebInspector.UIString("Heavy (Bottom Up)");
-    heavyViewOption.value = WebInspector.CPUProfileView._TypeHeavy;
-    var treeViewOption = document.createElement("option");
-    treeViewOption.label = WebInspector.UIString("Tree (Top Down)");
-    treeViewOption.value = WebInspector.CPUProfileView._TypeTree;
-
-    this.viewSelectComboBox.addOption(heavyViewOption);
-    this.viewSelectComboBox.addOption(treeViewOption);
+    var heavyViewOption = this.viewSelectComboBox.createOption(WebInspector.UIString("Heavy (Bottom Up)"), "", WebInspector.CPUProfileView._TypeHeavy);
+    var treeViewOption = this.viewSelectComboBox.createOption(WebInspector.UIString("Tree (Top Down)"), "", WebInspector.CPUProfileView._TypeTree);
     this.viewSelectComboBox.select(this._viewType.get() === WebInspector.CPUProfileView._TypeHeavy ? heavyViewOption : treeViewOption);
 
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item");

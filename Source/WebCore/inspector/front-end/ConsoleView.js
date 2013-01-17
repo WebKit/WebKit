@@ -150,12 +150,9 @@ WebInspector.ConsoleView.prototype = {
      */
     _addFrame: function(contextList)
     {
-        var option = document.createElement("option");
-        option.text = contextList.displayName;
-        option.title = contextList.url;
+        var option = this._frameSelector.createOption(contextList.displayName, contextList.url);
         option._contextList = contextList;
         contextList._consoleOption = option;
-        this._frameSelector.addOption(option);
         contextList.addEventListener(WebInspector.FrameExecutionContextList.EventTypes.ContextsUpdated, this._frameUpdated, this);
         contextList.addEventListener(WebInspector.FrameExecutionContextList.EventTypes.ContextAdded, this._contextAdded, this);
         this._frameChanged();
@@ -201,11 +198,8 @@ WebInspector.ConsoleView.prototype = {
     {
         if (!WebInspector.runtimeModel.currentExecutionContext())
             WebInspector.runtimeModel.setCurrentExecutionContext(executionContext);
-        var option = document.createElement("option");
-        option.text = executionContext.name;
-        option.title = executionContext.id;
+        var option = this._contextSelector.createOption(executionContext.name, executionContext.id);
         option._executionContext = executionContext;
-        this._contextSelector.addOption(option);
     },
 
     /**
