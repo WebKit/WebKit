@@ -26,6 +26,8 @@
 #include "config.h"
 #include "OSAllocator.h"
 
+#if OS(UNIX)
+
 #include "PageAllocation.h"
 #include <errno.h>
 #include <sys/mman.h>
@@ -187,3 +189,5 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 }
 
 } // namespace WTF
+
+#endif // OS(UNIX)

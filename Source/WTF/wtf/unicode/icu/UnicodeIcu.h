@@ -23,6 +23,8 @@
 #ifndef WTF_UNICODE_ICU_H
 #define WTF_UNICODE_ICU_H
 
+#if USE(ICU_UNICODE)
+
 #include <stdlib.h>
 #include <unicode/uchar.h>
 #include <unicode/uscript.h>
@@ -30,6 +32,7 @@
 #include <unicode/utf16.h>
 
 namespace WTF {
+
 namespace Unicode {
 
 enum Direction {
@@ -225,6 +228,10 @@ inline int umemcasecmp(const UChar* a, const UChar* b, int len)
     return u_memcasecmp(a, b, len, U_FOLD_CASE_DEFAULT);
 }
 
-} }
+} // namespace Unicode
+
+} // namespace WTF
+
+#endif // USE(ICU_UNICODE)
 
 #endif // WTF_UNICODE_ICU_H

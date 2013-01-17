@@ -23,12 +23,15 @@
 #include "config.h"
 #include "UnicodeGLib.h"
 
+#if USE(GLIB_UNICODE)
+
 #include <wtf/Vector.h>
 #include <wtf/unicode/UTF8.h>
 
 #define UTF8_IS_SURROGATE(character) (character >= 0x10000 && character <= 0x10FFFF)
 
 namespace WTF {
+
 namespace Unicode {
 
 UChar32 foldCase(UChar32 ch)
@@ -189,5 +192,8 @@ int umemcasecmp(const UChar* a, const UChar* b, int len)
     return g_utf8_collate(foldedA.get(), foldedB.get());
 }
 
-}
-}
+} // namespace Unicode
+
+} // namespace WTF
+
+#endif // USE(GLIB_UNICODE)

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "OwnPtr.h"
 
+#if OS(WINDOWS)
+
 #include <windows.h>
 
 namespace WTF {
@@ -73,4 +75,6 @@ void deleteOwnedPtr(HRGN ptr)
         DeleteObject(ptr);
 }
 
-}
+} // namespace WTF
+
+#endif // OS(WINDOWS)

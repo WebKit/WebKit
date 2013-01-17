@@ -108,6 +108,8 @@ wtf_sources += \
     Source/WTF/wtf/RAMSize.cpp \
     Source/WTF/wtf/RAMSize.h \
     Source/WTF/wtf/OSAllocator.h \
+    Source/WTF/wtf/OSAllocatorPosix.cpp \
+    Source/WTF/wtf/OSAllocatorWin.cpp \
     Source/WTF/wtf/OSRandomSource.cpp \
     Source/WTF/wtf/OSRandomSource.h \
     Source/WTF/wtf/OwnArrayPtr.h \
@@ -169,15 +171,18 @@ wtf_sources += \
     Source/WTF/wtf/TCSystemAlloc.cpp \
     Source/WTF/wtf/TCSystemAlloc.h \
     Source/WTF/wtf/TemporaryChange.h \
+    Source/WTF/wtf/ThreadFunctionInvocation.h \
     Source/WTF/wtf/ThreadIdentifierDataPthreads.cpp \
     Source/WTF/wtf/ThreadIdentifierDataPthreads.h \
     Source/WTF/wtf/ThreadRestrictionVerifier.h \
     Source/WTF/wtf/ThreadSafeRefCounted.h \
     Source/WTF/wtf/ThreadSpecific.h \
+    Source/WTF/wtf/ThreadSpecificWin.cpp \
     Source/WTF/wtf/Threading.cpp \
     Source/WTF/wtf/Threading.h \
     Source/WTF/wtf/ThreadingPrimitives.h \
     Source/WTF/wtf/ThreadingPthreads.cpp \
+    Source/WTF/wtf/ThreadingWin.cpp \
     Source/WTF/wtf/TypeTraits.cpp \
     Source/WTF/wtf/TypeTraits.h \
     Source/WTF/wtf/TypedArrayBase.h \
@@ -249,40 +254,15 @@ wtf_sources += \
     Source/WTF/wtf/unicode/CharacterNames.h \
     Source/WTF/wtf/unicode/Collator.h \
     Source/WTF/wtf/unicode/CollatorDefault.cpp \
+    Source/WTF/wtf/unicode/ScriptCodesFromICU.h \
     Source/WTF/wtf/unicode/UTF8.cpp \
     Source/WTF/wtf/unicode/UTF8.h \
     Source/WTF/wtf/unicode/Unicode.h \
-    Source/WTF/wtf/url/api/URLBuffer.h \
-    Source/WTF/wtf/url/api/URLQueryCharsetConverter.h
-
-if TARGET_WIN32
-wtf_sources += \
-    Source/WTF/wtf/OSAllocatorWin.cpp \
-    Source/WTF/wtf/ThreadFunctionInvocation.h \
-    Source/WTF/wtf/ThreadingWin.cpp \
-    Source/WTF/wtf/ThreadSpecificWin.cpp \
-    Source/WTF/wtf/win/OwnPtrWin.cpp
-else
-wtf_sources += \
-    Source/WTF/wtf/OSAllocatorPosix.cpp
-endif
-
-# ----
-# icu unicode backend
-# ----
-if USE_ICU_UNICODE
-wtf_sources += \
-    Source/WTF/wtf/unicode/icu/CollatorICU.cpp \
-    Source/WTF/wtf/unicode/icu/UnicodeIcu.h
-endif # USE_ICU_UNICODE
-
-# ----
-# glib unicode backend
-# ----
-if USE_GLIB_UNICODE
-wtf_sources += \
     Source/WTF/wtf/unicode/UnicodeMacrosFromICU.h \
-    Source/WTF/wtf/unicode/ScriptCodesFromICU.h \
     Source/WTF/wtf/unicode/glib/UnicodeGLib.h \
-    Source/WTF/wtf/unicode/glib/UnicodeGLib.cpp
-endif # USE_GLIB_UNICODE
+    Source/WTF/wtf/unicode/glib/UnicodeGLib.cpp \
+    Source/WTF/wtf/unicode/icu/CollatorICU.cpp \
+    Source/WTF/wtf/unicode/icu/UnicodeIcu.h \
+    Source/WTF/wtf/url/api/URLBuffer.h \
+    Source/WTF/wtf/url/api/URLQueryCharsetConverter.h \
+    Source/WTF/wtf/win/OwnPtrWin.cpp

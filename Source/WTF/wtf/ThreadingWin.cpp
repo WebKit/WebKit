@@ -85,6 +85,9 @@
 
 #include "config.h"
 #include "Threading.h"
+
+#if OS(WINDOWS)
+
 #include "DateMath.h"
 #include "dtoa.h"
 #include "dtoa/cached-powers.h"
@@ -515,3 +518,5 @@ DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
 }
 
 } // namespace WTF
+
+#endif // OS(WINDOWS)

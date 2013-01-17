@@ -26,6 +26,8 @@
 #include "config.h"
 #include "OSAllocator.h"
 
+#if OS(WINDOWS)
+
 #include "windows.h"
 #include <wtf/Assertions.h>
 
@@ -78,3 +80,5 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 }
 
 } // namespace WTF
+
+#endif // OS(WINDOWS)

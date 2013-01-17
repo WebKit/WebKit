@@ -148,6 +148,6 @@ void Collator::releaseCollator()
     }
 }
 
-}
+} // namespace WTF
 
-#endif
+#endif // USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION

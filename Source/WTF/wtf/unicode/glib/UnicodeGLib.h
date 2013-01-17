@@ -25,6 +25,8 @@
 #ifndef UnicodeGLib_h
 #define UnicodeGLib_h
 
+#if USE(GLIB_UNICODE)
+
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/unicode/ScriptCodesFromICU.h>
 #include <wtf/unicode/UnicodeMacrosFromICU.h>
@@ -39,6 +41,7 @@ typedef uint16_t UChar;
 typedef int32_t UChar32;
 
 namespace WTF {
+
 namespace Unicode {
 
 enum Direction {
@@ -226,8 +229,10 @@ inline DecompositionType decompositionType(UChar32 c)
 
 int umemcasecmp(const UChar*, const UChar*, int len);
 
-}
-}
+} // namespace Unicode
 
-#endif
+} // namespace WTF
 
+#endif // USE(GLIB_UNICODE)
+
+#endif // UnicodeGlib_h
