@@ -25,6 +25,7 @@
 #include "config.h"
 #include "TreeScopeAdopter.h"
 
+#include "Attr.h"
 #include "Document.h"
 #include "ElementRareData.h"
 #include "ElementShadow.h"
@@ -60,6 +61,15 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);
+
+        if (!node->isElementNode())
+            continue;
+
+        if (node->hasSyntheticAttrChildNodes()) {
+            const Vector<RefPtr<Attr> >& attrs = toElement(node)->attrNodeList();
+            for (unsigned i = 0; i < attrs.size(); ++i)
+                moveTreeToNewScope(attrs[i].get());
+        }
 
         for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot()) {
             shadow->setParentTreeScope(m_newScope);

@@ -1642,6 +1642,12 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 }
 #endif
 
+const Vector<RefPtr<Attr> >& Element::attrNodeList()
+{
+    ASSERT(hasSyntheticAttrChildNodes());
+    return *attrNodeListForElement(this);
+}
+
 PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 {
     if (!attrNode) {

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+var target = document.getElementById("target");
+var attr = target.attributes[0];
+var anotherDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "", null);
+anotherDocument.title = "Hello";
+anotherDocument.adoptNode(target);
+shouldBe("attr.ownerDocument.title", "anotherDocument.title");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

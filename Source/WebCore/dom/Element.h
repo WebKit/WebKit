@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Attr;
 class Attribute;
 class ClientRect;
 class ClientRectList;
@@ -228,7 +229,9 @@ public:
 
     PassRefPtr<Attr> attrIfExists(const QualifiedName&);
     PassRefPtr<Attr> ensureAttr(const QualifiedName&);
-    
+
+    const Vector<RefPtr<Attr> >& attrNodeList();
+
     virtual CSSStyleDeclaration* style();
 
     const QualifiedName& tagQName() const { return m_tagName; }
