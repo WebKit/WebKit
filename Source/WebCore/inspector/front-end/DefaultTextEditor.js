@@ -1981,6 +1981,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
             highlight.style.marginLeft = (metrics[i].left - highlight.offsetLeft - extraWidth) + "px";
             highlight.style.width = (metrics[i].width + extraWidth * 2) + "px";
+            highlight.innerHTML = "&nbsp;";
             highlight.addStyleClass("text-editor-overlay-highlight");
         }
     },
