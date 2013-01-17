@@ -338,7 +338,9 @@ endif  # END ENABLE_SPELLCHECK
 
 if ENABLE_INDEXED_DATABASE
 webcore_cppflags += \
-	-DWTF_USE_LEVELDB=1
+	-DWTF_USE_LEVELDB=1 \
+	-I$(srcdir)/Source/ThirdParty/leveldb \
+	-I$(srcdir)/Source/ThirdParty/leveldb/include
 endif
 
 # Fill the feature_defines variable with all the defines, making it possible
