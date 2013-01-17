@@ -146,7 +146,8 @@ WebInspector.SidebarView.prototype = {
      */
     applyConstraints: function(size)
     {
-        return Number.constrain(size, this._minimumSidebarWidth, this.element.offsetWidth * (100 - this._minimumMainWidthPercent) / 100);
+        var offsetWidth = this.element.offsetWidth;
+        return offsetWidth ? Number.constrain(size, this._minimumSidebarWidth, offsetWidth * (100 - this._minimumMainWidthPercent) / 100) : size;
     },
 
     hideMainElement: function()
