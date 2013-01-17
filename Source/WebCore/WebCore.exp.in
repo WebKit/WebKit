@@ -1576,7 +1576,6 @@ _wkSignalCFReadStreamHasBytes
 .objc_class_name_DOMCSSRuleList
 .objc_class_name_DOMCSSStyleRule
 .objc_class_name_DOMCSSStyleSheet
-.objc_class_name_DOMCSSSupportsRule
 .objc_class_name_DOMCSSUnknownRule
 .objc_class_name_DOMCSSValue
 .objc_class_name_DOMCSSValueList
@@ -2251,6 +2250,10 @@ __ZNK7WebCore15ContextMenuItem6actionEv
 __ZNK7WebCore15ContextMenuItem7checkedEv
 __ZNK7WebCore15ContextMenuItem7enabledEv
 #endif // ENABLE(CONTEXT_MENUS)
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+.objc_class_name_DOMCSSSupportsRule
+#endif // ENABLE(CSS3_CONDITIONAL_RULES)
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
 __ZNK7WebCore8Document16annotatedRegionsEv
