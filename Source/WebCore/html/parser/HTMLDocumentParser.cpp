@@ -575,7 +575,10 @@ void HTMLDocumentParser::endIfDelayed()
 void HTMLDocumentParser::finish()
 {
 #if ENABLE(THREADED_HTML_PARSER)
-    if (shouldUseThreading()) {
+    // Empty documents never got an append() call, and thus have never started
+    // a background parser. In those cases, we ignore shouldUseThreading()
+    // and fall through to the non-threading case.
+    if (shouldUseThreading() && m_haveBackgroundParser) {
         HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::finishPartial, ParserMap::identifierForParser(this)));
         return;
     }
