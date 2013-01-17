@@ -312,6 +312,8 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         setAttributeEventListener(eventNames().webkitAnimationEndEvent, createAttributeEventListener(this, name, value));
     } else if (name == onwebkittransitionendAttr) {
         setAttributeEventListener(eventNames().webkitTransitionEndEvent, createAttributeEventListener(this, name, value));
+    } else if (name == ontransitionendAttr) {
+        setAttributeEventListener(eventNames().transitionendEvent, createAttributeEventListener(this, name, value));
     } else if (name == oninputAttr) {
         setAttributeEventListener(eventNames().inputEvent, createAttributeEventListener(this, name, value));
     } else if (name == oninvalidAttr) {

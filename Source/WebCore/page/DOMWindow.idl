@@ -297,6 +297,9 @@
     attribute EventListener onwebkitanimationiteration;
     attribute EventListener onwebkitanimationstart;
     attribute EventListener onwebkittransitionend;
+#if defined(ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED) && ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
+    attribute EventListener ontransitionend;
+#endif
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
     attribute EventListener onorientationchange;
 #endif
