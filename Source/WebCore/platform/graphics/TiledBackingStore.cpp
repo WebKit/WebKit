@@ -580,7 +580,7 @@ void TiledBackingStore::setContentsFrozen(bool freeze)
 
 void TiledBackingStore::setSupportsAlpha(bool a)
 {
-    if (a == supportsAlpha())
+    if (a == m_supportsAlpha)
         return;
     m_supportsAlpha = a;
     invalidate(m_rect);

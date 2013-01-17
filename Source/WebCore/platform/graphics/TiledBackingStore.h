@@ -79,7 +79,6 @@ public:
     void removeAllNonVisibleTiles();
 
     void setSupportsAlpha(bool);
-    bool supportsAlpha() const { return m_supportsAlpha; }
 
 private:
     void startTileBufferUpdateTimer();
