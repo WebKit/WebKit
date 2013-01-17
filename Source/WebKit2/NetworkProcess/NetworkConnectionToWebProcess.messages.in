@@ -30,7 +30,6 @@ messages -> NetworkConnectionToWebProcess {
     // We might also have the NetworkProcess divvy up identifiers in blocks to each WebProcess beforehand.
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (uint64_t resourceLoadIdentifier)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, CoreIPC::DataReference data) Delayed
-    AddLoadInProgress(WebCore::KURL url) -> (uint64_t resourceLoadIdentifier)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     
     ServePendingRequests(uint32_t resourceLoadPriority)

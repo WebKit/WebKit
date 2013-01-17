@@ -1,3 +1,16 @@
+2013-01-16  Sam Weinig  <sam@webkit.org>
+
+        Remove unused AddLoadInProgress message
+        https://bugs.webkit.org/show_bug.cgi?id=107077
+
+        Reviewed by Dan Bernstein.
+
+        Dead code is dead.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
 2013-01-16  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when destroying a plug-in with pending URL requests

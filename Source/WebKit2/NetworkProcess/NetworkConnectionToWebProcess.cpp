@@ -126,11 +126,6 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleSyncNetworkResourceLoader(SyncNetworkResourceLoader::create(loadParameters, reply));
 }
 
-void NetworkConnectionToWebProcess::addLoadInProgress(const KURL& url, ResourceLoadIdentifier& identifier)
-{
-    identifier = NetworkProcess::shared().networkResourceLoadScheduler().addLoadInProgress(url);
-}
-
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)
 {
     NetworkProcess::shared().networkResourceLoadScheduler().removeLoadIdentifier(identifier);
