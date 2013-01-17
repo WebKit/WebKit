@@ -95,6 +95,8 @@ class CommittersTest(unittest.TestCase):
         self.assertEqual(committer_list.contributors_by_search_string('test'), [contributor, committer, reviewer])
         self.assertEqual(committer_list.contributors_by_search_string('rad'), [reviewer])
         self.assertEqual(committer_list.contributors_by_search_string('Two'), [reviewer])
+        self.assertEqual(committer_list.contributors_by_search_string('otherfour'), [contributor_with_two_nicknames])
+        self.assertEqual(committer_list.contributors_by_search_string('*otherfour*'), [contributor_with_two_nicknames, contributor_with_same_email_username])
 
         self.assertEqual(committer_list.contributors_by_email_username("one"), [committer])
         self.assertEqual(committer_list.contributors_by_email_username("four"), [])

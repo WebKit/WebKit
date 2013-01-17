@@ -289,7 +289,7 @@ class Sheriffs(IRCCommand):
 
 class Whois(IRCCommand):
     usage_string = "whois SEARCH_STRING"
-    help_string = "Searches known contributors and returns any matches with irc, email and full name."
+    help_string = "Searches known contributors and returns any matches with irc, email and full name. Wild card * permitted."
 
     def _nick_or_full_record(self, contributor):
         if contributor.irc_nicknames:

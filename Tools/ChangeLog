@@ -1,3 +1,20 @@
+2013-01-16  Alan Cutter  <alancutter@chromium.org>
+
+        sheriffbot can't tell me who "kov" is
+        https://bugs.webkit.org/show_bug.cgi?id=106184
+
+        Reviewed by Eric Seidel.
+
+        Added glob style searching to the CommitterList contributors_by_search_string function so exact matches are favoured.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (Account.matches_glob):
+        (CommitterList.contributors_by_search_string):
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest.test_committer_lookup):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Whois):
+
 2013-01-16  David Kilzer  <ddkilzer@apple.com>
 
         Use xcrun to find path to make for Mac port

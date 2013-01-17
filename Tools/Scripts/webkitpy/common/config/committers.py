@@ -30,6 +30,7 @@
 # WebKit's Python module for committer and reviewer validation.
 
 from webkitpy.common.editdistance import edit_distance
+import fnmatch
 
 class Account(object):
     def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
@@ -66,6 +67,18 @@ class Account(object):
                     return True
         for email in self.emails:
             if string in email:
+                return True
+        return False
+
+    def matches_glob(self, glob_string):
+        if fnmatch.fnmatch(self.full_name, glob_string):
+            return True
+        if self.irc_nicknames:
+            for nickname in self.irc_nicknames:
+                if fnmatch.fnmatch(nickname, glob_string):
+                    return True
+        for email in self.emails:
+            if fnmatch.fnmatch(email, glob_string):
                 return True
         return False
 
@@ -657,7 +670,8 @@ class CommitterList(object):
         return None
 
     def contributors_by_search_string(self, string):
-        return filter(lambda contributor: contributor.contains_string(string), self.contributors())
+        glob_matches = filter(lambda contributor: contributor.matches_glob(string), self.contributors())
+        return glob_matches or filter(lambda contributor: contributor.contains_string(string), self.contributors())
 
     def contributors_by_email_username(self, string):
         string = string + '@'
