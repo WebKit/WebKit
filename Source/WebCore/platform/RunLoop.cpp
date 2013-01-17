@@ -53,6 +53,10 @@ RunLoop* RunLoop::main()
     return s_mainRunLoop;
 }
 
+void RunLoop::setUseApplicationRunLoopOnMainRunLoop()
+{
+}
+
 #endif
 
 void RunLoop::performWork()

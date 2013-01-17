@@ -305,6 +305,8 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
+    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+
     WKAXRegisterRemoteApp();
 
 #if USE(SECURITY_FRAMEWORK)

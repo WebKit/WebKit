@@ -51,6 +51,9 @@ public:
     // can be called from any thread).
     static void initializeMainRunLoop();
 
+    // Must be called before entering main run loop. If called, application style run loop will be used, handling events.
+    static void setUseApplicationRunLoopOnMainRunLoop();
+
     static RunLoop* current();
     static RunLoop* main();
 

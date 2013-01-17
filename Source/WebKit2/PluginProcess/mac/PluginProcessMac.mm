@@ -42,6 +42,8 @@
 
 #import "NetscapeSandboxFunctions.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 class FullscreenWindowTracker {
@@ -338,6 +340,8 @@ static void muteAudio(void)
 
 void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
+    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)",
