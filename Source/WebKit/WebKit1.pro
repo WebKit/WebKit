@@ -127,8 +127,7 @@ enable?(VIDEO) {
             $$PWD/../../WebKitLibraries/
 
         DEFINES += NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-
-        contains(CONFIG, "x86") {
+        isEqual(QT_ARCH, "i386") {
             DEFINES+=NS_BUILD_32_LIKE_64
         }
 
