@@ -64,15 +64,6 @@ public:
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
-
-    virtual LayoutUnit paddingTop() const OVERRIDE;
-    virtual LayoutUnit paddingBottom() const OVERRIDE;
-    virtual LayoutUnit paddingLeft() const OVERRIDE;
-    virtual LayoutUnit paddingRight() const OVERRIDE;
-    virtual LayoutUnit paddingBefore() const OVERRIDE;
-    virtual LayoutUnit paddingAfter() const OVERRIDE;
-    virtual LayoutUnit paddingStart() const OVERRIDE;
-    virtual LayoutUnit paddingEnd() const OVERRIDE;
     
     // A MathML element's preferred logical widths often depend on its children's preferred heights, not just their widths.
     // This is due to operator stretching and other layout fine tuning. We define an element's preferred height to be its
@@ -106,11 +97,6 @@ protected:
     void computeChildrenPreferredLogicalHeights();
     // This can only be called after children have been sized by computeChildrenPreferredLogicalHeights().
     static LayoutUnit preferredLogicalHeightAfterSizing(RenderObject* child);
-    
-    int m_intrinsicPaddingBefore;
-    int m_intrinsicPaddingAfter;
-    int m_intrinsicPaddingStart;
-    int m_intrinsicPaddingEnd;
     
     // m_preferredLogicalHeight is dirty if it's < 0 or preferredLogicalWidthsDirty().
     LayoutUnit m_preferredLogicalHeight;

@@ -68,7 +68,95 @@ const float gRadicalThickLineThicknessEms = 0.1f;
     
 RenderMathMLRoot::RenderMathMLRoot(Element* element)
     : RenderMathMLBlock(element)
+    , m_intrinsicPaddingBefore(0)
+    , m_intrinsicPaddingAfter(0)
+    , m_intrinsicPaddingStart(0)
+    , m_intrinsicPaddingEnd(0)
 {
+}
+
+LayoutUnit RenderMathMLRoot::paddingTop() const
+{
+    LayoutUnit result = computedCSSPaddingTop();
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case BottomToTopWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case LeftToRightWritingMode:
+    case RightToLeftWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLRoot::paddingBottom() const
+{
+    LayoutUnit result = computedCSSPaddingBottom();
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case BottomToTopWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case LeftToRightWritingMode:
+    case RightToLeftWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLRoot::paddingLeft() const
+{
+    LayoutUnit result = computedCSSPaddingLeft();
+    switch (style()->writingMode()) {
+    case LeftToRightWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case RightToLeftWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case TopToBottomWritingMode:
+    case BottomToTopWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLRoot::paddingRight() const
+{
+    LayoutUnit result = computedCSSPaddingRight();
+    switch (style()->writingMode()) {
+    case RightToLeftWritingMode:
+        return result + m_intrinsicPaddingBefore;
+    case LeftToRightWritingMode:
+        return result + m_intrinsicPaddingAfter;
+    case TopToBottomWritingMode:
+    case BottomToTopWritingMode:
+        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+    }
+    ASSERT_NOT_REACHED();
+    return result;
+}
+
+LayoutUnit RenderMathMLRoot::paddingBefore() const
+{
+    return computedCSSPaddingBefore() + m_intrinsicPaddingBefore;
+}
+
+LayoutUnit RenderMathMLRoot::paddingAfter() const
+{
+    return computedCSSPaddingAfter() + m_intrinsicPaddingAfter;
+}
+
+LayoutUnit RenderMathMLRoot::paddingStart() const
+{
+    return computedCSSPaddingStart() + m_intrinsicPaddingStart;
+}
+
+LayoutUnit RenderMathMLRoot::paddingEnd() const
+{
+    return computedCSSPaddingEnd() + m_intrinsicPaddingEnd;
 }
 
 void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChild)

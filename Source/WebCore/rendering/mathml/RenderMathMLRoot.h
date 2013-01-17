@@ -36,7 +36,16 @@ namespace WebCore {
 class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element*);
-    
+
+    virtual LayoutUnit paddingTop() const OVERRIDE;
+    virtual LayoutUnit paddingBottom() const OVERRIDE;
+    virtual LayoutUnit paddingLeft() const OVERRIDE;
+    virtual LayoutUnit paddingRight() const OVERRIDE;
+    virtual LayoutUnit paddingBefore() const OVERRIDE;
+    virtual LayoutUnit paddingAfter() const OVERRIDE;
+    virtual LayoutUnit paddingStart() const OVERRIDE;
+    virtual LayoutUnit paddingEnd() const OVERRIDE;
+
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
     
 protected:
@@ -52,7 +61,11 @@ private:
     
     // This may return 0 for a non-MathML index (which won't occur in valid MathML).
     RenderBoxModelObject* index() const;
-    
+
+    int m_intrinsicPaddingBefore;
+    int m_intrinsicPaddingAfter;
+    int m_intrinsicPaddingStart;
+    int m_intrinsicPaddingEnd;
     int m_overbarLeftPointShift;
     int m_indexTop;
 };
