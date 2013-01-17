@@ -40,7 +40,7 @@ void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer<NetworkResou
     servePendingRequests();
 }
 
-ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
+PassRefPtr<NetworkResourceLoader> NetworkResourceLoadScheduler::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
 {
     ResourceLoadPriority priority = loadParameters.priority();
     const ResourceRequest& resourceRequest = loadParameters.request();
@@ -48,8 +48,6 @@ ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const 
     ResourceLoadIdentifier identifier = ++s_currentResourceLoadIdentifier;
     RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, identifier, connection);
     
-    m_resourceLoaders.add(identifier, loader);
-
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleNetworkResourceRequest resource %llu '%s'", identifier, resourceRequest.url().string().utf8().data());
 
     HostRecord* host = hostForURL(resourceRequest.url(), CreateIfNotFound);
@@ -60,12 +58,12 @@ ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const 
     if (priority > ResourceLoadPriorityLow || !resourceRequest.url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequestsForHost(host, priority);
-        return identifier;
+        return loader;
     }
     
     // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones.
     scheduleServePendingRequests();
-    return identifier;
+    return loader;
 }
 
 void NetworkResourceLoadScheduler::scheduleSyncNetworkResourceLoader(PassRefPtr<SyncNetworkResourceLoader> loader)
@@ -132,16 +130,8 @@ void NetworkResourceLoadScheduler::removeLoadIdentifier(ResourceLoadIdentifier i
     // In this situation we might not have a HostRecord to clean up.
     if (host)
         host->remove(identifier);
-    
-    m_resourceLoaders.remove(identifier);
 
     scheduleServePendingRequests();
-}
-
-NetworkResourceLoader* NetworkResourceLoadScheduler::networkResourceLoaderForIdentifier(ResourceLoadIdentifier identifier)
-{
-    ASSERT(m_resourceLoaders.get(identifier));
-    return m_resourceLoaders.get(identifier).get();
 }
 
 void NetworkResourceLoadScheduler::receivedRedirect(ResourceLoadIdentifier identifier, const WebCore::KURL& redirectURL)

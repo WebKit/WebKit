@@ -46,7 +46,7 @@ namespace WebKit {
 class RemoteNetworkingContext;
 typedef uint64_t ResourceLoadIdentifier;
 
-class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public NetworkConnectionToWebProcessObserver, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender<NetworkResourceLoader> {
+class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender<NetworkResourceLoader> {
 public:
     static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
     {
@@ -63,7 +63,7 @@ public:
 
     void start();
 
-    virtual void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*) OVERRIDE;
+    void connectionToWebProcessDidClose();
     
     ResourceLoadIdentifier identifier() const { return m_identifier; }
     WebCore::ResourceLoadPriority priority() const;

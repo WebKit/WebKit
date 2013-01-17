@@ -53,15 +53,11 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_connection(connection)
 {
     ASSERT(isMainThread());
-    connection->registerObserver(this);
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(isMainThread());
-
-    if (m_connection)
-        m_connection->unregisterObserver(this);
 }
 
 CoreIPC::Connection* NetworkResourceLoader::connection() const
@@ -141,9 +137,8 @@ void NetworkResourceLoader::stop()
     deref();
 }
 
-void NetworkResourceLoader::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
+void NetworkResourceLoader::connectionToWebProcessDidClose()
 {
-    ASSERT_ARG(connection, connection == m_connection.get());
     // FIXME (NetworkProcess): Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
 }
 

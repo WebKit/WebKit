@@ -42,13 +42,8 @@ class ResourceRequest;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
+class NetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
-
-class NetworkConnectionToWebProcessObserver {
-public:
-    virtual ~NetworkConnectionToWebProcessObserver() { }
-    virtual void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*) = 0;
-};
 
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, CoreIPC::Connection::Client {
 public:
@@ -56,9 +51,6 @@ public:
     virtual ~NetworkConnectionToWebProcess();
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
-    
-    void registerObserver(NetworkConnectionToWebProcessObserver*);
-    void unregisterObserver(NetworkConnectionToWebProcessObserver*);
 
     bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
 
@@ -91,8 +83,8 @@ private:
     void deleteCookie(bool privateBrowsingEnabled, const WebCore::KURL&, const String& cookieName);
 
     RefPtr<CoreIPC::Connection> m_connection;
-    
-    HashSet<NetworkConnectionToWebProcessObserver*> m_observers;
+
+    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> > m_resourceLoaders;
 
     bool m_serialLoadingEnabled;
 };

@@ -49,7 +49,7 @@ public:
     NetworkResourceLoadScheduler();
     
     // Adds the request to the queue for its host and create a unique identifier for it.
-    ResourceLoadIdentifier scheduleResourceLoad(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
+    PassRefPtr<NetworkResourceLoader> scheduleResourceLoad(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
     
     // Adds a synchronous request to the synchronous request queue for its host.
     void scheduleSyncNetworkResourceLoader(PassRefPtr<SyncNetworkResourceLoader>);
@@ -66,8 +66,6 @@ public:
     void receivedRedirect(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
     
-    NetworkResourceLoader* networkResourceLoaderForIdentifier(ResourceLoadIdentifier);
-
 private:
     enum CreateHostPolicy {
         CreateIfNotFound,
@@ -85,8 +83,6 @@ private:
 
     static void removeScheduledLoadIdentifiers(void* context);
     void removeScheduledLoadIdentifiers();
-
-    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> > m_resourceLoaders;
 
     typedef HashMap<String, HostRecord*, StringHash> HostMap;
     HostMap m_hosts;
