@@ -205,7 +205,12 @@
        (subpath "/Library/Input Methods")
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
-       (home-subpath "/Library/Input Methods"))
+       (home-subpath "/Library/Input Methods")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+       (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le"))
+       (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le.kbdx"))
+#endif
+       )
 
 (deny mach-lookup (with no-log)
        (global-name "com.apple.coreservices.appleevents"))
