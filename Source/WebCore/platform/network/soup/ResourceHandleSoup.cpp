@@ -375,7 +375,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
 
 // Called each time the message is going to be sent again except the first time.
 // This happens when libsoup handles HTTP authentication.
-static void restartedCallback(SoupMessage* message, gpointer data)
+static void restartedCallback(SoupMessage*, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle)
