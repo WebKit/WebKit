@@ -888,7 +888,6 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
 
     // Used to prevent mouseMoveEvent from initiating a drag before
     // the mouse is pressed again.
-    m_frame->selection()->setCaretBlinkingSuspended(false);
     m_mousePressed = false;
     m_capturesDragging = false;
 #if ENABLE(DRAG_SUPPORT)
@@ -1553,6 +1552,8 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
 {
     RefPtr<FrameView> protector(m_frame->view());
 
+    m_frame->selection()->setCaretBlinkingSuspended(false);
+
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     // We get this instead of a second mouse-up 
@@ -1760,6 +1761,8 @@ void EventHandler::invalidateClick()
 bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 {
     RefPtr<FrameView> protector(m_frame->view());
+
+    m_frame->selection()->setCaretBlinkingSuspended(false);
 
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
