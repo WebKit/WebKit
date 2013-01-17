@@ -1768,6 +1768,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 {
                     color = e.data;
                     var colorString = color.toString();
+                    spectrum.displayText = colorString;
                     colorValueElement.textContent = colorString;
                     colorSwatch.setColorString(colorString);
                     self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, false, false, false);
