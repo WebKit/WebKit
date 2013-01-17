@@ -1,3 +1,18 @@
+2013-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG 32_64 backend doesn't check for hasArrayStorage() in NewArrayWithSize
+        https://bugs.webkit.org/show_bug.cgi?id=107081
+
+        Reviewed by Michael Saboff.
+
+        This bug led to the 32_64 backend emitting contiguous allocation code to allocate
+        ArrayStorage arrays. This then led to all manner of heap corruption, since
+        subsequent array accesses would be accessing the contiguous array "as if" it was
+        an arraystorage array.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-01-16  Jonathan Liu  <net147@gmail.com>
 
         Add missing sys/mman.h include on Mac

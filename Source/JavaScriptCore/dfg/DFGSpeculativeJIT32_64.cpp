@@ -3722,7 +3722,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case NewArrayWithSize: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
-        if (!globalObject->isHavingABadTime()) {
+        if (!globalObject->isHavingABadTime() && !hasArrayStorage(node.indexingType())) {
             globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
             
             SpeculateStrictInt32Operand size(this, node.child1());
