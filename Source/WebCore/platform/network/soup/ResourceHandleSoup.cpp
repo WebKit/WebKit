@@ -985,6 +985,9 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
     GOwnPtr<GError> error;
 
     GOwnPtr<SoupURI> soupURI(request.soupURI());
+    if (!soupURI)
+        return false;
+
     d->m_soupRequest = adoptGRef(soup_requester_request_uri(requester, soupURI.get(), &error.outPtr()));
     if (error) {
         d->m_soupRequest.clear();
