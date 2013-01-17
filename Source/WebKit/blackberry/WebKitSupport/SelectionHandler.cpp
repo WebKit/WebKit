@@ -954,13 +954,12 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
         return;
 
     m_lastSelectionRegion = unclippedRegion;
+    bool isRTL = directionOfEnclosingBlock(frame->selection()) == RTL;
 
     IntRectRegion visibleSelectionRegion;
     if (!unclippedRegion.isEmpty()) {
         WebCore::IntRect unclippedStartCaret;
         WebCore::IntRect unclippedEndCaret;
-
-        bool isRTL = directionOfEnclosingBlock(frame->selection()) == RTL;
 
         WebCore::IntPoint startCaretReferencePoint = referencePoint(frame->selection()->selection().visibleStart(), unclippedRegion.extents(), framePos, true /* isStartCaret */, isRTL);
         WebCore::IntPoint endCaretReferencePoint = referencePoint(frame->selection()->selection().visibleEnd(), unclippedRegion.extents(), framePos, false /* isStartCaret */, isRTL);
@@ -997,6 +996,13 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
             // Find the top corner and bottom corner.
             adjustCaretRects(startCaret, shouldClipStartCaret, endCaret, shouldClipEndCaret, visibleSelectionRegion.rects(), startCaretReferencePoint, endCaretReferencePoint, isRTL);
         }
+    }
+
+    if (!frame->selection()->selection().isBaseFirst() || isRTL ) {
+        // End handle comes before start, invert the caret reference points.
+        WebCore::IntRect tmpCaret(startCaret);
+        startCaret = endCaret;
+        endCaret = tmpCaret;
     }
 
     SelectionLog(Platform::LogLevelInfo,
