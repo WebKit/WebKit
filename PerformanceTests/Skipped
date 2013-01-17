@@ -64,3 +64,8 @@ SVG/SvgNestedUse.html
 ShadowDOM
 
 Canvas/drawimage.html
+
+# Works fine, but is mostly useful to the threaded-parsing folks, as
+# it's very similar to parser/html-parser.html just using
+# srcdoc to load instead of document.write.
+parser/html-parser-srcdoc.html
