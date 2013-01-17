@@ -1327,15 +1327,6 @@ webkit.org/b/104680 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ F
 
 webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 
-webkit.org/b/87734 svg/dom/SVGViewSpec.html [ Failure ]
-webkit.org/b/87734 svg/dom/complex-svgView-specification.html [ ImageOnlyFailure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-1.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-3.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-4.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-5.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-6.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
-
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 
 # Leaking state into the next test.

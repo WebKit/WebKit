@@ -97,6 +97,15 @@
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/87734 svg/dom/SVGViewSpec.html [ Failure ]
+webkit.org/b/87734 svg/dom/complex-svgView-specification.html [ ImageOnlyFailure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-1.html [ Failure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-3.html [ Failure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-4.html [ Failure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-5.html [ Failure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-6.html [ Failure ]
+webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

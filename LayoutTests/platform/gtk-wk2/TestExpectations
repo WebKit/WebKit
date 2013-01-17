@@ -99,8 +99,6 @@ webkit.org/b/63706 http/tests/misc/bubble-drag-events.html [ Failure ]
 webkit.org/b/63706 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 webkit.org/b/63706 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
-webkit.org/b/63706 svg/custom/mouse-move-on-svg-container.xhtml [ Failure Timeout ]
-webkit.org/b/63706 svg/custom/mouse-move-on-svg-root.xhtml [ Failure Timeout ]
 
 # WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
 Bug(GTK) editing/selection/doubleclick-beside-cr-span.html [ Failure ]
@@ -214,7 +212,6 @@ webkit.org/b/42194 editing/undo/undo-smart-delete-reversed-selection.html [ Fail
 webkit.org/b/42194 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
-webkit.org/b/42194 svg/custom/polyline-hittest.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -299,10 +296,6 @@ Bug(GTK) http/tests/security/cross-origin-plugin-allowed.html [ Failure Pass ]
 Bug(GTK) http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
 Bug(GTK) media/video-transformed.html [ Failure Pass ]
 Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failure Pass ]
-Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
-Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
-Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
-Bug(GTK) svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -335,9 +328,28 @@ webkit.org/b/106344 accessibility/placeholder.html [ Failure ]
 webkit.org/b/106346 accessibility/svg-remote-element.html [ Timeout ]
 webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
 
-# Fullscreen tests failing. Some of them are really slow, mark them as SLOW once
-# we have lower values for normal and slow time out.
-# http://webkit.org/b/93973
+# svg/ failures
+webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
+webkit.org/b/42457 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
+webkit.org/b/42457 svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
+webkit.org/b/42457 svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
+webkit.org/b/63706 svg/custom/mouse-move-on-svg-container.xhtml [ Failure ]
+webkit.org/b/63706 svg/custom/mouse-move-on-svg-root.xhtml [ Failure ]
+Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
+Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
+Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
+Bug(WK2) svg/dom/fuzz-path-parser.html [ Failure ]
+Bug(WK2) svg/hixie/cascade/002.xml [ Failure ]
+Bug(GTK) svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure ]
+Bug(GTK) svg/text/select-x-list-1.svg [ Failure ]
+Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
+
+# tables/ failures
+Bug(WK2) tables/mozilla_expected_failures/bugs/bug8499.html [ Failure ]
 
 # HiDPI - 1 pixel diffs
 # http://webkit.org/b/93978
@@ -475,14 +487,6 @@ Bug(GTK) plugins/npruntime/browser-object-identity.html [ Failure ]
 Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Failure ]
 Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
-Bug(GTK) svg/custom/use-elementInstance-event-target.svg [ Failure ]
-Bug(GTK) svg/custom/use-instanceRoot-as-event-target.xhtml [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure ]
-Bug(GTK) svg/text/select-x-list-1.svg [ Failure ]
-Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
 Bug(GTK) touchadjustment/iframe.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -549,12 +553,6 @@ Bug(GTK) http/tests/xmlhttprequest/origin-exact-matching.html [ Pass ]
 Bug(GTK) plugins/form-value.html [ Pass ]
 Bug(GTK) plugins/npruntime/delete-plugin-within-getProperty.html [ Pass ]
 Bug(GTK) plugins/plugin-document-load-prevented-userscript.html [ Pass ]
-Bug(GTK) svg/dom/SVGViewSpec.html [ Pass ]
-Bug(GTK) svg/dom/viewspec-parser-1.html [ Pass ]
-Bug(GTK) svg/dom/viewspec-parser-2.html [ Pass ]
-Bug(GTK) svg/dom/viewspec-parser-3.html [ Pass ]
-Bug(GTK) svg/dom/viewspec-parser-4.html [ Pass ]
-Bug(GTK) svg/dom/viewspec-parser-5.html [ Pass ]
 Bug(GTK) fullscreen/full-screen-keyboard-enabled.html [ Pass ]
 
 # Will need rebaselining after bug 98527 fixed
