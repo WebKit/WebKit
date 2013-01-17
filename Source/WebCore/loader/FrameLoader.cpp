@@ -2893,6 +2893,10 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource)
     if (!resource->shouldSendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
         return;
 
+    // Main resource delegate messages are synthesized in MainResourceLoader, so we must not send them here.
+    if (resource->type() == CachedResource::MainResource)
+        return;
+
     if (!page->areMemoryCacheClientCallsEnabled()) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource->url());

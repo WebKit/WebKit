@@ -46,6 +46,7 @@
 #include "HTMLFormElement.h"
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceBuffer.h"
@@ -73,7 +74,7 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
-    , m_substituteDataLoadIdentifier(0)
+    , m_identifierForLoadWithoutResourceLoader(0)
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     , m_filter(0)
 #endif
@@ -99,9 +100,9 @@ void MainResourceLoader::receivedError(const ResourceError& error)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<Frame> protectFrame(m_documentLoader->frame());
 
-    if (m_substituteDataLoadIdentifier) {
+    if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!loader());
-        frameLoader()->client()->dispatchDidFailLoading(documentLoader(), m_substituteDataLoadIdentifier, error);
+        frameLoader()->client()->dispatchDidFailLoading(documentLoader(), m_identifierForLoadWithoutResourceLoader, error);
     }
 
     // It is important that we call DocumentLoader::mainReceivedError before calling 
@@ -286,7 +287,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
         ASSERT(!m_substituteData.isValid());
         documentLoader()->applicationCacheHost()->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
         if (m_substituteData.isValid())
-            m_substituteDataLoadIdentifier = identifier();
+            m_identifierForLoadWithoutResourceLoader = identifier();
     }
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate
@@ -392,7 +393,21 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 void MainResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& r)
 {
     ASSERT_UNUSED(resource, m_resource == resource);
-    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainResponse(request(), r))
+    bool willLoadFallback = documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainResponse(request(), r);
+
+    // The memory cache doesn't understand the application cache or its caching rules. So if a main resource is served
+    // from the application cache, ensure we don't save the result for future use.
+    bool shouldRemoveResourceFromCache = willLoadFallback;
+#if PLATFORM(CHROMIUM)
+    // chromium's ApplicationCacheHost implementation always returns true for maybeLoadFallbackForMainResponse(). However, all responses loaded
+    // from appcache will have a non-zero appCacheID().
+    if (r.appCacheID())
+        shouldRemoveResourceFromCache = true;
+#endif
+    if (shouldRemoveResourceFromCache)
+        memoryCache()->remove(m_resource.get());
+
+    if (willLoadFallback)
         return;
 
     DEFINE_STATIC_LOCAL(AtomicString, xFrameOptionHeader, ("x-frame-options", AtomicString::ConstructFromLiteral));
@@ -540,7 +555,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 
     if (!loader()) {
         frameLoader()->notifier()->dispatchDidFinishLoading(documentLoader(), identifier(), finishTime);
-        m_substituteDataLoadIdentifier = 0;
+        m_identifierForLoadWithoutResourceLoader = 0;
     }
 
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
@@ -561,6 +576,13 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 
     documentLoader()->timing()->setResponseEnd(finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : monotonicallyIncreasingTime()));
     documentLoader()->finishedLoading();
+
+    // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
+    // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
+    if (Frame* frame = documentLoader()->frame()) {
+        if (m_resource && frame->document()->hasManifest())
+            memoryCache()->remove(m_resource.get());
+    }
 
     dl->applicationCacheHost()->finishedLoadingMainResource();
 }
@@ -671,9 +693,9 @@ void MainResourceLoader::load(const ResourceRequest& initialRequest, const Subst
     documentLoader()->applicationCacheHost()->maybeLoadMainResource(request, m_substituteData);
 
     if (m_substituteData.isValid()) {
-        m_substituteDataLoadIdentifier = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
-        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_substituteDataLoadIdentifier, documentLoader(), request);
-        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_substituteDataLoadIdentifier, request, ResourceResponse());
+        m_identifierForLoadWithoutResourceLoader = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
+        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, documentLoader(), request);
+        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
         handleSubstituteDataLoadSoon(request);
         return;
     }
@@ -686,13 +708,20 @@ void MainResourceLoader::load(const ResourceRequest& initialRequest, const Subst
         documentLoader()->setRequest(ResourceRequest());
         return;
     }
+    if (!loader()) {
+        m_identifierForLoadWithoutResourceLoader = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
+        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, documentLoader(), request);
+        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
+    }
     m_resource->addClient(this);
 
-    // We need to wait until after requestMainResource() is called to setRequest(), because there are a bunch of headers set when
-    // the underlying ResourceLoader is created, and DocumentLoader::m_request needs to include those. However, the cache will
-    // strip the fragment identifier (which DocumentLoader::m_request should also include), so add that back in.
+    // A bunch of headers are set when the underlying ResourceLoader is created, and DocumentLoader::m_request needs to include those.
     if (loader())
         request = loader()->originalRequest();
+    // If there was a fragment identifier on initialRequest, the cache will have stripped it. DocumentLoader::m_request should include
+    // the fragment identifier, so add that back in.
+    if (equalIgnoringFragmentIdentifier(initialRequest.url(), request.url()))
+        request.setURL(initialRequest.url());
     documentLoader()->setRequest(request);
 }
 
@@ -720,9 +749,9 @@ ResourceLoader* MainResourceLoader::loader() const
 
 unsigned long MainResourceLoader::identifier() const
 {
-    ASSERT(!m_substituteDataLoadIdentifier || !loader() || !loader()->identifier());
-    if (m_substituteDataLoadIdentifier)
-        return m_substituteDataLoadIdentifier;
+    ASSERT(!m_identifierForLoadWithoutResourceLoader || !loader() || !loader()->identifier());
+    if (m_identifierForLoadWithoutResourceLoader)
+        return m_identifierForLoadWithoutResourceLoader;
     if (ResourceLoader* resourceLoader = loader())
         return resourceLoader->identifier();
     return 0;

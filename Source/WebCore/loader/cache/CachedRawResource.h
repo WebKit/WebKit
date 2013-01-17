@@ -48,7 +48,7 @@ public:
     SubresourceLoader* loader() const;
     void clear();
 
-    bool canReuse(const ResourceRequest&) const;
+    virtual bool canReuse(const ResourceRequest&) const;
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
@@ -67,6 +67,20 @@ private:
 #endif
 
     unsigned long m_identifier;
+
+    struct RedirectPair {
+    public:
+        explicit RedirectPair(const ResourceRequest& request, const ResourceResponse& redirectResponse)
+            : m_request(request)
+            , m_redirectResponse(redirectResponse)
+        {
+        }
+
+        const ResourceRequest m_request;
+        const ResourceResponse m_redirectResponse;
+    };
+
+    Vector<RedirectPair> m_redirectChain;
 };
 
 

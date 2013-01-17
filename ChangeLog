@@ -1,3 +1,12 @@
+2013-01-17  Nate Chapin  <japhet@chromium.org>
+
+        Enable reuse of cached main resources
+        https://bugs.webkit.org/show_bug.cgi?id=105667
+
+        Reviewed by Antti Koivisto.
+
+        * Source/autotools/symbols.filter: Expose MemoryCache::resourceForURL().
+
 2013-01-17  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL][CMAKE] Compress resource files of inspector
