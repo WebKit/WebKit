@@ -1077,9 +1077,6 @@ Bug(GTK) editing/spelling/grammar.html [ Failure ]
 Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
-# TextCheckerEnchant::checkSpellingOfString doesn't return misspelled location and length for multiple words.
-Bug(GTK) editing/spelling/spelling-backspace-between-lines.html [ Failure ]
-
 # testRunner::setTextDirection() is not implemented.
 Bug(GTK) fast/html/set-text-direction.html [ Failure ]
 

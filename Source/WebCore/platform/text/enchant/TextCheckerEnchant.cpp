@@ -74,12 +74,12 @@ void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int
             // Stop checking, this word is ok in at least one dict.
             misspellingLocation = -1;
             misspellingLength = 0;
-            break;
+            return;
         }
-
-        misspellingLocation = start;
-        misspellingLength = end - start;
     }
+
+    misspellingLocation = start;
+    misspellingLength = end - start;
 }
 
 void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)
@@ -98,8 +98,12 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     CString utf8String = string.utf8();
     int start = textBreakFirst(iter);
     for (int end = textBreakNext(iter); end != TextBreakDone; end = textBreakNext(iter)) {
-        if (isWordTextBreak(iter))
+        if (isWordTextBreak(iter)) {
             checkSpellingOfWord(utf8String, start, end, misspellingLocation, misspellingLength);
+            // Stop checking the next words If the current word is misspelled, to do not overwrite its misspelled location and length.
+            if (misspellingLength)
+                return;
+        }
         start = end;
     }
 }

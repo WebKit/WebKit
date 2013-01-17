@@ -33,6 +33,7 @@ editing/spelling/spellcheck-api-crash.html [ Pass ]
 editing/spelling/spellcheck-attribute.html [ Pass ]
 editing/spelling/spelling-attribute-at-child.html [ Pass ]
 editing/spelling/spelling-attribute-change.html [ Pass ]
+editing/spelling/spelling-backspace-between-lines.html [ Pass ]
 editing/spelling/spelling-hasspellingmarker.html [ Pass ]
 editing/spelling/spelling-linebreak.html [ Pass ]
 
