@@ -1,3 +1,22 @@
+2013-01-17  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove redundant behaviors in LayerTreeRenderer.
+        https://bugs.webkit.org/show_bug.cgi?id=107084
+
+        Reviewed by Noam Rosenthal.
+
+        There are two changes.
+        1. It is redundant to call GraphicsLayer::removeFromParent() or
+        GraphicsLayer::removeAllChildren() before deleting GraphicsLayer, because the
+        destructor of GraphicsLayerTextureMapper removes a parent and all children.
+        2. LayerTreeRenderer::setRootLayerID() does not need to remove all children of
+        rootLayer because this method can be called only once.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::deleteLayer):
+        (WebKit::LayerTreeRenderer::setRootLayerID):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+
 2013-01-17  Timothy Hatcher  <timothy@apple.com>
 
         Make logging console messages to STDOUT work in WebKit2 via a new setting.

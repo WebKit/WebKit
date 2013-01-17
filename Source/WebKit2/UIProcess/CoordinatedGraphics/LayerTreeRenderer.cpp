@@ -365,7 +365,6 @@ void LayerTreeRenderer::deleteLayer(CoordinatedLayerID layerID)
     OwnPtr<GraphicsLayer> layer = m_layers.take(layerID);
     ASSERT(layer);
 
-    layer->removeFromParent();
     m_pendingSyncBackingStores.remove(toTextureMapperLayer(layer.get()));
     m_fixedLayers.remove(layerID);
 #if USE(GRAPHICS_SURFACE)
@@ -379,9 +378,9 @@ void LayerTreeRenderer::setRootLayerID(CoordinatedLayerID layerID)
     ASSERT(m_rootLayerID == InvalidCoordinatedLayerID);
 
     m_rootLayerID = layerID;
-    m_rootLayer->removeAllChildren();
 
     GraphicsLayer* layer = layerByID(layerID);
+    ASSERT(m_rootLayer->children().isEmpty());
     m_rootLayer->addChild(layer);
 }
 
@@ -635,7 +634,6 @@ void LayerTreeRenderer::purgeGLResources()
     m_surfaceBackingStores.clear();
 #endif
 
-    m_rootLayer->removeAllChildren();
     m_rootLayer.clear();
     m_rootLayerID = InvalidCoordinatedLayerID;
     m_layers.clear();
