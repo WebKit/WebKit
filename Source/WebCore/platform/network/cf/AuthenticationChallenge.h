@@ -71,11 +71,12 @@ private:
     friend class AuthenticationChallengeBase;
     static bool platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
 
+    // Platform challenge may be null. If it's non-null, it's always up to date with other fields.
 #if USE(CFNETWORK)
     RefPtr<AuthenticationClient> m_authenticationClient;
     RetainPtr<CFURLAuthChallengeRef> m_cfChallenge;
 #else
-    RetainPtr<id> m_sender; // Always the same as [m_macChallenge.get() sender], cached here for performance.
+    RetainPtr<id> m_sender;
     RetainPtr<NSURLAuthenticationChallenge *> m_nsChallenge;
 #endif
 };
