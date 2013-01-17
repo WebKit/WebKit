@@ -137,11 +137,8 @@ namespace WebKit {
     macro(UsesEncodingDetector, usesEncodingDetector, Bool, bool, false) \
     macro(TextAutosizingEnabled, textAutosizingEnabled, Bool, bool, false) \
     macro(AggressiveTileRetentionEnabled, aggressiveTileRetentionEnabled, Bool, bool, false) \
-<<<<<<< HEAD
     macro(QTKitEnabled, isQTKitEnabled, Bool, bool, true) \
-=======
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
->>>>>>> Make logging console messages to STDOUT work in WebKit2 via a new setting.
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
