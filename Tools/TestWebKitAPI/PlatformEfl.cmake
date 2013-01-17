@@ -77,6 +77,7 @@ set(test_webkit2_api_BINARIES
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
     ShouldGoToBackForwardListItem
+    UserMessage
     WKConnection
     WKPreferences
     WKString
@@ -99,7 +100,3 @@ add_definitions(-DTHEME_DIR="${THEME_BINARY_DIR}")
 #
 #   ResponsivenessTimerDoesntFireEarly
 #   SpacebarScrolling
-#
-# Flaky test, fails on Release but passes on Debug:
-#
-#   UserMessage

@@ -39,7 +39,8 @@ namespace TestWebKitAPI {
 
 static Ecore_Evas* initEcoreEvas()
 {
-    ASSERT(ecore_evas_init());
+    if (!ecore_evas_init())
+        return 0;
 
     const char* engine = 0;
 #if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
