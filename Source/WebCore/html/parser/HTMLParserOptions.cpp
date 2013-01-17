@@ -42,6 +42,8 @@ HTMLParserOptions::HTMLParserOptions(Document* document)
     usePreHTML5ParserQuirks = settings && settings->usePreHTML5ParserQuirks();
 #if ENABLE(THREADED_HTML_PARSER)
     useThreading = settings && settings->threadedHTMLParser();
+#else
+    useThreading = false;
 #endif
     maximumDOMTreeDepth = settings ? settings->maximumHTMLParserDOMTreeDepth() : Settings::defaultMaximumHTMLParserDOMTreeDepth;
 }

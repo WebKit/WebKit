@@ -35,9 +35,7 @@ public:
     bool scriptEnabled;
     bool pluginsEnabled;
     bool usePreHTML5ParserQuirks;
-#if ENABLE(THREADED_HTML_PARSER)
     bool useThreading;
-#endif
     unsigned maximumDOMTreeDepth;
 
     explicit HTMLParserOptions(Document*);
