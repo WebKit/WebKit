@@ -1,0 +1,20 @@
+
+<!doctype html>
+<html>
+  <body>
+    This test passes by not crashing !
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    window.onload = function () {
+    	var canvas = document.createElement('canvas');
+		canvas.width = 0;
+		canvas.height = 0;
+		var context = canvas.getContext('2d');
+		if(context.webkitImageSmoothingEnabled) {context.webkitImageSmoothingEnabled = false;}
+    };
+    </script>
+  </body>
+</html>
+

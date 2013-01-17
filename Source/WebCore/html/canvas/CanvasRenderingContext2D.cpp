@@ -2398,7 +2398,9 @@ void CanvasRenderingContext2D::setWebkitImageSmoothingEnabled(bool enabled)
 
     realizeSaves();
     modifiableState().m_imageSmoothingEnabled = enabled;
-    drawingContext()->setImageInterpolationQuality(enabled ? DefaultInterpolationQuality : InterpolationNone);
+    GraphicsContext* c = drawingContext();
+    if (c)
+        c->setImageInterpolationQuality(enabled ? DefaultInterpolationQuality : InterpolationNone);
 }
 
 } // namespace WebCore
