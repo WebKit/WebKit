@@ -89,7 +89,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
-        int length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8);
+        CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8);
         char* buffer = (char*)malloc(length + 1);
 
         CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
