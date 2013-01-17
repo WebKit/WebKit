@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -268,43 +268,57 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
-void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm, AuthResult result, bool requireCredentials)
+void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, BlackBerry::Platform::NetworkRequest::AuthScheme authScheme, const char* realm, AuthResult result, bool requireCredentials)
 {
     using BlackBerry::Platform::NetworkRequest;
 
-    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
-    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
-
-    if (m_response.url().protocolIs("https"))
-        serverType = ProtectionSpaceServerHTTPS;
-
+    ProtectionSpaceServerType serverType;
     switch (authType) {
-    case NetworkRequest::AuthHTTPBasic:
+    case NetworkRequest::AuthTypeHTTP:
+        serverType = ProtectionSpaceServerHTTP;
+        break;
+    case NetworkRequest::AuthTypeHTTPS:
+        serverType = ProtectionSpaceServerHTTPS;
+        break;
+    case NetworkRequest::AuthTypeFTP:
+        serverType = ProtectionSpaceServerFTP;
+        break;
+    case NetworkRequest::AuthTypeFTPS:
+        serverType = ProtectionSpaceServerFTPS;
+        break;
+    case NetworkRequest::AuthTypeProxyHTTP:
+        serverType = ProtectionSpaceProxyHTTP;
+        break;
+    case NetworkRequest::AuthTypeProxyHTTPS:
+        serverType = ProtectionSpaceProxyHTTPS;
+        break;
+    case NetworkRequest::AuthTypeProxyFTP:
+        serverType = ProtectionSpaceProxyFTP;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ProtectionSpaceAuthenticationScheme scheme;
+    switch (authScheme) {
+    case NetworkRequest::AuthSchemeDefault:
+        scheme = ProtectionSpaceAuthenticationSchemeDefault;
+        break;
+    case NetworkRequest::AuthSchemeHTTPBasic:
         scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
         break;
-    case NetworkRequest::AuthHTTPDigest:
+    case NetworkRequest::AuthSchemeHTTPDigest:
         scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
         break;
-    case NetworkRequest::AuthNegotiate:
+    case NetworkRequest::AuthSchemeNegotiate:
         scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
         break;
-    case NetworkRequest::AuthHTTPNTLM:
+    case NetworkRequest::AuthSchemeNTLM:
         scheme = ProtectionSpaceAuthenticationSchemeNTLM;
         break;
-    case NetworkRequest::AuthFTP:
-        if (m_response.url().protocolIs("ftps"))
-            serverType = ProtectionSpaceServerFTPS;
-        else
-            serverType = ProtectionSpaceServerFTP;
-        break;
-    case NetworkRequest::AuthProxy:
-        if (m_response.url().protocolIs("https"))
-            serverType = ProtectionSpaceProxyHTTPS;
-        else
-            serverType = ProtectionSpaceProxyHTTP;
-        break;
-    case NetworkRequest::AuthNone:
     default:
+        ASSERT_NOT_REACHED();
         return;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,39 +81,63 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
     AuthenticationChallenge& challenge = guardJob->getInternal()->m_currentWebChallenge;
     if (!challenge.isNull()) {
         Credential credential = challenge.proposedCredential();
-        ProtectionSpace protectionSpace = challenge.protectionSpace();
-        ProtectionSpaceServerType type = protectionSpace.serverType();
+        const ProtectionSpace& protectionSpace = challenge.protectionSpace();
 
         String username = credential.user();
         String password = credential.password();
 
-        BlackBerry::Platform::NetworkRequest::AuthType authType = BlackBerry::Platform::NetworkRequest::AuthNone;
-        if (type == ProtectionSpaceServerHTTP || type == ProtectionSpaceServerHTTPS) {
-            switch (protectionSpace.authenticationScheme()) {
-            case ProtectionSpaceAuthenticationSchemeHTTPBasic:
-                authType = BlackBerry::Platform::NetworkRequest::AuthHTTPBasic;
-                break;
-            case ProtectionSpaceAuthenticationSchemeHTTPDigest:
-                authType = BlackBerry::Platform::NetworkRequest::AuthHTTPDigest;
-                break;
-            case ProtectionSpaceAuthenticationSchemeNegotiate:
-                authType = BlackBerry::Platform::NetworkRequest::AuthNegotiate;
-                break;
-            case ProtectionSpaceAuthenticationSchemeNTLM:
-                authType = BlackBerry::Platform::NetworkRequest::AuthHTTPNTLM;
-                break;
-            // Lots more cases to handle.
-            default:
-                // Defaults to AuthNone as per above.
-                break;
-            }
-        } else if (type == ProtectionSpaceServerFTP || type == ProtectionSpaceServerFTPS)
-            authType = BlackBerry::Platform::NetworkRequest::AuthFTP;
-        else if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS)
-            authType = BlackBerry::Platform::NetworkRequest::AuthProxy;
+        BlackBerry::Platform::NetworkRequest::AuthType authType = BlackBerry::Platform::NetworkRequest::AuthTypeNone;
+        switch (protectionSpace.serverType()) {
+        case ProtectionSpaceServerHTTP:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeHTTP;
+            break;
+        case ProtectionSpaceServerHTTPS:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeHTTPS;
+            break;
+        case ProtectionSpaceServerFTP:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeFTP;
+            break;
+        case ProtectionSpaceServerFTPS:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeFTPS;
+            break;
+        case ProtectionSpaceProxyHTTP:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeProxyHTTP;
+            break;
+        case ProtectionSpaceProxyHTTPS:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeProxyHTTPS;
+            break;
+        case ProtectionSpaceProxyFTP:
+            authType = BlackBerry::Platform::NetworkRequest::AuthTypeProxyFTP;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
 
-        if (authType != BlackBerry::Platform::NetworkRequest::AuthNone)
-            platformRequest.setCredentials(username.utf8().data(), password.utf8().data(), authType);
+        BlackBerry::Platform::NetworkRequest::AuthScheme authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeNone;
+        switch (protectionSpace.authenticationScheme()) {
+        case ProtectionSpaceAuthenticationSchemeDefault:
+            authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeDefault;
+            break;
+        case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+            authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeHTTPBasic;
+            break;
+        case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+            authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeHTTPDigest;
+            break;
+        case ProtectionSpaceAuthenticationSchemeNegotiate:
+            authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeNegotiate;
+            break;
+        case ProtectionSpaceAuthenticationSchemeNTLM:
+            authScheme = BlackBerry::Platform::NetworkRequest::AuthSchemeNTLM;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        if (authType != BlackBerry::Platform::NetworkRequest::AuthTypeNone && authScheme != BlackBerry::Platform::NetworkRequest::AuthSchemeNone)
+            platformRequest.setCredentials(username.utf8().data(), password.utf8().data(), authType, authScheme);
     }
 
     if (!request.overrideContentType().isEmpty())
