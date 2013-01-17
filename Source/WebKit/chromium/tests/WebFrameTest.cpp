@@ -38,6 +38,7 @@
 #include "FrameView.h"
 #include "Range.h"
 #include "ResourceError.h"
+#include "Settings.h"
 #include "URLTestHelpers.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
@@ -451,7 +452,6 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->setPageScaleFactorLimits(1, 4);
     webView->layout();
-    webView->setDeviceScaleFactor(1.5f);
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
     webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
@@ -463,6 +463,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
 
     // Test double tap scale bounds.
     // minimumPageScale < doubleTapZoomAlreadyLegibleScale < deviceDpiScale
+    webViewImpl->setDeviceScaleFactor(1.5f);
     setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
     simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
     EXPECT_FLOAT_EQ(webViewImpl->deviceScaleFactor(), scale);
@@ -485,7 +486,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
 
     // Zoom in to reset double_tap_zoom_in_effect flag.
     webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
-    // minimumPageScale < doubleTapZoomAlreadyLegibleScale < deviceDpiScale
+    // minimumPageScale < deviceDpiScale < doubleTapZoomAlreadyLegibleScale
     webViewImpl->setDeviceScaleFactor(1.1f);
     setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
     simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
@@ -495,6 +496,83 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
     simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
     EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
 }
+
+#if ENABLE(TEXT_AUTOSIZING)
+TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTest)
+{
+    registerMockedHttpURLLoad("get_scale_bounds_check_for_auto_zoom_test.html");
+
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    float doubleTapZoomAlreadyLegibleRatio = 1.2f;
+    float textAutosizingFontScaleFactor = 1.13f;
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_bounds_check_for_auto_zoom_test.html");
+    webView->enableFixedLayoutMode(true);
+    webView->resize(WebSize(viewportWidth, viewportHeight));
+    webView->setPageScaleFactorLimits(1, 4);
+    webView->layout();
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
+    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+    webViewImpl->page()->settings()->setTextAutosizingFontScaleFactor(textAutosizingFontScaleFactor);
+    float doubleTapZoomAlreadyLegibleScale = webViewImpl->minimumPageScaleFactor() * doubleTapZoomAlreadyLegibleRatio;
+
+    WebRect div(200, 100, 200, 150);
+    WebPoint doubleTapPoint(div.x + 50, div.y + 50);
+    float scale;
+
+    // Test double tap scale bounds.
+    // minimumPageScale < doubleTapZoomAlreadyLegibleScale < deviceDpiScale < deviceDpiScale * textAutosizingFontScaleFactor
+    webViewImpl->setDeviceScaleFactor(1.5f);
+    float legibleScale = webViewImpl->deviceScaleFactor() * textAutosizingFontScaleFactor;
+    setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(legibleScale, scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(legibleScale, scale);
+
+    // Zoom in to reset double_tap_zoom_in_effect flag.
+    webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
+    // deviceDpiScale < deviceDpiScale * textAutosizingFontScaleFactor < minimumPageScale < doubleTapZoomAlreadyLegibleScale
+    webViewImpl->setDeviceScaleFactor(0.5f);
+    legibleScale = webViewImpl->deviceScaleFactor() * textAutosizingFontScaleFactor;
+    setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(doubleTapZoomAlreadyLegibleScale, scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+
+    // Zoom in to reset double_tap_zoom_in_effect flag.
+    webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
+    // minimumPageScale < deviceDpiScale < deviceDpiScale * textAutosizingFontScaleFactor < doubleTapZoomAlreadyLegibleScale
+    webViewImpl->setDeviceScaleFactor(1.05f);
+    legibleScale = webViewImpl->deviceScaleFactor() * textAutosizingFontScaleFactor;
+    setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(doubleTapZoomAlreadyLegibleScale, scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+
+    // Zoom in to reset double_tap_zoom_in_effect flag.
+    webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
+    // minimumPageScale < deviceDpiScale < doubleTapZoomAlreadyLegibleScale < deviceDpiScale * textAutosizingFontScaleFactor
+    webViewImpl->setDeviceScaleFactor(1.1f);
+    legibleScale = webViewImpl->deviceScaleFactor() * textAutosizingFontScaleFactor;
+    setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(legibleScale, scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+    simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
+    EXPECT_FLOAT_EQ(legibleScale, scale);
+}
+#endif
 
 // This test depends on code that is compiled conditionally. We likely need to
 // add the proper ifdef when re-enabling it. See

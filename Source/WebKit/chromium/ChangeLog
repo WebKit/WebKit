@@ -1,3 +1,46 @@
+2013-01-17  John Mellor  <johnme@chromium.org>
+
+        [chromium] Double-tap zoom should take into account accessibility fontScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=107123
+
+        Reviewed by Adam Barth.
+
+        Platforms which support Text Autosizing (currently just Chrome for
+        Android) may provide a textAutosizingFontScaleFactor (defaults to 1.0).
+
+        This value is intended to be chosen by the user to indicate how large
+        they want text to appear, for example Chrome for Android has a "Text
+        scaling" slider in Settings > Accessibility that lets you choose a value
+        in the range 50% - 200% (defaults to 100%*).
+
+        For text in wide columns that typically gets autosized, this value is
+        applied by multiplying the textAutosizingMultiplier computed for each
+        cluster by the textAutosizingFontScaleFactor. Double-tap zoom will fit
+        the column to the screen (ignoring the textAutosizingFontScaleFactor)
+        since the column is wide. This part already works.
+
+        For text in narrow columns that doesn't get autosized, the
+        textAutosizingFontScaleFactor is not applied through Text Autosizing,
+        and instead needs to be applied by adjusting the double-tap zoom level.
+        When double-tapping on narrow columns, instead of fitting the column to
+        the screen (which would often zoom in excessively far), the existing
+        logic in computeScaleAndScrollForHitRect applies a maximum zoom level
+        called the legibleScale. This value needs to be multiplied by the
+        textAutosizingFontScaleFactor, so that we zoom in proportionately
+        further on non-autosized narrow columns, hence the effective text size
+        (taking into account zoom) will have increased in proportion to the
+        textAutosizingFontScaleFactor as expected.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+            Multiplies legibleScale (the maximum zoom level) by the
+            textAutosizingFontScaleFactor.
+        * tests/WebFrameTest.cpp:
+            Added WebFrameTest.DivAutoZoomScaleFontScaleFactorTest based on
+            WebFrameTest.DivAutoZoomScaleBoundsTest to test the interaction
+            between textAutosizingFontScaleFactor and the double-tap zoom logic.
+            Also did minor cleanup to WebFrameTest.DivAutoZoomScaleBoundsTest.
+
 2013-01-17  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Make new-style page scale work with fixed layout
