@@ -144,6 +144,7 @@ PluginView::Stream::~Stream()
     
 void PluginView::Stream::start()
 {
+    ASSERT(m_pluginView->m_plugin);
     ASSERT(!m_loader);
 
     Frame* frame = m_pluginView->m_pluginElement->document()->frame();
@@ -308,6 +309,10 @@ void PluginView::destroyPluginAndReset()
         m_isBeingDestroyed = true;
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
+
+        m_pendingURLRequests.clear();
+        m_pendingURLRequestsTimer.stop();
+
 #if PLATFORM(MAC)
         if (m_webPage)
             pluginFocusOrWindowFocusChanged(false);
