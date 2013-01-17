@@ -1,3 +1,11 @@
+2013-01-16  Dominic Cooney   <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Roll Chromium to 177350.
+
+        * DEPS:
+
 2013-01-16  Kristian Monsen  <kristianm@google.com>
 
         Fix build break for Android webview.
