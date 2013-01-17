@@ -4301,3 +4301,7 @@ webkit.org/b/107033 [ Debug ] fast/frames/valid.html [ Crash ]
 webkit.org/b/107033 [ Debug ] fast/events/form-iframe-target-before-load-crash.html [ Crash ]
 webkit.org/b/107033 [ Debug ] fast/events/before-unload-with-subframes.html [ Crash ]
 webkit.org/b/107033 [ Debug ] fast/css/stylesheet-enable-first-alternate-link.html [ Crash ]
+
+# This is won't fix, as the debug and release versions differ.
+webkit.org/b/99138 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
+
