@@ -336,6 +336,10 @@ else
 feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
 
+if ENABLE_INDEXED_DATABASE
+webcore_cppflags += \
+	-DWTF_USE_LEVELDB=1
+endif
 
 # Fill the feature_defines variable with all the defines, making it possible
 # to override the default define value (as set in feature_defines_defaults)
@@ -564,6 +568,11 @@ noinst_LTLIBRARIES += \
 	libWebCoreModules.la \
 	libWebCore.la
 
+if ENABLE_INDEXED_DATABASE
+noinst_LTLIBRARIES += \
+	libLevelDB.la
+endif
+
 if ENABLE_SVG
 noinst_LTLIBRARIES += \
 	libWebCoreSVG.la
@@ -634,24 +643,36 @@ endif
 
 libWebCoreModules_la_SOURCES = \
 	$(webcore_modules_sources)
-
 libWebCoreModules_la_CXXFLAGS = $(libWebCore_la_CXXFLAGS)
-
 libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
-
 libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
+
+libLevelDB_la_CXXFLAGS = $(global_cxxflags)
+libLevelDB_la_CFLAGS = $(global_cxflags)
+libLevelDB_la_CPPFLAGS = \
+	$(global_cppflags) \
+	-fno-builtin-memcmp \
+	-I$(srcdir)/Source/ThirdParty/leveldb \
+	-I$(srcdir)/Source/ThirdParty/leveldb/include
+
+if TARGET_WIN32
+libLevelDB_la_CPPFLAGS += \
+	-DOS_WIN
+else
+libLevelDB_la_CPPFLAGS += \
+	-pthread \
+	-DOS_LINUX \
+	-DLEVELDB_PLATFORM_POSIX
+endif
 
 libWebCorePlatform_la_SOURCES = \
 	$(webcore_platform_sources)
-
 libWebCorePlatform_la_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	$(global_cxxflags)
-
 libWebCorePlatform_la_CFLAGS = \
 	$(SYMBOL_VISIBILITY) \
 	$(global_cflags)
-
 libWebCorePlatform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \

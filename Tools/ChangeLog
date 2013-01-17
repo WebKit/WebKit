@@ -1,3 +1,13 @@
+2013-01-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Build with LevelDB when IndexedDB is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=103220
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitpy/style/checker.py: Do not style check the leveldb source code
+        as it does not conform to WebKit style.
+
 2013-01-17  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Fix misuse of ASSERT on ecore_evas_init()

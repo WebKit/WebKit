@@ -1108,6 +1108,10 @@ if test "$enable_webkit2" = "yes"; then
    AC_SUBST([ATSPI2_LIBS])
 fi
 
+# For the moment we need to check whether or not indexed database
+# is enabled because it determines if we build leveldb or not.
+AM_WEBKIT_FEATURE_CONDITIONAL([ENABLE_INDEXED_DATABASE])
+
 # OS conditionals
 AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
 AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
