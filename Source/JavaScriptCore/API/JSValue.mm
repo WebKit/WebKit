@@ -1051,8 +1051,8 @@ JSValueRef valueInternalValue(JSValue * value)
 
     ASSERT(value);
     m_context = [context retain];
-    [context protect:value];
     m_value = value;
+    JSValueProtect(contextInternalContext(m_context), m_value);
     return self;
 }
 
@@ -1172,7 +1172,7 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 {
     JSContext *context = [self context];
     if (context)
-        [context unprotect:m_value];
+        JSValueUnprotect(contextInternalContext(context), m_value);
     [m_context release];
     m_context = nil;
     [super dealloc];

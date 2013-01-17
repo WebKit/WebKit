@@ -42,7 +42,6 @@
     JSVirtualMachine *m_virtualMachine;
     JSGlobalContextRef m_context;
     JSWrapperMap *m_wrapperMap;
-    HashCountedSet<JSValueRef> m_protectCounts;
 }
 
 @synthesize exception;
@@ -156,12 +155,6 @@ JSGlobalContextRef contextInternalContext(JSContext *context)
 - (void)dealloc
 {
     toJS(m_context)->lexicalGlobalObject()->m_apiData = 0;
-
-    HashCountedSet<JSValueRef>::iterator iterator = m_protectCounts.begin();
-    HashCountedSet<JSValueRef>::iterator end = m_protectCounts.end();
-    for (; iterator != end; ++iterator)
-        JSValueUnprotect(m_context, iterator->key);
-
     [m_wrapperMap release];
     JSGlobalContextRelease(m_context);
     [m_virtualMachine release];
@@ -204,24 +197,6 @@ JSGlobalContextRef contextInternalContext(JSContext *context)
     [callbackData->currentArguments release];
     threadData.m_apiData = callbackData->next;
     [self release];
-}
-
-- (void)protect:(JSValueRef)value
-{
-    // Lock access to m_protectCounts
-    JSC::JSLockHolder lock(toJS(m_context));
-
-    if (m_protectCounts.add(value).isNewEntry)
-        JSValueProtect(m_context, value);
-}
-
-- (void)unprotect:(JSValueRef)value
-{
-    // Lock access to m_protectCounts
-    JSC::JSLockHolder lock(toJS(m_context));
-
-    if (m_protectCounts.remove(value))
-        JSValueUnprotect(m_context, value);
 }
 
 - (JSValue *)wrapperForObject:(id)object
