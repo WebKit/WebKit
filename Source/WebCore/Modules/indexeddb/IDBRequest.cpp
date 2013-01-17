@@ -440,6 +440,13 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(event->target() == this);
     ASSERT_WITH_MESSAGE(m_readyState < DONE, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), DONE, m_readyState);
 
+    // FIXME: This method should not be called if stop() was previously called,
+    // but there are crash reports (no local repro) indicating a null pointer
+    // deference in the following DOMRequestState::Scope constructor. If this
+    // resolves the crashes, track down the root cause, otherwise back this out.
+    if (m_contextStopped)
+        return false;
+
     DOMRequestState::Scope scope(m_requestState);
 
     if (event->type() != eventNames().blockedEvent)
