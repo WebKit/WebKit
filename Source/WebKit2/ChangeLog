@@ -1,3 +1,21 @@
+2013-01-17  Timothy Hatcher  <timothy@apple.com>
+
+        Make logging console messages to STDOUT work in WebKit2 via a new setting.
+
+        https://bugs.webkit.org/show_bug.cgi?id=107157
+
+        Reviewed by Joseph Pecoraro.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetLogsPageMessagesToSystemConsoleEnabled): Added.
+        (WKPreferencesGetLogsPageMessagesToSystemConsoleEnabled): Added.
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup): Enable logging in debug builds.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Set new setting in WebCore.
+
 2013-01-17  Brady Eidson  <beidson@apple.com>
 
         Each NetworkConnectionToWebProcess should keep its own map of NetworkResourceLoaders

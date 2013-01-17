@@ -1004,6 +1004,7 @@ bool WKPreferencesGetAggressiveTileRetentionEnabled(WKPreferencesRef preferences
     return toImpl(preferencesRef)->aggressiveTileRetentionEnabled();
 }
 
+<<<<<<< HEAD
 void WKPreferencesSetQTKitEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setQTKitEnabled(enabled);
@@ -1012,4 +1013,14 @@ void WKPreferencesSetQTKitEnabled(WKPreferencesRef preferencesRef, bool enabled)
 bool WKPreferencesGetQTKitEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->isQTKitEnabled();
+=======
+void WKPreferencesSetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setLogsPageMessagesToSystemConsoleEnabled(enabled);
+}
+
+bool WKPreferencesGetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->logsPageMessagesToSystemConsoleEnabled();
+>>>>>>> Make logging console messages to STDOUT work in WebKit2 via a new setting.
 }

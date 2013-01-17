@@ -2409,6 +2409,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setTextAutosizingEnabled(store.getBoolValueForKey(WebPreferencesKey::textAutosizingEnabledKey()));
 #endif
 
+    settings->setLogsPageMessagesToSystemConsoleEnabled(store.getBoolValueForKey(WebPreferencesKey::logsPageMessagesToSystemConsoleEnabledKey()));
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

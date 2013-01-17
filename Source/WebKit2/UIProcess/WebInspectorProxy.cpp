@@ -62,6 +62,7 @@ static PassRefPtr<WebPageGroup> createInspectorPageGroup()
 #ifndef NDEBUG
     // Allow developers to inspect the Web Inspector in debug builds.
     pageGroup->preferences()->setDeveloperExtrasEnabled(true);
+    pageGroup->preferences()->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
 
     pageGroup->preferences()->setApplicationChromeModeEnabled(true);
