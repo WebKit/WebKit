@@ -510,8 +510,13 @@ void ScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerCallF
     updateCallFrameAndPauseIfNeeded(debuggerCallFrame, sourceID, lineNumber, columnNumber);
 
     // Treat stepping over the end of a program like stepping out.
-    if (m_currentCallFrame == m_pauseOnCallFrame)
+    if (!m_currentCallFrame)
+        return;
+    if (m_currentCallFrame == m_pauseOnCallFrame) {
         m_pauseOnCallFrame = m_currentCallFrame->caller();
+        if (!m_currentCallFrame)
+            return;
+    }
     m_currentCallFrame = m_currentCallFrame->caller();
 }
 
