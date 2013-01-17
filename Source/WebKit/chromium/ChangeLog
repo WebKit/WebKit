@@ -1,3 +1,11 @@
+2013-01-16  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Roll Chromium to 177310.
+
+        * DEPS:
+
 2013-01-16  W. James MacLean  <wjmaclean@chromium.org>
 
         LinkHighlight should use touch adjustment to match active state on GestureTapDown.
