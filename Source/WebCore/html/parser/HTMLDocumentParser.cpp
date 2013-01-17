@@ -259,11 +259,11 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
 #if ENABLE(THREADED_HTML_PARSER)
 
-void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>& tokens)
+void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>& tokens, bool threadIsWaitingForScripts)
 {
     ASSERT(shouldUseThreading());
 
-    // feedTokens can cause this parser to be detached from the Document,
+    // didReceiveTokensFromBackgroundParser can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
@@ -282,11 +282,14 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         // as we do in canTakeNextToken;
 
         if (isWaitingForScripts()) {
+            ASSERT(threadIsWaitingForScripts); // We expect that the thread is waiting for us.
             runScriptsForPausedTreeBuilder();
             if (!isWaitingForScripts()) {
                 ParserIdentifier identifier = ParserMap::identifierForParser(this);
                 HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::continuePartial, identifier));
             }
+            ASSERT(it + 1 == tokens.end()); // The </script> is assumed to be the last token of this bunch.
+            return;
         }
 
         // FIXME: This is too abrupt a way to end parsing because we might
@@ -294,10 +297,19 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         // attemptToRunDeferredScriptsAndEnd(), prepareToStopParsing(), or
         // attemptToEnd() instead.
         if (it->type() == HTMLTokenTypes::EndOfFile) {
+            ASSERT(it + 1 == tokens.end()); // The EOF is assumed to be the last token of this bunch.
             DocumentParser::prepareToStopParsing();
             document()->setReadyState(Document::Interactive);
             end();
+            return;
         }
+    }
+
+    // If we got here and the parser thread is still waiting for scripts, then it paused unnecessarily
+    // (as can happen with a stray </script> tag), and we need to tell it to continue.
+    if (threadIsWaitingForScripts) {
+        ParserIdentifier identifier = ParserMap::identifierForParser(this);
+        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::continuePartial, identifier));
     }
 }
 

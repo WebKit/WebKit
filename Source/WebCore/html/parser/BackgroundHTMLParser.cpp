@@ -169,17 +169,27 @@ void BackgroundHTMLParser::pumpTokenizer()
 class TokenDelivery {
     WTF_MAKE_NONCOPYABLE(TokenDelivery);
 public:
-    TokenDelivery() { }
+    TokenDelivery()
+        : identifier(0)
+        , isPausedWaitingForScripts(false)
+    {
+    }
 
     ParserIdentifier identifier;
     Vector<CompactHTMLToken> tokens;
+    // FIXME: This bool will be replaced by a CheckPoint object once
+    // we implement speculative parsing. Then the main thread will decide
+    // to either accept the speculative tokens we've already given it
+    // (or ask for them, depending on who ends up owning them), or send
+    // us a "reset to checkpoint message".
+    bool isPausedWaitingForScripts;
 
     static void execute(void* context)
     {
         TokenDelivery* delivery = static_cast<TokenDelivery*>(context);
         HTMLDocumentParser* parser = parserMap().mainThreadParsers().get(delivery->identifier);
         if (parser)
-            parser->didReceiveTokensFromBackgroundParser(delivery->tokens);
+            parser->didReceiveTokensFromBackgroundParser(delivery->tokens, delivery->isPausedWaitingForScripts);
         // FIXME: Ideally we wouldn't need to call delete manually. Instead
         // we would like an API where the message queue owns the tasks and
         // takes care of deleting them.
@@ -192,6 +202,7 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     TokenDelivery* delivery = new TokenDelivery;
     delivery->identifier = m_parserIdentifer;
     delivery->tokens.swap(m_pendingTokens);
+    delivery->isPausedWaitingForScripts = m_isPausedWaitingForScripts;
     callOnMainThread(TokenDelivery::execute, delivery);
 }
 

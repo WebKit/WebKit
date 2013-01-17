@@ -79,7 +79,7 @@ public:
     virtual void resumeScheduledTasks();
 
 #if ENABLE(THREADED_HTML_PARSER)
-    void didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>&);
+    void didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>&, bool threadIsWaitingForScripts);
 #endif
 
 protected:
