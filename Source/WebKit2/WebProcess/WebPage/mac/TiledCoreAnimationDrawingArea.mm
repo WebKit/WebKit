@@ -113,13 +113,6 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graph
 {
     CALayer *rootCompositingLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
 
-    // Since we'll always be in accelerated compositing mode, the only time that layer will be nil
-    // is when the WKView is removed from its containing window. In that case, the layer will already be
-    // removed from the layer tree hierarchy over in the UI process, so there's no reason to remove it locally.
-    // In addition, removing the layer here will cause flashes when switching between tabs.
-    if (!rootCompositingLayer)
-        return;
-
     if (m_layerTreeStateIsFrozen) {
         m_pendingRootCompositingLayer = rootCompositingLayer;
         return;
@@ -458,7 +451,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    m_rootLayer.get().sublayers = [NSArray arrayWithObject:layer];
+    m_rootLayer.get().sublayers = layer ? [NSArray arrayWithObject:layer] : [NSArray array];
 
     if (m_pageOverlayLayer)
         [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
