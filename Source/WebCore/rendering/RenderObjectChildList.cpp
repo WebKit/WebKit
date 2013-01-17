@@ -28,13 +28,8 @@
 #include "RenderObjectChildList.h"
 
 #include "AXObjectCache.h"
-#include "ContentData.h"
-#include "RenderBlock.h"
 #include "RenderCounter.h"
-#include "RenderLayer.h"
-#include "RenderListItem.h"
-#include "RenderNamedFlowThread.h"
-#include "RenderRegion.h"
+#include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 
@@ -105,9 +100,8 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 
     // rendererRemovedFromTree walks the whole subtree. We can improve performance
     // by skipping this step when destroying the entire tree.
-    if (!owner->documentBeingDestroyed()) {
+    if (!owner->documentBeingDestroyed())
         RenderCounter::rendererRemovedFromTree(oldChild);
-    }
 
     if (AXObjectCache::accessibilityEnabled())
         owner->document()->axObjectCache()->childrenChanged(owner);
@@ -115,79 +109,52 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     return oldChild;
 }
 
-void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* newChild, bool notifyRenderer)
+void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer)
 {
-    ASSERT(newChild->parent() == 0);
+    ASSERT(!newChild->parent());
     ASSERT(!owner->isBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
 
-    newChild->setParent(owner);
-    RenderObject* lChild = lastChild();
+    while (beforeChild && beforeChild->parent() && beforeChild->parent() != owner)
+        beforeChild = beforeChild->parent();
 
-    if (lChild) {
-        newChild->setPreviousSibling(lChild);
-        lChild->setNextSibling(newChild);
-    } else
+    // This should never happen, but if it does prevent render tree corruption
+    // where child->parent() ends up being owner but child->nextSibling()->parent()
+    // is not owner.
+    if (beforeChild && beforeChild->parent() != owner) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    newChild->setParent(owner);
+
+    if (firstChild() == beforeChild)
         setFirstChild(newChild);
 
-    setLastChild(newChild);
-    
+    if (beforeChild) {
+        RenderObject* previousSibling = beforeChild->previousSibling();
+        if (previousSibling)
+            previousSibling->setNextSibling(newChild);
+        newChild->setPreviousSibling(previousSibling);
+        newChild->setNextSibling(beforeChild);
+        beforeChild->setPreviousSibling(newChild);
+    } else {
+        if (lastChild())
+            lastChild()->setNextSibling(newChild);
+        newChild->setPreviousSibling(lastChild());
+        setLastChild(newChild);
+    }
+
     if (!owner->documentBeingDestroyed() && notifyRenderer)
         newChild->insertedIntoTree();
 
     if (!owner->documentBeingDestroyed()) {
         RenderCounter::rendererSubtreeAttached(newChild);
     }
-    newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
+
+    newChild->setNeedsLayoutAndPrefWidthsRecalc();
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-    
-    if (AXObjectCache::accessibilityEnabled())
-        owner->document()->axObjectCache()->childrenChanged(owner);
-}
 
-void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* beforeChild, bool notifyRenderer)
-{
-    if (!beforeChild) {
-        appendChildNode(owner, child, notifyRenderer);
-        return;
-    }
-
-    ASSERT(!child->parent());
-    while (beforeChild->parent() && beforeChild->parent() != owner)
-        beforeChild = beforeChild->parent();
-
-    // This should never happen, but if it does prevent render tree corruption
-    // where child->parent() ends up being owner but child->nextSibling()->parent()
-    // is not owner.
-    if (beforeChild->parent() != owner) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    ASSERT(!owner->isBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
-
-    if (beforeChild == firstChild())
-        setFirstChild(child);
-
-    RenderObject* prev = beforeChild->previousSibling();
-    child->setNextSibling(beforeChild);
-    beforeChild->setPreviousSibling(child);
-    if (prev)
-        prev->setNextSibling(child);
-    child->setPreviousSibling(prev);
-
-    child->setParent(owner);
-    
-    if (!owner->documentBeingDestroyed() && notifyRenderer)
-        child->insertedIntoTree();
-
-    if (!owner->documentBeingDestroyed()) {
-        RenderCounter::rendererSubtreeAttached(child);
-    }
-    child->setNeedsLayoutAndPrefWidthsRecalc();
-    if (!owner->normalChildNeedsLayout())
-        owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-    
     if (AXObjectCache::accessibilityEnabled())
         owner->document()->axObjectCache()->childrenChanged(owner);
 }

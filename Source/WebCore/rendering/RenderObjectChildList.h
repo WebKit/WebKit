@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class RenderObject;
-class RenderStyle;
 
 class RenderObjectChildList {
 public:
@@ -43,17 +42,20 @@ public:
 
     RenderObject* firstChild() const { return m_firstChild; }
     RenderObject* lastChild() const { return m_lastChild; }
-    
+
     // FIXME: Temporary while RenderBox still exists. Eventually this will just happen during insert/append/remove methods on the child list, and nobody
     // will need to manipulate firstChild or lastChild directly.
     void setFirstChild(RenderObject* child) { m_firstChild = child; }
     void setLastChild(RenderObject* child) { m_lastChild = child; }
-    
+
     void destroyLeftoverChildren();
 
     RenderObject* removeChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
-    void appendChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
-    void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool notifyRenderer = true);
+    void insertChildNode(RenderObject* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer = true);
+    void appendChildNode(RenderObject* owner, RenderObject* newChild, bool notifyRenderer = true)
+    {
+        insertChildNode(owner, newChild, 0, notifyRenderer);
+    }
 
 private:
     RenderObject* m_firstChild;
