@@ -189,6 +189,8 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
     if (!sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(request)))
         request = ResourceRequest();
+
+    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
