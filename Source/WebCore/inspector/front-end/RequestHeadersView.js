@@ -98,20 +98,31 @@ WebInspector.RequestHeadersView = function(request)
     this._responseHeadersTreeElement.expanded = true;
     this._responseHeadersTreeElement.selectable = false;
     this._headersTreeOutline.appendChild(this._responseHeadersTreeElement);
-
-    request.addEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshRequestHeaders, this);
-    request.addEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshResponseHeaders, this);
-    request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._refreshHTTPInformation, this);
-
-    this._refreshURL();
-    this._refreshQueryString();
-    this._refreshUrlFragment();
-    this._refreshRequestHeaders();
-    this._refreshResponseHeaders();
-    this._refreshHTTPInformation();
 }
 
 WebInspector.RequestHeadersView.prototype = {
+
+    wasShown: function()
+    {
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshRequestHeaders, this);
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshResponseHeaders, this);
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._refreshHTTPInformation, this);
+
+        this._refreshURL();
+        this._refreshQueryString();
+        this._refreshUrlFragment();
+        this._refreshRequestHeaders();
+        this._refreshResponseHeaders();
+        this._refreshHTTPInformation();
+    },
+
+    willHide: function()
+    {
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshRequestHeaders, this);
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshResponseHeaders, this);
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._refreshHTTPInformation, this);
+    },
+
     /**
      * @param {string} name
      * @param {string} value

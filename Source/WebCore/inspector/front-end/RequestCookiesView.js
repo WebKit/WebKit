@@ -39,14 +39,14 @@ WebInspector.RequestCookiesView = function(request)
     this.element.addStyleClass("resource-cookies-view");
 
     this._request = request;
-
-    request.addEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshCookies, this);
-    request.addEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshCookies, this);
 }
 
 WebInspector.RequestCookiesView.prototype = {
     wasShown: function()
     {
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshCookies, this);
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshCookies, this);
+
         if (!this._gotCookies) {
             if (!this._emptyView) {
                 this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no cookies."));
@@ -57,6 +57,12 @@ WebInspector.RequestCookiesView.prototype = {
 
         if (!this._cookiesTable)
             this._buildCookiesTable();
+    },
+
+    willHide: function()
+    {
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.RequestHeadersChanged, this._refreshCookies, this);
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.ResponseHeadersChanged, this._refreshCookies, this);
     },
 
     get _gotCookies()
