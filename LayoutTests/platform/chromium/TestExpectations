@@ -3953,7 +3953,6 @@ webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnly
 
 webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass ImageOnlyFailure Failure ]
 
-webkit.org/b/99138 [ SnowLeopard Debug ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 
 # Flaky crashing on debug
 webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Crash ]
@@ -4375,7 +4374,6 @@ Bug(schenney) svg/W3C-SVG-1.1/text-text-08-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg [ ImageOnlyFailure ]
 
-webkit.org/b/106833 fast/borders/outline-alpha-inline.html [ Pass ImageOnlyFailure ]
 webkit.org/b/106858 [ SnowLeopard Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
 
