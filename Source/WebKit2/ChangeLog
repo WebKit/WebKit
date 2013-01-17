@@ -1,3 +1,31 @@
+2013-01-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] PageUIClientEfl should keep in sync with WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=107060
+
+        Reviewed by Benjamin Poulain.
+
+        Rearrange the order of functions in PageUIClientEfl.
+        Rename closePage() to close().
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::close):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        (WebKit::PageUIClientEfl::close):
+        (WebKit::PageUIClientEfl::takeFocus):
+        (WebKit::PageUIClientEfl::focus):
+        (WebKit::PageUIClientEfl::unfocus):
+        (WebKit::PageUIClientEfl::getWindowFrame):
+        (WebKit::PageUIClientEfl::setWindowFrame):
+        (WebKit::PageUIClientEfl::createNewPage):
+        (WebKit::PageUIClientEfl::showColorPicker):
+        (WebKit::PageUIClientEfl::hideColorPicker):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (PageUIClientEfl):
+
 2013-01-16  Brady Eidson  <beidson@apple.com>
 
         Synchronous XMLHTTPRequests need to go to the NetworkProcess.

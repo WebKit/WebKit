@@ -175,7 +175,7 @@ public:
 #endif
 
     WKPageRef createNewPage(PassRefPtr<EwkUrlRequest>, WebKit::ImmutableDictionary* windowFeatures);
-    void closePage();
+    void close();
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
     void closePopupMenu();

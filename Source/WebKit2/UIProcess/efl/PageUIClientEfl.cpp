@@ -45,15 +45,66 @@ static inline PageUIClientEfl* toPageUIClientEfl(const void* clientInfo)
     return static_cast<PageUIClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-void PageUIClientEfl::closePage(WKPageRef, const void* clientInfo)
+PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    toPageUIClientEfl(clientInfo)->m_viewImpl->closePage();
+    WKPageRef pageRef = m_viewImpl->wkPage();
+    ASSERT(pageRef);
+
+    WKPageUIClient uiClient;
+    memset(&uiClient, 0, sizeof(WKPageUIClient));
+    uiClient.version = kWKPageUIClientCurrentVersion;
+    uiClient.clientInfo = this;
+    uiClient.close = close;
+    uiClient.takeFocus = takeFocus;
+    uiClient.focus = focus;
+    uiClient.unfocus = unfocus;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+    uiClient.toolbarsAreVisible = toolbarsAreVisible;
+    uiClient.setToolbarsAreVisible = setToolbarsAreVisible;
+    uiClient.menuBarIsVisible = menuBarIsVisible;
+    uiClient.setMenuBarIsVisible = setMenuBarIsVisible;
+    uiClient.statusBarIsVisible = statusBarIsVisible;
+    uiClient.setStatusBarIsVisible = setStatusBarIsVisible;
+    uiClient.isResizable = isResizable;
+    uiClient.setIsResizable = setIsResizable;
+    uiClient.getWindowFrame = getWindowFrame;
+    uiClient.setWindowFrame = setWindowFrame;
+#if ENABLE(SQL_DATABASE)
+    uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
+#endif
+    uiClient.runOpenPanel = runOpenPanel;
+    uiClient.createNewPage = createNewPage;
+#if ENABLE(INPUT_TYPE_COLOR)
+    uiClient.showColorPicker = showColorPicker;
+    uiClient.hideColorPicker = hideColorPicker;
+#endif
+
+    WKPageSetPageUIClient(pageRef, &uiClient);
 }
 
-WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef wkRequest, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
+
+void PageUIClientEfl::close(WKPageRef, const void* clientInfo)
 {
-    RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
-    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(request, toImpl(wkWindowFeatures));
+    toPageUIClientEfl(clientInfo)->m_viewImpl->close();
+}
+
+void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
+{
+    // FIXME: this is only a partial implementation.
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
+}
+
+void PageUIClientEfl::focus(WKPageRef, const void* clientInfo)
+{
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), true);
+}
+
+void PageUIClientEfl::unfocus(WKPageRef, const void* clientInfo)
+{
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
 }
 
 void PageUIClientEfl::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
@@ -128,6 +179,37 @@ void PageUIClientEfl::setIsResizable(WKPageRef, bool resizable, const void* clie
     features->setResizable(resizable);
 }
 
+WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
+{
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->windowGeometry();
+}
+
+void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
+{
+    toPageUIClientEfl(clientInfo)->m_viewImpl->setWindowGeometry(frame);
+}
+
+#if ENABLE(SQL_DATABASE)
+unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
+{
+    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
+    return viewImpl->informDatabaseQuotaReached(toImpl(databaseName)->string(), toImpl(displayName)->string(), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+}
+#endif
+
+void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+{
+    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
+    RefPtr<EwkFileChooserRequest> fileChooserRequest = EwkFileChooserRequest::create(toImpl(parameters), toImpl(listener));
+    viewImpl->smartCallback<FileChooserRequest>().call(fileChooserRequest.get());
+}
+
+WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef wkRequest, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
+{
+    RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(request, toImpl(wkWindowFeatures));
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 void PageUIClientEfl::showColorPicker(WKPageRef, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo)
 {
@@ -142,87 +224,5 @@ void PageUIClientEfl::hideColorPicker(WKPageRef, const void* clientInfo)
     pageUIClient->m_viewImpl->dismissColorPicker();
 }
 #endif
-
-#if ENABLE(SQL_DATABASE)
-unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
-{
-    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
-    return viewImpl->informDatabaseQuotaReached(toImpl(databaseName)->string(), toImpl(displayName)->string(), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
-}
-#endif
-
-void PageUIClientEfl::focus(WKPageRef, const void* clientInfo)
-{
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), true);
-}
-
-void PageUIClientEfl::unfocus(WKPageRef, const void* clientInfo)
-{
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
-}
-
-void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
-{
-    // FIXME: this is only a partial implementation.
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
-}
-
-WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
-{
-    return toPageUIClientEfl(clientInfo)->m_viewImpl->windowGeometry();
-}
-
-void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
-{
-    toPageUIClientEfl(clientInfo)->m_viewImpl->setWindowGeometry(frame);
-}
-
-void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
-{
-    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
-    RefPtr<EwkFileChooserRequest> fileChooserRequest = EwkFileChooserRequest::create(toImpl(parameters), toImpl(listener));
-    viewImpl->smartCallback<FileChooserRequest>().call(fileChooserRequest.get());
-}
-
-PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
-{
-    WKPageRef pageRef = m_viewImpl->wkPage();
-    ASSERT(pageRef);
-
-    WKPageUIClient uiClient;
-    memset(&uiClient, 0, sizeof(WKPageUIClient));
-    uiClient.version = kWKPageUIClientCurrentVersion;
-    uiClient.clientInfo = this;
-    uiClient.close = closePage;
-    uiClient.createNewPage = createNewPage;
-    uiClient.runJavaScriptAlert = runJavaScriptAlert;
-    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
-    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
-    uiClient.toolbarsAreVisible = toolbarsAreVisible;
-    uiClient.setToolbarsAreVisible = setToolbarsAreVisible;
-    uiClient.menuBarIsVisible = menuBarIsVisible;
-    uiClient.setMenuBarIsVisible = setMenuBarIsVisible;
-    uiClient.statusBarIsVisible = statusBarIsVisible;
-    uiClient.setStatusBarIsVisible = setStatusBarIsVisible;
-    uiClient.isResizable = isResizable;
-    uiClient.setIsResizable = setIsResizable;
-    uiClient.takeFocus = takeFocus;
-    uiClient.focus = focus;
-    uiClient.unfocus = unfocus;
-    uiClient.getWindowFrame = getWindowFrame;
-    uiClient.setWindowFrame = setWindowFrame;
-    uiClient.runOpenPanel = runOpenPanel;
-#if ENABLE(SQL_DATABASE)
-    uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
-#endif
-
-#if ENABLE(INPUT_TYPE_COLOR)
-    uiClient.showColorPicker = showColorPicker;
-    uiClient.hideColorPicker = hideColorPicker;
-#endif
-
-    WKPageSetPageUIClient(pageRef, &uiClient);
-}
 
 } // namespace WebKit

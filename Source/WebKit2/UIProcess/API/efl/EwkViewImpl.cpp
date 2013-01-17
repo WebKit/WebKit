@@ -937,7 +937,7 @@ WKPageRef EwkViewImpl::createNewPage(PassRefPtr<EwkUrlRequest> request, Immutabl
     return static_cast<WKPageRef>(WKRetain(newViewImpl->page()));
 }
 
-void EwkViewImpl::closePage()
+void EwkViewImpl::close()
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
