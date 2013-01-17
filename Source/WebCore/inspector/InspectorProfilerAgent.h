@@ -87,7 +87,8 @@ public:
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
     virtual void getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader> >&);
-    virtual void getProfile(ErrorString*, const String& type, int uid, RefPtr<TypeBuilder::Profiler::Profile>&);
+    virtual void getCPUProfile(ErrorString*, int uid, RefPtr<TypeBuilder::Profiler::CPUProfile>&);
+    virtual void getHeapSnapshot(ErrorString*, int uid);
     virtual void removeProfile(ErrorString*, const String& type, int uid);
 
     virtual void setFrontend(InspectorFrontend*);

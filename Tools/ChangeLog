@@ -1,3 +1,16 @@
+2013-01-17  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Profiler: split "getProfile" to "getCPUProfile" and "loadHeapSnapshot"
+        https://bugs.webkit.org/show_bug.cgi?id=104545
+
+        Reviewed by Yury Semikhatsky.
+
+        Adopt signature changes.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
+        (ProfilerAgent.getCPUProfile): Renamed.
+        (ProfilerAgent.getHeapSnapshot): Added.
+
 2013-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][EFL] NWRT should check that Xvfb is installed

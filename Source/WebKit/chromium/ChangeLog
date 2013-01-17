@@ -1,3 +1,14 @@
+2013-01-17  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Profiler: split "getProfile" to "getCPUProfile" and "loadHeapSnapshot"
+        https://bugs.webkit.org/show_bug.cgi?id=104545
+
+        Reviewed by Yury Semikhatsky.
+
+        Adopt changes: mimic old behavior.
+
+        * src/WebDevToolsAgentImpl.cpp: Adopt signature changes.
+
 2013-01-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add WebDeToolsAgentImpl as task observer on reattach

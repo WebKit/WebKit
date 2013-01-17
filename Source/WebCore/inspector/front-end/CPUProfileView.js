@@ -98,7 +98,7 @@ WebInspector.CPUProfileView = function(profile)
 
     this._linkifier = new WebInspector.Linkifier(new WebInspector.Linkifier.DefaultFormatter(30));
 
-    ProfilerAgent.getProfile(this.profile.profileType().id, this.profile.uid, profileCallback.bind(this));
+    ProfilerAgent.getCPUProfile(this.profile.uid, profileCallback.bind(this));
 }
 
 WebInspector.CPUProfileView._TypeTree = "Tree";

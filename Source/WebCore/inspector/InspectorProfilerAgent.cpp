@@ -284,32 +284,33 @@ private:
 
 } // namespace
 
-void InspectorProfilerAgent::getProfile(ErrorString* errorString, const String& type, int rawUid, RefPtr<TypeBuilder::Profiler::Profile>& profileObject)
+void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid, RefPtr<TypeBuilder::Profiler::CPUProfile>& profileObject)
 {
     unsigned uid = static_cast<unsigned>(rawUid);
-    if (type == CPUProfileType) {
-        ProfilesMap::iterator it = m_profiles.find(uid);
-        if (it == m_profiles.end()) {
-            *errorString = "Profile wasn't found";
-            return;
-        }
-        profileObject = TypeBuilder::Profiler::Profile::create();
-        profileObject->setHead(it->value->buildInspectorObjectForHead());
-        if (it->value->bottomUpHead())
-            profileObject->setBottomUpHead(it->value->buildInspectorObjectForBottomUpHead());
-        profileObject->setIdleTime(it->value->idleTime());
-    } else if (type == HeapProfileType) {
-        HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
-        if (it == m_snapshots.end()) {
-            *errorString = "Profile wasn't found";
-            return;
-        }
-        RefPtr<ScriptHeapSnapshot> snapshot = it->value;
-        profileObject = TypeBuilder::Profiler::Profile::create();
-        if (m_frontend) {
-            OutputStream stream(m_frontend, uid);
-            snapshot->writeJSON(&stream);
-        }
+    ProfilesMap::iterator it = m_profiles.find(uid);
+    if (it == m_profiles.end()) {
+        *errorString = "Profile wasn't found";
+        return;
+    }
+    profileObject = TypeBuilder::Profiler::CPUProfile::create();
+    profileObject->setHead(it->value->buildInspectorObjectForHead());
+    if (it->value->bottomUpHead())
+        profileObject->setBottomUpHead(it->value->buildInspectorObjectForBottomUpHead());
+    profileObject->setIdleTime(it->value->idleTime());
+}
+
+void InspectorProfilerAgent::getHeapSnapshot(ErrorString* errorString, int rawUid)
+{
+    unsigned uid = static_cast<unsigned>(rawUid);
+    HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
+    if (it == m_snapshots.end()) {
+        *errorString = "Profile wasn't found";
+        return;
+    }
+    RefPtr<ScriptHeapSnapshot> snapshot = it->value;
+    if (m_frontend) {
+        OutputStream stream(m_frontend, uid);
+        snapshot->writeJSON(&stream);
     }
 }
 

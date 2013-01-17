@@ -872,7 +872,7 @@ WebInspector.HeapProfileHeader.prototype = {
             this._setupWorker();
             this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
             this.sidebarElement.wait = true;
-            ProfilerAgent.getProfile(this.profileType().id, this.uid);
+            ProfilerAgent.getHeapSnapshot(this.uid);
         }
         var loaderProxy = /** @type {WebInspector.HeapSnapshotLoaderProxy} */ (this._receiver);
         loaderProxy.addConsumer(callback);
@@ -977,7 +977,7 @@ WebInspector.HeapProfileHeader.prototype = {
             this._receiver = fileOutputStream;
             this._savedChunks = 0;
             this._updateTransferProgress(0, this._totalNumberOfChunks);
-            ProfilerAgent.getProfile(this.profileType().id, this.uid);
+            ProfilerAgent.getHeapSnapshot(this.uid);
         }
         this._savingToFile = true;
         this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".heapsnapshot";

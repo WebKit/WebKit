@@ -14,7 +14,7 @@ function test()
                 console.log(errorString);
                 next();
             }
-            ProfilerAgent.getProfile("HEAP", -1, finish);
+            ProfilerAgent.getHeapSnapshot(-1, finish);
         }
     ]);
 }

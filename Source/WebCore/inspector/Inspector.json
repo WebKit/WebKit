@@ -2984,7 +2984,7 @@
                 ]
             },
             {
-                "id": "Profile",
+                "id": "CPUProfile",
                 "type": "object",
                 "description": "Profile.",
                 "properties": [
@@ -3037,13 +3037,18 @@
                 ]
             },
             {
-                "name": "getProfile",
+                "name": "getCPUProfile",
                 "parameters": [
-                    { "name": "type", "type": "string" },
                     { "name": "uid", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "profile", "$ref": "Profile" }
+                    { "name": "profile", "$ref": "CPUProfile" }
+                ]
+            },
+            {
+                "name": "getHeapSnapshot",
+                "parameters": [
+                    { "name": "uid", "type": "integer" }
                 ]
             },
             {
