@@ -41,6 +41,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+namespace {
+
+class ExtraDataContainer : public RTCVoidRequest::ExtraData {
+public:
+    ExtraDataContainer(WebRTCVoidRequest::ExtraData* extraData) : m_extraData(adoptPtr(extraData)) { }
+
+    WebRTCVoidRequest::ExtraData* extraData() { return m_extraData.get(); }
+
+private:
+    OwnPtr<WebRTCVoidRequest::ExtraData> m_extraData;
+};
+
+} // namespace
+
 WebRTCVoidRequest::WebRTCVoidRequest(const PassRefPtr<RTCVoidRequest>& constraints)
     : m_private(constraints)
 {
@@ -67,16 +81,6 @@ void WebRTCVoidRequest::requestFailed(const WebString& error) const
     ASSERT(m_private.get());
     m_private->requestFailed(error);
 }
-
-class ExtraDataContainer : public WebCore::RTCVoidRequest::ExtraData {
-public:
-    ExtraDataContainer(WebRTCVoidRequest::ExtraData* extraData) : m_extraData(WTF::adoptPtr(extraData)) { }
-
-    WebRTCVoidRequest::ExtraData* extraData() { return m_extraData.get(); }
-
-private:
-    OwnPtr<WebRTCVoidRequest::ExtraData> m_extraData;
-};
 
 WebRTCVoidRequest::ExtraData* WebRTCVoidRequest::extraData() const
 {

@@ -43,6 +43,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+namespace {
+
+class ExtraDataContainer : public RTCSessionDescriptionRequest::ExtraData {
+public:
+    ExtraDataContainer(WebRTCSessionDescriptionRequest::ExtraData* extraData) : m_extraData(adoptPtr(extraData)) { }
+
+    WebRTCSessionDescriptionRequest::ExtraData* extraData() { return m_extraData.get(); }
+
+private:
+    OwnPtr<WebRTCSessionDescriptionRequest::ExtraData> m_extraData;
+};
+
+} // namespace
+
 WebRTCSessionDescriptionRequest::WebRTCSessionDescriptionRequest(const PassRefPtr<RTCSessionDescriptionRequest>& constraints)
     : m_private(constraints)
 {
@@ -69,16 +83,6 @@ void WebRTCSessionDescriptionRequest::requestFailed(const WebString& error) cons
     ASSERT(m_private.get());
     m_private->requestFailed(error);
 }
-
-class ExtraDataContainer : public WebCore::RTCSessionDescriptionRequest::ExtraData {
-public:
-    ExtraDataContainer(WebRTCSessionDescriptionRequest::ExtraData* extraData) : m_extraData(WTF::adoptPtr(extraData)) { }
-
-    WebRTCSessionDescriptionRequest::ExtraData* extraData() { return m_extraData.get(); }
-
-private:
-    OwnPtr<WebRTCSessionDescriptionRequest::ExtraData> m_extraData;
-};
 
 WebRTCSessionDescriptionRequest::ExtraData* WebRTCSessionDescriptionRequest::extraData() const
 {

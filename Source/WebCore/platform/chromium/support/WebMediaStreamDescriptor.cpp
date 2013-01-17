@@ -48,6 +48,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+namespace {
+
+class ExtraDataContainer : public MediaStreamDescriptor::ExtraData {
+public:
+    ExtraDataContainer(WebMediaStreamDescriptor::ExtraData* extraData) : m_extraData(adoptPtr(extraData)) { }
+
+    WebMediaStreamDescriptor::ExtraData* extraData() { return m_extraData.get(); }
+
+private:
+    OwnPtr<WebMediaStreamDescriptor::ExtraData> m_extraData;
+};
+
+} // namespace
+
 WebMediaStreamDescriptor::WebMediaStreamDescriptor(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
     : m_private(mediaStreamDescriptor)
 {
@@ -72,16 +86,6 @@ WebString WebMediaStreamDescriptor::id() const
 {
     return m_private->id();
 }
-
-class ExtraDataContainer : public WebCore::MediaStreamDescriptor::ExtraData {
-public:
-    ExtraDataContainer(WebMediaStreamDescriptor::ExtraData* extraData) : m_extraData(WTF::adoptPtr(extraData)) { }
-
-    WebMediaStreamDescriptor::ExtraData* extraData() { return m_extraData.get(); }
-
-private:
-    OwnPtr<WebMediaStreamDescriptor::ExtraData> m_extraData;
-};
 
 WebMediaStreamDescriptor::ExtraData* WebMediaStreamDescriptor::extraData() const
 {
