@@ -49,9 +49,10 @@ public:
     bool parseViewSpec(const String&);
     void reset();
 
-    SVGElement* viewTarget(ExceptionCode&) const;
+    SVGElement* viewTarget() const;
     String viewBoxString() const;
 
+    void setPreserveAspectRatioString(const String&);
     String preserveAspectRatioString() const;
 
     void setTransformString(const String&);
@@ -73,13 +74,21 @@ public:
     SVGTransformList transformBaseValue() const { return m_transform; }
 
     // Custom animated 'viewBox' property.
-    PassRefPtr<SVGAnimatedRect> viewBoxAnimated(ExceptionCode&);
+    PassRefPtr<SVGAnimatedRect> viewBoxAnimated()
+    {
+        return static_pointer_cast<SVGAnimatedRect>(lookupOrCreateViewBoxWrapper(this));
+    }
+
     FloatRect& viewBox() { return m_viewBox; }
     FloatRect viewBoxBaseValue() const { return m_viewBox; }
     void setViewBoxBaseValue(const FloatRect& viewBox) { m_viewBox = viewBox; }
 
     // Custom animated 'preserveAspectRatio' property.
-    PassRefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated(ExceptionCode&);
+    PassRefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated()
+    {
+        return static_pointer_cast<SVGAnimatedPreserveAspectRatio>(lookupOrCreatePreserveAspectRatioWrapper(this));
+    }
+
     SVGPreserveAspectRatio& preserveAspectRatio() { return m_preserveAspectRatio; }
     SVGPreserveAspectRatio preserveAspectRatioBaseValue() const { return m_preserveAspectRatio; }
     void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }

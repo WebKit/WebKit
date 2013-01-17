@@ -30,8 +30,7 @@
     JSGenerateToJSObject
 ] interface SVGViewSpec {
       readonly attribute SVGTransformList transform;
-      readonly attribute SVGElement viewTarget
-        getter raises(DOMException);
+      readonly attribute SVGElement viewTarget;
       readonly attribute DOMString viewBoxString;
       readonly attribute DOMString preserveAspectRatioString;
       readonly attribute DOMString transformString;
@@ -42,9 +41,7 @@
           setter raises(DOMException);
 
       // SVGFitToViewBox
-      readonly attribute SVGAnimatedRect viewBox
-        getter raises(DOMException);
-      readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio
-        getter raises(DOMException);
+      readonly attribute SVGAnimatedRect viewBox;
+      readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 
