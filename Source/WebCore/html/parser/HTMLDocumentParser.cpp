@@ -577,11 +577,6 @@ void HTMLDocumentParser::finish()
     attemptToEnd();
 }
 
-bool HTMLDocumentParser::finishWasCalled()
-{
-    return m_input.haveSeenEndOfFile();
-}
-
 bool HTMLDocumentParser::isExecutingScript() const
 {
     if (!m_scriptRunner)

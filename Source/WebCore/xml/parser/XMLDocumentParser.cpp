@@ -229,11 +229,6 @@ void XMLDocumentParser::finish()
         end();
 }
 
-bool XMLDocumentParser::finishWasCalled()
-{
-    return m_finishCalled;
-}
-
 void XMLDocumentParser::insertErrorMessageBlock()
 {
 #if USE(QXMLSTREAM)

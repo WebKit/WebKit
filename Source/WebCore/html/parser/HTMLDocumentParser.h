@@ -101,7 +101,6 @@ private:
     // DocumentParser
     virtual void detach();
     virtual bool hasInsertionPoint();
-    virtual bool finishWasCalled();
     virtual bool processingData() const;
     virtual void prepareToStopParsing();
     virtual void stopParsing();

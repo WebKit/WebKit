@@ -68,7 +68,6 @@ public:
 
     // DocumentParser
     virtual bool hasInsertionPoint();
-    virtual bool finishWasCalled();
     virtual bool isWaitingForScripts() const;
     virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
@@ -91,7 +90,9 @@ private:
     XMLToken m_token;
 
     bool m_parserPaused;
+#ifndef NDEBUG
     bool m_finishWasCalled;
+#endif
 
     CachedResourceHandle<CachedScript> m_pendingScript;
     RefPtr<Element> m_scriptElement;

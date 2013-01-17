@@ -109,7 +109,6 @@ class Text;
         virtual void insert(const SegmentedString&);
         virtual void append(const SegmentedString&);
         virtual void finish();
-        virtual bool finishWasCalled();
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();
         virtual void detach();

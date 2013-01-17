@@ -91,9 +91,4 @@ void HTMLViewSourceParser::finish()
     document()->finishedParsing();
 }
 
-bool HTMLViewSourceParser::finishWasCalled()
-{
-    return m_input.haveSeenEndOfFile();
-}
-
 }

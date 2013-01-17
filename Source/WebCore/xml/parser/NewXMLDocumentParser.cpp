@@ -40,7 +40,9 @@ NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
     : ScriptableDocumentParser(document)
     , m_tokenizer(XMLTokenizer::create())
     , m_parserPaused(false)
+#ifndef NDEBUG
     , m_finishWasCalled(false)
+#endif
     , m_pendingScript(0)
     , m_scriptElement(0)
     , m_treeBuilder(XMLTreeBuilder::create(this, document))
@@ -51,7 +53,9 @@ NewXMLDocumentParser::NewXMLDocumentParser(DocumentFragment* fragment, Element* 
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(XMLTokenizer::create())
     , m_parserPaused(false)
+#ifndef NDEBUG
     , m_finishWasCalled(false)
+#endif
     , m_pendingScript(0)
     , m_scriptElement(0)
     , m_treeBuilder(XMLTreeBuilder::create(this, fragment, parent))
@@ -147,7 +151,9 @@ void NewXMLDocumentParser::finish()
 
     m_treeBuilder->finish();
 
+#ifndef NDEBUG
     m_finishWasCalled = true;
+#endif
     if (isParsing()) {
 #if ENABLE(XSLT)
         XMLTreeViewer xmlTreeViewer(document());
@@ -164,11 +170,6 @@ void NewXMLDocumentParser::finish()
 bool NewXMLDocumentParser::hasInsertionPoint()
 {
     return false;
-}
-
-bool NewXMLDocumentParser::finishWasCalled()
-{
-    return m_finishWasCalled;
 }
 
 bool NewXMLDocumentParser::isWaitingForScripts() const

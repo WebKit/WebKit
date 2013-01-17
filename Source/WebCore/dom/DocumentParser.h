@@ -54,7 +54,6 @@ public:
     virtual void append(const SegmentedString&) = 0;
 
     virtual void finish() = 0;
-    virtual bool finishWasCalled() = 0;
 
     // FIXME: processingData() is only used by DocumentLoader::isLoadingInAPISense
     // and is very unclear as to what it actually means.  The LegacyHTMLDocumentParser

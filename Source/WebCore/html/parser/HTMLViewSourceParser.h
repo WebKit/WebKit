@@ -61,7 +61,6 @@ private:
     virtual void insert(const SegmentedString&);
     virtual void append(const SegmentedString&);
     virtual void finish();
-    virtual bool finishWasCalled();
 
     HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }
 
