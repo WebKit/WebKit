@@ -98,6 +98,7 @@ public:
     // height of a single column or page in the set.
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
+    LayoutUnit maxPageLogicalHeight() const;
 
     virtual LayoutUnit minPreferredLogicalWidth() const OVERRIDE;
     virtual LayoutUnit maxPreferredLogicalWidth() const OVERRIDE;
@@ -115,8 +116,6 @@ public:
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
 
     bool hasAutoLogicalHeight() const { return m_hasAutoLogicalHeight; }
-
-    bool needsOverrideLogicalContentHeightComputation() const;
 
     virtual void updateLogicalHeight() OVERRIDE;
 

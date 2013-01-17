@@ -62,14 +62,22 @@ LayoutUnit RenderRegion::pageLogicalWidth() const
 LayoutUnit RenderRegion::pageLogicalHeight() const
 {
     if (hasOverrideHeight() && view()->normalLayoutPhase())
-        return overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
+        return overrideLogicalContentHeight();
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
+}
+
+// This method returns the maximum page size of a region with auto-height. This is the initial
+// height value for auto-height regions in the first layout phase of the parent named flow.
+LayoutUnit RenderRegion::maxPageLogicalHeight() const
+{
+    ASSERT(hasAutoLogicalHeight() && view()->normalLayoutPhase());
+    return style()->logicalMaxHeight().isUndefined() ? LayoutUnit::max() / 2 : computeReplacedLogicalHeightUsing(MaxSize, style()->logicalMaxHeight());
 }
 
 LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 {
     if (hasOverrideHeight() && view()->normalLayoutPhase())
-        return overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
+        return overrideLogicalContentHeight();
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
@@ -610,11 +618,6 @@ void RenderRegion::updateLogicalHeight()
     ASSERT(newLogicalHeight < LayoutUnit::max() / 2);
     if (newLogicalHeight > logicalHeight())
         setLogicalHeight(newLogicalHeight);
-}
-
-bool RenderRegion::needsOverrideLogicalContentHeightComputation() const
-{
-    return hasAutoLogicalHeight() && view()->normalLayoutPhase() && !hasOverrideHeight();
 }
 
 } // namespace WebCore

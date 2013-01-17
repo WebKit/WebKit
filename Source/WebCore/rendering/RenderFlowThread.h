@@ -154,7 +154,7 @@ protected:
     // Override if the flow thread implementation supports dispatching events when the flow layout is updated (e.g. for named flows)
     virtual void dispatchRegionLayoutUpdateEvent() { m_dispatchRegionLayoutUpdateEvent = false; }
 
-    void clearOverrideLogicalContentHeightInRegions(RenderRegion* startRegion = 0);
+    void initializeRegionsOverrideLogicalContentHeight(RenderRegion* = 0);
 
     RenderRegionList m_regionList;
 

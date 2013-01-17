@@ -1,0 +1,14 @@
+Test for Content flows incorrectly in autoheight regions with min/max-height set.
+
+There are two paragraphs in the flow, the first having a forced break. The auto-height regions are interleaved with fixed height regions and have min/max-height set. The layout algorithm should fill the regions optimally by taking into account the min-height, max-height and height properties of the regions.
+
+if there's enough content to fill an auto-height region up to max-height, the region must have that height and the content must have an unforced break if it doesn't fit exactly;
+if an autoheight region has min-height and there's not enough content / there's a forced break before min-height, the region must still be min-height tall;
+if a region has a fixed height, that value must be used;
+if an auto-height region has a forced break before max-height is reached, the region must end at that point.
+The algorithm should also take into account the horizontal bottom-up writing mode.
+On success, you should see a PASS at the end of the document.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet dolor at felis euismod tempus nec eget lacus. Aliquam tortor orci, accumsan id rutrum quis, venenatis id enim. Cras a quam ligula. Aliquam hendrerit augue ut metus adipiscing sit amet iaculis purus hendrerit. Phasellus at facilisis lorem. Vestibulum gravida tortor vitae odio accumsan id fringilla ante mattis. Morbi lorem mi, convallis quis gravida dictum, imperdiet quis erat. Sed quam quam, gravida id tincidunt in, tempus id felis. In elementum sem eget enim rutrum tempus scelerisque risus auctor. Duis sollicitudin urna quis ante adipiscing volutpat.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet dolor at felis euismod tempus nec eget lacus. Aliquam tortor orci, accumsan id rutrum quis, venenatis id enim. Cras a quam ligula. Aliquam hendrerit augue ut metus adipiscing sit amet iaculis purus hendrerit. Phasellus at facilisis lorem. Vestibulum gravida tortor vitae odio accumsan id fringilla ante mattis. Morbi lorem mi, convallis quis gravida dictum, imperdiet quis erat. Sed quam quam, gravida id tincidunt in, tempus id felis.
+PASS
