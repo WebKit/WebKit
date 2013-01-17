@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL texImage2D from WebGL conformance test.</title>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="256" height="16" style="width: 256px; height: 48px;"></canvas>
+<canvas id="source" width="256" height="16" style="width: 256px; height: 48px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test texImage2D from a webgl canvas.");
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext("example");
+gl.disable(gl.DITHER);
+var program = wtu.setupTexturedQuad(gl);
+var gl1 = wtu.create3DContext("source");
+gl1.disable(gl.DITHER);
+
+glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+glErrorShouldBe(gl1, gl1.NO_ERROR, "Should be no errors from setup.");
+
+gl.disable(gl.BLEND);
+gl.disable(gl.DEPTH_TEST);
+
+gl1.clearColor(1.0, 0.0, 0.0, 1.0);
+gl1.clear(gl1.COLOR_BUFFER_BIT);
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, gl1.canvas);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+wtu.drawQuad(gl);
+
+wtu.checkCanvas(gl, [255, 0, 0, 255], "Canvas should be red");
+
+gl1.clearColor(0.0, 1.0, 0.0, 1.0);
+gl1.clear(gl1.COLOR_BUFFER_BIT);
+
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, gl1.canvas);
+wtu.drawQuad(gl);
+
+wtu.checkCanvas(gl, [0, 255, 0, 255], "Canvas should be green");
+
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
