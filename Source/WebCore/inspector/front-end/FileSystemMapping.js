@@ -42,6 +42,11 @@ WebInspector.FileSystemMapping.FileDescriptor = function(fileSystemPath, filePat
     this.filePath = filePath;
 }
 
+WebInspector.FileSystemMapping.Events = {
+    FileSystemAdded: "FileSystemAdded",
+    FileSystemRemoved: "FileSystemRemoved"
+}
+
 WebInspector.FileSystemMapping.prototype = {
     /**
      * @return {Array.<string>}
@@ -64,7 +69,21 @@ WebInspector.FileSystemMapping.prototype = {
      * @param {string} path
      * @return {?string}
      */
-    uriForPath: function(path) { }
+    uriForPath: function(path) { },
+
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    addEventListener: function(eventType, listener, thisObject) { },
+
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    removeEventListener: function(eventType, listener, thisObject) { }
 }
 
 /**
@@ -74,6 +93,7 @@ WebInspector.FileSystemMapping.prototype = {
  */
 WebInspector.FileSystemMappingImpl = function()
 {
+    WebInspector.Object.call(this);
     this._fileSystemMappingSetting = WebInspector.settings.createSetting("fileSystemMapping", {});
     /** @type {!Object.<string, string>} */
     this._mappedNames = this._fileSystemMappingSetting.get();
@@ -92,6 +112,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
         var uniqueMappedName = this._uniqueMappedName(mappedName);
         this._mappedNames[fileSystemPath] = mappedName;
         this._fileSystemMappingSetting.set(this._mappedNames);
+        this.dispatchEventToListeners(WebInspector.FileSystemMapping.Events.FileSystemAdded, fileSystemPath);
     },
 
     /**
@@ -113,8 +134,10 @@ WebInspector.FileSystemMappingImpl.prototype = {
      */
     removeFileSystemMapping: function(fileSystemPath)
     {
+        var uriPrefix = this._uriPrefixForMappedName(this._mappedNames[fileSystemPath]);
         delete this._mappedNames[fileSystemPath];
         this._fileSystemMappingSetting.set(this._mappedNames);
+        this.dispatchEventToListeners(WebInspector.FileSystemMapping.Events.FileSystemRemoved, fileSystemPath);
     },
 
     /**
@@ -174,5 +197,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
             }
         }
         return null;
-    }
+    },
+
+    __proto__: WebInspector.Object.prototype
 }

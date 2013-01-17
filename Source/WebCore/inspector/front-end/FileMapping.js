@@ -75,7 +75,7 @@ WebInspector.FileMapping.prototype = {
     
     /**
      * @param {string} uri
-     * @return {?string}
+     * @return {string}
      */
     urlForURI: function(uri)
     {
@@ -83,7 +83,7 @@ WebInspector.FileMapping.prototype = {
             if (this._mappingEntries[i].matchesURI(uri))
                 return this._mappingEntries[i].urlForURI(uri);
         }
-        return null;
+        return "";
     },
 
     /**
@@ -181,13 +181,13 @@ WebInspector.FileMapping.MappingEntry.prototype = {
     
     /**
      * @param {string} uri
-     * @return {?string}
+     * @return {string}
      */
     urlForURI: function(uri)
     {
         if (this.matchesURI(uri))
             return this._urlPrefix + uri.substring(this._uriPrefix.length);
-        return null;
+        return "";
     },
     
     /**

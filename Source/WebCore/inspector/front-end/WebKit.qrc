@@ -78,6 +78,7 @@
     <file>FileSystemMapping.js</file>
     <file>FileSystemModel.js</file>
     <file>FileSystemView.js</file>
+    <file>FileSystemWorkspaceProvider.js</file>
     <file>FileUtils.js</file>
     <file>FilteredItemSelectionDialog.js</file>
     <file>FontView.js</file>

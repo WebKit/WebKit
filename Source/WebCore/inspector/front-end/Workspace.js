@@ -257,6 +257,7 @@ WebInspector.projectNames = {
     Compiler: "compiler",
     Network: "network",
     Snippets: "snippets",
+    FileSystem: "filesystem"
 }
 
 /**

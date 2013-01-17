@@ -5159,6 +5159,7 @@
             'inspector/front-end/FileMapping.js',
             'inspector/front-end/FileSystemMapping.js',
             'inspector/front-end/FileSystemModel.js',
+            'inspector/front-end/FileSystemWorkspaceProvider.js',
             'inspector/front-end/FileUtils.js',
             'inspector/front-end/FontView.js',
             'inspector/front-end/GoToLineDialog.js',

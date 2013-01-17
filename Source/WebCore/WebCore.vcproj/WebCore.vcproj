@@ -76917,6 +76917,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FileSystemWorkspaceProvider.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FileUtils.js"
 					>
 				</File>

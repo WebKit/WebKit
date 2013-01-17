@@ -30,8 +30,9 @@
 
 /**
  * @constructor
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.IsolatedFileSystemModel = function()
+WebInspector.IsolatedFileSystemModel = function(workspace)
 {
     /** @type {!Object.<string, WebInspector.IsolatedFileSystemModel.FileSystem>} */
     this._fileSystems = {};
@@ -41,6 +42,9 @@ WebInspector.IsolatedFileSystemModel = function()
 
     if (this.supportsFileSystems())
         this._requestFileSystems();
+
+    this._fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(this);
+    workspace.addProject(WebInspector.projectNames.FileSystem, this._fileSystemWorkspaceProvider);
 }
 
 /** @typedef {{fileSystemName: string, rootURL: string, fileSystemPath: string}} */
@@ -103,8 +107,8 @@ WebInspector.IsolatedFileSystemModel.prototype = {
      */
     _innerAddFileSystem: function(fileSystem)
     {
-        this._fileSystemMapping.addFileSystemMapping(fileSystem.fileSystemPath);
         this._fileSystems[fileSystem.fileSystemPath] = fileSystem;
+        this._fileSystemMapping.addFileSystemMapping(fileSystem.fileSystemPath);
     },
 
     /**

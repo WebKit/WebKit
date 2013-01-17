@@ -79,6 +79,7 @@ modules = [
             "FileMapping.js",
             "FileSystemMapping.js",
             "FileSystemModel.js",
+            "FileSystemWorkspaceProvider.js",
             "FileUtils.js",
             "HAREntry.js",
             "IndexedDBModel.js",

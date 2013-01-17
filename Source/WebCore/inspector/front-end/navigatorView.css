@@ -48,6 +48,10 @@
     content: url(Images/resourceDocumentIcon.png);
 }
 
+.navigator-other-tree-item .icon {
+    content: url(Images/resourcePlainIcon.png);
+}
+
 .navigator li {
     height: 17px;
     white-space: nowrap;

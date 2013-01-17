@@ -430,21 +430,24 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
-    this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel();
+    this.workspace = new WebInspector.Workspace();
+    this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
+
+    this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel(this.workspace);
     this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemModel);
     this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemModel.mapping());
-    this.workspace = new WebInspector.Workspace();
+
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
     this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);
-    this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
+    new WebInspector.NetworkUISourceCodeProvider(this.workspace, this.networkWorkspaceProvider);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 
     this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace);
+
     new WebInspector.DebuggerScriptMapping(this.workspace, this.networkWorkspaceProvider);
     this.liveEditSupport = new WebInspector.LiveEditSupport(this.workspace);
     this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);
-    new WebInspector.NetworkUISourceCodeProvider(this.workspace, this.networkWorkspaceProvider);
     new WebInspector.StylesSourceMapping(this.workspace);
     if (WebInspector.experimentsSettings.sass.isEnabled())
         new WebInspector.SASSSourceMapping(this.workspace, this.networkWorkspaceProvider);

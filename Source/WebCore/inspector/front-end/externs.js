@@ -144,6 +144,11 @@ DOMApplicationCache.prototype.OBSOLETE = 5;
  */
 function DOMFileSystem() {}
 
+/**
+ * @type {DirectoryEntry}
+ */
+DOMFileSystem.prototype.root = null;
+
 /** @type {Node} */
 Range.prototype.startContainer;
 
