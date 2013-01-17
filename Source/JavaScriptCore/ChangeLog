@@ -1,3 +1,10 @@
+2013-01-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Added svn:ignore=*.pyc, so that ud_opcode.pyc and ud_optable.pyc don't show up
+        in svn stat.
+
+        * disassembler/udis86: Added property svn:ignore.
+
 2013-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG 32_64 backend doesn't check for hasArrayStorage() in NewArrayWithSize
