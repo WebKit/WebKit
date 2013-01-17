@@ -1,5 +1,30 @@
 2013-01-16  Sam Weinig  <sam@webkit.org>
 
+        Make debug-safari --target-web-process work again
+        https://bugs.webkit.org/show_bug.cgi?id=107088
+
+        Reviewed by Anders Carlsson.
+
+        --target-web-process was made harder to use during recent refactoring
+        by requiring users to pass a -ui-process-name parameter in addition to
+        the -client-executable. Instead, we should conjure up that name from
+        the information we already have at our disposal.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMainDelegate::getConnectionIdentifier):
+        Simplify by making the non-client-executable path use the base
+        class implementation.
+
+        (WebKit::WebProcessMainDelegate::getClientIdentifier):
+        Ditto.
+
+        (WebKit::WebProcessMainDelegate::getClientProcessName):
+        Added. Create a client process name (its actually not too important what it is, as it
+        is only used to show a name in Activity Monitor) from the passed in client executable
+        path.
+
+2013-01-16  Sam Weinig  <sam@webkit.org>
+
         Fix crashes on the bots.
 
         The WebKit LoaderStrategy for loading synchronously was only implemented

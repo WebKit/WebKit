@@ -2685,7 +2685,7 @@ sub execMacWebKitAppForDebugging($)
             die "Targetting the Web Process is not compatible with using an XPC Service for the Web Process at this time.";
         }
         
-        my $webProcessShimPath = File::Spec->catfile($productDir, "WebProcessShim.dylib");
+        my $webProcessShimPath = File::Spec->catfile($productDir, "SecItemShim.dylib");
         my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
         my $webKit2ExecutablePath = File::Spec->catfile($productDir, "WebKit2.framework", "WebKit2");
 

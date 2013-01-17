@@ -1,3 +1,14 @@
+2013-01-16  Sam Weinig  <sam@webkit.org>
+
+        Make debug-safari --target-web-process work again
+        https://bugs.webkit.org/show_bug.cgi?id=107088
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging):
+        The shim is now called SecItemShim.
+
 2013-01-16  Alan Cutter  <alancutter@chromium.org>
 
         GCE build scripts don't take working directory into account when calling findzone.sh
