@@ -103,6 +103,11 @@ void BackgroundHTMLParser::pumpTokenizer()
     if (m_isPausedWaitingForScripts)
         return;
 
+    // It's unclear whether we want to use AtomicStrings on the background
+    // thread. We will likely eventually use libdispatch to schedule parsing
+    // in a separate sequenced queue for each HTMLDocumentParser instance.
+    // Once we do that, the code below will be unsafe because libdispatch
+    // might schedule us on many different threads.
     DEFINE_STATIC_LOCAL(AtomicString, iframeTag, ("iframe", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, mathTag, ("math", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, noembedTag, ("noembed", AtomicString::ConstructFromLiteral));
@@ -162,7 +167,10 @@ void BackgroundHTMLParser::pumpTokenizer()
 }
 
 class TokenDelivery {
+    WTF_MAKE_NONCOPYABLE(TokenDelivery);
 public:
+    TokenDelivery() { }
+
     ParserIdentifier identifier;
     Vector<CompactHTMLToken> tokens;
 
@@ -172,6 +180,9 @@ public:
         HTMLDocumentParser* parser = parserMap().mainThreadParsers().get(delivery->identifier);
         if (parser)
             parser->didReceiveTokensFromBackgroundParser(delivery->tokens);
+        // FIXME: Ideally we wouldn't need to call delete manually. Instead
+        // we would like an API where the message queue owns the tasks and
+        // takes care of deleting them.
         delete delivery;
     }
 };
