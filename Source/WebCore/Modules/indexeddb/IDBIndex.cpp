@@ -99,7 +99,6 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
         return 0;
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    IDBDatabaseMetadata metadata(m_transaction->db()->metadata());
     backendDB()->count(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, request);
     return request;
 }
