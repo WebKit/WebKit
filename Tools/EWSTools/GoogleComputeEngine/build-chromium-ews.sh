@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,13 +32,16 @@ echo "Usage: build-cr-linux-ews.sh BOT_NUMBER"
 exit 1
 fi
 
+CWD="$(pwd)"
+cd "$(dirname "$0")"
+
 QUEUE_TYPE=chromium-ews
 BOT_ID=gce-cr-linux-$1
 BUGZILLA_USERNAME=webkit.review.bot@gmail.com
 read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 
 PROJECT=google.com:webkit
-ZONE=$(findzone.sh $PROJECT)
+ZONE=$(bash findzone.sh $PROJECT)
 IMAGE=projects/google/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
@@ -56,3 +59,5 @@ gcutil --project=$PROJECT ssh $BOT_ID "
     bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID 10\" &&
     bash boot.sh
 "
+
+cd "$CWD"

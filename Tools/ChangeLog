@@ -1,5 +1,16 @@
 2013-01-16  Alan Cutter  <alancutter@chromium.org>
 
+        GCE build scripts don't take working directory into account when calling findzone.sh
+        https://bugs.webkit.org/show_bug.cgi?id=106962
+
+        Reviewed by Adam Barth.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+
+2013-01-16  Alan Cutter  <alancutter@chromium.org>
+
         start-queue.sh does not pass remaining parameters correctly
         https://bugs.webkit.org/show_bug.cgi?id=107054
 

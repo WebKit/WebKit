@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,13 +32,16 @@ echo "Usage: build-feeder-style-sheriffbot.sh BOT_NUMBER"
 exit 1
 fi
 
+CWD="$(pwd)"
+cd "$(dirname "$0")"
+
 BOT_ID=gce-feeder-$1
 BUGZILLA_USERNAME=webkit.review.bot@gmail.com
 read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 read -s -p "sheriffbot IRC Password: " IRC_PASSWORD && echo
 
 PROJECT=google.com:webkit
-ZONE=$(findzone.sh $PROJECT)
+ZONE=$(bash findzone.sh $PROJECT)
 IMAGE=projects/google/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
@@ -61,3 +64,5 @@ screen -t sq ./start-queue.sh style-queue $BOT_ID 10
 screen -t sb ./start-queue.sh sheriff-bot $BOT_ID 180 --irc-password=$IRC_PASSWORD\"
     bash boot.sh
 "
+
+cd "$CWD"
