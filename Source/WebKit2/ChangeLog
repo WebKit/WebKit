@@ -1,5 +1,11 @@
 2013-01-16  Sam Weinig  <sam@webkit.org>
 
+        Update Owners file.
+
+        * Owners:
+
+2013-01-16  Sam Weinig  <sam@webkit.org>
+
         Remove unused AddLoadInProgress message
         https://bugs.webkit.org/show_bug.cgi?id=107077
 
