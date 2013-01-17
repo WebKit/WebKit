@@ -37,6 +37,7 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
     
 SpeechSynthesis::SpeechSynthesis()
 {
+    initializeVoiceList();
 }
 
 } // namespace WebCore

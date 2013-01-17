@@ -57,6 +57,7 @@ public:
 private:
     SpeechSynthesis();
     
+    void initializeVoiceList();
     Vector<RefPtr<SpeechSynthesisVoice> > m_voiceList;
 };
     

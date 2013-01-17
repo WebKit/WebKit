@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that we can get synthesizer voices on the Mac");
+
+    var speech = window.speechSynthesis;
+    var list = speech.getVoices();
+
+    var foundDefaultVoice = false;
+    var foundEnglishVoice = false;
+    var voiceCount = list.length;
+
+    for (var k = 0; k < list.length; k++ ) {
+        var voice = list[k];
+        if (voice.lang == "en-US") {
+            foundEnglishVoice = true;
+        }
+        if (voice.default) {
+            foundDefaultVoice = true;
+        }
+    }
+
+    shouldBeTrue("voiceCount > 0");
+    shouldBeTrue("foundEnglishVoice");
+    shouldBeTrue("foundDefaultVoice");
+
+</script>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

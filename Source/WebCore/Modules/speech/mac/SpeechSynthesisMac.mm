@@ -28,10 +28,34 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "SpeechSynthesisVoice.h"
 #include "SpeechSynthesisUtterance.h"
+#include <AppKit/NSSpeechSynthesizer.h>
 
 namespace WebCore {
     
+void SpeechSynthesis::initializeVoiceList()
+{
+    NSString *defaultVoiceURI = [NSSpeechSynthesizer defaultVoice];
+    NSArray *availableVoices = [NSSpeechSynthesizer availableVoices];
+    NSUInteger count = [availableVoices count];
+    for (NSUInteger k = 0; k < count; k++) {
+        NSString *voiceName = [availableVoices objectAtIndex:k];
+        NSDictionary *attributes = [NSSpeechSynthesizer attributesForVoice:voiceName];
+        
+        NSString *voiceURI = [attributes objectForKey:NSVoiceIdentifier];
+        NSString *name = [attributes objectForKey:NSVoiceName];
+        NSString *language = [attributes objectForKey:NSVoiceLocaleIdentifier];
+
+        // Change to BCP-47 format as defined by spec.
+        language = [language stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
+        
+        bool isDefault = [defaultVoiceURI isEqualToString:voiceURI];
+        
+        m_voiceList.append(SpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
+    }
+}
+
 bool SpeechSynthesis::pending() const
 {
     return false;

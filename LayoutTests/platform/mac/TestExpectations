@@ -188,6 +188,9 @@ gamepad/
 # Speech input is not yet enabled.
 fast/speech
 
+# Speech synthesis is not yet enabled.
+platform/mac/fast/speechsynthesis
+
 # Speech JavaScript API is not yet enabled.
 fast/events/constructors/speech-recognition-event-constructor.html
 
