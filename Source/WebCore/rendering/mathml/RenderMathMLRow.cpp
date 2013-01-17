@@ -36,8 +36,8 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLRow::RenderMathMLRow(ContainerNode* node)
-    : RenderMathMLBlock(node)
+RenderMathMLRow::RenderMathMLRow(Element* element)
+    : RenderMathMLBlock(element)
 {
 }
 
@@ -45,7 +45,8 @@ RenderMathMLRow::RenderMathMLRow(ContainerNode* node)
 RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX);
-    RenderMathMLRow* newMRow = new (parent->renderArena()) RenderMathMLRow(parent->document() /* is anonymous */);
+    RenderMathMLRow* newMRow = new (parent->renderArena()) RenderMathMLRow(0);
+    newMRow->setDocumentForAnonymous(parent->document());
     newMRow->setStyle(newStyle.release());
     return newMRow;
 }

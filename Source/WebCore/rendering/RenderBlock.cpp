@@ -238,6 +238,13 @@ RenderBlock::~RenderBlock()
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
+RenderBlock* RenderBlock::createAnonymous(Document* document)
+{
+    RenderBlock* renderer = new (document->renderArena()) RenderBlock(0);
+    renderer->setDocumentForAnonymous(document);
+    return renderer;
+}
+
 void RenderBlock::willBeDestroyed()
 {
     // Mark as being destroyed to avoid trouble with merges in removeChild().
@@ -1847,7 +1854,7 @@ RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* 
     if (!runIn->isRenderBlock())
         newRunIn = new (renderArena()) RenderBlock(runIn->node());
     else
-        newRunIn = new (renderArena()) RenderInline(runIn->node());
+        newRunIn = new (renderArena()) RenderInline(toElement(runIn->node()));
 
     runIn->node()->setRenderer(newRunIn);
     newRunIn->setStyle(runIn->style());
@@ -6386,9 +6393,9 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)
-            newFirstLetter = new (renderArena()) RenderInline(document());
+            newFirstLetter = RenderInline::createAnonymous(document());
         else
-            newFirstLetter = new (renderArena()) RenderBlock(document());
+            newFirstLetter = RenderBlock::createAnonymous(document());
         newFirstLetter->setStyle(pseudoStyle);
 
         // Move the first letter into the new renderer.
@@ -6432,9 +6439,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
-        firstLetter = new (renderArena()) RenderInline(document());
+        firstLetter = RenderInline::createAnonymous(document());
     else
-        firstLetter = new (renderArena()) RenderBlock(document());
+        firstLetter = RenderBlock::createAnonymous(document());
     firstLetter->setStyle(pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentChild);
 
@@ -7681,10 +7688,10 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     EDisplay newDisplay;
     RenderBlock* newBox = 0;
     if (display == BOX || display == INLINE_BOX) {
-        newBox = new (parent->renderArena()) RenderDeprecatedFlexibleBox(parent->document() /* anonymous box */);
+        newBox = RenderDeprecatedFlexibleBox::createAnonymous(parent->document());
         newDisplay = BOX;
     } else {
-        newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+        newBox = RenderBlock::createAnonymous(parent->document());
         newDisplay = BLOCK;
     }
 
@@ -7698,7 +7705,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->inheritColumnPropertiesFrom(parent->style());
 
-    RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }
@@ -7708,7 +7715,7 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->setColumnSpan(ColumnSpanAll);
 
-    RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
+    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }

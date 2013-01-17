@@ -37,8 +37,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableCol::RenderTableCol(ContainerNode* node)
-    : RenderBox(node)
+RenderTableCol::RenderTableCol(Element* element)
+    : RenderBox(element)
     , m_span(1)
 {
     // init RenderObject attributes

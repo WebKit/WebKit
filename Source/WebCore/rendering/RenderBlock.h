@@ -91,6 +91,8 @@ public:
     RenderBlock(ContainerNode*);
     virtual ~RenderBlock();
 
+    static RenderBlock* createAnonymous(Document*);
+
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
     RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
 

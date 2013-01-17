@@ -30,7 +30,7 @@ namespace WebCore {
 
 class RenderFieldset : public RenderBlock {
 public:
-    explicit RenderFieldset(ContainerNode*);
+    explicit RenderFieldset(Element*);
 
     enum FindLegendOption { IgnoreFloatingOrOutOfFlow, IncludeFloatingOrOutOfFlow };
     RenderBox* findLegend(FindLegendOption = IgnoreFloatingOrOutOfFlow) const;

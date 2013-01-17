@@ -498,7 +498,6 @@ public:
 #endif
 
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
-    void setIsAnonymous(bool b) { m_bitfields.setIsAnonymous(b); }
     bool isAnonymousBlock() const
     {
         // This function is kept in sync with anonymous block creation conditions in
@@ -979,6 +978,8 @@ protected:
     virtual void insertedIntoTree();
     virtual void willBeRemovedFromTree();
 
+    void setDocumentForAnonymous(Document* document) { ASSERT(isAnonymous()); m_node = document; }
+
 private:
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
@@ -1031,7 +1032,7 @@ private:
             , m_preferredLogicalWidthsDirty(false)
             , m_floating(false)
             , m_paintBackground(false)
-            , m_isAnonymous(node == node->document())
+            , m_isAnonymous(!node)
             , m_isText(false)
             , m_isBox(false)
             , m_isInline(true)

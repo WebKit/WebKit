@@ -53,7 +53,7 @@ namespace WebCore {
 // <ruby> when used as 'display:inline'
 class RenderRubyAsInline : public RenderInline {
 public:
-    RenderRubyAsInline(ContainerNode*);
+    RenderRubyAsInline(Element*);
     virtual ~RenderRubyAsInline();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
@@ -72,7 +72,7 @@ private:
 // <ruby> when used as 'display:block' or 'display:inline-block'
 class RenderRubyAsBlock : public RenderBlock {
 public:
-    RenderRubyAsBlock(ContainerNode*);
+    RenderRubyAsBlock(Element*);
     virtual ~RenderRubyAsBlock();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);

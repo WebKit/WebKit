@@ -33,14 +33,21 @@
 
 namespace WebCore {
 
-RenderReplica::RenderReplica(ContainerNode* node)
-    : RenderBox(node)
+RenderReplica::RenderReplica()
+    : RenderBox(0)
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the
     // renderers being replicated, so they always report that they are inline, non-replaced.
     // However, we need transforms to be applied to replicas for reflections, so have to pass
     // the if (!isInline() || isReplaced()) check before setHasTransform().
     setReplaced(true);
+}
+
+RenderReplica* RenderReplica::createAnonymous(Document* document)
+{
+    RenderReplica* renderer = new (document->renderArena()) RenderReplica();
+    renderer->setDocumentForAnonymous(document);
+    return renderer;
 }
 
 RenderReplica::~RenderReplica()

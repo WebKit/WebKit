@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(ContainerNode* element)
+RenderFieldset::RenderFieldset(Element* element)
     : RenderBlock(element)
 {
 }

@@ -52,13 +52,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(ContainerNode* node)
-    : RenderReplaced(node, IntSize())
+RenderImage::RenderImage(Element* element)
+    : RenderReplaced(element, IntSize())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
 {
     updateAltText();
+}
+
+RenderImage* RenderImage::createAnonymous(Document* document)
+{
+    RenderImage* image = new (document->renderArena()) RenderImage(0);
+    image->setDocumentForAnonymous(document);
+    return image;
 }
 
 RenderImage::~RenderImage()

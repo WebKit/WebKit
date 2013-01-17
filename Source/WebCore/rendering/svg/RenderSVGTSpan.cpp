@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-RenderSVGTSpan::RenderSVGTSpan(ContainerNode* node)
-    : RenderSVGInline(node)
+RenderSVGTSpan::RenderSVGTSpan(Element* element)
+    : RenderSVGInline(element)
 {
 }
 

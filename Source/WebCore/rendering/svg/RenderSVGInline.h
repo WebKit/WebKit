@@ -30,7 +30,7 @@ namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
 public:
-    explicit RenderSVGInline(ContainerNode*);
+    explicit RenderSVGInline(Element*);
 
     virtual const char* renderName() const { return "RenderSVGInline"; }
     virtual bool requiresLayer() const { return false; }

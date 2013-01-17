@@ -49,11 +49,18 @@ using namespace std;
 
 namespace WebCore {
 
-RenderInline::RenderInline(ContainerNode* node)
-    : RenderBoxModelObject(node)
+RenderInline::RenderInline(Element* element)
+    : RenderBoxModelObject(element)
     , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
+}
+
+RenderInline* RenderInline::createAnonymous(Document* document)
+{
+    RenderInline* renderer = new (document->renderArena()) RenderInline(0);
+    renderer->setDocumentForAnonymous(document);
+    return renderer;
 }
 
 void RenderInline::willBeDestroyed()
@@ -310,7 +317,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         if (RenderObject* positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle->setPosition(positionedAncestor->style()->position());
 
-        RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+        RenderBlock* newBox = RenderBlock::createAnonymous(document());
         newBox->setStyle(newStyle.release());
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);

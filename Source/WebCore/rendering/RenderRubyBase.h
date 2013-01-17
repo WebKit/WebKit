@@ -39,8 +39,9 @@ class RenderRubyRun;
 
 class RenderRubyBase : public RenderBlock {
 public:
-    RenderRubyBase(ContainerNode*);
     virtual ~RenderRubyBase();
+    
+    static RenderRubyBase* createAnonymous(Document*);
 
     virtual const char* renderName() const { return "RenderRubyBase (anonymous)"; }
 
@@ -49,6 +50,8 @@ public:
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
 private:
+    RenderRubyBase();
+
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
 

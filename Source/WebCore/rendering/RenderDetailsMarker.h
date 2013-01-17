@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RenderDetailsMarker : public RenderBlock {
 public:
-    RenderDetailsMarker(ContainerNode*);
+    RenderDetailsMarker(Element*);
 
     enum Orientation { Up, Down, Left, Right };
 

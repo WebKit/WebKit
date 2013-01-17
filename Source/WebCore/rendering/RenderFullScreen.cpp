@@ -39,9 +39,10 @@ using namespace WebCore;
 class RenderFullScreenPlaceholder : public RenderBlock {
 public:
     RenderFullScreenPlaceholder(RenderFullScreen* owner) 
-        : RenderBlock(owner->document())
+        : RenderBlock(0)
         , m_owner(owner) 
-    { 
+    {
+        setDocumentForAnonymous(owner->document());
     }
 private:
     virtual bool isRenderFullScreenPlaceholder() const { return true; }
@@ -55,11 +56,18 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
     RenderBlock::willBeDestroyed();
 }
 
-RenderFullScreen::RenderFullScreen(Document* document)
-    : RenderDeprecatedFlexibleBox(document)
+RenderFullScreen::RenderFullScreen()
+    : RenderDeprecatedFlexibleBox(0)
     , m_placeholder(0)
-{ 
+{
     setReplaced(false); 
+}
+
+RenderFullScreen* RenderFullScreen::createAnonymous(Document* document)
+{
+    RenderFullScreen* renderer = new (document->renderArena()) RenderFullScreen();
+    renderer->setDocumentForAnonymous(document);
+    return renderer;
 }
 
 void RenderFullScreen::willBeDestroyed()
@@ -107,7 +115,7 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
 
 RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, RenderObject* parent, Document* document)
 {
-    RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
+    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
     if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();

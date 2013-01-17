@@ -35,7 +35,8 @@ class RenderScrollbar;
 
 class RenderScrollbarPart : public RenderBlock {
 public:
-    RenderScrollbarPart(ContainerNode*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
+    static RenderScrollbarPart* createAnonymous(Document*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
+    
     virtual ~RenderScrollbarPart();
 
     virtual const char* renderName() const { return "RenderScrollbarPart"; }
@@ -61,6 +62,8 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
 private:
+    RenderScrollbarPart(RenderScrollbar*, ScrollbarPart);
+
     virtual void computePreferredLogicalWidths();
 
     void layoutHorizontalPart();
