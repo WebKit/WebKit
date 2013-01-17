@@ -33,7 +33,7 @@ from webkitpy.common.memoized import memoized
 
 # In this dictionary, each item stores:
 # * port_name -- a fully qualified port name
-# * specifiers -- a set of specifiers, representing configurations covered by this builder.
+# * is_debug -- whether we are using a debug build
 # * move_overwritten_baselines_to -- (optional) list of platform directories that we will copy an existing
 #      baseline to before pulling down a new baseline during rebaselining. This is useful
 #      for bringing up a new port, for example when adding a Lion was the most recent Mac version and
@@ -46,44 +46,44 @@ from webkitpy.common.memoized import memoized
 
 _exact_matches = {
     # These builders are on build.chromium.org.
-    "WebKit XP": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
-    "WebKit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "release"])},
-    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "debug"])},
-    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "debug"])},
-    "WebKit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},
-    "WebKit Linux 32": {"port_name": "chromium-linux-x86", "specifiers": set(["linux", "x86"])},
-    "WebKit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "debug"])},
-    "WebKit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
-    "WebKit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
-    "WebKit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion", "release"])},
-    "WebKit Mac10.7 (dbg)": {"port_name": "chromium-mac-lion", "specifiers": set(["lion", "debug"])},
-    "WebKit Mac10.8": {"port_name": "chromium-mac-mountainlion", "specifiers": set(["mountainlion", "release"])},
+    "WebKit XP": {"port_name": "chromium-win-xp", "is_debug": False},
+    "WebKit Win7": {"port_name": "chromium-win-win7", "is_debug": False},
+    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-win7", "is_debug": True},
+    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-win7", "is_debug": True},
+    "WebKit Linux": {"port_name": "chromium-linux-x86_64", "is_debug": False},
+    "WebKit Linux 32": {"port_name": "chromium-linux-x86", "is_debug": False},
+    "WebKit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "is_debug": True},
+    "WebKit Mac10.6": {"port_name": "chromium-mac-snowleopard", "is_debug": False},
+    "WebKit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "is_debug": True},
+    "WebKit Mac10.7": {"port_name": "chromium-mac-lion", "is_debug": False},
+    "WebKit Mac10.7 (dbg)": {"port_name": "chromium-mac-lion", "is_debug": True},
+    "WebKit Mac10.8": {"port_name": "chromium-mac-mountainlion", "is_debug": False},
 
     # These builders are on build.webkit.org.
-    "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion"]), "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion", "debug"]), "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Release WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "specifiers": set(["mountainlion", "wk2"]), "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Debug WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "specifiers": set(["mountainlion", "wk2", "debug"]), "rebaseline_override_dir": "mac"},
-    "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion"])},
-    "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "debug"])},
-    "Apple Lion Release WK2 (Tests)": {"port_name": "mac-lion-wk2", "specifiers": set(["lion", "wk2"])},
-    "Apple Lion Debug WK2 (Tests)": {"port_name": "mac-lion-wk2", "specifiers": set(["lion", "wk2", "debug"])},
+    "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": False, "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": True, "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Release WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": False, "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Debug WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": True, "rebaseline_override_dir": "mac"},
+    "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "is_debug": False},
+    "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "is_debug": True},
+    "Apple Lion Release WK2 (Tests)": {"port_name": "mac-lion-wk2", "is_debug": False},
+    "Apple Lion Debug WK2 (Tests)": {"port_name": "mac-lion-wk2", "is_debug": True},
 
-    "Apple Win XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win", "debug"])},
+    "Apple Win XP Debug (Tests)": {"port_name": "win-xp", "is_debug": True},
     # FIXME: Remove rebaseline_override_dir once there is an Apple buildbot that corresponds to platform/win.
-    "Apple Win 7 Release (Tests)": {"port_name": "win-7sp0", "specifiers": set(["win"]), "rebaseline_override_dir": "win"},
+    "Apple Win 7 Release (Tests)": {"port_name": "win-7sp0", "is_debug": False, "rebaseline_override_dir": "win"},
 
-    "GTK Linux 32-bit Release": {"port_name": "gtk", "specifiers": set(["gtk", "x86", "release"])},
-    "GTK Linux 64-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk", "x86_64", "debug"])},
-    "GTK Linux 64-bit Release": {"port_name": "gtk", "specifiers": set(["gtk", "x86_64", "release"])},
-    "GTK Linux 64-bit Release WK2 (Tests)": {"port_name": "gtk-wk2", "specifiers": set(["gtk", "x86_64", "wk2", "release"])},
+    "GTK Linux 32-bit Release": {"port_name": "gtk", "is_debug": False},
+    "GTK Linux 64-bit Debug": {"port_name": "gtk", "is_debug": True},
+    "GTK Linux 64-bit Release": {"port_name": "gtk", "is_debug": False},
+    "GTK Linux 64-bit Release WK2 (Tests)": {"port_name": "gtk-wk2", "is_debug": False},
 
     # FIXME: Remove rebaseline_override_dir once there are Qt bots for all the platform/qt-* directories.
-    "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"]), "rebaseline_override_dir": "qt"},
+    "Qt Linux Release": {"port_name": "qt-linux", "is_debug": False, "rebaseline_override_dir": "qt"},
 
-    "EFL Linux 64-bit Release": {"port_name": "efl", "specifiers": set(["efl", "release"])},
-    "EFL Linux 64-bit Release WK2": {"port_name": "efl-wk2", "specifiers": set(["efl", "wk2", "release"])},
-    "EFL Linux 64-bit Debug WK2": {"port_name": "efl-wk2", "specifiers": set(["efl", "wk2", "debug"])},
+    "EFL Linux 64-bit Release": {"port_name": "efl", "is_debug": False},
+    "EFL Linux 64-bit Release WK2": {"port_name": "efl-wk2", "is_debug": False},
+    "EFL Linux 64-bit Debug WK2": {"port_name": "efl-wk2", "is_debug": True},
 }
 
 
@@ -121,10 +121,6 @@ def all_port_names():
     return sorted(set(map(lambda x: x["port_name"], _exact_matches.values()) + _ports_without_builders))
 
 
-def coverage_specifiers_for_builder_name(builder_name):
-    return _exact_matches[builder_name].get("specifiers", set())
-
-
 def rebaseline_override_dir(builder_name):
     return _exact_matches[builder_name].get("rebaseline_override_dir", None)
 
@@ -143,10 +139,14 @@ def port_name_for_builder_name(builder_name):
 
 
 def builder_name_for_port_name(target_port_name):
+    debug_builder_name = None
     for builder_name, builder_info in _exact_matches.items():
-        if builder_info['port_name'] == target_port_name and 'debug' not in builder_info['specifiers']:
-            return builder_name
-    return None
+        if builder_info['port_name'] == target_port_name:
+            if builder_info['is_debug']:
+                debug_builder_name = builder_name
+            else:
+                return builder_name
+    return debug_builder_name
 
 
 def builder_path_for_port_name(port_name):
