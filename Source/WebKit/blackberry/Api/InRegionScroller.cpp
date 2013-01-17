@@ -80,6 +80,10 @@ InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
 
 void InRegionScrollerPrivate::reset()
 {
+    // Notify the client side to clear InRegion scrollable areas before we destroy them here.
+    std::vector<Platform::ScrollViewBase*> emptyInRegionScrollableAreas;
+    m_webPage->m_client->notifyInRegionScrollableAreasChanged(emptyInRegionScrollableAreas);
+
     m_needsActiveScrollableAreaCalculation = false;
     for (size_t i = 0; i < m_activeInRegionScrollableAreas.size(); ++i)
         delete m_activeInRegionScrollableAreas[i];

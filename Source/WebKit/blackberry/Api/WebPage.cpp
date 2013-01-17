@@ -1428,12 +1428,8 @@ void WebPagePrivate::deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*)
 
 void WebPagePrivate::notifyInRegionScrollStopped()
 {
-    if (m_inRegionScroller->d->isActive()) {
-        // Notify the client side to clear InRegion scrollable areas before we destroy them here.
-        std::vector<Platform::ScrollViewBase*> emptyInRegionScrollableAreas;
-        m_client->notifyInRegionScrollableAreasChanged(emptyInRegionScrollableAreas);
+    if (m_inRegionScroller->d->isActive())
         m_inRegionScroller->d->reset();
-    }
 }
 
 void WebPage::notifyInRegionScrollStopped()

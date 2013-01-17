@@ -1,3 +1,19 @@
+2013-01-17  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] InRegionScroller should notify client before it deletes all the scrollables
+        https://bugs.webkit.org/show_bug.cgi?id=107162
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Gen Mak and Mike Fenton.
+
+        Move the notification code from notifyInRegionScrollStopped() to reset() as there are
+        other places where reset() gets called.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::reset):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStopped):
+
 2013-01-17  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Fix selection handle appearance for RTL text.
