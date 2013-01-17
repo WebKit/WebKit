@@ -7,6 +7,7 @@
 #include "NetworkProcessconnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
+#include "SyncNetworkResourceLoader.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
@@ -65,6 +66,27 @@ ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const 
     // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones.
     scheduleServePendingRequests();
     return identifier;
+}
+
+void NetworkResourceLoadScheduler::scheduleSyncNetworkResourceLoader(PassRefPtr<SyncNetworkResourceLoader> loader)
+{
+    // FIXME (NetworkProcess): Sync loaders need to get identifiers in a sane way.
+    ResourceLoadIdentifier identifier = ++s_currentResourceLoadIdentifier;
+    loader->setIdentifier(identifier);
+
+    const ResourceRequest& resourceRequest = loader->loadParameters().request();
+
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleSyncNetworkResourceLoader synchronous resource '%s'", resourceRequest.url().string().utf8().data());
+
+    HostRecord* host = hostForURL(resourceRequest.url(), CreateIfNotFound);
+    bool hadRequests = host->hasRequests();
+    host->syncLoadersPending().append(loader);
+    m_identifiers.add(identifier, host);
+    
+    if (!hadRequests)
+        servePendingRequestsForHost(host, ResourceLoadPriorityHighest);
+
+    scheduleServePendingRequests();
 }
 
 ResourceLoadIdentifier NetworkResourceLoadScheduler::addLoadInProgress(const WebCore::KURL& url)
@@ -170,6 +192,24 @@ void NetworkResourceLoadScheduler::servePendingRequestsForHost(HostRecord* host,
 {
     LOG(NetworkScheduling, "NetworkResourceLoadScheduler::servePendingRequests Host name='%s'", host->name().utf8().data());
 
+    // We serve synchronous requests before any other requests to improve responsiveness in any
+    // WebProcess that is waiting on a synchronous load.
+    HostRecord::SyncLoaderQueue& syncLoadersPending = host->syncLoadersPending();
+    while (!syncLoadersPending.isEmpty()) {
+        RefPtr<SyncNetworkResourceLoader> loader = syncLoadersPending.first();
+
+        // FIXME (NetworkProcess): How do we know this synchronous load isn't associated with a WebProcess
+        // we've lost our connection to?
+        bool shouldLimitRequests = !host->name().isNull();
+        if (shouldLimitRequests && host->limitRequests(ResourceLoadPriorityHighest, false))
+            return;
+
+        syncLoadersPending.removeFirst();
+        host->addLoadInProgress(loader->identifier());
+
+        loader->start();
+    }
+    
     for (int priority = ResourceLoadPriorityHighest; priority >= minimumPriority; --priority) {
         HostRecord::LoaderQueue& loadersPending = host->loadersPending(ResourceLoadPriority(priority));
 

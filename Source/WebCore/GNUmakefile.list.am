@@ -5811,6 +5811,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/ResourceHandle.cpp \
 	Source/WebCore/platform/network/ResourceHandle.h \
 	Source/WebCore/platform/network/ResourceHandleInternal.h \
+	Source/WebCore/platform/network/ResourceHandleTypes.h \
 	Source/WebCore/platform/network/ResourceLoadInfo.h \
 	Source/WebCore/platform/network/ResourceLoadPriority.h \
 	Source/WebCore/platform/network/ResourceLoadTiming.cpp \

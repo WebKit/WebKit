@@ -32785,6 +32785,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ResourceHandleTypes.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\ResourceHandleClient.h"
 					>
 				</File>

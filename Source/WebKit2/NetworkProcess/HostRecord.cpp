@@ -32,6 +32,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoadScheduler.h"
 #include "NetworkResourceLoader.h"
+#include "SyncNetworkResourceLoader.h"
 
 #if ENABLE(NETWORK_PROCESS)
 

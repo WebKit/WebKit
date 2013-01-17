@@ -1,3 +1,48 @@
+2013-01-16  Brady Eidson  <beidson@apple.com>
+
+        Synchronous XMLHTTPRequests need to go to the NetworkProcess.
+        <rdar://problem/12951765> and https://bugs.webkit.org/show_bug.cgi?id=106826
+
+        Reviewed by Sam Weinig and Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously): Entry point for WebCore to get
+          synchronous requests to the NetworkProcess.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad): Create a SyncNetworkResourceLoader
+          and schedule it.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleSyncNetworkResourceLoader):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequestsForHost): Serve synchronous loaders
+          before async loaders.
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        A class that encapsulates a synchronous load request and the CoreIPC reply to be made once it is complete:
+        * NetworkProcess/SyncNetworkResourceLoader.cpp: Added.
+        (WebKit::SyncNetworkResourceLoader::SyncNetworkResourceLoader):
+        (WebKit::SyncNetworkResourceLoader::start):
+        * NetworkProcess/SyncNetworkResourceLoader.h: Copied from Source/WebKit2/NetworkProcess/HostRecord.h.
+        (WebKit::SyncNetworkResourceLoader::create):
+        (WebKit::SyncNetworkResourceLoader::setIdentifier):
+        (WebKit::SyncNetworkResourceLoader::identifier):
+        (WebKit::SyncNetworkResourceLoader::loadParameters):
+
+        Add a second queue of sync loaders:
+        * NetworkProcess/HostRecord.h:
+        (WebKit::HostRecord::syncLoadersPending):
+
+        Add comments to explicitly spell out the current reliance on some messages that are currently synchronous:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         WebProcess should not access ~/Library/Caches/com.apple.WebProcess

@@ -39,6 +39,7 @@ namespace WebKit {
 class HostRecord;
 class NetworkResourceLoadParameters;
 class NetworkConnectionToWebProcess;
+class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkResourceLoadScheduler {
@@ -49,6 +50,9 @@ public:
     
     // Adds the request to the queue for its host and create a unique identifier for it.
     ResourceLoadIdentifier scheduleResourceLoad(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
+    
+    // Adds a synchronous request to the synchronous request queue for its host.
+    void scheduleSyncNetworkResourceLoader(PassRefPtr<SyncNetworkResourceLoader>);
     
     // Creates a unique identifier for an already-in-progress load.
     ResourceLoadIdentifier addLoadInProgress(const WebCore::KURL&);

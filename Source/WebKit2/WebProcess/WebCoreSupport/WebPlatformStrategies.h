@@ -71,6 +71,7 @@ private:
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() OVERRIDE;
+    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) OVERRIDE;
 #endif
 
     // WebCore::PluginStrategy

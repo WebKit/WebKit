@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class NetworkResourceLoader;
+class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
 class HostRecord {
@@ -54,10 +55,16 @@ public:
     typedef Deque<RefPtr<NetworkResourceLoader> > LoaderQueue;
     LoaderQueue& loadersPending(WebCore::ResourceLoadPriority priority) { return m_loadersPending[priority]; }
 
+    typedef Deque<RefPtr<SyncNetworkResourceLoader> > SyncLoaderQueue;
+    SyncLoaderQueue& syncLoadersPending() { return m_syncLoadersPending; }
+
 private:                    
     LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
     typedef HashSet<ResourceLoadIdentifier> ResourceLoadIdentifierSet;
     ResourceLoadIdentifierSet m_resourceIdentifiersLoading;
+    
+    SyncLoaderQueue m_syncLoadersPending;
+    HashSet<RefPtr<SyncNetworkResourceLoader> > m_syncLoadersLoading;
 
     const String m_name;
     int m_maxRequestsInFlight;

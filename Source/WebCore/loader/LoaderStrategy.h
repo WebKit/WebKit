@@ -28,13 +28,22 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
+#include "ResourceHandleTypes.h"
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
+class NetworkingContext;
+class ResourceError;
 class ResourceLoadScheduler;
+class ResourceRequest;
+class ResourceResponse;
 
 class LoaderStrategy {
 public:
     virtual ResourceLoadScheduler* resourceLoadScheduler();
+
+    virtual void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
 protected:
     virtual ~LoaderStrategy()

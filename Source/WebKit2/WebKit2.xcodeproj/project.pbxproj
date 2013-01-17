@@ -470,6 +470,8 @@
 		51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
+		51815B9F16A622210054501F /* SyncNetworkResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51815B9D16A622210054501F /* SyncNetworkResourceLoader.cpp */; };
+		51815BA016A622210054501F /* SyncNetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51815B9E16A622210054501F /* SyncNetworkResourceLoader.h */; };
 		51829DA51637C70C000953D6 /* NetworkResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */; };
 		51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */; };
 		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
@@ -1733,6 +1735,8 @@
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessConnectionMessages.h; sourceTree = "<group>"; };
+		51815B9D16A622210054501F /* SyncNetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SyncNetworkResourceLoader.cpp; path = NetworkProcess/SyncNetworkResourceLoader.cpp; sourceTree = "<group>"; };
+		51815B9E16A622210054501F /* SyncNetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncNetworkResourceLoader.h; path = NetworkProcess/SyncNetworkResourceLoader.h; sourceTree = "<group>"; };
 		51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadScheduler.cpp; path = NetworkProcess/NetworkResourceLoadScheduler.cpp; sourceTree = "<group>"; };
 		51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadScheduler.h; path = NetworkProcess/NetworkResourceLoadScheduler.h; sourceTree = "<group>"; };
 		51834590134532E80092B696 /* WebIconDatabaseClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseClient.cpp; sourceTree = "<group>"; };
@@ -3190,6 +3194,8 @@
 				515705521657018C00101A90 /* NetworkResourceLoader.messages.in */,
 				51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */,
 				51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */,
+				51815B9D16A622210054501F /* SyncNetworkResourceLoader.cpp */,
+				51815B9E16A622210054501F /* SyncNetworkResourceLoader.h */,
 			);
 			name = NetworkProcess;
 			sourceTree = "<group>";
@@ -5050,6 +5056,7 @@
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
 				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
 				1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */,
+				51815BA016A622210054501F /* SyncNetworkResourceLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6029,6 +6036,7 @@
 				E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */,
 				E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */,
 				1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */,
+				51815B9F16A622210054501F /* SyncNetworkResourceLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

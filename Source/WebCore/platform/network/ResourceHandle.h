@@ -28,6 +28,7 @@
 
 #include "AuthenticationClient.h"
 #include "HTTPHeaderMap.h"
+#include "ResourceHandleTypes.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -87,11 +88,6 @@ class ResourceRequest;
 class ResourceResponse;
 class SchedulePair;
 class SharedBuffer;
-
-enum StoredCredentials {
-    AllowStoredCredentials,
-    DoNotAllowStoredCredentials
-};
 
 template <typename T> class Timer;
 

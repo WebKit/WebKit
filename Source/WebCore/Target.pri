@@ -2304,6 +2304,7 @@ HEADERS += \
     platform/network/qt/QNetworkReplyHandler.h \
     platform/network/ResourceErrorBase.h \
     platform/network/ResourceHandle.h \
+    platform/network/ResourceHandleTypes.h \
     platform/network/ResourceLoadInfo.h \
     platform/network/ResourceLoadPriority.h \
     platform/network/ResourceLoadTiming.h \

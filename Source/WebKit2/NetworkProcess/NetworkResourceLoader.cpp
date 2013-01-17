@@ -188,6 +188,10 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     ASSERT(!redirectResponse.isNull());
     ASSERT(!isMainThread());
 
+    // IMPORTANT: The fact that this message to the WebProcess is sync is what makes our current approach to synchronous XMLHttpRequests safe.
+    // If this message changes to be asynchronous we might introduce a situation where the NetworkProcess is deadlocked waiting for 6 connections
+    // to complete while the WebProcess is waiting for a 7th to complete.
+    // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
     if (!sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(request)))
         request = ResourceRequest();
 }
@@ -287,6 +291,10 @@ bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle
 {
     ASSERT(!isMainThread());
 
+    // IMPORTANT: The fact that this message to the WebProcess is sync is what makes our current approach to synchronous XMLHttpRequests safe.
+    // If this message changes to be asynchronous we might introduce a situation where the NetworkProcess is deadlocked waiting for 6 connections
+    // to complete while the WebProcess is waiting for a 7th to complete.
+    // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
     bool result;
     if (!sendSync(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace::Reply(result)))
         return false;

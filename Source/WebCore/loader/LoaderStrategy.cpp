@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LoaderStrategy.h"
 
+#include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 
 #if USE(PLATFORM_STRATEGIES)
@@ -35,6 +36,11 @@ namespace WebCore {
 ResourceLoadScheduler* LoaderStrategy::resourceLoadScheduler()
 {
     return WebCore::resourceLoadScheduler();
+}
+
+void LoaderStrategy::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+    ResourceHandle::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }
 
 } // namespace WebCore
