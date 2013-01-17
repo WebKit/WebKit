@@ -2016,7 +2016,7 @@ webkit.org/b/90225 [ Android Linux Mac ] http/tests/loading/text-content-type-wi
 # These tests time out *and* are slow. The test should be fixed to not timeout,
 # then should be marked as SLOW/PASS.
 crbug.com/2844 [ Win ] http/tests/appcache/cyrillic-uri.html [ Pass Timeout ]
-crbug.com/2844 [ Win ] http/tests/appcache/fail-on-update.html [ Pass Timeout ]
+crbug.com/2844 [ Win Linux ] http/tests/appcache/fail-on-update.html [ Pass Timeout Crash ]
 crbug.com/2844 [ Win ] http/tests/appcache/offline-access.html [ Pass Timeout ]
 crbug.com/2844 [ Win ] http/tests/appcache/update-cache.html [ Pass Timeout ]
 
