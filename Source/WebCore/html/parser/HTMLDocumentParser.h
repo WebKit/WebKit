@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class CompactHTMLToken;
 class Document;
 class DocumentFragment;
 class HTMLDocument;
@@ -76,6 +77,10 @@ public:
 
     virtual void suspendScheduledTasks();
     virtual void resumeScheduledTasks();
+
+#if ENABLE(THREADED_HTML_PARSER)
+    void didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>&);
+#endif
 
 protected:
     virtual void insert(const SegmentedString&);

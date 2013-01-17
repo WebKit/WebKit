@@ -3530,6 +3530,8 @@ webcore_sources += \
 	Source/WebCore/html/MonthInputType.h \
 	Source/WebCore/html/NumberInputType.cpp \
 	Source/WebCore/html/NumberInputType.h \
+	Source/WebCore/html/parser/BackgroundHTMLParser.cpp \
+	Source/WebCore/html/parser/BackgroundHTMLParser.h \
 	Source/WebCore/html/parser/CSSPreloadScanner.cpp \
 	Source/WebCore/html/parser/CSSPreloadScanner.h \
 	Source/WebCore/html/parser/CompactHTMLToken.cpp \

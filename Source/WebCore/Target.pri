@@ -707,6 +707,7 @@ SOURCES += \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
     html/canvas/DataView.cpp \
+    html/parser/BackgroundHTMLParser.cpp \
     html/parser/CSSPreloadScanner.cpp \
     html/parser/CompactHTMLToken.cpp \
     html/parser/HTMLConstructionSite.cpp \

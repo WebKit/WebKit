@@ -64537,6 +64537,14 @@
 				Name="parser"
 				>
 				<File
+					RelativePath="..\html\parser\BackgroundHTMLParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\BackgroundHTMLParser.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\CSSPreloadScanner.cpp"
 					>
 				</File>

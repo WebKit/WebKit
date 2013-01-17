@@ -1526,6 +1526,7 @@ set(WebCore_SOURCES
     html/canvas/WebGLUniformLocation.cpp
     html/canvas/WebGLVertexArrayObjectOES.cpp
 
+    html/parser/BackgroundHTMLParser.cpp
     html/parser/CSSPreloadScanner.cpp
     html/parser/CompactHTMLToken.cpp
     html/parser/HTMLConstructionSite.cpp

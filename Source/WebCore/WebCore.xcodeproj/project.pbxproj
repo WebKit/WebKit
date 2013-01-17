@@ -3624,8 +3624,6 @@
 		977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B37221228721700B81FF8 /* HTMLTreeBuilder.h */; };
 		977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3849122883E900B81FF8 /* CSSPreloadScanner.cpp */; };
 		977B3863122883E900B81FF8 /* CSSPreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384A122883E900B81FF8 /* CSSPreloadScanner.h */; };
-		977B3862122883E900B81FF9 /* CompactHTMLToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B3849122883E900B81FF9 /* CompactHTMLToken.cpp */; };
-		977B3863122883E900B81FF9 /* CompactHTMLToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384A122883E900B81FF9 /* CompactHTMLToken.h */; };
 		977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B384B122883E900B81FF8 /* HTMLConstructionSite.cpp */; };
 		977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B384C122883E900B81FF8 /* HTMLConstructionSite.h */; };
 		977B3866122883E900B81FF8 /* HTMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */; };
@@ -3661,6 +3659,10 @@
 		978D07CA145A10160096908D /* SVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07C9145A10160096908D /* SVGException.cpp */; };
 		978D07CC145A102E0096908D /* XPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CB145A102E0096908D /* XPathException.cpp */; };
 		978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CD145A10370096908D /* XMLHttpRequestException.cpp */; };
+		979DC03616A7992A00807794 /* CompactHTMLToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979DC03316A7992100807794 /* CompactHTMLToken.cpp */; };
+		979DC03716A7992E00807794 /* CompactHTMLToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 979DC03416A7992100807794 /* CompactHTMLToken.h */; };
+		979DC03816A7993300807794 /* BackgroundHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 979DC03216A7992100807794 /* BackgroundHTMLParser.h */; };
+		979DC03916A7993900807794 /* BackgroundHTMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979DC03116A7992100807794 /* BackgroundHTMLParser.cpp */; };
 		979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* NavigationScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* NavigationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */; };
@@ -11002,8 +11004,6 @@
 		977B37221228721700B81FF8 /* HTMLTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLTreeBuilder.h; path = parser/HTMLTreeBuilder.h; sourceTree = "<group>"; };
 		977B3849122883E900B81FF8 /* CSSPreloadScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSPreloadScanner.cpp; path = parser/CSSPreloadScanner.cpp; sourceTree = "<group>"; };
 		977B384A122883E900B81FF8 /* CSSPreloadScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSPreloadScanner.h; path = parser/CSSPreloadScanner.h; sourceTree = "<group>"; };
-		977B3849122883E900B81FF9 /* CompactHTMLToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompactHTMLToken.cpp; path = parser/CompactHTMLToken.cpp; sourceTree = "<group>"; };
-		977B384A122883E900B81FF9 /* CompactHTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompactHTMLToken.h; path = parser/CompactHTMLToken.h; sourceTree = "<group>"; };
 		977B384B122883E900B81FF8 /* HTMLConstructionSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLConstructionSite.cpp; path = parser/HTMLConstructionSite.cpp; sourceTree = "<group>"; };
 		977B384C122883E900B81FF8 /* HTMLConstructionSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLConstructionSite.h; path = parser/HTMLConstructionSite.h; sourceTree = "<group>"; };
 		977B384D122883E900B81FF8 /* HTMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLDocumentParser.cpp; path = parser/HTMLDocumentParser.cpp; sourceTree = "<group>"; };
@@ -11041,6 +11041,10 @@
 		978D07C9145A10160096908D /* SVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGException.cpp; sourceTree = "<group>"; };
 		978D07CB145A102E0096908D /* XPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathException.cpp; sourceTree = "<group>"; };
 		978D07CD145A10370096908D /* XMLHttpRequestException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestException.cpp; sourceTree = "<group>"; };
+		979DC03116A7992100807794 /* BackgroundHTMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundHTMLParser.cpp; path = parser/BackgroundHTMLParser.cpp; sourceTree = "<group>"; };
+		979DC03216A7992100807794 /* BackgroundHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundHTMLParser.h; path = parser/BackgroundHTMLParser.h; sourceTree = "<group>"; };
+		979DC03316A7992100807794 /* CompactHTMLToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompactHTMLToken.cpp; path = parser/CompactHTMLToken.cpp; sourceTree = "<group>"; };
+		979DC03416A7992100807794 /* CompactHTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompactHTMLToken.h; path = parser/CompactHTMLToken.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* NavigationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* NavigationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationScheduler.h; sourceTree = "<group>"; };
 		97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetHeaders.h; sourceTree = "<group>"; };
@@ -18533,6 +18537,10 @@
 		97C1F5511228558800EDE616 /* parser */ = {
 			isa = PBXGroup;
 			children = (
+				979DC03116A7992100807794 /* BackgroundHTMLParser.cpp */,
+				979DC03216A7992100807794 /* BackgroundHTMLParser.h */,
+				979DC03316A7992100807794 /* CompactHTMLToken.cpp */,
+				979DC03416A7992100807794 /* CompactHTMLToken.h */,
 				977B3849122883E900B81FF8 /* CSSPreloadScanner.cpp */,
 				977B384A122883E900B81FF8 /* CSSPreloadScanner.h */,
 				977B384B122883E900B81FF8 /* HTMLConstructionSite.cpp */,
@@ -22978,6 +22986,7 @@
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
 				51741D0F0B07259A00ED442C /* BackForwardList.h in Headers */,
 				BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */,
+				979DC03816A7993300807794 /* BackgroundHTMLParser.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
@@ -23094,6 +23103,7 @@
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
 				6550B6A2099DF0270090D781 /* Comment.h in Headers */,
+				979DC03716A7992E00807794 /* CompactHTMLToken.h in Headers */,
 				37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */,
 				4A6A0C5C15232F2400B09C6E /* ComposedShadowTreeWalker.h in Headers */,
 				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
@@ -26655,6 +26665,7 @@
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,
 				BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */,
+				979DC03916A7993900807794 /* BackgroundHTMLParser.cpp in Sources */,
 				BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */,
 				379E61C9126CA5C300B63E8D /* BaseButtonInputType.cpp in Sources */,
 				379E61CB126CA5C400B63E8D /* BaseCheckableInputType.cpp in Sources */,
@@ -26747,6 +26758,7 @@
 				F55B3DB31251F12D003EF269 /* ColorInputType.cpp in Sources */,
 				B27535770B053814002CE64F /* ColorMac.mm in Sources */,
 				6550B6A1099DF0270090D781 /* Comment.cpp in Sources */,
+				979DC03616A7992A00807794 /* CompactHTMLToken.cpp in Sources */,
 				37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */,
 				37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */,
 				4A6A0C5B15232F2400B09C6E /* ComposedShadowTreeWalker.cpp in Sources */,

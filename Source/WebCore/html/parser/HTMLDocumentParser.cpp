@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "CompactHTMLToken.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -241,6 +242,15 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
     return true;
 }
+
+#if ENABLE(THREADED_HTML_PARSER)
+
+void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>& tokens)
+{
+    // FIXME: Actually consume the tokens.
+}
+
+#endif // ENABLE(THREADED_HTML_PARSER)
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
