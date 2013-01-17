@@ -127,6 +127,9 @@ private:
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
     void constructTreeFromHTMLToken(HTMLToken&);
+#if ENABLE(THREADED_HTML_PARSER)
+    void constructTreeFromCompactHTMLToken(const CompactHTMLToken&);
+#endif
 
     void runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();

@@ -340,6 +340,16 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     }
 }
 
+#if ENABLE(THREADED_HTML_PARSER)
+
+void HTMLDocumentParser::constructTreeFromCompactHTMLToken(const CompactHTMLToken& compactToken)
+{
+    RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(compactToken);
+    m_treeBuilder->constructTree(token.get());
+}
+
+#endif
+
 bool HTMLDocumentParser::hasInsertionPoint()
 {
     // FIXME: The wasCreatedByScript() branch here might not be fully correct.

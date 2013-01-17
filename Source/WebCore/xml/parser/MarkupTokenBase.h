@@ -473,6 +473,15 @@ public:
         }
     }
 
+    explicit AtomicMarkupTokenBase(typename Token::Type::Type type)
+        : m_type(type)
+        , m_externalCharacters(0)
+        , m_externalCharactersLength(0)
+        , m_isAll8BitData(false)
+        , m_selfClosing(false)
+    {
+    }
+
     AtomicMarkupTokenBase(typename Token::Type::Type type, const AtomicString& name, const Vector<Attribute>& attributes = Vector<Attribute>())
         : m_type(type)
         , m_name(name)
