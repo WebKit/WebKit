@@ -1,3 +1,25 @@
+2013-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][EFL] NWRT should check that Xvfb is installed
+        https://bugs.webkit.org/show_bug.cgi?id=71767
+
+        Reviewed by Dirk Pranke.
+
+        EFL and GTK ports now check that Xvfb is installed before running
+        layout tests. The command line used to check whether Xvfb is present
+        is a simple `which Xvfb` that should return 0 as the exit code upon
+        success.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.show_results_html_file):
+        (EflPort):
+        (EflPort.check_sys_deps):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.check_sys_deps):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver):
+        (XvfbDriver.check_xvfb):
+
 2013-01-16  Alan Cutter  <alancutter@chromium.org>
 
         sheriffbot can't tell me who "kov" is

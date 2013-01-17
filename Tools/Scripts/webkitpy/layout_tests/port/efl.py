@@ -125,3 +125,6 @@ class EflPort(Port):
         # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
         # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
         self._run_script("run-launcher", run_launcher_args)
+
+    def check_sys_deps(self, needs_http):
+        return super(EflPort, self).check_sys_deps(needs_http) and XvfbDriver.check_xvfb(self)

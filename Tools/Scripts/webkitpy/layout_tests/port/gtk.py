@@ -124,6 +124,9 @@ class GtkPort(Port):
         # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
         self._run_script("run-launcher", run_launcher_args)
 
+    def check_sys_deps(self, needs_http):
+        return super(GtkPort, self).check_sys_deps(needs_http) and XvfbDriver.check_xvfb(self)
+
     def _get_gdb_output(self, coredump_path):
         cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

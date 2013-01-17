@@ -39,6 +39,13 @@ _log = logging.getLogger(__name__)
 
 
 class XvfbDriver(Driver):
+    @staticmethod
+    def check_xvfb(port):
+        xvfb_found = port.host.executive.run_command(['which', 'Xvfb'], return_exit_code=True) is 0
+        if not xvfb_found:
+            _log.error("No Xvfb found. Cannot run layout tests.")
+        return xvfb_found
+
     def __init__(self, *args, **kwargs):
         Driver.__init__(self, *args, **kwargs)
         self._guard_lock = None
