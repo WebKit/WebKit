@@ -121,6 +121,9 @@ private:
         bool found = false;
 
         for (int i = 0; i < numAvailableConfigs; ++i) {
+            if (m_visualInfo)
+                XFree(m_visualInfo);
+
             m_visualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[i]);
             if (!m_visualInfo)
                 continue;
