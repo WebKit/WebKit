@@ -136,7 +136,7 @@ public:
 
     // WebWidget methods:
     virtual void close();
-    virtual WebSize size() { return m_size; }
+    virtual WebSize size();
     virtual void willStartLiveResize();
     virtual void resize(const WebSize&);
     virtual void willEndLiveResize();
@@ -243,7 +243,6 @@ public:
     virtual void enableFixedLayoutMode(bool enable);
     virtual WebSize fixedLayoutSize() const;
     virtual void setFixedLayoutSize(const WebSize&);
-    virtual WebCore::FloatSize dipSize() const;
     virtual void enableAutoResizeMode(
         const WebSize& minSize,
         const WebSize& maxSize);
@@ -459,6 +458,9 @@ public:
     {
         return m_maxAutoSize;
     }
+
+    WebCore::IntSize dipSize() const;
+    WebCore::IntSize layoutSize() const;
 
     // Set the disposition for how this webview is to be initially shown.
     void setInitialNavigationPolicy(WebNavigationPolicy policy)
@@ -851,7 +853,6 @@ private:
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
     bool m_compositorSurfaceReady;
-    float m_deviceScaleInCompositor;
     int m_inputHandlerIdentifier;
 #endif
     static const WebInputEvent* m_currentInputEvent;

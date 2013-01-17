@@ -428,7 +428,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
     , m_compositorSurfaceReady(false)
-    , m_deviceScaleInCompositor(1)
     , m_inputHandlerIdentifier(-1)
 #endif
 #if ENABLE(INPUT_SPEECH)
@@ -1580,6 +1579,14 @@ void WebViewImpl::willStartLiveResize()
         pluginContainer->willStartLiveResize();
 }
 
+WebSize WebViewImpl::size()
+{
+    if (isFixedLayoutModeEnabled() && settingsImpl()->applyPageScaleFactorInCompositor())
+        return layoutSize();
+
+    return m_size;
+}
+
 void WebViewImpl::resize(const WebSize& newSize)
 {
     if (m_shouldAutoResize || m_size == newSize)
@@ -1607,15 +1614,18 @@ void WebViewImpl::resize(const WebSize& newSize)
     if (!agentPrivate || !agentPrivate->metricsOverridden()) {
         WebFrameImpl* webFrame = mainFrameImpl();
         if (webFrame->frameView())
-            webFrame->frameView()->resize(newSize.width, newSize.height);
+            webFrame->frameView()->resize(size());
     }
 
 #if ENABLE(VIEWPORT)
     if (settings()->viewportEnabled()) {
-        // Relayout immediately to obtain the new content width, which is needed
-        // to calculate the minimum scale limit.
-        view->layout();
+        if (!settingsImpl()->applyPageScaleFactorInCompositor()) {
+            // Relayout immediately to obtain the new content width, which is needed
+            // to calculate the minimum scale limit.
+            view->layout();
+        }
         computePageScaleFactorLimits();
+
         // When the device rotates:
         // - If the page width is unchanged, then zoom by new width/old width
         //   such as to keep the same content horizontally onscreen.
@@ -1631,7 +1641,8 @@ void WebViewImpl::resize(const WebSize& newSize)
         float scaleMultiplier = viewportWidthRatio / fixedLayoutWidthRatio;
         if (scaleMultiplier != 1) {
             IntSize scrollOffsetAtNewScale = oldScrollOffset;
-            scrollOffsetAtNewScale.scale(scaleMultiplier);
+            if (!settingsImpl()->applyPageScaleFactorInCompositor())
+                scrollOffsetAtNewScale.scale(scaleMultiplier);
             setPageScaleFactor(oldPageScaleFactor * scaleMultiplier, IntPoint(scrollOffsetAtNewScale));
         }
     }
@@ -2915,12 +2926,6 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     if (!scaleFactor)
         scaleFactor = 1;
 
-    if (m_deviceScaleInCompositor != 1) {
-        // Don't allow page scaling when compositor scaling is being used,
-        // as they are currently incompatible.
-        ASSERT(scaleFactor == 1);
-    }
-
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
     WebPoint scrollOffset;
     if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
@@ -2954,16 +2959,8 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
 
     page()->setDeviceScaleFactor(scaleFactor);
 
-    if (m_layerTreeView && m_webSettings->applyDeviceScaleFactorInCompositor()) {
-        m_deviceScaleInCompositor = page()->deviceScaleFactor();
-        m_layerTreeView->setDeviceScaleFactor(m_deviceScaleInCompositor);
-    }
-    if (m_deviceScaleInCompositor != 1) {
-        // Don't allow page scaling when compositor scaling is being used,
-        // as they are currently incompatible. This means the deviceScale
-        // needs to match the one in the compositor.
-        ASSERT(scaleFactor == m_deviceScaleInCompositor);
-    }
+    if (m_layerTreeView && m_webSettings->applyDeviceScaleFactorInCompositor())
+        m_layerTreeView->setDeviceScaleFactor(scaleFactor);
 }
 
 bool WebViewImpl::isFixedLayoutModeEnabled() const
@@ -3036,6 +3033,19 @@ static IntSize unscaledContentsSize(Frame* frame)
     return root->unscaledDocumentRect().size();
 }
 
+IntSize WebViewImpl::layoutSize() const
+{
+    if (!isFixedLayoutModeEnabled())
+        return m_size;
+
+    IntSize contentSize = unscaledContentsSize(page()->mainFrame());
+    if (fixedLayoutSize().width >= contentSize.width())
+        return fixedLayoutSize();
+
+    float aspectRatio = static_cast<float>(m_size.height) / m_size.width;
+    return IntSize(contentSize.width(), contentSize.width() * aspectRatio);
+}
+
 bool WebViewImpl::computePageScaleFactorLimits()
 {
     if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1)
@@ -3044,10 +3054,18 @@ bool WebViewImpl::computePageScaleFactorLimits()
     if (!mainFrame() || !page() || !page()->mainFrame() || !page()->mainFrame()->view())
         return false;
 
-    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor) * (deviceScaleFactor() / m_deviceScaleInCompositor);
-    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor) * (deviceScaleFactor() / m_deviceScaleInCompositor);
+    FrameView* view = page()->mainFrame()->view();
 
-    int viewWidthNotIncludingScrollbars = page()->mainFrame()->view()->visibleContentRect(false).width();
+    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor);
+    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor);
+    if (!m_webSettings->applyDeviceScaleFactorInCompositor()) {
+        m_minimumPageScaleFactor *= deviceScaleFactor();
+        m_maximumPageScaleFactor *= deviceScaleFactor();
+    }
+
+    int viewWidthNotIncludingScrollbars = m_size.width;
+    if (viewWidthNotIncludingScrollbars && view->verticalScrollbar() && !view->verticalScrollbar()->isOverlayScrollbar())
+        viewWidthNotIncludingScrollbars -= view->verticalScrollbar()->width();
     int unscaledContentsWidth = unscaledContentsSize(page()->mainFrame()).width();
     if (viewWidthNotIncludingScrollbars && unscaledContentsWidth) {
         // Limit page scaling down to the document width.
@@ -3146,13 +3164,12 @@ void WebViewImpl::setFixedLayoutSize(const WebSize& layoutSize)
     frame->view()->setFixedLayoutSize(layoutSize);
 }
 
-WebCore::FloatSize WebViewImpl::dipSize() const
+WebCore::IntSize WebViewImpl::dipSize() const
 {
-    if (!page() || m_webSettings->applyDeviceScaleFactorInCompositor())
-        return FloatSize(m_size.width, m_size.height);
-
-    float deviceScaleFactor = page()->deviceScaleFactor();
-    return FloatSize(m_size.width / deviceScaleFactor, m_size.height / deviceScaleFactor);
+    IntSize dipSize = m_size;
+    if (!m_webSettings->applyDeviceScaleFactorInCompositor())
+        dipSize.scale(1 / m_client->screenInfo().deviceScaleFactor);
+    return dipSize;
 }
 
 void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
@@ -3697,27 +3714,29 @@ void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
 void WebViewImpl::didChangeContentsSize()
 {
 #if ENABLE(VIEWPORT)
-    if (!settings()->viewportEnabled())
+    if (!settings()->viewportEnabled() || !mainFrameImpl())
         return;
 
-    bool didChangeScale = false;
+    bool mayNeedLayout = false;
     if (!isPageScaleFactorSet()) {
         // If the viewport tag failed to be processed earlier, we need
         // to recompute it now.
         ViewportArguments viewportArguments = mainFrameImpl()->frame()->document()->viewportArguments();
         m_page->chrome()->client()->dispatchViewportPropertiesDidChange(viewportArguments);
-        didChangeScale = true;
+        mayNeedLayout = true;
     } else
-        didChangeScale = computePageScaleFactorLimits();
-
-    if (!didChangeScale)
-        return;
-
-    if (!mainFrameImpl())
-        return;
+        mayNeedLayout = computePageScaleFactorLimits();
 
     FrameView* view = mainFrameImpl()->frameView();
-    if (view && view->needsLayout())
+    if (settingsImpl()->applyPageScaleFactorInCompositor() && view && view->visibleContentRect(true).width() != layoutSize().width()) {
+        view->resize(layoutSize());
+        mayNeedLayout = true;
+    }
+
+    // didChangeContentsSize() may be called from FrameView::layout; we need to
+    // relayout to avoid triggering the assertion that needsLayout() isn't set
+    // at the end of a layout.
+    if (mayNeedLayout && view && view->needsLayout())
         view->layout();
 #endif
 }
@@ -4053,12 +4072,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_ownsLayerTreeView = true;
         }
         if (m_layerTreeView) {
-            if (m_webSettings->applyDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
-                ASSERT(page()->deviceScaleFactor());
-
-                m_deviceScaleInCompositor = page()->deviceScaleFactor();
-                setDeviceScaleFactor(m_deviceScaleInCompositor);
-            }
+            if (m_webSettings->applyDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1)
+                setDeviceScaleFactor(page()->deviceScaleFactor());
 
             bool visible = page()->visibilityState() == PageVisibilityStateVisible;
             m_layerTreeView->setVisible(visible);
@@ -4197,12 +4212,11 @@ void WebViewImpl::updateLayerTreeViewport()
 
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, view->scrollOrigin());
 
-    IntSize layoutViewportSize = size();
-    IntSize deviceViewportSize = size();
+    IntSize layoutViewportSize = visibleRect.size();
+    IntSize deviceViewportSize = m_size;
+    if (m_webSettings->applyDeviceScaleFactorInCompositor())
+        deviceViewportSize.scale(deviceScaleFactor());
 
-    // This part of the deviceScale will be used to scale the contents of
-    // the NCCH's GraphicsLayer.
-    deviceViewportSize.scale(m_deviceScaleInCompositor);
     m_layerTreeView->setViewportSize(layoutViewportSize, deviceViewportSize);
     m_layerTreeView->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
