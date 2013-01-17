@@ -1,3 +1,15 @@
+2013-01-16  Alan Cutter  <alancutter@chromium.org>
+
+        start-queue.sh does not pass remaining parameters correctly
+        https://bugs.webkit.org/show_bug.cgi?id=107054
+
+        Reviewed by Adam Barth.
+
+        start-queue.sh now passes all remaining params to the webkit-patch command.
+        Previously only one additional queue parameter could be sent.
+
+        * EWSTools/start-queue.sh:
+
 2013-01-16  Xueqing Huang  <huangxueqing@baidu.com>
 
         check-webkit-style script cannot running in Chinese windows.

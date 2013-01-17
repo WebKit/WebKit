@@ -27,8 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# The GCE VM image we're using only has bash v4.1.5
-if test $# -lt 3 -o $# -gt 4; then
+if [[ $# -lt 3 ]]; then
     echo "Usage: start-queue-loop.sh QUEUE_NAME BOT_ID RESET_AFTER_ITERATION [QUEUE_PARAMS]"
     exit 1
 fi
@@ -36,7 +35,8 @@ fi
 QUEUE_NAME=$1
 BOT_ID=$2
 RESET_AFTER_ITERATION=$3
-QUEUE_PARAMS=$4
+shift 3
+QUEUE_PARAMS="$@"
 
 cd /mnt/git/webkit-$QUEUE_NAME
 while :
