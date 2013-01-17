@@ -445,7 +445,6 @@ void TiledCoreAnimationDrawingArea::updateLayerHostingContext()
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 {
-    ASSERT(layer);
     ASSERT(!m_layerTreeStateIsFrozen);
 
     [CATransaction begin];
