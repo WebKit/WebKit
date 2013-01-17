@@ -1,3 +1,16 @@
+2013-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        Use xcrun to find path to make for Mac port
+        <http://webkit.org/b/107091>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._build_java_test_support): Call self.make_command().
+        (MacPort.make_command): Add.  Call xcrun_find().
+        (MacPort.nm_command): Use self.xcrun_find().
+        (MacPort.xcrun_find): Add.  Extract from nm_command().
+
 2013-01-16  Sam Weinig  <sam@webkit.org>
 
         Make debug-safari --target-web-process work again
