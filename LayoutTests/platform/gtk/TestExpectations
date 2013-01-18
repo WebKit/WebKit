@@ -483,6 +483,7 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
 
+webkit.org/b/107257 [ Debug ] fast/js/toString-stack-overflow.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -591,6 +592,8 @@ webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash P
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
 
 webkit.org/b/106592 fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -818,7 +821,7 @@ Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 Bug(GTK) http/tests/media/video-play-stall.html [ Failure Slow ]
 
-Bug(GTK) [ Release ] http/tests/misc/acid3.html [ Failure ]
+Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
 Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
 Bug(GTK) http/tests/misc/window-dot-stop.html [ Failure ]
