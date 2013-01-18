@@ -33,7 +33,6 @@
 #include "LevelDBSlice.h"
 #include "LevelDBWriteBatch.h"
 #include "Logging.h"
-#include <env_idb.h>
 #include <helpers/memenv/memenv.h>
 #include <leveldb/comparator.h>
 #include <leveldb/db.h>
@@ -43,6 +42,21 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(CHROMIUM)
+#include <env_idb.h>
+#endif
+
+#if !PLATFORM(CHROMIUM)
+namespace leveldb {
+
+static Env* IDBEnv()
+{
+    return leveldb::Env::Default();
+}
+
+}
+#endif
 
 namespace WebCore {
 
