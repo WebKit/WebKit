@@ -130,9 +130,11 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
      */
     _fileSystemRemoved: function(event)
     {
+        WebInspector.startBatchUpdate();
         var fileSystemPath = /** @type {string} */ (event.data);
         for (var uri in this._files[fileSystemPath])
             this._removeFile(fileSystemPath, uri);
+        WebInspector.endBatchUpdate();
     },
 
     /**

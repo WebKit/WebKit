@@ -74,7 +74,7 @@ WebInspector.IsolatedFileSystemModel.prototype = {
     },
 
     /**
-     * @param {function(string)} callback
+     * @param {function(?string)} callback
      */
     addFileSystem: function(callback)
     {
@@ -134,17 +134,14 @@ WebInspector.IsolatedFileSystemModel.prototype = {
      */
     _fileSystemAdded: function(errorMessage, fileSystem)
     {
-        if (errorMessage) {
-            console.error("Error: " + errorMessage);
-            return;
-        }
-        if (!fileSystem)
-            return;
         var fileSystemPath;
-        if (fileSystem) {
+        if (errorMessage)
+            WebInspector.showErrorMessage(errorMessage)
+        else if (fileSystem) {
             this._innerAddFileSystem(fileSystem);
             fileSystemPath = fileSystem.fileSystemPath;
         }
+
         if (this._selectFileSystemPathCallback) {
             this._selectFileSystemPathCallback(fileSystemPath);
             delete this._selectFileSystemPathCallback;

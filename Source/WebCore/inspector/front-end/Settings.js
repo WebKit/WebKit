@@ -209,6 +209,7 @@ WebInspector.ExperimentsSettings = function()
     this.codemirror = this._createExperiment("codemirror", "Use CodeMirror editor");
     this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
     this.showOverridesInDrawer = this._createExperiment("showOverridesInDrawer", "Show Overrides in drawer");
+    this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");
 
     this._cleanUpSetting();
 }

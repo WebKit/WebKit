@@ -436,3 +436,57 @@ body.platform-mac .help-content input[type=radio] {
 .settings-tab select:disabled {
     background-color: rgb(221, 221, 221);
 }
+
+
+
+.settings-tab .file-systems-editor input.file-system-path {
+    width: 383px;
+}
+
+.settings-tab .file-mappings-editor .workspace-settings-row input {
+    width: 190px;
+}
+
+.settings-tab .file-mappings-editor .workspace-settings-row input.file-mapping-url {
+    margin-right: 3px;
+}
+
+#workspace-tab-content .button:hover {
+    opacity: 1.0 !important;
+}
+
+#workspace-tab-content .workspace-settings-row:hover .button {
+    visibility: visible;
+    opacity: 0.4;
+}
+
+#workspace-tab-content .workspace-settings-row .button {
+    width: 10px;
+    height: 10px;
+    border: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    visibility: hidden;
+    background-position: center;
+    margin: 0 0 0 4px;
+}
+
+#workspace-tab-content .workspace-settings-row .remove-button {
+    background-image: url(Images/deleteIcon.png);
+}
+
+#workspace-tab-content .workspace-settings-row .add-button {
+    background-image: url(Images/addIcon.png);
+}
+
+#workspace-tab-content .workspace-settings-row .file-system-add-button {
+    color: gray;
+    border: none;
+    border-bottom: 1px transparent solid;
+    -webkit-appearance: none;
+    background: transparent;
+}
+
+#workspace-tab-content .workspace-settings-row .file-system-add-button:hover {
+    border-bottom: 1px gray dashed;
+}

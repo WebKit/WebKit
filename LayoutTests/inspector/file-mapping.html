@@ -10,21 +10,14 @@ function test()
             return "uri:" + path;
         }
     };
-    
-    function createMockMappingEntry(urlPrefix, pathPrefix)
-    {
-        var result = {};
-        result.urlPrefix = urlPrefix;
-        result.pathPrefix = pathPrefix;
-        return result;
-    }
 
     // At first fill file mapping with entries.
     var fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());
     var mappingEntries = [];
-    mappingEntries.push(createMockMappingEntry("http://localhost", "/var/www"));
-    mappingEntries.push(createMockMappingEntry("http://www.example.com", "/home/example.com"));
-    fileMapping.setMappings(mappingEntries);
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://localhost", "/var/www"));
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.example.com", "/home/example.com"));
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.foo.com", "/bar/"));
+    fileMapping.setMappingEntries(mappingEntries);
 
     // Then create another file mapping to make sure it is correctly restored from the settings.
     fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());

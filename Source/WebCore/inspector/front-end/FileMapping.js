@@ -36,26 +36,53 @@ WebInspector.FileMapping = function(fileSystemMapping)
 {
     this._fileSystemMapping = fileSystemMapping;
     this._mappingEntriesSetting = WebInspector.settings.createSetting("fileMappingEntries", []);
-    /** @type {Array.<WebInspector.FileMapping.MappingEntry>} */
-    this._mappingEntries = [];
-    this._deserialize(/** @type {Array.<WebInspector.FileMapping.MappingEntry>} */ (this._mappingEntriesSetting.get()));
+    /** @type {Array.<WebInspector.FileMapping.Entry>} */
+    this._entries = [];
+    this._loadFromSettings();
 }
 
-/** @typedef {{urlPrefix: string, pathPrefix: string}} */
-WebInspector.FileMapping.SerializedMappingEntry;
-
 WebInspector.FileMapping.prototype = {
+    /**
+     * @param {WebInspector.FileMapping.Entry} entry
+     * @param {string} url
+     * @return {boolean}
+     */
+    _entryMatchesURL: function(entry, url)
+    {
+        return url.indexOf(entry.urlPrefix) === 0;
+    },
+    
+    /**
+     * @param {WebInspector.FileMapping.Entry} entry
+     * @return {?string}
+     */
+    _entryURIPrefix: function(entry)
+    {
+        return this._fileSystemMapping.uriForPath(entry.pathPrefix);
+    },
+    
     /**
      * @param {string} url
      * @return {boolean}
      */
     hasMappingForURL: function(url)
     {
-        for (var i = 0; i < this._mappingEntries.length; ++i) {
-            if (this._mappingEntries[i].matchesURL(url))
-                return true;
+        return !!this._innerURIForURL(url);
+    },
+    
+    /**
+     * @param {string} url
+     * @return {?string}
+     */
+    _innerURIForURL: function(url)
+    {
+        for (var i = 0; i < this._entries.length; ++i) {
+            var entry = this._entries[i];
+            var uriPrefix = this._entryURIPrefix(entry);
+            if (uriPrefix && this._entryMatchesURL(entry, url))
+                return uriPrefix + url.substring(entry.urlPrefix.length);
         }
-        return false;
+        return null;
     },
     
     /**
@@ -64,13 +91,8 @@ WebInspector.FileMapping.prototype = {
      */
     uriForURL: function(url)
     {
-        for (var i = 0; i < this._mappingEntries.length; ++i) {
-            var uri = this._mappingEntries[i].uriForURL(url);
-            if (typeof uri === "string")
-                return uri;
-        }
         // FIXME: FileMapping should be network project aware. It should return correct uri for network project uiSourceCodes.
-        return url;
+        return this._innerURIForURL(url) || url;
     },
     
     /**
@@ -79,46 +101,40 @@ WebInspector.FileMapping.prototype = {
      */
     urlForURI: function(uri)
     {
-        for (var i = 0; i < this._mappingEntries.length; ++i) {
-            if (this._mappingEntries[i].matchesURI(uri))
-                return this._mappingEntries[i].urlForURI(uri);
+        for (var i = 0; i < this._entries.length; ++i) {
+            var entry = this._entries[i];
+            var uriPrefix = this._entryURIPrefix(entry);
+            if (uriPrefix && uri.indexOf(uriPrefix) === 0)
+                return entry.urlPrefix + uri.substring(uriPrefix.length);
         }
         return "";
     },
 
     /**
-     * @param {Array.<WebInspector.FileMapping.SerializedMappingEntry>} serializedMappingEntries
+     * @return {Array.<WebInspector.FileMapping.Entry>}
      */
-    setMappings: function(serializedMappingEntries)
+    mappingEntries: function()
     {
-        this._deserialize(serializedMappingEntries);
-        this._serialize();
+        return this._entries.slice();
     },
 
     /**
-     * @return {Array.<WebInspector.FileMapping.MappingEntry>}
+     * @param {Array.<WebInspector.FileMapping.Entry>} mappingEntries
      */
-    mappings: function()
+    setMappingEntries: function(mappingEntries)
     {
-        return this._mappingEntries.slice();
+        this._entries = mappingEntries;
+        this._mappingEntriesSetting.set(mappingEntries);
     },
 
-    /**
-     * @param {Array.<WebInspector.FileMapping.SerializedMappingEntry>} serializedMappingEntries
-     */
-    _deserialize: function(serializedMappingEntries)
+    _loadFromSettings: function()
     {
-        this._mappingEntries = [];
-        for (var i = 0; i < serializedMappingEntries.length; ++i)
-            this._mappingEntries.push(WebInspector.FileMapping.MappingEntry.deserialize(serializedMappingEntries[i], this._fileSystemMapping));
-    },
-
-    _serialize: function()
-    {
-        var savedEntries = [];
-        for (var i = 0; i < this._mappingEntries.length; ++i)
-            savedEntries.push(this._mappingEntries[i].serialize());
-        this._mappingEntriesSetting.set(savedEntries);
+        var savedEntries = this._mappingEntriesSetting.get();
+        this._entries = [];
+        for (var i = 0; i < savedEntries.length; ++i) {
+            var entry = new WebInspector.FileMapping.Entry(savedEntries[i].urlPrefix, savedEntries[i].pathPrefix);
+            this._entries.push(entry);
+        }
     },
 
     __proto__: WebInspector.Object.prototype
@@ -128,77 +144,11 @@ WebInspector.FileMapping.prototype = {
  * @constructor
  * @param {string} urlPrefix
  * @param {string} pathPrefix
- * @param {?string} uriPrefix
  */
-WebInspector.FileMapping.MappingEntry = function(urlPrefix, pathPrefix, uriPrefix)
+WebInspector.FileMapping.Entry = function(urlPrefix, pathPrefix)
 {
-    this._urlPrefix = urlPrefix;
-    this._pathPrefix = pathPrefix;
-    this._uriPrefix = uriPrefix;
-}
-
-/**
- * @param {WebInspector.FileMapping.SerializedMappingEntry} serializedMappingEntry
- * @param {WebInspector.FileSystemMapping} fileSystemMapping
- */
-WebInspector.FileMapping.MappingEntry.deserialize = function(serializedMappingEntry, fileSystemMapping)
-{
-    var uriPrefix = fileSystemMapping.uriForPath(serializedMappingEntry.pathPrefix);
-    return new WebInspector.FileMapping.MappingEntry(serializedMappingEntry.urlPrefix, serializedMappingEntry.pathPrefix, uriPrefix);
-}
-
-WebInspector.FileMapping.MappingEntry.prototype = {
-    /**
-     * @param {string} url
-     * @return {boolean}
-     */
-    matchesURL: function(url)
-    {
-        return url.indexOf(this._urlPrefix) === 0;
-    },
-    
-    /**
-     * @param {string} uri
-     * @return {boolean}
-     */
-    matchesURI: function(uri)
-    {
-        if (!this._uriPrefix)
-            return false;
-        return uri.indexOf(this._uriPrefix) === 0;
-    },
-    
-    /**
-     * @param {string} url
-     * @return {?string}
-     */
-    uriForURL: function(url)
-    {
-        if (this._uriPrefix && this.matchesURL(url))
-            return this._uriPrefix + url.substring(this._urlPrefix.length);
-        return null;
-    },
-    
-    /**
-     * @param {string} uri
-     * @return {string}
-     */
-    urlForURI: function(uri)
-    {
-        if (this.matchesURI(uri))
-            return this._urlPrefix + uri.substring(this._uriPrefix.length);
-        return "";
-    },
-    
-    /**
-     * @return {Object}
-     */
-    serialize: function()
-    {
-        return { urlPrefix: this._urlPrefix, pathPrefix: this._pathPrefix };
-    },
-
-    __proto__: WebInspector.Object.prototype
+    this.urlPrefix = urlPrefix;
+    this.pathPrefix = pathPrefix;
 }
 
 /**

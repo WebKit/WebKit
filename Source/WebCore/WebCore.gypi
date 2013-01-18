@@ -5408,6 +5408,7 @@
             'inspector/front-end/UglifyJS/parse-js.js',
         ],
         'webinspector_image_files': [
+            'inspector/front-end/Images/addIcon.png',
             'inspector/front-end/Images/applicationCache.png',
             'inspector/front-end/Images/back.png',
             'inspector/front-end/Images/breakpointBorder.png',
