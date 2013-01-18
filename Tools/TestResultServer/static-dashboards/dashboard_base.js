@@ -146,6 +146,9 @@ var TEST_TYPES = [
     'unit_tests',
     'views_unittests',
     'webkit_unit_tests',
+    'androidwebview_instrumentation_tests',
+    'chromiumtestshell_instrumentation_tests',
+    'contentshell_instrumentation_tests',
 ];
 
 var RELOAD_REQUIRING_PARAMETERS = ['showAllRuns', 'group', 'testType'];
@@ -181,6 +184,7 @@ function handleValidHashParameterWrapper(key, value)
             function() {
               return value in LAYOUT_TESTS_BUILDER_GROUPS ||
                   value in CHROMIUM_GPU_TESTS_BUILDER_GROUPS ||
+                  value in CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS ||
                   value in CHROMIUM_GTESTS_BUILDER_GROUPS;
             });
         return true;
@@ -404,6 +408,10 @@ function currentBuilderGroupCategory()
     case 'test_shell_tests':
     case 'webkit_unit_tests':
         return TEST_SHELL_TESTS_BUILDER_GROUPS;
+    case 'androidwebview_instrumentation_tests':
+    case 'chromiumtestshell_instrumentation_tests':
+    case 'contentshell_instrumentation_tests':
+        return CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS;
     default:
         return CHROMIUM_GTESTS_BUILDER_GROUPS;
     }

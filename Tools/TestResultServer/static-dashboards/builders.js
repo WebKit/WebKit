@@ -91,6 +91,7 @@ CHROMIUM_LINUX_BUILDER_MASTER = 'ChromiumLinux';
 CHROMIUMOS_BUILDER_MASTER = 'ChromiumChromiumOS';
 CHROMIUM_GPU_BUILDER_MASTER = 'ChromiumGPU';
 CHROMIUM_GPU_FYI_BUILDER_MASTER = 'ChromiumGPUFYI';
+CHROMIUM_FYI_BUILDER_MASTER = 'ChromiumFYI';
 CHROMIUM_PERF_AV_BUILDER_MASTER = 'ChromiumPerfAv';
 CHROMIUM_WEBKIT_BUILDER_MASTER = 'ChromiumWebkit';
 WEBKIT_BUILDER_MASTER = 'webkit.org';
@@ -235,7 +236,18 @@ function loadBuildersList(groupName, testType) {
             requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitDepsTestRunner);
             break;
         }
-        break;    
+        break;
+
+    case 'androidwebview_instrumentation_tests':
+    case 'chromiumtestshell_instrumentation_tests':
+    case 'contentshell_instrumentation_tests':
+        switch(groupName) {
+        case '@DEPS FYI - chromium.org':
+            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
+            requestBuilderList(CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS, CHROMIUM_FYI_BUILDER_MASTER , groupName, builderGroup, testType);
+            break;
+        }
+        break;
 
     default:
         switch(groupName) {
@@ -282,4 +294,8 @@ var CHROMIUM_GTESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': null,
     '@DEPS CrOS - chromium.org': null,
     '@ToT - chromium.org': null,
+};
+
+var CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS = {
+    '@DEPS FYI - chromium.org': null,
 };

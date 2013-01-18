@@ -1,3 +1,23 @@
+2013-01-17  Frank Farzan  <frankf@chromium.org>
+
+        Add Chrome on Android instrumentation test types to flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=106964
+
+        Reviewed by Ojan Vafai.
+
+        Specifically, add these test types:
+        
+         androidwebview_instrumentation_tests
+         chromiumtestshell_instrumentation_tests
+         contentshell_instrumentation_tests
+        
+        Also, add ChromiumFYI to the list of masters.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (currentBuilderGroupCategory):
+
 2013-01-17  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Fixing webkitpy's SCM unit tests.
