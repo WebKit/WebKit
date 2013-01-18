@@ -1,3 +1,11 @@
+2013-01-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Roll Chromium DEPS to 177676
+
+        Unreviewed DEPS roll.
+
+        * DEPS:
+
 2013-01-18  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Use new-style gesture scrolling events for fling and
