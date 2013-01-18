@@ -816,7 +816,8 @@ void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
         return;
 
     HashMap<unsigned, double>::iterator it = m_plugInAutoStartOrigins.find(plugInOriginHash);
-    ASSERT(it != m_plugInAutoStartOrigins.end());
+    if (it == m_plugInAutoStartOrigins.end())
+        return;
     if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
         return;
 
