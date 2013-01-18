@@ -1962,10 +1962,10 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta), ScrollOffsetClamped);
 }
 
-void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
+bool RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
 {
     if (delta.isZero())
-        return;
+        return false;
 
     bool restrictedByLineClamp = false;
     if (renderer()->parent())
@@ -1977,21 +1977,30 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
 
         // If this layer can't do the scroll we ask the next layer up that can scroll to try
         IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
+        bool didScroll = true;
         if (!remainingScrollOffset.isZero() && renderer()->parent()) {
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
-                scrollableLayer->scrollByRecursively(remainingScrollOffset);
+                didScroll = scrollableLayer->scrollByRecursively(remainingScrollOffset, clamp);
 
             Frame* frame = renderer()->frame();
             if (frame)
                 frame->eventHandler()->updateAutoscrollRenderer();
         }
+        return didScroll;
     } else if (renderer()->view()->frameView()) {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
-        renderer()->view()->frameView()->scrollBy(delta);
+        FrameView* view = renderer()->view()->frameView();
+        IntPoint scrollPositionBefore = view->scrollPosition();
+        view->scrollBy(delta);
+        IntPoint scrollPositionAfter = view->scrollPosition();
+        return scrollPositionBefore != scrollPositionAfter;
+
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
+
+    return false;
 }
 
 IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const

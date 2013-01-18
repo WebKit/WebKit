@@ -4,17 +4,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 first gesture
-wheel event 0+> [object HTMLDivElement]
-wheel event 1+> [object HTMLDivElement]
 PASS document.body.scrollTop is 70
 PASS document.body.scrollLeft is 0
-PASS wheelEventsOccurred is 2
+PASS wheelEventsOccurred is 0
 second gesture
-wheel event 0+> [object HTMLDivElement]
-wheel event 1+> [object HTMLDivElement]
 PASS document.body.scrollTop is 130
 PASS document.body.scrollLeft is 0
-PASS wheelEventsOccurred is 2
+PASS wheelEventsOccurred is 0
 scroll event 0+> [object HTMLDocument]
 PASS scrollEventsOccurred is 1
 PASS successfullyParsed is true

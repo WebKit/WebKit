@@ -6,6 +6,5 @@ Plugin received event: MouseUp
 Plugin received event: GestureTapDown
 Plugin received event: GestureScrollBegin
 Plugin received event: GestureScrollUpdate
-Plugin received event: MouseWheel
 Plugin received event: GestureScrollEnd
 

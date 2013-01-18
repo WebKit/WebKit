@@ -339,6 +339,10 @@ EventHandler::EventHandler(Frame* frame)
     , m_originatingTouchPointTargetKey(0)
     , m_touchPressed(false)
 #endif
+#if ENABLE(GESTURE_EVENTS)
+    , m_scrollGestureHandlingNode(0)
+    , m_lastHitTestResultOverWidget(false)
+#endif
     , m_maxMouseMovedDuration(0)
     , m_baseEventType(PlatformEvent::NoType)
     , m_didStartDrag(false)
@@ -396,6 +400,7 @@ void EventHandler::clear()
 #endif
 #if ENABLE(GESTURE_EVENTS)
     m_scrollGestureHandlingNode = 0;
+    m_lastHitTestResultOverWidget = false;
     m_scrollbarHandlingScrollGesture = 0;
 #endif
     m_maxMouseMovedDuration = 0;
@@ -2449,12 +2454,9 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 
     if (eventTarget) {
         bool eventSwallowed = eventTarget->dispatchGestureEvent(gestureEvent);
-
-        if (gestureEvent.type() == PlatformEvent::GestureScrollBegin) {
+        if (gestureEvent.type() == PlatformEvent::GestureScrollBegin || gestureEvent.type() == PlatformEvent::GestureScrollEnd) {
             if (eventSwallowed)
                 m_scrollGestureHandlingNode = eventTarget;
-            else
-                m_scrollGestureHandlingNode = 0;
         }
 
         if (eventSwallowed)
@@ -2467,7 +2469,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureScrollBegin:
-        return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, false);
+        return handleGestureScrollBegin(gestureEvent);
     case PlatformEvent::GestureScrollUpdate:
         return handleGestureScrollUpdate(gestureEvent);
     case PlatformEvent::GestureTap:
@@ -2583,32 +2585,111 @@ bool EventHandler::handleGestureTwoFingerTap(const PlatformGestureEvent& gesture
     return handleGestureForTextSelectionOrContextMenu(gestureEvent);
 }
 
+bool EventHandler::passGestureEventToWidget(const PlatformGestureEvent& gestureEvent, Widget* widget)
+{
+    if (!widget)
+        return false;
+
+    if (!widget->isFrameView())
+        return false;
+
+    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleGestureEvent(gestureEvent);
+}
+
+bool EventHandler::passGestureEventToWidgetIfPossible(const PlatformGestureEvent& gestureEvent, RenderObject* renderer)
+{
+    if (m_lastHitTestResultOverWidget && renderer && renderer->isWidget()) {
+        Widget* widget = toRenderWidget(renderer)->widget();
+        return widget && passGestureEventToWidget(gestureEvent, widget);
+    }
+    return false;
+}
+
+static const Node* closestScrollableNodeInDocumentIfPossibleOrSelfIfNotScrollable(const Node* node)
+{
+    for (const Node* scrollableNode = node; scrollableNode; scrollableNode = scrollableNode->parentNode()) {
+        if (scrollableNode->isDocumentNode())
+            break;
+        RenderObject* renderer = scrollableNode->renderer();
+        if (renderer && renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())
+            return scrollableNode;
+    }
+    return node;
+}
+
+bool EventHandler::handleGestureScrollBegin(const PlatformGestureEvent& gestureEvent)
+{
+    Document* document = m_frame->document();
+    RenderObject* documentRenderer = document->renderer();
+    if (!documentRenderer)
+        return false;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return false;
+
+    LayoutPoint viewPoint = view->windowToContents(gestureEvent.position());
+    HitTestRequest request(HitTestRequest::ReadOnly);
+    HitTestResult result(viewPoint);
+    document->renderView()->hitTest(request, result);
+
+    m_lastHitTestResultOverWidget = result.isOverWidget(); 
+    m_scrollGestureHandlingNode = result.innerNode();
+
+    Node* node = m_scrollGestureHandlingNode.get();
+    if (node)
+        passGestureEventToWidgetIfPossible(gestureEvent, node->renderer());
+    
+    return node && node->renderer();
+}
+
 bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gestureEvent)
 {
-    return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, true);
+    // Ignore this event if we don't already have a targeted node with a valid renderer.
+    const Node* node = m_scrollGestureHandlingNode.get();
+    if (!node)
+        return false;
+
+    RenderObject* latchedRenderer = node->renderer();
+    if (!latchedRenderer)
+        return false;
+
+    IntSize delta(-gestureEvent.deltaX(), -gestureEvent.deltaY());
+    if (delta.isZero())
+        return false;
+
+    RefPtr<FrameView> protector(m_frame->view());
+
+    // Try to send the event to the correct view.
+    if (passGestureEventToWidgetIfPossible(gestureEvent, latchedRenderer))
+        return true;
+
+    // Otherwise if this is the correct view for the event, find the closest scrollable
+    // ancestor of the targeted node and scroll the layer that contains this node's renderer.
+    node = closestScrollableNodeInDocumentIfPossibleOrSelfIfNotScrollable(node);
+    if (!node)
+        return false;
+
+    latchedRenderer = node->renderer();
+    if (!latchedRenderer)
+        return false;
+
+    const float scaleFactor = m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
+    delta.scale(1 / scaleFactor, 1 / scaleFactor);
+
+    bool result = latchedRenderer->enclosingLayer()->scrollByRecursively(delta, RenderLayer::ScrollOffsetClamped);
+
+    if (result)
+        setFrameWasScrolledByUser();
+
+    return result;
 }
 
 bool EventHandler::isScrollbarHandlingGestures() const
 {
     return m_scrollbarHandlingScrollGesture.get();
 }
-
-bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEvent, PlatformWheelEventGranularity granularity, bool latchedWheel)
-{
-    const float tickDivisor = (float)WheelEvent::tickMultiplier;
-    const float scaleFactor = m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
-    float scaledDeltaX = gestureEvent.deltaX() / scaleFactor;
-    float scaledDeltaY = gestureEvent.deltaY() / scaleFactor;
-    IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
-    IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
-    PlatformWheelEvent syntheticWheelEvent(point, globalPoint,
-        scaledDeltaX, scaledDeltaY, scaledDeltaX / tickDivisor, scaledDeltaY / tickDivisor,
-        granularity,
-        gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
-    syntheticWheelEvent.setUseLatchedEventNode(latchedWheel);
-    return handleWheelEvent(syntheticWheelEvent);
-}
-#endif
+#endif // ENABLE(GESTURE_EVENTS)
 
 #if ENABLE(TOUCH_ADJUSTMENT)
 bool EventHandler::shouldApplyTouchAdjustment(const PlatformGestureEvent& event) const

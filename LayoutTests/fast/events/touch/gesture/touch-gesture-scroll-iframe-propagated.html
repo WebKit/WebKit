@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="resources/gesture-helpers.js"></script>
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+#bluebox {
+  width: 100px;
+  height: 100px;
+  background: blue;
+  padding: 0px;
+  margin: 0px;
+}
+
+#container {
+    width: 150px;
+    height: 150px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+#outerdiv {
+    width: 200px;
+    height: 200px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+td {
+  padding: 0px;
+}
+
+</style>
+</head>
+<body style="margin:0" >
+
+<div id="outerdiv">
+  <table border="0" cellspacing="0px" >
+    <tr><td>
+      <div id="container">
+        <iframe id="touchtargetiframe" src="resources/scroll-inside-editable-iframe.html"></iframe>
+      </div>
+    </td></tr>
+    <tr><td>
+      <div id="bluebox"></div>
+    </td></tr>
+  </table>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var movedbox;
+var touchtarget;
+var expectedGesturesTotal = 2;
+var gesturesOccurred = 0;
+var scrollAmountX = ['0', '0'];
+var scrollAmountY = ['0', '50'];
+var wheelEventsOccurred = 0;
+var expectedWheelEventsOccurred = ['0', '0'];
+var scrollEventsOccurred = 0;
+var scrolledElement = 'movedbox'
+var scrollEventsOccurred = 0;
+var expectedScrollEventsOccurred = '1';
+
+
+function recordScroll(event) {
+	debug('scroll event ' + scrollEventsOccurred + '+> ' + event.target);
+	scrollEventsOccurred++;
+
+	if (window.eventSender) {
+		// Because scroll events arrive asynchronously, only one will arrive.
+	    if (gesturesOccurred == expectedGesturesTotal) {
+			shouldBe('scrollEventsOccurred', expectedScrollEventsOccurred);
+	        // If we've got here, we've passed.
+	        successfullyParsed = true;
+	        isSuccessfullyParsed();
+	        if (window.testRunner)
+	            testRunner.notifyDone();
+		}
+    }
+}
+
+
+function firstGestureScroll()
+{
+    debug("first gesture");
+    eventSender.gestureScrollBegin(10, 72);
+    eventSender.gestureScrollUpdate(0, -700);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+function secondGestureScroll()
+{
+    debug("second gesture");
+    eventSender.gestureScrollBegin(12, 40);
+    eventSender.gestureScrollUpdate(0, -100);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest()
+{
+    movedbox = document.getElementById("outerdiv");
+    touchtarget = document.getElementById("touchtargetiframe");
+    touchtarget.contentDocument.addEventListener("scroll", recordScroll);
+    touchtarget.contentDocument.body.addEventListener("mousewheel", recordWheel);
+
+    if (window.eventSender) {
+        description('This tests that a gesture scroll is propagated from an ' +
+                'iframe to an outer div when the iframe has no remaining ' +
+                'scroll offset.');
+        if (checkTestDependencies())
+            firstGestureScroll();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.  Gesture-scroll the page to validate the implementation.");
+    }
+}
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="resources/gesture-helpers.js"></script>
+<style type="text/css">
+#touchtarget {
+  background: white;
+}
+    
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+#container {
+    width: 200px;
+    height: 200px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    display: block;
+}
+
+</style>
+</head>
+<body>
+<div id="container">
+<iframe id="touchtarget" src="resources/scroll-inside-editable-iframe.html"></iframe>
+</div>
+    <p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var touchtarget;
+var expectedGesturesTotal = 2;
+var gesturesOccurred = 0;
+var scrollAmountX = ['0', '0'];
+var scrollAmountY = ['140', '200'];
+var wheelEventsOccurred = 0;
+var expectedWheelEventsOccurred = ['0', '0'];
+var scrollEventsOccurred = 0;
+var expectedScrollEventsOccurred = '1';
+var scrolledElement = 'touchtarget.contentDocument.body'
+
+function firstGestureScroll()
+{
+    debug("first gesture");
+    eventSender.gestureScrollBegin(12, 150);
+    eventSender.gestureScrollUpdate(0, -140);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+function secondGestureScroll()
+{
+    debug("second gesture");
+    eventSender.gestureScrollBegin(12, 110);
+    eventSender.gestureScrollUpdate(0, -60);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+        
+if (window.testRunner)
+    testRunner.waitUntilDone();
+    
+function runTest()
+{
+    touchtarget = document.getElementById('touchtarget');
+    touchtarget.contentDocument.addEventListener("scroll", recordScroll);
+    touchtarget.contentDocument.body.addEventListener("mousewheel", recordWheel);
+
+    if (window.eventSender) {
+        description('This tests gesture event scrolling of an iframe in an overflow div. ' +
+            'Red-green strip is scrolled on pass.');
+        if (checkTestDependencies())
+            firstGestureScroll();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.  Touch-scroll the red/green strip.");
+    }
+}
+</script>
+</body>
+</html>
