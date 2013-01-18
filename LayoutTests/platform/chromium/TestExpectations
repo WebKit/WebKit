@@ -2016,7 +2016,7 @@ webkit.org/b/90225 [ Android Linux Mac ] http/tests/loading/text-content-type-wi
 # These tests time out *and* are slow. The test should be fixed to not timeout,
 # then should be marked as SLOW/PASS.
 crbug.com/2844 [ Win ] http/tests/appcache/cyrillic-uri.html [ Pass Timeout ]
-crbug.com/2844 [ Win Linux ] http/tests/appcache/fail-on-update.html [ Pass Timeout Crash ]
+crbug.com/2844 [ Win Linux Mac ] http/tests/appcache/fail-on-update.html [ Pass Timeout Crash ]
 crbug.com/2844 [ Win ] http/tests/appcache/offline-access.html [ Pass Timeout ]
 crbug.com/2844 [ Win ] http/tests/appcache/update-cache.html [ Pass Timeout ]
 
@@ -2331,7 +2331,7 @@ webkit.org/b/98977 fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
 # Flaky since r68438:r68445 or before that.
 webkit.org/b/46693 [ Mac ] fast/repaint/repaint-svg-after-style-change.html [ Failure ]
 
-crbug.com/57934 [ Win Debug ] http/tests/appcache/fail-on-update-2.html [ Pass Timeout ]
+crbug.com/57934 [ Win Linux Mac ] http/tests/appcache/fail-on-update-2.html [ Pass Timeout Crash ]
 
 # Flakiness first seen
 # http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
