@@ -262,6 +262,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._timerRecords = {};
         this._requestAnimationFrameRecords = {};
         this._timeRecords = {};
+        this._timeRecordStack = [];
         this._frames = [];
         this._minimumRecordTime = -1;
         this._lastInvalidateLayout = {};
@@ -585,7 +586,13 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         break;
 
     case recordTypes.Time:
-        presentationModel._timeRecords[record.data["message"]] = this;
+        var message = record.data["message"];
+        var oldReference = presentationModel._timeRecords[message];
+        if (oldReference)
+            break;
+        presentationModel._timeRecords[message] = this;
+        if (origin)
+            presentationModel._timeRecordStack.push(this);
         break;
 
     case recordTypes.TimeEnd:
@@ -598,6 +605,22 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
             var intervalDuration = this.startTime - timeRecord.startTime;
             this.intervalDuration = intervalDuration;
             timeRecord.intervalDuration = intervalDuration;
+            if (!origin)
+                break;
+            var recordStack = presentationModel._timeRecordStack;
+            recordStack.splice(recordStack.indexOf(timeRecord), 1);
+            for (var index = recordStack.length; index; --index) {
+                var openRecord = recordStack[index - 1];
+                if (openRecord.startTime > timeRecord.startTime)
+                    continue;
+                function compareStartTime(value, record)
+                {
+                    return value < record.startTime ? -1 : 1;
+                }
+                timeRecord.parent.children.splice(timeRecord.parent.children.indexOf(timeRecord));
+                openRecord.children.splice(insertionIndexForObjectInListSortedByFunction(timeRecord.startTime, openRecord.children, compareStartTime), 0, timeRecord);
+                break;
+            }
         }
         break;
 

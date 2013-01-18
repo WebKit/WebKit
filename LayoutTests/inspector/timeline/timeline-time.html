@@ -48,17 +48,17 @@ function test()
     function onDataLoaded()
     {
         var root = presentationModel.rootRecord();
-        InspectorTest.assertEquals(5, root.children.length);
+        InspectorTest.assertEquals(4, root.children.length);
 
         var time1 = root.children[1];
         InspectorTest.assertEquals("Time", time1.type);
-        InspectorTest.assertEquals(1, time1.children.length);
-        var timeEnd1 = time1.children[0];
+        InspectorTest.assertEquals(2, time1.children.length);
+        var timeEnd1 = time1.children[1];
         InspectorTest.assertEquals("TimeEnd", timeEnd1.type);
         InspectorTest.assertEquals(time1, timeEnd1.timeRecord);
         InspectorTest.assertEquals(timeEnd1, time1.timeEndRecord);
 
-        var time2 = root.children[3];
+        var time2 = time1.children[0];
         InspectorTest.assertEquals("Time", time2.type);
         InspectorTest.assertEquals(1, time2.children.length);
         var timeEnd2 = time2.children[0];
