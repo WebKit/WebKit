@@ -115,7 +115,7 @@ WebInspector.ScriptsSearchScope.prototype = {
         
         function comparator(a, b)
         {
-            return a.originURL().localeCompare(b.originURL());   
+            return a.originURL().compareTo(b.originURL());   
         }
         
         var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();

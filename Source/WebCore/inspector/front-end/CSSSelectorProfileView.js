@@ -195,7 +195,7 @@ WebInspector.CSSSelectorProfileView.prototype = {
 
         function selectorComparator(a, b)
         {
-            var result = b.rawData.selector.localeCompare(a.rawData.selector);
+            var result = b.rawData.selector.compareTo(a.rawData.selector);
             return sortAscending ? -result : result;
         }
 
@@ -203,7 +203,7 @@ WebInspector.CSSSelectorProfileView.prototype = {
         {
             var aRawData = a.rawData;
             var bRawData = b.rawData;
-            var result = bRawData.url.localeCompare(aRawData.url);
+            var result = bRawData.url.compareTo(aRawData.url);
             if (!result)
                 result = bRawData.lineNumber - aRawData.lineNumber;
             return sortAscending ? -result : result;

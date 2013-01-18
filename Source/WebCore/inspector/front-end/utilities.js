@@ -134,6 +134,19 @@ String.prototype.trimURL = function(baseURLDomain)
 }
 
 /**
+ * @param {string} other
+ * @return {number}
+ */
+String.prototype.compareTo = function(other)
+{
+    if (this > other)
+        return 1;
+    if (this < other)
+        return -1;
+    return 0;
+}
+
+/**
  * @param {string} href
  * @return {string}
  */

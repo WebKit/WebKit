@@ -155,12 +155,12 @@ WebInspector.DirectoryContentView.Node.comparator = function(column, reverse)
 
     function nameCompare(x, y)
     {
-        return reverseFactor * x._entry.name.localeCompare(y._entry.name);
+        return reverseFactor * x._entry.name.compareTo(y._entry.name);
     }
 
     function typeCompare(x, y)
     {
-        return reverseFactor * (x._entry.mimeType || "").localeCompare(y._entry.mimeType || "");
+        return reverseFactor * (x._entry.mimeType || "").compareTo(y._entry.mimeType || "");
     }
 
     function sizeCompare(x, y)

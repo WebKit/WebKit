@@ -473,7 +473,7 @@ WebInspector.FileSystemModel.Entry.compare = function(x, y)
 {
     if (x.isDirectory != y.isDirectory)
         return y.isDirectory ? 1 : -1;
-    return x.name.localeCompare(y.name);
+    return x.name.compareTo(y.name);
 }
 
 WebInspector.FileSystemModel.Entry.prototype = {

@@ -634,11 +634,7 @@ WebInspector.OpenResourceDialog = function(panel)
 
     function compareFunction(uiSourceCode1, uiSourceCode2)
     {
-        if (uiSourceCode1.parsedURL.lastPathComponent < uiSourceCode2.parsedURL.lastPathComponent)
-            return -1;
-        if (uiSourceCode1.parsedURL.lastPathComponent > uiSourceCode2.parsedURL.lastPathComponent)
-            return 1;
-        return 0;
+        return uiSourceCode1.parsedURL.lastPathComponent.compareTo(uiSourceCode2.parsedURL.lastPathComponent);
     }
     this._uiSourceCodes.sort(compareFunction);
 }

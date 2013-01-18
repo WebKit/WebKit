@@ -169,9 +169,9 @@ WebInspector.CookiesTable.prototype = {
     {
         var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
 
-        function localeCompare(getter, cookie1, cookie2)
+        function compareTo(getter, cookie1, cookie2)
         {
-            return sortDirection * (getter.apply(cookie1) + "").localeCompare(getter.apply(cookie2) + "")
+            return sortDirection * (getter.apply(cookie1) + "").compareTo(getter.apply(cookie2) + "")
         }
 
         function numberCompare(getter, cookie1, cookie2)
@@ -196,15 +196,15 @@ WebInspector.CookiesTable.prototype = {
 
         var comparator;
         switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
-            case 0: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.name); break;
-            case 1: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.value); break;
-            case 2: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.domain); break;
-            case 3: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.path); break;
+            case 0: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.name); break;
+            case 1: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.value); break;
+            case 2: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.domain); break;
+            case 3: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.path); break;
             case 4: comparator = expiresCompare; break;
             case 5: comparator = numberCompare.bind(null, WebInspector.Cookie.prototype.size); break;
-            case 6: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.httpOnly); break;
-            case 7: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.secure); break;
-            default: localeCompare.bind(null, WebInspector.Cookie.prototype.name);
+            case 6: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.httpOnly); break;
+            case 7: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.secure); break;
+            default: compareTo.bind(null, WebInspector.Cookie.prototype.name);
         }
 
         cookies.sort(comparator);

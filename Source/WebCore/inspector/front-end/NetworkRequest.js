@@ -501,7 +501,7 @@ WebInspector.NetworkRequest.prototype = {
 
         this._sortedRequestHeaders = [];
         this._sortedRequestHeaders = this.requestHeaders.slice();
-        this._sortedRequestHeaders.sort(function(a,b) { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()) });
+        this._sortedRequestHeaders.sort(function(a,b) { return a.name.toLowerCase().compareTo(b.name.toLowerCase()) });
         return this._sortedRequestHeaders;
     },
 
@@ -603,7 +603,7 @@ WebInspector.NetworkRequest.prototype = {
         
         this._sortedResponseHeaders = [];
         this._sortedResponseHeaders = this.responseHeaders.slice();
-        this._sortedResponseHeaders.sort(function(a,b) { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()) });
+        this._sortedResponseHeaders.sort(function(a,b) { return a.name.toLowerCase().compareTo(b.name.toLowerCase()) });
         return this._sortedResponseHeaders;
     },
 

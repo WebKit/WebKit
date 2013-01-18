@@ -1395,7 +1395,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
     {
         function sorter(a, b)
         {
-            return a.name.localeCompare(b.name);
+            return a.name.compareTo(b.name);
         }
 
         var style = this.styleRule.style;
