@@ -64,6 +64,8 @@ AttributeState elementSupportsAutocorrect(const WebCore::Element*);
 AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 AttributeState elementSupportsSpellCheck(const WebCore::Element*);
 
+bool elementHasContinuousSpellCheckingEnabled(const PassRefPtr<WebCore::Element>);
+
 WTF::String inputElementText(WebCore::Element*);
 WTF::String webWorksContext(const WebCore::Element*);
 

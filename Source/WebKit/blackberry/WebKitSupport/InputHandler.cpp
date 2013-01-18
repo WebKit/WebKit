@@ -655,7 +655,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
         m_processingTransactionId,
         transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
 
-    if (!spannableString || !isActiveTextEdit()) {
+    if (!spannableString || !isActiveTextEdit() || !DOMSupport::elementHasContinuousSpellCheckingEnabled(m_currentFocusElement)) {
         SpellingLog(Platform::LogLevelWarn, "InputHandler::spellCheckingRequestProcessed Cancelling request with transactionId %d.", transactionId);
         m_request->didCancel();
         m_processingTransactionId = -1;

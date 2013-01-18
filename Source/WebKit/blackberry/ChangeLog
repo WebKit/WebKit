@@ -1,3 +1,24 @@
+2013-01-18  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Check if continuous spellchecking is enabled before processing a request
+        https://bugs.webkit.org/show_bug.cgi?id=107169
+
+        Reviewed by Rob Buis.
+
+        PR265815
+        We set this value based on the global settings page. The
+        spellcheck-on-focus codepath did not hit this, so focusing a
+        field would not uphold the setting.
+
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementHasContinuousSpellCheckingEnabled):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient
