@@ -5153,7 +5153,7 @@ void RenderLayer::rebuildZOrderLists()
     if (isRootLayer()) {
         RenderObject* view = renderer()->view();
         for (RenderObject* child = view->firstChild(); child; child = child->nextSibling()) {
-            Element* childElement = child->node()->isElementNode() ? toElement(child->node()) : 0;
+            Element* childElement = (child->node() && child->node()->isElementNode()) ? toElement(child->node()) : 0;
             if (childElement && childElement->isInTopLayer()) {
                 RenderLayer* layer = toRenderLayerModelObject(child)->layer();
                 m_posZOrderList->append(layer);

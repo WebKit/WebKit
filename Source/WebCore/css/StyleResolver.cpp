@@ -2003,6 +2003,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
             style->setFloating(NoFloat);
             style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_selectorChecker.strictParsing()));
         }
+
+#if ENABLE(DIALOG_ELEMENT)
+        // Per the spec, position 'static' and 'relative' in the top layer compute to 'absolute'.
+        if (e && e->isInTopLayer() && (style->position() == StaticPosition || style->position() == RelativePosition)) {
+            style->setPosition(AbsolutePosition);
+            style->setDisplay(BLOCK);
+        }
+#endif
     }
 
     // Make sure our z-index value is only applied if the object is positioned.

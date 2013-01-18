@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setDialogElementEnabled(true);
+</script>
+<style>
+.green-box {
+    background-color: green;
+    height: 50px;
+    width: 50px;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+#left-div {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+
+#middle-dialog {
+    position: static;
+    top: 100px;
+    left: 150px;
+}
+
+#right-dialog {
+    position: static;
+    top: 100px;
+    left: 200px;
+}
+</style>
+</head>
+<body>
+<p>Bug <a href="http://webkit.org/b/106538">106538</a>: Top layer fails for inline elements
+<p>This tests that position 'static' computes to 'absolute' in the top layer. The test passes if you see a single green box.</p>
+<div id="left-div" class="green-box"></div>
+<dialog id="middle-dialog" class="green-box"></dialog>
+<dialog id="right-dialog" class="green-box"></dialog>
+<script>
+document.getElementById('middle-dialog').showModal();
+var rightDialog = document.getElementById('right-dialog');
+rightDialog.showModal();
+rightDialog.style.position = 'absolute';
+</script>
+</body>
+</html>

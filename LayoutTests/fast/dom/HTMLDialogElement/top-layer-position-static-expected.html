@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    background-color: green;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    height: 50px;
+    width: 150px;
+}
+</style>
+</head>
+<body>
+<p>Bug <a href="http://webkit.org/b/106538">106538</a>: Top layer fails for inline elements
+<p>This tests that position 'static' computes to 'absolute' in the top layer. The test passes if you see a single green box.</p>
+<div></div>
+</body>
+</html>
