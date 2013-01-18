@@ -483,9 +483,6 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
 
-webkit.org/b/106922 accessibility/aria-tables.html [ Crash ]
-webkit.org/b/106922 accessibility/aria-hidden-with-elements.html [ Crash ]
-webkit.org/b/106922 platform/gtk/accessibility/aria-table-hierarchy.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
