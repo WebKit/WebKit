@@ -4305,3 +4305,4 @@ webkit.org/b/107033 [ Debug ] fast/css/stylesheet-enable-first-alternate-link.ht
 # This is won't fix, as the debug and release versions differ.
 webkit.org/b/99138 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 
+webkit.org/b/107204 fast/events/touch/multi-touch-inside-iframes.html [ Pass Failure ]
