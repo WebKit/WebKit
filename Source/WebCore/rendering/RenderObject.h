@@ -734,6 +734,8 @@ public:
     {
         return localToContainerQuad(quad, 0, mode, wasFixed);
     }
+    // Convert an absolute quad to local coordinates.
+    FloatQuad absoluteToLocalQuad(const FloatQuad&, MapCoordinatesFlags mode = 0) const;
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
     FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags = 0, bool* wasFixed = 0) const;

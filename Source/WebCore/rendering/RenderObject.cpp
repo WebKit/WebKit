@@ -2050,6 +2050,14 @@ FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, MapCo
     return transformState.lastPlanarPoint();
 }
 
+FloatQuad RenderObject::absoluteToLocalQuad(const FloatQuad& quad, MapCoordinatesFlags mode) const
+{
+    TransformState transformState(TransformState::UnapplyInverseTransformDirection, quad.boundingBox().center(), quad);
+    mapAbsoluteToLocalPoint(mode, transformState);
+    transformState.flatten();
+    return transformState.lastPlanarQuad();
+}
+
 void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)

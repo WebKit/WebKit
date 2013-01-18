@@ -2142,21 +2142,17 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
         RenderBox* box = renderBox();
         ASSERT(box);
-        FloatPoint absPos = box->localToAbsolute();
-        absPos.move(box->borderLeft(), box->borderTop());
+        LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(rect)), UseTransforms).boundingBox());
+        LayoutRect layerBounds(0, 0, box->clientWidth(), box->clientHeight());
+        LayoutRect r = getRectToExpose(layerBounds, localExposeRect, alignX, alignY);
 
-        LayoutRect layerBounds = LayoutRect(absPos.x() + scrollXOffset(), absPos.y() + scrollYOffset(), box->clientWidth(), box->clientHeight());
-        LayoutRect exposeRect = LayoutRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
-        LayoutRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
-        
-        int roundedAdjustedX = roundToInt(r.x() - absPos.x());
-        int roundedAdjustedY = roundToInt(r.y() - absPos.y());
-        IntSize clampedScrollOffset = clampScrollOffset(IntSize(roundedAdjustedX, roundedAdjustedY));
+        IntSize clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(r).location()));
         if (clampedScrollOffset != scrollOffset()) {
             IntSize oldScrollOffset = scrollOffset();
             scrollToOffset(clampedScrollOffset);
             IntSize scrollOffsetDifference = scrollOffset() - oldScrollOffset;
-            newRect.move(-scrollOffsetDifference);
+            localExposeRect.move(-scrollOffsetDifference);
+            newRect = LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRect)), UseTransforms).boundingBox());
         }
     } else if (!parentLayer && renderer()->isBox() && renderBox()->canBeProgramaticallyScrolled()) {
         if (frameView) {
@@ -2183,6 +2179,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                     frameView->setScrollPosition(IntPoint(xOffset, yOffset));
                     if (frameView->safeToPropagateScrollToParent()) {
                         parentLayer = ownerElement->renderer()->enclosingLayer();
+                        // FIXME: This doesn't correctly convert the rect to
+                        // absolute coordinates in the parent.
                         newRect.setX(rect.x() - frameView->scrollX() + frameView->x());
                         newRect.setY(rect.y() - frameView->scrollY() + frameView->y());
                     } else

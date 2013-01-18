@@ -4311,6 +4311,14 @@ webkit.org/b/107033 [ Debug ] fast/events/form-iframe-target-before-load-crash.h
 webkit.org/b/107033 [ Debug ] fast/events/before-unload-with-subframes.html [ Crash ]
 webkit.org/b/107033 [ Debug ] fast/css/stylesheet-enable-first-alternate-link.html [ Crash ]
 
+# Needs rebaseline.
+webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
+webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
+webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
+webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
+
 # This is won't fix, as the debug and release versions differ.
 webkit.org/b/99138 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 

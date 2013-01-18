@@ -1280,6 +1280,12 @@ webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 
+# Needs rebaseline.
+webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
+webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html [ Failure ]
+
 # Rebaseline required after https://webkit.org/b/107208
 webkit.org/b/107208 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/107208 fast/regions/overflow-size-change-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
