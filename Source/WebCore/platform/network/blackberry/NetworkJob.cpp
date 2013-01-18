@@ -776,6 +776,9 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     if (!newURL.isValid())
         return false;
 
+    // IMPORTANT: if a new source of credentials is added to this method, be sure to handle it in
+    // purgeCredentials as well!
+
     String host;
     int port;
     BlackBerry::Platform::ProxyInfo proxyInfo;
@@ -846,18 +849,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         }
 
         // Before asking the user for credentials, we check if the URL contains that.
-        if (!username.isEmpty() || !password.isEmpty()) {
-            // Prevent them from been used again if they are wrong.
-            // If they are correct, they will be put into CredentialStorage.
-            if (!proxyInfo.address.empty()) {
-                proxyInfo.username.clear();
-                proxyInfo.password.clear();
-                BlackBerry::Platform::Settings::instance()->storeProxyCredentials(proxyInfo);
-            } else {
-                m_handle->getInternal()->m_user = "";
-                m_handle->getInternal()->m_pass = "";
-            }
-        } else {
+        if (username.isEmpty() && password.isEmpty()) {
             if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
                 return false;
 
@@ -923,6 +915,25 @@ void NetworkJob::purgeCredentials()
     AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
     if (challenge.isNull())
         return;
+
+    const String& purgeUsername = challenge.proposedCredential().user();
+    const String& purgePassword = challenge.proposedCredential().password();
+
+    // Since this credential didn't work, remove it from all sources which would return it
+    // IMPORTANT: every source that is checked for a password in sendRequestWithCredentials should
+    // be handled here!
+
+    if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP || challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTPS) {
+        BlackBerry::Platform::ProxyInfo proxyInfo = BlackBerry::Platform::Settings::instance()->proxyInfo(m_handle->firstRequest().url().string());
+        if (!proxyInfo.address.empty() && purgeUsername == proxyInfo.username.c_str() && purgePassword == proxyInfo.password.c_str()) {
+            proxyInfo.username.clear();
+            proxyInfo.password.clear();
+            BlackBerry::Platform::Settings::instance()->storeProxyCredentials(proxyInfo);
+        }
+    } else if (m_handle->getInternal()->m_user == purgeUsername && m_handle->getInternal()->m_pass == purgePassword) {
+        m_handle->getInternal()->m_user = "";
+        m_handle->getInternal()->m_pass = "";
+    }
 
     CredentialStorage::remove(challenge.protectionSpace());
     challenge.setStored(false);
