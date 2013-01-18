@@ -1,5 +1,17 @@
 2013-01-18  Tim Horton  <timothy_horton@apple.com>
 
+        [mac] DumpRenderTree/WebKitTestRunner should not participate in Exposé/Mission Control
+        https://bugs.webkit.org/show_bug.cgi?id=107234
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Disable participation in Exposé via NSWindowCollectionBehaviorStationary.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Ditto.
+
+2013-01-18  Tim Horton  <timothy_horton@apple.com>
+
         [mac] DumpRenderTree/WebKitTestRunner should disable NSBeep
         https://bugs.webkit.org/show_bug.cgi?id=107251
 

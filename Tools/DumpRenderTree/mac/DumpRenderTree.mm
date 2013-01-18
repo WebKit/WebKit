@@ -548,6 +548,7 @@ WebView *createWebViewAndOffscreenWindow()
     DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 
     [window setColorSpace:[[NSScreen mainScreen] colorSpace]];
+    [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[window contentView] addSubview:webView];
     [window orderBack:nil];
     [window setAutodisplay:NO];
