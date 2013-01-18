@@ -85,6 +85,9 @@ struct PaintInfo {
 
     bool forceBlackText() const { return paintBehavior & PaintBehaviorForceBlackText; }
 
+    bool skipRootBackground() const { return paintBehavior & PaintBehaviorSkipRootBackground; }
+    bool paintRootBackgroundOnly() const { return paintBehavior & PaintBehaviorRootBackgroundOnly; }
+
 #if ENABLE(SVG)
     void applyTransform(const AffineTransform& localToAncestorTransform)
     {

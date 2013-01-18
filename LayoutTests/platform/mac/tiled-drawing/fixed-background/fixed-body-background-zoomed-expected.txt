@@ -1,0 +1,34 @@
+(GraphicsLayer
+  (bounds 1805.00 3910.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 785.00 1700.00)
+      (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 2
+        (GraphicsLayer
+          (anchor 0.00 0.00)
+          (bounds 785.00 1700.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (backgroundColor #FFFFFF)
+          (tile cache coverage 0, 0 445 x 667)
+          (tile size 512 x 512)
+          (top left tile 0, 0 tiles grid 2 x 3)
+        )
+        (GraphicsLayer
+          (bounds 785.00 1700.00)
+          (drawsContent 1)
+          (tile cache coverage 0, 110 446 x 443)
+          (tile size 342 x 255)
+          (top left tile 0, 1 tiles grid 3 x 4)
+          (children 1
+            (GraphicsLayer
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

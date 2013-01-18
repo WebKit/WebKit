@@ -60,6 +60,10 @@
 #include <math.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 using namespace std;
 
 namespace WTF {
@@ -197,8 +201,14 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
         if (diff >= StyleDifferenceRepaint && node() &&
-                (node()->hasTagName(htmlTag) || node()->hasTagName(bodyTag)))
+            (node()->hasTagName(htmlTag) || node()->hasTagName(bodyTag))) {
             view()->repaint();
+            
+#if USE(ACCELERATED_COMPOSITING)
+            if (oldStyle->hasEntirelyFixedBackground() != newStyle->hasEntirelyFixedBackground())
+                view()->compositor()->rootFixedBackgroundsChanged();
+#endif
+        }
         
         // When a layout hint happens and an object's position style changes, we have to do a layout
         // to dirty the render tree using the old position value now.
@@ -983,6 +993,9 @@ void RenderBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
 {
+    if (paintInfo.skipRootBackground())
+        return;
+
     RenderObject* rootBackgroundRenderer = rendererForRootBackground();
     
     const FillLayer* bgLayer = rootBackgroundRenderer->style()->backgroundLayers();

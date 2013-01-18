@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 100px;
+            height: 1500px;
+            background-image: url('../../../../compositing/resources/simple_image.png');
+            background-size: 200px 200px;
+            background-attachment: fixed;
+        }
+        
+        .test {
+            height: 400px;
+            width: 600px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 20px solid orange;
+        }
+        
+        #layers {
+            opacity: 0;
+        }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+    
+    function doTest()
+    {
+        if (window.eventSender)
+            eventSender.scalePageBy(2.3, 2.3);
+
+        window.scrollTo(0, 200);
+
+        if (window.internals)
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+    }
+    
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="test"></div>
+<pre id="layers"></pre>
+</body>
+</html>

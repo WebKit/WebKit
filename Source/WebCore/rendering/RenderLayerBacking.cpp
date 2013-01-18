@@ -118,6 +118,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 #if ENABLE(CSS_FILTERS)
     , m_canCompositeFilters(false)
 #endif
+    , m_backgroundLayerPaintsFixedRootBackground(false)
 {
     if (layer->isRootLayer()) {
         Frame* frame = toRenderView(renderer())->frameView()->frame();
@@ -155,6 +156,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateClippingLayers(false, false);
     updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
+    updateBackgroundLayer(false);
     updateMaskLayer(false);
     updateScrollingLayers(false);
     detachFromScrollingCoordinator();
@@ -285,11 +287,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         m_childContainmentLayer = createGraphicsLayer("TileCache Flattening Layer");
 
     if (m_isMainFrameRenderViewLayer) {
-        bool hasOpaqueBackground = false;
-        if (FrameView* frameView = toRenderView(renderer())->frameView())
-            hasOpaqueBackground = !frameView->hasOpaqueBackground();
-
-        m_graphicsLayer->setContentsOpaque(!hasOpaqueBackground);
+        m_graphicsLayer->setContentsOpaque(true);
         m_graphicsLayer->setAppliesPageScale();
     }
 
@@ -479,9 +477,10 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     m_owningLayer->updateZOrderLists();
 
     bool layerConfigChanged = false;
+    setBackgroundLayerPaintsFixedRootBackground(compositor->needsFixedRootBackgroundLayer(m_owningLayer));
     
-    // FIXME: The background layer is currently unused.
-    if (updateBackgroundLayer(false))
+    // The background layer is currently only used for fixed root backgrounds.
+    if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground))
         layerConfigChanged = true;
 
     if (updateForegroundLayer(compositor->needsContentsCompositingLayer(m_owningLayer)))
@@ -522,7 +521,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         m_graphicsLayer->setReplicatedByLayer(0);
 
     updateBackgroundColor(isSimpleContainerCompositingLayer());
-
+    updateRootLayerConfiguration();
+    
     if (isDirectlyCompositedImage())
         updateImageContents();
 
@@ -848,7 +848,7 @@ void RenderLayerBacking::updateInternalHierarchy()
     }
     
     if (m_backgroundLayer)
-        m_contentsContainmentLayer->addChild(m_graphicsLayer.get());
+        m_contentsContainmentLayer->addChild(m_backgroundLayer.get());
 
     m_graphicsLayer->removeFromParent();
     if (m_contentsContainmentLayer)
@@ -921,6 +921,9 @@ void RenderLayerBacking::updateDrawsContent(bool isSimpleContainer)
     m_graphicsLayer->setDrawsContent(hasPaintedContent);
     if (m_foregroundLayer)
         m_foregroundLayer->setDrawsContent(hasPaintedContent);
+
+    if (m_backgroundLayer)
+        m_backgroundLayer->setDrawsContent(hasPaintedContent);
 }
 
 // Return true if the layers changed.
@@ -953,6 +956,11 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     }
     
     return layersChanged;
+}
+
+void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgroundLayerPaintsFixedRootBackground)
+{
+    m_backgroundLayerPaintsFixedRootBackground = backgroundLayerPaintsFixedRootBackground;
 }
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
@@ -1225,7 +1233,9 @@ void RenderLayerBacking::detachFromScrollingCoordinator()
 
 GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const
 {
-    unsigned phase = GraphicsLayerPaintBackground;
+    unsigned phase = 0;
+    if (!m_backgroundLayer)
+        phase |= GraphicsLayerPaintBackground;
     if (!m_foregroundLayer)
         phase |= GraphicsLayerPaintForeground;
     if (!m_maskLayer)
@@ -1285,24 +1295,38 @@ Color RenderLayerBacking::rendererBackgroundColor() const
 void RenderLayerBacking::updateBackgroundColor(bool isSimpleContainer)
 {
     Color backgroundColor;
-
-    if (m_usingTiledCacheLayer) {
-        FrameView* frameView = toRenderView(renderer())->frameView();
-        if (!frameView->isTransparent()) {
-            backgroundColor = frameView->documentBackgroundColor();
-            if (frameView->hasOpaqueBackground() && (!backgroundColor.isValid() || backgroundColor.hasAlpha()))
-                backgroundColor = Color::white;
-        }
-
-        m_graphicsLayer->setBackgroundColor(backgroundColor);
-        return;
-    }
-
     if (isSimpleContainer)
         backgroundColor = rendererBackgroundColor();
 
     // An unset (invalid) color will remove the solid color.
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
+}
+
+void RenderLayerBacking::updateRootLayerConfiguration()
+{
+    if (!m_usingTiledCacheLayer)
+        return;
+
+    Color backgroundColor;
+    FrameView* frameView = toRenderView(renderer())->frameView();
+    bool viewIsTransparent = frameView->isTransparent();
+
+    if (!viewIsTransparent) {
+        backgroundColor = frameView->documentBackgroundColor();
+        if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+            backgroundColor = Color::white;
+    }
+
+    if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
+        m_backgroundLayer->setBackgroundColor(backgroundColor);
+        m_backgroundLayer->setContentsOpaque(!viewIsTransparent);
+
+        m_graphicsLayer->setBackgroundColor(Color());
+        m_graphicsLayer->setContentsOpaque(false);
+    } else {
+        m_graphicsLayer->setBackgroundColor(backgroundColor);
+        m_graphicsLayer->setContentsOpaque(!viewIsTransparent);
+    }
 }
 
 static bool supportsDirectBoxDecorationsComposition(const RenderObject* renderer)
@@ -1708,6 +1732,9 @@ void RenderLayerBacking::setContentsNeedDisplay()
     if (m_foregroundLayer && m_foregroundLayer->drawsContent())
         m_foregroundLayer->setNeedsDisplay();
 
+    if (m_backgroundLayer && m_backgroundLayer->drawsContent())
+        m_backgroundLayer->setNeedsDisplay();
+
     if (m_maskLayer && m_maskLayer->drawsContent())
         m_maskLayer->setNeedsDisplay();
 
@@ -1732,6 +1759,13 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
         m_foregroundLayer->setNeedsDisplayInRect(layerDirtyRect);
     }
 
+    // FIXME: need to split out repaints for the background.
+    if (m_backgroundLayer && m_backgroundLayer->drawsContent()) {
+        IntRect layerDirtyRect = r;
+        layerDirtyRect.move(-m_backgroundLayer->offsetFromRenderer());
+        m_backgroundLayer->setNeedsDisplayInRect(layerDirtyRect);
+    }
+
     if (m_maskLayer && m_maskLayer->drawsContent()) {
         IntRect layerDirtyRect = r;
         layerDirtyRect.move(-m_maskLayer->offsetFromRenderer());
@@ -1745,7 +1779,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
     }
 }
 
-void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext* context,
+void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext* context,
                     const IntRect& paintDirtyRect, // In the coords of rootLayer.
                     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
@@ -1765,9 +1799,14 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingMaskPhase;
     if (paintingPhase & GraphicsLayerPaintOverflowContents)
         paintFlags |= RenderLayer::PaintLayerPaintingOverflowContents;
+
+    if (graphicsLayer == m_backgroundLayer)
+        paintFlags |= (RenderLayer::PaintLayerPaintingRootBackgroundOnly | RenderLayer::PaintLayerPaintingCompositingForegroundPhase); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
+    else if (m_backgroundLayer)
+        paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
     
     // FIXME: GraphicsLayers need a way to split for RenderRegions.
-    RenderLayer::LayerPaintingInfo paintingInfo(rootLayer, paintDirtyRect, paintBehavior, LayoutSize());
+    RenderLayer::LayerPaintingInfo paintingInfo(m_owningLayer, paintDirtyRect, paintBehavior, LayoutSize());
     m_owningLayer->paintLayerContents(context, paintingInfo, paintFlags);
 
     if (m_owningLayer->containsDirtyOverlayScrollbars())
@@ -1798,7 +1837,11 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         page->setIsPainting(true);
 #endif
 
-    if (graphicsLayer == m_graphicsLayer.get() || graphicsLayer == m_foregroundLayer.get() || graphicsLayer == m_maskLayer.get() || graphicsLayer == m_scrollingContentsLayer.get()) {
+    if (graphicsLayer == m_graphicsLayer.get()
+        || graphicsLayer == m_foregroundLayer.get()
+        || graphicsLayer == m_backgroundLayer.get()
+        || graphicsLayer == m_maskLayer.get()
+        || graphicsLayer == m_scrollingContentsLayer.get()) {
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame());
 
         // The dirtyRect is in the coords of the painting root.
@@ -1807,7 +1850,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             dirtyRect.intersect(compositedBounds());
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-        paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
+        paintIntoLayer(graphicsLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
 
         if (m_usingTiledCacheLayer)
             m_owningLayer->renderer()->frame()->view()->setLastPaintTime(currentTime());
@@ -2130,6 +2173,8 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
     backingMemory = m_graphicsLayer->backingStoreMemoryEstimate();
     if (m_foregroundLayer)
         backingMemory += m_foregroundLayer->backingStoreMemoryEstimate();
+    if (m_backgroundLayer)
+        backingMemory += m_backgroundLayer->backingStoreMemoryEstimate();
     if (m_maskLayer)
         backingMemory += m_maskLayer->backingStoreMemoryEstimate();
 
@@ -2170,6 +2215,7 @@ void RenderLayerBacking::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
     info.addMember(m_contentsContainmentLayer);
     info.addMember(m_graphicsLayer);
     info.addMember(m_foregroundLayer);
+    info.addMember(m_backgroundLayer);
     info.addMember(m_childContainmentLayer);
     info.addMember(m_maskLayer);
     info.addMember(m_layerForHorizontalScrollbar);

@@ -129,6 +129,10 @@ public:
 
     // Whether the given layer needs an extra 'contents' layer.
     bool needsContentsCompositingLayer(const RenderLayer*) const;
+
+    bool needsFixedRootBackgroundLayer(const RenderLayer*) const;
+    GraphicsLayer* fixedRootBackgroundLayer() const;
+    
     // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
     // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
     IntRect calculateCompositedBounds(const RenderLayer*, const RenderLayer* ancestorLayer) const;
@@ -196,6 +200,7 @@ public:
     void frameViewDidChangeSize();
     void frameViewDidScroll();
     void frameViewDidLayout();
+    void rootFixedBackgroundsChanged();
 
     void scrollingLayerDidChange(RenderLayer*);
 

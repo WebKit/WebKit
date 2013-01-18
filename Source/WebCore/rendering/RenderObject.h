@@ -544,6 +544,8 @@ public:
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool mustRepaintBackgroundOrBorder() const;
     bool hasBackground() const { return style()->hasBackground(); }
+    bool hasEntirelyFixedBackground() const;
+
     bool needsLayout() const
     {
         return m_bitfields.needsLayout() || m_bitfields.normalChildNeedsLayout() || m_bitfields.posChildNeedsLayout()

@@ -1027,6 +1027,21 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect,
     return roundedRect;
 }
 
+static bool allLayersAreFixed(const FillLayer* layer)
+{
+    bool allFixed = true;
+    
+    for (const FillLayer* currLayer = layer; currLayer; currLayer = currLayer->next())
+        allFixed &= currLayer->attachment() == FixedBackgroundAttachment;
+
+    return layer && allFixed;
+}
+
+bool RenderStyle::hasEntirelyFixedBackground() const
+{
+    return allLayersAreFixed(backgroundLayers());
+}
+
 const CounterDirectiveMap* RenderStyle::counterDirectives() const
 {
     return rareNonInheritedData->m_counterDirectives.get();

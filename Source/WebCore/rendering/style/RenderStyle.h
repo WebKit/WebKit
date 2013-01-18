@@ -380,6 +380,9 @@ public:
 
     bool hasBackgroundImage() const { return m_background->background().hasImage(); }
     bool hasFixedBackgroundImage() const { return m_background->background().hasFixedImage(); }
+    
+    bool hasEntirelyFixedBackground() const;
+    
     bool hasAppearance() const { return appearance() != NoControlPart; }
 
     bool hasBackground() const

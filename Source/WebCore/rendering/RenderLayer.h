@@ -529,6 +529,8 @@ public:
         PaintLayerPaintingCompositingForegroundPhase = 1 << 6,
         PaintLayerPaintingCompositingMaskPhase = 1 << 7,
         PaintLayerPaintingOverflowContents = 1 << 8,
+        PaintLayerPaintingRootBackgroundOnly = 1 << 9,
+        PaintLayerPaintingSkipRootBackground = 1 << 10,
         PaintLayerPaintingCompositingAllPhases = (PaintLayerPaintingCompositingBackgroundPhase | PaintLayerPaintingCompositingForegroundPhase | PaintLayerPaintingCompositingMaskPhase)
     };
     

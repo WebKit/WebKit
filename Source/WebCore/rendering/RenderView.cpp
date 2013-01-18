@@ -351,6 +351,9 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     if (document()->ownerElement() || !view())
         return;
 
+    if (paintInfo.skipRootBackground())
+        return;
+
     bool rootFillsViewport = false;
     bool rootObscuresBackground = false;
     Node* documentElement = document()->documentElement();

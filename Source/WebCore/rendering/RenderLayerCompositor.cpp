@@ -1203,6 +1203,13 @@ void RenderLayerCompositor::frameViewDidLayout()
         renderViewBacking->adjustTileCacheCoverage();
 }
 
+void RenderLayerCompositor::rootFixedBackgroundsChanged()
+{
+    RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
+    if (renderViewBacking->usingTileCache())
+        setCompositingLayersNeedRebuild();
+}
+
 void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer* layer)
 {
     RenderLayerBacking* backing = layer->backing();
@@ -2121,6 +2128,36 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
         view->calculateAndPaintOverhangAreas(&context, clip);
 #endif
     }
+}
+
+bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer* layer) const
+{
+    if (layer != m_renderView->layer())
+        return false;
+
+    // We only create a background layer if using a TileCache, since that will allow us to adjust the fixed background layer on scrolling.
+    if (!layer->isComposited() || !layer->backing()->usingTileCache())
+        return false;
+
+    RenderObject* rootObject = m_renderView->document()->documentElement() ? m_renderView->document()->documentElement()->renderer() : 0;
+    if (!rootObject)
+        return false;
+
+    RenderObject* rootRenderer = rootObject->rendererForRootBackground();
+    return rootRenderer->hasEntirelyFixedBackground();
+}
+
+GraphicsLayer* RenderLayerCompositor::fixedRootBackgroundLayer() const
+{
+    // Get the fixed root background from the RenderView layer's backing.
+    RenderLayer* viewLayer = m_renderView->layer();
+    if (!viewLayer)
+        return 0;
+    
+    if (viewLayer->isComposited() && viewLayer->backing()->backgroundLayerPaintsFixedRootBackground())
+        return viewLayer->backing()->backgroundLayer();
+
+    return 0;
 }
 
 static void resetTrackedRepaintRectsRecursive(GraphicsLayer* graphicsLayer)

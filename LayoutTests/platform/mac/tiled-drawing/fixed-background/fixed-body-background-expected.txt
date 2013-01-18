@@ -1,0 +1,28 @@
+(GraphicsLayer
+  (bounds 785.00 1700.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1700.00)
+      (children 2
+        (GraphicsLayer
+          (anchor 0.00 0.00)
+          (bounds 785.00 1700.00)
+          (drawsContent 1)
+          (backgroundColor #FFFFFF)
+        )
+        (GraphicsLayer
+          (bounds 785.00 1700.00)
+          (drawsContent 1)
+          (tile cache coverage 0, 0 785 x 1200)
+          (tile size 785 x 600)
+          (top left tile 0, 0 tiles grid 1 x 2)
+          (children 1
+            (GraphicsLayer
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

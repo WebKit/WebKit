@@ -2258,6 +2258,11 @@ bool RenderObject::hasOutlineAnnotation() const
     return node() && node()->isLink() && document()->printing();
 }
 
+bool RenderObject::hasEntirelyFixedBackground() const
+{
+    return m_style->hasEntirelyFixedBackground();
+}
+
 RenderObject* RenderObject::container(const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped) const
 {
     if (repaintContainerSkipped)

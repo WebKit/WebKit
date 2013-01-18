@@ -3543,6 +3543,9 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool useClipRect = true;
     GraphicsContext* transparencyLayerContext = context;
     
+    if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer()->isRenderView() && !renderer()->isRoot())
+        return;
+
     // Ensure our lists are up-to-date.
     updateLayerListsIfNeeded();
 
@@ -3659,6 +3662,12 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool forceBlackText = localPaintingInfo.paintBehavior & PaintBehaviorForceBlackText;
     bool selectionOnly  = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
     
+    PaintBehavior paintBehavior = PaintBehaviorNormal;
+    if (localPaintFlags & PaintLayerPaintingSkipRootBackground)
+        paintBehavior |= PaintBehaviorSkipRootBackground;
+    else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
+        paintBehavior |= PaintBehaviorRootBackgroundOnly;
+    
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
@@ -3687,7 +3696,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             }
             
             // Paint the background.
-            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, paintBehavior, paintingRootForRenderer, localPaintingInfo.region);
             renderer()->paint(paintInfo, paintOffset);
 
             if (useClipRect) {
@@ -3714,7 +3723,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             
             PaintInfo paintInfo(context, pixelSnappedIntRect(clipRectToApply.rect()),
                                 selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                                forceBlackText ? PaintBehaviorForceBlackText : PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
+                                forceBlackText ? (PaintBehavior)PaintBehaviorForceBlackText : paintBehavior, paintingRootForRenderer, localPaintingInfo.region);
             renderer()->paint(paintInfo, paintOffset);
             if (!selectionOnly) {
                 paintInfo.phase = PaintPhaseFloat;
@@ -3734,7 +3743,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
             // Paint our own outline
-            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, paintBehavior, paintingRootForRenderer, localPaintingInfo.region);
             clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
             renderer()->paint(paintInfo, paintOffset);
             restoreClip(context, localPaintingInfo.paintDirtyRect, outlineRect);
