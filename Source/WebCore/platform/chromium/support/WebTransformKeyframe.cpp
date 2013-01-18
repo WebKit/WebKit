@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTransformKeyframe_h
-#define WebTransformKeyframe_h
-
-#include "WebPrivateOwnPtr.h"
-#include "WebTransformOperations.h"
+#include "config.h"
+#include <public/WebTransformKeyframe.h>
 
 namespace WebKit {
 
-class WebTransformKeyframe {
-public:
-    // Takes ownership of the WebTranformOperations object.
-    WEBKIT_EXPORT WebTransformKeyframe(double time, WebTransformOperations* value);
+WebTransformKeyframe::WebTransformKeyframe(double time, WebTransformOperations* value)
+    : m_time(time)
+    , m_value(value)
+{
+}
 
-    WEBKIT_EXPORT ~WebTransformKeyframe();
+WebTransformKeyframe::~WebTransformKeyframe()
+{
+    m_value.reset(0);
+}
 
-    WEBKIT_EXPORT double time() const;
+double WebTransformKeyframe::time() const
+{
+    return m_time;
+}
 
-    WEBKIT_EXPORT const WebTransformOperations& value() const;
+const WebTransformOperations& WebTransformKeyframe::value() const
+{
+    return *m_value.get();
+}
 
-private:
-    double m_time;
-    WebPrivateOwnPtr<WebTransformOperations> m_value;
-};
 
 } // namespace WebKit
-
-#endif // WebTransformKeyframe_h

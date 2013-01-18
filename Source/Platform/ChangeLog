@@ -1,3 +1,20 @@
+2013-01-18  Ali Juma  <ajuma@chromium.org>
+
+        [chromium] Convert WebTransformOperations into pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=105553
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        (WebKit::WebCompositorSupport::createTransformOperations):
+        (WebCompositorSupport):
+        * chromium/public/WebTransformKeyframe.h:
+        (WebTransformKeyframe):
+        * chromium/public/WebTransformOperations.h:
+        (WebKit::WebTransformOperations::~WebTransformOperations):
+        (WebTransformOperations):
+
 2013-01-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r140158.

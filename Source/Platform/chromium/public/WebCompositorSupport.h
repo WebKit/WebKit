@@ -50,6 +50,7 @@ class WebScrollbarThemeGeometry;
 class WebSolidColorLayer;
 class WebThread;
 class WebTransformAnimationCurve;
+class WebTransformOperations;
 class WebVideoFrameProvider;
 class WebVideoLayer;
 
@@ -103,6 +104,8 @@ public:
     virtual WebFloatAnimationCurve* createFloatAnimationCurve() { return 0; }
 
     virtual WebTransformAnimationCurve* createTransformAnimationCurve() { return 0; }
+
+    virtual WebTransformOperations* createTransformOperations() { return 0; }
 
 protected:
     virtual ~WebCompositorSupport() { }

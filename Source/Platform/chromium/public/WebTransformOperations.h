@@ -27,69 +27,28 @@
 
 #include "WebTransformationMatrix.h"
 
+#define WEB_TRANSFORM_OPERATIONS_IS_VIRTUAL 1
+
 namespace WebKit {
 
-class WebTransformOperationsPrivate;
-
-// Transform operations are a decomposed transformation matrix. It can be
-// applied to obtain a WebTransformationMatrix at any time, and can be blended
-// intelligently with other transform operations, so long as they represent the
-// same decomposition. For example, if we have a transform that is made up of
-// a rotation followed by skew, it can be blended intelligently with another
-// transform made up of a rotation followed by a skew. Blending is possible if
-// we have two dissimilar sets of transform operations, but the effect may not
-// be what was intended. For more information, see the comments for the blend
-// function below.
 class WebTransformOperations {
 public:
-    ~WebTransformOperations() { reset(); }
-
-    WebTransformOperations() { initialize(); }
-    WebTransformOperations(const WebTransformOperations& other) { initialize(other); }
-    WebTransformOperations& operator=(const WebTransformOperations& other)
-    {
-        initialize(other);
-        return *this;
-    }
-
-    // Returns a transformation matrix representing these transform operations.
-    WEBKIT_EXPORT WebTransformationMatrix apply() const;
-
-    // Given another set of transform operations and a progress in the range
-    // [0, 1], returns a transformation matrix representing the intermediate
-    // value. If this->matchesTypes(from), then each of the operations are
-    // blended separately and then combined. Otherwise, the two sets of
-    // transforms are baked to matrices (using apply), and the matrices are
-    // then decomposed and interpolated. For more information, see
-    // http://www.w3.org/TR/2011/WD-css3-2d-transforms-20111215/#matrix-decomposition.
-    WEBKIT_EXPORT WebTransformationMatrix blend(const WebTransformOperations& from, double progress) const;
-
-    // Returns true if this operation and its descendants have the same types
-    // as other and its descendants.
-    WEBKIT_EXPORT bool matchesTypes(const WebTransformOperations& other) const;
+    virtual ~WebTransformOperations() { }
 
     // Returns true if these operations can be blended. It will only return
     // false if we must resort to matrix interpolation, and matrix interpolation
     // fails (this can happen if either matrix cannot be decomposed).
-    WEBKIT_EXPORT bool canBlendWith(const WebTransformOperations& other) const;
+    virtual bool canBlendWith(const WebTransformOperations& other) const = 0;
 
-    WEBKIT_EXPORT void appendTranslate(double x, double y, double z);
-    WEBKIT_EXPORT void appendRotate(double x, double y, double z, double degrees);
-    WEBKIT_EXPORT void appendScale(double x, double y, double z);
-    WEBKIT_EXPORT void appendSkew(double x, double y);
-    WEBKIT_EXPORT void appendPerspective(double depth);
-    WEBKIT_EXPORT void appendMatrix(const WebTransformationMatrix&);
-    WEBKIT_EXPORT void appendIdentity();
+    virtual void appendTranslate(double x, double y, double z) = 0;
+    virtual void appendRotate(double x, double y, double z, double degrees) = 0;
+    virtual void appendScale(double x, double y, double z) = 0;
+    virtual void appendSkew(double x, double y) = 0;
+    virtual void appendPerspective(double depth) = 0;
+    virtual void appendMatrix(const WebTransformationMatrix&) = 0;
+    virtual void appendIdentity() = 0;
 
-    WEBKIT_EXPORT bool isIdentity() const;
-
-private:
-    WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void initialize(const WebTransformOperations& prototype);
-    WEBKIT_EXPORT bool blendInternal(const WebTransformOperations& from, double progress, WebTransformationMatrix& result) const;
-
-    WebPrivateOwnPtr<WebTransformOperationsPrivate> m_private;
+    virtual bool isIdentity() const = 0;
 };
 
 } // namespace WebKit

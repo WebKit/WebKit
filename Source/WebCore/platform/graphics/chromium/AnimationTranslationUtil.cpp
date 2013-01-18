@@ -57,10 +57,12 @@ using namespace WebKit;
 
 namespace WebCore {
 
-WebTransformOperations toWebTransformOperations(const TransformOperations& transformOperations, const FloatSize& boxSize)
+PassOwnPtr<WebTransformOperations> toWebTransformOperations(const TransformOperations& transformOperations, const FloatSize& boxSize)
 {
     // We need to do a deep copy the transformOperations may contain ref pointers to TransformOperation objects.
-    WebTransformOperations webTransformOperations;
+    OwnPtr<WebTransformOperations> webTransformOperations = adoptPtr(Platform::current()->compositorSupport()->createTransformOperations());
+    if (!webTransformOperations)
+        return nullptr;
     for (size_t j = 0; j < transformOperations.size(); ++j) {
         TransformOperation::OperationType operationType = transformOperations.operations()[j]->getOperationType();
         switch (operationType) {
@@ -70,7 +72,7 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
         case TransformOperation::SCALE_3D:
         case TransformOperation::SCALE: {
             ScaleTransformOperation* transform = static_cast<ScaleTransformOperation*>(transformOperations.operations()[j].get());
-            webTransformOperations.appendScale(transform->x(), transform->y(), transform->z());
+            webTransformOperations->appendScale(transform->x(), transform->y(), transform->z());
             break;
         }
         case TransformOperation::TRANSLATE_X:
@@ -79,7 +81,7 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
         case TransformOperation::TRANSLATE_3D:
         case TransformOperation::TRANSLATE: {
             TranslateTransformOperation* transform = static_cast<TranslateTransformOperation*>(transformOperations.operations()[j].get());
-            webTransformOperations.appendTranslate(floatValueForLength(transform->x(), boxSize.width()), floatValueForLength(transform->y(), boxSize.height()), floatValueForLength(transform->z(), 1));
+            webTransformOperations->appendTranslate(floatValueForLength(transform->x(), boxSize.width()), floatValueForLength(transform->y(), boxSize.height()), floatValueForLength(transform->z(), 1));
             break;
         }
         case TransformOperation::ROTATE_X:
@@ -87,35 +89,35 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
         case TransformOperation::ROTATE_3D:
         case TransformOperation::ROTATE: {
             RotateTransformOperation* transform = static_cast<RotateTransformOperation*>(transformOperations.operations()[j].get());
-            webTransformOperations.appendRotate(transform->x(), transform->y(), transform->z(), transform->angle());
+            webTransformOperations->appendRotate(transform->x(), transform->y(), transform->z(), transform->angle());
             break;
         }
         case TransformOperation::SKEW_X:
         case TransformOperation::SKEW_Y:
         case TransformOperation::SKEW: {
             SkewTransformOperation* transform = static_cast<SkewTransformOperation*>(transformOperations.operations()[j].get());
-            webTransformOperations.appendSkew(transform->angleX(), transform->angleY());
+            webTransformOperations->appendSkew(transform->angleX(), transform->angleY());
             break;
         }
         case TransformOperation::MATRIX: {
             MatrixTransformOperation* transform = static_cast<MatrixTransformOperation*>(transformOperations.operations()[j].get());
             TransformationMatrix m = transform->matrix();
-            webTransformOperations.appendMatrix(WebTransformationMatrix(m));
+            webTransformOperations->appendMatrix(WebTransformationMatrix(m));
             break;
         }
         case TransformOperation::MATRIX_3D: {
             Matrix3DTransformOperation* transform = static_cast<Matrix3DTransformOperation*>(transformOperations.operations()[j].get());
             TransformationMatrix m = transform->matrix();
-            webTransformOperations.appendMatrix(WebTransformationMatrix(m));
+            webTransformOperations->appendMatrix(WebTransformationMatrix(m));
             break;
         }
         case TransformOperation::PERSPECTIVE: {
             PerspectiveTransformOperation* transform = static_cast<PerspectiveTransformOperation*>(transformOperations.operations()[j].get());
-            webTransformOperations.appendPerspective(floatValueForLength(transform->perspective(), 0));
+            webTransformOperations->appendPerspective(floatValueForLength(transform->perspective(), 0));
             break;
         }
         case TransformOperation::IDENTITY:
-            webTransformOperations.appendIdentity();
+            webTransformOperations->appendIdentity();
             break;
         case TransformOperation::NONE:
             // Do nothing.
@@ -123,7 +125,7 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
         } // switch
     } // for each operation
 
-    return webTransformOperations;
+    return webTransformOperations.release();
 }
 
 template <class Value, class Keyframe, class Curve>
@@ -153,13 +155,17 @@ template <>
 bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize& boxSize)
 {
     bool canBlend = !lastValue;
-    WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
+    OwnPtr<WebTransformOperations> operations(toWebTransformOperations(*value->value(), boxSize));
+    if (!operations)
+        return false;
     if (!canBlend) {
-        WebTransformOperations lastOperations = toWebTransformOperations(*lastValue->value(), boxSize);
-        canBlend = lastOperations.canBlendWith(operations);
+        OwnPtr<WebTransformOperations> lastOperations(toWebTransformOperations(*lastValue->value(), boxSize));
+        if (!lastOperations)
+            return false;
+        canBlend = lastOperations->canBlendWith(*operations);
     }
     if (canBlend) {
-        curve->add(WebTransformKeyframe(keyTime, operations), timingFunctionType);
+        curve->add(WebTransformKeyframe(keyTime, operations.leakPtr()), timingFunctionType);
         return true;
     }
     return false;
@@ -169,13 +175,17 @@ template <>
 bool appendKeyframeWithCustomBezierTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, double x1, double y1, double x2, double y2, const FloatSize& boxSize)
 {
     bool canBlend = !lastValue;
-    WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
+    OwnPtr<WebTransformOperations> operations(toWebTransformOperations(*value->value(), boxSize));
+    if (!operations)
+        return false;
     if (!canBlend) {
-        WebTransformOperations lastOperations = toWebTransformOperations(*lastValue->value(), boxSize);
-        canBlend = lastOperations.canBlendWith(operations);
+        OwnPtr<WebTransformOperations> lastOperations(toWebTransformOperations(*lastValue->value(), boxSize));
+        if (!lastOperations)
+            return false;
+        canBlend = lastOperations->canBlendWith(*operations);
     }
     if (canBlend) {
-        curve->add(WebTransformKeyframe(keyTime, operations), x1, y1, x2, y2);
+        curve->add(WebTransformKeyframe(keyTime, operations.leakPtr()), x1, y1, x2, y2);
         return true;
     }
     return false;
