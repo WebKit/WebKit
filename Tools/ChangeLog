@@ -1,3 +1,13 @@
+2013-01-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Enable indexed database for development builds
+        https://bugs.webkit.org/show_bug.cgi?id=107299
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable indexed database by default
+        for GTK+ development builds.
+
 2013-01-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Improve table-guessing heuristics

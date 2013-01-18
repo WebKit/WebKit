@@ -185,10 +185,6 @@ webkit.org/b/56132 userscripts [ Skip ]
 # These tests require touch support.
 webkit.org/b/98931 fast/events/touch [ Skip ]
 
-# IndexedDB is not yet enabled.
-webkit.org/b/98932 storage/indexeddb [ Skip ]
-webkit.org/b/98932 http/tests/inspector/indexeddb [ Skip ]
-
 # StorageTracker is not enabled.
 webkit.org/b/98933 storage/domstorage/localstorage/storagetracker [ Skip ]
 
@@ -596,6 +592,11 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
 webkit.org/b/106592 fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
+
+webkit.org/b/107194 storage/indexeddb/cursor-advance-workers.html [ Failure Pass ]
+webkit.org/b/107194 storage/indexeddb/index-basics-workers.html [ Failure Pass ]
+webkit.org/b/107194 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html  [ Failure Pass ]
+webkit.org/b/107194 storage/indexeddb/factory-basics-workers.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1345,6 +1346,27 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 
 webkit.org/b/107257 [ Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
 webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
+
+webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
+webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/index-unique.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/intversion-close-in-oncomplete.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/intversion-close-in-upgradeneeded.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/key-generator.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/lazy-index-population.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/objectstore-basics.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/open-twice-workers.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
+webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Failure ]
+webkit.org/b/107194 storage/indexeddb/transaction-error.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
