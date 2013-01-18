@@ -1,3 +1,26 @@
+2013-01-18  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Use new-style gesture scrolling events for fling and
+        for plugin scrolling: https://bugs.webkit.org/show_bug.cgi?id=106589
+
+        Reviewed by James Robinson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=103952 modified touchscreen
+        scrolling to not use synthetic mouse wheel events. Update the fling facility
+        in WebViewImpl to use these events for touchscreen-initiated flings. Also
+        modify the WebPluginContainerImpl to scroll in response to touchscreen
+        scroll gestures if the plugin does not itself implement gesture events. 
+
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::scrollBy): Handle fling callback conditionally based
+        on initiating device. Touchpad flings generate wheels. Touchscreen flings
+        use gesture events.
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::transferActiveWheelFlingAnimation):
+        * src/WebViewImpl.h:
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient

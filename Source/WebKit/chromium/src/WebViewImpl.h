@@ -879,9 +879,10 @@ private:
     OwnPtr<NavigatorContentUtilsClientImpl> m_navigatorContentUtilsClient;
 #endif
     OwnPtr<WebActiveGestureAnimation> m_gestureAnimation;
-    WebPoint m_lastWheelPosition;
-    WebPoint m_lastWheelGlobalPosition;
+    WebPoint m_positionOnFlingStart;
+    WebPoint m_globalPositionOnFlingStart;
     int m_flingModifier;
+    bool m_flingSourceDevice;
 #if ENABLE(GESTURE_EVENTS)
     OwnPtr<LinkHighlight> m_linkHighlight;
 #endif
