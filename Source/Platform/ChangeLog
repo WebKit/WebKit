@@ -1,3 +1,16 @@
+2013-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the contents of WebVideoFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=106037
+
+        Reviewed by James Robinson.
+
+        This class becomes an empty base class now, used only for the API
+        boundary.
+
+        * chromium/public/WebVideoFrame.h:
+        (WebKit):
+
 2013-01-10  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding the new id attribute to MediaStream and MediaStreamTrack

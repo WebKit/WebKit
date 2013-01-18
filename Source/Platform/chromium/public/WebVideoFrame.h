@@ -36,44 +36,10 @@
 
 namespace WebKit {
 
-// A proxy video frame interface to communicate frame data between chromium
-// and WebKit.
-// Keep in sync with chromium's media::VideoFrame::Format.
+// A base class for the container which holds a media::VideoFrame.
 class WebVideoFrame {
 public:
-    enum {
-        rgbPlane = 0,
-        numRGBPlanes = 1
-    };
-    enum {
-        yPlane = 0,
-        uPlane = 1,
-        vPlane = 2,
-        numYUVPlanes = 3
-    };
-    enum { maxPlanes = 3 };
-
-    enum Format {
-        FormatInvalid = 0,
-        FormatRGB32 = 4,
-        FormatYV12 = 6,
-        FormatYV16 = 7,
-        FormatEmpty = 9,
-        FormatI420 = 11,
-        FormatNativeTexture = 12,
-    };
-
     virtual ~WebVideoFrame() { }
-    virtual Format format() const { return FormatInvalid; }
-    virtual unsigned width() const { return 0; }
-    virtual unsigned height() const { return 0; }
-    virtual unsigned planes() const { return 0; }
-    virtual int stride(unsigned plane) const { return 0; }
-    virtual const void* data(unsigned plane) const { return 0; }
-    virtual unsigned textureId() const { return 0; }
-    virtual unsigned textureTarget() const { return 0; }
-    virtual WebKit::WebRect visibleRect() const { return WebKit::WebRect(); }
-    virtual WebKit::WebSize textureSize() const { return WebKit::WebSize(); }
 };
 
 } // namespace WebKit
