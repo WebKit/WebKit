@@ -1206,7 +1206,7 @@ void RenderLayerCompositor::frameViewDidLayout()
 void RenderLayerCompositor::rootFixedBackgroundsChanged()
 {
     RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
-    if (renderViewBacking->usingTileCache())
+    if (renderViewBacking && renderViewBacking->usingTileCache())
         setCompositingLayersNeedRebuild();
 }
 
