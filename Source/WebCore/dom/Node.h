@@ -675,6 +675,10 @@ public:
 
     void textRects(Vector<IntRect>&) const;
 
+    unsigned connectedSubframeCount() const;
+    void incrementConnectedSubframeCount(unsigned amount = 1);
+    void decrementConnectedSubframeCount(unsigned amount = 1);
+
 private:
     enum NodeFlags {
         IsTextFlag = 1,

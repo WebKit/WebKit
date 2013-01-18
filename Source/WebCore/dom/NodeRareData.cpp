@@ -39,6 +39,7 @@
 namespace WebCore {
 
 struct SameSizeAsNodeRareData {
+    unsigned m_bitfields : 20;
     void* m_pointer[3];
 #if ENABLE(MICRODATA)
     void* m_microData;

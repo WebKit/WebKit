@@ -27,6 +27,7 @@
 #include "LiveNodeList.h"
 #include "MutationObserver.h"
 #include "MutationObserverRegistration.h"
+#include "Page.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
 #if ENABLE(VIDEO_TRACK)
@@ -315,15 +316,30 @@ public:
     }
 #endif
 
+    unsigned connectedSubframeCount() const { return m_connectedFrameCount; }
+    void incrementConnectedSubframeCount(unsigned amount)
+    {
+        m_connectedFrameCount += amount;
+    }
+    void decrementConnectedSubframeCount(unsigned amount)
+    {
+        ASSERT(m_connectedFrameCount);
+        ASSERT(amount <= m_connectedFrameCount);
+        m_connectedFrameCount -= amount;
+    }
+
     // This member function is intentionially not virtual to avoid adding a vtable pointer.
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     NodeRareData(RenderObject* renderer)
         : NodeRareDataBase(renderer)
+        , m_connectedFrameCount(0)
     { }
 
 private:
+    unsigned m_connectedFrameCount : 10; // Must fit Page::maxNumberOfFrames.
+
     OwnPtr<NodeListsNodeData> m_nodeLists;
     OwnPtr<NodeMutationObserverData> m_mutationObserverData;
 
@@ -341,6 +357,9 @@ inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLas
     ownerNode->clearNodeLists();
     return true;
 }
+
+// Ensure the 10 bits reserved for the m_connectedFrameCount cannot overflow
+COMPILE_ASSERT(Page::maxNumberOfFrames < 1024, Frame_limit_should_fit_in_rare_data_count);
 
 } // namespace WebCore
 

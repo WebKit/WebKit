@@ -331,6 +331,11 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
 
     insertBeforeCommon(nextChild, newChild.get());
 
+    if (unsigned count = newChild->connectedSubframeCount()) {
+        for (Node* node = newChild->parentOrHostNode(); node; node = node->parentOrHostNode())
+            node->incrementConnectedSubframeCount(count);
+    }
+
     childrenChanged(true, newChild->previousSibling(), nextChild, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
@@ -449,7 +454,7 @@ static void willRemoveChildren(ContainerNode* container)
         dispatchChildRemovalEvents(child);
     }
 
-    ChildFrameDisconnector(container, ChildFrameDisconnector::DoNotIncludeRoot).disconnect();
+    ChildFrameDisconnector(container).disconnect(ChildFrameDisconnector::DescendantsOnly);
 }
 
 void ContainerNode::disconnectDescendantFrames()
@@ -551,6 +556,11 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
 
     Node* prev = oldChild->previousSibling();
     Node* next = oldChild->nextSibling();
+
+    if (unsigned count = oldChild->connectedSubframeCount()) {
+        for (Node* node = oldChild->parentOrHostNode(); node; node = node->parentOrHostNode())
+            node->decrementConnectedSubframeCount(count);
+    }
 
     removeBetween(prev, next, oldChild);
 
@@ -694,6 +704,11 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
         // FIXME: This method should take a PassRefPtr.
         appendChildToContainer(newChild.get(), this);
         treeScope()->adoptIfNeeded(newChild.get());
+    }
+
+    if (unsigned count = newChild->connectedSubframeCount()) {
+        for (Node* node = newChild->parentOrHostNode(); node; node = node->parentOrHostNode())
+            node->incrementConnectedSubframeCount(count);
     }
 
     childrenChanged(true, last, 0, 1);

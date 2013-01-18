@@ -2604,6 +2604,22 @@ void Node::textRects(Vector<IntRect>& rects) const
     range->textRects(rects);
 }
 
+unsigned Node::connectedSubframeCount() const
+{
+    return hasRareData() ? rareData()->connectedSubframeCount() : 0;
+}
+
+void Node::incrementConnectedSubframeCount(unsigned amount)
+{
+    ASSERT(isContainerNode());
+    ensureRareData()->incrementConnectedSubframeCount(amount);
+}
+
+void Node::decrementConnectedSubframeCount(unsigned amount)
+{
+    rareData()->decrementConnectedSubframeCount(amount);
+}
+
 void Node::registerScopedHTMLStyleChild()
 {
     setHasScopedHTMLStyleChild(true);

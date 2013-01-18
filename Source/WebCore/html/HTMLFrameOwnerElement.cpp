@@ -57,13 +57,22 @@ void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
     // Disconnected frames should not be allowed to load.
     ASSERT(inDocument());
     m_contentFrame = frame;
+
+    for (ContainerNode* node = this; node; node = node->parentOrHostNode())
+        node->incrementConnectedSubframeCount();
 }
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     ASSERT(hasCustomCallbacks());
-    // This causes an unload event thus cannot be a part of removedFrom().
+    // FIXME: Currently we don't do this in removedFrom because this causes an
+    // unload event in the subframe which could execute script that could then
+    // reach up into this document and then attempt to look back down. We should
+    // see if this behavior is really needed as Gecko does not allow this.
     if (Frame* frame = contentFrame()) {
+        for (ContainerNode* node = this; node; node = node->parentOrHostNode())
+            node->decrementConnectedSubframeCount();
+
         RefPtr<Frame> protect(frame);
         frame->loader()->frameDetached();
         frame->disconnectOwnerElement();

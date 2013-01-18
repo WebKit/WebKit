@@ -109,10 +109,10 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode* no
     }
 }
 
-void ChildFrameDisconnector::collectDescendant(ElementShadow* shadow)
+void ChildFrameDisconnector::collectFrameOwners(ElementShadow* shadow)
 {
     for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
-        collectDescendant(root, IncludeRoot);
+        collectFrameOwners(root);
 }
 
 void ChildFrameDisconnector::Target::disconnect()
