@@ -4,21 +4,21 @@ layer at (0,0) size 800x255
   RenderBlock {HTML} at (0,0) size 800x255
     RenderBody {BODY} at (8,16) size 784x223 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline (generated) at (0,0) size 10x19 [color=#008000]
-          RenderText {#text} at (0,0) size 10x19
+        RenderInline (generated) at (0,0) size 10x17 [color=#008000]
+          RenderText {#text} at (0,0) size 10x17
             text run at (0,0) width 10: "T"
-        RenderText {#text} at (10,0) size 19x19
+        RenderText {#text} at (10,0) size 19x17
           text run at (10,0) width 19: "he "
-        RenderInline {STRONG} at (0,0) size 66x19
-          RenderText {#text} at (29,0) size 66x19
+        RenderInline {STRONG} at (0,0) size 66x17
+          RenderText {#text} at (29,0) size 66x17
             text run at (29,0) width 66: "first letter"
-        RenderText {#text} at (95,0) size 300x19
+        RenderText {#text} at (95,0) size 300x17
           text run at (95,0) width 204: " of this paragraph, and only that "
           text run at (299,0) width 96: "one, should be "
-        RenderInline {STRONG} at (0,0) size 38x19
-          RenderText {#text} at (395,0) size 38x19
+        RenderInline {STRONG} at (0,0) size 38x17
+          RenderText {#text} at (395,0) size 38x17
             text run at (395,0) width 38: "green"
-        RenderText {#text} at (433,0) size 761x37
+        RenderText {#text} at (433,0) size 761x35
           text run at (433,0) width 178: ". If this precise combination "
           text run at (611,0) width 150: "does not occur, then the"
           text run at (0,18) width 183: "user agent has failed this test."
@@ -26,49 +26,49 @@ layer at (0,0) size 800x255
         RenderInline (generated) at (0,0) size 20x36 [color=#008000]
           RenderText {#text} at (0,0) size 20x36
             text run at (0,0) width 20: "T"
-        RenderText {#text} at (20,14) size 19x19
-          text run at (20,14) width 19: "he "
-        RenderInline {STRONG} at (0,0) size 66x19
-          RenderText {#text} at (39,14) size 66x19
-            text run at (39,14) width 66: "first letter"
-        RenderText {#text} at (105,14) size 327x19
-          text run at (105,14) width 204: " of this paragraph, and only that "
-          text run at (309,14) width 123: "one, should be in a "
-        RenderInline {STRONG} at (0,0) size 41x19
-          RenderText {#text} at (432,14) size 41x19
-            text run at (432,14) width 41: "larger"
-        RenderText {#text} at (473,14) size 130x19
-          text run at (473,14) width 130: " font size, as well as "
-        RenderInline {STRONG} at (0,0) size 38x19
-          RenderText {#text} at (603,14) size 38x19
-            text run at (603,14) width 38: "green"
-        RenderText {#text} at (641,14) size 733x42
-          text run at (641,14) width 92: ". If this precise"
+        RenderText {#text} at (20,15) size 19x17
+          text run at (20,15) width 19: "he "
+        RenderInline {STRONG} at (0,0) size 66x17
+          RenderText {#text} at (39,15) size 66x17
+            text run at (39,15) width 66: "first letter"
+        RenderText {#text} at (105,15) size 327x17
+          text run at (105,15) width 204: " of this paragraph, and only that "
+          text run at (309,15) width 123: "one, should be in a "
+        RenderInline {STRONG} at (0,0) size 41x17
+          RenderText {#text} at (432,15) size 41x17
+            text run at (432,15) width 41: "larger"
+        RenderText {#text} at (473,15) size 130x17
+          text run at (473,15) width 130: " font size, as well as "
+        RenderInline {STRONG} at (0,0) size 38x17
+          RenderText {#text} at (603,15) size 38x17
+            text run at (603,15) width 38: "green"
+        RenderText {#text} at (641,15) size 733x39
+          text run at (641,15) width 92: ". If this precise"
           text run at (0,37) width 182: "combination does not occur, "
           text run at (182,37) width 237: "then the user agent has failed this test."
       RenderBlock {P} at (0,123) size 784x100
-        RenderInline (generated) at (0,0) size 57x63 [color=#008000]
-          RenderText {#text} at (0,0) size 57x63
-            text run at (0,0) width 57: "\"T"
-        RenderText {#text} at (57,35) size 19x19
-          text run at (57,35) width 19: "he "
-        RenderInline {STRONG} at (0,0) size 131x19
-          RenderText {#text} at (76,35) size 131x19
-            text run at (76,35) width 131: "first two characters"
-        RenderText {#text} at (207,35) size 452x19
-          text run at (207,35) width 129: " in this paragraph (a "
-          text run at (336,35) width 323: "double-quote mark and a capital 'T') should be in a "
-        RenderInline {STRONG} at (0,0) size 83x19
-          RenderText {#text} at (659,35) size 83x19
-            text run at (659,35) width 42: "much "
-            text run at (701,35) width 41: "larger"
-        RenderText {#text} at (742,35) size 771x48
-          text run at (742,35) width 29: " font"
+        RenderInline (generated) at (0,0) size 57x62 [color=#008000]
+          RenderText {#text} at (0,1) size 57x62
+            text run at (0,1) width 57: "\"T"
+        RenderText {#text} at (57,37) size 19x17
+          text run at (57,37) width 19: "he "
+        RenderInline {STRONG} at (0,0) size 131x17
+          RenderText {#text} at (76,37) size 131x17
+            text run at (76,37) width 131: "first two characters"
+        RenderText {#text} at (207,37) size 452x17
+          text run at (207,37) width 129: " in this paragraph (a "
+          text run at (336,37) width 323: "double-quote mark and a capital 'T') should be in a "
+        RenderInline {STRONG} at (0,0) size 83x17
+          RenderText {#text} at (659,37) size 83x17
+            text run at (659,37) width 42: "much "
+            text run at (701,37) width 41: "larger"
+        RenderText {#text} at (742,37) size 771x44
+          text run at (742,37) width 29: " font"
           text run at (0,64) width 246: "size than the rest of the paragraph, and "
-        RenderInline {STRONG} at (0,0) size 38x19
-          RenderText {#text} at (246,64) size 38x19
+        RenderInline {STRONG} at (0,0) size 38x17
+          RenderText {#text} at (246,64) size 38x17
             text run at (246,64) width 38: "green"
-        RenderText {#text} at (284,64) size 770x37
+        RenderText {#text} at (284,64) size 770x35
           text run at (284,64) width 278: ". If this precise combination does not occur, "
           text run at (562,64) width 208: "then the user agent has failed this"
           text run at (0,82) width 25: "test."

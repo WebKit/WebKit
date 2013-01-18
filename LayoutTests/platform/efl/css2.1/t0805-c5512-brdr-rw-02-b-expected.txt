@@ -4,8 +4,8 @@ layer at (0,0) size 800x84
   RenderBlock {HTML} at (0,0) size 800x84
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 230x19
+        RenderText {#text} at (0,0) size 230x17
           text run at (0,0) width 230: "There should be no red on this page:"
       RenderBlock {P} at (0,34) size 784x18 [color=#FF0000]
-        RenderText {#text} at (0,0) size 4x19
+        RenderText {#text} at (0,0) size 4x17
           text run at (0,0) width 4: " "

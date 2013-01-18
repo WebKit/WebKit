@@ -5,5 +5,5 @@ layer at (0,0) size 800x37
     RenderBody {BODY} at (8,8) size 784x21
       RenderBlock {DIV} at (0,0) size 784x21 [color=#000080]
         RenderBlock {DIV} at (0,0) size 784x21 [border: (3px solid #000080) none (3px solid #000080)]
-          RenderText {#text} at (3,3) size 288x19
+          RenderText {#text} at (3,3) size 288x17
             text run at (3,3) width 288: "This box should be open ended at the bottom."

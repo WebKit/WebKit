@@ -4,7 +4,7 @@ layer at (0,0) size 800x344
   RenderBlock {HTML} at (0,0) size 800x344
     RenderBody {BODY} at (8,8) size 784x328
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 412x19
+        RenderText {#text} at (0,0) size 412x17
           text run at (0,0) width 412: "The two diagrams below should be identical, with no red present."
       RenderTable {TABLE} at (0,18) size 218x310
         RenderTableSection {TBODY} at (0,0) size 218x310
@@ -20,19 +20,19 @@ layer at (0,0) size 800x344
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {P} at (3,63) size 100x20 [bgcolor=#0000FF]
+              RenderBlock {P} at (3,62) size 100x21 [bgcolor=#0000FF]
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {P} at (3,103) size 100x20 [bgcolor=#00FFFF]
+              RenderBlock {P} at (3,102) size 100x21 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {P} at (3,143) size 100x20 [bgcolor=#008080]
+              RenderBlock {P} at (3,142) size 100x21 [bgcolor=#008080]
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {UL} at (3,183) size 100x60 [bgcolor=#0000FF]
+              RenderBlock {UL} at (3,182) size 100x61 [bgcolor=#0000FF]
                 RenderListItem {LI} at (0,0) size 100x10
                   RenderText {#text} at (0,0) size 70x10
                     text run at (0,0) width 70: "xxxxxxx"
@@ -45,15 +45,15 @@ layer at (0,0) size 800x344
                 RenderListItem {LI} at (0,50) size 100x10
                   RenderText {#text} at (0,0) size 40x10
                     text run at (0,0) width 40: "xxxx"
-              RenderBlock {P} at (3,263) size 100x20 [bgcolor=#008080]
+              RenderBlock {P} at (3,262) size 100x21 [bgcolor=#008080]
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {P} at (3,283) size 100x20 [bgcolor=#00FFFF]
+              RenderBlock {P} at (3,282) size 100x21 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 70x20
                   text run at (0,0) width 70: "xxxxxxx"
                   text run at (0,10) width 40: "xxxx"
-              RenderBlock {P} at (3,293) size 100x10 [bgcolor=#008080]
+              RenderBlock {P} at (3,292) size 100x11 [bgcolor=#008080]
                 RenderText {#text} at (0,0) size 40x10
                   text run at (0,0) width 40: "xxxx"
             RenderTableCell {TD} at (110,2) size 106x306 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]

@@ -4,7 +4,7 @@ layer at (0,0) size 800x164
   RenderBlock {HTML} at (0,0) size 800x164
     RenderBody {BODY} at (8,8) size 784x148
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 267x19
+        RenderText {#text} at (0,0) size 267x17
           text run at (0,0) width 267: "The next two columns should be identical."
       RenderTable {TABLE} at (0,18) size 138x130
         RenderTableSection {TBODY} at (0,0) size 138x130
@@ -12,22 +12,22 @@ layer at (0,0) size 800x164
             RenderTableCell {TD} at (2,2) size 66x126 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 60x120
                 RenderBlock {P} at (0,0) size 60x12 [color=#0000FF] [bgcolor=#FFA500]
-                  RenderText {#text} at (0,0) size 60x13
+                  RenderText {#text} at (0,0) size 60x12
                     text run at (0,0) width 60: "xxxxx"
                 RenderBlock {P} at (0,12) size 60x24 [color=#00FFFF] [bgcolor=#FFFF00]
-                  RenderText {#text} at (0,12) size 60x13
+                  RenderText {#text} at (0,12) size 60x12
                     text run at (0,12) width 60: "xxxxx"
                 RenderBlock {P} at (0,36) size 60x24 [color=#FF00FF] [bgcolor=#00FF00]
-                  RenderText {#text} at (0,12) size 60x13
+                  RenderText {#text} at (0,12) size 60x12
                     text run at (0,12) width 60: "xxxxx"
                 RenderBlock {P} at (0,60) size 60x24 [color=#FFA500] [bgcolor=#0000FF]
-                  RenderText {#text} at (0,12) size 60x13
+                  RenderText {#text} at (0,12) size 60x12
                     text run at (0,12) width 60: "xxxxx"
                 RenderBlock {P} at (0,84) size 60x24 [color=#FFFF00] [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,12) size 60x13
+                  RenderText {#text} at (0,12) size 60x12
                     text run at (0,12) width 60: "xxxxx"
                 RenderBlock {P} at (0,108) size 60x12 [color=#00FF00] [bgcolor=#FF00FF]
-                  RenderText {#text} at (0,0) size 60x13
+                  RenderText {#text} at (0,0) size 60x12
                     text run at (0,0) width 60: "xxxxx"
             RenderTableCell {TD} at (70,2) size 66x126 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 60x12 [border: (12px solid #0000FF) none]

@@ -1,28 +1,28 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x237
-  RenderBlock {HTML} at (0,0) size 800x237
-    RenderBody {BODY} at (8,16) size 784x213
+layer at (0,0) size 800x238
+  RenderBlock {HTML} at (0,0) size 800x238
+    RenderBody {BODY} at (8,16) size 784x214
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 290x19
+        RenderText {#text} at (0,0) size 290x17
           text run at (0,0) width 290: "The three diagrams below should be identical:"
       RenderBlock {P} at (0,34) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 112x17
+        RenderText {#text} at (0,0) size 112x16
           text run at (0,0) width 112: "xxx xxx"
-        RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
-          RenderText {#text} at (0,16) size 112x17
+        RenderInline {SPAN} at (0,0) size 112x16 [bgcolor=#00FF00]
+          RenderText {#text} at (0,16) size 112x16
             text run at (0,16) width 112: "xxx xxx"
-        RenderText {#text} at (0,32) size 112x17
+        RenderText {#text} at (0,32) size 112x16
           text run at (0,32) width 112: "xxx xxx"
       RenderBlock {P} at (0,98) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 112x17
+        RenderText {#text} at (0,0) size 112x16
           text run at (0,0) width 112: "xxx xxx"
-        RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
-          RenderText {#text} at (0,16) size 112x17
+        RenderInline {SPAN} at (0,0) size 112x16 [bgcolor=#00FF00]
+          RenderText {#text} at (0,16) size 112x16
             text run at (0,16) width 112: "xxx xxx"
-        RenderText {#text} at (0,32) size 112x17
+        RenderText {#text} at (0,32) size 112x16
           text run at (0,32) width 112: "xxx xxx"
-      RenderBlock {DIV} at (0,162) size 784x51
+      RenderBlock {DIV} at (0,162) size 784x52
         RenderImage {IMG} at (0,0) size 48x48
         RenderImage {IMG} at (48,0) size 16x48 [border: (16px solid #FFFF00) none (16px solid #FFFF00) none]
         RenderImage {IMG} at (64,0) size 48x48

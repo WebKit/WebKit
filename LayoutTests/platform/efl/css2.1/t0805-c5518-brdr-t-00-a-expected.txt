@@ -4,8 +4,8 @@ layer at (0,0) size 800x95
   RenderBlock {HTML} at (0,0) size 800x95
     RenderBody {BODY} at (8,16) size 784x63
       RenderBlock {P} at (0,0) size 784x28 [color=#0000FF] [border: (10px double #0000FF) none]
-        RenderText {#text} at (0,10) size 376x19
+        RenderText {#text} at (0,10) size 376x17
           text run at (0,10) width 376: "This paragraph should have two blue lines directly above it."
       RenderBlock {P} at (0,44) size 784x19 [color=#0000FF] [border: (1px solid #0000FF) none]
-        RenderText {#text} at (0,1) size 422x19
+        RenderText {#text} at (0,1) size 422x17
           text run at (0,1) width 422: "This paragraph should have a single thin blue line directly above it."

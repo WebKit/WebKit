@@ -4,18 +4,18 @@ layer at (0,0) size 800x134
   RenderBlock {HTML} at (0,0) size 800x134
     RenderBody {BODY} at (8,16) size 784x108
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 681x19
+        RenderText {#text} at (0,0) size 681x17
           text run at (0,0) width 681: "There should be five numbers, in numerical order, below: on the first line 1, 2 and 3, on the second, 4 and 5."
       RenderBlock {DIV} at (10,34) size 262x74 [color=#000080] [border: (3px solid #0000FF)]
         RenderBlock (floating) {P} at (19,19) size 80x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "1"
         RenderBlock (floating) {P} at (99,19) size 80x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "2"
         RenderBlock (floating) {P} at (19,37) size 80x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "4"
-        RenderText {#text} at (179,19) size 88x37
+        RenderText {#text} at (179,19) size 88x35
           text run at (179,19) width 8: "3"
           text run at (99,37) width 88: "5                    "

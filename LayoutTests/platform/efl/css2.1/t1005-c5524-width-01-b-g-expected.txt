@@ -4,7 +4,7 @@ layer at (0,0) size 800x263
   RenderBlock {HTML} at (0,0) size 800x263
     RenderBody {BODY} at (8,16) size 784x239
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 408x19
+        RenderText {#text} at (0,0) size 408x17
           text run at (0,0) width 408: "The square below should be exactly 100 pixels high on the ruler."
       RenderBlock {DIV} at (0,34) size 784x205
         RenderImage {IMG} at (45,0) size 100x100

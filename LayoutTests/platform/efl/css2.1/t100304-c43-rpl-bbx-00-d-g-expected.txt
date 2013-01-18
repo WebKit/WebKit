@@ -4,7 +4,7 @@ layer at (0,0) size 800x458
   RenderBlock {HTML} at (0,0) size 800x458
     RenderBody {BODY} at (8,16) size 784x426
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 616x19
+        RenderText {#text} at (0,0) size 616x17
           text run at (0,0) width 396: "Below this paragraph there should be a big teal square half the "
           text run at (396,0) width 220: "width of the window and centered."
       RenderBlock {P} at (0,34) size 784x392 [color=#000080]

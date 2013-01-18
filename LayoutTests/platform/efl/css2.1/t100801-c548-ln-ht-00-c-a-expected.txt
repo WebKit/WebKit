@@ -4,14 +4,14 @@ layer at (0,0) size 800x326
   RenderBlock {HTML} at (0,0) size 800x326
     RenderBody {BODY} at (8,16) size 784x298
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 267x19
+        RenderText {#text} at (0,0) size 267x17
           text run at (0,0) width 267: "The two blocks below should be identical:"
       RenderBlock {DIV} at (12,34) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
-        RenderText {#text} at (27,26) size 72x73
-          text run at (27,26) width 72: "X X"
-          text run at (27,74) width 72: "X X"
+        RenderText {#text} at (27,27) size 72x72
+          text run at (27,27) width 72: "X X"
+          text run at (27,75) width 72: "X X"
       RenderBlock {PRE} at (12,172) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
-        RenderText {#text} at (3,3) size 120x121
+        RenderText {#text} at (3,3) size 120x120
           text run at (3,3) width 120: "     "
           text run at (123,3) width 0: " "
           text run at (3,27) width 120: " X X "

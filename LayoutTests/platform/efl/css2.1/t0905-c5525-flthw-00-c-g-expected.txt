@@ -4,7 +4,7 @@ layer at (0,0) size 800x258
   RenderBlock {HTML} at (0,0) size 800x258
     RenderBody {BODY} at (8,16) size 784x234
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 507x19
+        RenderText {#text} at (0,0) size 507x17
           text run at (0,0) width 507: "There should be a complete unbroken drawing of a yin-yang (\x{262F}) symbol below."
       RenderBlock {DIV} at (0,34) size 784x200
         RenderBlock (floating) {DIV} at (0,0) size 100x100
