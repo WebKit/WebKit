@@ -61,6 +61,8 @@ xmlviewer [ Skip ]
 
 Bug(zalbisser) fast/canvas/webgl [ Pass ]
 
+webkit.org/b/107260 fast/canvas/webgl/webgl-composite-modes-repaint.html [ Skip ]
+
 #
 # The following tests are currently failing and need investigation before unskipping.
 #
