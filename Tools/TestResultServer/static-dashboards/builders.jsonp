@@ -6,12 +6,12 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "ash_unittests": {
                 "builders": [
-                    "Win Aura"
+                    "Win Aura Tests (1)"
                 ]
             }, 
             "aura_unittests": {
                 "builders": [
-                    "Win Aura"
+                    "Win Aura Tests (1)"
                 ]
             }, 
             "base_unittests": {
@@ -32,6 +32,7 @@ LOAD_BUILDBOT_DATA([
                     "Win7 Tests (2)", 
                     "XP Tests (3)", 
                     "Vista Tests (1)", 
+                    "Win Aura Tests (2)", 
                     "Vista Tests (3)", 
                     "XP Tests (2)", 
                     "XP Tests (dbg)(2)", 
@@ -43,8 +44,9 @@ LOAD_BUILDBOT_DATA([
                     "Win7 Tests (dbg)(2)", 
                     "Vista Tests (2)", 
                     "Win7 Tests (1)", 
-                    "XP Tests (dbg)(3)", 
-                    "Win Aura"
+                    "Win Aura Tests (3)", 
+                    "Win Aura Tests (1)", 
+                    "XP Tests (dbg)(3)"
                 ]
             }, 
             "cacheinvalidation_unittests": {
@@ -89,9 +91,18 @@ LOAD_BUILDBOT_DATA([
                     "Chrome Frame Tests (ie9)"
                 ]
             }, 
+            "chromedriver2_unittests": {
+                "builders": [
+                    "XP Tests (1)", 
+                    "Win7 Tests (dbg)(1)", 
+                    "Vista Tests (1)", 
+                    "Win7 Tests (1)", 
+                    "XP Tests (dbg)(1)"
+                ]
+            }, 
             "compositor_unittests": {
                 "builders": [
-                    "Win Aura"
+                    "Win Aura Tests (2)"
                 ]
             }, 
             "content_browsertests": {
@@ -101,16 +112,16 @@ LOAD_BUILDBOT_DATA([
                     "XP Tests (dbg)(2)", 
                     "Win7 Tests (dbg)(2)", 
                     "Win7 Tests (1)", 
-                    "Win Aura"
+                    "Win Aura Tests (1)"
                 ]
             }, 
             "content_unittests": {
                 "builders": [
                     "Win7 Tests (dbg)(1)", 
                     "XP Tests (3)", 
+                    "Win Aura Tests (2)", 
                     "Vista Tests (3)", 
                     "Win7 Tests (3)", 
-                    "Win Aura", 
                     "XP Tests (dbg)(1)"
                 ]
             }, 
@@ -165,7 +176,7 @@ LOAD_BUILDBOT_DATA([
                     "Interactive Tests (dbg)", 
                     "Vista Tests (1)", 
                     "Win7 Tests (1)", 
-                    "Win Aura"
+                    "Win Aura Tests (3)"
                 ]
             }, 
             "ipc_tests": {
@@ -301,9 +312,9 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Win7 Tests (dbg)(1)", 
                     "XP Tests (3)", 
+                    "Win Aura Tests (2)", 
                     "Vista Tests (3)", 
                     "Win7 Tests (3)", 
-                    "Win Aura", 
                     "XP Tests (dbg)(1)"
                 ]
             }, 
@@ -311,9 +322,9 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Win7 Tests (dbg)(1)", 
                     "XP Tests (3)", 
+                    "Win Aura Tests (2)", 
                     "Vista Tests (3)", 
                     "Win7 Tests (3)", 
-                    "Win Aura", 
                     "XP Tests (dbg)(1)"
                 ]
             }, 
@@ -375,6 +386,14 @@ LOAD_BUILDBOT_DATA([
                     "Mac 10.6 Tests (dbg)(1)"
                 ]
             }, 
+            "chromedriver2_unittests": {
+                "builders": [
+                    "Mac10.7 Tests (1)", 
+                    "Mac 10.7 Tests (dbg)(1)", 
+                    "Mac10.6 Tests (1)", 
+                    "Mac 10.6 Tests (dbg)(1)"
+                ]
+            }, 
             "content_browsertests": {
                 "builders": [
                     "Mac10.7 Tests (1)", 
@@ -386,6 +405,7 @@ LOAD_BUILDBOT_DATA([
             "content_unittests": {
                 "builders": [
                     "Mac10.6 Tests (2)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.6 Tests (dbg)(4)", 
                     "Mac10.7 Tests (2)", 
                     "Mac 10.7 Tests (dbg)(4)"
@@ -444,6 +464,7 @@ LOAD_BUILDBOT_DATA([
             "media_unittests": {
                 "builders": [
                     "Mac10.7 Tests (1)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.7 Tests (dbg)(2)", 
                     "Mac10.6 Tests (1)", 
                     "Mac 10.6 Tests (dbg)(2)"
@@ -452,6 +473,7 @@ LOAD_BUILDBOT_DATA([
             "net_unittests": {
                 "builders": [
                     "Mac10.6 Tests (3)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.7 Tests (dbg)(2)", 
                     "Mac 10.6 Tests (dbg)(2)", 
                     "Mac10.7 Tests (3)"
@@ -498,6 +520,7 @@ LOAD_BUILDBOT_DATA([
             "sync_unit_tests": {
                 "builders": [
                     "Mac10.6 Tests (2)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.6 Tests (dbg)(4)", 
                     "Mac10.7 Tests (2)", 
                     "Mac 10.7 Tests (dbg)(4)"
@@ -506,6 +529,7 @@ LOAD_BUILDBOT_DATA([
             "ui_unittests": {
                 "builders": [
                     "Mac10.6 Tests (2)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.6 Tests (dbg)(4)", 
                     "Mac10.7 Tests (2)", 
                     "Mac 10.7 Tests (dbg)(4)"
@@ -514,6 +538,7 @@ LOAD_BUILDBOT_DATA([
             "unit_tests": {
                 "builders": [
                     "Mac10.6 Tests (2)", 
+                    "iOS Simulator (dbg)", 
                     "Mac 10.6 Tests (dbg)(4)", 
                     "Mac10.7 Tests (2)", 
                     "Mac 10.7 Tests (dbg)(4)"
@@ -533,43 +558,51 @@ LOAD_BUILDBOT_DATA([
     {
         "name": "ChromiumLinux", 
         "tests": {
-            "Instrumentation tests: Smoke, SmallTest, MediumTest, LargeTest - ChromiumTestShellTest": {
+            "Run tests": {
                 "builders": [
                     "Android Tests (dbg)"
                 ]
             }, 
-            "Instrumentation tests: Smoke, SmallTest, MediumTest, LargeTest - ContentShellTest": {
+            "android_webview_unittests": {
+                "builders": [
+                    "Android Tests (dbg)"
+                ]
+            }, 
+            "androidwebview_instrumentation_tests": {
                 "builders": [
                     "Android Tests (dbg)"
                 ]
             }, 
             "aura_unittests": {
                 "builders": [
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "base_unittests": {
                 "builders": [
+                    "Linux Precise (dbg)", 
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (Precise)", 
+                    "Linux Precise x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "browser_tests": {
                 "builders": [
+                    "Linux Precise (dbg)", 
                     "Linux Tests (dbg)(1)", 
                     "Linux Tests x64", 
-                    "Linux (Precise)"
+                    "Linux Precise x64", 
+                    "Linux Aura"
                 ]
             }, 
             "cacheinvalidation_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "cc_unittests": {
@@ -579,17 +612,29 @@ LOAD_BUILDBOT_DATA([
                     "Android Tests (dbg)"
                 ]
             }, 
+            "chromedriver2_unittests": {
+                "builders": [
+                    "Linux Tests (dbg)(2)", 
+                    "Linux Tests x64"
+                ]
+            }, 
+            "chromiumtestshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (dbg)"
+                ]
+            }, 
             "compositor_unittests": {
                 "builders": [
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "content_browsertests": {
                 "builders": [
+                    "Linux Precise (dbg)", 
                     "Linux Tests (dbg)(1)", 
                     "Linux Tests x64", 
-                    "Linux (Precise)", 
-                    "Linux (aura)"
+                    "Linux Precise x64", 
+                    "Linux Aura"
                 ]
             }, 
             "content_unittests": {
@@ -598,7 +643,12 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
+                ]
+            }, 
+            "contentshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (dbg)"
                 ]
             }, 
             "crypto_unittests": {
@@ -606,7 +656,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "dbus_unittests": {
@@ -620,14 +670,14 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "googleurl_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "gpu_unittests": {
@@ -635,13 +685,14 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "interactive_ui_tests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
-                    "Linux Tests x64"
+                    "Linux Tests x64", 
+                    "Linux Aura"
                 ]
             }, 
             "ipc_tests": {
@@ -650,14 +701,14 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "jingle_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "media_unittests": {
@@ -665,7 +716,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "net_unittests": {
@@ -673,34 +724,35 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests (dbg)(1)", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "ppapi_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "printing_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "remoting_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
                     "Linux Tests x64", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "sandbox_linux_unittests": {
                 "builders": [
+                    "Linux Precise (dbg)", 
                     "Linux Tests x64", 
-                    "Linux (Precise)"
+                    "Linux Precise x64"
                 ]
             }, 
             "sql_unittests": {
@@ -709,7 +761,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "sync_integration_tests": {
@@ -723,7 +775,12 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
+                ]
+            }, 
+            "test_report": {
+                "builders": [
+                    "Android Tests (dbg)"
                 ]
             }, 
             "ui_unittests": {
@@ -732,7 +789,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "unit_tests": {
@@ -741,12 +798,12 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "views_unittests": {
                 "builders": [
-                    "Linux (aura)"
+                    "Linux Aura"
                 ]
             }, 
             "webkit_compositor_bindings_unittests": {
@@ -792,6 +849,12 @@ LOAD_BUILDBOT_DATA([
                     "Linux ChromiumOS Tests (1)"
                 ]
             }, 
+            "chromeos_unittests": {
+                "builders": [
+                    "Linux ChromiumOS Tests (dbg)(1)", 
+                    "Linux ChromiumOS Tests (1)"
+                ]
+            }, 
             "compositor_unittests": {
                 "builders": [
                     "Linux ChromiumOS Tests (dbg)(1)", 
@@ -817,6 +880,12 @@ LOAD_BUILDBOT_DATA([
                 ]
             }, 
             "dbus_unittests": {
+                "builders": [
+                    "Linux ChromiumOS Tests (dbg)(1)", 
+                    "Linux ChromiumOS Tests (1)"
+                ]
+            }, 
+            "device_unittests": {
                 "builders": [
                     "Linux ChromiumOS Tests (dbg)(1)", 
                     "Linux ChromiumOS Tests (1)"
@@ -882,6 +951,12 @@ LOAD_BUILDBOT_DATA([
                     "Linux ChromiumOS Tests (1)"
                 ]
             }, 
+            "sandbox_linux_unittests": {
+                "builders": [
+                    "Linux ChromiumOS Tests (dbg)(1)", 
+                    "Linux ChromiumOS Tests (1)"
+                ]
+            }, 
             "sql_unittests": {
                 "builders": [
                     "Linux ChromiumOS Tests (dbg)(1)", 
@@ -918,54 +993,121 @@ LOAD_BUILDBOT_DATA([
     {
         "name": "ChromiumGPU", 
         "tests": {
-            "gl_tests": {
+            "content_browsertests": {
                 "builders": [
+                    "Mac 10.8 Debug (Intel)", 
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
                     "Win7 Debug (NVIDIA)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
                     "Mac Debug (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
                     "Linux Debug (NVIDIA)", 
+                    "Win7 Release (ATI)", 
+                    "Mac Retina Debug", 
+                    "Linux Release (NVIDIA)"
+                ]
+            }, 
+            "gl_tests": {
+                "builders": [
+                    "Mac 10.8 Debug (Intel)", 
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
+                    "Win7 Debug (NVIDIA)", 
+                    "Linux Release (ATI)", 
+                    "Mac Release (Intel)", 
+                    "Mac Debug (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
+                    "Win7 Release (NVIDIA)", 
+                    "Linux Debug (NVIDIA)", 
+                    "Win7 Release (ATI)", 
+                    "Mac Retina Debug", 
                     "Linux Release (NVIDIA)"
                 ]
             }, 
             "gles2_conform_test": {
                 "builders": [
+                    "Mac 10.8 Debug (Intel)", 
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
                     "Win7 Debug (NVIDIA)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
                     "Mac Debug (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
                     "Linux Debug (NVIDIA)", 
+                    "Win7 Release (ATI)", 
+                    "Mac Retina Debug", 
                     "Linux Release (NVIDIA)"
                 ]
             }, 
             "gpu_frame_rate_test": {
                 "builders": [
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
+                    "Win7 Release (ATI)", 
                     "Linux Release (NVIDIA)"
                 ]
             }, 
             "gpu_latency_tests": {
                 "builders": [
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
+                    "Win7 Release (ATI)", 
                     "Linux Release (NVIDIA)"
                 ]
             }, 
             "gpu_tests": {
                 "builders": [
+                    "Mac 10.8 Debug (Intel)", 
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
                     "Win7 Debug (NVIDIA)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
                     "Mac Debug (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
                     "Linux Debug (NVIDIA)", 
+                    "Win7 Release (ATI)", 
+                    "Mac Retina Debug", 
                     "Linux Release (NVIDIA)"
                 ]
             }, 
             "gpu_throughput_tests": {
                 "builders": [
+                    "Mac Release (ATI)", 
+                    "Win7 Release (Intel)", 
+                    "Linux Release (ATI)", 
                     "Mac Release (Intel)", 
+                    "Mac 10.8 Release (ATI)", 
+                    "Mac Retina Release", 
+                    "Mac 10.8 Release (Intel)", 
                     "Win7 Release (NVIDIA)", 
+                    "Win7 Release (ATI)", 
                     "Linux Release (NVIDIA)"
                 ]
             }
@@ -977,86 +1119,53 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "content_unittests": {
                 "builders": [
-                    "Linux Audio", 
-                    "Win7 Audio"
+                    "Win7 Audio", 
+                    "Linux Audio"
                 ]
             }, 
             "gl_tests": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "WinXP Debug (NVIDIA)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
-                    "Mac Retina Debug", 
+                    "WinXP Debug (NVIDIA)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "gles2_conform_test": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "WinXP Debug (NVIDIA)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
-                    "Mac Retina Debug", 
+                    "WinXP Debug (NVIDIA)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "gpu_frame_rate_test": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "gpu_latency_tests": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "gpu_tests": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "WinXP Debug (NVIDIA)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
-                    "Mac Retina Debug", 
+                    "WinXP Debug (NVIDIA)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "gpu_throughput_tests": {
                 "builders": [
-                    "Mac Release (ATI)", 
-                    "Linux Release (ATI)", 
-                    "Mac Retina Release", 
-                    "Win7 Release (Intel)", 
-                    "Win7 Release (ATI)", 
                     "Linux Release (Intel)", 
                     "WinXP Release (NVIDIA)"
                 ]
             }, 
             "media_unittests": {
                 "builders": [
-                    "Linux Audio", 
-                    "Win7 Audio"
+                    "Win7 Audio", 
+                    "Linux Audio"
                 ]
             }
         }, 
@@ -1083,6 +1192,22 @@ LOAD_BUILDBOT_DATA([
     {
         "name": "ChromiumWebkit", 
         "tests": {
+            "Run tests": {
+                "builders": [
+                    "WebKit Android (GalaxyNexus)", 
+                    "Android Tests (dbg)"
+                ]
+            }, 
+            "android_webview_unittests": {
+                "builders": [
+                    "Android Tests (dbg)"
+                ]
+            }, 
+            "aura_unittests": {
+                "builders": [
+                    "Linux Aura"
+                ]
+            }, 
             "base_unittests": {
                 "builders": [
                     "Android Tests (dbg)"
@@ -1118,9 +1243,15 @@ LOAD_BUILDBOT_DATA([
             }, 
             "content_browsertests": {
                 "builders": [
+                    "GPU Win7 (NVIDIA)", 
                     "Win7 (dbg)", 
+                    "GPU Linux (NVIDIA)", 
                     "Linux Tests", 
                     "Mac10.6 Tests", 
+                    "GPU Mac10.7", 
+                    "GPU Win7 (dbg) (NVIDIA)", 
+                    "GPU Mac10.7 (dbg)", 
+                    "GPU Linux (dbg) (NVIDIA)", 
                     "Mac10.8 Tests"
                 ]
             }, 
@@ -1131,105 +1262,8 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
-                ]
-            }, 
-            "dromaeo_domcoreattr_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_domcoremodify_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_domcorequery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_domcoretraverse_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibattrjquery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibattrprototype_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibeventjquery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibeventprototype_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibmodifyjquery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibmodifyprototype_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibstylejquery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibstyleprototype_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibtraversejquery_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "dromaeo_jslibtraverseprototype_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
                 ]
             }, 
             "gl_tests": {
@@ -1298,6 +1332,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
                 ]
             }, 
@@ -1309,6 +1344,8 @@ LOAD_BUILDBOT_DATA([
                     "WebKit Win7 (dbg)(2)", 
                     "WebKit (Content Shell) Linux", 
                     "WebKit (Content Shell) Win", 
+                    "WebKit Android (GalaxyNexus)", 
+                    "WebKit Android (GalaxyNexus)", 
                     "WebKit Mac10.7 (dbg)", 
                     "WebKit Mac10.6 (dbg)", 
                     "WebKit Linux", 
@@ -1370,17 +1407,11 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
                 ]
             }, 
             "startup_test": {
-                "builders": [
-                    "Win7 Perf", 
-                    "Mac10.6 Perf", 
-                    "Linux Perf"
-                ]
-            }, 
-            "sunspider_test": {
                 "builders": [
                     "Win7 Perf", 
                     "Mac10.6 Perf", 
@@ -1394,12 +1425,19 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
                 ]
             }, 
             "tab_switching_test": {
                 "builders": [
                     "Mac10.6 Perf"
+                ]
+            }, 
+            "test_report": {
+                "builders": [
+                    "WebKit Android (GalaxyNexus)", 
+                    "Android Tests (dbg)"
                 ]
             }, 
             "test_shell_tests": {
@@ -1427,6 +1465,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
                 ]
             }, 
@@ -1437,12 +1476,8 @@ LOAD_BUILDBOT_DATA([
                     "Linux Tests", 
                     "Mac10.6 Tests", 
                     "Android Tests (dbg)", 
+                    "Linux Aura", 
                     "Mac10.8 Tests"
-                ]
-            }, 
-            "v8_benchmark_test": {
-                "builders": [
-                    "Mac10.6 Perf"
                 ]
             }, 
             "views_unittests": {
@@ -1477,6 +1512,1008 @@ LOAD_BUILDBOT_DATA([
             }
         }, 
         "url": "http://build.chromium.org/p/chromium.webkit"
+    }, 
+    {
+        "name": "ChromiumFYI", 
+        "tests": {
+            "Run tests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "android_webview_unittests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "androidwebview_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "base_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "base_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "browser_tests": {
+                "builders": [
+                    "Linux ARM Tests (Panda)", 
+                    "Win8 Tests (2)", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Vista Tests (dbg)(2)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)"
+                ]
+            }, 
+            "browser_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "buildrunner_tests": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "cacheinvalidation_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "cacheinvalidation_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "cc_unittests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "chrome_frame_net_tests": {
+                "builders": [
+                    "Chrome Frame Tests (ie6)(peruser)", 
+                    "Chrome Frame Tests (ie8)(peruser)", 
+                    "Chrome Frame Tests (ie7)(peruser)", 
+                    "Chrome Frame Tests (ie8)(dbg)"
+                ]
+            }, 
+            "chrome_frame_tests": {
+                "builders": [
+                    "Chrome Frame Tests (ie6)(peruser)", 
+                    "Chrome Frame Tests (ie8)(peruser)", 
+                    "Chrome Frame Tests (ie7)(peruser)", 
+                    "Chrome Frame Tests (ie8)(dbg)"
+                ]
+            }, 
+            "chrome_frame_unittests": {
+                "builders": [
+                    "Chrome Frame Tests (ie6)(peruser)", 
+                    "Chrome Frame Tests (ie8)(peruser)", 
+                    "Chrome Frame Tests (ie7)(peruser)", 
+                    "Chrome Frame Tests (ie8)(dbg)"
+                ]
+            }, 
+            "chromedriver2_unittests": {
+                "builders": [
+                    "Linux ARM Tests (Panda)"
+                ]
+            }, 
+            "chromiumtestshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "content_browsertests": {
+                "builders": [
+                    "Linux ARM Tests (Panda)", 
+                    "Win8 Tests (2)", 
+                    "Chromium Win (aura)", 
+                    "Vista Tests (dbg)(2)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)"
+                ]
+            }, 
+            "content_browsertests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "content_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "content_unittests_1": {
+                "builders": [
+                    "Chromium Linux TSan v2"
+                ]
+            }, 
+            "content_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "contentshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "courgette_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "courgette_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Windows Buildrunner"
+                ]
+            }, 
+            "crypto_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "crypto_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "dbus_unittests": {
+                "builders": [
+                    "Linux ARM Tests (Panda)"
+                ]
+            }, 
+            "dbus_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "device_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "googleurl_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "googleurl_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "gpu_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "gpu_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "installer_util_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "interactive_ui_tests": {
+                "builders": [
+                    "Linux ARM Tests (Panda)"
+                ]
+            }, 
+            "ipc_tests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "ipc_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "jingle_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "jingle_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "media_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "media_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "memory test: base": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: browser_tests": {
+                "builders": [
+                    "Chromium Linux Browser (valgrind) (2)", 
+                    "Windows Browser (DrMemory) (6)", 
+                    "Chromium Linux Browser (valgrind) (4)", 
+                    "Windows Browser (DrMemory) (2)", 
+                    "Windows Browser (DrMemory) (3)", 
+                    "Chromium Linux Browser (valgrind) (1)", 
+                    "Windows Browser (DrMemory) (5)", 
+                    "Chromium Linux Browser (valgrind) (3)", 
+                    "Windows Browser (DrMemory) (4)", 
+                    "Windows Browser (DrMemory) (1)"
+                ]
+            }, 
+            "memory test: browser_tests_1": {
+                "builders": [
+                    "Chromium Linux Browser (valgrind) (2)", 
+                    "Chromium Linux Browser (valgrind) (4)", 
+                    "Chromium Linux Browser (valgrind) (1)", 
+                    "Chromium Linux Browser (valgrind) (3)"
+                ]
+            }, 
+            "memory test: content": {
+                "builders": [
+                    "Chromium Mac 10.6 (tsan)"
+                ]
+            }, 
+            "memory test: content_browsertests": {
+                "builders": [
+                    "Chromium Linux Browser (valgrind) (2)", 
+                    "Chromium Linux Browser (valgrind) (4)", 
+                    "Chromium Linux Browser (valgrind) (1)", 
+                    "Chromium Linux Browser (valgrind) (3)"
+                ]
+            }, 
+            "memory test: crypto": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: device_unittests": {
+                "builders": [
+                    "Linux Tests (tsan RV)"
+                ]
+            }, 
+            "memory test: googleurl": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: interactive_ui": {
+                "builders": [
+                    "Chromium Linux Reliability (valgrind)"
+                ]
+            }, 
+            "memory test: interactive_ui_1": {
+                "builders": [
+                    "Chromium Linux Reliability (valgrind)"
+                ]
+            }, 
+            "memory test: ipc": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: media": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: net": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: printing": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: remoting": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: sql": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: sync": {
+                "builders": [
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)"
+                ]
+            }, 
+            "memory test: ui_unittests": {
+                "builders": [
+                    "Chromium Mac 10.6 (tsan)", 
+                    "Linux Tests (tsan RV)"
+                ]
+            }, 
+            "memory test: unit": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Linux Tests (tsan RV)", 
+                    "Windows Tests (DrMemory pattern)"
+                ]
+            }, 
+            "memory test: unit_1": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (DrMemory full)", 
+                    "Linux Tests (tsan RV)"
+                ]
+            }, 
+            "memory test: unit_2": {
+                "builders": [
+                    "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (DrMemory full)"
+                ]
+            }, 
+            "memory test: unit_3": {
+                "builders": [
+                    "Windows Tests (DrMemory full)"
+                ]
+            }, 
+            "memory test: unit_4": {
+                "builders": [
+                    "Windows Tests (DrMemory full)"
+                ]
+            }, 
+            "memory test: unit_5": {
+                "builders": [
+                    "Windows Tests (DrMemory full)"
+                ]
+            }, 
+            "memory_test": {
+                "builders": [
+                    "Chromium Vista Memory", 
+                    "Chromium Linux Memory", 
+                    "Chromium Mac Memory"
+                ]
+            }, 
+            "mini_installer_test": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "mini_installer_test_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Windows Buildrunner"
+                ]
+            }, 
+            "net_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "net_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "new_tab_ui_cold_test": {
+                "builders": [
+                    "Chromium Linux Perf Annotator"
+                ]
+            }, 
+            "new_tab_ui_warm_test": {
+                "builders": [
+                    "Chromium Linux Perf Annotator"
+                ]
+            }, 
+            "ppapi_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "ppapi_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "printing_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "printing_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "remoting_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "remoting_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Mac Buildrunner", 
+                    "Chromium Windows Buildrunner", 
+                    "Chromium Linux Buildrunner", 
+                    "Chromium Mac 10.8 Buildrunner"
+                ]
+            }, 
+            "run_unittests_only": {
+                "builders": [
+                    "Linux Coverage (dbg)"
+                ]
+            }, 
+            "sandbox_linux_unittests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)"
+                ]
+            }, 
+            "sbox_integration_tests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "sbox_integration_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Windows Buildrunner"
+                ]
+            }, 
+            "sbox_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "sbox_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Windows Buildrunner"
+                ]
+            }, 
+            "sbox_validation_tests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "sbox_validation_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Windows Buildrunner"
+                ]
+            }, 
+            "sql_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "sql_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "startup_test": {
+                "builders": [
+                    "Chromium Linux Perf Annotator"
+                ]
+            }, 
+            "sync_unit_tests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "sync_unit_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "test_report": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "ui_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Win ASAN Tests (1)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "ui_unittests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "unit_tests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Linux Redux", 
+                    "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Win ASAN Tests (2)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "unit_tests_buildrunner_ignore": {
+                "builders": [
+                    "Chromium Linux Buildrunner"
+                ]
+            }, 
+            "views_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
+                ]
+            }, 
+            "webkit_compositor_bindings_unittests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Android Tests (ICS GalaxyNexus)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)", 
+                    "Android Asan Tests (dbg)"
+                ]
+            }
+        }, 
+        "url": "http://build.chromium.org/p/chromium.fyi"
     }, 
     {
         "name": "webkit.org", 

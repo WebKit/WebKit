@@ -105,6 +105,7 @@ def main():
         {'name': 'ChromiumGPUFYI', 'url': 'http://build.chromium.org/p/chromium.gpu.fyi'},
         {'name': 'ChromiumPerfAv', 'url': 'http://build.chromium.org/p/chromium.perf_av'},
         {'name': 'ChromiumWebkit', 'url': 'http://build.chromium.org/p/chromium.webkit'},
+        {'name': 'ChromiumFYI', 'url': 'http://build.chromium.org/p/chromium.fyi'},
         {'name': 'webkit.org', 'url': 'http://build.webkit.org'},
     ]
 
