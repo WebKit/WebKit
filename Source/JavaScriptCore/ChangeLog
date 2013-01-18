@@ -1,5 +1,23 @@
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
+        Harden ArithDiv of integers fix-up by inserting Int32ToDouble node directly
+        https://bugs.webkit.org/show_bug.cgi?id=107321
+
+        Reviewed by  Filip Pizlo.
+
+        Split out the Int32ToDouble node insertion from fixDoubleEdge() and used it directly when we're fixing up
+        an ArithDiv node with integer inputs and output for platforms that don't have integer division.
+        Since we are checking that our inputs should be ints, we can just insert the Int32ToDouble node
+        without any further checks.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
         Fix up of ArithDiv nodes for non-x86 CPUs is broken
         https://bugs.webkit.org/show_bug.cgi?id=107309
 
