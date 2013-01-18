@@ -117,6 +117,37 @@ static Frame* frameForScriptExecutionContext(ScriptExecutionContext* context)
     return frame;
 }
 
+InspectorInstrumentationCookie::InspectorInstrumentationCookie()
+    : m_instrumentingAgents(0)
+    , m_timelineAgentId(0)
+{
+}
+
+InspectorInstrumentationCookie::InspectorInstrumentationCookie(InstrumentingAgents* agents, int timelineAgentId)
+    : m_instrumentingAgents(agents)
+    , m_timelineAgentId(timelineAgentId)
+{
+}
+
+InspectorInstrumentationCookie::InspectorInstrumentationCookie(const InspectorInstrumentationCookie& other)
+    : m_instrumentingAgents(other.m_instrumentingAgents)
+    , m_timelineAgentId(other.m_timelineAgentId)
+{
+}
+
+InspectorInstrumentationCookie& InspectorInstrumentationCookie::operator=(const InspectorInstrumentationCookie& other)
+{
+    if (this != &other) {
+        m_instrumentingAgents = other.m_instrumentingAgents;
+        m_timelineAgentId = other.m_timelineAgentId;
+    }
+    return *this;
+}
+
+InspectorInstrumentationCookie::~InspectorInstrumentationCookie()
+{
+}
+
 void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, DOMWrapperWorld* world)
 {
     InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent();
@@ -374,7 +405,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willHandleEventImpl(Ins
 
 void InspectorInstrumentation::didHandleEventImpl(const InspectorInstrumentationCookie& cookie)
 {
-    cancelPauseOnNativeEvent(cookie.first);
+    cancelPauseOnNativeEvent(cookie.instrumentingAgents());
 }
 
 void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentationCookie& cookie)
@@ -436,7 +467,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(Instr
 
 void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCookie& cookie)
 {
-    cancelPauseOnNativeEvent(cookie.first);
+    cancelPauseOnNativeEvent(cookie.instrumentingAgents());
 
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireTimer();
@@ -472,13 +503,10 @@ InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(Instrume
 
 void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCookie& cookie, RenderObject* root)
 {
-    if (!cookie.first)
-        return;
-
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didLayout(root);
 
-    if (InspectorPageAgent* pageAgent = cookie.first->inspectorPageAgent())
+    if (InspectorPageAgent* pageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
         pageAgent->didLayout();
 }
 
@@ -513,7 +541,7 @@ void InspectorInstrumentation::didPaintImpl(const InspectorInstrumentationCookie
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didPaint(rect);
-    if (InspectorPageAgent* pageAgent = cookie.first ? cookie.first->inspectorPageAgent() : 0)
+    if (InspectorPageAgent* pageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
         pageAgent->didPaint(context, rect);
 }
 
@@ -557,9 +585,7 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didRecalculateStyle();
-    InstrumentingAgents* instrumentingAgents = cookie.first;
-    if (!instrumentingAgents)
-        return;
+    InstrumentingAgents* instrumentingAgents = cookie.instrumentingAgents();
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didRecalculateStyle();
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
@@ -587,7 +613,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(Instr
 
 void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCookie& cookie, bool matched)
 {
-    InspectorCSSAgent* cssAgent = cookie.first->inspectorCSSAgent();
+    InspectorCSSAgent* cssAgent = cookie.instrumentingAgents()->inspectorCSSAgent();
     if (cssAgent)
         cssAgent->didMatchRule(matched);
 }
@@ -605,7 +631,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(Ins
 
 void InspectorInstrumentation::didProcessRuleImpl(const InspectorInstrumentationCookie& cookie)
 {
-    InspectorCSSAgent* cssAgent = cookie.first->inspectorCSSAgent();
+    InspectorCSSAgent* cssAgent = cookie.instrumentingAgents()->inspectorCSSAgent();
     if (cssAgent)
         cssAgent->didProcessRule();
 }
@@ -715,9 +741,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
         timelineAgent->didReceiveResourceResponse();
     if (!loader)
         return;
-    InstrumentingAgents* instrumentingAgents = cookie.first;
-    if (!instrumentingAgents)
-        return;
+    InstrumentingAgents* instrumentingAgents = cookie.instrumentingAgents();
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didReceiveResponse(identifier, loader, response, resourceLoader);
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
@@ -1255,10 +1279,10 @@ void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)
 {
-    if (!cookie.first)
+    if (!cookie.instrumentingAgents())
         return 0;
-    InspectorTimelineAgent* timelineAgent = cookie.first->inspectorTimelineAgent();
-    if (timelineAgent && timelineAgent->id() == cookie.second)
+    InspectorTimelineAgent* timelineAgent = cookie.instrumentingAgents()->inspectorTimelineAgent();
+    if (timelineAgent && cookie.hasMatchingTimelineAgentId(timelineAgent->id()))
         return timelineAgent;
     return 0;
 }

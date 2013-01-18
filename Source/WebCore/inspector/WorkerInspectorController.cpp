@@ -94,7 +94,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
     : m_workerContext(workerContext)
     , m_stateClient(adoptPtr(new WorkerStateClient(workerContext)))
     , m_state(adoptPtr(new InspectorCompositeState(m_stateClient.get())))
-    , m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
+    , m_instrumentingAgents(InstrumentingAgents::create())
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
     , m_runtimeAgent(0)
 {
@@ -129,6 +129,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
  
 WorkerInspectorController::~WorkerInspectorController()
 {
+    m_instrumentingAgents->reset();
     disconnectFrontend();
 }
 
