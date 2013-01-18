@@ -485,6 +485,8 @@ webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.h
 
 webkit.org/b/107257 [ Debug ] fast/js/toString-stack-overflow.html [ Crash ]
 
+webkit.org/b/107261 [ Debug ] dom/xhtml/level2/html/HTMLInputElement20.xhtml [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1343,6 +1345,9 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 
 webkit.org/b/106997 [ Debug ] fast/dom/MicroData/properties-collection-namedgetter-with-invalid-name.html [ Failure ]
 webkit.org/b/106997 [ Debug ] fast/dom/MicroData/propertiescollection-crash.html [ Failure ]
+
+webkit.org/b/107257 [ Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
+webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
