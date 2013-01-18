@@ -96,13 +96,14 @@ void GLXTransportSurface::swapBuffers()
 
 void GLXTransportSurface::destroy()
 {
+    GLPlatformSurface::destroy();
+
     if (m_bufferHandle) {
         m_nativeResource->destroyWindow(m_bufferHandle);
         m_bufferHandle = 0;
         m_drawable = 0;
     }
 
-    m_nativeResource = nullptr;
     m_configSelector = nullptr;
 }
 
@@ -168,7 +169,6 @@ void GLXPBuffer::freeResources()
     }
 
     m_configSelector = nullptr;
-    m_nativeResource = nullptr;
 }
 
 void GLXPBuffer::setGeometry(const IntRect& newRect)

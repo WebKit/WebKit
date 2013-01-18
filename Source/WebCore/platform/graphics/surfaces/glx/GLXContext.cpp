@@ -110,6 +110,7 @@ bool GLXOffScreenContext::platformMakeCurrent(GLPlatformSurface* surface)
 void GLXOffScreenContext::platformReleaseCurrent()
 {
     glXMakeCurrent(m_display, 0, 0);
+    m_display = 0;
 }
 
 void GLXOffScreenContext::freeResources()
@@ -118,7 +119,6 @@ void GLXOffScreenContext::freeResources()
         glXDestroyContext(m_display, m_contextHandle);
 
     m_contextHandle = 0;
-    m_display = 0;
 }
 
 void GLXOffScreenContext::destroy()

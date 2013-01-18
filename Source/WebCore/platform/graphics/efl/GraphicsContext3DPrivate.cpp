@@ -74,14 +74,13 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 void GraphicsContext3DPrivate::releaseResources()
 {
     // Release the current context and drawable only after destroying any associated gl resources.
-    if (m_platformContext)
-        m_platformContext->destroy();
-
     if (m_platformSurface)
         m_platformSurface->destroy();
 
-    if (m_platformContext)
+    if (m_platformContext) {
+        m_platformContext->destroy();
         m_platformContext->releaseCurrent();
+    }
 }
 
 bool GraphicsContext3DPrivate::createSurface(PageClientEfl*, bool)

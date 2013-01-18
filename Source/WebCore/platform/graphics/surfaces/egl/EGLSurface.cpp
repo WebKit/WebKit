@@ -108,10 +108,9 @@ void EGLWindowTransportSurface::swapBuffers()
 
 void EGLWindowTransportSurface::destroy()
 {
+    GLPlatformSurface::destroy();
     m_nativeResource->destroyWindow(m_bufferHandle);
     freeEGLResources();
-    m_nativeResource = nullptr;
-    m_configSelector = nullptr;
     m_bufferHandle = 0;
 }
 
