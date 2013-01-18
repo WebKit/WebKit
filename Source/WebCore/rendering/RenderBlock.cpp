@@ -2657,8 +2657,10 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
         // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
         // it has static position.
         markFixedPositionObjectForLayoutIfNeeded(r);
-        if (fixedPositionObjectsOnly)
+        if (fixedPositionObjectsOnly) {
+            r->layoutIfNeeded();
             continue;
+        }
 
         // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
