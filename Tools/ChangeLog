@@ -1,3 +1,9 @@
+2013-01-18  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed, add my secondary email address to the list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-18  Dan Carney  <dcarney@google.com>
 
         [chromium] move pointerlock functions to TestRunner library
