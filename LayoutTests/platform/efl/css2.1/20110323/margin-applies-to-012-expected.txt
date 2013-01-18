@@ -4,9 +4,9 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 437x19
+        RenderText {#text} at (0,0) size 437x17
           text run at (0,0) width 437: "Test passes if there is space between the blue and orange lines below."
-layer at (8,50) size 340x343
-  RenderBlock (positioned) {DIV} at (8,50) size 340x343 [border: (10px solid #0000FF)]
+layer at (8,50) size 340x344
+  RenderBlock (positioned) {DIV} at (8,50) size 340x344 [border: (10px solid #0000FF)]
     RenderBlock {DIV} at (60,60) size 220x220 [border: (10px solid #FFA500)]
     RenderText {#text} at (0,0) size 0x0

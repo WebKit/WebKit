@@ -4,11 +4,11 @@ layer at (0,0) size 800x118
   RenderBlock {HTML} at (0,0) size 800x118
     RenderBody {BODY} at (8,16) size 784x86
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 289x19
+        RenderText {#text} at (0,0) size 289x17
           text run at (0,0) width 289: "The following paragraphs should be identical:"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 197x19
+        RenderText {#text} at (0,0) size 197x17
           text run at (0,0) width 197: "This should be in a bold font."
       RenderBlock {P} at (0,68) size 784x18
-        RenderText {#text} at (0,0) size 197x19
+        RenderText {#text} at (0,0) size 197x17
           text run at (0,0) width 197: "This should be in a bold font."

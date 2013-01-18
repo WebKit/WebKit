@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x251
-  RenderBlock {HTML} at (0,0) size 800x251
-    RenderBody {BODY} at (8,16) size 784x227
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,16) size 784x228
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 286x19
+        RenderText {#text} at (0,0) size 286x17
           text run at (0,0) width 286: "There must be a green box below and no red."
-      RenderBlock {DIV} at (0,34) size 784x193
+      RenderBlock {DIV} at (0,34) size 784x194
         RenderEmbeddedObject {OBJECT} at (0,0) size 100x190 [bgcolor=#008000] [border: (20px solid #FF0000)]
           layer at (0,0) size 60x150
             RenderView at (0,0) size 60x150

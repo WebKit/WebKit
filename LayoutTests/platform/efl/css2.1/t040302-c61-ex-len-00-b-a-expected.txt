@@ -4,7 +4,7 @@ layer at (0,0) size 800x118
   RenderBlock {HTML} at (0,0) size 800x118
     RenderBody {BODY} at (8,16) size 784x86
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 327x19
+        RenderText {#text} at (0,0) size 327x17
           text run at (0,0) width 327: "The two blocks below should have the same height."
       RenderTable {TABLE} at (80,34) size 102x52
         RenderTableSection {TBODY} at (0,0) size 102x52

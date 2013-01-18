@@ -4,12 +4,12 @@ layer at (0,0) size 800x204
   RenderBlock {HTML} at (0,0) size 800x204
     RenderBody {BODY} at (8,16) size 784x180
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 763x37
+        RenderText {#text} at (0,0) size 763x35
           text run at (0,0) width 763: "Below there should be a green square. In the middle of such green square, a black horizontal stripe should be traversing it"
           text run at (0,18) width 484: "and protruding out of it toward the right. There should be no red in this page."
       RenderBlock (anonymous) at (0,52) size 784x128
         RenderBlock {DIV} at (0,0) size 128x128 [bgcolor=#FF0000]
           RenderBlock {SPAN} at (0,0) size 128x128 [bgcolor=#008000]
-            RenderText {#text} at (0,47) size 256x33
-              text run at (0,47) width 256: "XXXXXXXX"
+            RenderText {#text} at (0,48) size 256x32
+              text run at (0,48) width 256: "XXXXXXXX"
         RenderText {#text} at (0,0) size 0x0

@@ -4,7 +4,7 @@ layer at (0,0) size 800x370
   RenderBlock {HTML} at (0,0) size 800x370
     RenderBody {BODY} at (8,16) size 784x346
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 774x37
+        RenderText {#text} at (0,0) size 774x35
           text run at (0,0) width 774: "Test passes if the blue and orange boxes below are the same width, and the boxes are horizontally centered inside the black"
           text run at (0,18) width 28: "box."
 layer at (8,68) size 198x294

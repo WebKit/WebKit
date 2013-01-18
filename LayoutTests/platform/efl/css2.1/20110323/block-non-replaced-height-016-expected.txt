@@ -5,7 +5,7 @@ layer at (0,0) size 785x177
 layer at (8,8) size 769x161 clip at (8,8) size 754x146 scrollHeight 242
   RenderBody {BODY} at (8,8) size 769x161
     RenderBlock {P} at (0,16) size 754x18
-      RenderText {#text} at (0,0) size 425x19
+      RenderText {#text} at (0,0) size 425x17
         text run at (0,0) width 425: "Test passes if the blue and orange boxes below are the same height."
 layer at (8,58) size 754x96
   RenderBlock (relative positioned) {DIV} at (0,50) size 754x96

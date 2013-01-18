@@ -4,7 +4,7 @@ layer at (0,0) size 800x245
   RenderBlock {HTML} at (0,0) size 800x245
     RenderBody {BODY} at (8,16) size 784x214
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 393x19
+        RenderText {#text} at (0,0) size 393x17
           text run at (0,0) width 393: "There must be four evenly-spaced blue bars below and no red."
       RenderBlock {DIV} at (15,34) size 96x180 [border: (15px solid #FF0000) none (15px solid #FF0000) none]
         RenderBlock {DIV} at (0,0) size 96x180 [border: (15px solid #0000FF) none (15px solid #0000FF) none]

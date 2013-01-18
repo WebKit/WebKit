@@ -4,10 +4,10 @@ layer at (0,0) size 800x256
   RenderBlock {HTML} at (0,0) size 800x256
     RenderBody {BODY} at (8,16) size 784x232
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 773x19
+        RenderText {#text} at (0,0) size 773x17
           text run at (0,0) width 773: "Test passes if the blue and orange boxes below are the same width, and they are horizontally centered inside the black box."
       RenderBlock {DIV} at (0,34) size 198x198 [border: (3px solid #000000)]
-        RenderImage {IMG} at (91,3) size 15x15
+        RenderImage {IMG} at (91,3) size 16x15
         RenderBlock {DIV} at (3,18) size 192x15 [color=#FFA500]
           RenderText {#text} at (88,0) size 16x15
             text run at (88,0) width 16: "X"

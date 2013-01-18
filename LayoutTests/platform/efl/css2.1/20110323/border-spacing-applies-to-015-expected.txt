@@ -4,7 +4,7 @@ layer at (0,0) size 800x298
   RenderBlock {HTML} at (0,0) size 800x298
     RenderBody {BODY} at (8,16) size 784x274
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 645x19
+        RenderText {#text} at (0,0) size 645x17
           text run at (0,0) width 645: "Test passes if there is a blue and orange square below and there is no vertical gap between the squares."
       RenderTable {DIV} at (0,34) size 120x240
         RenderBlock {DIV} at (0,0) size 120x120 [border: (10px solid #0000FF)]

@@ -4,11 +4,11 @@ layer at (0,0) size 800x294
   RenderBlock {HTML} at (0,0) size 800x294
     RenderBody {BODY} at (8,16) size 784x270
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 637x19
+        RenderText {#text} at (0,0) size 637x17
           text run at (0,0) width 637: "Test passes if the top square below has \"Filler Text\" directly above it and the bottom square does not."
       RenderTable {DIV} at (0,34) size 100x118
         RenderBlock {DIV} at (0,0) size 100x18
-          RenderText {#text} at (0,0) size 66x19
+          RenderText {#text} at (0,0) size 66x17
             text run at (0,0) width 66: "Filler Text"
         RenderTableSection (anonymous) at (0,18) size 100x100
           RenderTableRow {DIV} at (0,0) size 100x50
@@ -18,7 +18,7 @@ layer at (0,0) size 800x294
             RenderTableCell {DIV} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {DIV} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
       RenderBlock {DIV} at (0,152) size 784x18
-        RenderText {#text} at (0,0) size 4x19
+        RenderText {#text} at (0,0) size 4x17
           text run at (0,0) width 4: " "
       RenderTable {DIV} at (0,170) size 100x100
         RenderTableSection (anonymous) at (0,0) size 100x100
