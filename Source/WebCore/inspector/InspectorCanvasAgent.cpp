@@ -164,13 +164,31 @@ void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& t
         module.traceLog(errorString, traceLogId, startOffset, &traceLog);
 }
 
-void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
+void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, RefPtr<TypeBuilder::Canvas::ResourceState>& result)
 {
     if (!checkIsEnabled(errorString))
         return;
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
-        module.replayTraceLog(errorString, traceLogId, stepNo, result);
+        module.replayTraceLog(errorString, traceLogId, stepNo, &result);
+}
+
+void InspectorCanvasAgent::getResourceInfo(ErrorString* errorString, const String& resourceId, RefPtr<TypeBuilder::Canvas::ResourceInfo>& result)
+{
+    if (!checkIsEnabled(errorString))
+        return;
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, resourceId);
+    if (!module.hasNoValue())
+        module.resourceInfo(errorString, resourceId, &result);
+}
+
+void InspectorCanvasAgent::getResourceState(ErrorString* errorString, const String& traceLogId, const String& resourceId, RefPtr<TypeBuilder::Canvas::ResourceState>& result)
+{
+    if (!checkIsEnabled(errorString))
+        return;
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    if (!module.hasNoValue())
+        module.resourceState(errorString, traceLogId, resourceId, &result);
 }
 
 ScriptObject InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject& context)

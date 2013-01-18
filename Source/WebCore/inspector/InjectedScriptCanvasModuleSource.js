@@ -741,8 +741,7 @@ Resource.prototype = {
      */
     toDataURL: function()
     {
-        var contextResource = this.contextResource();
-        return contextResource === this ? "" : contextResource.toDataURL();
+        return "";
     },
 
     /**
@@ -2607,6 +2606,15 @@ TraceLog.prototype = {
     },
 
     /**
+     * @param {number} id
+     * @return {ReplayableResource}
+     */
+    replayableResource: function(id)
+    {
+        return /** @type {ReplayableResource} */ (this._replayablesCache.get(id));
+    },
+
+    /**
      * @param {!Resource} resource
      */
     captureResource: function(resource)
@@ -2644,6 +2652,15 @@ TraceLogPlayer.prototype = {
     traceLog: function()
     {
         return this._traceLog;
+    },
+
+    /**
+     * @param {number} id
+     * @return {Resource}
+     */
+    replayWorldResource: function(id)
+    {
+        return /** @type {Resource} */ (this._replayWorldCache.get(id));
     },
 
     /**
@@ -2897,13 +2914,13 @@ InjectedCanvasModule.prototype = {
     /**
      * @param {string} id
      * @param {number=} startOffset
-     * @return {Object|string}
+     * @return {!Object|string}
      */
     traceLog: function(id, startOffset)
     {
         var traceLog = this._traceLogs[id];
         if (!traceLog)
-            return "Error: Trace log with this ID not found.";
+            return "Error: Trace log with the given ID not found.";
         startOffset = Math.max(0, startOffset || 0);
         var alive = this._manager.capturing() && this._manager.lastTraceLog() === traceLog;
         var result = {
@@ -2919,7 +2936,7 @@ InjectedCanvasModule.prototype = {
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
             var traceLogItem = {
-                contextId: this._makeContextId(contextResource.id()),
+                contextId: this._makeStringResourceId(contextResource.id()),
                 sourceURL: callFrame.sourceURL,
                 lineNumber: callFrame.lineNumber,
                 columnNumber: callFrame.columnNumber
@@ -2952,18 +2969,77 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} id
+     * @param {string} traceLogId
      * @param {number} stepNo
-     * @return {string}
+     * @return {!Object|string}
      */
-    replayTraceLog: function(id, stepNo)
+    replayTraceLog: function(traceLogId, stepNo)
     {
-        var traceLog = this._traceLogs[id];
+        var traceLog = this._traceLogs[traceLogId];
         if (!traceLog)
-            return "";
-        this._traceLogPlayers[id] = this._traceLogPlayers[id] || new TraceLogPlayer(traceLog);
-        var lastCall = this._traceLogPlayers[id].stepTo(stepNo);
-        return lastCall.resource().toDataURL();
+            return "Error: Trace log with the given ID not found.";
+        this._traceLogPlayers[traceLogId] = this._traceLogPlayers[traceLogId] || new TraceLogPlayer(traceLog);
+        var lastCall = this._traceLogPlayers[traceLogId].stepTo(stepNo);
+        var resource = lastCall.resource();
+        var dataURL = resource.toDataURL();
+        if (!dataURL) {
+            resource = resource.contextResource();
+            dataURL = resource.toDataURL();
+        }
+        return this._makeResourceState(this._makeStringResourceId(resource.id()), traceLogId, dataURL);
+    },
+
+    /**
+     * @param {string} stringResourceId
+     * @return {!Object|string}
+     */
+    resourceInfo: function(stringResourceId)
+    {
+        var resourceId = this._parseStringId(stringResourceId).resourceId;
+        if (!resourceId)
+            return "Error: Wrong resource ID: " + stringResourceId;
+
+        var replayableResource = null;
+        for (var id in this._traceLogs) {
+            replayableResource = this._traceLogs[id].replayableResource(resourceId);
+            if (replayableResource)
+                break;
+        }
+        if (!replayableResource)
+            return "Error: Resource with the given ID not found.";
+
+        return this._makeResourceInfo(stringResourceId, replayableResource.description());
+    },
+
+    /**
+     * @param {string} traceLogId
+     * @param {string} stringResourceId
+     * @return {!Object|string}
+     */
+    resourceState: function(traceLogId, stringResourceId)
+    {
+        var traceLog = this._traceLogs[traceLogId];
+        if (!traceLog)
+            return "Error: Trace log with the given ID not found.";
+
+        var traceLogPlayer = this._traceLogPlayers[traceLogId];
+        if (!traceLogPlayer)
+            return "Error: Trace log replay has not started yet.";
+
+        var parsedStringId1 = this._parseStringId(traceLogId);
+        var parsedStringId2 = this._parseStringId(stringResourceId);
+        if (parsedStringId1.injectedScriptId !== parsedStringId2.injectedScriptId)
+            return "Error: Both IDs must point to the same injected script.";
+
+        var resourceId = parsedStringId2.resourceId;
+        if (!resourceId)
+            return "Error: Wrong resource ID: " + stringResourceId;
+
+        var resource = traceLogPlayer.replayWorldResource(resourceId);
+        if (!resource)
+            return "Error: Resource with the given ID has not been replayed yet.";
+
+        return this._makeResourceState(stringResourceId, traceLogId, resource.toDataURL());
     },
 
     /**
@@ -2978,9 +3054,46 @@ InjectedCanvasModule.prototype = {
      * @param {number} resourceId
      * @return {string}
      */
-    _makeContextId: function(resourceId)
+    _makeStringResourceId: function(resourceId)
     {
-        return "{\"injectedScriptId\":" + injectedScriptId + ",\"canvasContextId\":" + resourceId + "}";
+        return "{\"injectedScriptId\":" + injectedScriptId + ",\"resourceId\":" + resourceId + "}";
+    },
+
+    /**
+     * @param {string} stringResourceId
+     * @param {string} description
+     * @return {!Object}
+     */
+    _makeResourceInfo: function(stringResourceId, description)
+    {
+        return {
+            id: stringResourceId,
+            description: description
+        };
+    },
+
+    /**
+     * @param {string} stringResourceId
+     * @param {string} traceLogId
+     * @param {string} imageURL
+     * @return {!Object}
+     */
+    _makeResourceState: function(stringResourceId, traceLogId, imageURL)
+    {
+        return {
+            id: stringResourceId,
+            traceLogId: traceLogId,
+            imageURL: imageURL
+        };
+    },
+
+    /**
+     * @param {string} stringId
+     * @return {{injectedScriptId: number, traceLogId: ?number, resourceId: ?number}}
+     */
+    _parseStringId: function(stringId)
+    {
+        return InjectedScriptHost.evaluate("(" + stringId + ")");
     }
 }
 

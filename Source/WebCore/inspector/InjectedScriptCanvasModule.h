@@ -60,7 +60,9 @@ public:
     void stopCapturing(ErrorString*, const String&);
     void dropTraceLog(ErrorString*, const String&);
     void traceLog(ErrorString*, const String&, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>*);
-    void replayTraceLog(ErrorString*, const String&, int, String*);
+    void replayTraceLog(ErrorString*, const String&, int, RefPtr<TypeBuilder::Canvas::ResourceState>*);
+    void resourceInfo(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::ResourceInfo>*);
+    void resourceState(ErrorString*, const String&, const String&, RefPtr<TypeBuilder::Canvas::ResourceState>*);
 
 private:
     ScriptObject callWrapContextFunction(const String&, const ScriptObject&);

@@ -84,7 +84,9 @@ public:
     virtual void startCapturing(ErrorString*, String*);
     virtual void stopCapturing(ErrorString*, const String&);
     virtual void getTraceLog(ErrorString*, const String&, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>&);
-    virtual void replayTraceLog(ErrorString*, const String&, int, String*);
+    virtual void replayTraceLog(ErrorString*, const String&, int, RefPtr<TypeBuilder::Canvas::ResourceState>&);
+    virtual void getResourceInfo(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::ResourceInfo>&);
+    virtual void getResourceState(ErrorString*, const String&, const String&, RefPtr<TypeBuilder::Canvas::ResourceState>&);
 
 private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, Page*, InjectedScriptManager*);

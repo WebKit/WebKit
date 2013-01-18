@@ -183,7 +183,7 @@ WebInspector.CanvasProfileView.prototype = {
         if (!callNode)
             return;
         var time = Date.now();
-        function didReplayTraceLog(error, dataURL)
+        function didReplayTraceLog(error, resourceState)
         {
             if (callNode !== this._logGrid.selectedNode)
                 return;
@@ -191,7 +191,7 @@ WebInspector.CanvasProfileView.prototype = {
             if (error)
                 return;
             this._debugInfoElement.textContent = "Replay time: " + (Date.now() - time) + "ms";
-            this._replayImageElement.src = dataURL;
+            this._replayImageElement.src = resourceState.imageURL;
         }
         this._enableWaitIcon(true);
         CanvasAgent.replayTraceLog(this._traceLogId, callNode.index, didReplayTraceLog.bind(this));
