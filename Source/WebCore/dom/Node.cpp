@@ -981,6 +981,11 @@ NodeListsNodeData* Node::nodeLists()
     return hasRareData() ? rareData()->nodeLists() : 0;
 }
 
+void Node::clearNodeLists()
+{
+    rareData()->clearNodeLists();
+}
+
 void Node::checkSetPrefix(const AtomicString& prefix, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by

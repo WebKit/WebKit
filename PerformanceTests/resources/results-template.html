@@ -255,7 +255,7 @@ function PerfTest(name) {
         computeScalingFactorIfNeeded();
         return cachedUnit;
     }
-    this.smallerIsBetter = function () { return this.unit() == 'ms' || this.unit() == 'bytes'; }
+    this.smallerIsBetter = function () { return testResults[0].unit() == 'ms' || testResults[0].unit() == 'bytes'; }
 }
 
 var plotColor = 'rgb(230,50,50)';

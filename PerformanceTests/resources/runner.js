@@ -166,6 +166,9 @@ if (window.testRunner) {
         PerfTestRunner.gc();
         window.setTimeout(function () {
             try {
+                if (currentTest.setup)
+                    currentTest.setup();
+
                 var measuredValue = runner();
             } catch (exception) {
                 logFatalError("Got an exception while running test.run with name=" + exception.name + ", message=" + exception.message);
@@ -274,9 +277,6 @@ if (window.testRunner) {
         var timeToRun = 750;
         var totalTime = 0;
         var numberOfRuns = 0;
-
-        if (currentTest.setup)
-            currentTest.setup();
 
         while (totalTime < timeToRun) {
             totalTime += callRunAndMeasureTime(callsPerIteration);

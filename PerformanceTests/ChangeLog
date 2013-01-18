@@ -1,3 +1,25 @@
+2013-01-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove NodeListsNodeData when it's no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=107074
+
+        Reviewed by Darin Adler.
+
+        Added a micro benchmark to see the benefit of removing NodeListsNodeData.
+        The test traverses all elements in the html5 specification page and accesses childNodes.
+
+        Don't enable this test for now since it's really a micro benchmark specifically
+        designed to test this patch.
+
+        * DOM/TraverseChildNodes.html: Added.
+        * Skipped: Don't enable newly added test by default.
+        * resources/results-template.html: Compare against the unscaled unit (e.g. "bytes") as
+        opposed to scaled units such as "K bytes".
+        * resources/runner.js:
+        (.start): Moved the code to call currentTest.setup from measureRunsPerSecondOnce so that
+        it'll be ran for all test types, namely of PerfTestRunner.measureTime.
+        (.measureRunsPerSecondOnce):
+
 2013-01-17  Eric Seidel  <eric@webkit.org>
 
         Add a version of the html-parser benchmark which uses srcdoc instead of document.write so it tests the threaded parser

@@ -69,7 +69,9 @@ public:
 
     void removeChildNodeList(ChildNodeList* list)
     {
-        ASSERT_UNUSED(list, m_childNodeList = list);
+        ASSERT(m_childNodeList = list);
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
         m_childNodeList = 0;
     }
 
@@ -144,20 +146,26 @@ public:
 
     void removeCacheWithAtomicName(LiveNodeListBase* list, CollectionType collectionType, const AtomicString& name = starAtom)
     {
-        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(collectionType, name)));
+        ASSERT(list == m_atomicNameCaches.get(namedNodeListKey(collectionType, name)));
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
         m_atomicNameCaches.remove(namedNodeListKey(collectionType, name));
     }
 
     void removeCacheWithName(LiveNodeListBase* list, CollectionType collectionType, const String& name)
     {
-        ASSERT_UNUSED(list, list == m_nameCaches.get(namedNodeListKey(collectionType, name)));
+        ASSERT(list == m_nameCaches.get(namedNodeListKey(collectionType, name)));
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
         m_nameCaches.remove(namedNodeListKey(collectionType, name));
     }
 
     void removeCacheWithQualifiedName(LiveNodeList* list, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         QualifiedName name(nullAtom, localName, namespaceURI);
-        ASSERT_UNUSED(list, list == m_tagNodeListCacheNS.get(name));
+        ASSERT(list == m_tagNodeListCacheNS.get(name));
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
         m_tagNodeListCacheNS.remove(name);
     }
 
@@ -217,6 +225,8 @@ private:
     {
         return std::pair<unsigned char, String>(type, name);
     }
+
+    bool deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node*);
 
     // FIXME: m_childNodeList should be merged into m_atomicNameCaches or at least be shared with HTMLCollection returned by Element::children
     // but it's tricky because invalidateCaches shouldn't invalidate this cache and adoptTreeScope shouldn't call registerNodeList or unregisterNodeList.
@@ -321,6 +331,16 @@ private:
     mutable OwnPtr<NodeMicroDataTokenLists> m_microDataTokenLists;
 #endif
 };
+
+inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node* ownerNode)
+{
+    ASSERT(ownerNode);
+    ASSERT(ownerNode->nodeLists() == this);
+    if ((m_childNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size() + m_tagNodeListCacheNS.size() != 1)
+        return false;
+    ownerNode->clearNodeLists();
+    return true;
+}
 
 } // namespace WebCore
 
