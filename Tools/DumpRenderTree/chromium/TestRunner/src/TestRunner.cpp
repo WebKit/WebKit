@@ -146,6 +146,13 @@ TestRunner::TestRunner()
     bindMethod("setSmartInsertDeleteEnabled", &TestRunner::setSmartInsertDeleteEnabled);
     bindMethod("setSelectTrailingWhitespaceEnabled", &TestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setMockDeviceOrientation", &TestRunner::setMockDeviceOrientation);
+#if ENABLE(POINTER_LOCK)
+    bindMethod("didAcquirePointerLock", &TestRunner::didAcquirePointerLock);
+    bindMethod("didLosePointerLock", &TestRunner::didLosePointerLock);
+    bindMethod("didNotAcquirePointerLock", &TestRunner::didNotAcquirePointerLock);
+    bindMethod("setPointerLockWillRespondAsynchronously", &TestRunner::setPointerLockWillRespondAsynchronously);
+    bindMethod("setPointerLockWillFailSynchronously", &TestRunner::setPointerLockWillFailSynchronously);
+#endif
 
     // The following modify WebPreferences.
     bindMethod("setUserStyleSheetEnabled", &TestRunner::setUserStyleSheetEnabled);
@@ -1584,5 +1591,37 @@ void TestRunner::notImplemented(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
 }
+
+#if ENABLE(POINTER_LOCK)
+void TestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->didAcquirePointerLock();
+    result->setNull();
+}
+
+void TestRunner::didNotAcquirePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->didNotAcquirePointerLock();
+    result->setNull();
+}
+
+void TestRunner::didLosePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->didLosePointerLock();
+    result->setNull();
+}
+
+void TestRunner::setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->setPointerLockWillRespondAsynchronously();
+    result->setNull();
+}
+
+void TestRunner::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->setPointerLockWillFailSynchronously();
+    result->setNull();
+}
+#endif
 
 }

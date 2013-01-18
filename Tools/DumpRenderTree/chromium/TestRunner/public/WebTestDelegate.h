@@ -94,6 +94,11 @@ public:
     virtual std::string pathToLocalResource(const std::string& resource) { return std::string(); }
     virtual void setLocale(const std::string&) { }
     virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) { }
+    virtual void didAcquirePointerLock() { }
+    virtual void didNotAcquirePointerLock() { }
+    virtual void didLosePointerLock() { }
+    virtual void setPointerLockWillRespondAsynchronously() { }
+    virtual void setPointerLockWillFailSynchronously() { }
 };
 
 }

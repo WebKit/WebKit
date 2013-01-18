@@ -140,14 +140,6 @@ public:
     void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
 #endif
 
-#if ENABLE(POINTER_LOCK)
-    void didAcquirePointerLock(const CppArgumentList&, CppVariant*);
-    void didNotAcquirePointerLock(const CppArgumentList&, CppVariant*);
-    void didLosePointerLock(const CppArgumentList&, CppVariant*);
-    void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
-    void setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant*);
-#endif
-
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

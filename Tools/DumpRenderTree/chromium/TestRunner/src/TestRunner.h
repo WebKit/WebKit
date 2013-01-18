@@ -193,6 +193,14 @@ private:
     // DeviceOrientation related functions
     void setMockDeviceOrientation(const CppArgumentList&, CppVariant*);
 
+#if ENABLE(POINTER_LOCK)
+    void didAcquirePointerLock(const CppArgumentList&, CppVariant*);
+    void didNotAcquirePointerLock(const CppArgumentList&, CppVariant*);
+    void didLosePointerLock(const CppArgumentList&, CppVariant*);
+    void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
+    void setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant*);
+#endif
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods modifying WebPreferences.
 

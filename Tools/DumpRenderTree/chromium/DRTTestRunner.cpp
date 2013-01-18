@@ -101,11 +101,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setMockSpeechRecognitionError", &DRTTestRunner::setMockSpeechRecognitionError);
     bindMethod("wasMockSpeechRecognitionAborted", &DRTTestRunner::wasMockSpeechRecognitionAborted);
 #endif
-#if ENABLE(POINTER_LOCK)
-    bindMethod("didAcquirePointerLock", &DRTTestRunner::didAcquirePointerLock);
-    bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
-    bindMethod("didNotAcquirePointerLock", &DRTTestRunner::didNotAcquirePointerLock);
-#endif
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
 #if ENABLE(NOTIFICATIONS)
@@ -125,10 +120,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
-#if ENABLE(POINTER_LOCK)
-    bindMethod("setPointerLockWillRespondAsynchronously", &DRTTestRunner::setPointerLockWillRespondAsynchronously);
-    bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
-#endif
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
@@ -603,37 +594,5 @@ void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppV
     result->set(false);
     if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
         result->set(recognizer->wasAborted());
-}
-#endif
-
-#if ENABLE(POINTER_LOCK)
-void DRTTestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->webViewHost()->didAcquirePointerLock();
-    result->setNull();
-}
-
-void DRTTestRunner::didNotAcquirePointerLock(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->webViewHost()->didNotAcquirePointerLock();
-    result->setNull();
-}
-
-void DRTTestRunner::didLosePointerLock(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->webViewHost()->didLosePointerLock();
-    result->setNull();
-}
-
-void DRTTestRunner::setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->webViewHost()->setPointerLockWillRespondAsynchronously();
-    result->setNull();
-}
-
-void DRTTestRunner::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->webViewHost()->setPointerLockWillFailSynchronously();
-    result->setNull();
 }
 #endif

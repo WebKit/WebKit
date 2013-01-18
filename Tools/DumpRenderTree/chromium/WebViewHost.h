@@ -118,14 +118,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     MockWebSpeechRecognizer* mockSpeechRecognizer() { return m_mockSpeechRecognizer.get(); }
 #endif
 
-#if ENABLE(POINTER_LOCK)
-    void didAcquirePointerLock();
-    void didNotAcquirePointerLock();
-    void didLosePointerLock();
-    void setPointerLockWillRespondAsynchronously() { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
-    void setPointerLockWillFailSynchronously() { m_pointerLockPlannedResult = PointerLockWillFailSync; }
-#endif
-
     // WebTestDelegate.
     virtual WebKit::WebContextMenuData* lastContextMenuData() const OVERRIDE;
     virtual void clearContextMenuData() OVERRIDE;
@@ -161,6 +153,13 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual std::string pathToLocalResource(const std::string& url) OVERRIDE;
     virtual void setLocale(const std::string&) OVERRIDE;
     virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) OVERRIDE;
+#if ENABLE(POINTER_LOCK)
+    virtual void didAcquirePointerLock() OVERRIDE;
+    virtual void didNotAcquirePointerLock() OVERRIDE;
+    virtual void didLosePointerLock() OVERRIDE;
+    virtual void setPointerLockWillRespondAsynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
+    virtual void setPointerLockWillFailSynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillFailSync; }
+#endif
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

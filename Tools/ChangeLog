@@ -1,3 +1,33 @@
+2013-01-18  Dan Carney  <dcarney@google.com>
+
+        [chromium] move pointerlock functions to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=107241
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::didAcquirePointerLock):
+        (WebTestRunner::WebTestDelegate::didNotAcquirePointerLock):
+        (WebTestRunner::WebTestDelegate::didLosePointerLock):
+        (WebTestRunner::WebTestDelegate::setPointerLockWillRespondAsynchronously):
+        (WebTestRunner::WebTestDelegate::setPointerLockWillFailSynchronously):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::didAcquirePointerLock):
+        (WebTestRunner::TestRunner::didNotAcquirePointerLock):
+        (WebTestRunner::TestRunner::didLosePointerLock):
+        (WebTestRunner::TestRunner::setPointerLockWillRespondAsynchronously):
+        (WebTestRunner::TestRunner::setPointerLockWillFailSynchronously):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Update freetype in jhbuild to 2.4.11 and activate subpixel layout
