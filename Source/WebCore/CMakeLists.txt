@@ -834,11 +834,13 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBLevelDBCoding.cpp
     Modules/indexeddb/IDBObjectStore.cpp
     Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
+    Modules/indexeddb/IDBOpenDBRequest.cpp
     Modules/indexeddb/IDBPendingTransactionMonitor.cpp
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBTransaction.cpp
     Modules/indexeddb/IDBTransactionBackendImpl.cpp
     Modules/indexeddb/IDBTransactionCoordinator.cpp
+    Modules/indexeddb/IDBUpgradeNeededEvent.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/IDBVersionChangeRequest.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
