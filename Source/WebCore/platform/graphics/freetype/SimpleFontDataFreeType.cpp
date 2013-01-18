@@ -65,8 +65,12 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
 
+#if PLATFORM(EFL)
+    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
+#else
     // Match CoreGraphics metrics.
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+#endif
     m_fontMetrics.setLineGap(lineGap);
 
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &text_extents);
@@ -74,7 +78,7 @@ void SimpleFontData::platformInit()
 
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &text_extents);
     m_spaceWidth = narrowPrecisionToFloat(text_extents.x_advance);
-    
+
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }
 

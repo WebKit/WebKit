@@ -90,9 +90,9 @@
   </autotools>
 
   <tarball id="freetype6">
-    <source href="download.savannah.gnu.org/releases/freetype/freetype-2.4.2.tar.bz2" version="2.4.2"
-            hash="sha256:9a987aef8c50d9bcfdfdc9f012f8bd0de6095cc1a5524e62c1a037deb8dacbfe"
-            md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
+    <source href="download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2" version="2.4.11"
+            hash="sha256:ef9d0bcb64647d9e5125dc7534d7ca371c98310fec87677c410f397f71ffbe3f"
+            md5sum="b93435488942486c8d0ca22e8f768034" />
   </tarball>
 
   <autotools id="p11-kit">
