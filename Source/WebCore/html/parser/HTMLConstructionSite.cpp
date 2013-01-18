@@ -503,6 +503,10 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
         task.child = textNode.release();
+
+        if (task.parent->document() != task.child->document())
+            task.parent->document()->adoptNode(task.child, ASSERT_NO_EXCEPTION);
+
         executeTask(task);
     }
 }
@@ -639,6 +643,10 @@ void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)
     findFosterSite(task);
     task.child = node;
     ASSERT(task.parent);
+
+    if (task.parent->document() != task.child->document())
+        task.parent->document()->adoptNode(task.child, ASSERT_NO_EXCEPTION);
+
     m_attachmentQueue.append(task);
 }
 
