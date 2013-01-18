@@ -436,7 +436,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
     JSC::ExecState* exec = toJS(contextInternalContext(m_context));
     jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);
-    m_cachedWrappers.set(exec->globalData(), object, jsWrapper);
+    m_cachedWrappers.set(object, jsWrapper);
     return wrapper;
 }
 

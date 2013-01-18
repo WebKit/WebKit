@@ -1,3 +1,10 @@
+2013-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build after r140194.
+
+        * API/JSWrapperMap.mm:
+        (-[JSWrapperMap wrapperForObject:]):
+
 2013-01-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Update documentation for JSValue and JSContext
