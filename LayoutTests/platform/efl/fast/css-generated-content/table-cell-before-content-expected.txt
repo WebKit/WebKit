@@ -8,11 +8,11 @@ layer at (0,0) size 800x34
           RenderTableSection (anonymous) at (0,0) size 282x18
             RenderTableRow (anonymous) at (0,0) size 282x18
               RenderTableCell (anonymous) at (0,0) size 203x18 [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,0) size 203x19
+                RenderText at (0,0) size 203x17
                   text run at (0,0) width 203: "You should just see a single line"
               RenderTableCell {DIV} at (203,0) size 4x18 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 4x19
+                RenderText {#text} at (0,0) size 4x17
                   text run at (0,0) width 4: " "
               RenderTableCell (anonymous) at (207,0) size 75x18 [r=0 c=2 rs=1 cs=1]
-                RenderText at (0,0) size 75x19
+                RenderText at (0,0) size 75x17
                   text run at (0,0) width 75: "of blue text."

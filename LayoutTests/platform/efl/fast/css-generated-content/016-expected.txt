@@ -4,37 +4,37 @@ layer at (0,0) size 800x238
   RenderBlock {HTML} at (0,0) size 800x238
     RenderBody {BODY} at (8,16) size 784x206
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 458x19
+        RenderText {#text} at (0,0) size 458x17
           text run at (0,0) width 458: "Each link below should display the text \"n(href=n)\" where n is a number"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 323x19
+        RenderText {#text} at (0,0) size 323x17
           text run at (0,0) width 323: "The href attribute of the last one is changed onload."
       RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,86) size 784x18
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 8x19
+        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "1"
-          RenderInline (generated) at (0,0) size 52x19
-            RenderText at (8,0) size 52x19
+          RenderInline (generated) at (0,0) size 52x17
+            RenderText at (8,0) size 52x17
               text run at (8,0) width 52: "(href=1)"
       RenderBlock {P} at (0,120) size 784x18
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 8x19
+        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "2"
-          RenderInline (generated) at (0,0) size 52x19
-            RenderText at (8,0) size 52x19
+          RenderInline (generated) at (0,0) size 52x17
+            RenderText at (8,0) size 52x17
               text run at (8,0) width 52: "(href=2)"
       RenderBlock {P} at (0,154) size 784x18
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 8x19
+        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "3"
-          RenderInline (generated) at (0,0) size 52x19
-            RenderText at (8,0) size 52x19
+          RenderInline (generated) at (0,0) size 52x17
+            RenderText at (8,0) size 52x17
               text run at (8,0) width 52: "(href=3)"
       RenderBlock {P} at (0,188) size 784x18
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 8x19
+        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "4"
-          RenderInline (generated) at (0,0) size 52x19
-            RenderText at (8,0) size 52x19
+          RenderInline (generated) at (0,0) size 52x17
+            RenderText at (8,0) size 52x17
               text run at (8,0) width 52: "(href=4)"

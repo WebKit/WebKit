@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 768x55
+        RenderText {#text} at (0,0) size 768x53
           text run at (0,0) width 502: "On the left, you should see three blocks that are aligned left within a black box. "
           text run at (502,0) width 83: "They should "
           text run at (585,0) width 183: "be stacked vertically with the"
@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           text run at (442,18) width 308: "box should be 100x100, and there should be 100"
           text run at (0,36) width 322: "pixels of padding on the right side of the box stack."
       RenderBlock {P} at (0,70) size 784x54
-        RenderText {#text} at (0,0) size 753x55
+        RenderText {#text} at (0,0) size 753x53
           text run at (0,0) width 487: "On the right, you should see two blocks that are centered within a black box. "
           text run at (487,0) width 102: "They should be "
           text run at (589,0) width 164: "stacked vertically with the"

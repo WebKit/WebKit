@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FF0000]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 369x19
+        RenderText {#text} at (0,0) size 369x17
           text run at (0,0) width 369: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
       RenderTable {DIV} at (0,34) size 77x54
         RenderTableSection (anonymous) at (0,0) size 77x54
           RenderTableRow (anonymous) at (0,0) size 77x18
             RenderTableCell (anonymous) at (0,0) size 77x18 [r=0 c=0 rs=1 cs=1]
-              RenderText at (0,0) size 63x19
+              RenderText at (0,0) size 63x17
                 text run at (0,0) width 63: "BEFORE"
           RenderTableRow (anonymous) at (0,18) size 77x18
             RenderTableCell (anonymous) at (0,18) size 77x18 [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 77x18
-                RenderText {#text} at (0,0) size 77x19
+                RenderText {#text} at (0,0) size 77x17
                   text run at (0,0) width 77: "CONTENT"
           RenderTableRow (anonymous) at (0,36) size 77x18
             RenderTableCell (anonymous) at (0,36) size 77x18 [r=2 c=0 rs=1 cs=1]
-              RenderText at (0,0) size 52x19
+              RenderText at (0,0) size 52x17
                 text run at (0,0) width 52: "AFTER"
       RenderBlock (anonymous) at (0,88) size 784x18
-        RenderText {#text} at (0,0) size 77x19
+        RenderText {#text} at (0,0) size 77x17
           text run at (0,0) width 77: "CONTENT"
         RenderText {#text} at (0,0) size 0x0

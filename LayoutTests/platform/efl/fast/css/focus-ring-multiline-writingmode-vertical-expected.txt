@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 160x160
-        RenderText {#text} at (0,0) size 109x160
+        RenderText {#text} at (0,0) size 107x160
           text run at (0,0) width 121: "Assuming the port-"
           text run at (18,0) width 132: "specific theme draws"
           text run at (18,132) width 4: " "

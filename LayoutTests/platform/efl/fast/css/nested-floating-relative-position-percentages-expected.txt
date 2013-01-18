@@ -4,11 +4,11 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 388x19
+        RenderText {#text} at (0,0) size 388x17
           text run at (0,0) width 388: "The six boxes below should be centered in two rows of three."
 layer at (400,26) size 630x420
   RenderBlock (floating) {DIV} at (0,18) size 630x420
-    RenderBR {BR} at (630,0) size 0x19
+    RenderBR {BR} at (630,0) size 0x17
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x36
   RenderBlock {root} at (0,0) size 800x36
     RenderBlock {t} at (0,0) size 800x18 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 299x19
+      RenderText {#text} at (0,0) size 299x17
         text run at (0,0) width 299: "This sentence should have a green background."
     RenderBlock {t} at (0,18) size 800x18 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 299x19
+      RenderText {#text} at (0,0) size 299x17
         text run at (0,0) width 299: "This sentence should have a green background."

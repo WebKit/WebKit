@@ -4,30 +4,30 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 31x19
+        RenderText {#text} at (0,0) size 31x17
           text run at (0,0) width 31: "Bug "
-        RenderInline {A} at (0,0) size 44x19 [color=#0000EE]
-          RenderText {#text} at (31,0) size 44x19
+        RenderInline {A} at (0,0) size 44x17 [color=#0000EE]
+          RenderText {#text} at (31,0) size 44x17
             text run at (31,0) width 44: "23826 "
-        RenderText {#text} at (75,0) size 565x19
+        RenderText {#text} at (75,0) size 565x17
           text run at (75,0) width 565: ": Potential bug with before/after rule while moving element from one document to another"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 538x19
+        RenderText {#text} at (0,0) size 538x17
           text run at (0,0) width 538: "This test that moving a quote element sets the before / after flag in the final document."
       RenderBlock {DIV} at (0,68) size 784x52
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderInline {Q} at (0,0) size 158x19
-            RenderInline (generated) at (0,0) size 7x19
-              RenderQuote at (0,0) size 7x19
+          RenderInline {Q} at (0,0) size 158x17
+            RenderInline (generated) at (0,0) size 7x17
+              RenderQuote at (0,0) size 7x17
                 text run at (0,0) width 7: "\""
-            RenderText {#text} at (7,0) size 151x19
+            RenderText {#text} at (7,0) size 151x17
               text run at (7,0) width 151: "Quotes should surround"
         RenderBlock (anonymous) at (0,34) size 784x0
           RenderBlock {P} at (0,0) size 784x0
         RenderBlock (anonymous) at (0,34) size 784x18
-          RenderInline {Q} at (0,0) size 60x19
-            RenderText {#text} at (0,0) size 53x19
+          RenderInline {Q} at (0,0) size 60x17
+            RenderText {#text} at (0,0) size 53x17
               text run at (0,0) width 53: "this text."
-            RenderInline (generated) at (0,0) size 7x19
-              RenderQuote at (53,0) size 7x19
+            RenderInline (generated) at (0,0) size 7x17
+              RenderQuote at (53,0) size 7x17
                 text run at (53,0) width 7: "\""

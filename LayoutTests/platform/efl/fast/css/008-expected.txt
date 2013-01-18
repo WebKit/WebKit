@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x48 [border: (10px solid #808000)]
-        RenderText {#text} at (10,10) size 563x28
-          text run at (10,10) width 563: "You should see 24px text inside a 10px solid olive border."
+        RenderText {#text} at (10,11) size 563x26
+          text run at (10,11) width 563: "You should see 24px text inside a 10px solid olive border."

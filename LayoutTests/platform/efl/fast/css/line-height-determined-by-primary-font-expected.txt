@@ -10,53 +10,53 @@ layer at (0,0) size 800x270
       RenderBlock {DIV} at (0,40) size 784x97
         RenderBlock {UL} at (0,0) size 567x97
           RenderBlock (floating) {LI} at (40,0) size 52x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 30x17
-              RenderText {#text} at (12,6) size 30x17
-                text run at (12,6) width 30: "\x{6EE8}\x{5D0E}\x{6B65}"
+            RenderInline {A} at (0,0) size 30x15
+              RenderText {#text} at (12,7) size 30x15
+                text run at (12,7) width 30: "\x{6EE8}\x{5D0E}\x{6B65}"
           RenderBlock (floating) {LI} at (92,0) size 76x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 54x21
-              RenderText {#text} at (12,4) size 54x21
-                text run at (12,4) width 54: "\x{8521}\x{4F9D}\x{6797}"
+            RenderInline {A} at (0,0) size 54x20
+              RenderText {#text} at (12,5) size 54x20
+                text run at (12,5) width 54: "\x{8521}\x{4F9D}\x{6797}"
           RenderBlock (floating) {LI} at (168,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 42x28
-              RenderText {#text} at (12,1) size 42x28
-                text run at (12,1) width 42: "\x{9648}\x{7EEE}\x{8D1E}"
+            RenderInline {A} at (0,0) size 42x26
+              RenderText {#text} at (12,2) size 42x26
+                text run at (12,2) width 42: "\x{9648}\x{7EEE}\x{8D1E}"
           RenderBlock (floating) {LI} at (232,0) size 69x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 47x21
-              RenderText {#text} at (12,4) size 47x21
-                text run at (12,4) width 47: "\x{9648}\x{5955}\x{8FC5}"
+            RenderInline {A} at (0,0) size 47x20
+              RenderText {#text} at (12,5) size 47x20
+                text run at (12,5) width 47: "\x{9648}\x{5955}\x{8FC5}"
           RenderBlock (floating) {LI} at (301,0) size 48x31 [border: none (1px solid #FF0000) none]
             RenderInline {A} at (0,0) size 26x14
               RenderText {#text} at (12,8) size 26x14
                 text run at (12,8) width 26: "\x{9ED1}\x{9E2D}\x{5B50}"
           RenderBlock (floating) {LI} at (349,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 42x17
-              RenderText {#text} at (12,6) size 42x17
-                text run at (12,6) width 42: "\x{674E}\x{5B87}\x{6625}"
+            RenderInline {A} at (0,0) size 42x15
+              RenderText {#text} at (12,7) size 42x15
+                text run at (12,7) width 42: "\x{674E}\x{5B87}\x{6625}"
           RenderBlock (floating) {LI} at (413,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderInline {A} at (0,0) size 42x17
-              RenderText {#text} at (12,6) size 42x17
-                text run at (12,6) width 42: "\x{6881}\x{9759}\x{8339}"
+            RenderInline {A} at (0,0) size 42x15
+              RenderText {#text} at (12,7) size 42x15
+                text run at (12,7) width 42: "\x{6881}\x{9759}\x{8339}"
       RenderBlock {DIV} at (0,149) size 784x97
         RenderBlock {UL} at (0,0) size 567x97
           RenderBlock (floating) {LI} at (40,0) size 52x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,6) size 30x17
-              text run at (12,6) width 30: "\x{6EE8}\x{5D0E}\x{6B65}"
+            RenderText {#text} at (12,7) size 30x15
+              text run at (12,7) width 30: "\x{6EE8}\x{5D0E}\x{6B65}"
           RenderBlock (floating) {LI} at (92,0) size 76x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,4) size 54x21
-              text run at (12,4) width 54: "\x{8521}\x{4F9D}\x{6797}"
+            RenderText {#text} at (12,5) size 54x20
+              text run at (12,5) width 54: "\x{8521}\x{4F9D}\x{6797}"
           RenderBlock (floating) {LI} at (168,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,1) size 42x28
-              text run at (12,1) width 42: "\x{9648}\x{7EEE}\x{8D1E}"
+            RenderText {#text} at (12,2) size 42x26
+              text run at (12,2) width 42: "\x{9648}\x{7EEE}\x{8D1E}"
           RenderBlock (floating) {LI} at (232,0) size 69x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,4) size 47x21
-              text run at (12,4) width 47: "\x{9648}\x{5955}\x{8FC5}"
+            RenderText {#text} at (12,5) size 47x20
+              text run at (12,5) width 47: "\x{9648}\x{5955}\x{8FC5}"
           RenderBlock (floating) {LI} at (301,0) size 48x31 [border: none (1px solid #FF0000) none]
             RenderText {#text} at (12,8) size 26x14
               text run at (12,8) width 26: "\x{9ED1}\x{9E2D}\x{5B50}"
           RenderBlock (floating) {LI} at (349,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,6) size 42x17
-              text run at (12,6) width 42: "\x{674E}\x{5B87}\x{6625}"
+            RenderText {#text} at (12,7) size 42x15
+              text run at (12,7) width 42: "\x{674E}\x{5B87}\x{6625}"
           RenderBlock (floating) {LI} at (413,0) size 64x31 [border: none (1px solid #FF0000) none]
-            RenderText {#text} at (12,6) size 42x17
-              text run at (12,6) width 42: "\x{6881}\x{9759}\x{8339}"
+            RenderText {#text} at (12,7) size 42x15
+              text run at (12,7) width 42: "\x{6881}\x{9759}\x{8339}"

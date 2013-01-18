@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 769x37
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x19
+        RenderInline {I} at (0,0) size 769x35
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 307x17
               text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=18818"
-          RenderText {#text} at (360,0) size 769x37
+          RenderText {#text} at (360,0) size 769x35
             text run at (360,0) width 4: " "
             text run at (364,0) width 405: "REGRESSION (3.1.1-TOT): Character order (float:left ordered"
             text run at (0,18) width 121: "after the first letter)"
-        RenderText {#text} at (121,18) size 4x19
+        RenderText {#text} at (121,18) size 4x17
           text run at (121,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 200x19
+        RenderText {#text} at (0,0) size 200x17
           text run at (0,0) width 200: "The next line should say \x{201C}123\x{201D}."
       RenderBlock {DIV} at (0,86) size 784x18
         RenderBlock (floating) {SPAN} at (0,0) size 8x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "1"
         RenderBlock (floating) at (8,0) size 8x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "2"
-        RenderText {#text} at (16,0) size 8x19
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "3"

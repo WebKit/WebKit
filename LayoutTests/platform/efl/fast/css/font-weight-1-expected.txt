@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 266x19
+        RenderText {#text} at (0,0) size 266x17
           text run at (0,0) width 266: "You should see the numbers 1 to 9 below."
       RenderBlock {DIV} at (0,34) size 784x48
         RenderText {#text} at (0,2) size 24x44

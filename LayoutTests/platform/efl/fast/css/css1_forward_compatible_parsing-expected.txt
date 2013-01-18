@@ -1,42 +1,42 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x399
-  RenderBlock {HTML} at (0,0) size 800x399
-    RenderBody {BODY} at (8,16) size 784x367
+layer at (0,0) size 800x401
+  RenderBlock {HTML} at (0,0) size 800x402
+    RenderBody {BODY} at (8,16) size 784x370
       RenderBlock {DIV} at (0,0) size 784x36 [color=#008000] [bgcolor=#FFFFFF]
         RenderBlock {P} at (0,0) size 784x36
-          RenderText {#text} at (0,0) size 773x37
+          RenderText {#text} at (0,0) size 773x35
             text run at (0,0) width 773: "First sentence: this text should be green. The markup code is invalid according to W3C HTML validator and the CSS code"
             text run at (0,18) width 273: "is invalid according to W3C CSS validator."
       RenderBlock {DIV} at (0,52) size 784x36 [color=#008000] [bgcolor=#FFFFFF]
         RenderBlock {P} at (0,0) size 784x36 [color=#FF0000]
-          RenderText {#text} at (0,0) size 776x37
+          RenderText {#text} at (0,0) size 776x35
             text run at (0,0) width 776: "Second sentence: this text should be green according to CSS 1 but it should be red according to CSS 2.1. The markup code"
             text run at (0,18) width 753: "is also invalid according to W3C HTML validator but the CSS code is perfectly valid according to W3C CSS validator."
-      RenderBlock {H3} at (0,106) size 784x44 [color=#008000] [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 767x44
+      RenderBlock {H3} at (0,106) size 784x45 [color=#008000] [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 767x43
           text run at (0,0) width 767: "Third sentence: this text should be green. The markup code is valid according to W3C HTML"
           text run at (0,22) width 581: "validator but the CSS code is invalid according to W3C CSS validator."
-      RenderBlock {H4} at (0,171) size 784x54 [color=#FF0000] [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 776x55
+      RenderBlock {H4} at (0,171) size 784x55 [color=#FF0000] [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 776x53
           text run at (0,0) width 776: "Fourth sentence: this text should be green according to CSS 1 (class name can not start with a dash in CSS 1) but it"
           text run at (0,18) width 773: "should be red according to CSS 2.1 and the markup code is valid according to W3C HTML validator and the CSS"
           text run at (0,36) width 376: "code is perfectly valid according to W3C CSS validator."
-      RenderBlock {H5} at (0,251) size 784x72 [color=#800080] [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 775x73
+      RenderBlock {H5} at (0,252) size 784x73 [color=#800080] [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 775x71
           text run at (0,0) width 761: "Fifth sentence: this text should be green according to CSS 1 (class name can not start with a dash in CSS 1) but it"
           text run at (0,18) width 775: "should be purple according to latest CSS 2.1 WD (class name can not start with a dash unless immediately followed"
           text run at (0,36) width 771: "by [_A-Za-z] character in CSS 2.1) and the markup code is valid according to W3C HTML validator and the CSS"
           text run at (0,54) width 402: "code is perfectly valid according to the W3C CSS validator!"
-      RenderBlock {P} at (0,349) size 784x18
-        RenderText {#text} at (0,0) size 27x19
+      RenderBlock {P} at (0,351) size 784x19
+        RenderText {#text} at (0,0) size 27x17
           text run at (0,0) width 27: "See "
-        RenderInline {A} at (0,0) size 71x19 [color=#0000EE]
-          RenderText {#text} at (27,0) size 71x19
+        RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
+          RenderText {#text} at (27,0) size 71x17
             text run at (27,0) width 71: "Bug 14373"
-        RenderInline {A} at (0,0) size 4x19
-          RenderText {#text} at (98,0) size 4x19
+        RenderInline {A} at (0,0) size 4x17
+          RenderText {#text} at (98,0) size 4x17
             text run at (98,0) width 4: "."
-      RenderBlock (anonymous) at (0,383) size 784x0
+      RenderBlock (anonymous) at (0,385) size 784x1
         RenderInline {A} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

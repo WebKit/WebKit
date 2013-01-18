@@ -4,11 +4,11 @@ layer at (0,0) size 800x118
   RenderBlock {html} at (0,0) size 800x118
     RenderBody {body} at (8,16) size 784x86
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 760x19
+        RenderText {#text} at (0,0) size 760x17
           text run at (0,0) width 760: "Below both lines should be centered. The first is static, the second is dynamically generated using javascript. Bug 14506."
       RenderBlock {p} at (0,34) size 784x18
-        RenderText {#text} at (331,0) size 122x19
+        RenderText {#text} at (331,0) size 122x17
           text run at (331,0) width 122: "Should be centered"
       RenderBlock {p} at (0,68) size 784x18
-        RenderText {#text} at (331,0) size 122x19
+        RenderText {#text} at (331,0) size 122x17
           text run at (331,0) width 122: "Should be centered"

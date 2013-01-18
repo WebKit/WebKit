@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 67x19
+        RenderText {#text} at (0,0) size 67x17
           text run at (0,0) width 67: "All of this "
-        RenderInline {SPAN} at (0,0) size 88x19
-          RenderText {#text} at (67,0) size 88x19
+        RenderInline {SPAN} at (0,0) size 88x17
+          RenderText {#text} at (67,0) size 88x17
             text run at (67,0) width 88: "text should be"
-        RenderText {#text} at (155,0) size 43x19
+        RenderText {#text} at (155,0) size 43x17
           text run at (155,0) width 43: " green."
       RenderBlock {UL} at (0,34) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 373x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 373x17
             text run at (0,0) width 373: "All of this text should be green. The bullet should be black."
       RenderBlock {DIV} at (0,68) size 784x55 [color=#FF0000]
-        RenderInline {SPAN} at (0,0) size 429x19 [color=#008000]
-          RenderInline (generated) at (0,0) size 35x54
-            RenderText {#text} at (0,0) size 35x54
-              text run at (0,0) width 35: "A"
-          RenderText {#text} at (35,28) size 394x19
-            text run at (35,28) width 394: "ll of this text should be green, including the big \"A\" first-letter."
+        RenderInline {SPAN} at (0,0) size 429x17 [color=#008000]
+          RenderInline (generated) at (0,0) size 35x53
+            RenderText {#text} at (0,1) size 35x53
+              text run at (0,1) width 35: "A"
+          RenderText {#text} at (35,30) size 394x17
+            text run at (35,30) width 394: "ll of this text should be green, including the big \"A\" first-letter."
       RenderBlock {P} at (0,139) size 784x0
       RenderBlock {DIV} at (0,139) size 784x18
         RenderBlock {DIV} at (0,0) size 163x18 [color=#FF0000]
-          RenderText {#text} at (0,0) size 163x19
+          RenderText {#text} at (0,0) size 163x17
             text run at (0,0) width 163: "This text should be green."

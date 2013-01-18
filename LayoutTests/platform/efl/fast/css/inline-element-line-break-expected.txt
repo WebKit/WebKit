@@ -4,67 +4,67 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 86x42 [border: (3px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 108x19
-          RenderText {#text} at (3,3) size 108x19
+        RenderInline {SPAN} at (0,0) size 108x17
+          RenderText {#text} at (3,3) size 108x17
             text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 132x37
+        RenderText {#text} at (111,3) size 132x35
           text run at (111,3) width 24: "AA"
           text run at (3,21) width 22: "BB"
       RenderBlock {P} at (0,58) size 86x24 [border: (3px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 108x19
-          RenderText {#text} at (3,3) size 108x19
+        RenderInline {SPAN} at (0,0) size 108x17
+          RenderText {#text} at (3,3) size 108x17
             text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 60x19
+        RenderText {#text} at (111,3) size 60x17
           text run at (111,3) width 60: "AAAAA"
       RenderBlock {P} at (0,98) size 86x42 [border: (3px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 48x19
-          RenderText {#text} at (3,3) size 48x19
+        RenderInline {SPAN} at (0,0) size 48x17
+          RenderText {#text} at (3,3) size 48x17
             text run at (3,3) width 48: "AAAA"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 44x19
-          RenderText {#text} at (3,21) size 44x19
+        RenderInline {SPAN} at (0,0) size 44x17
+          RenderText {#text} at (3,21) size 44x17
             text run at (3,21) width 44: "BBBB"
-        RenderText {#text} at (47,21) size 55x19
+        RenderText {#text} at (47,21) size 55x17
           text run at (47,21) width 55: "BBBBB"
       RenderBlock {P} at (0,156) size 86x42 [border: (3px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 108x19
-          RenderText {#text} at (3,3) size 108x19
+        RenderInline {SPAN} at (0,0) size 108x17
+          RenderText {#text} at (3,3) size 108x17
             text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 132x37
+        RenderText {#text} at (111,3) size 132x35
           text run at (111,3) width 24: "AA"
           text run at (3,21) width 20: "ZZ"
-        RenderInline {SPAN} at (0,0) size 90x19
-          RenderText {#text} at (23,21) size 90x19
+        RenderInline {SPAN} at (0,0) size 90x17
+          RenderText {#text} at (23,21) size 90x17
             text run at (23,21) width 90: "ZZZZZZZZZ"
       RenderBlock {P} at (0,214) size 86x24 [border: (3px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 108x19
-          RenderText {#text} at (3,3) size 108x19
+        RenderInline {SPAN} at (0,0) size 108x17
+          RenderText {#text} at (3,3) size 108x17
             text run at (3,3) width 108: "AAAAAAAAA"
-        RenderText {#text} at (111,3) size 70x19
+        RenderText {#text} at (111,3) size 70x17
           text run at (111,3) width 70: "MMMMM"
-        RenderInline {SPAN} at (0,0) size 90x19
-          RenderText {#text} at (181,3) size 90x19
+        RenderInline {SPAN} at (0,0) size 90x17
+          RenderText {#text} at (181,3) size 90x17
             text run at (181,3) width 90: "ZZZZZZZZZ"
       RenderBlock {P} at (0,254) size 86x42 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 60x19
+        RenderText {#text} at (3,3) size 60x17
           text run at (3,3) width 60: "YYYYY"
-        RenderInline {SPAN} at (0,0) size 48x19
-          RenderText {#text} at (63,3) size 48x19
+        RenderInline {SPAN} at (0,0) size 48x17
+          RenderText {#text} at (63,3) size 48x17
             text run at (63,3) width 48: "YYYY"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 40x19
-          RenderText {#text} at (3,21) size 40x19
+        RenderInline {SPAN} at (0,0) size 40x17
+          RenderText {#text} at (3,21) size 40x17
             text run at (3,21) width 40: "ZZZZ"
       RenderBlock {P} at (0,312) size 86x42 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 24x37
+        RenderText {#text} at (3,3) size 24x35
           text run at (3,3) width 24: "YY"
           text run at (3,21) width 20: "ZZ"
-        RenderInline {SPAN} at (0,0) size 90x19
-          RenderText {#text} at (23,21) size 90x19
+        RenderInline {SPAN} at (0,0) size 90x17
+          RenderText {#text} at (23,21) size 90x17
             text run at (23,21) width 90: "ZZZZZZZZZ"
       RenderBlock {P} at (0,370) size 86x24 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 50x19
+        RenderText {#text} at (3,3) size 50x17
           text run at (3,3) width 50: "ZZZZZ"
-        RenderInline {SPAN} at (0,0) size 90x19
-          RenderText {#text} at (53,3) size 90x19
+        RenderInline {SPAN} at (0,0) size 90x17
+          RenderText {#text} at (53,3) size 90x17
             text run at (53,3) width 90: "ZZZZZZZZZ"

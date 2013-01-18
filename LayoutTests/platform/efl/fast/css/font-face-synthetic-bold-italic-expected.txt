@@ -4,56 +4,56 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 745x37
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x19
+        RenderInline {I} at (0,0) size 745x35
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 307x17
               text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=34147"
-          RenderText {#text} at (360,0) size 745x37
+          RenderText {#text} at (360,0) size 745x35
             text run at (360,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
             text run at (0,18) width 94: "regular is used"
-        RenderText {#text} at (94,18) size 4x19
+        RenderText {#text} at (94,18) size 4x17
           text run at (94,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 91x19
+        RenderText {#text} at (0,0) size 91x17
           text run at (0,0) width 91: "Ahem regular:"
       RenderBlock {P} at (0,86) size 784x16
-        RenderText {#text} at (0,0) size 192x17
+        RenderText {#text} at (0,0) size 192x16
           text run at (0,0) width 192: "Ahem regular"
       RenderBlock {P} at (0,118) size 784x18
-        RenderText {#text} at (0,0) size 135x19
+        RenderText {#text} at (0,0) size 135x17
           text run at (0,0) width 135: "Ahem synthetic bold:"
       RenderBlock (anonymous) at (0,152) size 784x0
         RenderInline {STRONG} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,152) size 784x16
         RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 304x17
+          RenderText {#text} at (0,0) size 304x16
             text run at (0,0) width 304: "Ahem synthetic bold"
       RenderBlock (anonymous) at (0,184) size 784x0
         RenderInline {STRONG} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,184) size 784x18
-        RenderText {#text} at (0,0) size 137x19
+        RenderText {#text} at (0,0) size 137x17
           text run at (0,0) width 137: "Ahem synthetic italic:"
       RenderBlock (anonymous) at (0,218) size 784x0
         RenderInline {I} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,218) size 784x16
         RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 336x17
+          RenderText {#text} at (0,0) size 336x16
             text run at (0,0) width 336: "Ahem synthetic italic"
       RenderBlock (anonymous) at (0,250) size 784x0
         RenderInline {I} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,250) size 784x18
-        RenderText {#text} at (0,0) size 169x19
+        RenderText {#text} at (0,0) size 169x17
           text run at (0,0) width 169: "Ahem synthetic bold italic:"
       RenderBlock (anonymous) at (0,284) size 784x0
         RenderInline {STRONG} at (0,0) size 0x0
           RenderInline {I} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,284) size 784x16
         RenderBlock {P} at (0,0) size 784x16
-          RenderText {#text} at (0,0) size 416x17
+          RenderText {#text} at (0,0) size 416x16
             text run at (0,0) width 416: "Ahem synthetic bold italic"
       RenderBlock (anonymous) at (0,316) size 784x0
         RenderInline {STRONG} at (0,0) size 0x0

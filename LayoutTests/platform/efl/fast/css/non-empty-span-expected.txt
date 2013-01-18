@@ -4,32 +4,32 @@ layer at (0,0) size 800x457
   RenderBlock {HTML} at (0,0) size 800x457
     RenderBody {BODY} at (8,8) size 784x441
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 119x19
+        RenderText {#text} at (0,0) size 119x17
           text run at (0,0) width 119: "Before empty span"
       RenderBlock (anonymous) at (0,18) size 784x100
-        RenderInline {SPAN} at (0,0) size 0x19
-        RenderText {#text} at (0,40) size 12x19
-          text run at (0,40) width 12: "X"
+        RenderInline {SPAN} at (0,0) size 0x17
+        RenderText {#text} at (0,41) size 12x17
+          text run at (0,41) width 12: "X"
       RenderBlock {DIV} at (0,118) size 784x18
-        RenderText {#text} at (0,0) size 109x19
+        RenderText {#text} at (0,0) size 109x17
           text run at (0,0) width 109: "After empty span"
       RenderBlock {DIV} at (0,136) size 784x18
-        RenderText {#text} at (0,0) size 119x19
+        RenderText {#text} at (0,0) size 119x17
           text run at (0,0) width 119: "Before empty span"
       RenderBlock (anonymous) at (0,154) size 784x115
-        RenderInline {SPAN} at (0,0) size 0x112
-        RenderText {#text} at (0,76) size 12x19
-          text run at (0,76) width 12: "X"
+        RenderInline {SPAN} at (0,0) size 0x111
+        RenderText {#text} at (0,77) size 12x17
+          text run at (0,77) width 12: "X"
       RenderBlock {DIV} at (0,269) size 784x18
-        RenderText {#text} at (0,0) size 109x19
+        RenderText {#text} at (0,0) size 109x17
           text run at (0,0) width 109: "After empty span"
       RenderBlock {DIV} at (0,287) size 784x18
-        RenderText {#text} at (0,0) size 119x19
+        RenderText {#text} at (0,0) size 119x17
           text run at (0,0) width 119: "Before empty span"
       RenderBlock (anonymous) at (0,305) size 784x118
-        RenderInline {SPAN} at (0,0) size 0x19
-        RenderText {#text} at (0,100) size 12x19
+        RenderInline {SPAN} at (0,0) size 0x17
+        RenderText {#text} at (0,100) size 12x17
           text run at (0,100) width 12: "X"
       RenderBlock {DIV} at (0,423) size 784x18
-        RenderText {#text} at (0,0) size 109x19
+        RenderText {#text} at (0,0) size 109x17
           text run at (0,0) width 109: "After empty span"

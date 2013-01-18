@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline (generated) at (0,0) size 54x19
-          RenderInline (generated) at (0,0) size 9x19 [color=#FFD800]
-            RenderText at (0,0) size 9x19
+        RenderInline (generated) at (0,0) size 54x17
+          RenderInline (generated) at (0,0) size 9x17 [color=#FFD800]
+            RenderText at (0,0) size 9x17
               text run at (0,0) width 9: "S"
-          RenderText at (9,0) size 45x19
+          RenderText at (9,0) size 45x17
             text run at (9,0) width 45: "pecial: "
-        RenderText {#text} at (54,0) size 590x19
+        RenderText {#text} at (54,0) size 590x17
           text run at (54,0) width 220: "The \"S\" to the left should be gold. "
           text run at (274,0) width 370: "This is testing :before used in conjunction with :first-letter. "
-        RenderInline (generated) at (0,0) size 65x19
-          RenderText at (644,0) size 65x19
+        RenderInline (generated) at (0,0) size 65x17
+          RenderText at (644,0) size 65x17
             text run at (644,0) width 65: "[The End]"

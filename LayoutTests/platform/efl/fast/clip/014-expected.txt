@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x70
   RenderBlock {HTML} at (0,0) size 800x70
     RenderBody {BODY} at (8,8) size 784x54
-      RenderText {#text} at (0,0) size 770x55
+      RenderText {#text} at (0,0) size 770x53
         text run at (0,0) width 405: "You should see a 100x100 green square with a scrollbar below. "
         text run at (405,0) width 237: "If you see any red, the test has failed. "
         text run at (642,0) width 128: "This test is checking"

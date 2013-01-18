@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 624x19
+        RenderText {#text} at (0,0) size 624x17
           text run at (0,0) width 624: "These should be four green hollow boxes with dimensions 600x300, 100x300, 600x100, 100x100."
-      RenderBlock (anonymous) at (0,34) size 784x418
+      RenderBlock (anonymous) at (0,34) size 784x420
         RenderHTMLCanvas {CANVAS} at (0,0) size 606x306 [border: (3px solid #008000)]
-        RenderText {#text} at (606,291) size 4x19
-          text run at (606,291) width 4: " "
+        RenderText {#text} at (606,292) size 4x17
+          text run at (606,292) width 4: " "
         RenderText {#text} at (0,0) size 0x0
         RenderHTMLCanvas {CANVAS} at (610,0) size 106x306 [border: (3px solid #008000)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderHTMLCanvas {CANVAS} at (0,309) size 606x106 [border: (3px solid #008000)]
-        RenderText {#text} at (606,400) size 4x19
-          text run at (606,400) width 4: " "
+        RenderHTMLCanvas {CANVAS} at (0,310) size 606x106 [border: (3px solid #008000)]
+        RenderText {#text} at (606,402) size 4x17
+          text run at (606,402) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderHTMLCanvas {CANVAS} at (610,309) size 106x106 [border: (3px solid #008000)]
+        RenderHTMLCanvas {CANVAS} at (610,310) size 106x106 [border: (3px solid #008000)]
         RenderText {#text} at (0,0) size 0x0
