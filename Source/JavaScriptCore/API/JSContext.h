@@ -33,11 +33,10 @@
 // JavaScript execution takes place within a context.
 // JSContext is also used to manage the life-cycle of objects within the
 // JavaScript virtual machine. Every instance of JSValue is associated with a
-// JSContext via a weak reference. The JSValue will keep the JavaScript value it
-// references alive so long as the JSContext is also retained. When an instance
-// of JSContext is deallocated and the weak references to it are cleared the
-// JSValues that had been associated with this context will be invalidated, and
-// will cease to keep the values within the JavaScript engine alive.
+// JSContext via a strong reference. The JSValue will keep the JSContext it
+// references alive so long as the JSValue remains alive. When all of the JSValues
+// that reference a particular JSContext have been deallocated the JSContext 
+// will be deallocated unless it has been previously retained.
 
 NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSContext : NSObject

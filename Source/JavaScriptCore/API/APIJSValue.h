@@ -28,21 +28,12 @@
 @class JSContext;
 
 // A JSValue is a reference to a value within the JavaScript object space of a
-// JSVirtualMachine. All instances of JSValue originate from a JSContext, and
-// hold a strong reference to this JSContext. Where an instance method is invoked
-// upon a JSValue, and this returns another JSValue, the returned JSValue will
-// originate from the same JSContext as the JSValue on which the method was
-// invoked.
-//
-// The JSContext is used to manage the life-cycle of the referenced JavaScript
-// value within the virtual machine. So long as the JSContext is being retained
-// the JSValue will continue to keep the referenced value within the JavaScript
-// virtual machine alive. When the JSContext associated with a JSValue is
-// deallocated the weak context property of the JSValue will become nil. After
-// this occurs the value within the JavaScript virtual machine is no longer
-// being maintained by this JSValue, and the JSValue instance may no longer by
-// used as a reference to this value. For any method invoked on instance of
-// JSValue with a nil context, the method will return a nil/zero/false result.
+// JSVirtualMachine. All instances of JSValue originate from a JSContext and
+// hold a strong reference to this JSContext. As long as any value associated with 
+// a particular JSContext is retained, that JSContext will remain alive. 
+// Where an instance method is invoked upon a JSValue, and this returns another 
+// JSValue, the returned JSValue will originate from the same JSContext as the 
+// JSValue on which the method was invoked.
 //
 // For all methods taking arguments of type id, arguments will be converted
 // into a JavaScript value according to the conversion specified below.

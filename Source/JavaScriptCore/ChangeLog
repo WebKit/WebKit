@@ -1,3 +1,15 @@
+2013-01-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Update documentation for JSValue and JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=107313
+
+        Reviewed by Geoffrey Garen.
+
+        After changing the semantics of object lifetime we need to update the API documentation to reflect the new semantics.
+
+        * API/APIJSValue.h:
+        * API/JSContext.h:
+
 2013-01-18  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         r134080 causes heap problem on linux systems where PAGESIZE != 4096
