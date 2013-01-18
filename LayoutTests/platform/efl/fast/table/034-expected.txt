@@ -9,6 +9,6 @@ layer at (0,0) size 785x1276
             RenderTableCell {TD} at (2,629) size 2x2 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (6,2) size 1048x1256 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 1046x1254 [bgcolor=#A9AFB8]
-                RenderText {#text} at (0,0) size 297x19
+                RenderText {#text} at (0,0) size 297x17
                   text run at (0,0) width 104: "This cell should "
                   text run at (104,0) width 193: "be huge and 1000 pixels wide."

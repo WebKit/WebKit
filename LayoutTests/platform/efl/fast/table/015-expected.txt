@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (3,3) size 41x24
           RenderTableRow {TR} at (0,2) size 41x20
             RenderTableCell {TD} at (2,2) size 37x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 35x19
+              RenderText {#text} at (1,1) size 35x17
                 text run at (1,1) width 35: "Hello"
       RenderTable {TABLE} at (0,46) size 47x30 [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 41x24
           RenderTableRow {TR} at (0,2) size 41x20
             RenderTableCell {TD} at (2,2) size 37x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 35x19
+              RenderText {#text} at (1,1) size 35x17
                 text run at (1,1) width 35: "Hello"

@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 735x19
+        RenderText {#text} at (0,0) size 735x17
           text run at (0,0) width 99: "This is a test of "
           text run at (99,0) width 182: "some code to make sure that "
           text run at (281,0) width 221: "white-space gets properly ignored. "
           text run at (502,0) width 233: "If it does, then this should render the "
-        RenderInline {A} at (0,0) size 27x19 [color=#0000EE]
-          RenderText {#text} at (735,0) size 27x19
+        RenderInline {A} at (0,0) size 27x17 [color=#0000EE]
+          RenderText {#text} at (735,0) size 27x17
             text run at (735,0) width 27: "way"
-        RenderText {#text} at (0,18) size 366x19
+        RenderText {#text} at (0,18) size 366x17
           text run at (0,18) width 120: "one would expect. "
           text run at (120,18) width 246: "Hopefully it does render the way we w"
-        RenderInline {I} at (0,0) size 8x19
-          RenderText {#text} at (366,18) size 8x19
+        RenderInline {I} at (0,0) size 8x17
+          RenderText {#text} at (366,18) size 8x17
             text run at (366,18) width 8: "a"
-        RenderInline {B} at (0,0) size 9x19
-          RenderText {#text} at (374,18) size 9x19
+        RenderInline {B} at (0,0) size 9x17
+          RenderText {#text} at (374,18) size 9x17
             text run at (374,18) width 9: "n"
-        RenderText {#text} at (383,18) size 280x19
+        RenderText {#text} at (383,18) size 280x17
           text run at (383,18) width 40: "t it to. "
           text run at (423,18) width 83: "If it does not "
           text run at (506,18) width 90: "that would be "

@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 63x19
+        RenderText {#text} at (0,0) size 63x17
           text run at (0,0) width 63: "This tests "
-        RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-          RenderText {#text} at (63,0) size 60x19
+        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
+          RenderText {#text} at (63,0) size 60x17
             text run at (63,0) width 60: "bug 6960"
-        RenderText {#text} at (123,0) size 756x37
+        RenderText {#text} at (123,0) size 756x35
           text run at (123,0) width 633: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can arise with"
           text run at (0,18) width 91: "forms, at least."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 428x19
+        RenderText {#text} at (0,0) size 428x17
           text run at (0,0) width 428: "The test is simply that the empty table below does not cause a crash."
       RenderTable {TABLE} at (0,86) size 100x100 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 94x94

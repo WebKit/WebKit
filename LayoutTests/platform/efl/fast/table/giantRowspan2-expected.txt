@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x76
           RenderTableRow {TR} at (0,2) size 784x0
             RenderTableCell {TD} at (2,1) size 780x74 [r=0 c=0 rs=8190 cs=1]
-              RenderText {#text} at (1,1) size 778x73
+              RenderText {#text} at (1,1) size 778x71
                 text run at (1,1) width 673: "This test succeeds if it does not crash. We implemented a heuristic a while back to prevent giant rowspans. "
                 text run at (674,1) width 82: "The heuristic"
                 text run at (1,19) width 696: "did not, however, fix this case. This rowpsan was small enough so that we thought it was okay to allocate, but "

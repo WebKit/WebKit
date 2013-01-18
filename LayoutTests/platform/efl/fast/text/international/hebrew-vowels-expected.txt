@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 274x19
+        RenderText {#text} at (0,0) size 274x17
           text run at (0,0) width 274: "This test covers Hebrew vowel positioning."
       RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 458x19
+        RenderText {#text} at (0,0) size 458x17
           text run at (0,0) width 458: "The vowel (two vertical dots) should be centered beneath the main letter."
       RenderBlock {DIV} at (0,86) size 784x92
-        RenderText {#text} at (65,1) size 76x90
-          text run at (65,1) width 76 RTL: "\x{5E1}\x{5B0} "
-        RenderText {#text} at (0,1) size 65x90
-          text run at (0,1) width 65 RTL: "\x{5E9}\x{5B0}"
+        RenderText {#text} at (65,2) size 76x88
+          text run at (65,2) width 76 RTL: "\x{5E1}\x{5B0} "
+        RenderText {#text} at (0,2) size 65x88
+          text run at (0,2) width 65 RTL: "\x{5E9}\x{5B0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,186) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,204) size 784x18
-        RenderText {#text} at (0,0) size 637x19
+        RenderText {#text} at (0,0) size 637x17
           text run at (0,0) width 637: "The dot should be positioned on the right side of the first letter, and on the left side of the second one."
       RenderBlock {DIV} at (0,238) size 784x184
-        RenderText {#text} at (0,1) size 65x90
-          text run at (0,1) width 65 RTL: "\x{5E9}\x{5C1}"
+        RenderText {#text} at (0,2) size 65x88
+          text run at (0,2) width 65 RTL: "\x{5E9}\x{5C1}"
         RenderBR {BR} at (65,73) size 0x0
-        RenderText {#text} at (0,93) size 65x90
-          text run at (0,93) width 65 RTL: "\x{5E9}\x{5C2}"
+        RenderText {#text} at (0,94) size 65x88
+          text run at (0,94) width 65 RTL: "\x{5E9}\x{5C2}"
         RenderText {#text} at (0,0) size 0x0

@@ -6,5 +6,5 @@ layer at (0,0) size 800x509
       RenderBlock {DIV} at (0,0) size 784x2 [border: (1px solid #008000)]
         RenderTable {TABLE} at (1,1) size 400x500 [bgcolor=#FFA500] [border: (1px outset #808080)]
       RenderBlock (anonymous) at (0,2) size 784x18
-        RenderText {#text} at (401,0) size 84x19
+        RenderText {#text} at (401,0) size 84x17
           text run at (401,0) width 84: "More content"

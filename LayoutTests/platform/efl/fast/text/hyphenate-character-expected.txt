@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (4,0) size 344x275
-        RenderBlock {P} at (0,16) size 344x19
-          RenderText {#text} at (0,0) size 203x19
+      RenderBlock (floating) {DIV} at (4,0) size 344x274
+        RenderBlock {P} at (0,16) size 344x18
+          RenderText {#text} at (0,0) size 203x17
             text run at (0,0) width 203: "The initial value (should be like "
           RenderInline {TT} at (0,0) size 32x15
-            RenderText {#text} at (203,4) size 32x15
-              text run at (203,4) width 32: "auto"
-          RenderText {#text} at (235,0) size 5x19
+            RenderText {#text} at (203,3) size 32x15
+              text run at (203,3) width 32: "auto"
+          RenderText {#text} at (235,0) size 5x17
             text run at (235,0) width 5: ")"
-        RenderBlock {DIV} at (0,51) size 344x224 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x210
+          RenderText {#text} at (7,7) size 330x209
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
             text run at (7,49) width 245: "flamingo: she succeeded in"
@@ -28,18 +28,18 @@ layer at (0,0) size 800x600
             text run at (7,175) width 285: "hedgehog a blow with its head, it "
             text run at (292,175) width 45: "would"
             text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
-      RenderBlock (floating) {DIV} at (356,0) size 344x275
-        RenderBlock {P} at (0,16) size 344x19
-          RenderText {#text} at (0,0) size 81x19
+      RenderBlock (floating) {DIV} at (356,0) size 344x274
+        RenderBlock {P} at (0,16) size 344x18
+          RenderText {#text} at (0,0) size 81x17
             text run at (0,0) width 81: "The default ("
           RenderInline {TT} at (0,0) size 200x15
-            RenderText {#text} at (81,4) size 200x15
-              text run at (81,4) width 200: "hyphenate-character: auto"
-          RenderText {#text} at (281,0) size 5x19
+            RenderText {#text} at (81,3) size 200x15
+              text run at (81,3) width 200: "hyphenate-character: auto"
+          RenderText {#text} at (281,0) size 5x17
             text run at (281,0) width 5: ")"
-        RenderBlock {DIV} at (0,51) size 344x224 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x210
+          RenderText {#text} at (7,7) size 330x209
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
             text run at (7,49) width 245: "flamingo: she succeeded in"
@@ -53,18 +53,18 @@ layer at (0,0) size 800x600
             text run at (7,175) width 285: "hedgehog a blow with its head, it "
             text run at (292,175) width 45: "would"
             text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
-      RenderBlock (floating) {DIV} at (4,275) size 344x275
-        RenderBlock {P} at (0,16) size 344x19
-          RenderText {#text} at (0,0) size 47x19
+      RenderBlock (floating) {DIV} at (4,274) size 344x274
+        RenderBlock {P} at (0,16) size 344x18
+          RenderText {#text} at (0,0) size 47x17
             text run at (0,0) width 47: "Bullet ("
           RenderInline {TT} at (0,0) size 224x15
-            RenderText {#text} at (47,4) size 224x15
-              text run at (47,4) width 224: "hyphenate-character: \"\\2022\""
-          RenderText {#text} at (271,0) size 5x19
+            RenderText {#text} at (47,3) size 224x15
+              text run at (47,3) width 224: "hyphenate-character: \"\\2022\""
+          RenderText {#text} at (271,0) size 5x17
             text run at (271,0) width 5: ")"
-        RenderBlock {DIV} at (0,51) size 344x224 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x210
+          RenderText {#text} at (7,7) size 330x209
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
             text run at (7,49) width 245: "flamingo: she succeeded in"
@@ -78,18 +78,18 @@ layer at (0,0) size 800x600
             text run at (7,175) width 285: "hedgehog a blow with its head, it "
             text run at (292,175) width 45: "would"
             text run at (7,196) width 314: "twist itself round and look up in her face\x{2026}"
-      RenderBlock (floating) {DIV} at (356,275) size 357x275
-        RenderBlock {P} at (0,16) size 357x19
-          RenderText {#text} at (0,0) size 136x19
+      RenderBlock (floating) {DIV} at (356,274) size 357x274
+        RenderBlock {P} at (0,16) size 357x18
+          RenderText {#text} at (0,0) size 136x17
             text run at (0,0) width 136: "Middle dot and tilde ("
           RenderInline {TT} at (0,0) size 216x15
-            RenderText {#text} at (136,4) size 216x15
-              text run at (136,4) width 216: "hyphenate-character: \"\\B7~\""
-          RenderText {#text} at (352,0) size 5x19
+            RenderText {#text} at (136,3) size 216x15
+              text run at (136,3) width 216: "hyphenate-character: \"\\B7~\""
+          RenderText {#text} at (352,0) size 5x17
             text run at (352,0) width 5: ")"
-        RenderBlock {DIV} at (0,51) size 344x224 [border: (3px solid #000000)]
+        RenderBlock {DIV} at (0,50) size 344x224 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x210
+          RenderText {#text} at (7,7) size 330x209
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,28) width 245: "at first was in managing her"
             text run at (7,49) width 245: "flamingo: she succeeded in"

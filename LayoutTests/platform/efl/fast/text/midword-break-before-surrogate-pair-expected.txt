@@ -4,6 +4,6 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 186x88 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 176x82
+        RenderText {#text} at (3,3) size 176x81
           text run at (3,3) width 176: "\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}"
           text run at (3,44) width 44: "\x{D834}\x{DD10}\x{D834}\x{DD10}"

@@ -4,7 +4,7 @@ layer at (0,0) size 800x234
   RenderBlock {HTML} at (0,0) size 800x234
     RenderBody {BODY} at (8,8) size 784x218
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 360x19
+        RenderText {#text} at (0,0) size 360x17
           text run at (0,0) width 360: "Will be green if relative positioning offsets are supported:"
       RenderTable {TABLE} at (0,18) size 100x200
         RenderTableSection {TBODY} at (0,0) size 100x200

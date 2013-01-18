@@ -4,13 +4,13 @@ layer at (0,0) size 800x110
   RenderBlock {HTML} at (0,0) size 800x110
     RenderBody {BODY} at (8,8) size 784x86
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 279x19
+        RenderText {#text} at (0,0) size 279x17
           text run at (0,0) width 279: "The following two lines should be the same:"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 76x19
+        RenderText {#text} at (0,0) size 76x17
           text run at (0,0) width 76 LTR override: "abc\x{5D2}\x{5D1}\x{5D0}\x{661}\x{662}\x{663}"
       RenderBlock {P} at (0,68) size 784x18
-        RenderText {#text} at (0,0) size 76x19
+        RenderText {#text} at (0,0) size 76x17
           text run at (0,0) width 22: "abc"
           text run at (22,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (49,0) width 27: "\x{661}\x{662}\x{663}"

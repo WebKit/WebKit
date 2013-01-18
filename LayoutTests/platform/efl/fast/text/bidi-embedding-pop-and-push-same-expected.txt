@@ -4,140 +4,140 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 512x19
+        RenderText {#text} at (0,0) size 512x17
           text run at (0,0) width 512: "In each box below, the words or letters should be in the same order on every line."
       RenderBlock {DIV} at (8,34) size 768x64 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 75x19
-            RenderText {#text} at (46,0) size 75x19
+          RenderInline {SPAN} at (0,0) size 75x17
+            RenderText {#text} at (46,0) size 75x17
               text run at (46,0) width 75: "ipsum dolor"
-          RenderText {#text} at (121,0) size 56x19
+          RenderText {#text} at (121,0) size 56x17
             text run at (121,0) width 56: " sit amet."
         RenderBlock {DIV} at (5,23) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderInline {SPAN} at (0,0) size 37x19
-            RenderText {#text} at (84,0) size 37x19
+          RenderInline {SPAN} at (0,0) size 37x17
+            RenderText {#text} at (84,0) size 37x17
               text run at (84,0) width 37: " dolor"
-          RenderText {#text} at (121,0) size 56x19
+          RenderText {#text} at (121,0) size 56x17
             text run at (121,0) width 56: " sit amet."
         RenderBlock {DIV} at (5,41) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 42x19
-            RenderText {#text} at (46,0) size 42x19
+          RenderInline {SPAN} at (0,0) size 42x17
+            RenderText {#text} at (46,0) size 42x17
               text run at (46,0) width 42: "ipsum "
-          RenderInline {B} at (0,0) size 91x19
-            RenderInline {SPAN} at (0,0) size 36x19
-              RenderText {#text} at (88,0) size 36x19
+          RenderInline {B} at (0,0) size 91x17
+            RenderInline {SPAN} at (0,0) size 36x17
+              RenderText {#text} at (88,0) size 36x17
                 text run at (88,0) width 36: "dolor"
-            RenderText {#text} at (124,0) size 4x19
+            RenderText {#text} at (124,0) size 4x17
               text run at (124,0) width 4: " "
-            RenderInline {I} at (0,0) size 14x19
-              RenderText {#text} at (128,0) size 14x19
+            RenderInline {I} at (0,0) size 14x17
+              RenderText {#text} at (128,0) size 14x17
                 text run at (128,0) width 14: "sit"
-            RenderText {#text} at (142,0) size 37x19
+            RenderText {#text} at (142,0) size 37x17
               text run at (142,0) width 37: " amet"
-          RenderText {#text} at (179,0) size 4x19
+          RenderText {#text} at (179,0) size 4x17
             text run at (179,0) width 4: "."
       RenderBlock {DIV} at (8,106) size 768x64 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 64x19
-            RenderText {#text} at (46,0) size 64x19
+          RenderInline {SPAN} at (0,0) size 64x17
+            RenderText {#text} at (46,0) size 64x17
               text run at (46,0) width 23 RTL: " \x{5DB}\x{5DC}"
               text run at (69,0) width 9: "if"
               text run at (78,0) width 32 RTL: "\x{5D9}\x{5D5}\x{5EA}\x{5E8} "
-          RenderText {#text} at (110,0) size 56x19
+          RenderText {#text} at (110,0) size 56x17
             text run at (110,0) width 56: " sit amet."
         RenderBlock {DIV} at (5,23) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 32x19
-            RenderText {#text} at (78,0) size 32x19
+          RenderInline {SPAN} at (0,0) size 32x17
+            RenderText {#text} at (78,0) size 32x17
               text run at (78,0) width 32 RTL: "\x{5D9}\x{5D5}\x{5EA}\x{5E8} "
-          RenderInline {SPAN} at (0,0) size 32x19
-            RenderText {#text} at (46,0) size 32x19
+          RenderInline {SPAN} at (0,0) size 32x17
+            RenderText {#text} at (46,0) size 32x17
               text run at (46,0) width 23 RTL: " \x{5DB}\x{5DC}"
               text run at (69,0) width 9: "if"
-          RenderText {#text} at (110,0) size 56x19
+          RenderText {#text} at (110,0) size 56x17
             text run at (110,0) width 56: " sit amet."
         RenderBlock {DIV} at (5,41) size 758x18
-          RenderText {#text} at (0,0) size 46x19
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 32x19
-            RenderText {#text} at (78,0) size 32x19
+          RenderInline {SPAN} at (0,0) size 32x17
+            RenderText {#text} at (78,0) size 32x17
               text run at (78,0) width 32 RTL: "\x{5D9}\x{5D5}\x{5EA}\x{5E8} "
-          RenderInline {B} at (0,0) size 119x19
-            RenderInline {SPAN} at (0,0) size 32x19
-              RenderText {#text} at (46,0) size 32x19
+          RenderInline {B} at (0,0) size 119x17
+            RenderInline {SPAN} at (0,0) size 32x17
+              RenderText {#text} at (46,0) size 32x17
                 text run at (46,0) width 23 RTL: " \x{5DB}\x{5DC}"
                 text run at (69,0) width 9: "if"
-            RenderText {#text} at (110,0) size 4x19
+            RenderText {#text} at (110,0) size 4x17
               text run at (110,0) width 4: " "
-            RenderInline {I} at (0,0) size 14x19
-              RenderText {#text} at (114,0) size 14x19
+            RenderInline {I} at (0,0) size 14x17
+              RenderText {#text} at (114,0) size 14x17
                 text run at (114,0) width 14: "sit"
-            RenderText {#text} at (128,0) size 37x19
+            RenderText {#text} at (128,0) size 37x17
               text run at (128,0) width 37: " amet"
-          RenderText {#text} at (165,0) size 4x19
+          RenderText {#text} at (165,0) size 4x17
             text run at (165,0) width 4: "."
       RenderBlock {DIV} at (8,178) size 768x46 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18
-          RenderInline {SPAN} at (0,0) size 19x19
-            RenderText {#text} at (0,0) size 19x19
+          RenderInline {SPAN} at (0,0) size 19x17
+            RenderText {#text} at (0,0) size 19x17
               text run at (0,0) width 19: "a b"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (5,23) size 758x18
-          RenderInline {SPAN} at (0,0) size 7x19
-            RenderText {#text} at (0,0) size 7x19
+          RenderInline {SPAN} at (0,0) size 7x17
+            RenderText {#text} at (0,0) size 7x17
               text run at (0,0) width 7: "a"
-          RenderInline {SPAN} at (0,0) size 12x19
-            RenderText {#text} at (7,0) size 12x19
+          RenderInline {SPAN} at (0,0) size 12x17
+            RenderText {#text} at (7,0) size 12x17
               text run at (7,0) width 12: " b"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (8,232) size 768x64 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18
-          RenderText {#text} at (723,0) size 35x19
+          RenderText {#text} at (723,0) size 35x17
             text run at (723,0) width 35 RTL: "\x{5D0}\x{5D7}\x{5EA} "
-          RenderInline {SPAN} at (0,0) size 86x19
-            RenderText {#text} at (637,0) size 86x19
+          RenderInline {SPAN} at (0,0) size 86x17
+            RenderText {#text} at (637,0) size 86x17
               text run at (637,0) width 86 RTL: "\x{5E9}\x{5EA}\x{5D9}\x{5D9}\x{5DD} \x{5E9}\x{5DC}\x{5D5}\x{5E9}"
-          RenderText {#text} at (553,0) size 84x19
+          RenderText {#text} at (553,0) size 84x17
             text run at (553,0) width 84 RTL: " \x{5D0}\x{5E8}\x{5D1}\x{5E2} \x{5D7}\x{5DE}\x{5E9}."
         RenderBlock {DIV} at (5,23) size 758x18
-          RenderText {#text} at (723,0) size 35x19
+          RenderText {#text} at (723,0) size 35x17
             text run at (723,0) width 35 RTL: "\x{5D0}\x{5D7}\x{5EA} "
-          RenderInline {SPAN} at (0,0) size 42x19
-            RenderText {#text} at (681,0) size 42x19
+          RenderInline {SPAN} at (0,0) size 42x17
+            RenderText {#text} at (681,0) size 42x17
               text run at (681,0) width 42 RTL: "\x{5E9}\x{5EA}\x{5D9}\x{5D9}\x{5DD}"
-          RenderInline {SPAN} at (0,0) size 44x19
-            RenderText {#text} at (637,0) size 44x19
+          RenderInline {SPAN} at (0,0) size 44x17
+            RenderText {#text} at (637,0) size 44x17
               text run at (637,0) width 44 RTL: " \x{5E9}\x{5DC}\x{5D5}\x{5E9}"
-          RenderText {#text} at (553,0) size 84x19
+          RenderText {#text} at (553,0) size 84x17
             text run at (553,0) width 84 RTL: " \x{5D0}\x{5E8}\x{5D1}\x{5E2} \x{5D7}\x{5DE}\x{5E9}."
         RenderBlock {DIV} at (5,41) size 758x18
-          RenderText {#text} at (723,0) size 35x19
+          RenderText {#text} at (723,0) size 35x17
             text run at (723,0) width 35 RTL: "\x{5D0}\x{5D7}\x{5EA} "
-          RenderInline {SPAN} at (0,0) size 46x19
-            RenderText {#text} at (677,0) size 46x19
+          RenderInline {SPAN} at (0,0) size 46x17
+            RenderText {#text} at (677,0) size 46x17
               text run at (677,0) width 46 RTL: "\x{5E9}\x{5EA}\x{5D9}\x{5D9}\x{5DD} "
-          RenderInline {B} at (0,0) size 120x19
-            RenderInline {SPAN} at (0,0) size 40x19
-              RenderText {#text} at (637,0) size 40x19
+          RenderInline {B} at (0,0) size 120x17
+            RenderInline {SPAN} at (0,0) size 40x17
+              RenderText {#text} at (637,0) size 40x17
                 text run at (637,0) width 40 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5E9}"
-            RenderText {#text} at (633,0) size 4x19
+            RenderText {#text} at (633,0) size 4x17
               text run at (633,0) width 4 RTL: " "
-            RenderInline {I} at (0,0) size 38x19
-              RenderText {#text} at (595,0) size 38x19
+            RenderInline {I} at (0,0) size 38x17
+              RenderText {#text} at (595,0) size 38x17
                 text run at (595,0) width 38 RTL: "\x{5D0}\x{5E8}\x{5D1}\x{5E2}"
-            RenderText {#text} at (557,0) size 38x19
+            RenderText {#text} at (557,0) size 38x17
               text run at (557,0) width 38 RTL: " \x{5D7}\x{5DE}\x{5E9}"
-          RenderText {#text} at (553,0) size 4x19
+          RenderText {#text} at (553,0) size 4x17
             text run at (553,0) width 4 RTL: "."

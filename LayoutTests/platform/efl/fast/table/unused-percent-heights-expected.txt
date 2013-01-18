@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 784x27
             RenderTableCell {TD} at (0,0) size 784x27 [border: none (1px solid #FFFFFF) none] [r=0 c=0 rs=1 cs=1]
               RenderBlock {A} at (0,0) size 784x26 [color=#0000EE]
-                RenderText {#text} at (4,4) size 153x19
+                RenderText {#text} at (4,4) size 153x17
                   text run at (4,4) width 153: "List of Transit Providers"
           RenderTableRow {TR} at (0,27) size 784x27
             RenderTableCell {TD} at (0,27) size 784x27 [border: none (1px solid #FFFFFF) none] [r=1 c=0 rs=1 cs=1]
               RenderBlock {A} at (0,0) size 784x26 [color=#0000EE]
-                RenderText {#text} at (4,4) size 160x19
+                RenderText {#text} at (4,4) size 160x17
                   text run at (4,4) width 160: "Locate a Transit Provider"

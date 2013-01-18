@@ -4,30 +4,30 @@ layer at (0,0) size 800x102
   RenderBlock {HTML} at (0,0) size 800x102
     RenderBody {BODY} at (8,16) size 784x70
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x37
+        RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "The three boxes should be the same. The order in each box should be: Roman letters, Hebrew"
           text run at (0,18) width 359: "letters, digits, Hebrew letters, Roman letters."
       RenderBlock {P} at (0,52) size 784x18
-        RenderInline {SPAN} at (0,0) size 158x21 [border: (1px solid #008000)]
-          RenderText {#text} at (1,0) size 156x19
+        RenderInline {SPAN} at (0,0) size 158x19 [border: (1px solid #008000)]
+          RenderText {#text} at (1,0) size 156x17
             text run at (1,0) width 34: "abc "
             text run at (35,0) width 29 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (64,0) width 30: "123"
             text run at (94,0) width 32 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (126,0) width 31: " def"
-        RenderText {#text} at (158,0) size 5x19
+        RenderText {#text} at (158,0) size 5x17
           text run at (158,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 158x21 [border: (1px solid #008000)]
-          RenderText {#text} at (164,0) size 156x19
+        RenderInline {SPAN} at (0,0) size 158x19 [border: (1px solid #008000)]
+          RenderText {#text} at (164,0) size 156x17
             text run at (164,0) width 34: "abc "
             text run at (198,0) width 29 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (227,0) width 30: "123"
             text run at (257,0) width 32 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             text run at (289,0) width 31: " def"
-        RenderText {#text} at (321,0) size 5x19
+        RenderText {#text} at (321,0) size 5x17
           text run at (321,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 158x21 [border: (1px solid #008000)]
-          RenderText {#text} at (327,0) size 156x19
+        RenderInline {SPAN} at (0,0) size 158x19 [border: (1px solid #008000)]
+          RenderText {#text} at (327,0) size 156x17
             text run at (327,0) width 34: "abc "
             text run at (361,0) width 29 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             text run at (390,0) width 30: "123"

@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 735x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 735x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15208"
-          RenderText {#text} at (354,0) size 735x37
+          RenderText {#text} at (354,0) size 735x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 377: "display:table causes the collapsed text to show at a different"
             text run at (0,18) width 153: "position when expanded"
-        RenderText {#text} at (153,18) size 4x19
+        RenderText {#text} at (153,18) size 4x17
           text run at (153,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 205x19
+        RenderText {#text} at (0,0) size 205x17
           text run at (0,0) width 205: "This should say \x{201C}Lorem ipsum\x{201D}:"
       RenderTable {DIV} at (0,86) size 84x18
         RenderTableSection (anonymous) at (0,0) size 84x18
           RenderTableRow (anonymous) at (0,0) size 84x18
             RenderTableCell (anonymous) at (0,0) size 84x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 42x19
+              RenderText {#text} at (0,0) size 42x17
                 text run at (0,0) width 42: "Lorem"
-              RenderText {#text} at (42,0) size 42x19
+              RenderText {#text} at (42,0) size 42x17
                 text run at (42,0) width 4: " "
                 text run at (46,0) width 38: "ipsum"

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 780x56 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 778x54
                 RenderBlock (anonymous) at (0,0) size 778x18
-                  RenderText {#text} at (0,0) size 24x19
+                  RenderText {#text} at (0,0) size 24x17
                     text run at (0,0) width 24: "boo"
                 RenderTable {TABLE} at (0,18) size 100x36 [bgcolor=#800080]
                   RenderTableSection {TBODY} at (0,0) size 100x36
@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
                                   RenderTableSection {TBODY} at (0,0) size 88x24
                                     RenderTableRow {TR} at (0,2) size 88x20
                                       RenderTableCell {TD} at (2,2) size 84x20 [r=0 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (1,1) size 50x19
+                                        RenderText {#text} at (1,1) size 50x17
                                           text run at (1,1) width 50: "Content"

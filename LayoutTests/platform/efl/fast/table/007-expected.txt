@@ -9,18 +9,18 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 27x3 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
               RenderImage {IMG} at (1,1) size 25x1
             RenderTableCell {TD} at (27,0) size 495x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
+              RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "foo"
           RenderTableRow {TR} at (0,48) size 522x20
             RenderTableCell {TD} at (27,48) size 495x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 493x18
-                RenderText {#text} at (12,0) size 432x19
+                RenderText {#text} at (12,0) size 432x17
                   text run at (12,0) width 432: "Affordable, high-quality business services with unparalleled support."
           RenderTableRow {TR} at (0,68) size 522x0
             RenderTableCell {TD} at (27,68) size 495x20 [border: (1px inset #808080)] [r=2 c=1 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 416x19
+              RenderText {#text} at (1,1) size 416x17
                 text run at (1,1) width 416: "Wireless Services\x{2014}Take the Net with you when you\x{2019}re on the go"
           RenderTableRow {TR} at (0,68) size 522x20
             RenderTableCell {TD} at (0,68) size 522x20 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 24x19
+              RenderText {#text} at (1,1) size 24x17
                 text run at (1,1) width 24: "goo"

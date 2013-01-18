@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection (anonymous) at (0,0) size 512x128
           RenderTableRow (anonymous) at (0,0) size 512x128
             RenderTableCell (anonymous) at (0,0) size 512x128 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 512x129
+              RenderText {#text} at (0,0) size 512x128
                 text run at (0,0) width 512: "ABCD"
       RenderBlock {DIV} at (0,128) size 784x128 [color=#008000]
-        RenderText {#text} at (0,0) size 512x129
+        RenderText {#text} at (0,0) size 512x128
           text run at (0,0) width 512: "EFGH"

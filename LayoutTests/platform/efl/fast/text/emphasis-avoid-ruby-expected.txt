@@ -3,95 +3,95 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x66
-        RenderText {#text} at (0,17) size 64x33
-          text run at (0,17) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,17) size 160x49
-            RenderRubyText {RT} at (0,-17) size 160x16
-              RenderText {#text} at (56,0) size 48x17
-                text run at (56,0) width 48: "678"
-            RenderRubyBase (anonymous) at (0,0) size 160x49
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,0) size 96x33
-                  text run at (0,0) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,0) size 64x33
-                    text run at (96,0) width 64: "45"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,74) size 784x49
-        RenderText {#text} at (0,17) size 64x33
-          text run at (0,17) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,0) size 160x49
-            RenderRubyText {RT} at (0,17) size 160x0
-            RenderRubyBase (anonymous) at (0,0) size 160x49
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,17) size 96x33
-                  text run at (0,17) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,17) size 64x33
-                    text run at (96,17) width 64: "45"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,131) size 784x49
-        RenderText {#text} at (0,17) size 64x33
-          text run at (0,17) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,17) size 160x32
-            RenderRubyText {RT} at (0,-17) size 160x16
-              RenderText {#text} at (56,0) size 48x17
-                text run at (56,0) width 48: "678"
-            RenderRubyBase (anonymous) at (0,0) size 160x32
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,0) size 96x33
-                  text run at (0,0) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,0) size 64x33
-                    text run at (96,0) width 64: "45"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,188) size 784x66
-        RenderText {#text} at (0,-1) size 64x33
-          text run at (0,-1) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,0) size 160x49
-            RenderRubyText {RT} at (0,50) size 160x16
-              RenderText {#text} at (56,0) size 48x17
-                text run at (56,0) width 48: "678"
-            RenderRubyBase (anonymous) at (0,0) size 160x49
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,17) size 96x33
-                  text run at (0,17) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,17) size 64x33
-                    text run at (96,17) width 64: "45"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,262) size 784x49
-        RenderText {#text} at (0,16) size 64x33
+      RenderBlock {DIV} at (0,0) size 784x64
+        RenderText {#text} at (0,16) size 64x32
           text run at (0,16) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,0) size 160x49
-            RenderRubyText {RT} at (0,33) size 160x0
-            RenderRubyBase (anonymous) at (0,0) size 160x49
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,0) size 96x33
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,16) size 160x48
+            RenderRubyText {RT} at (0,-16) size 160x16
+              RenderText {#text} at (56,0) size 48x16
+                text run at (56,0) width 48: "678"
+            RenderRubyBase (anonymous) at (0,0) size 160x48
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,0) size 96x32
                   text run at (0,0) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,0) size 64x33
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,0) size 64x32
                     text run at (96,0) width 64: "45"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,319) size 784x49
-        RenderText {#text} at (0,-1) size 64x33
-          text run at (0,-1) width 64: "1 "
-        RenderRuby (inline) {RUBY} at (0,0) size 160x33
-          RenderRubyRun (anonymous) at (64,0) size 160x32
-            RenderRubyText {RT} at (0,33) size 160x16
-              RenderText {#text} at (56,0) size 48x17
+      RenderBlock {DIV} at (0,72) size 784x48
+        RenderText {#text} at (0,16) size 64x32
+          text run at (0,16) width 64: "1 "
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,0) size 160x48
+            RenderRubyText {RT} at (0,16) size 160x0
+            RenderRubyBase (anonymous) at (0,0) size 160x48
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,16) size 96x32
+                  text run at (0,16) width 96: "23 "
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,16) size 64x32
+                    text run at (96,16) width 64: "45"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,128) size 784x48
+        RenderText {#text} at (0,16) size 64x32
+          text run at (0,16) width 64: "1 "
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,16) size 160x32
+            RenderRubyText {RT} at (0,-16) size 160x16
+              RenderText {#text} at (56,0) size 48x16
                 text run at (56,0) width 48: "678"
             RenderRubyBase (anonymous) at (0,0) size 160x32
-              RenderInline {RB} at (0,0) size 160x33
-                RenderText {#text} at (0,0) size 96x33
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,0) size 96x32
                   text run at (0,0) width 96: "23 "
-                RenderInline {SPAN} at (0,0) size 64x33
-                  RenderText {#text} at (96,0) size 64x33
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,0) size 64x32
+                    text run at (96,0) width 64: "45"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,184) size 784x64
+        RenderText {#text} at (0,0) size 64x32
+          text run at (0,0) width 64: "1 "
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,0) size 160x48
+            RenderRubyText {RT} at (0,48) size 160x16
+              RenderText {#text} at (56,0) size 48x16
+                text run at (56,0) width 48: "678"
+            RenderRubyBase (anonymous) at (0,0) size 160x48
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,16) size 96x32
+                  text run at (0,16) width 96: "23 "
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,16) size 64x32
+                    text run at (96,16) width 64: "45"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,256) size 784x48
+        RenderText {#text} at (0,16) size 64x32
+          text run at (0,16) width 64: "1 "
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,0) size 160x48
+            RenderRubyText {RT} at (0,32) size 160x0
+            RenderRubyBase (anonymous) at (0,0) size 160x48
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,0) size 96x32
+                  text run at (0,0) width 96: "23 "
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,0) size 64x32
+                    text run at (96,0) width 64: "45"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,312) size 784x48
+        RenderText {#text} at (0,0) size 64x32
+          text run at (0,0) width 64: "1 "
+        RenderRuby (inline) {RUBY} at (0,0) size 160x32
+          RenderRubyRun (anonymous) at (64,0) size 160x32
+            RenderRubyText {RT} at (0,32) size 160x16
+              RenderText {#text} at (56,0) size 48x16
+                text run at (56,0) width 48: "678"
+            RenderRubyBase (anonymous) at (0,0) size 160x32
+              RenderInline {RB} at (0,0) size 160x32
+                RenderText {#text} at (0,0) size 96x32
+                  text run at (0,0) width 96: "23 "
+                RenderInline {SPAN} at (0,0) size 64x32
+                  RenderText {#text} at (96,0) size 64x32
                     text run at (96,0) width 64: "45"
         RenderText {#text} at (0,0) size 0x0

@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 744x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 744x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=12726"
-          RenderText {#text} at (354,0) size 744x37
+          RenderText {#text} at (354,0) size 744x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 386: "REGRESSION (r12073): Text wraps in the middle of a word"
             text run at (0,18) width 309: "instead of wrapping at the space before the word"
-        RenderText {#text} at (309,18) size 4x19
+        RenderText {#text} at (309,18) size 4x17
           text run at (309,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 382x19
+        RenderText {#text} at (0,0) size 382x17
           text run at (0,0) width 382: "\x{201C}onelongwrodwithnobreaks\x{201D} should not break in the middle."
       RenderBlock {DIV} at (0,86) size 200x26 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 127x26
+        RenderText {#text} at (0,0) size 127x25
           text run at (0,0) width 110: "lllllllllllllllllllllllllllllllllllllllllllllllllllllll"
           text run at (0,13) width 127: "onelongwrodwithnobreaks"

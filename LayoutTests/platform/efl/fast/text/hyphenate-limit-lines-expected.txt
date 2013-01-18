@@ -4,7 +4,7 @@ layer at (0,0) size 785x1032
   RenderBlock {HTML} at (0,0) size 785x1032
     RenderBody {BODY} at (8,8) size 769x584
       RenderBlock (floating) {DIV} at (4,0) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x510
+        RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 87: "rational,"
@@ -24,7 +24,7 @@ layer at (0,0) size 785x1032
           text run at (1,451) width 200: "first invented by"
           text run at (1,481) width 60: "Plato."
       RenderBlock (floating) {DIV} at (214,0) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x510
+        RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 87: "rational,"
@@ -44,7 +44,7 @@ layer at (0,0) size 785x1032
           text run at (1,451) width 200: "first invented by"
           text run at (1,481) width 60: "Plato."
       RenderBlock (floating) {DIV} at (424,0) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x510
+        RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 87: "rational,"
@@ -64,7 +64,7 @@ layer at (0,0) size 785x1032
           text run at (1,451) width 200: "first invented by"
           text run at (1,481) width 60: "Plato."
       RenderBlock (floating) {DIV} at (4,512) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x510
+        RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 87: "rational,"
@@ -84,7 +84,7 @@ layer at (0,0) size 785x1032
           text run at (1,451) width 200: "first invented by"
           text run at (1,481) width 60: "Plato."
       RenderBlock (floating) {DIV} at (214,512) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x510
+        RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 87: "rational,"

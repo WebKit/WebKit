@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 498x50
           RenderTableRow {TR} at (0,2) size 498x22
             RenderTableCell {TD} at (2,2) size 246x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x19
+              RenderText {#text} at (2,2) size 46x17
                 text run at (2,2) width 46: "cell 1,1"
             RenderTableCell {TD} at (250,2) size 246x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x19
+              RenderText {#text} at (2,2) size 46x17
                 text run at (2,2) width 46: "cell 1,2"
           RenderTableRow {TR} at (0,26) size 498x22
             RenderTableCell {TD} at (2,26) size 246x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x19
+              RenderText {#text} at (2,2) size 46x17
                 text run at (2,2) width 46: "cell 2,1"
             RenderTableCell {TD} at (250,26) size 246x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x19
+              RenderText {#text} at (2,2) size 46x17
                 text run at (2,2) width 46: "cell 2,2"

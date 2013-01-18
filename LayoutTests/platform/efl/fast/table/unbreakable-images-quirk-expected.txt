@@ -4,69 +4,69 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 86x19
+        RenderText {#text} at (0,0) size 86x17
           text run at (0,0) width 86: "No line break"
-      RenderTable {TABLE} at (0,18) size 120x59 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 120x59
-          RenderTableRow {TR} at (0,2) size 120x55
-            RenderTableCell {TD} at (2,2) size 116x55 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 120x60 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 120x60
+          RenderTableRow {TR} at (0,2) size 120x56
+            RenderTableCell {TD} at (2,2) size 116x56 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 20x50 [bgcolor=#ADD8E6]
-              RenderText {#text} at (21,36) size 74x19
-                text run at (21,36) width 74: "loremipsum"
+              RenderText {#text} at (21,37) size 74x17
+                text run at (21,37) width 74: "loremipsum"
               RenderImage {IMG} at (95,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,85) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,95) size 784x18
-        RenderText {#text} at (0,0) size 86x19
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,96) size 784x18
+        RenderText {#text} at (0,0) size 86x17
           text run at (0,0) width 86: "No line break"
-      RenderTable {TABLE} at (0,113) size 100x59 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 100x59
-          RenderTableRow {TR} at (0,2) size 100x55
-            RenderTableCell {TD} at (2,2) size 96x55 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,36) size 74x19
-                text run at (1,36) width 74: "loremipsum"
+      RenderTable {TABLE} at (0,114) size 100x60 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 100x60
+          RenderTableRow {TR} at (0,2) size 100x56
+            RenderTableCell {TD} at (2,2) size 96x56 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,37) size 74x17
+                text run at (1,37) width 74: "loremipsum"
               RenderImage {IMG} at (75,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,180) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,190) size 784x18
-        RenderText {#text} at (0,0) size 152x19
+      RenderBlock {HR} at (0,182) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,192) size 784x18
+        RenderText {#text} at (0,0) size 152x17
           text run at (0,0) width 152: "Line break after the \"a\"."
-      RenderTable {TABLE} at (0,208) size 100x77 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 100x77
-          RenderTableRow {TR} at (0,2) size 100x73
-            RenderTableCell {TD} at (2,2) size 96x73 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 74x72
+      RenderTable {TABLE} at (0,210) size 100x78 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 100x78
+          RenderTableRow {TR} at (0,2) size 100x74
+            RenderTableCell {TD} at (2,2) size 96x74 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 74x71
                 text run at (1,1) width 7: "a"
-                text run at (1,54) width 74: "loremipsum"
+                text run at (1,55) width 74: "loremipsum"
               RenderImage {IMG} at (75,19) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,293) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,303) size 784x18
-        RenderText {#text} at (0,0) size 152x19
+      RenderBlock {HR} at (0,296) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,306) size 784x18
+        RenderText {#text} at (0,0) size 152x17
           text run at (0,0) width 152: "Line break after the \"a\"."
-      RenderTable {TABLE} at (0,321) size 120x77 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 120x77
-          RenderTableRow {TR} at (0,2) size 120x73
-            RenderTableCell {TD} at (2,2) size 116x73 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 7x19
+      RenderTable {TABLE} at (0,324) size 120x78 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 120x78
+          RenderTableRow {TR} at (0,2) size 120x74
+            RenderTableCell {TD} at (2,2) size 116x74 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 7x17
                 text run at (1,1) width 7: "a"
               RenderImage {IMG} at (1,19) size 20x50 [bgcolor=#ADD8E6]
-              RenderText {#text} at (21,54) size 74x19
-                text run at (21,54) width 74: "loremipsum"
+              RenderText {#text} at (21,55) size 74x17
+                text run at (21,55) width 74: "loremipsum"
               RenderImage {IMG} at (95,19) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,406) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,416) size 784x18
-        RenderText {#text} at (0,0) size 186x19
+      RenderBlock {HR} at (0,410) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,420) size 784x18
+        RenderText {#text} at (0,0) size 186x17
           text run at (0,0) width 186: "Line break after \"wideword\"."
-      RenderTable {TABLE} at (0,434) size 120x77 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 120x77
-          RenderTableRow {TR} at (0,2) size 120x73
-            RenderTableCell {TD} at (2,2) size 116x73 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 64x19
+      RenderTable {TABLE} at (0,438) size 120x78 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 120x78
+          RenderTableRow {TR} at (0,2) size 120x74
+            RenderTableCell {TD} at (2,2) size 116x74 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x17
                 text run at (1,1) width 64: "wideword"
               RenderImage {IMG} at (1,19) size 20x50 [bgcolor=#ADD8E6]
-              RenderText {#text} at (21,54) size 74x19
-                text run at (21,54) width 74: "loremipsum"
+              RenderText {#text} at (21,55) size 74x17
+                text run at (21,55) width 74: "loremipsum"
               RenderImage {IMG} at (95,19) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0

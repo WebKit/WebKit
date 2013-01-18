@@ -11,5 +11,5 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 345x24
                   RenderTableRow {TR} at (0,2) size 345x20
                     RenderTableCell {TD} at (2,2) size 341x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 339x19
+                      RenderText {#text} at (1,1) size 339x17
                         text run at (1,1) width 339: "This text should be white, since we're in quirks mode."

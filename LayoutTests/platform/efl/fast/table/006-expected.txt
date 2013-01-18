@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 227x220
           RenderTableRow {TR} at (0,0) size 227x220
             RenderTableCell {TD} at (0,0) size 227x220 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (101,101) size 25x19
+              RenderText {#text} at (101,101) size 25x17
                 text run at (101,101) width 25: "Foo"

@@ -4,7 +4,7 @@ layer at (0,0) size 785x7957
   RenderBlock {HTML} at (0,0) size 785x7957
     RenderBody {BODY} at (8,8) size 769x7936
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 659x19
+        RenderText {#text} at (0,0) size 659x17
           text run at (0,0) width 659: "The text below consists of composed characters. There shouldn't be any errors (e and ' visible separately)"
       RenderBlock {PRE} at (0,31) size 769x7905
         RenderText {#text} at (0,0) size 1056x3780

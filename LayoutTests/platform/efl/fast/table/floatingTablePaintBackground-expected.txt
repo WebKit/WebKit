@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 627x20
           RenderTableRow {TR} at (0,0) size 627x20
             RenderTableCell {TD} at (0,0) size 627x20 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 264x19
+              RenderText {#text} at (1,1) size 264x17
                 text run at (1,1) width 264: "This line should have a green background"

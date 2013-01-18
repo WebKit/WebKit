@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableSection (anonymous) at (0,0) size 63x18
             RenderTableRow (anonymous) at (0,0) size 63x18 [border: (3px solid #0000FF)]
               RenderTableCell (anonymous) at (0,0) size 63x18 [r=0 c=0 rs=1 cs=1]
-                RenderText at (0,0) size 63x19
+                RenderText at (0,0) size 63x17
                   text run at (0,0) width 63: "BEFORE"
         RenderBlock {DIV} at (19,37) size 746x18
-          RenderText {#text} at (0,0) size 77x19
+          RenderText {#text} at (0,0) size 77x17
             text run at (0,0) width 77: "CONTENT"

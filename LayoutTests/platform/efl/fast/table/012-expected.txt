@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 29x19
+        RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "Text"
       RenderTable {TABLE} at (0,18) size 784x100
         RenderTableSection {TBODY} at (0,0) size 784x100
           RenderTableRow {TR} at (0,0) size 784x100
             RenderTableCell {TD} at (0,50) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (0,118) size 784x18
-        RenderText {#text} at (0,0) size 321x19
+        RenderText {#text} at (0,0) size 321x17
           text run at (0,0) width 321: "This text is 100 pixels lower than the previous line."
       RenderTable {TABLE} at (0,136) size 784x100
         RenderTableSection {TBODY} at (0,0) size 784x100
           RenderTableRow {TR} at (0,0) size 784x100
       RenderBlock (anonymous) at (0,236) size 784x18
-        RenderText {#text} at (0,0) size 321x19
+        RenderText {#text} at (0,0) size 321x17
           text run at (0,0) width 321: "This text is 100 pixels lower than the previous line."
       RenderTable {TABLE} at (0,254) size 784x0
       RenderBlock (anonymous) at (0,254) size 784x18
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "No space between this line and the previous line."

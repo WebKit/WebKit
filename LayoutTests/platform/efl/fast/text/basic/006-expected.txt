@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 780x26
           RenderTableRow {TR} at (0,2) size 780x22
             RenderTableCell {TD} at (2,2) size 579x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 160x19
+              RenderText {#text} at (2,2) size 160x17
                 text run at (2,2) width 160: "Big cell gets all the width"
             RenderTableCell {TD} at (583,2) size 195x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 191x19
+              RenderText {#text} at (2,2) size 191x17
                 text run at (2,2) width 191: "Icannotbreak noicannot \x{B7}break"

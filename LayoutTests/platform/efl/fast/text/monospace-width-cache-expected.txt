@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 322x19
+        RenderText {#text} at (0,0) size 322x17
           text run at (0,0) width 322: "Test for monospace width cache bug mentioned in "
-        RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
-          RenderText {#text} at (322,0) size 68x19
+        RenderInline {A} at (0,0) size 68x17 [color=#0000EE]
+          RenderText {#text} at (322,0) size 68x17
             text run at (322,0) width 68: "bug 11197"
-        RenderText {#text} at (390,0) size 4x19
+        RenderText {#text} at (390,0) size 4x17
           text run at (390,0) width 4: " "
-        RenderInline {I} at (0,0) size 744x37
-          RenderText {#text} at (394,0) size 744x37
+        RenderInline {I} at (0,0) size 744x35
+          RenderText {#text} at (394,0) size 744x35
             text run at (394,0) width 350: "REGRESSION: Specifying a counter for a CODE tag's"
             text run at (0,18) width 348: "content style property on before or after causes a crash"
-        RenderText {#text} at (348,18) size 4x19
+        RenderText {#text} at (348,18) size 4x17
           text run at (348,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 369x19
+        RenderText {#text} at (0,0) size 369x17
           text run at (0,0) width 369: "The blue line and the black line should be the same length."
       RenderBlock {P} at (0,86) size 784x18
-        RenderInline {SPAN} at (0,0) size 120x20 [border: none (1px solid #0000FF) none]
-          RenderText {#text} at (0,0) size 120x19
+        RenderInline {SPAN} at (0,0) size 120x19 [border: none (1px solid #0000FF) none]
+          RenderText {#text} at (0,0) size 120x18
             text run at (0,0) width 120: "\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}"

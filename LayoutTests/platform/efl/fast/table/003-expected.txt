@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x60
           RenderTableRow {TR} at (0,2) size 784x34
             RenderTableCell {TD} at (2,9) size 42x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 37x19
+              RenderText {#text} at (1,1) size 37x17
                 text run at (1,1) width 37: "URL:"
             RenderTableCell {TD} at (46,2) size 736x34 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 734x28 [bgcolor=#FFFFFF]
           RenderTableRow {TR} at (0,38) size 784x20
             RenderTableCell {TD} at (2,38) size 780x20 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 253x19
+              RenderText {#text} at (1,1) size 253x17
                 text run at (1,1) width 253: "Alongwordtogiveyouanicebigminwidth."
       RenderTable {TABLE} at (0,60) size 100x100 [bgcolor=#FF0000] [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 96x96
@@ -23,15 +23,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 213x116
           RenderTableRow {TR} at (0,2) size 213x22
             RenderTableCell {TD} at (2,2) size 209x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 31x19
+              RenderText {#text} at (2,2) size 31x17
                 text run at (2,2) width 31: "hello"
           RenderTableRow {TR} at (0,26) size 213x22
             RenderTableCell {TD} at (2,26) size 209x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 67x19
+              RenderText {#text} at (2,2) size 67x17
                 text run at (2,2) width 67: "more hello"
           RenderTableRow {TR} at (0,50) size 213x22
             RenderTableCell {TD} at (2,50) size 209x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 37x19
+              RenderText {#text} at (2,2) size 37x17
                 text run at (2,2) width 37: "world"
           RenderTableRow {TR} at (0,74) size 213x40
             RenderTableCell {TD} at (2,77) size 209x34 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 106x78
           RenderTableRow {TR} at (0,2) size 106x74
             RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 100x73
+              RenderText {#text} at (1,1) size 100x71
                 text run at (1,1) width 87: "I should wrap"
                 text run at (1,19) width 81: "and not have"
                 text run at (1,37) width 56: "nowrap. "
@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 106x74
             RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 100x72
-                RenderText {#text} at (0,0) size 100x73
+                RenderText {#text} at (0,0) size 100x71
                   text run at (0,0) width 87: "I should wrap"
                   text run at (0,18) width 81: "and not have"
                   text run at (0,36) width 56: "nowrap. "
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 369x24
           RenderTableRow {TR} at (0,2) size 369x20
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 363x19
+              RenderText {#text} at (1,1) size 363x17
                 text run at (1,1) width 145: "I should have nowrap. "
                 text run at (146,1) width 98: "I really should. "
                 text run at (244,1) width 120: "Definitely. Should."
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 369x20
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 363x18
-                RenderText {#text} at (0,0) size 363x19
+                RenderText {#text} at (0,0) size 363x17
                   text run at (0,0) width 145: "I should have nowrap. "
                   text run at (145,0) width 98: "I really should. "
                   text run at (243,0) width 120: "Definitely. Should."

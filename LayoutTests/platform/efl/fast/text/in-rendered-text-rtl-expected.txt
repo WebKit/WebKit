@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 67x19
+        RenderText {#text} at (0,0) size 67x17
           text run at (0,0) width 67: "Test for "
-        RenderInline {I} at (0,0) size 780x37
-          RenderInline {A} at (0,0) size 426x19 [color=#0000EE]
-            RenderText {#text} at (67,0) size 426x19
+        RenderInline {I} at (0,0) size 780x35
+          RenderInline {A} at (0,0) size 426x17 [color=#0000EE]
+            RenderText {#text} at (67,0) size 426x17
               text run at (67,0) width 426: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7433"
-          RenderText {#text} at (493,0) size 780x37
+          RenderText {#text} at (493,0) size 780x35
             text run at (493,0) width 287: " REGRESSION (r12789): Second RTL"
             text run at (0,18) width 293: "text run on a line cannot be selected"
-        RenderText {#text} at (293,18) size 5x19
+        RenderText {#text} at (293,18) size 5x17
           text run at (293,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 766x37
+        RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 766: "The rightmost two words in the Hebrew text should be selectable by dragging or double-clicking"
           text run at (0,18) width 47: "them."
       RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,114) size 784x18
-        RenderInline {SPAN} at (0,0) size 152x19
-          RenderText {#text} at (0,0) size 152x19
+        RenderInline {SPAN} at (0,0) size 152x17
+          RenderText {#text} at (0,0) size 152x17
             text run at (0,0) width 62 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
             text run at (62,0) width 90 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
         RenderText {#text} at (0,0) size 0x0

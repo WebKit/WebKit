@@ -4,37 +4,37 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 669x19
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 669x17
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15309"
-          RenderText {#text} at (354,0) size 368x19
+          RenderText {#text} at (354,0) size 368x17
             text run at (354,0) width 4: " "
             text run at (358,0) width 364: "Crash due to infinite recursion in RenderTable::addChild"
-        RenderText {#text} at (722,0) size 4x19
+        RenderText {#text} at (722,0) size 4x17
           text run at (722,0) width 4: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 502x19
+        RenderText {#text} at (0,0) size 502x17
           text run at (0,0) width 502: "The following should look the same (and have identical render tree hierarchies):"
       RenderBlock {P} at (0,68) size 784x36
         RenderTable {SPAN} at (0,0) size 30x36
           RenderTableSection (anonymous) at (0,0) size 30x18
             RenderTableRow (anonymous) at (0,0) size 30x18
               RenderTableCell (anonymous) at (0,0) size 30x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 30x19
+                RenderText {#text} at (0,0) size 30x17
                   text run at (0,0) width 30: "table"
           RenderBlock (generated) at (0,18) size 30x18
-            RenderText at (0,0) size 28x19
+            RenderText at (0,0) size 28x17
               text run at (0,0) width 28: "after"
       RenderBlock {P} at (0,120) size 784x36
         RenderTable {TABLE} at (0,0) size 30x36
           RenderTableSection {TBODY} at (0,0) size 30x18
             RenderTableRow {TR} at (0,0) size 30x18
               RenderTableCell {TD} at (0,0) size 30x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 30x19
+                RenderText {#text} at (0,0) size 30x17
                   text run at (0,0) width 30: "table"
           RenderBlock {CAPTION} at (0,18) size 30x18
-            RenderText {#text} at (1,0) size 28x19
+            RenderText {#text} at (1,0) size 28x17
               text run at (1,0) width 28: "after"

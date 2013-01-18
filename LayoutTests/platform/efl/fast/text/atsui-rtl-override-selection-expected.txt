@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 800x18
-        RenderInline {BDO} at (0,0) size 80x19
-          RenderText {#text} at (0,0) size 80x19
+        RenderInline {BDO} at (0,0) size 80x17
+          RenderText {#text} at (0,0) size 80x17
             text run at (0,0) width 80 RTL override: "\x{300}muspimeroL"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,26) size 800x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,36) size 800x18
-        RenderText {#text} at (0,0) size 281x19
+        RenderText {#text} at (0,0) size 281x17
           text run at (0,0) width 281: "\x{201C}remips\x{201D} should be highlighted in the above."
 selection start: position 2 of child 0 {#text} of child 3 {BDO} of body
 selection end:   position 9 of child 0 {#text} of child 3 {BDO} of body

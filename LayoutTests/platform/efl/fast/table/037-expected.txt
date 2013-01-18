@@ -7,8 +7,8 @@ layer at (0,0) size 800x58
         RenderTableSection (anonymous) at (0,0) size 82x24
           RenderTableRow {tr} at (0,2) size 82x20
             RenderTableCell {td} at (2,2) size 78x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 76x19
+              RenderText {#text} at (1,1) size 76x17
                 text run at (1,1) width 76: "Hello world"
       RenderBlock (anonymous) at (0,24) size 784x18
-        RenderText {#text} at (0,0) size 213x19
+        RenderText {#text} at (0,0) size 213x17
           text run at (0,0) width 213: "Hello also? Why isn't this visible?"

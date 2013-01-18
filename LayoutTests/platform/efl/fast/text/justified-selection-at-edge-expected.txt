@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 386x19
+        RenderText {#text} at (0,0) size 386x17
           text run at (0,0) width 386: "Test for bug 13234, layout of selected justified text is broken."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 251x19
+        RenderText {#text} at (0,0) size 251x17
           text run at (0,0) width 251: "The two blue boxes should be identical."
       RenderBlock {DIV} at (0,68) size 256x42 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 189x19
+        RenderText {#text} at (3,3) size 189x17
           text run at (3,3) width 189: "Lorem ipsum dolor si"
-        RenderInline {SPAN} at (0,0) size 61x19 [color=#008000] [bgcolor=#FFFF00]
-          RenderText {#text} at (192,3) size 61x19
+        RenderInline {SPAN} at (0,0) size 61x17 [color=#008000] [bgcolor=#FFFF00]
+          RenderText {#text} at (192,3) size 61x17
             text run at (192,3) width 61: "t amet,"
-        RenderText {#text} at (3,21) size 173x19
+        RenderText {#text} at (3,21) size 173x17
           text run at (3,21) width 173: "consectetuer adipiscing elit."
       RenderBlock (anonymous) at (0,110) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,144) size 256x42 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 250x37
+        RenderText {#text} at (3,3) size 250x35
           text run at (3,3) width 250: "Lorem ipsum dolor sit amet,"
           text run at (3,21) width 173: "consectetuer adipiscing elit."
 selection start: position 20 of child 0 {#text} of child 8 {P} of body
