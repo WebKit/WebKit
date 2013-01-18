@@ -4,35 +4,35 @@ layer at (0,0) size 800x298
   RenderBlock {HTML} at (0,0) size 800x298
     RenderBody {BODY} at (8,16) size 784x274
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 380x19
+        RenderText {#text} at (0,0) size 380x17
           text run at (0,0) width 380: "There should be a tall solid unbroken column of blue below."
       RenderBlock {DIV} at (0,34) size 432x24 [color=#0000FF]
-        RenderText {#text} at (0,0) size 48x25
+        RenderText {#text} at (0,0) size 48x24
           text run at (0,0) width 48: " x"
       RenderBlock {DIV} at (0,58) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,82) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,106) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,130) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,154) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,178) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,202) size 432x24 [color=#0000FF]
-        RenderText {#text} at (31,0) size 24x25
+        RenderText {#text} at (31,0) size 24x24
           text run at (31,0) width 24: "x"
       RenderBlock {DIV} at (0,226) size 432x24 [color=#0000FF]
-        RenderText {#text} at (24,0) size 24x25
+        RenderText {#text} at (24,0) size 24x24
           text run at (24,0) width 24: "x"
       RenderBlock {DIV} at (0,250) size 432x24 [color=#0000FF]
-        RenderText {#text} at (0,0) size 48x25
+        RenderText {#text} at (0,0) size 48x24
           text run at (0,0) width 48: " x"

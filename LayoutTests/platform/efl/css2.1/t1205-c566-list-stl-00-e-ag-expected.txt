@@ -4,7 +4,7 @@ layer at (0,0) size 800x116
   RenderBlock {HTML} at (0,0) size 800x116
     RenderBody {BODY} at (8,16) size 784x85
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 193x19
+        RenderText {#text} at (0,0) size 193x17
           text run at (0,0) width 193: "There should be no red below."
       RenderBlock {UL} at (75,34) size 96x51 [color=#00FF00] [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderListItem {LI} at (3,3) size 90x45

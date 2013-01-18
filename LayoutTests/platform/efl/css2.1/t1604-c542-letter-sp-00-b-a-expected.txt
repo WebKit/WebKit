@@ -4,39 +4,39 @@ layer at (0,0) size 800x346
   RenderBlock {HTML} at (0,0) size 800x346
     RenderBody {BODY} at (8,16) size 784x322
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 708x19
+        RenderText {#text} at (0,0) size 708x17
           text run at (0,0) width 708: "There should be a stripy pattern of yellow and aqua below (each vertical stripe should be straight and unbroken)."
       RenderBlock {DIV} at (0,34) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 360x25
+        RenderText {#text} at (0,0) size 360x24
           text run at (0,0) width 360: "x x   x x   x x"
       RenderBlock {DIV} at (0,58) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 360x25
+        RenderText {#text} at (0,0) size 360x24
           text run at (0,0) width 360: "x x   x x   x x"
       RenderBlock {DIV} at (0,82) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 360x25
+        RenderText {#text} at (0,0) size 360x24
           text run at (0,0) width 360: "x x   x x   x x"
       RenderBlock {DIV} at (0,106) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,130) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,154) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,178) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,202) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,226) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,250) size 432x48 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 275x49
+        RenderText {#text} at (0,0) size 275x48
           text run at (0,0) width 275: "xx xx"
           text run at (0,24) width 110: "xx"
       RenderBlock {DIV} at (0,298) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x25
+        RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"

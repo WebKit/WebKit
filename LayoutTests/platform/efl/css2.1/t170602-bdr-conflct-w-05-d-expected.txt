@@ -4,37 +4,37 @@ layer at (0,0) size 800x228
   RenderBlock {HTML} at (0,0) size 800x228
     RenderBody {BODY} at (8,16) size 784x204
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 317x19
+        RenderText {#text} at (0,0) size 317x17
           text run at (0,0) width 317: "There should be no red borders on the table below"
       RenderTable {TABLE} at (0,34) size 128x170 [border: (2px none #808080)]
         RenderTableSection {TBODY} at (2,2) size 123x165
           RenderTableRow {TR} at (0,0) size 123x55
             RenderTableCell {TD} at (0,15) size 39x25 [border: (3px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"
             RenderTableCell {TD} at (39,16) size 45x23 [border: (3px ridge #00FF00) none (3px ridge #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"
             RenderTableCell {TD} at (84,15) size 39x25 [border: (3px ridge #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"
           RenderTableRow {TR} at (0,55) size 123x55
             RenderTableCell {TD} at (0,70) size 39x25 [border: (3px ridge #00FF00) none (2px ridge #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"
             RenderTableCell {TD} at (39,72) size 45x20 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x19
+              RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "hidden"
             RenderTableCell {TD} at (84,70) size 39x25 [border: (3px ridge #00FF00) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 32x19
+              RenderText {#text} at (1,4) size 32x17
                 text run at (1,4) width 32: "ridge"
           RenderTableRow {TR} at (0,110) size 123x55
             RenderTableCell {TD} at (0,125) size 39x25 [border: (3px ridge #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"
             RenderTableCell {TD} at (39,126) size 45x22 [border: none (2px ridge #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 32x19
+              RenderText {#text} at (4,1) size 32x17
                 text run at (4,1) width 32: "ridge"
             RenderTableCell {TD} at (84,125) size 39x25 [border: (3px ridge #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 32x19
+              RenderText {#text} at (4,4) size 32x17
                 text run at (4,4) width 32: "ridge"

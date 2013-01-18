@@ -1,47 +1,47 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x439
-  RenderBlock {HTML} at (0,0) size 800x439
-    RenderBody {BODY} at (8,16) size 784x407
+layer at (0,0) size 800x440
+  RenderBlock {HTML} at (0,0) size 800x440
+    RenderBody {BODY} at (8,16) size 784x408
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 203x19
+        RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "This sentence should be normal."
       RenderBlock {P} at (0,34) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 300x19
+        RenderText {#text} at (0,0) size 300x17
           text run at (0,0) width 300: "This sentence should be bolder than normal."
       RenderBlock {P} at (0,68) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 198x19
+        RenderText {#text} at (0,0) size 198x17
           text run at (0,0) width 198: "This sentence should be bold."
-      RenderBlock {H4} at (0,107) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 202x19
+      RenderBlock {H4} at (0,107) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 202x17
           text run at (0,0) width 202: "Whatever this line looks like..."
-      RenderBlock {H4} at (0,146) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 290x19
+      RenderBlock {H4} at (0,146) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 290x17
           text run at (0,0) width 290: "...this line should look bolder (or the same)."
-      RenderBlock {P} at (0,185) size 784x18 [color=#000080]
-        RenderInline {B} at (0,0) size 203x19
-          RenderText {#text} at (0,0) size 203x19
+      RenderBlock {P} at (0,185) size 784x19 [color=#000080]
+        RenderInline {B} at (0,0) size 203x17
+          RenderText {#text} at (0,0) size 203x17
             text run at (0,0) width 203: "This sentence should be normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,219) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 219x19
+      RenderBlock {P} at (0,219) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 219x17
           text run at (0,0) width 219: "This sentence should be very light."
-      RenderBlock {P} at (0,253) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 335x19
+      RenderBlock {P} at (0,253) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 335x17
           text run at (0,0) width 335: "This sentence should be slightly bolder (or the same)."
-      RenderBlock {P} at (0,287) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 373x19
+      RenderBlock {P} at (0,287) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 373x17
           text run at (0,0) width 373: "This sentence should be slightly bolder again (or the same)."
-      RenderBlock {P} at (0,321) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 417x19
+      RenderBlock {P} at (0,321) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "This sentence should be slightly bolder still (but not the same)."
-      RenderBlock {P} at (0,355) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 509x19
+      RenderBlock {P} at (0,355) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 509x17
           text run at (0,0) width 509: "This sentence should be the most bold (and maybe the same as the last one)."
-      RenderBlock {P} at (0,389) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 202x19
+      RenderBlock {P} at (0,389) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 202x17
           text run at (0,0) width 202: "This sentence should be bold. "
-        RenderInline {SPAN} at (0,0) size 203x19
-          RenderText {#text} at (202,0) size 203x19
+        RenderInline {SPAN} at (0,0) size 203x17
+          RenderText {#text} at (202,0) size 203x17
             text run at (202,0) width 203: "This sentence should be normal."
         RenderText {#text} at (0,0) size 0x0

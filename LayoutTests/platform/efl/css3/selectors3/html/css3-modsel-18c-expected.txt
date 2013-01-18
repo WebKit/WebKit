@@ -4,16 +4,16 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {A} at (0,0) size 382x19 [color=#000080]
-          RenderText {#text} at (0,0) size 44x19
+        RenderInline {A} at (0,0) size 382x17 [color=#000080]
+          RenderText {#text} at (0,0) size 44x17
             text run at (0,0) width 44: "Hover "
-          RenderInline {STRONG} at (0,0) size 30x19
-            RenderText {#text} at (44,0) size 30x19
+          RenderInline {STRONG} at (0,0) size 30x17
+            RenderText {#text} at (44,0) size 30x17
               text run at (44,0) width 30: "here"
-          RenderText {#text} at (74,0) size 150x19
+          RenderText {#text} at (74,0) size 150x17
             text run at (74,0) width 150: " and the background of "
-          RenderInline {SPAN} at (0,0) size 154x19
-            RenderText {#text} at (224,0) size 154x19
+          RenderInline {SPAN} at (0,0) size 154x17
+            RenderText {#text} at (224,0) size 154x17
               text run at (224,0) width 154: "this text should go green"
-          RenderText {#text} at (378,0) size 4x19
+          RenderText {#text} at (378,0) size 4x17
             text run at (378,0) width 4: "."

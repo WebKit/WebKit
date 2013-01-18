@@ -4,6 +4,6 @@ layer at (0,0) size 800x124
   RenderBlock {HTML} at (0,0) size 800x124
     RenderBody {BODY} at (8,16) size 784x92
       RenderBlock {P} at (0,0) size 784x92 [color=#008000]
-        RenderBR {BR} at (0,1) size 0x72
-        RenderText {#text} at (0,74) size 163x19
+        RenderBR {BR} at (0,1) size 0x71
+        RenderText {#text} at (0,74) size 163x17
           text run at (0,74) width 163: "This line should be green."

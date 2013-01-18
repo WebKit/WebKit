@@ -1,34 +1,34 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x196
-  RenderBlock {HTML} at (0,0) size 800x196
-    RenderBody {BODY} at (8,16) size 784x164 [color=#000080]
+layer at (0,0) size 800x199
+  RenderBlock {HTML} at (0,0) size 800x199
+    RenderBody {BODY} at (8,16) size 784x167 [color=#000080]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 234x19
+        RenderText {#text} at (0,0) size 234x17
           text run at (0,0) width 234: "Each bullet should look as described."
-      RenderBlock {UL} at (0,34) size 784x60
-        RenderListItem {LI} at (40,0) size 744x20
+      RenderBlock {UL} at (0,34) size 784x63
+        RenderListItem {LI} at (40,0) size 744x21
           RenderListMarker at (-24,0) size 17x17
-          RenderText {#text} at (0,2) size 85x19
-            text run at (0,2) width 85: "purple square"
-        RenderListItem {LI} at (40,20) size 744x20
+          RenderText {#text} at (0,3) size 85x17
+            text run at (0,3) width 85: "purple square"
+        RenderListItem {LI} at (40,21) size 744x21
           RenderListMarker at (-24,0) size 17x17
-          RenderText {#text} at (0,2) size 85x19
-            text run at (0,2) width 85: "purple square"
-        RenderListItem {LI} at (40,40) size 744x20
+          RenderText {#text} at (0,3) size 85x17
+            text run at (0,3) width 85: "purple square"
+        RenderListItem {LI} at (40,42) size 744x21
           RenderListMarker at (-24,0) size 17x17
-          RenderText {#text} at (0,2) size 85x19
-            text run at (0,2) width 85: "purple square"
-      RenderBlock {UL} at (0,110) size 784x54
+          RenderText {#text} at (0,3) size 85x17
+            text run at (0,3) width 85: "purple square"
+      RenderBlock {UL} at (0,113) size 784x54
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 25x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 25x17
             text run at (0,0) width 25: "disc"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 25x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 25x17
             text run at (0,0) width 25: "disc"
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 25x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 25x17
             text run at (0,0) width 25: "disc"

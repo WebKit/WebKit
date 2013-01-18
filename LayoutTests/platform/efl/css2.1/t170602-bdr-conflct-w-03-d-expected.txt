@@ -4,37 +4,37 @@ layer at (0,0) size 800x228
   RenderBlock {HTML} at (0,0) size 800x228
     RenderBody {BODY} at (8,16) size 784x204
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 317x19
+        RenderText {#text} at (0,0) size 317x17
           text run at (0,0) width 317: "There should be no red borders on the table below"
       RenderTable {TABLE} at (0,34) size 158x170 [border: (2px none #808080)]
         RenderTableSection {TBODY} at (2,2) size 153x165
           RenderTableRow {TR} at (0,0) size 153x55
             RenderTableCell {TD} at (0,15) size 51x25 [border: (3px dashed #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"
             RenderTableCell {TD} at (51,16) size 51x23 [border: (3px dashed #00FF00) none (3px dashed #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"
             RenderTableCell {TD} at (102,15) size 51x25 [border: (3px dashed #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"
           RenderTableRow {TR} at (0,55) size 153x55
             RenderTableCell {TD} at (0,70) size 51x25 [border: (3px dashed #00FF00) none (2px dashed #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"
             RenderTableCell {TD} at (51,72) size 51x20 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x19
+              RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "hidden"
             RenderTableCell {TD} at (102,70) size 51x25 [border: (3px dashed #00FF00) none] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 44x19
+              RenderText {#text} at (1,4) size 44x17
                 text run at (1,4) width 44: "dashed"
           RenderTableRow {TR} at (0,110) size 153x55
             RenderTableCell {TD} at (0,125) size 51x25 [border: (3px dashed #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"
             RenderTableCell {TD} at (51,126) size 51x22 [border: none (2px dashed #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 44x19
+              RenderText {#text} at (4,1) size 44x17
                 text run at (4,1) width 44: "dashed"
             RenderTableCell {TD} at (102,125) size 51x25 [border: (3px dashed #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 44x19
+              RenderText {#text} at (4,4) size 44x17
                 text run at (4,4) width 44: "dashed"

@@ -7,7 +7,7 @@ layer at (0,0) size 800x290
         RenderText {#text} at (785,0) size 15x15
           text run at (785,0) width 15: "X"
       RenderBlock {P} at (0,31) size 800x18
-        RenderText {#text} at (0,0) size 487x19
+        RenderText {#text} at (0,0) size 487x17
           text run at (0,0) width 487: "There should be no red on this page (look in the upper right hand corner too)."
       RenderBlock {DIV} at (0,65) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75

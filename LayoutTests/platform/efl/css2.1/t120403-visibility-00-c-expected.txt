@@ -4,14 +4,14 @@ layer at (0,0) size 800x94
   RenderBlock {HTML} at (0,0) size 800x94
     RenderBody {BODY} at (8,16) size 784x70
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 216x19
+        RenderText {#text} at (0,0) size 216x17
           text run at (0,0) width 216: "The following should be identical:"
       RenderBlock {DIV} at (0,34) size 784x18
         RenderInline {SPAN} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 8x19
-          RenderInline (generated) at (0,0) size 8x19
-            RenderCounter at (0,0) size 8x19
+        RenderInline {SPAN} at (0,0) size 8x17
+          RenderInline (generated) at (0,0) size 8x17
+            RenderCounter at (0,0) size 8x17
               text run at (0,0) width 8: "1"
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "1"

@@ -4,20 +4,20 @@ layer at (0,0) size 800x386
   RenderBlock {HTML} at (0,0) size 800x386
     RenderBody {BODY} at (8,16) size 784x354
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 234x19
+        RenderText {#text} at (0,0) size 234x17
           text run at (0,0) width 234: "This sentence should be left-justified."
       RenderBlock {P} at (0,34) size 784x18 [color=#000080]
-        RenderText {#text} at (541,0) size 243x19
+        RenderText {#text} at (541,0) size 243x17
           text run at (541,0) width 243: "This sentence should be right-justified."
       RenderBlock {P} at (0,68) size 784x18 [color=#000080]
-        RenderText {#text} at (286,0) size 212x19
+        RenderText {#text} at (286,0) size 212x17
           text run at (286,0) width 212: "This sentence should be centered."
       RenderBlock {P} at (0,102) size 784x252 [color=#000080]
-        RenderText {#text} at (0,0) size 496x19
+        RenderText {#text} at (0,0) size 496x17
           text run at (0,0) width 392: "This paragraph should be justified (the right and left margins "
           text run at (392,0) width 104: "should line up). "
-        RenderInline {SPAN} at (0,0) size 784x253 [color=#C0C0C0]
-          RenderText {#text} at (496,0) size 784x253
+        RenderInline {SPAN} at (0,0) size 784x251 [color=#C0C0C0]
+          RenderText {#text} at (496,0) size 784x251
             text run at (496,0) width 288: "This is just lovely dummy text. Dummy text."
             text run at (0,18) width 56: "Dummy "
             text run at (56,18) width 529: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
@@ -50,6 +50,6 @@ layer at (0,0) size 800x386
             text run at (516,216) width 268: "This is just lovely dummy text. This is just"
             text run at (0,234) width 269: "lovely dummy text. Dummy text. Dummy "
             text run at (269,234) width 118: "text. Dummy text. "
-        RenderText {#text} at (387,234) size 381x19
+        RenderText {#text} at (387,234) size 381x17
           text run at (387,234) width 260: "This sentence should be at the end of the "
           text run at (647,234) width 121: "block, not justified."
