@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 762x37
+        RenderText {#text} at (0,0) size 762x35
           text run at (0,0) width 762: "This tests that when a selection that starts at [replaced element, 1] is painted, the replaced element doesn't appear selected."
           text run at (0,18) width 304: "This test uses an image for the replaced element."
-      RenderBlock {DIV} at (0,52) size 784x106
-        RenderText {#text} at (0,88) size 22x19
-          text run at (0,88) width 22: "abc"
+      RenderBlock {DIV} at (0,52) size 784x107
+        RenderText {#text} at (0,89) size 22x17
+          text run at (0,89) width 22: "abc"
         RenderImage {IMG} at (22,0) size 76x103
-        RenderText {#text} at (98,88) size 20x19
-          text run at (98,88) width 20: "def"
+        RenderText {#text} at (98,89) size 20x17
+          text run at (98,89) width 20: "def"
 selection start: position 0 of child 2 {#text} of child 3 {DIV} of body
 selection end:   position 3 of child 2 {#text} of child 3 {DIV} of body

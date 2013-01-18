@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 777x55
+        RenderText {#text} at (0,0) size 777x53
           text run at (0,0) width 773: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases"
           text run at (0,18) width 777: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be"
           text run at (0,36) width 35: "lost). "
           text run at (35,36) width 368: "It wasn't requesting a merge in cases where it should have."
       RenderBlock {P} at (0,70) size 784x72
-        RenderText {#text} at (0,0) size 783x73
+        RenderText {#text} at (0,0) size 783x71
           text run at (0,0) width 783: "The failing case is where the incoming fragment has more than one block, and the selection being pasted into ends at the end"
           text run at (0,18) width 99: "of a paragraph. "
           text run at (99,18) width 683: "Any time the selection being pasted into ends at the end of a paragraph, deleting will leave leave a) a br or b)"
@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
           text run at (0,54) width 154: "after the paste operation."
       RenderBlock {DIV} at (2,158) size 780x48 [border: (1px solid #000000)]
         RenderBlock {DIV} at (3,3) size 774x20 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 29x19
+          RenderText {#text} at (1,1) size 29x17
             text run at (1,1) width 29: "bfoo"
         RenderBlock (anonymous) at (1,25) size 778x0
         RenderBlock {DIV} at (3,25) size 774x20 [border: (1px solid #000000)]
-          RenderText {#text} at (1,1) size 20x19
+          RenderText {#text} at (1,1) size 20x17
             text run at (1,1) width 20: "bar"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 4 {DIV} of body

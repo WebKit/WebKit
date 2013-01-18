@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (4,0) size 776x54 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (5,5) size 766x20 [border: (1px solid #0000FF)]
-          RenderText {#text} at (1,1) size 26x19
+          RenderText {#text} at (1,1) size 26x17
             text run at (1,1) width 26: "ffoo"
         RenderBlock (anonymous) at (1,29) size 774x0
         RenderBlock {DIV} at (5,29) size 766x20 [border: (1px solid #0000FF)]
-          RenderBR {BR} at (1,1) size 0x19
+          RenderBR {BR} at (1,1) size 0x17
 caret: position 0 of child 0 {BR} of child 1 {DIV} of child 0 {DIV} of body

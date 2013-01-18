@@ -11,29 +11,29 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline {B} at (0,0) size 304x19
-          RenderText {#text} at (0,0) size 304x19
+        RenderInline {B} at (0,0) size 304x17
+          RenderText {#text} at (0,0) size 304x17
             text run at (0,0) width 304: "Make sure that your window is small enough"
-        RenderText {#text} at (304,0) size 764x37
+        RenderText {#text} at (304,0) size 764x35
           text run at (304,0) width 460: " so that 'don't select this line' and 'try to select just this line' appear on two"
           text run at (0,18) width 94: "different lines. "
           text run at (94,18) width 610: "The two phrases are actually in the same paragraph, there are just lots of spaces in between them."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 104x19
+        RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {A} at (0,0) size 368x19 [color=#0000EE]
-          RenderText {#text} at (104,0) size 368x19
+        RenderInline {A} at (0,0) size 368x17 [color=#0000EE]
+          RenderText {#text} at (104,0) size 368x17
             text run at (104,0) width 368: "REGRESSION: Selection includes spaces that it shouldn't"
-        RenderText {#text} at (472,0) size 753x37
+        RenderText {#text} at (472,0) size 753x35
           text run at (472,0) width 281: ". The test makes sure that a word that is right"
           text run at (0,18) width 285: "after a line wrap can be selected successfully."
       RenderBlock {P} at (0,104) size 784x0
       RenderBlock {DIV} at (16,104) size 752x38 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 750x19
+        RenderText {#text} at (1,1) size 750x17
           text run at (1,1) width 93: "don't select me"
           text run at (94,1) width 657: "                                                                                                                                                                                                                                                                                                                                                             "
-        RenderInline {I} at (0,0) size 150x19
-          RenderText {#text} at (1,19) size 150x19
+        RenderInline {I} at (0,0) size 150x17
+          RenderText {#text} at (1,19) size 150x17
             text run at (1,19) width 150: "try to select just this text"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {I} of child 7 {DIV} of body

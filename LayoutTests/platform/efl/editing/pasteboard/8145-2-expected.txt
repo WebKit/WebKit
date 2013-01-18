@@ -12,24 +12,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 783x37
+        RenderText {#text} at (0,0) size 783x35
           text run at (0,0) width 299: "This tests a change made with the fix for 8145. "
           text run at (299,0) width 484: "The paragraph separator inserted to prevent nesting blocks from the fragment"
           text run at (0,18) width 779: "to paste inside the block where the paste occured was incorrectly inserted when the paste occured at the start of a paragraph."
       RenderBlock {DIV} at (0,52) size 784x74 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x18
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-          RenderBR {BR} at (21,15) size 0x0
+          RenderBR {BR} at (21,14) size 0x0
         RenderBlock {DIV} at (1,19) size 782x18
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
         RenderBlock (anonymous) at (1,37) size 782x36
-          RenderText {#text} at (0,0) size 20x19
+          RenderText {#text} at (0,0) size 20x17
             text run at (0,0) width 20: "bar"
-          RenderText {#text} at (20,0) size 20x19
+          RenderText {#text} at (20,0) size 20x17
             text run at (20,0) width 20: "bar"
-          RenderBR {BR} at (40,15) size 0x0
-          RenderText {#text} at (0,18) size 22x19
+          RenderBR {BR} at (40,14) size 0x0
+          RenderText {#text} at (0,18) size 22x17
             text run at (0,18) width 22: "baz"
 caret: position 3 of child 3 {#text} of child 2 {DIV} of body

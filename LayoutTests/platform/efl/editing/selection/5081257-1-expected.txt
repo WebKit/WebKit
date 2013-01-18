@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 784x55
+        RenderText {#text} at (0,0) size 784x53
           text run at (0,0) width 727: "This tests for setting the selection at a position inside the document when the document node is non-editable and the"
           text run at (727,0) width 4: " "
           text run at (0,18) width 251: "document's body element *is* editable. "

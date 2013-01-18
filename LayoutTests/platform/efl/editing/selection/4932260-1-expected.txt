@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 429x19
+        RenderText {#text} at (0,0) size 429x17
           text run at (0,0) width 429: "This tests for a bug where images would act as sentence boundaries."
-      RenderBlock {DIV} at (0,34) size 784x106
-        RenderText {#text} at (0,88) size 128x19
-          text run at (0,88) width 128: "The caret should be "
+      RenderBlock {DIV} at (0,34) size 784x107
+        RenderText {#text} at (0,89) size 128x17
+          text run at (0,89) width 128: "The caret should be "
         RenderImage {IMG} at (128,0) size 76x103
-        RenderText {#text} at (204,88) size 206x19
-          text run at (204,88) width 206: "at the beginning of this sentence."
+        RenderText {#text} at (204,89) size 206x17
+          text run at (204,89) width 206: "at the beginning of this sentence."
 caret: position 0 of child 0 {#text} of child 2 {DIV} of body

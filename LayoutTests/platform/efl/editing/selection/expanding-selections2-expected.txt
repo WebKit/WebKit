@@ -8,18 +8,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x37
+        RenderText {#text} at (0,0) size 776x35
           text run at (0,0) width 414: "This tests double clicking inside and at the end of an editable div. "
           text run at (414,0) width 362: "The selection that is created should not extend outside the"
           text run at (0,18) width 97: "editable region."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This text is in an editable div"
-        RenderInline {SPAN} at (0,0) size 4x19
-          RenderText {#text} at (181,0) size 4x19
+        RenderInline {SPAN} at (0,0) size 4x17
+          RenderText {#text} at (181,0) size 4x17
             text run at (181,0) width 4: "."
       RenderBlock (anonymous) at (0,70) size 784x18
-        RenderText {#text} at (0,0) size 242x19
+        RenderText {#text} at (0,0) size 242x17
           text run at (0,0) width 242: "This text is outside the editable region."
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body

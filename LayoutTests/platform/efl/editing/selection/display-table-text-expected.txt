@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
         RenderTableSection (anonymous) at (0,0) size 348x18
           RenderTableRow (anonymous) at (0,0) size 348x18
             RenderTableCell (anonymous) at (0,0) size 348x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 348x19
+              RenderText {#text} at (0,0) size 348x17
                 text run at (0,0) width 348: "Only the third word in this sentence should be selected."
 selection start: position 9 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 14 of child 0 {#text} of child 1 {DIV} of body

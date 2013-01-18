@@ -11,16 +11,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 779x37
+        RenderText {#text} at (0,0) size 779x35
           text run at (0,0) width 779: "This is a test to make sure that the final <br> in an incoming fragment is interpretted strictly in quirks mode (where brs at the"
           text run at (0,18) width 184: "end of blocks are collapsed). "
           text run at (184,18) width 509: "This test used to fail because of unrendered content to the left of the collapsed br."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 370x19
+          RenderText {#text} at (0,0) size 370x17
             text run at (0,0) width 370: "The test should add a single blank line after this paragraph."
-          RenderInline {SPAN} at (0,0) size 0x19
-          RenderBR {BR} at (370,15) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x17
+          RenderBR {BR} at (370,14) size 0x0
         RenderBlock (anonymous) at (0,18) size 784x18
-          RenderBR {BR} at (0,0) size 0x19
+          RenderBR {BR} at (0,0) size 0x17
 caret: position 0 of child 1 {BR} of child 2 {DIV} of body

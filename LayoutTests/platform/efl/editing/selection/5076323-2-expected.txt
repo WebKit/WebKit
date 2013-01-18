@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 632x19
+        RenderText {#text} at (0,0) size 632x17
           text run at (0,0) width 632: "This tests caret painting before a table, you should see a caret before the table containing 'foo' above."
       RenderBlock {DIV} at (0,34) size 784x26
         RenderTable {TABLE} at (0,0) size 29x26 [border: (1px solid #AAAAAA)]
           RenderTableSection {TBODY} at (1,1) size 27x24
             RenderTableRow {TR} at (0,2) size 27x20
               RenderTableCell {TD} at (2,2) size 23x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 21x19
+                RenderText {#text} at (1,1) size 21x17
                   text run at (1,1) width 21: "foo"
 caret: position 0 of child 0 {TABLE} of child 2 {DIV} of body

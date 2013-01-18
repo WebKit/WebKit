@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 775x37
+        RenderText {#text} at (0,0) size 775x35
           text run at (0,0) width 446: "This tests clicking to place a caret in the padding of an editable region. "
           text run at (446,0) width 329: "The eventSender clicks in the bottom padding of the"
           text run at (0,18) width 444: "editable region and the caret should be placed at the end of that region."
       RenderBlock {DIV} at (0,52) size 784x116 [border: (1px solid #000000)]
         RenderBlock {DIV} at (26,26) size 732x18
-          RenderText {#text} at (0,0) size 99x19
+          RenderText {#text} at (0,0) size 99x17
             text run at (0,0) width 99: "Paragraph One."
         RenderTable {TABLE} at (26,44) size 93x28 [border: (1px solid #BBBBBB)]
           RenderTableSection {TBODY} at (1,1) size 91x26
             RenderTableRow {TR} at (0,2) size 91x22 [border: (1px solid #BBBBBB)]
               RenderTableCell {TD} at (2,2) size 8x22 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 4x19
+                RenderText {#text} at (2,2) size 4x17
                   text run at (2,2) width 4: " "
               RenderTableCell {TD} at (12,2) size 77x22 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 73x19
+                RenderText {#text} at (2,2) size 73x17
                   text run at (2,2) width 73: "ToDo One."
         RenderBlock {DIV} at (26,72) size 732x18
-          RenderText {#text} at (0,0) size 102x19
+          RenderText {#text} at (0,0) size 102x17
             text run at (0,0) width 102: "Paragraph Two."
 caret: position 14 of child 0 {#text} of child 5 {DIV} of child 3 {DIV} of body

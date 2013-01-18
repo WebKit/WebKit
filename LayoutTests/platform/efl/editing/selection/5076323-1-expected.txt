@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 782x37
+        RenderText {#text} at (0,0) size 782x35
           text run at (0,0) width 782: "This tests for a bug where moving the selection to the end of the document would move it outside of an editable region if the"
           text run at (0,18) width 219: "selection started just before a table."
       RenderBlock {DIV} at (0,52) size 784x44
@@ -12,12 +12,12 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 27x24
             RenderTableRow {TR} at (0,2) size 27x20
               RenderTableCell {TD} at (2,2) size 23x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 21x19
+                RenderText {#text} at (1,1) size 21x17
                   text run at (1,1) width 21: "foo"
         RenderBlock (anonymous) at (0,26) size 784x18
-          RenderText {#text} at (0,0) size 20x19
+          RenderText {#text} at (0,0) size 20x17
             text run at (0,0) width 20: "bar"
       RenderBlock {P} at (0,112) size 784x18
-        RenderText {#text} at (0,0) size 563x19
+        RenderText {#text} at (0,0) size 563x17
           text run at (0,0) width 563: "In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it."
 caret: position 3 of child 1 {#text} of child 2 {DIV} of body

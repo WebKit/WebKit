@@ -16,27 +16,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 361x19
+        RenderText {#text} at (0,0) size 361x17
           text run at (0,0) width 361: "The selection range in the red box should look like this:   "
-        RenderInline {SPAN} at (0,0) size 109x19 [bgcolor=#AFDAFF]
-          RenderText {#text} at (361,0) size 109x19
+        RenderInline {SPAN} at (0,0) size 109x17 [bgcolor=#AFDAFF]
+          RenderText {#text} at (361,0) size 109x17
             text run at (361,0) width 26: "abc "
             text run at (415,0) width 8: "1"
             text run at (439,0) width 31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-        RenderText {#text} at (387,0) size 111x19
+        RenderText {#text} at (387,0) size 111x17
           text run at (387,0) width 28 RTL: " \x{5D3}\x{5D4}\x{5D5}"
           text run at (423,0) width 16: "23"
           text run at (470,0) width 28: " def "
-        RenderBR {BR} at (498,15) size 0x0
-        RenderBR {BR} at (0,18) size 0x19
+        RenderBR {BR} at (498,14) size 0x0
+        RenderBR {BR} at (0,18) size 0x17
       RenderBlock {DIV} at (0,36) size 784x56 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 202x28
-          RenderText {#text} at (14,14) size 202x28
-            text run at (14,14) width 40: "abc "
-            text run at (54,14) width 42 RTL: " \x{5D3}\x{5D4}\x{5D5}"
-            text run at (96,14) width 36: "123"
-            text run at (132,14) width 47 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-            text run at (179,14) width 37: " def"
+        RenderInline {SPAN} at (0,0) size 202x26
+          RenderText {#text} at (14,15) size 202x26
+            text run at (14,15) width 40: "abc "
+            text run at (54,15) width 42 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (96,15) width 36: "123"
+            text run at (132,15) width 47 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (179,15) width 37: " def"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body
 selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body

@@ -4,33 +4,33 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 728x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 728x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14911"
-          RenderText {#text} at (354,0) size 728x37
+          RenderText {#text} at (354,0) size 728x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 370: "REGRESSION: Clicking in pasted text doesn't position the"
             text run at (0,18) width 151: "insertion point correctly"
-        RenderText {#text} at (151,18) size 4x19
+        RenderText {#text} at (151,18) size 4x17
           text run at (151,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 558x19
+        RenderText {#text} at (0,0) size 558x17
           text run at (0,0) width 528: "You should be able to select individual letters in \x{201C}ipsum\x{201D} by dragging in the yellow "
           text run at (528,0) width 30: "area "
-        RenderInline {EM} at (0,0) size 38x19
-          RenderText {#text} at (558,0) size 38x19
+        RenderInline {EM} at (0,0) size 38x17
+          RenderText {#text} at (558,0) size 38x17
             text run at (558,0) width 38: "above"
-        RenderText {#text} at (596,0) size 39x19
+        RenderText {#text} at (596,0) size 39x17
           text run at (596,0) width 39: " them."
       RenderBlock (floating) {DIV} at (0,86) size 84x80 [bgcolor=#FFFFAA]
-        RenderInline {SPAN} at (0,0) size 84x19 [bgcolor=#FFFFFF]
-          RenderText {#text} at (0,30) size 46x19
-            text run at (0,30) width 46: "Lorem "
-          RenderText {#text} at (46,30) size 38x19
-            text run at (46,30) width 38: "ipsum"
+        RenderInline {SPAN} at (0,0) size 84x17 [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,31) size 46x17
+            text run at (0,31) width 46: "Lorem "
+          RenderText {#text} at (46,31) size 38x17
+            text run at (46,31) width 38: "ipsum"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 4 {DIV} of body
 selection end:   position 5 of child 2 {#text} of child 1 {SPAN} of child 4 {DIV} of body

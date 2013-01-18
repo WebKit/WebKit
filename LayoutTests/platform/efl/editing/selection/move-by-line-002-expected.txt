@@ -12,22 +12,22 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,38) size 756x140
           RenderBlock {OL} at (0,0) size 756x140
             RenderListItem {LI} at (40,0) size 716x28
-              RenderListMarker at (-31,0) size 24x28: "1"
-              RenderText {#text} at (0,0) size 35x28
-                text run at (0,0) width 35: "one"
+              RenderListMarker at (-31,1) size 24x26: "1"
+              RenderText {#text} at (0,1) size 35x26
+                text run at (0,1) width 35: "one"
             RenderListItem {LI} at (40,28) size 716x28
-              RenderListMarker at (-31,0) size 24x28: "2"
-              RenderText {#text} at (0,0) size 36x28
-                text run at (0,0) width 36: "two"
+              RenderListMarker at (-31,1) size 24x26: "2"
+              RenderText {#text} at (0,1) size 36x26
+                text run at (0,1) width 36: "two"
             RenderListItem {LI} at (40,56) size 716x28
-              RenderListMarker at (-31,0) size 24x28: "3"
-              RenderBR {BR} at (0,0) size 0x28
+              RenderListMarker at (-31,1) size 24x26: "3"
+              RenderBR {BR} at (0,1) size 0x26
             RenderListItem {LI} at (40,84) size 716x28
-              RenderListMarker at (-31,0) size 24x28: "4"
-              RenderText {#text} at (0,0) size 40x28
-                text run at (0,0) width 40: "four"
+              RenderListMarker at (-31,1) size 24x26: "4"
+              RenderText {#text} at (0,1) size 40x26
+                text run at (0,1) width 40: "four"
             RenderListItem {LI} at (40,112) size 716x28
-              RenderListMarker at (-31,0) size 24x28: "5"
-              RenderText {#text} at (0,0) size 38x28
-                text run at (0,0) width 38: "five"
+              RenderListMarker at (-31,1) size 24x26: "5"
+              RenderText {#text} at (0,1) size 38x26
+                text run at (0,1) width 38: "five"
 caret: position 0 of child 0 {BR} of child 2 {LI} of child 1 {OL} of child 1 {DIV} of child 1 {DIV} of body

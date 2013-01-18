@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 541x19
+        RenderText {#text} at (0,0) size 541x17
           text run at (0,0) width 541: "This tests for a bug where copied links wouldn't be pasted as links at certain positions."
       RenderBlock {DIV} at (0,34) size 784x36
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 159x19
+          RenderText {#text} at (0,0) size 159x17
             text run at (0,0) width 159: "This should be plain text."
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderText {#text} at (0,0) size 159x19
+          RenderText {#text} at (0,0) size 159x17
             text run at (0,0) width 159: "This should be plain text."
-          RenderInline {A} at (0,0) size 136x19 [color=#0000EE]
-            RenderText {#text} at (159,0) size 136x19
+          RenderInline {A} at (0,0) size 136x17 [color=#0000EE]
+            RenderText {#text} at (159,0) size 136x17
               text run at (159,0) width 136: "This should be a link."
         RenderBlock (anonymous) at (0,36) size 784x0
 caret: position 22 of child 0 {#text} of child 1 {A} of child 1 {DIV} of child 2 {DIV} of body

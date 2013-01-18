@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 775x73
+        RenderText {#text} at (0,0) size 775x71
           text run at (0,0) width 419: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
           text run at (419,0) width 343: "It should operate on line boundaries and not paragraph"
           text run at (0,18) width 77: "boundaries. "
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
           text run at (606,36) width 169: "Also, moveTo{Beginning,"
           text run at (0,54) width 335: "End}OfParagraphAndModifySelection should work."
       RenderBlock {DIV} at (0,88) size 200x36
-        RenderText {#text} at (0,0) size 189x37
+        RenderText {#text} at (0,0) size 189x35
           text run at (0,0) width 185: "The quick brown fox jumped"
           text run at (185,0) width 4: " "
           text run at (0,18) width 158: "over the lazy brown dog."

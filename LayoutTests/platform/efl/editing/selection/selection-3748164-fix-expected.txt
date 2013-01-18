@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x70 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x42
           RenderInline {SPAN} at (0,0) size 0x0
-          RenderBR {BR} at (0,0) size 0x28
+          RenderBR {BR} at (0,1) size 0x26
           RenderInline {SPAN} at (0,0) size 29x14
             RenderText {#text} at (0,28) size 29x14
               text run at (0,28) width 29: "- Ken"

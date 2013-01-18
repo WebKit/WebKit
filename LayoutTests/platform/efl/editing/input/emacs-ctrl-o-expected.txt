@@ -20,26 +20,26 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x156
         RenderBlock {DIV} at (0,0) size 784x56
-          RenderText {#text} at (0,0) size 61x28
-            text run at (0,0) width 61: "Tests:"
+          RenderText {#text} at (0,1) size 61x26
+            text run at (0,1) width 61: "Tests:"
           RenderBR {BR} at (61,22) size 0x0
-          RenderText {#text} at (0,28) size 254x28
-            text run at (0,28) width 254: "Key binding for control-O"
+          RenderText {#text} at (0,29) size 254x26
+            text run at (0,29) width 254: "Key binding for control-O"
         RenderBlock {DIV} at (0,72) size 784x84
-          RenderText {#text} at (0,0) size 177x28
-            text run at (0,0) width 177: "Expected results:"
+          RenderText {#text} at (0,1) size 177x26
+            text run at (0,1) width 177: "Expected results:"
           RenderBR {BR} at (177,22) size 0x0
-          RenderText {#text} at (0,28) size 90x28
-            text run at (0,28) width 90: "one five |"
+          RenderText {#text} at (0,29) size 90x26
+            text run at (0,29) width 90: "one five |"
           RenderBR {BR} at (90,50) size 0x0
-          RenderText {#text} at (0,56) size 137x28
-            text run at (0,56) width 137: "two three four"
+          RenderText {#text} at (0,57) size 137x26
+            text run at (0,57) width 137: "two three four"
       RenderBlock {DIV} at (0,180) size 784x56
         RenderBlock {DIV} at (0,0) size 784x28
-          RenderText {#text} at (0,0) size 85x28
-            text run at (0,0) width 79: "one five"
-            text run at (79,0) width 6: " "
+          RenderText {#text} at (0,1) size 85x26
+            text run at (0,1) width 79: "one five"
+            text run at (79,1) width 6: " "
         RenderBlock {DIV} at (0,28) size 784x28
-          RenderText {#text} at (0,0) size 137x28
-            text run at (0,0) width 137: "two three four"
+          RenderText {#text} at (0,1) size 137x26
+            text run at (0,1) width 137: "two three four"
 caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

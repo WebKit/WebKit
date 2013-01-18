@@ -12,17 +12,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 754x55
+        RenderText {#text} at (0,0) size 754x53
           text run at (0,0) width 734: "Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a paragraph"
           text run at (0,18) width 418: "separator at the end of a paragraph in text that preserves newlines. "
           text run at (418,18) width 336: "Also, an extraneous space would be added after 'foo'."
           text run at (0,36) width 228: "Only one newline should be added. "
           text run at (228,36) width 269: "And there should be no extraneous spaces."
       RenderBlock {P} at (0,70) size 784x18
-        RenderInline {B} at (0,0) size 152x19
-          RenderText {#text} at (0,0) size 152x19
+        RenderInline {B} at (0,0) size 152x17
+          RenderText {#text} at (0,0) size 152x17
             text run at (0,0) width 152: "It demonstrates a bug:"
-        RenderText {#text} at (152,0) size 583x19
+        RenderText {#text} at (152,0) size 583x17
           text run at (152,0) width 583: " too much padding is left between the new line and the end of the paragraph containing 'foo'."
       RenderBlock {DIV} at (0,104) size 784x58
         RenderBlock {PRE} at (0,0) size 784x15

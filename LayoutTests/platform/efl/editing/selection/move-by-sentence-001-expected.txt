@@ -23,11 +23,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 14x28
-          text run at (14,14) width 14: "\x{2022} "
-        RenderInline {B} at (0,0) size 240x28
-          RenderText {#text} at (28,14) size 240x28
-            text run at (28,14) width 240: "This is some linked text"
+        RenderText {#text} at (14,15) size 14x26
+          text run at (14,15) width 14: "\x{2022} "
+        RenderInline {B} at (0,0) size 240x26
+          RenderText {#text} at (28,15) size 240x26
+            text run at (28,15) width 240: "This is some linked text"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

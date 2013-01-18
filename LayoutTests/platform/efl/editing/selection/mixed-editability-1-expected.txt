@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 20x19
-        RenderText {#text} at (0,0) size 20x19
+      RenderInline {SPAN} at (0,0) size 20x17
+        RenderText {#text} at (0,0) size 20x17
           text run at (0,0) width 20: "On"
-      RenderText {#text} at (20,0) size 784x37
+      RenderText {#text} at (20,0) size 784x35
         text run at (20,0) width 464: "ly the first two letters of the first word in this sentence should be selected. "
         text run at (484,0) width 298: "To run this test manually, double click between"
         text run at (782,0) width 2: " "

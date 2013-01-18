@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x37
+        RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "This tests for a bug where autoscroll code would prevent text from being selected. To run manually create a selection by"
           text run at (0,18) width 564: "clicking somewhere in the first sentence of the paragraph below and dragging downward."
 layer at (0,60) size 800x540
@@ -12,12 +12,12 @@ layer at (0,60) size 800x540
 layer at (0,60) size 800x90
   RenderBlock (positioned) {DIV} at (0,0) size 800x90
     RenderBlock {DIV} at (11,0) size 778x90
-      RenderText {#text} at (0,0) size 46x19
+      RenderText {#text} at (0,0) size 46x17
         text run at (0,0) width 46: "Lorem "
-      RenderInline {SPAN} at (0,0) size 38x19
-        RenderText {#text} at (46,0) size 38x19
+      RenderInline {SPAN} at (0,0) size 38x17
+        RenderText {#text} at (46,0) size 38x17
           text run at (46,0) width 38: "ipsum"
-      RenderText {#text} at (84,0) size 754x91
+      RenderText {#text} at (84,0) size 754x89
         text run at (84,0) width 670: " dolor sit amet, consectetuer adipiscing elit. Integer vehicula accumsan massa. Quisque elementum. Cras id"
         text run at (0,18) width 724: "neque a mi rutrum scelerisque. Nulla sed dui a massa sodales posuere. Nulla libero. Nulla posuere, felis id tincidunt"
         text run at (0,36) width 740: "tincidunt, ipsum metus tristique risus, et convallis turpis elit eget massa. Nunc consectetuer dolor vel nunc. Cum sociis"

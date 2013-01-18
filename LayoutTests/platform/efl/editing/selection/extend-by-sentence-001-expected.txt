@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
         RenderBlock {FRIJOLE} at (14,14) size 756x56
           RenderBlock (anonymous) at (0,0) size 756x28
-            RenderText {#text} at (0,0) size 132x28
-              text run at (0,0) width 132: "one two three"
+            RenderText {#text} at (0,1) size 132x26
+              text run at (0,1) width 132: "one two three"
             RenderInline {FRIJOLE} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,28) size 756x28
             RenderBlock {DOODAD} at (0,0) size 756x28
-              RenderText {#text} at (0,0) size 118x28
-                text run at (0,0) width 118: "four five six"
+              RenderText {#text} at (0,1) size 118x26
+                text run at (0,1) width 118: "four five six"
           RenderBlock (anonymous) at (0,56) size 756x0
             RenderInline {FRIJOLE} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {DOODAD} of child 1 {FRIJOLE} of child 1 {FRIJOLE} of child 1 {DIV} of body

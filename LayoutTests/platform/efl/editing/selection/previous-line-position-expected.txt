@@ -8,28 +8,28 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 241x19
+        RenderText {#text} at (0,0) size 241x17
           text run at (0,0) width 241: "There was a workaround added to fix "
-        RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-          RenderText {#text} at (241,0) size 149x19
+        RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+          RenderText {#text} at (241,0) size 149x17
             text run at (241,0) width 149: "rdar://problem/4033202"
-        RenderText {#text} at (390,0) size 297x19
+        RenderText {#text} at (390,0) size 297x17
           text run at (390,0) width 8: ". "
           text run at (398,0) width 289: "A bug to remove the workaround was filed as"
-        RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-          RenderText {#text} at (0,18) size 149x19
+        RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+          RenderText {#text} at (0,18) size 149x17
             text run at (0,18) width 149: "rdar://problem/4040763"
-        RenderText {#text} at (149,18) size 761x37
+        RenderText {#text} at (149,18) size 761x35
           text run at (149,18) width 8: ". "
           text run at (157,18) width 604: "The underlying problem with VisiblePositions was fixed, and so I removed the workaround and"
           text run at (0,36) width 136: "added this layout test."
       RenderBlock {DIV} at (0,70) size 784x56 [border: (1px solid #0000FF)]
         RenderBlock {P} at (1,1) size 782x18
-          RenderText {#text} at (0,0) size 12x19
+          RenderText {#text} at (0,0) size 12x17
             text run at (0,0) width 12: "hi"
-          RenderInline {SPAN} at (0,0) size 0x19
+          RenderInline {SPAN} at (0,0) size 0x17
         RenderBlock (anonymous) at (1,19) size 782x36
-          RenderBR {BR} at (0,0) size 0x19
-          RenderText {#text} at (0,18) size 21x19
+          RenderBR {BR} at (0,0) size 0x17
+          RenderText {#text} at (0,18) size 21x17
             text run at (0,18) width 21: "test"
 caret: position 0 of child 2 {BR} of child 3 {DIV} of body

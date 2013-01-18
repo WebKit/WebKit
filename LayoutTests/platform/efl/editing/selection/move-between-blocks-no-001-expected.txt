@@ -109,10 +109,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 243x28
-          RenderText {#text} at (14,14) size 243x28
-            text run at (14,14) width 243: "We hold these truths to b"
+        RenderInline {SPAN} at (0,0) size 243x26
+          RenderText {#text} at (14,15) size 243x26
+            text run at (14,15) width 243: "We hold these truths to b"
       RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 318x28
-          text run at (14,14) width 318: "that all men are created equal, ..."
+        RenderText {#text} at (14,15) size 318x26
+          text run at (14,15) width 318: "that all men are created equal, ..."
 caret: position 25 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body

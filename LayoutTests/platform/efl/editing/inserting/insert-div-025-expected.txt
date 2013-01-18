@@ -16,21 +16,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 715x56
-          text run at (14,14) width 715: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\""
-          text run at (14,42) width 197: "text is really \"foo \". "
-          text run at (211,42) width 63: "There "
-        RenderInline {B} at (0,0) size 50x28
-          RenderText {#text} at (274,42) size 50x28
-            text run at (274,42) width 50: "must"
-        RenderText {#text} at (324,42) size 318x28
-          text run at (324,42) width 318: " be a space at the end of the line."
+        RenderText {#text} at (14,15) size 715x54
+          text run at (14,15) width 715: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\""
+          text run at (14,43) width 197: "text is really \"foo \". "
+          text run at (211,43) width 63: "There "
+        RenderInline {B} at (0,0) size 50x26
+          RenderText {#text} at (274,43) size 50x26
+            text run at (274,43) width 50: "must"
+        RenderText {#text} at (324,43) size 318x26
+          text run at (324,43) width 318: " be a space at the end of the line."
       RenderBlock {DIV} at (0,108) size 784x112
         RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 38x28
-            text run at (14,14) width 32: "foo"
-            text run at (46,14) width 6: " "
+          RenderText {#text} at (14,15) size 38x26
+            text run at (14,15) width 32: "foo"
+            text run at (46,15) width 6: " "
         RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 31x28
-            text run at (14,14) width 31: "bar"
+          RenderText {#text} at (14,15) size 31x26
+            text run at (14,15) width 31: "bar"
 caret: position 0 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of body

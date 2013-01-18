@@ -24,12 +24,12 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderBlock {DIV} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 779x55
+        RenderText {#text} at (0,0) size 779x53
           text run at (0,0) width 779: "This test validates the fix for a bug that occurred when typing a blank at the end of a line when the character doesn't fix by a"
           text run at (0,18) width 760: "fraction of a pixel. If the test runs correctly, you should see the word 'you' at the end of the line and the word 'have' at the"
           text run at (0,36) width 199: "beginning of the following line."
       RenderBlock (anonymous) at (0,54) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,72) size 871x100
         RenderText {#text} at (0,0) size 822x14
           text run at (0,0) width 822: "and Anna, you can do your regular weekly report run, and I'll extract the key sections into this. Andrew and Mark, I'd like to include any new bits you have"

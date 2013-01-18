@@ -5,23 +5,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 131x19
+        RenderText {#text} at (0,0) size 131x17
           text run at (0,0) width 131: "This is a testcase for "
-        RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-          RenderText {#text} at (131,0) size 149x19
+        RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+          RenderText {#text} at (131,0) size 149x17
             text run at (131,0) width 149: "rdar://problem/4402375"
-        RenderText {#text} at (280,0) size 761x37
+        RenderText {#text} at (280,0) size 761x35
           text run at (280,0) width 481: " \"REGRESSION (417.8-TOT): finding text sometimes also selects previous"
           text run at (0,18) width 137: "image (5127) (6451)\""
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x36
-        RenderText {#text} at (0,0) size 743x37
+        RenderText {#text} at (0,0) size 743x35
           text run at (0,0) width 413: "This test uses a right aligned image next to some left aligned text. "
           text run at (413,0) width 330: "The image should not be selected, and should not be"
           text run at (0,18) width 598: "included in the selection rect (you won't see the selection rect when you run this test manually)."
       RenderBlock {DIV} at (0,122) size 784x18
         RenderImage {IMG} at (708,0) size 76x103
-        RenderText {#text} at (0,0) size 178x19
+        RenderText {#text} at (0,0) size 178x17
           text run at (0,0) width 178: "This text should be selected."
 selection start: position 0 of child 1 {#text} of child 6 {DIV} of body
 selection end:   position 29 of child 1 {#text} of child 6 {DIV} of body

@@ -15,41 +15,41 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x110
         RenderBlock {DIV} at (0,0) size 784x28
-          RenderText {#text} at (0,0) size 277x28
-            text run at (0,0) width 277: "Splitting Mail blockquotes."
+          RenderText {#text} at (0,1) size 277x26
+            text run at (0,1) width 277: "Splitting Mail blockquotes."
         RenderBlock {DIV} at (0,28) size 784x82
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 371x19
+          RenderText {#text} at (0,28) size 371x17
             text run at (0,28) width 371: "Two blockquotes, with an unquoted blank line in between."
-          RenderBR {BR} at (371,43) size 0x0
-          RenderText {#text} at (0,46) size 403x19
+          RenderBR {BR} at (371,42) size 0x0
+          RenderText {#text} at (0,46) size 403x17
             text run at (0,46) width 403: "The first blockquote contains two lines, the second one is blank."
-          RenderBR {BR} at (403,61) size 0x0
-          RenderText {#text} at (0,64) size 403x19
+          RenderBR {BR} at (403,60) size 0x0
+          RenderText {#text} at (0,64) size 403x17
             text run at (0,64) width 403: "The second blockquote contains two lines, the first one is blank."
-          RenderBR {BR} at (403,79) size 0x0
+          RenderBR {BR} at (403,78) size 0x0
       RenderBlock {DIV} at (0,110) size 784x300 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 120x28
-            text run at (0,0) width 120: "My citation:"
+          RenderText {#text} at (0,1) size 120x26
+            text run at (0,1) width 120: "My citation:"
         RenderBlock {DIV} at (14,66) size 756x196
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x60 [border: (2px solid #0000FF)]
             RenderBlock {DIV} at (2,2) size 672x28
-              RenderText {#text} at (0,0) size 35x28
-                text run at (0,0) width 35: "one"
+              RenderText {#text} at (0,1) size 35x26
+                text run at (0,1) width 35: "one"
             RenderBlock {DIV} at (2,30) size 672x28
               RenderBlock {DIV} at (0,0) size 672x28
                 RenderBlock {DIV} at (0,0) size 672x28
-                  RenderBR {BR} at (0,0) size 0x28
+                  RenderBR {BR} at (0,1) size 0x26
             RenderBlock (anonymous) at (2,58) size 672x0
           RenderBlock (anonymous) at (0,84) size 756x28
-            RenderBR {BR} at (0,0) size 0x28
+            RenderBR {BR} at (0,1) size 0x26
           RenderBlock {BLOCKQUOTE} at (40,136) size 676x60 [border: (2px solid #0000FF)]
             RenderBlock (anonymous) at (2,2) size 672x28
-              RenderBR {BR} at (0,0) size 0x28
+              RenderBR {BR} at (0,1) size 0x26
             RenderBlock {DIV} at (2,30) size 672x28
-              RenderText {#text} at (0,0) size 36x28
-                text run at (0,0) width 36: "two"
+              RenderText {#text} at (0,1) size 36x26
+                text run at (0,1) width 36: "two"
 caret: position 0 of child 2 {BR} of child 1 {DIV} of child 3 {DIV} of body

@@ -8,29 +8,29 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 250x36
-        RenderText {#text} at (0,0) size 203x19
+        RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "Try to create a caret after this lin"
-        RenderInline {SPAN} at (0,0) size 7x19
-          RenderText {#text} at (203,0) size 7x19
+        RenderInline {SPAN} at (0,0) size 7x17
+          RenderText {#text} at (203,0) size 7x17
             text run at (203,0) width 7: "e"
-        RenderText {#text} at (210,0) size 4x19
+        RenderText {#text} at (210,0) size 4x17
           text run at (210,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 181x19
+        RenderInline {SPAN} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 181x17
           text run at (0,18) width 181: "thisshouldbeonthesecondline"
       RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,62) size 784x36
-        RenderText {#text} at (0,0) size 131x19
+        RenderText {#text} at (0,0) size 131x17
           text run at (0,0) width 131: "This is a testcase for "
-        RenderInline {A} at (0,0) size 343x19 [color=#0000EE]
-          RenderText {#text} at (131,0) size 343x19
+        RenderInline {A} at (0,0) size 343x17 [color=#0000EE]
+          RenderText {#text} at (131,0) size 343x17
             text run at (131,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6476"
-        RenderText {#text} at (474,0) size 779x37
+        RenderText {#text} at (474,0) size 779x35
           text run at (474,0) width 8: ". "
           text run at (482,0) width 297: "Creating an upstream caret with the mouse was"
           text run at (0,18) width 591: "impossible if the upstream and downstream carets were separated only by unrendered content."
       RenderBlock {P} at (0,114) size 784x36
-        RenderText {#text} at (0,0) size 766x37
+        RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 318: "This test uses the eventSender to do mouse clicks. "
           text run at (318,0) width 448: "To run it manually, click in the space after all the text on the first line in"
           text run at (0,18) width 166: "the above editable region. "

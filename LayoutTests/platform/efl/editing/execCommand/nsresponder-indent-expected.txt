@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 534x19
+        RenderText {#text} at (0,0) size 534x17
           text run at (0,0) width 281: "This tests the NSResponder method indent:. "
           text run at (281,0) width 253: "You should see an indented 'foo' below."
       RenderBlock {DIV} at (0,34) size 784x18
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x18
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
         RenderBlock (anonymous) at (0,18) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

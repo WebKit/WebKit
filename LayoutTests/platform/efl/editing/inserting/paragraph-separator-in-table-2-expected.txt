@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 768x37
+        RenderText {#text} at (0,0) size 768x35
           text run at (0,0) width 337: "This tests InsertParagraphSeparator inside table cells. "
           text run at (337,0) width 431: "The first cell should contain 'Cell' and a newline, and the second cell"
           text run at (0,18) width 136: "should contain 'Two'."
@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 78x44
             RenderTableRow {TR} at (0,2) size 78x40
               RenderTableCell {TD} at (2,2) size 34x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 30x19
+                RenderText {#text} at (2,2) size 30x17
                   text run at (2,2) width 30: "Cell "
-                RenderBR {BR} at (32,17) size 0x0
-                RenderBR {BR} at (2,20) size 0x19
+                RenderBR {BR} at (32,16) size 0x0
+                RenderBR {BR} at (2,20) size 0x17
               RenderTableCell {TD} at (38,11) size 38x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 34x19
+                RenderText {#text} at (2,2) size 34x17
                   text run at (2,2) width 34: " Two"
 caret: position 0 of child 2 {BR} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

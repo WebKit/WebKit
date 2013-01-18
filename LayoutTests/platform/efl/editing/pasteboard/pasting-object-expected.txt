@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 757x37
+        RenderText {#text} at (0,0) size 757x35
           text run at (0,0) width 757: "This tests for a bug where attachments dragged into Mail documents blew all content after the position being pasted into."
           text run at (0,18) width 319: "You should see \"Hello[black box] World!\" below."
-      RenderBlock {DIV} at (0,52) size 784x155
-        RenderText {#text} at (0,137) size 35x19
-          text run at (0,137) width 35: "Hello"
+      RenderBlock {DIV} at (0,52) size 784x156
+        RenderText {#text} at (0,138) size 35x17
+          text run at (0,138) width 35: "Hello"
         RenderEmbeddedObject {OBJECT} at (35,0) size 302x152 [border: (1px solid #AAAAAA)]
-        RenderText {#text} at (337,137) size 49x19
-          text run at (337,137) width 49: " World!"
+        RenderText {#text} at (337,138) size 49x17
+          text run at (337,138) width 49: " World!"
 caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of body

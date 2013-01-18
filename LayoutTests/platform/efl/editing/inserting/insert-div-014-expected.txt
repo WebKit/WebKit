@@ -17,21 +17,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x28
-        RenderText {#text} at (0,0) size 638x28
-          text run at (0,0) width 638: "Test inserting paragraphs: should see empty blue box below \"bar\""
+        RenderText {#text} at (0,1) size 638x26
+          text run at (0,1) width 638: "Test inserting paragraphs: should see empty blue box below \"bar\""
       RenderBlock {DIV} at (0,28) size 784x36
       RenderBlock {DIV} at (0,64) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 34x28
-          text run at (14,14) width 34: "baz"
+        RenderText {#text} at (14,15) size 34x26
+          text run at (14,15) width 34: "baz"
       RenderBlock (anonymous) at (0,120) size 784x28
-        RenderText {#text} at (0,0) size 31x28
-          text run at (0,0) width 31: "bar"
+        RenderText {#text} at (0,1) size 31x26
+          text run at (0,1) width 31: "bar"
       RenderBlock {DIV} at (0,148) size 784x168 [border: (2px solid #0000FF)]
         RenderBlock (anonymous) at (14,14) size 756x28
-          RenderBR {BR} at (0,0) size 0x28
+          RenderBR {BR} at (0,1) size 0x26
         RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 32x28
-            text run at (14,14) width 32: "foo"
+          RenderText {#text} at (14,15) size 32x26
+            text run at (14,15) width 32: "foo"
         RenderBlock {DIV} at (14,98) size 756x56 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (14,14) size 0x28
+          RenderBR {BR} at (14,15) size 0x26
 caret: position 0 of child 0 {BR} of child 5 {DIV} of body

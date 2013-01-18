@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 545x19
+        RenderText {#text} at (0,0) size 545x17
           text run at (0,0) width 245: "This tests for an infinite loop on Paste. "
           text run at (245,0) width 300: "You should see 'Hello: ' and then an input field."
       RenderBlock {DIV} at (0,34) size 784x32
-        RenderText {#text} at (0,8) size 35x19
+        RenderText {#text} at (0,8) size 35x17
           text run at (0,8) width 35: "Hello"
-        RenderTextControl {INPUT} at (37,2) size 193x28 [bgcolor=#FFFFFF]
-        RenderText {#text} at (232,8) size 4x19
-          text run at (232,8) width 4: ":"
-layer at (49,50) size 186x18
-  RenderBlock {DIV} at (4,6) size 186x18
+        RenderTextControl {INPUT} at (37,2) size 192x28 [bgcolor=#FFFFFF]
+        RenderText {#text} at (231,8) size 4x17
+          text run at (231,8) width 4: ":"
+layer at (49,50) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
 caret: position 1 of child 1 {INPUT} of child 2 {DIV} of body

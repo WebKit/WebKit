@@ -12,21 +12,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 374x19
+        RenderText {#text} at (0,0) size 374x17
           text run at (0,0) width 374: "This tests the visual position at the end of an editable block."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 717x37
+        RenderText {#text} at (0,0) size 717x35
           text run at (0,0) width 590: "When the document ended with a <br>, there were visual positions at both [br, 0] and [br, 1]. "
           text run at (590,0) width 127: "This would produce"
           text run at (0,18) width 382: "inconsistent behavior when editing at the end of a document."
       RenderBlock {DIV} at (0,86) size 784x66 [border: (2px solid #AAAAFF)]
         RenderBlock {DIV} at (2,2) size 780x22 [border: (2px solid #FFAAAA)]
-          RenderText {#text} at (2,2) size 90x19
+          RenderText {#text} at (2,2) size 90x17
             text run at (2,2) width 90: "paragraph one"
         RenderBlock {DIV} at (2,24) size 780x22 [border: (2px solid #FFAAAA)]
-          RenderText {#text} at (2,2) size 91x19
+          RenderText {#text} at (2,2) size 91x17
             text run at (2,2) width 91: "paragraph two"
         RenderBlock (anonymous) at (2,46) size 780x18
-          RenderText {#text} at (0,0) size 8x19
+          RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "x"
 caret: position 1 of child 5 {#text} of child 5 {DIV} of body

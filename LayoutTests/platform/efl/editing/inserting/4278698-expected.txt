@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 767x37
+        RenderText {#text} at (0,0) size 767x35
           text run at (0,0) width 767: "This tests to see if inserting a space inside normal whitespace inside of a whitespace:pre element will collapse other spaces"
           text run at (0,18) width 92: "surrounding it."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 444x19
+        RenderText {#text} at (0,0) size 444x17
           text run at (0,0) width 444: "If successful, you should see 'a' followed by 10 spaces followed by 'b'."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 784x23 [border: (2px solid #FFAAAA)]

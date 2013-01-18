@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 393x19
+        RenderText {#text} at (0,0) size 393x17
           text run at (0,0) width 393: "This tests Range.selectNodeContents() of a text node and a br."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 23x19
+        RenderText {#text} at (0,0) size 23x17
           text run at (0,0) width 23: "one"
       RenderBlock {DIV} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 24x19
+        RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "two"
-        RenderBR {BR} at (24,15) size 0x0
-        RenderText {#text} at (0,18) size 31x19
+        RenderBR {BR} at (24,14) size 0x0
+        RenderText {#text} at (0,18) size 31x17
           text run at (0,18) width 31: "three"
       RenderBlock {DIV} at (0,88) size 784x18
-        RenderText {#text} at (0,0) size 26x19
+        RenderText {#text} at (0,0) size 26x17
           text run at (0,0) width 26: "four"
       RenderBlock {UL} at (0,122) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 54x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 54x17
             text run at (0,0) width 54: "Success."

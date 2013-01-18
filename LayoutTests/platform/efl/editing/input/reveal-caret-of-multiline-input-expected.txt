@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x227
-  RenderBlock {HTML} at (0,0) size 800x227
-    RenderBody {BODY} at (8,8) size 784x211
+layer at (0,0) size 800x228
+  RenderBlock {HTML} at (0,0) size 800x228
+    RenderBody {BODY} at (8,8) size 784x212
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 595x19
+        RenderText {#text} at (0,0) size 595x17
           text run at (0,0) width 595: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
-      RenderBlock (anonymous) at (0,18) size 784x193
+      RenderBlock (anonymous) at (0,18) size 784x194
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,28) size 111x186 clip at (11,29) size 94x184 scrollY 136 scrollHeight 580
+layer at (10,28) size 111x186 clip at (11,29) size 94x184 scrollY 134 scrollHeight 580
   RenderTextControl {TEXTAREA} at (2,2) size 111x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 90x576
-      RenderText {#text} at (0,0) size 27x559
+      RenderText {#text} at (0,0) size 27x557
         text run at (0,0) width 18: "00"
         text run at (18,0) width 0: " "
         text run at (0,18) width 18: "01"
@@ -75,5 +75,5 @@ layer at (10,28) size 111x186 clip at (11,29) size 94x184 scrollY 136 scrollHeig
         text run at (18,522) width 0: " "
         text run at (0,540) width 18: "30"
         text run at (18,540) width 0: " "
-      RenderBR {BR} at (0,558) size 0x19
+      RenderBR {BR} at (0,558) size 0x17
 caret: position 37 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

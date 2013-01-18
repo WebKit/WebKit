@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 553x19
+        RenderText {#text} at (0,0) size 553x17
           text run at (0,0) width 553: "This tests for sentence boundary when there are empty line breaks between lines of text."
-        RenderBR {BR} at (553,15) size 0x0
-        RenderText {#text} at (0,18) size 493x19
+        RenderBR {BR} at (553,14) size 0x0
+        RenderText {#text} at (0,18) size 493x17
           text run at (0,18) width 493: "The result insertion point should be at the end of the sentence \"How are you?\""
       RenderBlock {DIV} at (0,52) size 784x108
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 31x19
+          RenderText {#text} at (0,0) size 31x17
             text run at (0,0) width 31: "hello"
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderBR {BR} at (0,0) size 0x19
+          RenderBR {BR} at (0,0) size 0x17
         RenderBlock {DIV} at (0,36) size 784x18
-          RenderText {#text} at (0,0) size 37x19
+          RenderText {#text} at (0,0) size 37x17
             text run at (0,0) width 37: "world"
         RenderBlock {DIV} at (0,54) size 784x18
-          RenderBR {BR} at (0,0) size 0x19
+          RenderBR {BR} at (0,0) size 0x17
         RenderBlock {DIV} at (0,72) size 784x18
-          RenderBR {BR} at (0,0) size 0x19
+          RenderBR {BR} at (0,0) size 0x17
         RenderBlock {DIV} at (0,90) size 784x18
-          RenderText {#text} at (0,0) size 265x19
+          RenderText {#text} at (0,0) size 265x17
             text run at (0,0) width 86: "This is a test. "
             text run at (86,0) width 94: "How are you? "
             text run at (180,0) width 85: "Life is sweet!"

@@ -9,25 +9,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 765x37
+        RenderText {#text} at (0,0) size 765x35
           text run at (0,0) width 765: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the start of the"
           text run at (0,18) width 178: "editable text inside the table."
       RenderBlock {DIV} at (0,52) size 784x64
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 49x19
+          RenderText {#text} at (0,0) size 49x17
             text run at (0,0) width 49: "editable"
         RenderTable {TABLE} at (0,18) size 91x28 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 89x26
             RenderTableRow {TR} at (0,2) size 89x22
               RenderTableCell {TD} at (2,2) size 85x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {DIV} at (2,2) size 81x18
-                  RenderInline {SPAN} at (0,0) size 32x19
-                    RenderText {#text} at (0,0) size 32x19
+                  RenderInline {SPAN} at (0,0) size 32x17
+                    RenderText {#text} at (0,0) size 32x17
                       text run at (0,0) width 32: "static"
-                  RenderInline {SPAN} at (0,0) size 49x19
-                    RenderText {#text} at (32,0) size 49x19
+                  RenderInline {SPAN} at (0,0) size 49x17
+                    RenderText {#text} at (32,0) size 49x17
                       text run at (32,0) width 49: "editable"
         RenderBlock (anonymous) at (0,46) size 784x18
-          RenderText {#text} at (0,0) size 49x19
+          RenderText {#text} at (0,0) size 49x17
             text run at (0,0) width 49: "editable"
 caret: position 0 of child 0 {#text} of child 1 {SPAN} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

@@ -8,25 +8,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 127x19
+        RenderText {#text} at (0,0) size 127x17
           text run at (0,0) width 127: "Test case for fix for "
-        RenderInline {A} at (0,0) size 343x19 [color=#0000EE]
-          RenderText {#text} at (127,0) size 343x19
+        RenderInline {A} at (0,0) size 343x17 [color=#0000EE]
+          RenderText {#text} at (127,0) size 343x17
             text run at (127,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
-        RenderText {#text} at (470,0) size 4x19
+        RenderText {#text} at (470,0) size 4x17
           text run at (470,0) width 4: "."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 772x37
+        RenderText {#text} at (0,0) size 772x35
           text run at (0,0) width 772: "Changes were made to VisiblePosition's so that init() will not leave the block containing the requested position unless there"
           text run at (0,18) width 231: "are no VisiblePositions in that block."
       RenderBlock {P} at (0,86) size 784x0
       RenderBlock {DIV} at (0,86) size 784x54 [border: (2px solid #AAAAFF)]
         RenderBlock {P} at (2,18) size 780x18
-          RenderText {#text} at (0,0) size 682x19
+          RenderText {#text} at (0,0) size 682x17
             text run at (0,0) width 682: "Select All while inside this editable block should create a selection that does not extend outside of this block."
-layer at (8,164) size 784x18 scrollHeight 19
+layer at (8,164) size 784x18
   RenderBlock {P} at (0,156) size 784x18
-    RenderText {#text} at (0,0) size 424x19
+    RenderText {#text} at (0,0) size 424x17
       text run at (0,0) width 424: "This is a paragraph outside the editable block with overflow:hidden"
 selection start: position 0 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body
 selection end:   position 113 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body
