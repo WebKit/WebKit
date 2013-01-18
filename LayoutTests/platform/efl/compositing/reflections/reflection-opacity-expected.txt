@@ -4,7 +4,7 @@ layer at (0,0) size 800x176
   RenderBlock {HTML} at (0,0) size 800x176
     RenderBody {BODY} at (8,16) size 784x152
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 777x37
+        RenderText {#text} at (0,0) size 777x35
           text run at (0,0) width 777: "Opacity should be applied after reflection, so you should see a green rectangle below. The overlap between the original and"
           text run at (0,18) width 197: "reflection should not be visible."
 layer at (8,68) size 150x100

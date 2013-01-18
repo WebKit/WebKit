@@ -4,22 +4,22 @@ layer at (0,0) size 800x310
   RenderBlock {HTML} at (0,0) size 800x310
     RenderBody {BODY} at (8,16) size 784x286
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 262x19
+        RenderText {#text} at (0,0) size 262x17
           text run at (0,0) width 262: "Left and right sides should look the same."
       RenderBlock (anonymous) at (0,34) size 784x252
         RenderBlock {DIV} at (50,50) size 202x152 [border: (1px solid #000000)]
-        RenderText {#text} at (302,150) size 4x19
-          text run at (302,150) width 4: " "
+        RenderText {#text} at (302,151) size 4x17
+          text run at (302,151) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (59,138) size 200x86
-  RenderBlock {P} at (1,38) size 200x86 [color=#0000FF]
+  RenderBlock {P} at (1,38) size 200x87 [color=#0000FF]
     RenderText {#text} at (22,1) size 156x84
       text run at (22,1) width 156: "Shadowed"
       text run at (72,44) width 56: "text"
 layer at (364,100) size 202x152
   RenderBlock {DIV} at (356,50) size 202x152 [border: (1px solid #000000)]
 layer at (365,138) size 200x86
-  RenderBlock {P} at (1,38) size 200x86 [color=#0000FF]
+  RenderBlock {P} at (1,38) size 200x87 [color=#0000FF]
     RenderText {#text} at (22,1) size 156x84
       text run at (22,1) width 156: "Shadowed"
       text run at (72,44) width 56: "text"

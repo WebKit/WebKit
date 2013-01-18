@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x103
-  RenderBlock {HTML} at (0,0) size 800x103
-    RenderBody {BODY} at (0,0) size 800x103
+layer at (0,0) size 800x104
+  RenderBlock {HTML} at (0,0) size 800x104
+    RenderBody {BODY} at (0,0) size 800x104
       RenderText {#text} at (0,0) size 0x0
 layer at (0,0) size 100x100
   RenderVideo {VIDEO} at (0,0) size 100x100
@@ -11,7 +11,7 @@ layer at (50,50) size 100x100
 layer at (50,50) size 200x200
   RenderBlock (positioned) {DIV} at (50,50) size 200x200
     RenderBlock {P} at (0,218) size 200x54
-      RenderText {#text} at (0,0) size 191x55
+      RenderText {#text} at (0,0) size 191x53
         text run at (0,0) width 191: "The green box should obscure"
         text run at (0,18) width 180: "the red box, and move when"
         text run at (0,36) width 141: "you drag the scrollbar."

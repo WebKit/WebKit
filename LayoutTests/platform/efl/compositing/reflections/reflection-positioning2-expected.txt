@@ -4,7 +4,7 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 509x19
+        RenderText {#text} at (0,0) size 509x17
           text run at (0,0) width 509: "Position of reflected layer should update correctly. You should see no red below."
 layer at (50,50) size 150x120
   RenderBlock (positioned) {DIV} at (50,50) size 150x120

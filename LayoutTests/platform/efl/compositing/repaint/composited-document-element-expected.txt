@@ -5,5 +5,5 @@ layer at (0,0) size 800x50
 layer at (8,16) size 784x18
   RenderBody {BODY} at (8,16) size 784x18
     RenderBlock {P} at (0,0) size 784x18
-      RenderText {#text} at (0,0) size 354x19
+      RenderText {#text} at (0,0) size 354x17
         text run at (0,0) width 354: "In a pixel test, you should see a plain white background."

@@ -4,55 +4,55 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 518x19
+        RenderText {#text} at (0,0) size 518x17
           text run at (0,0) width 518: "The layering and positions of the boxes should not be affected by oveflow:hidden."
       RenderBlock (anonymous) at (0,34) size 784x320
-        RenderText {#text} at (320,147) size 4x19
+        RenderText {#text} at (320,147) size 4x17
           text run at (320,147) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (68,102) size 200x200 layerType: background only
 layer at (28,62) size 150x150
   RenderBlock (positioned) zI: -1 {DIV} at (-40,-40) size 150x150 [color=#808080] [bgcolor=#C86464] [border: (2px solid #000000)]
-    RenderText zI: -1 {#text} at (22,22) size 106x40
+    RenderText zI: -1 {#text} at (22,22) size 106x39
       text run at (22,22) width 106: "Behind"
     RenderText zI: -1 {#text} at (0,0) size 0x0
 layer at (50,144) size 100x100
   RenderBlock (positioned) {DIV} at (22,82) size 100x100 [bgcolor=#008000] [border: (2px solid #000000)]
-    RenderText {#text} at (22,22) size 55x42
+    RenderText {#text} at (22,22) size 55x41
       text run at (22,22) width 55: "Behind"
       text run at (22,43) width 53: "behind"
 layer at (68,102) size 200x200 layerType: foreground only
   RenderBlock (relative positioned) {DIV} at (60,60) size 200x200 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
-    RenderText {#text} at (30,30) size 126x80
+    RenderText {#text} at (30,30) size 126x79
       text run at (30,30) width 59: "Box"
       text run at (30,70) width 126: "contents"
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
 layer at (158,192) size 150x150
   RenderBlock (positioned) zI: 1 {DIV} at (90,90) size 150x150 [color=#808080] [bgcolor=#C8C880] [border: (2px solid #000000)]
-    RenderText zI: 1 {#text} at (22,22) size 86x80
+    RenderText zI: 1 {#text} at (22,22) size 86x79
       text run at (22,22) width 33: "In"
       text run at (22,62) width 86: "Front"
 layer at (392,102) size 200x200 clip at (402,112) size 180x180 scrollWidth 230 scrollHeight 230 layerType: background only
 layer at (352,62) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
   RenderBlock (positioned) zI: -1 {DIV} at (-40,-40) size 150x150 [color=#808080] [bgcolor=#C86464] [border: (2px solid #000000)]
-    RenderText zI: -1 {#text} at (22,22) size 106x40
+    RenderText zI: -1 {#text} at (22,22) size 106x39
       text run at (22,22) width 106: "Behind"
     RenderText zI: -1 {#text} at (0,0) size 0x0
 layer at (374,144) size 100x100 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
   RenderBlock (positioned) {DIV} at (22,82) size 100x100 [bgcolor=#008000] [border: (2px solid #000000)]
-    RenderText {#text} at (22,22) size 55x42
+    RenderText {#text} at (22,22) size 55x41
       text run at (22,22) width 55: "Behind"
       text run at (22,43) width 53: "behind"
 layer at (392,102) size 200x200 clip at (402,112) size 180x180 scrollWidth 230 scrollHeight 230 layerType: foreground only
   RenderBlock (relative positioned) {DIV} at (384,60) size 200x200 [color=#0000FF] [bgcolor=#FFFFFFCC] [border: (10px solid #000000)]
-    RenderText {#text} at (30,30) size 126x80
+    RenderText {#text} at (30,30) size 126x79
       text run at (30,30) width 59: "Box"
       text run at (30,70) width 126: "contents"
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
 layer at (482,192) size 150x150 backgroundClip at (402,112) size 180x180 clip at (402,112) size 180x180 outlineClip at (402,112) size 180x180
   RenderBlock (positioned) zI: 1 {DIV} at (90,90) size 150x150 [color=#808080] [bgcolor=#C8C880] [border: (2px solid #000000)]
-    RenderText zI: 1 {#text} at (22,22) size 86x80
+    RenderText zI: 1 {#text} at (22,22) size 86x79
       text run at (22,22) width 33: "In"
       text run at (22,62) width 86: "Front"

@@ -4,7 +4,7 @@ layer at (0,0) size 800x18
   RenderBlock {HTML} at (0,0) size 800x18
     RenderBody {BODY} at (0,0) size 800x18
       RenderBlock {P} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 511x19
+        RenderText {#text} at (0,0) size 511x17
           text run at (0,0) width 511: "Test passes the a filled blue square touches the upper-left corner of the black box."
 layer at (0,96) size 294x198
   RenderBlock (positioned) {DIV} at (0,96) size 294x198 [border: (3px solid #000000)]

@@ -4,7 +4,7 @@ layer at (0,0) size 785x997
   RenderBlock {HTML} at (0,0) size 785x997
     RenderBody {BODY} at (8,8) size 769x981 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 355x19
+        RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 769x180
         RenderText {#text} at (0,0) size 248x180
@@ -33,85 +33,85 @@ layer at (0,0) size 785x997
           text run at (0,165) width 0: " "
       RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,245) size 769x18
-        RenderText {#text} at (0,0) size 701x19
+        RenderText {#text} at (0,0) size 701x17
           text run at (0,0) width 701: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,279) size 769x18
-        RenderText {#text} at (0,0) size 601x19
+        RenderText {#text} at (0,0) size 601x17
           text run at (0,0) width 601: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,313) size 769x18
-        RenderText {#text} at (0,0) size 601x19
+        RenderText {#text} at (0,0) size 601x17
           text run at (0,0) width 601: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,347) size 769x18
-        RenderText {#text} at (0,0) size 461x19
+        RenderText {#text} at (0,0) size 461x17
           text run at (0,0) width 461: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,381) size 769x18
-        RenderText {#text} at (0,0) size 461x19
+        RenderText {#text} at (0,0) size 461x17
           text run at (0,0) width 461: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,415) size 769x18
-        RenderText {#text} at (0,0) size 581x19
+        RenderText {#text} at (0,0) size 581x17
           text run at (0,0) width 581: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,449) size 769x18
-        RenderText {#text} at (0,0) size 501x19
+        RenderText {#text} at (0,0) size 501x17
           text run at (0,0) width 501: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,483) size 769x36
-        RenderText {#text} at (0,0) size 751x19
+        RenderText {#text} at (0,0) size 751x17
           text run at (0,0) width 751: "This words in this sentence should have extra space between them, but the last few words in the sentence"
-        RenderInline {SPAN} at (0,0) size 176x19
-          RenderText {#text} at (0,18) size 176x19
+        RenderInline {SPAN} at (0,0) size 176x17
+          RenderText {#text} at (0,18) size 176x17
             text run at (0,18) width 176: "should have normal spacing"
-        RenderText {#text} at (176,18) size 4x19
+        RenderText {#text} at (176,18) size 4x17
           text run at (176,18) width 4: "."
       RenderBlock {P} at (0,535) size 769x18
-        RenderText {#text} at (0,0) size 668x19
+        RenderText {#text} at (0,0) size 668x17
           text run at (0,0) width 668: "This sentence should have normal word-spacing, since percentage values are not allowed on this property."
       RenderBlock {P} at (0,569) size 769x18
-        RenderText {#text} at (0,0) size 707x19
+        RenderText {#text} at (0,0) size 707x17
           text run at (0,0) width 707: "This words in this sentence should have reduced space between them, since negative values are allowed on this property."
       RenderTable {TABLE} at (0,603) size 769x378 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x376
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x19
-                RenderText {#text} at (4,4) size 163x19
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x350
             RenderTableCell {TD} at (0,188) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x350 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18
-                RenderText {#text} at (0,0) size 701x19
+                RenderText {#text} at (0,0) size 701x17
                   text run at (0,0) width 701: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,38) size 747x18
-                RenderText {#text} at (0,0) size 601x19
+                RenderText {#text} at (0,0) size 601x17
                   text run at (0,0) width 601: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,72) size 747x18
-                RenderText {#text} at (0,0) size 601x19
+                RenderText {#text} at (0,0) size 601x17
                   text run at (0,0) width 601: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,106) size 747x18
-                RenderText {#text} at (0,0) size 461x19
+                RenderText {#text} at (0,0) size 461x17
                   text run at (0,0) width 461: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,140) size 747x18
-                RenderText {#text} at (0,0) size 461x19
+                RenderText {#text} at (0,0) size 461x17
                   text run at (0,0) width 461: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,174) size 747x18
-                RenderText {#text} at (0,0) size 581x19
+                RenderText {#text} at (0,0) size 581x17
                   text run at (0,0) width 581: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,208) size 747x18
-                RenderText {#text} at (0,0) size 501x19
+                RenderText {#text} at (0,0) size 501x17
                   text run at (0,0) width 501: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,242) size 747x36
-                RenderText {#text} at (0,0) size 688x37
+                RenderText {#text} at (0,0) size 688x35
                   text run at (0,0) width 688: "This words in this sentence should have extra space between them, but the last few words in the"
                   text run at (0,18) width 63: "sentence "
-                RenderInline {SPAN} at (0,0) size 176x19
-                  RenderText {#text} at (63,18) size 176x19
+                RenderInline {SPAN} at (0,0) size 176x17
+                  RenderText {#text} at (63,18) size 176x17
                     text run at (63,18) width 176: "should have normal spacing"
-                RenderText {#text} at (239,18) size 4x19
+                RenderText {#text} at (239,18) size 4x17
                   text run at (239,18) width 4: "."
               RenderBlock {P} at (4,294) size 747x18
-                RenderText {#text} at (0,0) size 668x19
+                RenderText {#text} at (0,0) size 668x17
                   text run at (0,0) width 668: "This sentence should have normal word-spacing, since percentage values are not allowed on this property."
               RenderBlock {P} at (4,328) size 747x18
-                RenderText {#text} at (0,0) size 707x19
+                RenderText {#text} at (0,0) size 707x17
                   text run at (0,0) width 707: "This words in this sentence should have reduced space between them, since negative values are allowed on this property."

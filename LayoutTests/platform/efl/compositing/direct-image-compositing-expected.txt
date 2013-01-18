@@ -1,67 +1,67 @@
-layer at (0,0) size 785x749
+layer at (0,0) size 785x750
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x749
-  RenderBlock {HTML} at (0,0) size 785x749
-    RenderBody {BODY} at (8,21) size 769x112
+layer at (0,0) size 785x750
+  RenderBlock {HTML} at (0,0) size 785x750
+    RenderBody {BODY} at (8,21) size 769x113
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 389x36
           text run at (0,0) width 389: "Image optimisation in layers"
-      RenderBlock {P} at (0,58) size 769x54
-        RenderText {#text} at (0,0) size 749x55
+      RenderBlock {P} at (0,58) size 769x55
+        RenderText {#text} at (0,0) size 749x53
           text run at (0,0) width 595: "This test exercises direct compositing of images with hardware acceleration. The visual results "
           text run at (595,0) width 34: "using"
           text run at (0,18) width 683: "ACCELERATED_COMPOSITING and regular TOT should be identical. Running this test manually with "
           text run at (683,18) width 66: "the correct"
           text run at (0,36) width 442: "debug options will show which elements are directly composited. See "
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (442,36) size 305x19
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (442,36) size 305x17
             text run at (442,36) width 305: "https://bugs.webkit.org/show_bug.cgi?id=23361"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (floating) {DIV} at (0,128) size 260x200
-        RenderText {#text} at (150,0) size 106x73
+      RenderBlock (floating) {DIV} at (0,128) size 260x201
+        RenderText {#text} at (150,0) size 106x71
           text run at (150,0) width 106: "Basic image - no"
           text run at (150,18) width 83: "style - can be"
           text run at (150,36) width 47: "directly"
           text run at (150,54) width 72: "composited"
-      RenderBlock (floating) {DIV} at (260,128) size 260x200
-        RenderText {#text} at (160,0) size 100x73
+      RenderBlock (floating) {DIV} at (260,128) size 260x201
+        RenderText {#text} at (160,0) size 100x71
           text run at (160,0) width 100: "5px blue border"
           text run at (160,18) width 88: "- can NOT be"
           text run at (160,36) width 47: "directly"
           text run at (160,54) width 72: "composited"
-      RenderBlock (floating) {DIV} at (0,328) size 260x200
-        RenderText {#text} at (160,0) size 79x73
+      RenderBlock (floating) {DIV} at (0,328) size 260x201
+        RenderText {#text} at (160,0) size 79x71
           text run at (160,0) width 79: "margin - can"
           text run at (160,18) width 53: "NOT be"
           text run at (160,36) width 47: "directly"
           text run at (160,54) width 72: "composited"
-      RenderBlock (floating) {DIV} at (260,328) size 260x200
-        RenderText {#text} at (150,0) size 109x55
+      RenderBlock (floating) {DIV} at (260,328) size 260x201
+        RenderText {#text} at (150,0) size 109x53
           text run at (150,0) width 109: "solid background"
           text run at (150,18) width 101: "- can be directly"
           text run at (150,36) width 72: "composited"
-      RenderBlock (floating) {DIV} at (0,528) size 260x200
-        RenderText {#text} at (150,0) size 104x73
+      RenderBlock (floating) {DIV} at (0,528) size 260x201
+        RenderText {#text} at (150,0) size 104x71
           text run at (150,0) width 75: "background"
           text run at (150,18) width 73: "image - can"
           text run at (150,36) width 104: "NOT be directly"
           text run at (150,54) width 72: "composited"
-      RenderBlock (floating) {DIV} at (260,528) size 260x200
-        RenderText {#text} at (150,0) size 83x91
+      RenderBlock (floating) {DIV} at (260,528) size 260x201
+        RenderText {#text} at (150,0) size 83x89
           text run at (150,0) width 67: "rotated but"
           text run at (150,18) width 81: "otherwise no"
           text run at (150,36) width 83: "style - can be"
           text run at (150,54) width 47: "directly"
           text run at (150,72) width 72: "composited"
-layer at (8,149) size 150x150
+layer at (8,150) size 150x150
   RenderImage {IMG} at (0,0) size 150x150
-layer at (268,149) size 160x160
+layer at (268,150) size 160x160
   RenderImage {IMG} at (0,0) size 160x160 [border: (5px solid #0000FF)]
-layer at (13,354) size 150x150
+layer at (13,355) size 150x150
   RenderImage {IMG} at (5,5) size 150x150
-layer at (268,349) size 150x150
+layer at (268,350) size 150x150
   RenderImage {IMG} at (0,0) size 150x150 [bgcolor=#808080]
-layer at (8,549) size 150x150
+layer at (8,550) size 150x150
   RenderImage {IMG} at (0,0) size 150x150 [bgcolor=#FFA500]
-layer at (268,549) size 150x150
+layer at (268,550) size 150x150
   RenderImage {IMG} at (0,0) size 150x150

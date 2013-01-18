@@ -4,14 +4,14 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 467x19
+        RenderText {#text} at (0,0) size 467x17
           text run at (0,0) width 467: "You should see a green box under the video. If you see red, the test failed."
-layer at (8,50) size 132x222 clip at (9,51) size 130x220 scrollHeight 223
+layer at (8,50) size 132x222 clip at (9,51) size 130x220 scrollHeight 224
   RenderBlock (positioned) {DIV} at (8,50) size 132x222 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock (anonymous) at (11,11) size 110x103
+    RenderBlock (anonymous) at (11,11) size 110x104
       RenderText {#text} at (0,0) size 0x0
-    RenderBlock {DIV} at (11,114) size 100x100 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (11,115) size 100x100 [bgcolor=#FF0000]
 layer at (19,61) size 100x100
   RenderVideo {VIDEO} at (0,0) size 100x100 [bgcolor=#000000]
-layer at (19,164) size 100x100
-  RenderBlock (relative positioned) {DIV} at (11,114) size 100x100 [bgcolor=#008000]
+layer at (19,165) size 100x100
+  RenderBlock (relative positioned) {DIV} at (11,115) size 100x100 [bgcolor=#008000]

@@ -4,7 +4,7 @@ layer at (0,0) size 800x306
   RenderBlock {HTML} at (0,0) size 800x306
     RenderBody {BODY} at (8,16) size 784x270
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 449x19
+        RenderText {#text} at (0,0) size 449x17
           text run at (0,0) width 449: "You should see the original and three copies of the green box with text."
 layer at (28,54) size 122x232
   RenderBlock {DIV} at (20,38) size 122x232 [border: (1px solid #000000)]
@@ -14,7 +14,7 @@ layer at (39,65) size 100x100 clip at (39,65) size 85x85 scrollHeight 500
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100
 layer at (39,65) size 85x500 backgroundClip at (39,65) size 85x85 clip at (39,65) size 85x85 outlineClip at (39,65) size 85x85
   RenderBlock {DIV} at (0,0) size 85x500
-    RenderText {#text} at (0,0) size 84x415
+    RenderText {#text} at (0,0) size 84x413
       text run at (0,0) width 84: "Lorem ipsum"
       text run at (0,18) width 51: "dolor sit"
       text run at (0,36) width 34: "amet,"

@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 494x19
+        RenderText {#text} at (0,0) size 494x17
           text run at (0,0) width 494: "In the pixel result, the green boxes should be coincident with the black outline."
       RenderBlock {DIV} at (0,34) size 202x202 [border: (1px solid #EEEEEE)]
       RenderBlock {DIV} at (0,236) size 202x202 [border: (1px solid #EEEEEE)]
       RenderBlock {DIV} at (0,438) size 784x36
-        RenderText {#text} at (0,0) size 604x19
+        RenderText {#text} at (0,0) size 604x17
           text run at (0,0) width 604: "PASS - \"-webkit-transform.0\" property for \"inner1\" element at 0.5s saw something close to: 1.5"
-        RenderBR {BR} at (604,15) size 0x0
-        RenderText {#text} at (0,18) size 604x19
+        RenderBR {BR} at (604,14) size 0x0
+        RenderText {#text} at (0,18) size 604x17
           text run at (0,18) width 604: "PASS - \"-webkit-transform.0\" property for \"inner2\" element at 0.5s saw something close to: 1.5"
-        RenderBR {BR} at (604,33) size 0x0
+        RenderBR {BR} at (604,32) size 0x0
 layer at (34,68) size 150x150
   RenderBlock (positioned) {DIV} at (34,68) size 150x150 [border: (1px solid #000000)]
 layer at (59,93) size 100x100

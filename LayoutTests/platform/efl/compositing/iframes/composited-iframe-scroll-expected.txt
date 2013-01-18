@@ -5,8 +5,8 @@ layer at (0,0) size 800x0
     RenderBody {BODY} at (0,0) size 800x0
 layer at (120,120) size 200x200
   RenderBlock (positioned) {DIV} at (120,120) size 200x200 [bgcolor=#FF0000]
-layer at (0,100) size 240x243
-  RenderBlock (positioned) {DIV} at (0,100) size 240x243
+layer at (0,100) size 240x244
+  RenderBlock (positioned) {DIV} at (0,100) size 240x244
     RenderText {#text} at (0,0) size 0x0
 layer at (10,110) size 220x220
   RenderPartObject {IFRAME} at (10,10) size 220x220

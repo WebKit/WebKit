@@ -4,12 +4,12 @@ layer at (0,0) size 800x342
   RenderBlock {HTML} at (0,0) size 800x342
     RenderBody {BODY} at (8,16) size 784x318
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 379x19
+        RenderText {#text} at (0,0) size 379x17
           text run at (0,0) width 379: "The top left box, and all reflections should be rotated 45deg."
       RenderBlock {DIV} at (0,300) size 784x18
-        RenderText {#text} at (0,0) size 625x19
+        RenderText {#text} at (0,0) size 625x17
           text run at (0,0) width 625: "PASS - \"webkitTransform.0\" property for \"animated\" element at 0.5s saw something close to: 0.76"
-        RenderBR {BR} at (625,0) size 0x19
+        RenderBR {BR} at (625,0) size 0x17
 layer at (28,54) size 122x242
   RenderBlock {DIV} at (20,38) size 122x242 [border: (1px solid #000000)]
 layer at (39,65) size 104x104

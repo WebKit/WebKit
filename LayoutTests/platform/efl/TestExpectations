@@ -396,9 +396,10 @@ perf/array-nested-loop.html [ WontFix ]
 perf/mouse-event.html [ WontFix ]
 
 # Rounding issues when running on 32-bits machines.
-webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html [ Failure Pass ]
-webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html [ Failure Pass ]
-[ X86 ] svg/css/stars-with-shadow.html [ WontFix ]
+webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+svg/css/stars-with-shadow.html
+svg/W3C-SVG-1.1/paths-data-03-f.svg
 
 # Newly added test which fails on other bots too
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
@@ -830,6 +831,9 @@ webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source.html [ Crash Pass ]
 webkit.org/b/106551 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html [ Crash Pass ]
 
+webkit.org/b/107024 compositing/self-painting-layers2.html [ Pass Failure ]
+webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1105,6 +1109,11 @@ Bug(EFL) fast/images/pdf-as-image-landscape.html
 Bug(EFL) fast/images/pdf-as-image.html
 Bug(EFL) fast/images/pdf-as-tiled-background.html
 Bug(EFL) fast/replaced/pdf-as-image.html
+
+# Started failing after sub-pixel layout was enabled.
+Bug(EFL) fast/replaced/table-percent-height-text-controls.html [ Failure ]
+Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure ]
+Bug(EFL) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
@@ -1649,7 +1658,6 @@ webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html 
 # It may even be the case that the tests themselves are wrong.
 webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ ImageOnlyFailure Missing ]
 webkit.org/b/100857 ietestcenter/css3/text/textshadow-005.htm [ ImageOnlyFailure Missing ]
-webkit.org/b/100855 ietestcenter/css3/text/textshadow-008.htm [ ImageOnlyFailure Missing ]
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
@@ -1693,9 +1701,6 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 # No support for exposing in-band text tracks
 Bug(EFL) media/track/track-in-band.html [ Skip ]
 Bug(EFL) media/track/track-in-band-cues-added-once.html [ Skip ]
-
-# Newly added test in r136225 fails on GTK bot too.
-webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
 
 # All debug bots timeout (crash) on this one
 webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]
@@ -1787,7 +1792,6 @@ webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ 
 
 # Fail after r139145 on MAC, EFL, QT, GTK.
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 
 # Newly added test at r139002 is failing.
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
@@ -1818,3 +1822,5 @@ webkit.org/b/106997 fast/dom/MicroData/propertiescollection-crash.html [ Failure
 webkit.org/b/106997 fast/dom/MicroData/properties-collection-namedgetter-with-invalid-name.html [ Failure ]
 
 webkit.org/b/107001 compositing/layer-creation/overlap-animation-container.html [ Failure ]
+
+webkit.org/b/107013 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure ]

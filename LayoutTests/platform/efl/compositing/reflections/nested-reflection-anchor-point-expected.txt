@@ -4,11 +4,11 @@ layer at (0,0) size 800x306
   RenderBlock {HTML} at (0,0) size 800x306
     RenderBody {BODY} at (8,16) size 784x270
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 283x19
+        RenderText {#text} at (0,0) size 283x17
           text run at (0,0) width 283: "Left and right sides should look symmetrical."
 layer at (68,54) size 122x232
   RenderBlock {DIV} at (60,38) size 122x232 [border: (1px solid #000000)]
 layer at (79,65) size 100x100
   RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#008000]
-    RenderText {#text} at (33,1) size 34x75
+    RenderText {#text} at (33,1) size 34x74
       text run at (33,1) width 34: "1"

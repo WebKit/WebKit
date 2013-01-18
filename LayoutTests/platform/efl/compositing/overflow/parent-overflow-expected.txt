@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x223
-  RenderBlock {HTML} at (0,0) size 800x223
-    RenderBody {BODY} at (8,16) size 784x199
+layer at (0,0) size 800x224
+  RenderBlock {HTML} at (0,0) size 800x224
+    RenderBody {BODY} at (8,16) size 784x200
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 362x19
+        RenderText {#text} at (0,0) size 362x17
           text run at (0,0) width 362: "Gray box should be clipped by black border in each case."
-      RenderBlock (anonymous) at (0,34) size 784x165
-        RenderText {#text} at (162,147) size 4x19
-          text run at (162,147) width 4: " "
-        RenderText {#text} at (328,147) size 4x19
-          text run at (328,147) width 4: " "
+      RenderBlock (anonymous) at (0,34) size 784x166
+        RenderText {#text} at (162,148) size 4x17
+          text run at (162,148) width 4: " "
+        RenderText {#text} at (328,148) size 4x17
+          text run at (328,148) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (28,70) size 122x122 clip at (29,71) size 120x120 scrollHeight 320
   RenderBlock {DIV} at (20,20) size 122x122 [border: (1px solid #000000)]

@@ -4,7 +4,7 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 355x19
+        RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 232x60
@@ -17,7 +17,7 @@ layer at (0,0) size 800x585
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x90
-        RenderText {#text} at (0,0) size 569x91
+        RenderText {#text} at (0,0) size 569x89
           text run at (0,0) width 0: " "
           text run at (0,18) width 569: "This sentence should     show extra space  where there    would ordinarily         not be any."
           text run at (569,18) width 0: " "
@@ -28,33 +28,33 @@ layer at (0,0) size 800x585
           text run at (0,72) width 184: "     very clearly demonstrates."
           text run at (184,72) width 0: " "
       RenderBlock {P} at (0,231) size 784x18
-        RenderText {#text} at (0,0) size 891x19
+        RenderText {#text} at (0,0) size 891x17
           text run at (0,0) width 891: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
       RenderBlock {P} at (0,265) size 784x36
-        RenderText {#text} at (0,0) size 296x37
+        RenderText {#text} at (0,0) size 296x35
           text run at (0,0) width 0: " "
           text run at (0,18) width 296: "This sentence      should     show extra   space, "
-        RenderInline {SPAN} at (0,0) size 156x19
-          RenderText {#text} at (296,18) size 156x19
+        RenderInline {SPAN} at (0,0) size 156x17
+          RenderText {#text} at (296,18) size 156x17
             text run at (296,18) width 84: "except in the "
             text run at (380,18) width 72: "second half"
-        RenderText {#text} at (452,18) size 4x19
+        RenderText {#text} at (452,18) size 4x17
           text run at (452,18) width 4: "."
           text run at (456,18) width 0: " "
       RenderTable {TABLE} at (0,317) size 913x212 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 911x210
           RenderTableRow {TR} at (0,0) size 911x26
             RenderTableCell {TD} at (0,0) size 911x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x19
-                RenderText {#text} at (4,4) size 163x19
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 911x184
             RenderTableCell {TD} at (0,105) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 899x184 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 891x90
-                RenderText {#text} at (0,0) size 569x91
+                RenderText {#text} at (0,0) size 569x89
                   text run at (0,0) width 0: " "
                   text run at (0,18) width 569: "This sentence should     show extra space  where there    would ordinarily         not be any."
                   text run at (569,18) width 0: " "
@@ -65,16 +65,16 @@ layer at (0,0) size 800x585
                   text run at (0,72) width 184: "     very clearly demonstrates."
                   text run at (184,72) width 0: " "
               RenderBlock {P} at (4,110) size 891x18
-                RenderText {#text} at (0,0) size 891x19
+                RenderText {#text} at (0,0) size 891x17
                   text run at (0,0) width 891: "This sentence should not word-wrap, no matter how long the sentence is, as it has been set to nowrap and that should have the obvious effect."
               RenderBlock {P} at (4,144) size 891x36
-                RenderText {#text} at (0,0) size 296x37
+                RenderText {#text} at (0,0) size 296x35
                   text run at (0,0) width 0: " "
                   text run at (0,18) width 296: "This sentence      should     show extra   space, "
-                RenderInline {SPAN} at (0,0) size 156x19
-                  RenderText {#text} at (296,18) size 156x19
+                RenderInline {SPAN} at (0,0) size 156x17
+                  RenderText {#text} at (296,18) size 156x17
                     text run at (296,18) width 84: "except in the "
                     text run at (380,18) width 72: "second half"
-                RenderText {#text} at (452,18) size 4x19
+                RenderText {#text} at (452,18) size 4x17
                   text run at (452,18) width 4: "."
                   text run at (456,18) width 0: " "

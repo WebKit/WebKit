@@ -4,7 +4,7 @@ layer at (0,0) size 800x436
   RenderBlock {HTML} at (0,0) size 800x436
     RenderBody {BODY} at (100,100) size 600x236
       RenderBlock {P} at (0,0) size 600x18
-        RenderText {#text} at (0,0) size 469x19
+        RenderText {#text} at (0,0) size 469x17
           text run at (0,0) width 469: "Things should not jump around when the green square starts the transition."
 layer at (100,134) size 202x202 clip at (101,135) size 200x200
   RenderBlock (relative positioned) {DIV} at (0,34) size 202x202 [border: (1px solid #000000)]

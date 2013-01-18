@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600 [bgcolor=#00FFFF]
     RenderBody {BODY} at (25,25) size 750x550 [bgcolor=#008000]
       RenderBlock {P} at (0,0) size 750x18
-        RenderText {#text} at (0,0) size 355x19
+        RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 750x30
         RenderText {#text} at (0,0) size 552x30
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (552,15) width 0: " "
       RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 750x54
-        RenderText {#text} at (0,0) size 739x55
+        RenderText {#text} at (0,0) size 739x53
           text run at (0,0) width 387: "The body of this document should have a green background. "
           text run at (387,0) width 308: "It also has a margin of 25 pixels, so the light blue"
           text run at (0,18) width 432: "background set for the HTML element should surround the BODY. "
@@ -24,16 +24,16 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 748x88
           RenderTableRow {TR} at (0,0) size 748x26
             RenderTableCell {TD} at (0,0) size 748x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x19
-                RenderText {#text} at (4,4) size 163x19
+              RenderInline {STRONG} at (0,0) size 163x17
+                RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 748x62
             RenderTableCell {TD} at (0,44) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 736x62 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 728x54
-                RenderText {#text} at (0,0) size 708x55
+                RenderText {#text} at (0,0) size 708x53
                   text run at (0,0) width 387: "The body of this document should have a green background. "
                   text run at (387,0) width 308: "It also has a margin of 25 pixels, so the light blue"
                   text run at (0,18) width 432: "background set for the HTML element should surround the BODY. "

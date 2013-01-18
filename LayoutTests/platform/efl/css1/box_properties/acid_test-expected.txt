@@ -4,64 +4,64 @@ layer at (0,0) size 800x420
   RenderBlock {HTML} at (0,0) size 800x420 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderBody {BODY} at (15,15) size 490x390 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
       RenderBlock {DL} at (5,5) size 480x10
-        RenderBlock (floating) {DT} at (5,5) size 79x310 [bgcolor=#CC0000] [border: (5px solid #000000)]
-          RenderText {#text} at (15,14) size 29x13
+        RenderBlock (floating) {DT} at (5,5) size 80x310 [bgcolor=#CC0000] [border: (5px solid #000000)]
+          RenderText {#text} at (15,14) size 29x11
             text run at (15,14) width 29: "toggle"
         RenderBlock (floating) {DD} at (95,5) size 380x310 [border: (10px solid #000000)]
           RenderBlock {UL} at (20,20) size 340x0
             RenderBlock (floating) {LI} at (0,0) size 80x120 [color=#000000] [bgcolor=#FFCC00] [border: (5px solid #000000)]
-              RenderText {#text} at (15,14) size 36x13
+              RenderText {#text} at (15,14) size 36x11
                 text run at (15,14) width 36: "the way"
-            RenderBlock (floating) {LI} at (90,0) size 159x110 [bgcolor=#000000]
-              RenderBlock {P} at (10,10) size 139x10
-                RenderText {#text} at (0,-1) size 68x13
+            RenderBlock (floating) {LI} at (90,0) size 160x110 [bgcolor=#000000]
+              RenderBlock {P} at (10,10) size 140x10
+                RenderText {#text} at (0,-1) size 68x11
                   text run at (0,-1) width 68: "the world ends"
-              RenderBlock (anonymous) at (10,20) size 139x0
+              RenderBlock (anonymous) at (10,20) size 140x0
                 RenderInline {FORM} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,20) size 139x38
-                RenderBlock {P} at (0,0) size 139x19
-                  RenderText {#text} at (0,3) size 27x13
-                    text run at (0,3) width 27: "bang "
-                  RenderBlock {INPUT} at (31,4) size 12x12 [color=#000000]
+              RenderBlock (anonymous) at (10,20) size 140x38
+                RenderBlock {P} at (0,0) size 140x19
+                  RenderText {#text} at (0,4) size 27x11
+                    text run at (0,4) width 27: "bang "
+                  RenderBlock {INPUT} at (31,4) size 13x12 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
-                RenderBlock {P} at (0,19) size 139x19
-                  RenderText {#text} at (0,3) size 41x13
-                    text run at (0,3) width 41: "whimper "
-                  RenderBlock {INPUT} at (45,4) size 12x12 [color=#000000]
+                RenderBlock {P} at (0,19) size 140x19
+                  RenderText {#text} at (0,4) size 41x11
+                    text run at (0,4) width 41: "whimper "
+                  RenderBlock {INPUT} at (45,4) size 13x12 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,58) size 139x0
+              RenderBlock (anonymous) at (10,58) size 140x0
                 RenderInline {FORM} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-            RenderBlock (floating) {LI} at (259,0) size 80x120 [color=#000000] [bgcolor=#FFCC00] [border: (5px solid #000000)]
-              RenderText {#text} at (15,14) size 44x13
+            RenderBlock (floating) {LI} at (259,0) size 81x120 [color=#000000] [bgcolor=#FFCC00] [border: (5px solid #000000)]
+              RenderText {#text} at (15,14) size 44x11
                 text run at (15,14) width 44: "i grow old"
             RenderBlock (floating) {LI} at (0,130) size 120x120 [bgcolor=#000000]
-              RenderText {#text} at (10,9) size 29x13
+              RenderText {#text} at (10,9) size 29x11
                 text run at (10,9) width 29: "pluot?"
           RenderBlock (floating) {BLOCKQUOTE} at (160,150) size 70x140 [color=#000000] [bgcolor=#FFCC00] [border: (10px solid #000000) (15px solid #000000) (20px solid #000000) (5px solid #000000)]
             RenderBlock {ADDRESS} at (5,20) size 50x10
-              RenderText {#text} at (0,-1) size 48x13
+              RenderText {#text} at (0,-1) size 48x11
                 text run at (0,-1) width 48: "bar maids,"
           RenderBlock (floating) {H1} at (240,150) size 120x120 [bgcolor=#000000]
-            RenderText {#text} at (10,9) size 92x23
+            RenderText {#text} at (10,9) size 92x21
               text run at (10,9) width 92: "sing to me, erbarme"
               text run at (10,19) width 19: "dich"
       RenderBlock {P} at (5,320) size 480x65 [color=#000000]
-        RenderText {#text} at (0,0) size 467x39
-          text run at (0,0) width 463: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1 agents"
-          text run at (0,13) width 467: "should be able to render the document elements above this paragraph indistinguishably (to the pixel)"
-          text run at (0,26) width 42: "from this "
-        RenderInline {A} at (0,0) size 94x13 [color=#0000EE]
-          RenderText {#text} at (42,26) size 94x13
-            text run at (42,26) width 94: "reference rendering,"
-        RenderText {#text} at (136,26) size 471x39
-          text run at (136,26) width 3: " "
-          text run at (139,26) width 331: "(except font rasterization and form widgets). All discrepancies should be"
-          text run at (0,39) width 471: "traceable to CSS1 implementation shortcomings. Once you have finished evaluating this test, you can"
-          text run at (0,52) width 60: "return to the "
-        RenderInline {A} at (0,0) size 57x13 [color=#0000EE]
-          RenderText {#text} at (60,52) size 57x13
-            text run at (60,52) width 57: "parent page"
-        RenderText {#text} at (117,52) size 3x13
-          text run at (117,52) width 3: "."
+        RenderText {#text} at (0,1) size 467x37
+          text run at (0,1) width 463: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1 agents"
+          text run at (0,14) width 467: "should be able to render the document elements above this paragraph indistinguishably (to the pixel)"
+          text run at (0,27) width 42: "from this "
+        RenderInline {A} at (0,0) size 94x11 [color=#0000EE]
+          RenderText {#text} at (42,27) size 94x11
+            text run at (42,27) width 94: "reference rendering,"
+        RenderText {#text} at (136,27) size 471x37
+          text run at (136,27) width 3: " "
+          text run at (139,27) width 331: "(except font rasterization and form widgets). All discrepancies should be"
+          text run at (0,40) width 471: "traceable to CSS1 implementation shortcomings. Once you have finished evaluating this test, you can"
+          text run at (0,53) width 60: "return to the "
+        RenderInline {A} at (0,0) size 57x11 [color=#0000EE]
+          RenderText {#text} at (60,53) size 57x11
+            text run at (60,53) width 57: "parent page"
+        RenderText {#text} at (117,53) size 3x11
+          text run at (117,53) width 3: "."

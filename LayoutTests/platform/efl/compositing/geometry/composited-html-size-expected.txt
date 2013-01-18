@@ -5,7 +5,7 @@ layer at (10,10) size 100x100
   RenderBlock (positioned) zI: -1 {DIV} at (10,10) size 100x100 [bgcolor=#0000FF]
 layer at (10,10) size 100x18
   RenderBlock {DIV} at (0,0) size 100x18
-    RenderText {#text} at (0,0) size 81x19
+    RenderText {#text} at (0,0) size 81x17
       text run at (0,0) width 81: "Compositing"
 layer at (0,0) size 800x36 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x36

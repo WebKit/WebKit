@@ -5,13 +5,13 @@ layer at (0,0) size 800x37
     RenderBody {BODY} at (8,8) size 784x21
 layer at (8,8) size 784x21
   RenderBlock {DIV} at (0,0) size 784x21
-    RenderText {#text} at (23,0) size 4x19
-      text run at (23,0) width 4: " "
-    RenderBlock {SPAN} at (27,15) size 20x0
-    RenderText {#text} at (47,0) size 4x19
-      text run at (47,0) width 4: " "
+    RenderText {#text} at (24,1) size 4x17
+      text run at (24,1) width 4: " "
+    RenderBlock {SPAN} at (28,15) size 20x0
+    RenderText {#text} at (48,1) size 4x17
+      text run at (48,1) width 4: " "
     RenderText {#text} at (0,0) size 0x0
-layer at (12,11) size 15x15
-  RenderBlock (relative positioned) {INPUT} at (4,3) size 15x15
-layer at (63,11) size 15x15
-  RenderBlock (relative positioned) {INPUT} at (55,3) size 15x15
+layer at (13,11) size 15x15
+  RenderBlock (relative positioned) {INPUT} at (4,3) size 16x15
+layer at (65,11) size 15x15
+  RenderBlock (relative positioned) {INPUT} at (56,3) size 16x15

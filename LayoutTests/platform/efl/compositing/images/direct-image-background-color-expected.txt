@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,20) size 784x564
       RenderImage {IMG} at (20,0) size 280x200 [bgcolor=#0000807F]
       RenderBlock {P} at (0,440) size 784x18
-        RenderText {#text} at (0,0) size 242x19
+        RenderText {#text} at (0,0) size 242x17
           text run at (0,0) width 242: "Top and bottom should look the same."
 layer at (28,240) size 280x200
   RenderImage {IMG} at (20,220) size 280x200 [bgcolor=#0000807F]
