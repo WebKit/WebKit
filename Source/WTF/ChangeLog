@@ -1,3 +1,21 @@
+2013-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        Fix WTF::copyLCharsFromUCharSource() to compile with -Wshorten-64-to-32
+        <http://webkit.org/b/107227>
+
+        Reviewed by Benjamin Poulain.
+
+        Fixes the following build error:
+
+            ASCIIFastPath.h:117:59: error: implicit conversion loses integer precision: 'unsigned long' to 'const unsigned int' [-Werror,-Wshorten-64-to-32]
+                    const unsigned endLength = length - ucharsPerLoop + 1;
+                                   ~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~^~~
+            1 error generated.
+
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource): Change local variables from
+        unsigned to size_t.
+
 2013-01-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Update freetype in jhbuild to 2.4.11 and activate subpixel layout
