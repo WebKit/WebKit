@@ -148,7 +148,8 @@ void HTMLDocumentParser::prepareToStopParsing()
 
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
-    pumpTokenizerIfPossible(ForceSynchronous);
+    if (!shouldUseThreading())
+        pumpTokenizerIfPossible(ForceSynchronous);
     
     if (isStopped())
         return;
@@ -298,9 +299,7 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         // attemptToEnd() instead.
         if (it->type() == HTMLTokenTypes::EndOfFile) {
             ASSERT(it + 1 == tokens.end()); // The EOF is assumed to be the last token of this bunch.
-            DocumentParser::prepareToStopParsing();
-            document()->setReadyState(Document::Interactive);
-            end();
+            prepareToStopParsing();
             return;
         }
     }
