@@ -185,11 +185,6 @@ WebInspector.ProfileHeader.prototype = {
     saveToFile: function() { throw new Error("Needs implemented"); },
 
     /**
-     * @return {boolean}
-     */
-    canLoadFromFile: function() { return false; },
-
-    /**
      * @param {File} file
      */
     loadFromFile: function(file) { throw new Error("Needs implemented"); },

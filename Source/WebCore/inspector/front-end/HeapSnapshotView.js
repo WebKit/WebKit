@@ -429,14 +429,6 @@ WebInspector.HeapSnapshotView.prototype = {
         return this.parent.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
     },
 
-    processLoadedSnapshot: function(profile, snapshot)
-    {
-        profile.nodes = snapshot.nodes;
-        profile.strings = snapshot.strings;
-        var s = new WebInspector.HeapSnapshot(profile);
-        profile.sidebarElement.subtitle = Number.bytesToString(s.totalSize);
-    },
-
     /**
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {Event} event
@@ -849,11 +841,6 @@ WebInspector.HeapProfileHeader.prototype = {
         return new WebInspector.HeapSnapshotView(profilesPanel, this);
     },
 
-    snapshotProxy: function()
-    {
-        return this._snapshotProxy;
-    },
-
     /**
      * @override
      * @param {function(WebInspector.HeapSnapshotProxy):void} callback
@@ -982,14 +969,6 @@ WebInspector.HeapProfileHeader.prototype = {
         this._savingToFile = true;
         this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".heapsnapshot";
         fileOutputStream.open(this._fileName, onOpen.bind(this));
-    },
-
-    /**
-     * @return {boolean}
-     */
-    canLoadFromFile: function()
-    {
-        return false;
     },
 
     /**
