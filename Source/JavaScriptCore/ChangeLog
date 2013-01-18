@@ -1,3 +1,15 @@
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Refactor isPowerOf2() and add getLSBSet()
+        https://bugs.webkit.org/show_bug.cgi?id=107306
+
+        Reviewed by Filip Pizlo.
+
+        Moved implementation of isPowerOf2() to new hasOneBitSet() in wtf/MathExtras.h.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::isPowerOf2):
+
 2013-01-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Clean up JSValue.mm

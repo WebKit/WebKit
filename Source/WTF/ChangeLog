@@ -1,3 +1,16 @@
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Refactor isPowerOf2() and add getLSBSet()
+        https://bugs.webkit.org/show_bug.cgi?id=107306
+
+        Reviewed by Filip Pizlo.
+
+        Moved runtime/PropertyMapHashTable.h:PowerOf2() to new hasOneBitSet() and added getLSBSet().
+
+        * wtf/MathExtras.h:
+        (hasOneBitSet):
+        (getLSBSet):
+
 2013-01-18  David Kilzer  <ddkilzer@apple.com>
 
         Fix WTF::copyLCharsFromUCharSource() to compile with -Wshorten-64-to-32

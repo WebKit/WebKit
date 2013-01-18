@@ -24,6 +24,7 @@
 #include "PropertyOffset.h"
 #include "WriteBarrier.h"
 #include <wtf/HashTable.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImpl.h>
@@ -50,9 +51,7 @@ namespace JSC {
 
 inline bool isPowerOf2(unsigned v)
 {
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-    
-    return !(v & (v - 1)) && v;
+    return hasOneBitSet(v);
 }
 
 inline unsigned nextPowerOf2(unsigned v)

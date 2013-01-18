@@ -294,6 +294,11 @@ inline bool isWithinIntRange(float x)
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
 }
 
+template<typename T> inline bool hasOneBitSet(T value)
+{
+    return !((value - 1) & value) && value;
+}
+
 template<typename T> inline bool hasZeroOrOneBitsSet(T value)
 {
     return !((value - 1) & value);
@@ -302,6 +307,16 @@ template<typename T> inline bool hasZeroOrOneBitsSet(T value)
 template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
 {
     return !hasZeroOrOneBitsSet(value);
+}
+
+template <typename T> inline unsigned getLSBSet(T value)
+{
+    unsigned result = 0;
+
+    while (value >>= 1)
+        ++result;
+
+    return result;
 }
 
 template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
