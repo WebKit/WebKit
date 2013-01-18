@@ -41,6 +41,16 @@ function onload()
     e[NaN] = NaN;
     console.log("%O", e);
 
+    var f = [];
+    f[4294967294] = 4294967294;
+    for (var i = 20; i >= 0; i -= 2)
+        f[i] = i;
+    for (var i = 2, n = 33; n--; i *= 2)
+        f[i] = i;
+    for (var i = 1; i < 20; i += 2)
+        f[i] = i;
+    console.log("%O", f)
+
     runTest();
 }
 
@@ -67,7 +77,7 @@ function test()
     var populated = false;
     function populateCalled()
     {
-        populated = this._toIndex == 404;
+        populated = true;
     }
 
     InspectorTest.runAfterPendingDispatches(expandRecursively);
