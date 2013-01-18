@@ -1251,20 +1251,19 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendM
     m_data->p()->setCompositionMode(toQtCompositionMode(op));
 }
 
-// FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=106873
-void GraphicsContext::clip(const Path& path, WindRule)
+void GraphicsContext::clip(const Path& path, WindRule windRule)
 {
     if (paintingDisabled())
         return;
 
     QPainterPath clipPath = path.platformPath();
-    clipPath.setFillRule(Qt::WindingFill);
+    clipPath.setFillRule(toQtFillRule(windRule));
     m_data->p()->setClipPath(clipPath, Qt::IntersectClip);
 }
 
-void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
+void GraphicsContext::canvasClip(const Path& path, WindRule windRule)
 {
-    clip(path, fillRule);
+    clip(path, windRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)
