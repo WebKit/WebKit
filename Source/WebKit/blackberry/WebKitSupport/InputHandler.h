@@ -45,6 +45,7 @@ class IntRect;
 class Node;
 class Range;
 class SpellChecker;
+class SpellCheckRequest;
 class TextCheckingRequest;
 class VisiblePosition;
 class VisibleSelection;
@@ -59,6 +60,7 @@ class KeyboardEvent;
 
 namespace WebKit {
 
+class SpellingHandler;
 class WebPagePrivate;
 
 class InputHandler {
@@ -138,7 +140,7 @@ public:
     int32_t setComposingText(spannable_string_t*, int32_t relativeCursorPosition);
     int32_t commitText(spannable_string_t*, int32_t relativeCursorPosition);
 
-    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
+    void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>);
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t transactionId);
 
@@ -146,6 +148,8 @@ public:
     void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, const bool shouldMoveDialog = false);
     void clearDidSpellCheckState() { m_didSpellCheckWord = false; }
     void redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog = true);
+
+    void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
@@ -202,8 +206,6 @@ private:
 
     void learnText();
     void sendLearnTextDetails(const WTF::String&);
-    void spellCheckBlock(WebCore::VisibleSelection&, WebCore::TextCheckingProcessType);
-    PassRefPtr<WebCore::Range> getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
     WebCore::SpellChecker* getSpellChecker();
     bool shouldSpellCheckElement(const WebCore::Element*) const;
     bool didSpellCheckWord() const { return m_didSpellCheckWord; }
@@ -236,6 +238,8 @@ private:
     imf_sp_text_t m_spellCheckingOptionsRequest;
     WebCore::IntSize m_screenOffset;
     bool m_didSpellCheckWord;
+    SpellingHandler* m_spellingHandler;
+
 };
 
 }

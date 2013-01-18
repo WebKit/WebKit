@@ -136,6 +136,7 @@ list(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SelectionOverlay.cpp
+    blackberry/WebKitSupport/SpellingHandler.cpp
     blackberry/WebKitSupport/SurfacePool.cpp
     blackberry/WebKitSupport/TouchEventHandler.cpp
     blackberry/WebKitSupport/FatFingers.cpp

@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
+#include "EditorClientBlackBerry.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -55,6 +56,7 @@
 #include "SelectPopupClient.h"
 #include "SelectionHandler.h"
 #include "SpellChecker.h"
+#include "SpellingHandler.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -143,11 +145,13 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_shouldNotifyWebView(true)
     , m_expectedKeyUpChar(0)
     , m_didSpellCheckWord(false)
+    , m_spellingHandler(new SpellingHandler(this))
 {
 }
 
 InputHandler::~InputHandler()
 {
+    delete m_spellingHandler;
 }
 
 static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement)
@@ -576,6 +580,12 @@ void InputHandler::learnText()
     sendLearnTextDetails(textInField);
 }
 
+void InputHandler::callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest> spellCheckRequest)
+{
+    if (SpellChecker* spellChecker = getSpellChecker())
+        spellChecker->requestCheckingFor(spellCheckRequest);
+}
+
 void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> textCheckingRequest)
 {
     m_request = textCheckingRequest;
@@ -603,7 +613,7 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
             // enter to finish composing a word and create a new line.
             VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->start();
             VisibleSelection visibleSelection = VisibleSelection(previousLinePosition(caretPosition, caretPosition.lineDirectionPointForBlockDirectionNavigation()), caretPosition);
-            spellCheckBlock(visibleSelection, TextCheckingProcessIncremental);
+            m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessIncremental);
         }
         return;
     }
@@ -655,7 +665,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
         m_processingTransactionId,
         transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
 
-    if (!spannableString || !isActiveTextEdit() || !DOMSupport::elementHasContinuousSpellCheckingEnabled(m_currentFocusElement)) {
+    if (!spannableString || !isActiveTextEdit() || !DOMSupport::elementHasContinuousSpellCheckingEnabled(m_currentFocusElement) || !m_processingTransactionId) {
         SpellingLog(Platform::LogLevelWarn, "InputHandler::spellCheckingRequestProcessed Cancelling request with transactionId %d.", transactionId);
         m_request->didCancel();
         m_processingTransactionId = -1;
@@ -751,7 +761,7 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(const Platform::Int
 
     SpellingLog(Platform::LogLevelInfo,
         "InputHandler::shouldRequestSpellCheckingOptionsForPoint Found spelling marker at point %s\nMarker start %d end %d",
-        point.toString().c_str(),
+        documentContentPosition.toString().c_str(),
         spellCheckingOptionRequest.startTextPosition,
         spellCheckingOptionRequest.endTextPosition);
 
@@ -855,6 +865,9 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
             m_currentFocusElement->document()->frame()->selection()->setFocused(true);
     }
 
+    m_spellingHandler->setSpellCheckActive(false);
+    m_processingTransactionId = 0;
+
     // Clear the node details.
     m_currentFocusElement = 0;
     m_currentFocusElementType = TextEdit;
@@ -945,12 +958,12 @@ void InputHandler::setElementFocused(Element* element)
 #endif
 
     // Check if the field should be spellchecked.
-    if (!shouldSpellCheckElement(element))
+    if (!shouldSpellCheckElement(element) || !isActiveTextEdit())
         return;
 
     // Spellcheck the field in its entirety.
     VisibleSelection focusedBlock = DOMSupport::visibleSelectionForInputElement(element);
-    spellCheckBlock(focusedBlock, TextCheckingProcessBatch);
+    m_spellingHandler->spellCheckTextBlock(focusedBlock, TextCheckingProcessBatch);
 
 #ifdef ENABLE_SPELLING_LOG
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Spellchecking the field increased the total time to focus to %f seconds.", timer.elapsed());
@@ -981,90 +994,6 @@ void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)
         WebCore::IntSize screenOffset(-1, -1);
         requestSpellingCheckingOptions(spellCheckingOptionRequest, screenOffset, shouldMoveDialog);
     }
-}
-
-void InputHandler::spellCheckBlock(VisibleSelection& visibleSelection, TextCheckingProcessType textCheckingProcessType)
-{
-    if (!isActiveTextEdit())
-        return;
-
-    RefPtr<Range> rangeForSpellChecking = visibleSelection.toNormalizedRange();
-    if (!rangeForSpellChecking || !rangeForSpellChecking->text() || !rangeForSpellChecking->text().length())
-        return;
-
-    SpellChecker* spellChecker = getSpellChecker();
-    if (!spellChecker) {
-        SpellingLog(Platform::LogLevelInfo, "InputHandler::spellCheckBlock Failed to spellcheck the current focused element.");
-        return;
-    }
-
-    // If we have a batch request, try to send off the entire block.
-    if (textCheckingProcessType == TextCheckingProcessBatch) {
-        // If total block text is under the limited amount, send the entire chunk.
-        if (rangeForSpellChecking->text().length() < MaxSpellCheckingStringLength) {
-            spellChecker->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling, TextCheckingProcessBatch, rangeForSpellChecking, rangeForSpellChecking));
-            return;
-        }
-    }
-
-    // Since we couldn't check the entire block at once, set up starting and ending markers to fire incrementally.
-    VisiblePosition startPos = visibleSelection.visibleStart();
-    VisiblePosition startOfCurrentLine = startOfLine(startPos);
-    VisiblePosition endOfCurrentLine = endOfLine(startOfCurrentLine);
-
-    while (!isEndOfBlock(startOfCurrentLine)) {
-        // Create a selection with the start and end points of the line, and convert to Range to create a SpellCheckRequest.
-        rangeForSpellChecking = VisibleSelection(startOfCurrentLine, endOfCurrentLine).toNormalizedRange();
-
-        if (rangeForSpellChecking->text().length() < MaxSpellCheckingStringLength) {
-            startOfCurrentLine = nextLinePosition(startOfCurrentLine, startOfCurrentLine.lineDirectionPointForBlockDirectionNavigation());
-            endOfCurrentLine = endOfLine(startOfCurrentLine);
-        } else {
-            // Iterate through words from the start of the line to the end.
-            rangeForSpellChecking = getRangeForSpellCheckWithFineGranularity(startOfCurrentLine, endOfCurrentLine);
-            if (!rangeForSpellChecking) {
-                SpellingLog(Platform::LogLevelWarn, "InputHandler::spellCheckBlock Failed to set text range for spellchecking");
-                return;
-            }
-            startOfCurrentLine = VisiblePosition(rangeForSpellChecking->endPosition());
-            endOfCurrentLine = endOfLine(startOfCurrentLine);
-            rangeForSpellChecking = DOMSupport::trimWhitespaceFromRange(VisiblePosition(rangeForSpellChecking->startPosition()), VisiblePosition(rangeForSpellChecking->endPosition()));
-        }
-
-        SpellingLog(Platform::LogLevelInfo,
-            "InputHandler::spellCheckBlock Substring text is '%s', of size %d",
-            rangeForSpellChecking->text().latin1().data(),
-            rangeForSpellChecking->text().length());
-
-        // Call spellcheck with substring.
-        spellChecker->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling, TextCheckingProcessBatch, rangeForSpellChecking, rangeForSpellChecking));
-    }
-}
-
-PassRefPtr<Range> InputHandler::getRangeForSpellCheckWithFineGranularity(VisiblePosition startPosition, VisiblePosition endPosition)
-{
-    VisiblePosition endOfCurrentWord = endOfWord(startPosition);
-
-    // Keep iterating until one of our cases is hit, or we've incremented the starting position right to the end.
-    while (startPosition != endPosition) {
-        // Check the text length within this range.
-        if (VisibleSelection(startPosition, endOfCurrentWord).toNormalizedRange()->text().length() >= MaxSpellCheckingStringLength) {
-            // If this is not the first word, return a Range with end boundary set to the previous word.
-            if (startOfWord(endOfCurrentWord, LeftWordIfOnBoundary) != startPosition && !DOMSupport::isEmptyRangeOrAllSpaces(startPosition, endOfCurrentWord))
-                return VisibleSelection(startPosition, endOfWord(previousWordPosition(endOfCurrentWord), LeftWordIfOnBoundary)).toNormalizedRange();
-
-            // Our first word has gone over the character limit. Increment the starting position past an uncheckable word.
-            startPosition = endOfCurrentWord;
-            endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord));
-        } else if (endOfCurrentWord == endPosition) {
-            // Return the last segment if the end of our word lies at the end of the range.
-            return VisibleSelection(startPosition, endPosition).toNormalizedRange();
-        } else {
-            // Increment the current word.
-            endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord));
-        }
-    }
-    return 0;
 }
 
 bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType type)

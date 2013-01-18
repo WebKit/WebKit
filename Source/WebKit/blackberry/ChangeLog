@@ -1,5 +1,53 @@
 2013-01-18  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Set spellchecking calculations on a timer to free up the WebKit thread
+        https://bugs.webkit.org/show_bug.cgi?id=107284
+
+        Reviewed by Rob Buis.
+
+        PR282351
+        Firing off spellcheck requests is tieing up the WebKit thread for an
+        extended period of time. In testing with large blocks of text, this
+        can be in the matter of 5-10 seconds. Though we are using asynchronous
+        spellchecking, the process in which we break down blocks of text based
+        on input_service limitations is the issue.
+        Using a timer here which fires with an arbitrary timeout to allow for
+        focus and interaction to maintain at a reasonable level.
+        Further, pulling this code out of InputHandler and into its own class.
+
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::~InputHandler):
+        (BlackBerry::WebKit::InputHandler::callRequestCheckingFor):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::shouldRequestSpellCheckingOptionsForPoint):
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        * WebKitSupport/InputHandler.h:
+        (WebCore):
+        (WebKit):
+        (InputHandler):
+        * WebKitSupport/SpellingHandler.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::SpellingHandler::SpellingHandler):
+        (BlackBerry::WebKit::SpellingHandler::~SpellingHandler):
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        (BlackBerry::WebKit::SpellingHandler::createSpellCheckRequest):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+        (BlackBerry::WebKit::SpellingHandler::getRangeForSpellCheckWithFineGranularity):
+        * WebKitSupport/SpellingHandler.h: Added.
+        (WebCore):
+        (WebKit):
+        (SpellingHandler):
+        (BlackBerry::WebKit::SpellingHandler::isSpellCheckActive):
+        (BlackBerry::WebKit::SpellingHandler::setSpellCheckActive):
+
+2013-01-18  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Check if continuous spellchecking is enabled before processing a request
         https://bugs.webkit.org/show_bug.cgi?id=107169
 
