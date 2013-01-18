@@ -24,7 +24,7 @@ layer at (0,0) size 800x322
         RenderText {#text} at (293,36) size 75x16
           text run at (293,36) width 15: " "
           text run at (308,36) width 60: "\x{C9}\x{C9}\x{C9} "
-        RenderImage {IMG} at (368,35) size 10x11
+        RenderImage {IMG} at (368,36) size 10x11
         RenderText {#text} at (378,36) size 15x16
           text run at (378,36) width 15: " "
         RenderInline {SMALL} at (0,0) size 30x11 [color=#C0C0C0]
