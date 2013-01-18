@@ -26,87 +26,102 @@
 #ifndef WeakGCMap_h
 #define WeakGCMap_h
 
-#include "Handle.h"
-#include "JSGlobalData.h"
+#include "Weak.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
 
-// A HashMap for GC'd values that removes entries when the associated value
-// dies.
-template <typename KeyType, typename MappedType> struct DefaultWeakGCMapFinalizerCallback {
-    static void* finalizerContextFor(KeyType key)
-    {
-        return reinterpret_cast<void*>(key);
-    }
+// A HashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
 
-    static KeyType keyForFinalizer(void* context, typename HandleTypes<MappedType>::ExternalType)
-    {
-        return reinterpret_cast<KeyType>(context);
-    }
-};
-
-template<typename KeyType, typename MappedType, typename FinalizerCallback = DefaultWeakGCMapFinalizerCallback<KeyType, MappedType>, typename HashArg = typename DefaultHash<KeyType>::Hash, typename KeyTraitsArg = HashTraits<KeyType> >
-class WeakGCMap : private WeakHandleOwner {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WeakGCMap);
-
-    typedef HashMap<KeyType, WeakImpl*, HashArg, KeyTraitsArg> MapType;
-    typedef typename HandleTypes<MappedType>::ExternalType ExternalType;
+template<typename KeyArg, typename RawMappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
+    typename KeyTraitsArg = HashTraits<KeyArg> >
+class WeakGCMap : public HashMap<KeyArg, Weak<RawMappedArg>, HashArg, KeyTraitsArg> {
+    typedef Weak<RawMappedArg> MappedType;
+    typedef HashMap<KeyArg, MappedType, HashArg, KeyTraitsArg> Base;
+    typedef WeakGCMap<KeyArg, RawMappedArg, HashArg, KeyTraitsArg> Self;
+    typedef HashTraits<MappedType> MappedTraits;
+    typedef typename MappedTraits::PassInType MappedPassInType;
 
 public:
+    using typename Base::KeyType;
+    using typename Base::AddResult;
+    using typename Base::iterator;
+    using typename Base::const_iterator;
+    using Base::begin;
+    using Base::end;
+    using Base::size;
+    using Base::remove;
+
     WeakGCMap()
+        : m_gcThreshold(minGCThreshold)
     {
     }
 
-    void clear()
+    AddResult set(const KeyType& key, MappedPassInType value)
     {
-        typename MapType::iterator end = m_map.end();
-        for (typename MapType::iterator ptr = m_map.begin(); ptr != end; ++ptr)
-            WeakSet::deallocate(ptr->value);
-        m_map.clear();
+        gcMapIfNeeded();
+        return Base::set(key, value);
     }
 
-    ExternalType get(const KeyType& key) const
+    AddResult add(const KeyType& key, MappedPassInType value)
     {
-        WeakImpl* impl = m_map.get(key);
-        if (!impl || impl->state() != WeakImpl::Live)
-            return ExternalType();
-        return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&impl->jsValue()));
+        gcMapIfNeeded();
+        AddResult addResult = Base::add(key, value);
+        if (!addResult.isNewEntry && !addResult.iterator->value) { // Found a zombie value.
+            addResult.isNewEntry = true;
+            addResult.iterator->value = value;
+        }
+        return addResult;
     }
 
-    void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
+    iterator find(const KeyType& key)
     {
-        ASSERT_UNUSED(globalData, globalData.apiLock().currentThreadIsHoldingLock());
-        typename MapType::AddResult result = m_map.add(key, 0);
-        if (!result.isNewEntry)
-            WeakSet::deallocate(result.iterator->value);
-        result.iterator->value = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+        iterator it = Base::find(key);
+        iterator end = Base::end();
+        if (it != end && !it->value) // Found a zombie value.
+            return end;
+        return it;
     }
 
-    void remove(const KeyType& key)
+    const_iterator find(const KeyType& key) const
     {
-        WeakImpl* impl = m_map.take(key);
-        if (!impl)
-            return;
-        WeakSet::deallocate(impl);
+        return const_cast<Self*>(this)->find(key);
     }
 
-    ~WeakGCMap()
+    template<typename T, typename HashTranslator> bool contains(const T& key) const
     {
-        clear();
+        return find(key) != end();
     }
-    
+
 private:
-    virtual void finalize(Handle<Unknown> handle, void* context)
+    static const int minGCThreshold;
+
+    void gcMap()
     {
-        WeakImpl* impl = m_map.take(FinalizerCallback::keyForFinalizer(context, HandleTypes<MappedType>::getFromSlot(handle.slot())));
-        ASSERT(impl);
-        WeakSet::deallocate(impl);
+        Vector<KeyType, 4> zombies;
+        iterator end = this->end();
+        for (iterator it = begin(); it != end; ++it) {
+            if (!it->value)
+                zombies.append(it->key);
+        }
+        for (size_t i = 0; i < zombies.size(); ++i)
+            remove(zombies[i]);
     }
 
-    MapType m_map;
+    void gcMapIfNeeded()
+    {
+        if (size() < m_gcThreshold)
+            return;
+
+        gcMap();
+        m_gcThreshold = std::max(minGCThreshold, size() * 2 - 1);
+    }
+
+    int m_gcThreshold;
 };
+
+template<typename KeyArg, typename RawMappedArg, typename HashArg, typename KeyTraitsArg>
+const int WeakGCMap<KeyArg, RawMappedArg, HashArg, KeyTraitsArg>::minGCThreshold = 3;
 
 } // namespace JSC
 

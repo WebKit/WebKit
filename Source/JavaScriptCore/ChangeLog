@@ -1,3 +1,55 @@
+2013-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Weak GC maps should be easier to use
+        https://bugs.webkit.org/show_bug.cgi?id=107312
+
+        Reviewed by Sam Weinig.
+
+        This patch changes WeakGCMap to not use a WeakImpl finalizer to remove
+        items from the map, and to instead have the map automatically remove
+        stale items itself upon insertion. This has a few advantages:
+
+        (1) WeakGCMap is now compatible with all the specializations you would
+        use for HashMap.
+
+        (2) There's no need for clients to write special finalization munging
+        functions.
+
+        (3) Clients can specify custom value finalizers if they like.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def: Def!
+
+        * API/JSWeakObjectMapRefPrivate.cpp: Setter no longer requires a global
+        data, since we've reduced interdependency.
+
+        * heap/Handle.h: No more need to forward declare, since we've reduced
+        interdependency.
+
+        * heap/Weak.h:
+        (Weak): Use explicit so we can assign directly to a weak map iterator
+        without ambiguity between Weak<T> and PassWeak<T>.
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::add): See above.
+
+        * runtime/Structure.h:
+        (JSC):
+        * runtime/StructureTransitionTable.h:
+        (StructureTransitionTable): Bad code goes away, programmer happy.
+
+        * runtime/WeakGCMap.h:
+        (JSC):
+        (WeakGCMap):
+        (JSC::WeakGCMap::WeakGCMap):
+        (JSC::WeakGCMap::set):
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::find):
+        (JSC::WeakGCMap::contains):
+        (JSC::WeakGCMap::gcMap):
+        (JSC::WeakGCMap::gcMapIfNeeded): Inherit from HashMap and override any
+        function that might observe a Weak<T> that has died, just enough to
+        make such items appear as if they are not in the table.
+
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
         Refactor isPowerOf2() and add getLSBSet()

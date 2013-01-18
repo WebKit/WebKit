@@ -50,13 +50,6 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-JSValue jsStringWithCacheSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
-{
-    JSString* wrapper = JSC::jsString(exec, String(stringImpl));
-    weakAdd(stringCache, stringImpl, PassWeak<JSString>(wrapper, currentWorld(exec)->stringWrapperOwner(), stringImpl));
-    return wrapper;
-}
-
 JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())

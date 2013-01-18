@@ -34,21 +34,7 @@ class JSDOMWrapper;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
-typedef HashMap<StringImpl*, JSC::Weak<JSC::JSString>, PtrHash<StringImpl*> > JSStringCache;
-
-class JSStringOwner : public JSC::WeakHandleOwner {
-public:
-    JSStringOwner(DOMWrapperWorld*);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-
-private:
-    DOMWrapperWorld* m_world;
-};
-
-inline JSStringOwner::JSStringOwner(DOMWrapperWorld* world)
-    : m_world(world)
-{
-}
+typedef JSC::WeakGCMap<StringImpl*, JSC::JSString, PtrHash<StringImpl*> > JSStringCache;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
@@ -72,7 +58,6 @@ public:
     bool isNormal() const { return m_isNormal; }
 
     JSC::JSGlobalData* globalData() const { return m_globalData; }
-    JSStringOwner* stringWrapperOwner() { return &m_stringWrapperOwner; }
 
 protected:
     DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
@@ -81,7 +66,6 @@ private:
     JSC::JSGlobalData* m_globalData;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
-    JSStringOwner m_stringWrapperOwner;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

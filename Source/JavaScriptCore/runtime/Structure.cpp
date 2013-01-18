@@ -101,7 +101,7 @@ inline void StructureTransitionTable::add(JSGlobalData& globalData, Structure* s
     // Newer versions of the STL have an std::make_pair function that takes rvalue references.
     // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
     // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
-    map()->set(globalData, make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious), structure);
+    map()->set(make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious), structure);
 }
 
 void Structure::dumpStatistics()

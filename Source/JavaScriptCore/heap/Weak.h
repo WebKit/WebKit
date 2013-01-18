@@ -40,8 +40,8 @@ public:
     typedef typename WeakImplAccessor<Weak<T>, T>::GetType GetType;
 
     Weak();
-    Weak(std::nullptr_t);
-    Weak(GetType, WeakHandleOwner* = 0, void* context = 0);
+    explicit Weak(std::nullptr_t);
+    explicit Weak(GetType, WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     bool isHashTableDeletedValue() const;

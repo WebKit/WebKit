@@ -527,14 +527,6 @@ namespace JSC {
         m_stack.append(cell);
     }
 
-    inline StructureTransitionTable::Hash::Key StructureTransitionTable::keyForWeakGCMapFinalizer(void*, Structure* structure)
-    {
-        // Newer versions of the STL have an std::make_pair function that takes rvalue references.
-        // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
-        // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details.
-        return Hash::Key(structure->m_nameInPrevious.get(), +structure->m_attributesInPrevious);
-    }
-
     inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     {
         for (Structure* current = this; current; current = current->previousID()) {

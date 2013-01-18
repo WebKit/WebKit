@@ -30,17 +30,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSStringOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSString* jsString = jsCast<JSString*>(handle.get().asCell());
-    StringImpl* stringImpl = static_cast<StringImpl*>(context);
-    weakRemove(m_world->m_stringCache, stringImpl, jsString);
-}
-
 DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
-    , m_stringWrapperOwner(this)
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
