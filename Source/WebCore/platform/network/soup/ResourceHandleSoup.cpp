@@ -486,12 +486,17 @@ static void doRedirect(ResourceHandle* handle)
     handle->sendPendingRequest();
 }
 
-static void redirectCloseCallback(GObject*, GAsyncResult* res, gpointer data)
+static void redirectCloseCallback(GObject*, GAsyncResult* result, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = handle->getInternal();
 
-    g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
+    if (d->m_cancelled || !handle->client()) {
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    g_input_stream_close_finish(d->m_inputStream.get(), result, 0);
     doRedirect(handle.get());
 }
 
