@@ -181,7 +181,12 @@ public:
         return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_tagNodeListCacheNS.isEmpty();
     }
 
-    void adoptTreeScope(Document* oldDocument, Document* newDocument)
+    void adoptTreeScope()
+    {
+        invalidateCaches();
+    }
+
+    void adoptDocument(Document* oldDocument, Document* newDocument)
     {
         invalidateCaches();
 

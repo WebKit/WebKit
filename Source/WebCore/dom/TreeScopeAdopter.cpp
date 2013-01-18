@@ -53,14 +53,13 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
         node->setTreeScope(m_newScope);
 
-        if (node->hasRareData()) {
-            NodeRareData* rareData = node->rareData();
-            if (rareData->nodeLists())
-                rareData->nodeLists()->adoptTreeScope(oldDocument, newDocument);
-        }
-
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);
+        else if (node->hasRareData()) {
+            NodeRareData* rareData = node->rareData();
+            if (rareData->nodeLists())
+                rareData->nodeLists()->adoptTreeScope();
+        }
 
         if (!node->isElementNode())
             continue;
@@ -103,6 +102,12 @@ void TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(Document* oldDocument
 inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDocument, Document* newDocument) const
 {
     ASSERT(!node->inDocument() || oldDocument != newDocument);
+
+    if (node->hasRareData()) {
+        NodeRareData* rareData = node->rareData();
+        if (rareData->nodeLists())
+            rareData->nodeLists()->adoptDocument(oldDocument, newDocument);
+    }
 
     newDocument->guardRef();
     if (oldDocument)
