@@ -1,3 +1,9 @@
+2013-01-18  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix. Remove deleted symbol from windows export list.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient
