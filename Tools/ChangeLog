@@ -1,3 +1,15 @@
+2013-01-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Improve table-guessing heuristics
+        https://bugs.webkit.org/show_bug.cgi?id=107042
+
+        Reviewed by Chris Fleizach.
+
+        Implement parentElementCallback on Chromium to make testing easier.
+
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+        (WebTestRunner::AccessibilityUIElement::parentElementCallback):
+
 2013-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add property for IndexedDB database path to WebKitGTK+

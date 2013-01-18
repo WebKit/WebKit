@@ -127,6 +127,12 @@ bool AccessibilityTable::isDataTable() const
     // if someone used "rules" attribute than the table should appear
     if (!tableElement->rules().isEmpty())
         return true;    
+
+    // if there's a colgroup or col element, it's probably a data table.
+    for (Node* child = tableElement->firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(colTag) || child->hasTagName(colgroupTag))
+            return true;
+    }
     
     // go through the cell's and check for tell-tale signs of "data" table status
     // cells have borders, or use attributes like headers, abbr, scope or axis
@@ -138,11 +144,15 @@ bool AccessibilityTable::isDataTable() const
     int numCols = firstBody->numColumns();
     int numRows = firstBody->numRows();
     
-    // if there's only one cell, it's not a good AXTable candidate
+    // If there's only one cell, it's not a good AXTable candidate.
     if (numRows == 1 && numCols == 1)
         return false;
+
+    // If there are at least 20 rows, we'll call it a data table.
+    if (numRows >= 20)
+        return true;
     
-    // store the background color of the table to check against cell's background colors
+    // Store the background color of the table to check against cell's background colors.
     RenderStyle* tableStyle = table->style();
     if (!tableStyle)
         return false;
@@ -156,6 +166,10 @@ bool AccessibilityTable::isDataTable() const
     unsigned validCellCount = 0;
     unsigned borderedCellCount = 0;
     unsigned backgroundDifferenceCellCount = 0;
+    unsigned cellsWithTopBorder = 0;
+    unsigned cellsWithBottomBorder = 0;
+    unsigned cellsWithLeftBorder = 0;
+    unsigned cellsWithRightBorder = 0;
     
     Color alternatingRowColors[5];
     int alternatingRowColorCount = 0;
@@ -197,19 +211,34 @@ bool AccessibilityTable::isDataTable() const
             if (!renderStyle)
                 continue;
 
-            // a cell needs to have matching bordered sides, before it can be considered a bordered cell.
+            // If the empty-cells style is set, we'll call it a data table.
+            if (renderStyle->emptyCells() == HIDE)
+                return true;
+
+            // If a cell has matching bordered sides, call it a (fully) bordered cell.
             if ((cell->borderTop() > 0 && cell->borderBottom() > 0)
                 || (cell->borderLeft() > 0 && cell->borderRight() > 0))
                 borderedCellCount++;
+
+            // Also keep track of each individual border, so we can catch tables where most
+            // cells have a bottom border, for example.
+            if (cell->borderTop() > 0)
+                cellsWithTopBorder++;
+            if (cell->borderBottom() > 0)
+                cellsWithBottomBorder++;
+            if (cell->borderLeft() > 0)
+                cellsWithLeftBorder++;
+            if (cell->borderRight() > 0)
+                cellsWithRightBorder++;
             
-            // if the cell has a different color from the table and there is cell spacing,
-            // then it is probably a data table cell (spacing and colors take the place of borders)
+            // If the cell has a different color from the table and there is cell spacing,
+            // then it is probably a data table cell (spacing and colors take the place of borders).
             Color cellColor = renderStyle->visitedDependentColor(CSSPropertyBackgroundColor);
             if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0
                 && tableBGColor != cellColor && cellColor.alpha() != 1)
                 backgroundDifferenceCellCount++;
             
-            // if we've found 10 "good" cells, we don't need to keep searching
+            // If we've found 10 "good" cells, we don't need to keep searching.
             if (borderedCellCount >= 10 || backgroundDifferenceCellCount >= 10)
                 return true;
             
@@ -240,7 +269,11 @@ bool AccessibilityTable::isDataTable() const
     
     // half of the cells had borders, it's a data table
     unsigned neededCellCount = validCellCount / 2;
-    if (borderedCellCount >= neededCellCount)
+    if (borderedCellCount >= neededCellCount
+        || cellsWithTopBorder >= neededCellCount
+        || cellsWithBottomBorder >= neededCellCount
+        || cellsWithLeftBorder >= neededCellCount
+        || cellsWithRightBorder >= neededCellCount)
         return true;
     
     // half had different background colors, it's a data table

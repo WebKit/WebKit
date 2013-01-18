@@ -875,7 +875,13 @@ void AccessibilityUIElement::isDecrementActionSupportedCallback(const CppArgumen
 
 void AccessibilityUIElement::parentElementCallback(const CppArgumentList&, CppVariant* result)
 {
-    result->setNull();
+    AccessibilityUIElement* parent = m_factory->getOrCreate(accessibilityObject().parentObject());
+    if (!parent) {
+        result->setNull();
+        return;
+    }
+
+    result->set(*(parent->getAsCppVariant()));
 }
 
 void AccessibilityUIElement::incrementCallback(const CppArgumentList&, CppVariant* result)

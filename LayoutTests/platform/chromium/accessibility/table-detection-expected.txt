@@ -1,0 +1,191 @@
+
+This should be a table because it has a thead.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have borders.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should not be a table because its cells do not have borders.
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have different colors.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should not be a table because cells have different but no spacing.
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+asdf	asdf
+
+This should not be a table because cells have the same colors even though there is spacing.
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+asdf	asdf
+
+This should be a table because it has the "rules" attr.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should not be a table because it only has one valid cell (need more than one).
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+Contributions
+
+This should not be a table because it does not have enough cell borders or background colors
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+Politics
+Decision '08
+The debates
+The White House
+Capitol Hill
+National Journal
+New York Times
+
+This should be a table because it's editable.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+
+This should be a table because most cells have a top border.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf	asdf
+
+This should not be a table because cells have different borders.
+
+AXTitle: 
+AXRole: AXGroup
+AXDescription: 
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it sets empty-cells: hide on the table.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf
+asdf	asdf
+
+This should be a table because it sets empty-cells: hide on a cell.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf
+asdf	asdf
+
+This should be a table because it has a col.
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it has at least 20 rows
+
+AXTitle: 
+AXRole: AXTable
+AXDescription: 
+
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+

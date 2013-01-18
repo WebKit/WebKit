@@ -1,64 +1,6 @@
-This should be a table because it has a thead
-asdf	asdf
-asdf	asdf
-This should be a table because cells have borders
-asdf	asdf
-This should not be a table because it's cells do not have borders
-asdf	asdf
-// This should be a table because a cell has a special attribute
-asdf	asdf
-// This should be a table because a cell has a special attribute
-asdf	asdf
-// This should be a table because a cell has a special attribute
-asdf	asdf
-asdf	asdf
-// This should be a table because cells have different colors
-asdf	asdf
-// This should not be a table because cells have different but no spacing
-asdf	asdf
-// This should not be a table because cells have the same colors even though there is spacing
-asdf	asdf
-// this should be a table because it has the "rules" attr
-asdf	asdf
-// this should not be a table because it only has one valid cell (need more than one)
-Contributions
-// this should not be a table because it does not have enough cell borders or background colors
-Politics
-Decision '08
-The debates
-The White House
-Capitol Hill
-National Journal
-New York Times
-// this should be a table because it's editable
-asdf	asdf
---------------------------
 
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+This should be a table because it has a thead.
 
-------------
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -90,32 +32,12 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have borders.
+
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -147,32 +69,11 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+
+This should not be a table because its cells do not have borders.
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -197,57 +98,11 @@ AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {28, 20}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+asdf	asdf
 
-------------
+This should be a table because a cell has a special attribute
+
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -279,32 +134,11 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -336,32 +170,11 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -393,32 +206,12 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have different colors.
+
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -450,32 +243,11 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+
+This should not be a table because cells have different but no spacing.
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -500,7 +272,11 @@ AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
+
+asdf	asdf
+
+This should not be a table because cells have the same colors even though there is spacing.
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -525,107 +301,11 @@ AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {26, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+asdf	asdf
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {26, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+This should be a table because it has the "rules" attr.
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
-
-------------
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -657,32 +337,11 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+asdf	asdf
+
+This should not be a table because it only has one valid cell (need more than one).
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -707,32 +366,11 @@ AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
+Contributions
+
+This should not be a table because it does not have enough cell borders or background colors
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
@@ -757,182 +395,17 @@ AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+Politics
+Decision '08
+The debates
+The White House
+Capitol Hill
+National Journal
+New York Times
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
+This should be a table because it's editable.
 
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
-
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
-
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {130, 13}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
-
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 18}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
-AXARIABusy: 0
-
-------------
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
@@ -964,14 +437,55 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXARIABusy: 0
 
-------------
+
+asdf	asdf
+
+This should be a table because most cells have a top border.
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 5>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {62, 48}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 2>
+AXVisibleRows: <array of size 2>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 4>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXARIABusy: 0
+
+
+asdf	asdf
+asdf	asdf
+
+This should not be a table because cells have different borders.
+
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {769, 36}
+AXSize: NSSize: {28, 20}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -986,11 +500,182 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 AXARIABusy: 0
 
-------------
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it sets empty-cells: hide on the table.
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 6>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {64, 70}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 3>
+AXVisibleRows: <array of size 3>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 6>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXARIABusy: 0
 
 
---------------------------
+asdf	asdf
+asdf
+asdf	asdf
 
+This should be a table because it sets empty-cells: hide on a cell.
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 6>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {64, 70}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 3>
+AXVisibleRows: <array of size 3>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 6>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXARIABusy: 0
+
+
+asdf	asdf
+asdf
+asdf	asdf
+
+This should be a table because it has a col.
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 5>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {62, 46}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 2>
+AXVisibleRows: <array of size 2>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 4>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXARIABusy: 0
+
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it has at least 20 rows
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 26>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {32, 530}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 24>
+AXVisibleRows: <array of size 24>
+AXColumns: <array of size 1>
+AXVisibleColumns: <array of size 1>
+AXVisibleCells: <array of size 24>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXARIABusy: 0
+
+
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
 
