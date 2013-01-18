@@ -4294,8 +4294,10 @@ webkit.org/b/106689 canvas/philip/tests/2d.gradient.radial.transform.3.html [ Fa
 crbug.com/169602 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
 crbug.com/169602 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 
-webkit.org/b/106858 [ SnowLeopard Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/107033 [ Debug ] fast/frames/valid.html [ Crash ]
 webkit.org/b/107033 [ Debug ] fast/events/form-iframe-target-before-load-crash.html [ Crash ]
