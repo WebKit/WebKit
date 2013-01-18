@@ -5,5 +5,5 @@ layer at (0,0) size 800x76
     RenderBlock {p} at (0,16) size 800x44
       RenderButton {button} at (2,2) size 647x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (17,10) size 613x18
-          RenderText {#text} at (0,0) size 613x19
+          RenderText {#text} at (0,0) size 613x17
             text run at (0,0) width 613: "Activating (e.g. holding the mouse button down on) this button should make it go green."

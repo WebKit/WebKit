@@ -5,6 +5,6 @@ layer at (0,0) size 800x90
     RenderBody {body} at (8,16) size 784x66
       RenderBlock {div} at (0,0) size 784x66
         RenderBlock {p} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 222x19
+          RenderText {#text} at (0,0) size 222x17
             text run at (0,0) width 222: "The following bar should be green."
         RenderBlock {div} at (0,34) size 784x32 [bgcolor=#FF0000]

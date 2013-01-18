@@ -4,11 +4,11 @@ layer at (0,0) size 800x34
   RenderBlock {html} at (0,0) size 800x34
     RenderBody {body} at (8,8) size 784x18
       RenderBlock {address} at (0,0) size 784x18 [bgcolor=#00FF00]
-        RenderInline {span} at (0,0) size 104x19
-          RenderText {#text} at (0,0) size 104x19
+        RenderInline {span} at (0,0) size 104x17
+          RenderText {#text} at (0,0) size 104x17
             text run at (0,0) width 104: "This line should "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {span} at (0,0) size 166x19
-          RenderText {#text} at (104,0) size 166x19
+        RenderInline {span} at (0,0) size 166x17
+          RenderText {#text} at (104,0) size 166x17
             text run at (104,0) width 166: "have a green background."
         RenderText {#text} at (0,0) size 0x0

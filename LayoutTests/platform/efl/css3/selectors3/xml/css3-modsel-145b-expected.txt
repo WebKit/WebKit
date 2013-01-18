@@ -7,37 +7,37 @@ layer at (0,0) size 800x198
         RenderText {#text} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 800x198
       RenderBlock {line} at (0,0) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {line} at (0,18) size 800x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This line should be unstyled."
       RenderBlock {line} at (0,36) size 800x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This line should be unstyled."
       RenderBlock {line} at (0,54) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {line} at (0,72) size 800x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This line should be unstyled."
       RenderBlock {line} at (0,90) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {line} at (0,108) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {line} at (0,126) size 800x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This line should be unstyled."
       RenderBlock {line} at (0,144) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
       RenderBlock {line} at (0,162) size 800x18
-        RenderText {#text} at (0,0) size 181x19
+        RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This line should be unstyled."
       RenderBlock {line} at (0,180) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This line should be green."
     RenderBlock (anonymous) at (0,198) size 800x0
       RenderInline {test} at (0,0) size 0x0

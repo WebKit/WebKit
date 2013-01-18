@@ -5,14 +5,14 @@ layer at (0,0) size 800x144
     RenderBody {body} at (8,8) size 784x120
       RenderBlock {div} at (0,0) size 784x120
         RenderBlock {address} at (0,0) size 784x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 292x19
+          RenderText {#text} at (0,0) size 292x17
             text run at (0,0) width 292: "This address should have a green background"
         RenderBlock {s} at (0,34) size 784x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 304x19
+          RenderText {#text} at (0,0) size 304x17
             text run at (0,0) width 304: "This paragraph should have a green background"
         RenderBlock {t} at (0,68) size 784x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 304x19
+          RenderText {#text} at (0,0) size 304x17
             text run at (0,0) width 304: "This paragraph should have a green background"
         RenderBlock {u} at (0,102) size 784x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 304x19
+          RenderText {#text} at (0,0) size 304x17
             text run at (0,0) width 304: "This paragraph should have a green background"

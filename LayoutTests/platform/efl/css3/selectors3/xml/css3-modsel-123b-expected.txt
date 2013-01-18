@@ -4,5 +4,5 @@ layer at (0,0) size 800x34
   RenderBlock {test} at (0,0) size 800x34
     RenderBlock {div} at (0,0) size 800x18
       RenderBlock {t} at (0,0) size 800x18 [color=#008000]
-        RenderText {#text} at (0,0) size 286x19
+        RenderText {#text} at (0,0) size 286x17
           text run at (0,0) width 286: "This paragraph should be in green characters."

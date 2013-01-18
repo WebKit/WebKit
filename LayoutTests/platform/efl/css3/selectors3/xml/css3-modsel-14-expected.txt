@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x110
   RenderBlock {test} at (0,0) size 800x110
     RenderBlock {p} at (0,16) size 800x60 [bgcolor=#00FF00] [border: (5px solid #008000)]
-      RenderText {#text} at (21,21) size 748x19
+      RenderText {#text} at (21,21) size 748x17
         text run at (21,21) width 748: "This paragraph should have a green background and a green thick solid border because it carries both classes t1 and t2."
     RenderBlock {div} at (0,92) size 800x18 [color=#FFFFFF] [bgcolor=#008000]
-      RenderText {#text} at (0,0) size 163x19
+      RenderText {#text} at (0,0) size 163x17
         text run at (0,0) width 163: "This line should be green."

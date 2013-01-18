@@ -4,17 +4,17 @@ layer at (0,0) size 800x152
   RenderBlock {test} at (0,0) size 800x152
     RenderBlock {div} at (0,16) size 800x120
       RenderBlock {p} at (0,0) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 304x19
+        RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This paragraph should have a green background"
       RenderBlock {p} at (0,34) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 304x19
+        RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This paragraph should have a green background"
       RenderBlock {l} at (0,68) size 800x18 [bgcolor=#00FF00]
-        RenderInline {p} at (0,0) size 304x19
-          RenderText {#text} at (0,0) size 304x19
+        RenderInline {p} at (0,0) size 304x17
+          RenderText {#text} at (0,0) size 304x17
             text run at (0,0) width 190: "This paragraph should have a "
             text run at (190,0) width 114: "green background"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,102) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 304x19
+        RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This paragraph should have a green background"

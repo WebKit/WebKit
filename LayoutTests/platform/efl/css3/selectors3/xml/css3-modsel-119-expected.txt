@@ -5,26 +5,26 @@ layer at (0,0) size 800x288
     RenderBlock {div} at (0,16) size 800x256
       RenderBlock {div} at (0,0) size 800x120
         RenderBlock {p} at (0,0) size 800x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 308x19
+          RenderText {#text} at (0,0) size 308x17
             text run at (0,0) width 308: "This paragraph should have a green background."
         RenderBlock {p} at (0,34) size 800x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 308x19
+          RenderText {#text} at (0,0) size 308x17
             text run at (0,0) width 308: "This paragraph should have a green background."
         RenderBlock {p} at (0,68) size 800x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 308x19
+          RenderText {#text} at (0,0) size 308x17
             text run at (0,0) width 308: "This paragraph should have a green background."
         RenderBlock {p} at (0,102) size 800x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 308x19
+          RenderText {#text} at (0,0) size 308x17
             text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {address} at (0,136) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 296x19
+        RenderText {#text} at (0,0) size 296x17
           text run at (0,0) width 296: "This address should have a green background."
       RenderBlock {s} at (0,170) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {t} at (0,204) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {u} at (0,238) size 800x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."

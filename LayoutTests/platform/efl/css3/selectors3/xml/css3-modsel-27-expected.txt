@@ -3,5 +3,5 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x50
   RenderBlock {test} at (0,0) size 800x50 [bgcolor=#00FF00]
     RenderBlock {p} at (0,16) size 800x18
-      RenderText {#text} at (0,0) size 314x19
+      RenderText {#text} at (0,0) size 314x17
         text run at (0,0) width 314: "The background of the document should be green"
