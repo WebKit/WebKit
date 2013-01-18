@@ -179,6 +179,12 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         }
 
         if (parentBlock) {
+            // Need to skip anonymous blocks in our ancestor chain since our overhanging floats
+            // can be in the next siblings of enclosing block.
+            while (parentBlock && parentBlock->isAnonymousBlock())
+                parentBlock = parentBlock->containingBlock();
+            ASSERT(parentBlock);
+
             RenderObject* parent = parentBlock->parent();
             if (parent && parent->isFlexibleBoxIncludingDeprecated())
                 parentBlock = toRenderBlock(parent);

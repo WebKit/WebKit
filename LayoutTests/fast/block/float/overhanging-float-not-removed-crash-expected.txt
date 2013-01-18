@@ -1,0 +1,2 @@
+Bug 107226. Heap-use-after-free in WebCore::RenderObject::isDescendantOf.
+PASS. WebKit didn't crash
