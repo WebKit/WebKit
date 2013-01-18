@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 675x19
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 675x17
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13391"
-          RenderText {#text} at (354,0) size 374x19
+          RenderText {#text} at (354,0) size 374x17
             text run at (354,0) width 4: " "
             text run at (358,0) width 370: "REGRESSION (r18819): Incomplete repaint of button text"
-        RenderText {#text} at (728,0) size 4x19
+        RenderText {#text} at (728,0) size 4x17
           text run at (728,0) width 4: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 513x19
+        RenderText {#text} at (0,0) size 513x17
           text run at (0,0) width 513: "The popup and the button should say \x{201C}SUCCESS\x{201D} with no sign of \x{201C}FAILURE\x{201D}."
       RenderMenuList {SELECT} at (0,68) size 200x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,6) size 198x18
-          RenderText at (0,0) size 80x19
+          RenderText at (0,0) size 80x17
             text run at (0,0) width 80: "SUCCESS"
       RenderButton {BUTTON} at (0,98) size 200x30 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (17,10) size 166x18
-          RenderText {#text} at (43,0) size 80x19
+          RenderText {#text} at (43,0) size 80x17
             text run at (43,0) width 80: "SUCCESS"

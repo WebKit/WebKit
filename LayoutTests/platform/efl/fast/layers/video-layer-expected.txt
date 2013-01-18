@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 305x19
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 305x17
             text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=25066"
-        RenderBR {BR} at (305,15) size 0x0
-        RenderText {#text} at (0,18) size 415x19
+        RenderBR {BR} at (305,14) size 0x0
+        RenderText {#text} at (0,18) size 415x17
           text run at (0,18) width 415: "controls should not be misplaced when video gets a RenderLayer."
       RenderBlock (anonymous) at (0,52) size 784x252
         RenderText {#text} at (0,0) size 0x0
@@ -23,7 +23,7 @@ layer at (59,241) size 300x20 scrollHeight 28
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 240x20
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28
         RenderBlock (anonymous) at (4,4) size 55x20
-          RenderText {#text} at (0,0) size 55x12
+          RenderText {#text} at (0,0) size 55x11
             text run at (0,0) width 55: "00:00 / 00:00"
       RenderSlider {INPUT} at (63,0) size 177x20
         RenderFlexibleBox {DIV} at (2,0) size 173x20

@@ -1,83 +1,83 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x513
-  RenderBlock {HTML} at (0,0) size 800x513
+layer at (0,0) size 800x514
+  RenderBlock {HTML} at (0,0) size 800x514
     RenderBody {BODY} at (8,8) size 784x0
-      RenderBlock (floating) {DIV} at (0,0) size 121x505
+      RenderBlock (floating) {DIV} at (0,0) size 121x506
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 121x63
+        RenderBlock (anonymous) at (0,340) size 121x64
           RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,419) size 121x18
-          RenderText {#text} at (0,0) size 46x19
+        RenderBlock {P} at (0,420) size 121x18
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderText {#text} at (84,0) size 37x19
+          RenderText {#text} at (84,0) size 37x17
             text run at (84,0) width 37: " dolor"
-        RenderBlock {P} at (0,453) size 121x36
-          RenderText {#text} at (0,0) size 84x19
+        RenderBlock {P} at (0,454) size 121x36
+          RenderText {#text} at (0,0) size 84x17
             text run at (0,0) width 84: "Lorem ipsum"
-          RenderBR {BR} at (84,0) size 0x19
-          RenderText {#text} at (0,18) size 85x19
+          RenderBR {BR} at (84,0) size 0x17
+          RenderText {#text} at (0,18) size 85x17
             text run at (0,18) width 85: "dolor sit amet"
-      RenderBlock (floating) {DIV} at (131,0) size 121x453
+      RenderBlock (floating) {DIV} at (131,0) size 121x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 121x63
+        RenderBlock (anonymous) at (0,340) size 121x64
           RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,419) size 121x18
-          RenderText {#text} at (0,0) size 46x19
+        RenderBlock {P} at (0,420) size 121x18
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderText {#text} at (84,0) size 37x19
+          RenderText {#text} at (84,0) size 37x17
             text run at (84,0) width 37: " dolor"
-      RenderBlock (floating) {DIV} at (262,0) size 121x453
+      RenderBlock (floating) {DIV} at (262,0) size 121x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 121x63
+        RenderBlock (anonymous) at (0,340) size 121x64
           RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,419) size 121x18
-          RenderText {#text} at (0,0) size 46x19
+        RenderBlock {P} at (0,420) size 121x18
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderText {#text} at (84,0) size 37x19
+          RenderText {#text} at (84,0) size 37x17
             text run at (84,0) width 37: " dolor"
-      RenderBlock (floating) {DIV} at (393,0) size 121x453
+      RenderBlock (floating) {DIV} at (393,0) size 121x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 121x63
+        RenderBlock (anonymous) at (0,340) size 121x64
           RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,419) size 121x18
-          RenderText {#text} at (0,0) size 46x19
+        RenderBlock {P} at (0,420) size 121x18
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderText {#text} at (84,0) size 37x19
+          RenderText {#text} at (84,0) size 37x17
             text run at (84,0) width 37: " dolor"
-      RenderBlock (floating) {DIV} at (524,0) size 121x453
+      RenderBlock (floating) {DIV} at (524,0) size 121x454
         RenderBlock {DIV} at (10,10) size 40x40 [bgcolor=#FFFF77]
         RenderTable {TABLE} at (10,290) size 40x40 [bgcolor=#FFFF77]
-        RenderBlock (anonymous) at (0,340) size 121x63
+        RenderBlock (anonymous) at (0,340) size 121x64
           RenderHTMLCanvas {CANVAS} at (10,10) size 40x40 [bgcolor=#FFFF77]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,419) size 121x18
-          RenderText {#text} at (0,0) size 46x19
+        RenderBlock {P} at (0,420) size 121x18
+          RenderText {#text} at (0,0) size 46x17
             text run at (0,0) width 46: "Lorem "
-          RenderInline {SPAN} at (0,0) size 38x19
-            RenderText {#text} at (46,0) size 38x19
+          RenderInline {SPAN} at (0,0) size 38x17
+            RenderText {#text} at (46,0) size 38x17
               text run at (46,0) width 38: "ipsum"
-          RenderText {#text} at (84,0) size 37x19
+          RenderText {#text} at (84,0) size 37x17
             text run at (84,0) width 37: " dolor"
 layer at (18,248) size 40x40
   RenderBlock {DIV} at (10,240) size 40x40 [bgcolor=#FFFF77]

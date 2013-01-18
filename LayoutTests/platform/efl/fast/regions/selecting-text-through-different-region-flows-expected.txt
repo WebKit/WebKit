@@ -11,37 +11,37 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x217
-  RenderBlock {HTML} at (0,0) size 800x217
-    RenderBody {BODY} at (8,8) size 600x201
-      RenderRegion {DIV} at (0,0) size 600x176
-      RenderRegion {DIV} at (0,176) size 600x25
+layer at (0,0) size 800x218
+  RenderBlock {HTML} at (0,0) size 800x218
+    RenderBody {BODY} at (8,8) size 600x202
+      RenderRegion {DIV} at (0,0) size 600x177
+      RenderRegion {DIV} at (0,176) size 600x26
 Flow Threads
   Thread with flow-name 'content'
-    layer at (0,0) size 600x176
-      RenderNamedFlowThread at (0,0) size 600x176
-        RenderBlock {DIV} at (0,21) size 600x155 [border: none (1px solid #000000) none]
+    layer at (0,0) size 600x177
+      RenderNamedFlowThread at (0,0) size 600x177
+        RenderBlock {DIV} at (0,21) size 600x156 [border: none (1px solid #000000) none]
           RenderBlock {H1} at (0,0) size 600x74
             RenderText {#text} at (0,0) size 508x73
               text run at (0,0) width 508: "Selecting text through different CSS-"
               text run at (0,37) width 175: "Region flows"
-          RenderBlock {DIV} at (0,95) size 600x54
-            RenderText {#text} at (0,0) size 513x19
+          RenderBlock {DIV} at (0,95) size 600x55
+            RenderText {#text} at (0,0) size 513x17
               text run at (0,0) width 513: "This text contains a footnote as a nested region what is diplayed below the article."
             RenderInline {SPAN} at (0,0) size 8x14
-              RenderText {#text} at (518,4) size 3x14
-                text run at (518,4) width 3: " "
-            RenderText {#text} at (521,0) size 593x55
+              RenderText {#text} at (518,3) size 3x14
+                text run at (518,3) width 3: " "
+            RenderText {#text} at (521,0) size 593x53
               text run at (521,0) width 68: "If you start"
               text run at (589,0) width 4: " "
               text run at (0,18) width 59: "selecting "
               text run at (59,18) width 523: "text from this article until somewhere in the footnote and then click somewhere, the"
               text run at (582,18) width 4: " "
               text run at (0,36) width 173: "selection should be cleared."
-    layer at (0,112) size 5x12
-      RenderInline (relative positioned) at (0,0) size 5x12
-        RenderCounter at (513,6) size 5x12
-          text run at (513,6) width 5: "1"
+    layer at (0,112) size 5x11
+      RenderInline (relative positioned) at (0,0) size 5x11
+        RenderCounter at (513,5) size 5x11
+          text run at (513,5) width 5: "1"
   Regions for flow 'content'
     RenderRegion {DIV} #region hasAutoLogicalHeight
   Thread with flow-name 'footNote'
@@ -54,9 +54,9 @@ Flow Threads
             text run at (443,-1) width 151: "is nested inside the text above"
             text run at (594,-1) width 3: " "
             text run at (0,12) width 242: "and displayed here with the help of css-regions."
-    layer at (0,-4) size 5x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-      RenderInline (relative positioned) at (0,0) size 5x12
-        RenderCounter at (0,1) size 5x12
+    layer at (0,-5) size 5x11 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+      RenderInline (relative positioned) at (0,0) size 5x11
+        RenderCounter at (0,1) size 5x11
           text run at (0,1) width 5: "1"
   Regions for flow 'footNote'
     RenderRegion {DIV} #footNoteRegion hasAutoLogicalHeight

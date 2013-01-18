@@ -4,7 +4,7 @@ layer at (0,0) size 785x1188
   RenderBlock {HTML} at (0,0) size 785x1188
     RenderBody {BODY} at (8,8) size 769x1172
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 339x19
+        RenderText {#text} at (0,0) size 339x17
           text run at (0,0) width 339: "This test should scroll recursively to reveal the button."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,18) size 769x500
@@ -18,21 +18,21 @@ layer at (0,0) size 785x1188
           layer at (8,8) size 300x300 clip at (8,8) size 285x300 scrollY 543 scrollHeight 1268
             RenderBlock {DIV} at (0,0) size 300x300
               RenderBlock (anonymous) at (0,0) size 285x18
-                RenderText {#text} at (0,0) size 88x19
+                RenderText {#text} at (0,0) size 88x17
                   text run at (0,0) width 88: "overflow:auto"
               RenderBlock {DIV} at (0,18) size 285x600
               RenderBlock {DIV} at (0,768) size 285x500
           layer at (8,83) size 150x150 clip at (8,83) size 135x150 scrollY 483 scrollHeight 880
             RenderBlock {DIV} at (0,618) size 150x150
               RenderBlock (anonymous) at (0,0) size 135x18
-                RenderText {#text} at (0,0) size 88x19
+                RenderText {#text} at (0,0) size 88x17
                   text run at (0,0) width 88: "overflow:auto"
               RenderBlock {DIV} at (0,18) size 135x500
               RenderBlock (anonymous) at (0,518) size 135x62
-                RenderBR {BR} at (0,0) size 0x19
+                RenderBR {BR} at (0,0) size 0x17
                 RenderButton {INPUT} at (2,20) size 80x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 46x18
-                    RenderText at (0,0) size 46x19
+                    RenderText at (0,0) size 46x17
                       text run at (0,0) width 46: "Button"
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {DIV} at (0,580) size 135x300

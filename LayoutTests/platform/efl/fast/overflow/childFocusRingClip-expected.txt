@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
 layer at (8,8) size 250x43 clip at (8,8) size 250x28 scrollWidth 323
   RenderBlock {DIV} at (0,0) size 250x43
     RenderBlock {DIV} at (0,0) size 250x28
-      RenderInline {A} at (0,0) size 318x19
-        RenderText {#text} at (5,5) size 318x19
+      RenderInline {A} at (0,0) size 318x17
+        RenderText {#text} at (5,5) size 318x17
           text run at (5,5) width 318: "focused overflow:auto text that doesn't fit in its div"
       RenderText {#text} at (0,0) size 0x0

@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x50
-  RenderBlock {HTML} at (0,0) size 800x50
-    RenderBody {BODY} at (8,8) size 784x34
-layer at (8,8) size 784x34
-  RenderBlock {DIV} at (0,0) size 784x34
-    RenderBlock (anonymous multi-column span) at (0,17) size 784x0 [color=#FFFFFF]
+layer at (0,0) size 800x48
+  RenderBlock {HTML} at (0,0) size 800x48
+    RenderBody {BODY} at (8,8) size 784x32
+layer at (8,8) size 784x32
+  RenderBlock {DIV} at (0,0) size 784x32
+    RenderBlock (anonymous multi-column span) at (0,16) size 784x0 [color=#FFFFFF]
       RenderBlock {DIV} at (0,0) size 784x0
-layer at (8,8) size 784x17
-  RenderBlock (anonymous multi-column) at (0,0) size 784x17
-    RenderBlock {SUMMARY} at (0,0) size 117x16 [color=#FFFFFF]
-      RenderText {#text} at (0,0) size 16x17
+layer at (8,8) size 784x16
+  RenderBlock (anonymous multi-column) at (0,0) size 784x16
+    RenderBlock {SUMMARY} at (0,0) size 118x16 [color=#FFFFFF]
+      RenderText {#text} at (0,0) size 16x16
         text run at (0,0) width 16: "a"
-layer at (8,25) size 784x17
-  RenderBlock (anonymous multi-column) at (0,17) size 784x17
-    RenderBlock {SUMMARY} at (0,0) size 117x16 [color=#FFFFFF]
-      RenderText {#text} at (0,0) size 16x17
+layer at (8,24) size 784x16
+  RenderBlock (anonymous multi-column) at (0,16) size 784x16
+    RenderBlock {SUMMARY} at (0,0) size 118x16 [color=#FFFFFF]
+      RenderText {#text} at (0,0) size 16x16
         text run at (0,0) width 16: "b"

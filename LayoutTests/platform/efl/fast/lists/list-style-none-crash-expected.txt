@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 739x19
+        RenderText {#text} at (0,0) size 739x17
           text run at (0,0) width 739: "This test verifies that setting a list with list-style: none to display: none does not crash. It checks for regression against "
-        RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
-          RenderText {#text} at (739,0) size 32x19
+        RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
+          RenderText {#text} at (739,0) size 32x17
             text run at (739,0) width 32: "6860"

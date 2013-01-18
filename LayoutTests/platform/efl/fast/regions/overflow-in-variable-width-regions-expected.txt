@@ -4,7 +4,7 @@ layer at (0,0) size 800x482
   RenderBlock {HTML} at (0,0) size 800x482
     RenderBody {BODY} at (8,16) size 784x458
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 745x37
+        RenderText {#text} at (0,0) size 745x35
           text run at (0,0) width 745: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself"
           text run at (0,18) width 186: "independently in each region."
       RenderBlock {DIV} at (0,52) size 784x406
@@ -17,13 +17,13 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 300x400
         RenderBlock {DIV} at (0,0) size 300x253
           RenderBlock {DIV} at (5,5) size 290x243 [border: (1px solid #0000FF)]
-    layer at (46,46) size 208x161 clip at (47,47) size 206x159 scrollWidth 500 scrollHeight 160
+    layer at (46,46) size 208x161 clip at (47,47) size 206x159 scrollWidth 500
       RenderBlock {DIV} at (41,41) size 208x161 [border: (1px solid #008000)]
         RenderBlock {DIV} at (1,1) size 500x18
-          RenderText {#text} at (0,0) size 286x19
+          RenderText {#text} at (0,0) size 286x17
             text run at (0,0) width 286: "Clipped line of text that should not be visible."
         RenderBlock {P} at (1,35) size 206x91
-          RenderText {#text} at (0,0) size 206x92
+          RenderText {#text} at (0,0) size 206x90
             text run at (0,0) width 106: "These lines will"
             text run at (0,19) width 206: "not spill out of the regions."
             text run at (0,37) width 206: "These lines will not spill out of"
@@ -31,7 +31,7 @@ Flow Threads
             text run at (79,55) width 127: "These lines will not"
             text run at (0,73) width 144: "spill out of the regions."
         RenderBlock {DIV} at (1,142) size 500x18
-          RenderText {#text} at (0,0) size 286x19
+          RenderText {#text} at (0,0) size 286x17
             text run at (0,0) width 286: "Clipped line of text that should not be visible."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1

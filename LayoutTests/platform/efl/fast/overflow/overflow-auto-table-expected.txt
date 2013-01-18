@@ -4,7 +4,7 @@ layer at (0,0) size 800x160
   RenderBlock {HTML} at (0,0) size 800x160
     RenderBody {BODY} at (8,16) size 784x136
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 780x55
+        RenderText {#text} at (0,0) size 780x53
           text run at (0,0) width 775: "This tests the interaction of overflow on some very wide text with auto table layout. The CSS 2.1 spec does not define how"
           text run at (0,18) width 780: "overflow interacts with intrinsic width, so we copy the IE behavior. Therefore the lines should come out very very wide and"
           text run at (0,36) width 177: "scroll along with the border."

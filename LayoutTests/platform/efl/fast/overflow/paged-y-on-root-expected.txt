@@ -3,7 +3,7 @@ layer at (0,0) size 785x1200
 layer at (0,0) size 785x1112
   RenderBlock {HTML} at (0,0) size 785x1112
     RenderBody {BODY} at (8,8) size 769x1096
-      RenderText {#text} at (0,0) size 768x1097
+      RenderText {#text} at (0,0) size 768x1095
         text run at (0,0) width 739: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia massa in lectus pretium vulputate. Curabitur"
         text run at (0,18) width 768: "viverra augue in leo faucibus congue. Vestibulum ligula neque, commodo eget blandit sit amet, facilisis vitae mi. Vivamus"
         text run at (0,36) width 734: "pretium lorem a quam imperdiet in placerat purus sagittis. Aliquam ut dui nibh. Cras faucibus imperdiet pellentesque."

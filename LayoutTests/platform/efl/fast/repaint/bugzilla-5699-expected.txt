@@ -4,35 +4,35 @@ layer at (0,0) size 800x212
   RenderBlock {HTML} at (0,0) size 800x212
     RenderBody {BODY} at (8,16) size 784x180
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {B} at (0,0) size 62x19
-          RenderText {#text} at (0,0) size 62x19
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
             text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x19
+        RenderText {#text} at (62,0) size 4x17
           text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
-          RenderText {#text} at (66,0) size 117x19
+        RenderInline {A} at (0,0) size 117x17 [color=#0000EE]
+          RenderText {#text} at (66,0) size 117x17
             text run at (66,0) width 117: "Bugzilla bug 5699"
-        RenderText {#text} at (183,0) size 229x19
+        RenderText {#text} at (183,0) size 229x17
           text run at (183,0) width 229: " REGRESSION: incomplete repaint"
       RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x19
-          RenderText {#text} at (3,3) size 91x19
+        RenderInline {B} at (0,0) size 91x17
+          RenderText {#text} at (3,3) size 91x17
             text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 230x19
+        RenderText {#text} at (94,3) size 230x17
           text run at (94,3) width 4: " "
           text run at (98,3) width 226: "The word \x{201C}Hello\x{201D} will move down."
       RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x19
-          RenderText {#text} at (3,3) size 90x19
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
             text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 299x19
+        RenderText {#text} at (93,3) size 299x17
           text run at (93,3) width 4: " "
           text run at (97,3) width 295: "Another copy of the word \x{201C}Hello\x{201D} will appear."
       RenderBlock {P} at (0,114) size 784x66
-        RenderInline {SPAN} at (0,0) size 4x19
-          RenderText {#text} at (0,14) size 4x19
-            text run at (0,14) width 4: " "
-        RenderBR {BR} at (4,14) size 0x19
-        RenderText {#text} at (0,48) size 35x19
+        RenderInline {SPAN} at (0,0) size 4x17
+          RenderText {#text} at (0,15) size 4x17
+            text run at (0,15) width 4: " "
+        RenderBR {BR} at (4,15) size 0x17
+        RenderText {#text} at (0,48) size 35x17
           text run at (0,48) width 35: "Hello"
-        RenderBR {BR} at (35,48) size 0x19
+        RenderBR {BR} at (35,48) size 0x17

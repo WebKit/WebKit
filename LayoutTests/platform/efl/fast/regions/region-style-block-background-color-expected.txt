@@ -23,7 +23,7 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 258x19
+            RenderText {#text} at (0,0) size 258x17
               text run at (0,0) width 258: "Green background text styled in region1."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1 region style: 1
@@ -32,10 +32,10 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 266x19
+            RenderText {#text} at (0,0) size 266x17
               text run at (0,0) width 266: "Green background text styled in region21."
           RenderBlock {P} at (0,34) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 260x19
+            RenderText {#text} at (0,0) size 260x17
               text run at (0,0) width 260: "Lime background text styled in region22."
   Regions for flow 'flow2'
     RenderRegion {DIV} #region21 region style: 1
@@ -45,7 +45,7 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x130
         RenderBlock {DIV} at (0,16) size 280x102
           RenderBlock {P} at (0,0) size 280x102 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 266x103
+            RenderText {#text} at (0,0) size 266x101
               text run at (0,0) width 266: "Green background text styled in region31."
               text run at (0,34) width 260: "Lime background text styled in region32."
               text run at (0,52) width 260: "Lime background text styled in region32."
@@ -59,10 +59,10 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 270x19
+            RenderText {#text} at (0,0) size 270x17
               text run at (0,0) width 270: "Green background text styled in region 41."
           RenderBlock {P} at (0,34) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 270x19
+            RenderText {#text} at (0,0) size 270x17
               text run at (0,0) width 270: "Green background text styled in region 41."
   Regions for flow 'flow41'
     RenderRegion {DIV} #region41 region style: 1
@@ -72,10 +72,10 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 264x19
+            RenderText {#text} at (0,0) size 264x17
               text run at (0,0) width 264: "Lime background text styled in region 42."
           RenderBlock {P} at (0,34) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 264x19
+            RenderText {#text} at (0,0) size 264x17
               text run at (0,0) width 264: "Lime background text styled in region 42."
   Regions for flow 'flow42'
     RenderRegion {DIV} #region42 region style: 1
@@ -85,9 +85,9 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderInline {I} at (0,0) size 270x19
-              RenderInline {B} at (0,0) size 270x19
-                RenderText {#text} at (0,0) size 270x19
+            RenderInline {I} at (0,0) size 270x17
+              RenderInline {B} at (0,0) size 270x17
+                RenderText {#text} at (0,0) size 270x17
                   text run at (0,0) width 270: "Green background, styled text in region5."
   Regions for flow 'flow5'
     RenderRegion {DIV} #region5 region style: 1
@@ -96,7 +96,7 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x30
         RenderBlock {DIV} at (0,16) size 280x18
           RenderBlock {P} at (0,0) size 280x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 253x19
+            RenderText {#text} at (0,0) size 253x17
               text run at (0,0) width 253: "Transparent background text in region6."
   Regions for flow 'flow6'
     RenderRegion {DIV} #region6 region style: 1
@@ -105,7 +105,7 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 280x80
         RenderBlock {DIV} at (0,16) size 280x52
           RenderBlock {P} at (0,0) size 280x52 [bgcolor=#008000]
-            RenderText {#text} at (0,0) size 261x53
+            RenderText {#text} at (0,0) size 261x51
               text run at (0,0) width 261: "Transparent background text in region71."
               text run at (0,34) width 229: "Green background text in region 72."
   Regions for flow 'flow7'

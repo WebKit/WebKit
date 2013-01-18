@@ -4,35 +4,35 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x19
+        RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 768x37
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x19
+        RenderInline {I} at (0,0) size 768x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6673"
-          RenderText {#text} at (560,0) size 768x37
+          RenderText {#text} at (560,0) size 768x35
             text run at (560,0) width 4: " "
             text run at (564,0) width 204: "Selection highlight doesn't scroll"
             text run at (0,18) width 369: "along with an image contained in an overflow:scroll block"
-        RenderText {#text} at (369,18) size 4x19
+        RenderText {#text} at (369,18) size 4x17
           text run at (369,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 748x37
+        RenderText {#text} at (0,0) size 748x35
           text run at (0,0) width 412: "There should be one contiguous highlight from \x{201C}elit\x{201D} to \x{201C}Etiam\x{201D}, "
           text run at (412,0) width 336: "including the orange square, and no other highlighted"
           text run at (0,18) width 36: "areas."
       RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
-layer at (8,122) size 100x200 clip at (8,122) size 85x200 scrollY 40 scrollHeight 289
+layer at (8,122) size 100x200 clip at (8,122) size 85x200 scrollY 40 scrollHeight 288
   RenderBlock {DIV} at (0,114) size 100x200
-    RenderText {#text} at (0,0) size 84x109
+    RenderText {#text} at (0,0) size 84x107
       text run at (0,0) width 84: "Lorem ipsum"
       text run at (0,18) width 51: "dolor sit"
       text run at (0,36) width 34: "amet,"
       text run at (0,54) width 78: "consectetuer"
       text run at (0,72) width 64: "adipiscing"
       text run at (0,90) width 27: "elit. "
-    RenderImage {IMG} at (27,95) size 10x10
-    RenderText {#text} at (37,90) size 83x199
+    RenderImage {IMG} at (27,94) size 10x10
+    RenderText {#text} at (37,90) size 83x197
       text run at (37,90) width 4: " "
       text run at (41,90) width 37: "Etiam"
       text run at (0,108) width 57: "et ipsum."

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
 layer at (550,8) size 142x435
   RenderBlock {DIV} at (100,0) size 142x435 [border: (10px solid #000000)]
     RenderBlock {P} at (26,10) size 90x415
-      RenderText {#text} at (0,0) size 91x415
+      RenderText {#text} at (0,0) size 89x415
         text run at (0,0) width 415: "This technology preview of our award winning next generation"
         text run at (18,0) width 56: "browser "
         text run at (18,56) width 359: "is a sign of things to come from Mozilla. Powerful yet"

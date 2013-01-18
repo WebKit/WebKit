@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x552
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 226x19
+        RenderText {#text} at (0,0) size 226x17
           text run at (0,0) width 226: "This is a test for regressions against "
-        RenderInline {I} at (0,0) size 762x37
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (226,0) size 348x19
+        RenderInline {I} at (0,0) size 762x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (226,0) size 348x17
               text run at (226,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8056"
-          RenderText {#text} at (574,0) size 762x37
+          RenderText {#text} at (574,0) size 762x35
             text run at (574,0) width 4: " "
             text run at (578,0) width 184: "Flexible boxes do not repaint"
             text run at (0,18) width 238: "their top, left and children's overflows"
-        RenderText {#text} at (238,18) size 4x19
+        RenderText {#text} at (238,18) size 4x17
           text run at (238,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 784x100
         RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
-            RenderText {#text} at (1,1) size 177x19
+            RenderText {#text} at (1,1) size 177x17
               text run at (1,1) width 177: "Lorem ipsum dolor sit amet."
       RenderBlock {DIV} at (0,182) size 784x100
         RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,422) size 784x100
         RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
-            RenderText {#text} at (1,1) size 98x145
+            RenderText {#text} at (1,1) size 98x143
               text run at (1,1) width 84: "Lorem ipsum"
               text run at (1,19) width 89: "dolor sit amet,"
               text run at (1,37) width 78: "consectetuer"

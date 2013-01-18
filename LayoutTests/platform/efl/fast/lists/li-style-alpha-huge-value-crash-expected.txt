@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (40,0) size 624x54
           RenderBlock {OL} at (0,0) size 624x54
             RenderListItem {LI} at (40,0) size 584x54
-              RenderListMarker at (-93,0) size 88x19: "CYWOQVJ"
-              RenderBR {BR} at (0,0) size 0x19
-              RenderText {#text} at (0,18) size 487x37
+              RenderListMarker at (-92,0) size 88x17: "CYWOQVJ"
+              RenderBR {BR} at (0,0) size 0x17
+              RenderText {#text} at (0,18) size 487x35
                 text run at (0,18) width 189: "SUCCESS (you didn't crash) "
                 text run at (189,18) width 298: "Our behavior here matches WinIE not FireFox."
                 text run at (0,36) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8542"

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 769x37
+        RenderText {#text} at (0,0) size 769x35
           text run at (0,0) width 769: "The two lime squares below should look like mirror images (with a blue rectangle filling half the left square on the left and"
           text run at (0,18) width 210: "half the right square on the right)."
 layer at (8,44) size 200x200

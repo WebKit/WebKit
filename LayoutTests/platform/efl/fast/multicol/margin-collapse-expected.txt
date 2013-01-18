@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 769x37
+        RenderText {#text} at (0,0) size 769x35
           text run at (0,0) width 480: "The two purple rectangles below should both be at the top of their columns. "
           text run at (480,0) width 289: "If one is lower than the other, than the test has"
           text run at (0,18) width 39: "failed."

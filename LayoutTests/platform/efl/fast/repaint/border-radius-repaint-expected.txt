@@ -4,23 +4,23 @@ layer at (0,0) size 800x378
   RenderBlock {HTML} at (0,0) size 800x378
     RenderBody {BODY} at (8,16) size 784x354
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 100x19
+        RenderText {#text} at (0,0) size 100x17
           text run at (0,0) width 100: "Repaint test for "
-        RenderInline {I} at (0,0) size 777x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (100,0) size 301x19
+        RenderInline {I} at (0,0) size 777x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (100,0) size 301x17
               text run at (100,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=10699"
-          RenderText {#text} at (401,0) size 777x37
+          RenderText {#text} at (401,0) size 777x35
             text run at (401,0) width 4: " "
             text run at (405,0) width 372: "div with border-radius does not redraw properly if element"
             text run at (0,18) width 122: "inside div is resized"
-        RenderText {#text} at (122,18) size 4x19
+        RenderText {#text} at (122,18) size 4x17
           text run at (122,18) width 4: "."
       RenderBlock {DIV} at (0,52) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x68 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x40 [bgcolor=#C0C0C0]
       RenderBlock (anonymous) at (0,194) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,212) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x88 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x60 [bgcolor=#C0C0C0]

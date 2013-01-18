@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (10,10) size 780x574
       RenderBlock {P} at (0,116) size 780x18
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 305x19
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 305x17
             text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=19623"
       RenderBlock {P} at (0,150) size 780x36
-        RenderText {#text} at (0,0) size 777x37
+        RenderText {#text} at (0,0) size 777x35
           text run at (0,0) width 777: "Test for incomplete repaint when a non-layer object gains a transform. You should see a green square above. If you see any"
           text run at (0,18) width 140: "red, the test has failed."
 layer at (10,10) size 100x100

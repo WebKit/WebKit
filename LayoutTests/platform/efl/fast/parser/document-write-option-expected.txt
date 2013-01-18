@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (2,2) size 437x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 381x18
-          RenderText at (0,0) size 381x19
+          RenderText at (0,0) size 381x17
             text run at (0,0) width 381: "This is a very long string so it makes the select bigger."
       RenderText {#text} at (0,0) size 0x0

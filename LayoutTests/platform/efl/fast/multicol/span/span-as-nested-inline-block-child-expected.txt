@@ -7,15 +7,15 @@ layer at (8,8) size 784x102
   RenderBlock {DIV} at (0,0) size 784x102
     RenderBlock {DIV} at (0,0) size 384x102
       RenderBlock {P} at (0,16) size 384x18
-        RenderText {#text} at (0,0) size 332x19
+        RenderText {#text} at (0,0) size 332x17
           text run at (0,0) width 332: "This text should not be spanned across two columns."
       RenderBlock {P} at (0,50) size 384x36
-        RenderText {#text} at (0,0) size 368x37
+        RenderText {#text} at (0,0) size 368x35
           text run at (0,0) width 368: "This text should be below the previous text, but still on the"
           text run at (0,18) width 24: "left."
     RenderText {#text} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 368x91
-      RenderText {#text} at (0,102) size 368x91
+    RenderInline {SPAN} at (0,0) size 368x89
+      RenderText {#text} at (0,102) size 368x89
         text run at (0,102) width 368: "The beginning of this text should start next to or below the"
         text run at (0,120) width 362: "previous text, and still in the left column. However, when"
         text run at (0,138) width 363: "made sufficiently longer than the previous block of text, it"

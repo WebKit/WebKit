@@ -5,20 +5,20 @@ layer at (0,0) size 800x292
     RenderBody {BODY} at (8,16) size 784x268
       RenderBlock {UL} at (0,0) size 784x54 [color=#000080]
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 336x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 336x17
             text run at (0,0) width 336: "You should not see the background under the border."
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 343x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 343x17
             text run at (0,0) width 343: "As you scroll the element below the cats should move."
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 296x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 296x17
             text run at (0,0) width 296: "The cats should be on a light grey background."
-layer at (8,86) size 390x198 clip at (38,116) size 315x138 scrollHeight 361
+layer at (8,86) size 390x198 clip at (38,116) size 315x138 scrollHeight 360
   RenderBlock {DIV} at (0,70) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
-    RenderText {#text} at (30,30) size 32x361
+    RenderText {#text} at (30,30) size 32x359
       text run at (30,30) width 20: "   1"
       text run at (50,30) width 0: " "
       text run at (30,48) width 20: "   2"

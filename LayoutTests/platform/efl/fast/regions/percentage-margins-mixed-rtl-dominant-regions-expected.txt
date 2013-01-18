@@ -15,7 +15,7 @@ Flow Threads
           RenderBlock {DIV} at (34,5) size 232x589 [border: (1px solid #0000FF)]
             RenderBlock {DIV} at (11,11) size 210x567 [border: (1px solid #008000)]
               RenderBlock {P} at (1,17) size 208x157
-                RenderText {#text} at (90,0) size 218x158
+                RenderText {#text} at (90,0) size 218x156
                   text run at (90,0) width 128: "This line of text"
                   text run at (90,18) width 128: "should not get out"
                   text run at (90,36) width 128: "of the region. This"
@@ -25,7 +25,7 @@ Flow Threads
                   text run at (0,121) width 208: "This line of text should not get"
                   text run at (0,139) width 108: "out of the region."
               RenderBlock {P} at (1,190) size 208x236
-                RenderText {#text} at (0,0) size 226x237
+                RenderText {#text} at (0,0) size 226x235
                   text run at (0,0) width 208: "This line of text should not get"
                   text run at (0,18) width 208: "out of the region. This line of"
                   text run at (0,36) width 208: "text should not get out of the"
@@ -40,7 +40,7 @@ Flow Threads
                   text run at (162,200) width 64: "out of the"
                   text run at (162,218) width 44: "region."
               RenderBlock {P} at (1,442) size 208x108
-                RenderText {#text} at (162,0) size 64x109
+                RenderText {#text} at (162,0) size 64x107
                   text run at (162,0) width 64: "This line"
                   text run at (162,18) width 64: "of text"
                   text run at (162,36) width 42: "should"

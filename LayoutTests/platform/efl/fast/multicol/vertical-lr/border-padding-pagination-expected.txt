@@ -8,8 +8,8 @@ layer at (8,8) size 176x584
     RenderBlock {DIV} at (2,2) size 110x282
     RenderBlock {DIV} at (174,2) size 156x379 [bgcolor=#00FF00] [border: (2px solid #000000)]
       RenderBlock {DIV} at (2,12) size 152x355 [bgcolor=#008000] [border: (2px solid #0000FF)]
-        RenderInline {SPAN} at (0,0) size 146x192
-          RenderText {#text} at (3,2) size 146x192
+        RenderInline {SPAN} at (0,0) size 145x192
+          RenderText {#text} at (3,2) size 145x192
             text run at (3,2) width 165: "In 2nd"
             text run at (77,2) width 192: "column"
         RenderText {#text} at (0,0) size 0x0

@@ -4,20 +4,20 @@ layer at (446,0) size 354x600
   RenderBlock {HTML} at (0,0) size 354x600
     RenderBody {BODY} at (8,8) size 330x584
       RenderBlock {DIV} at (0,0) size 36x584
-        RenderText {#text} at (0,0) size 37x566
+        RenderText {#text} at (0,0) size 35x566
           text run at (0,0) width 443: "The words \"flow content\" in green should display twice after this div, "
           text run at (0,443) width 123: "and there should be"
           text run at (18,0) width 234: "two copies of this content that match."
       RenderRegion {DIV} at (36,0) size 112x312 [border: (1px solid #000000)]
       RenderRegion {DIV} at (148,0) size 112x312 [border: (1px solid #000000)]
       RenderBlock {DIV} at (260,0) size 36x584
-        RenderText {#text} at (0,0) size 37x556
+        RenderText {#text} at (0,0) size 35x556
           text run at (0,0) width 405: "The words \"flow content\" in green should display after this div, "
           text run at (0,405) width 151: "and there should be two"
           text run at (18,0) width 206: "copies of this content that match."
       RenderBlock {DIV} at (312,0) size 18x584 [color=#008000]
         RenderBlock {P} at (0,0) size 18x584
-          RenderText {#text} at (0,0) size 19x79
+          RenderText {#text} at (0,0) size 17x79
             text run at (0,0) width 79: "flow content"
 Flow Threads
   Thread with flow-name 'main-thread'
@@ -25,10 +25,10 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 200x300
         RenderBlock {DIV} at (0,0) size 200x300 [color=#008000]
           RenderBlock {DIV} at (0,0) size 100x300
-            RenderText {#text} at (0,0) size 19x107
+            RenderText {#text} at (0,0) size 17x107
               text run at (0,0) width 107: "first flow content"
           RenderBlock {DIV} at (100,0) size 100x300
-            RenderText {#text} at (0,0) size 19x127
+            RenderText {#text} at (0,0) size 17x127
               text run at (0,0) width 127: "second flow content"
   Regions for flow 'main-thread'
     RenderRegion {DIV} #region1

@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 506x505
   RenderBlock {DIV} at (0,0) size 506x505 [border: (3px solid #000000)]
-layer at (11,11) size 158x1454 backgroundClip at (11,11) size 158x589 clip at (11,11) size 158x589 outlineClip at (0,0) size 800x600
-  RenderBlock {DIV} at (3,3) size 158x1454
+layer at (11,11) size 159x1454 backgroundClip at (11,11) size 159x589 clip at (11,11) size 159x589 outlineClip at (0,0) size 800x600
+  RenderBlock {DIV} at (3,3) size 159x1454
     RenderText {#text} at (0,5) size 158x1444
       text run at (0,5) width 158: "Lorem ipsum dolor sit amet,"
       text run at (0,29) width 158: "consectetur adipiscing elit."

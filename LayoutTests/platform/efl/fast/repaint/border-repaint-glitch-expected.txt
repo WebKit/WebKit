@@ -4,28 +4,28 @@ layer at (0,0) size 800x476
   RenderBlock {HTML} at (0,0) size 800x476
     RenderBody {BODY} at (8,16) size 784x452
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {B} at (0,0) size 62x19
-          RenderText {#text} at (0,0) size 62x19
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
             text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x19
+        RenderText {#text} at (62,0) size 4x17
           text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
-          RenderText {#text} at (66,0) size 117x19
+        RenderInline {A} at (0,0) size 117x17 [color=#0000EE]
+          RenderText {#text} at (66,0) size 117x17
             text run at (66,0) width 117: "Bugzilla bug 6301"
-        RenderText {#text} at (183,0) size 243x19
+        RenderText {#text} at (183,0) size 243x17
           text run at (183,0) width 243: " REGRESSION: Border repaint glitch"
       RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x19
-          RenderText {#text} at (3,3) size 91x19
+        RenderInline {B} at (0,0) size 91x17
+          RenderText {#text} at (3,3) size 91x17
             text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 439x19
+        RenderText {#text} at (94,3) size 439x17
           text run at (94,3) width 4: " "
           text run at (98,3) width 435: "The boxes will resize, maintaining their solid red rectangular borders."
       RenderBlock {P} at (0,74) size 784x60 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x19
-          RenderText {#text} at (3,3) size 90x19
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
             text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 757x55
+        RenderText {#text} at (93,3) size 757x53
           text run at (93,3) width 4: " "
           text run at (97,3) width 663: "The boxes will resize, but the borders will break. The first box will be missing small segments from either"
           text run at (3,21) width 756: "side of its bottom border. The second box will have small red horizontal segments protruding inwards from both sides of"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x476
         RenderBlock {DIV} at (11,11) size 200x68 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x40 [bgcolor=#C0C0C0]
       RenderBlock (anonymous) at (0,292) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,310) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x88 [bgcolor=#008080] [border: (4px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 172x60 [bgcolor=#C0C0C0]

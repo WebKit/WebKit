@@ -4,7 +4,7 @@ layer at (0,0) size 800x482
   RenderBlock {HTML} at (0,0) size 800x482
     RenderBody {BODY} at (8,16) size 784x458
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 772x37
+        RenderText {#text} at (0,0) size 772x35
           text run at (0,0) width 772: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself and"
           text run at (0,18) width 195: "clips differently in each region."
       RenderBlock {DIV} at (0,52) size 784x406
@@ -17,29 +17,29 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 300x400
         RenderBlock {DIV} at (0,0) size 300x359
           RenderBlock {DIV} at (5,5) size 290x349 [border: (1px solid #0000FF)]
-    layer at (41,6) size 218x347 clip at (42,7) size 216x345 scrollX 284 scrollWidth 500 scrollHeight 346
+    layer at (41,6) size 218x347 clip at (42,7) size 216x345 scrollX 284 scrollWidth 500
       RenderBlock (relative positioned) {DIV} at (36,1) size 218x347 [border: (1px solid #008000)]
         RenderBlock {P} at (1,35) size 216x131
-          RenderText {#text} at (88,0) size 229x132
-            text run at (88,0) width 141: "These lines will not"
-            text run at (88,18) width 141: "spill out of the"
-            text run at (88,36) width 141: "regions. These lines"
+          RenderText {#text} at (88,0) size 228x130
+            text run at (88,0) width 140: "These lines will not"
+            text run at (88,18) width 140: "spill out of the"
+            text run at (88,36) width 140: "regions. These lines"
             text run at (0,59) width 216: "will not spill out of the regions."
             text run at (0,77) width 216: "These lines will not spill out of"
             text run at (0,95) width 216: "the regions. These lines will not"
             text run at (72,113) width 4 RTL: "."
             text run at (76,113) width 140: "spill out of the regions"
         RenderBlock {P} at (1,182) size 216x128
-          RenderText {#text} at (0,0) size 239x129
+          RenderText {#text} at (0,0) size 238x127
             text run at (0,0) width 216: "These lines will not spill out of"
             text run at (0,18) width 216: "the regions. These lines will not"
             text run at (0,36) width 178: "spill out of the regions. "
             text run at (178,36) width 38: "These"
             text run at (0,54) width 216: "lines will not spill out of the"
             text run at (0,72) width 216: "regions. These lines will not spill"
-            text run at (158,92) width 81: "out of the"
-            text run at (189,110) width 4 RTL: "."
-            text run at (193,110) width 46: "regions"
+            text run at (158,92) width 80: "out of the"
+            text run at (188,110) width 4 RTL: "."
+            text run at (192,110) width 46: "regions"
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1
     RenderRegion {DIV} #region2

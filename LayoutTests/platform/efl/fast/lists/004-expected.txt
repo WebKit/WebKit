@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 54x24 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 50x20
-          RenderTableRow {TR} at (0,0) size 50x20
-            RenderTableCell {TD} at (0,0) size 17x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderListItem {LI} at (1,1) size 15x18
-                RenderListMarker at (-1,0) size 7x19: bullet
-                RenderImage {IMG} at (15,15) size 0x0
-            RenderTableCell {TD} at (17,0) size 33x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 31x19
+      RenderTable {TABLE} at (0,0) size 53x24 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 49x20
+          RenderTableRow {TR} at (0,0) size 49x20
+            RenderTableCell {TD} at (0,0) size 16x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderListItem {LI} at (1,1) size 14x18
+                RenderListMarker at (-1,0) size 7x17: bullet
+                RenderImage {IMG} at (14,14) size 0x0
+            RenderTableCell {TD} at (16,0) size 33x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 31x17
                 text run at (1,1) width 31: "hello"

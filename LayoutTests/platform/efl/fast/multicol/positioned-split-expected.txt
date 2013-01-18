@@ -9,18 +9,18 @@ layer at (8,8) size 784x304
     RenderBlock {DIV} at (2,252) size 382x250
 layer at (10,260) size 300x200
   RenderBlock (positioned) {DIV} at (0,0) size 300x200 [bgcolor=#D3D3D3]
-    RenderText {#text} at (0,0) size 285x19
+    RenderText {#text} at (0,0) size 285x17
       text run at (0,0) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,15) size 0x0
-    RenderText {#text} at (0,18) size 285x19
+    RenderBR {BR} at (285,14) size 0x0
+    RenderText {#text} at (0,18) size 285x17
       text run at (0,18) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,33) size 0x0
-    RenderText {#text} at (0,50) size 285x19
+    RenderBR {BR} at (285,32) size 0x0
+    RenderText {#text} at (0,50) size 285x17
       text run at (0,50) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,65) size 0x0
-    RenderText {#text} at (0,68) size 285x19
+    RenderBR {BR} at (285,64) size 0x0
+    RenderText {#text} at (0,68) size 285x17
       text run at (0,68) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,83) size 0x0
-    RenderText {#text} at (0,86) size 285x19
+    RenderBR {BR} at (285,82) size 0x0
+    RenderText {#text} at (0,86) size 285x17
       text run at (0,86) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,101) size 0x0
+    RenderBR {BR} at (285,100) size 0x0
