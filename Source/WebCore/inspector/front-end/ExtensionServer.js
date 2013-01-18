@@ -333,11 +333,12 @@ WebInspector.ExtensionServer.prototype = {
             if (error) {
                 result.isException = true;
                 result.value = error.toString();
-            }  else
-                result.value = resultPayload.value;
-
-            if (wasThrown)
+            }  else if (wasThrown) {
                 result.isException = true;
+                result.value = resultPayload.description;
+            } else {
+                result.value = resultPayload.value;
+            }
       
             this._dispatchCallback(message.requestId, port, result);
         }

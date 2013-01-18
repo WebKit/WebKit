@@ -12,6 +12,8 @@ RUNNING TEST: extension_testEvalStatement
 Evaluate: 0 (exception: undefined)
 RUNNING TEST: extension_testEvalStringifyingLoopFailed
 Evaluate: "Object has too long reference chain(must not be longer than 1000)" (exception: true)
+RUNNING TEST: extension_testEvalThrows
+Evaluate: "testExceptionString" (exception: true)
 RUNNING TEST: extension_testEvalUndefined
 Evaluate: undefined (exception: undefined)
 RUNNING TEST: extension_testWithStringifyOverridden

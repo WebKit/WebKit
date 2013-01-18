@@ -46,6 +46,11 @@ function extension_testWithStringifyOverridden(nextTest)
     webInspector.inspectedWindow.eval("(JSON.stringify = function() { throw 'oops! you can not use JSON.stringify'; }), 'OK'", callbackAndNextTest(extension_onEval, nextTest));
 }
 
+function extension_testEvalThrows(nextTest)
+{
+    webInspector.inspectedWindow.eval("throw('testExceptionString')", callbackAndNextTest(extension_onEval, nextTest));
+}
+
 function extension_onEval(value, isException)
 {
     output("Evaluate: " + JSON.stringify(value) + " (exception: " + isException + ")");
