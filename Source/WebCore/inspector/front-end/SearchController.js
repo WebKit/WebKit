@@ -252,6 +252,7 @@ WebInspector.SearchController.prototype = {
         var selection = window.getSelection();
         if (selection.rangeCount)
             this._searchInputElement.value = selection.toString().replace(/\r?\n.*/, "");
+        this._performSearch(this._searchInputElement.value, true, false);
         this._searchInputElement.focus();
         this._searchInputElement.select();
         this._searchIsVisible = true;
