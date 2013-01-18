@@ -89,6 +89,7 @@ class XMLHttpRequest;
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (!hasFrontends()) return value;
 
 class InspectorInstrumentationCookie {
+#if ENABLE(INSPECTOR)
 public:
     InspectorInstrumentationCookie();
     InspectorInstrumentationCookie(InstrumentingAgents*, int);
@@ -104,6 +105,7 @@ private:
 
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     int m_timelineAgentId;
+#endif
 };
 
 class InspectorInstrumentation {
