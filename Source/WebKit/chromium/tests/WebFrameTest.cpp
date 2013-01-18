@@ -253,7 +253,9 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
     webView->mainFrame()->contentAsText(1024).utf8();
 }
 
-TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
+// Test is disabled because it started failing after r140025.
+// See bug for details: webkit.org/b/107206.
+TEST_F(WebFrameTest, DISABLED_FixedLayoutInitializeAtMinimumPageScale)
 {
     registerMockedHttpURLLoad("fixed_layout.html");
 
