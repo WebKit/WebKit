@@ -47,6 +47,9 @@ static void checkThatTokensAreSafeToSendToAnotherThread(const Vector<CompactHTML
 
 #endif
 
+// FIXME: Tune this constant based on a benchmark. The current value was choosen arbitrarily.
+static const size_t pendingTokenLimit = 4000;
+
 typedef const void* ParserIdentifier;
 class HTMLDocumentParser;
 
@@ -157,11 +160,10 @@ void BackgroundHTMLParser::pumpTokenizer()
         // FIXME: Need to set setForceNullCharacterReplacement based on m_inForeignContent as well.
         m_tokenizer->setShouldAllowCDATA(m_inForeignContent);
         m_token.clear();
-    }
 
-#ifndef NDEBUG
-    checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens);
-#endif
+        if (m_pendingTokens.size() >= pendingTokenLimit)
+            sendTokensToMainThread();
+    }
 
     sendTokensToMainThread();
 }
@@ -199,6 +201,15 @@ public:
 
 void BackgroundHTMLParser::sendTokensToMainThread()
 {
+    if (m_pendingTokens.isEmpty()) {
+        ASSERT(!m_isPausedWaitingForScripts);
+        return;
+    }
+
+#ifndef NDEBUG
+    checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens);
+#endif
+
     TokenDelivery* delivery = new TokenDelivery;
     delivery->identifier = m_parserIdentifer;
     delivery->tokens.swap(m_pendingTokens);
