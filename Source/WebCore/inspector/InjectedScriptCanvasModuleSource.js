@@ -92,12 +92,12 @@ var TypeUtils = {
             // Special case for Images with Blob URIs: cloneNode will fail if the Blob URI has already been revoked.
             // FIXME: Maybe this is a bug in WebKit core?
             if (/^blob:/.test(img.src))
-                return TypeUtils.cloneIntoCanvas(img, img.width, img.height);
+                return TypeUtils.cloneIntoCanvas(img);
             return img.cloneNode(true);
         }
 
         if (obj instanceof HTMLCanvasElement)
-            return TypeUtils.cloneIntoCanvas(obj, obj.width, obj.height);
+            return TypeUtils.cloneIntoCanvas(obj);
 
         if (obj instanceof HTMLVideoElement)
             return TypeUtils.cloneIntoCanvas(obj, obj.videoWidth, obj.videoHeight);
@@ -117,15 +117,15 @@ var TypeUtils = {
 
     /**
      * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} obj
-     * @param {number} width
-     * @param {number} height
+     * @param {number=} width
+     * @param {number=} height
      * @return {HTMLCanvasElement}
      */
     cloneIntoCanvas: function(obj, width, height)
     {
         var canvas = /** @type {HTMLCanvasElement} */ (inspectedWindow.document.createElement("canvas"));
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = width || +obj.width;
+        canvas.height = height || +obj.height;
         var context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
         context.drawImage(obj, 0, 0);
         return canvas;
@@ -734,6 +734,15 @@ Resource.prototype = {
         delete this._calculatingContextResource;
         console.assert(result, "Failed to find context resource for " + this._name + "@" + this._kindId);
         return result;
+    },
+
+    /**
+     * @return {string}
+     */
+    toDataURL: function()
+    {
+        var contextResource = this.contextResource();
+        return contextResource === this ? "" : contextResource.toDataURL();
     },
 
     /**
@@ -1599,12 +1608,10 @@ WebGLRenderbufferResource.prototype = {
  * @constructor
  * @extends {ContextResource}
  * @param {!WebGLRenderingContext} glContext
- * @param {function():WebGLRenderingContext} replayContextCallback
  */
-function WebGLRenderingContextResource(glContext, replayContextCallback)
+function WebGLRenderingContextResource(glContext)
 {
     ContextResource.call(this, glContext, "WebGLRenderingContext");
-    this._replayContextCallback = replayContextCallback;
     /** @type {Object.<number, boolean>} */
     this._customErrors = null;
     /** @type {!Object.<string, boolean>} */
@@ -1719,6 +1726,15 @@ WebGLRenderingContextResource.prototype = {
     },
 
     /**
+     * @override
+     * @return {string}
+     */
+    toDataURL: function()
+    {
+        return this.wrappedObject().canvas.toDataURL();
+    },
+
+    /**
      * @return {Array.<number>}
      */
     getAllErrors: function()
@@ -1808,7 +1824,8 @@ WebGLRenderingContextResource.prototype = {
     _populateReplayableData: function(data, cache)
     {
         var gl = this.wrappedObject();
-        data.replayContextCallback = this._replayContextCallback;
+        data.originalCanvas = gl.canvas;
+        data.originalContextAttributes = gl.getContextAttributes();
         data.extensions = TypeUtils.cloneObject(this._extensions);
 
         var originalErrors = this.getAllErrors();
@@ -1863,11 +1880,19 @@ WebGLRenderingContextResource.prototype = {
      */
     _doReplayCalls: function(data, cache)
     {
-        this._replayContextCallback = data.replayContextCallback;
         this._customErrors = null;
         this._extensions = TypeUtils.cloneObject(data.extensions) || {};
 
-        var gl = /** @type {!WebGLRenderingContext} */ (Resource.wrappedObject(this._replayContextCallback()));
+        var canvas = data.originalCanvas.cloneNode(true);
+        var replayContext = null;
+        var contextIds = ["experimental-webgl", "webkit-3d", "3d"];
+        for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
+            replayContext = canvas.getContext(contextId, data.originalContextAttributes);
+            if (replayContext)
+                break;
+        }
+
+        var gl = /** @type {!WebGLRenderingContext} */ (Resource.wrappedObject(replayContext));
         this.setWrappedObject(gl);
 
         // Enable corresponding WebGL extensions.
@@ -2186,12 +2211,10 @@ WebGLRenderingContextResource.prototype = {
  * @constructor
  * @extends {ContextResource}
  * @param {!CanvasRenderingContext2D} context
- * @param {function():CanvasRenderingContext2D} replayContextCallback
  */
-function CanvasRenderingContext2DResource(context, replayContextCallback)
+function CanvasRenderingContext2DResource(context)
 {
     ContextResource.call(this, context, "CanvasRenderingContext2D");
-    this._replayContextCallback = replayContextCallback;
 }
 
 /**
@@ -2260,19 +2283,22 @@ CanvasRenderingContext2DResource.prototype = {
 
     /**
      * @override
+     * @return {string}
+     */
+    toDataURL: function()
+    {
+        return this.wrappedObject().canvas.toDataURL();
+    },
+
+    /**
+     * @override
      * @param {!Object} data
      * @param {!Cache} cache
      */
     _populateReplayableData: function(data, cache)
     {
-        data.replayContextCallback = this._replayContextCallback;
         data.currentAttributes = this._currentAttributesState();
-        var ctx = this.wrappedObject();
-        try {
-            data.originalImageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-        } catch (e) {
-            console.error("ASSERT_NOT_REACHED: getImageData failed.", e);
-        }
+        data.originalCanvasCloned = TypeUtils.cloneIntoCanvas(this.wrappedObject().canvas);
     },
 
     /**
@@ -2282,21 +2308,12 @@ CanvasRenderingContext2DResource.prototype = {
      */
     _doReplayCalls: function(data, cache)
     {
-        this._replayContextCallback = data.replayContextCallback;
-
-        var ctx = /** @type {!CanvasRenderingContext2D} */ (Resource.wrappedObject(this._replayContextCallback()));
+        var canvas = TypeUtils.cloneIntoCanvas(data.originalCanvasCloned);
+        var ctx = /** @type {!CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
         this.setWrappedObject(ctx);
 
-        if (data.originalImageData) {
-            try {
-                ctx.putImageData(data.originalImageData, 0, 0);
-            } catch (e) {
-                console.error("ASSERT_NOT_REACHED: putImageData failed.", e);
-            }
-        }
-
         for (var i = 0, n = data.calls.length; i < n; ++i) {
-            var replayableCall = data.calls[i];
+            var replayableCall = /** @type {ReplayableCall} */ (data.calls[i]);
             if (replayableCall.functionName() === "save")
                 this._applyAttributesState(replayableCall.attachment("canvas2dAttributesState"));
             this._calls.push(replayableCall.replay(cache));
@@ -2609,9 +2626,8 @@ TraceLog.prototype = {
 /**
  * @constructor
  * @param {!TraceLog} traceLog
- * @param {function()=} resetCallback
  */
-function TraceLogPlayer(traceLog, resetCallback)
+function TraceLogPlayer(traceLog)
 {
     /** @type {!TraceLog} */
     this._traceLog = traceLog;
@@ -2619,8 +2635,6 @@ function TraceLogPlayer(traceLog, resetCallback)
     this._nextReplayStep = 0;
     /** @type {!Cache} */
     this._replayWorldCache = new Cache();
-    /** @type {function()|undefined} */
-    this._resetCallback = resetCallback;
 }
 
 TraceLogPlayer.prototype = {
@@ -2644,8 +2658,6 @@ TraceLogPlayer.prototype = {
     {
         this._nextReplayStep = 0;
         this._replayWorldCache.reset();
-        if (this._resetCallback)
-            this._resetCallback();
     },
 
     /**
@@ -2799,10 +2811,8 @@ var InjectedCanvasModule = function()
     this._lastTraceLogId = 0;
     /** @type {!Object.<string, TraceLog>} */
     this._traceLogs = {};
-    /** @type {TraceLogPlayer} */
-    this._traceLogPlayer = null;
-    /** @type {!Array.<{type: string, context: Object}>} */
-    this._replayContexts = [];
+    /** @type {!Object.<string, TraceLogPlayer>} */
+    this._traceLogPlayers = {};
 }
 
 InjectedCanvasModule.prototype = {
@@ -2812,7 +2822,7 @@ InjectedCanvasModule.prototype = {
      */
     wrapWebGLContext: function(glContext)
     {
-        var resource = Resource.forObject(glContext) || new WebGLRenderingContextResource(glContext, this._constructWebGLReplayContext.bind(this, glContext));
+        var resource = Resource.forObject(glContext) || new WebGLRenderingContextResource(glContext);
         this._manager.registerResource(resource);
         return resource.proxyObject();
     },
@@ -2823,7 +2833,7 @@ InjectedCanvasModule.prototype = {
      */
     wrapCanvas2DContext: function(context)
     {
-        var resource = Resource.forObject(context) || new CanvasRenderingContext2DResource(context, this._constructCanvas2DReplayContext.bind(this, context));
+        var resource = Resource.forObject(context) || new CanvasRenderingContext2DResource(context);
         this._manager.registerResource(resource);
         return resource.proxyObject();
     },
@@ -2880,11 +2890,8 @@ InjectedCanvasModule.prototype = {
     dropTraceLog: function(id)
     {
         this.stopCapturing(id);
-        if (this._traceLogPlayer && this._traceLogPlayer.traceLog() === this._traceLogs[id]) {
-            this._traceLogPlayer = null;
-            this._replayContexts = [];
-        }
         delete this._traceLogs[id];
+        delete this._traceLogPlayers[id];
     },
 
     /**
@@ -2954,24 +2961,9 @@ InjectedCanvasModule.prototype = {
         var traceLog = this._traceLogs[id];
         if (!traceLog)
             return "";
-        if (!this._traceLogPlayer || this._traceLogPlayer.traceLog() !== traceLog) {
-            this._replayContexts = [];
-            this._traceLogPlayer = new TraceLogPlayer(traceLog, this._onTraceLogPlayerReset.bind(this));
-        }
-        var lastCall = this._traceLogPlayer.stepTo(stepNo);
-        if (!this._replayContexts.length) {
-            console.error("ASSERT_NOT_REACHED: replayTraceLog failed to create a replay canvas?!");
-            return "";
-        }
-        // FIXME: Support replaying several canvases simultaneously.
-        var lastCallResourceContext = Resource.wrappedObject(lastCall.resource());
-        for (var i = 0, n = this._replayContexts.length; i < n; ++i) {
-            var context = this._replayContexts[i].context;
-            if (lastCallResourceContext === context)
-                return context.canvas.toDataURL();
-        }
-        console.assert("ASSERT_NOT_REACHED: replayTraceLog failed to match the replaying canvas?!");
-        return this._replayContexts[0].context.canvas.toDataURL();
+        this._traceLogPlayers[id] = this._traceLogPlayers[id] || new TraceLogPlayer(traceLog);
+        var lastCall = this._traceLogPlayers[id].stepTo(stepNo);
+        return lastCall.resource().toDataURL();
     },
 
     /**
@@ -2989,50 +2981,6 @@ InjectedCanvasModule.prototype = {
     _makeContextId: function(resourceId)
     {
         return "{\"injectedScriptId\":" + injectedScriptId + ",\"canvasContextId\":" + resourceId + "}";
-    },
-
-    _onTraceLogPlayerReset: function()
-    {
-        this._replayContexts = [];
-    },
-
-    /**
-     * @param {!WebGLRenderingContext} originalGlContext
-     * @return {WebGLRenderingContext}
-     */
-    _constructWebGLReplayContext: function(originalGlContext)
-    {
-        var canvas = originalGlContext.canvas.cloneNode(true);
-        var attributes = originalGlContext.getContextAttributes();
-        var contextIds = ["experimental-webgl", "webkit-3d", "3d"];
-        for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
-            var replayContext = canvas.getContext(contextId, attributes);
-            if (replayContext) {
-                replayContext = /** @type {WebGLRenderingContext} */ (Resource.wrappedObject(replayContext));
-                this._replayContexts.push({
-                    type: "3d",
-                    context: replayContext
-                });
-                return replayContext;
-            }
-        }
-        return null;
-    },
-
-    /**
-     * @param {!CanvasRenderingContext2D} originalContext
-     * @return {CanvasRenderingContext2D}
-     */
-    _constructCanvas2DReplayContext: function(originalContext)
-    {
-        // Create a new 2D context each time to start with an empty context drawing state stack (managed by save() and restore() methods).
-        var canvas = originalContext.canvas.cloneNode(true);
-        var replayContext = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
-        this._replayContexts.push({
-            type: "2d",
-            context: replayContext
-        });
-        return replayContext;
     }
 }
 
