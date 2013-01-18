@@ -27,7 +27,6 @@
 
 #include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
-#include "ImageLoaderClient.h"
 #include "StepRange.h"
 
 namespace WebCore {
@@ -43,7 +42,7 @@ class KURL;
 class ListAttributeTargetObserver;
 struct DateTimeChooserParameters;
 
-class HTMLInputElement : public HTMLTextFormControlElement, public ImageLoaderClientBase<HTMLInputElement> {
+class HTMLInputElement : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();

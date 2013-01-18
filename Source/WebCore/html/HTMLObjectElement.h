@@ -25,7 +25,6 @@
 
 #include "FormAssociatedElement.h"
 #include "HTMLPlugInImageElement.h"
-#include "ImageLoaderClient.h"
 
 namespace WebCore {
 

@@ -1,5 +1,0 @@
-This test ensures that image map works in img with Shadow DOM.
-
-PASS
-PASS
-PASS

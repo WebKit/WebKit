@@ -3605,8 +3605,6 @@ webcore_sources += \
 	Source/WebCore/html/shadow/HTMLContentElement.h \
 	Source/WebCore/html/shadow/InsertionPoint.cpp \
 	Source/WebCore/html/shadow/InsertionPoint.h \
-	Source/WebCore/html/shadow/ImageInnerElement.cpp \
-	Source/WebCore/html/shadow/ImageInnerElement.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \
 	Source/WebCore/html/shadow/MediaControlElements.h \
 	Source/WebCore/html/shadow/MediaControlElementTypes.cpp \
@@ -3966,7 +3964,6 @@ webcore_sources += \
 	Source/WebCore/loader/icon/PageURLRecord.h \
 	Source/WebCore/loader/ImageLoader.cpp \
 	Source/WebCore/loader/ImageLoader.h \
-	Source/WebCore/loader/ImageLoaderClient.h \
 	Source/WebCore/loader/LinkLoader.h \
 	Source/WebCore/loader/LinkLoader.cpp \
 	Source/WebCore/loader/LinkLoaderClient.h \

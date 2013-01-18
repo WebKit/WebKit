@@ -1,3 +1,0 @@
-This test confirms img element can listen an event from its Shadow DOM.
-
-PASS

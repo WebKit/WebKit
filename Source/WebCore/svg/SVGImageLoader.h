@@ -29,7 +29,7 @@ class SVGImageElement;
 
 class SVGImageLoader : public ImageLoader {
 public:
-    SVGImageLoader(ImageLoaderClient*);
+    SVGImageLoader(SVGImageElement*);
 
 private:
     virtual void dispatchLoadEvent();

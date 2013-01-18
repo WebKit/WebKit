@@ -1117,10 +1117,6 @@ progress::-webkit-progress-value {
 
 /* inline elements */
 
-img {
-    display: inline-block;
-}
-
 u, ins {
     text-decoration: underline
 }

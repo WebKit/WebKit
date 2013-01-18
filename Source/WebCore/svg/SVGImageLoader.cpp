@@ -26,23 +26,22 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLParserIdioms.h"
-#include "ImageLoaderClient.h"
 #include "RenderImage.h"
 #include "SVGImageElement.h"
 
 namespace WebCore {
 
-SVGImageLoader::SVGImageLoader(ImageLoaderClient* client)
-    : ImageLoader(client)
+SVGImageLoader::SVGImageLoader(SVGImageElement* node)
+    : ImageLoader(node)
 {
 }
 
 void SVGImageLoader::dispatchLoadEvent()
 {
     if (image()->errorOccurred())
-        client()->imageElement()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+        element()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
     else {
-        SVGImageElement* imageElement = static_cast<SVGImageElement*>(client()->imageElement());
+        SVGImageElement* imageElement = static_cast<SVGImageElement*>(element());
         if (imageElement->externalResourcesRequiredBaseValue())
             imageElement->sendSVGLoadEventIfPossible(true);
     }
@@ -50,10 +49,10 @@ void SVGImageLoader::dispatchLoadEvent()
 
 String SVGImageLoader::sourceURI(const AtomicString& attribute) const
 {
-    KURL base = client()->sourceElement()->baseURI();
+    KURL base = element()->baseURI();
     if (base.isValid())
         return KURL(base, stripLeadingAndTrailingHTMLSpaces(attribute)).string();
-    return client()->sourceElement()->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attribute));
+    return element()->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attribute));
 }
 
 }

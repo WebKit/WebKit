@@ -1,5 +1,0 @@
-PASS selectedString is "KotoriPiyo"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
