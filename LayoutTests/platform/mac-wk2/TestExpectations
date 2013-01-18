@@ -354,7 +354,6 @@ storage/websql/statement-error-callback-isolated-world.html
 
 # All tests that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
 http/tests/cookies/simple-cookies-max-age.html
-fast/events/drag-selects-image.html
 fast/workers/worker-cloneport.html
 
 # All additional tests that failed more than once on the Lion WebKit2 Release bot between r111814 and r111865
