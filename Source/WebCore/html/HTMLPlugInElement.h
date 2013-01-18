@@ -25,7 +25,6 @@
 
 #include "HTMLFrameOwnerElement.h"
 #include "Image.h"
-#include "ImageLoaderClient.h"
 
 #include "ScriptInstance.h"
 
