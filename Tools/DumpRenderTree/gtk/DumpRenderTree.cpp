@@ -650,6 +650,15 @@ void dump()
     gtk_main_quit();
 }
 
+static CString temporaryDatabaseDirectory()
+{
+    const char* directoryFromEnvironment = g_getenv("DUMPRENDERTREE_TEMP");
+    if (directoryFromEnvironment)
+        return directoryFromEnvironment;
+    GOwnPtr<char> fallback(g_build_filename(g_get_user_data_dir(), "gtkwebkitdrt", "databases", NULL));
+    return fallback.get();
+}
+
 static void setDefaultsToConsistentStateValuesForTesting()
 {
     resetDefaultsToConsistentValues();
@@ -658,9 +667,7 @@ static void setDefaultsToConsistentStateValuesForTesting()
     webkit_web_settings_add_extra_plugin_directory(webView, TEST_PLUGIN_DIR);
 #endif
 
-    gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "gtkwebkitdrt", "databases", NULL);
-    webkit_set_web_database_directory_path(databaseDirectory);
-    g_free(databaseDirectory);
+    webkit_set_web_database_directory_path(temporaryDatabaseDirectory().data());
 
 #if defined(GTK_API_VERSION_2)
     gtk_rc_parse_string("style \"nix_scrollbar_spacing\"                    "

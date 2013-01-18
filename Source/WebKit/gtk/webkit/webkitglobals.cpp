@@ -570,3 +570,8 @@ void webkitInit()
 
     atexit(webkitExit);
 }
+
+const char* webkitPageGroupName()
+{
+    return "org.webkit.gtk.WebKitGTK";
+}

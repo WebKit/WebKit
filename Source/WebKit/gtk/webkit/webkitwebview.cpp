@@ -3659,7 +3659,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // as visited link coloration (across pages) and changing popup window location will not work.
     // To keep the default behavior simple (and because no PageGroup API exist in WebKitGTK at the
     // time of writing this comment), we simply set all the pages to the same group.
-    priv->corePage->setGroupName("org.webkit.gtk.WebKitGTK");
+    priv->corePage->setGroupName(webkitPageGroupName());
 
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.

@@ -1,3 +1,26 @@
+2013-01-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add property for IndexedDB database path to WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=106136
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Make the web database directory affect both the legacy SQLite web
+        database API and the newer indexed database API. This will allow us
+        to run IDB tests in WebKit1.
+
+        * webkit/webkitglobals.cpp:
+        (webkitPageGroupName): Added this helper to get the default page
+        group name.
+        * webkit/webkitglobalsprivate.h: Added a declaration for the helper.
+        * webkit/webkitwebdatabase.cpp:
+        (webkit_get_web_database_directory_path): Just return the cached value.
+        This is always set by webkitInit.
+        (webkit_set_web_database_directory_path): Set both the IDB and legacy
+        database paths.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Use the new page group name helper.
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient

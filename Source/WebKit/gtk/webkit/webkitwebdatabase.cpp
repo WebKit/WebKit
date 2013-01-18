@@ -22,6 +22,9 @@
 
 #include "DatabaseDetails.h"
 #include "DatabaseManager.h"
+#include "FileSystem.h"
+#include "GroupSettings.h"
+#include "PageGroup.h"
 #include "webkitglobalsprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include <glib/gi18n-lib.h>
@@ -74,7 +77,7 @@ struct _WebKitWebDatabasePrivate {
     gchar* filename;
 };
 
-static gchar* webkit_database_directory_path = NULL;
+static CString gWebKitWebDatabasePath;
 static guint64 webkit_default_database_quota = 5 * 1024 * 1024;
 
 static void webkit_web_database_set_security_origin(WebKitWebDatabase* webDatabase, WebKitSecurityOrigin* security_origin);
@@ -457,47 +460,40 @@ void webkit_remove_all_web_databases()
  * webkit_get_web_database_directory_path:
  *
  * Returns the current path to the directory WebKit will write Web 
- * Database databases. By default this path will be in the user data
- * directory.
+ * Database and Indexed Database databases. By default this path will
+ * be in the user data directory.
  *
- * Returns: the current database directory path
+ * Returns: the current database directory path in the filesystem encoding
  *
  * Since: 1.1.14
  **/
 const gchar* webkit_get_web_database_directory_path()
 {
-#if ENABLE(SQL_DATABASE)
-    WTF::String path = WebCore::DatabaseManager::manager().databaseDirectoryPath();
-
-    if (path.isEmpty())
-        return "";
-
-    g_free(webkit_database_directory_path);
-    webkit_database_directory_path = g_strdup(path.utf8().data());
-    return webkit_database_directory_path;
-#else
-    return "";
-#endif
+    return gWebKitWebDatabasePath.data();
 }
 
 /**
  * webkit_set_web_database_directory_path:
- * @path: the new database directory path
+ * @path: the new database directory path in the filesystem encoding
  *
  * Sets the current path to the directory WebKit will write Web 
- * Database databases. 
+ * Database and Indexed Database databases. 
  *
  * Since: 1.1.14
  **/
 void webkit_set_web_database_directory_path(const gchar* path)
 {
-#if ENABLE(SQL_DATABASE)
-    WTF::String corePath = WTF::String::fromUTF8(path);
-    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(corePath);
+    gWebKitWebDatabasePath = path;
 
-    g_free(webkit_database_directory_path);
-    webkit_database_directory_path = g_strdup(corePath.utf8().data());
+    String pathString = WebCore::filenameToString(path);
+#if ENABLE(SQL_DATABASE)
+    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(pathString);
 #endif
+
+#if ENABLE(INDEXED_DATABASE)
+    WebCore::PageGroup::pageGroup(webkitPageGroupName())->groupSettings()->setIndexedDBDatabasePath(pathString);
+#endif
+
 }
 
 /**

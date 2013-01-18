@@ -33,6 +33,7 @@
 extern "C" {
 
 void webkitInit();
+const char* webkitPageGroupName();
 
 }
 

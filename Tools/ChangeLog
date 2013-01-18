@@ -1,3 +1,20 @@
+2013-01-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add property for IndexedDB database path to WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=106136
+
+        Reviewed by Gustavo Noronha Silva.
+
+        During testing, set the web database directory to DUMPRENDERTREE_TEMP
+        before falling back to the old default. This is necessary because
+        indexed database tests require that each DRT shard is using a different
+        IDB database location.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (temporaryDatabaseDirectory): Added this helper for getting the
+        database directory.
+        (setDefaultsToConsistentStateValuesForTesting): Use the new helper.
+
 2013-01-18  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Enable API test InjectedBundleFrameHitTest on EFL
