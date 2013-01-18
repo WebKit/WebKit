@@ -4317,6 +4317,7 @@ webkit.org/b/99138 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ Im
 webkit.org/b/107204 fast/events/touch/multi-touch-inside-iframes.html [ Pass Failure ]
 
 webkit.org/b/107209 [ Debug ] fast/inline/fixed-pos-moves-with-abspos-parent-relative-ancestor.html [ Crash ]
+webkit.org/b/107316 [ Mac Debug ] fast/inline/fixed-pos-moves-with-abspos-inline-parent.html [ Failure ]
 
 webkit.org/b/107237 [ Debug ] fast/forms/associated-element-crash.html [ Crash ]
 webkit.org/b/107327 [ Debug ] html5lib/run-template.html [ Crash ]
