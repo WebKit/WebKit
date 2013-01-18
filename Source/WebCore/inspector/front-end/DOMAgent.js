@@ -893,7 +893,7 @@ WebInspector.DOMAgent.prototype = {
      */
     pushNodeToFrontend: function(objectId, callback)
     {
-        var callbackCast = /** @type {function(*)} */ callback;
+        var callbackCast = /** @type {function(*)} */(callback);
         this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callbackCast);
     },
 
@@ -903,7 +903,7 @@ WebInspector.DOMAgent.prototype = {
      */
     pushNodeByPathToFrontend: function(path, callback)
     {
-        var callbackCast = /** @type {function(*)} */ callback;
+        var callbackCast = /** @type {function(*)} */(callback);
         this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeByPathToFrontend.bind(DOMAgent, path), callbackCast);
     },
 
@@ -932,7 +932,7 @@ WebInspector.DOMAgent.prototype = {
      */
     _dispatchWhenDocumentAvailable: function(func, callback)
     {
-        var callbackWrapper = /** @type {function(?Protocol.Error, *=)} */ this._wrapClientCallback(callback);
+        var callbackWrapper = /** @type {function(?Protocol.Error, *=)} */(this._wrapClientCallback(callback));
 
         function onDocumentAvailable()
         {
@@ -1209,7 +1209,7 @@ WebInspector.DOMAgent.prototype = {
      */
     querySelector: function(nodeId, selectors, callback)
     {
-        var callbackCast = /** @type {function(*)|undefined} */callback;
+        var callbackCast = /** @type {function(*)|undefined} */(callback);
         DOMAgent.querySelector(nodeId, selectors, this._wrapClientCallback(callbackCast));
     },
 
@@ -1220,7 +1220,7 @@ WebInspector.DOMAgent.prototype = {
      */
     querySelectorAll: function(nodeId, selectors, callback)
     {
-        var callbackCast = /** @type {function(*)|undefined} */callback;
+        var callbackCast = /** @type {function(*)|undefined} */(callback);
         DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callbackCast));
     },
 

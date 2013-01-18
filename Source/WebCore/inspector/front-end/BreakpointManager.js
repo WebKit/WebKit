@@ -159,7 +159,7 @@ WebInspector.BreakpointManager.prototype = {
     _filteredBreakpointLocations: function(filter)
     {
         var result = [];
-        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */ this._breakpoints.keys();
+        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */(this._breakpoints.keys());
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             for (var stringifiedLocation in breakpoint._uiLocations) {
@@ -198,7 +198,7 @@ WebInspector.BreakpointManager.prototype = {
      */
     toggleAllBreakpoints: function(toggleState)
     {
-        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */ this._breakpoints.keys();
+        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */(this._breakpoints.keys());
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             if (breakpoint.enabled() != toggleState)
@@ -208,7 +208,7 @@ WebInspector.BreakpointManager.prototype = {
 
     removeAllBreakpoints: function()
     {
-        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */ this._breakpoints.keys();
+        var breakpoints = /** @type {Array.<WebInspector.BreakpointManager.Breakpoint>} */(this._breakpoints.keys());
         for (var i = 0; i < breakpoints.length; ++i)
             breakpoints[i].remove();
     },

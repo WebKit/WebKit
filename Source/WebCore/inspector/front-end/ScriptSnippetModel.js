@@ -473,7 +473,7 @@ WebInspector.SnippetScriptMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */(rawLocation);
         return this._scriptSnippetModel._rawLocationToUILocation(debuggerModelLocation);
     },
 

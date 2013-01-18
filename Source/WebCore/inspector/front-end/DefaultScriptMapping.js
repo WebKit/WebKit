@@ -94,7 +94,7 @@ WebInspector.DefaultScriptMapping.prototype = {
      */
     _scriptEdited: function(scriptId, event)
     {
-        var content = /** @type {string} */ event.data;
+        var content = /** @type {string} */(event.data);
         this._uiSourceCodeForScriptId[scriptId].addRevision(content);
     },
 

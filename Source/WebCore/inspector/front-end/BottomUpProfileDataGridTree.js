@@ -208,8 +208,8 @@ WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView
     }
 
     // Populate the top level nodes.
-    var any = /** @type{*} */this;
-    var node = /** @type{WebInspector.ProfileDataGridNode} */any;
+    var any = /** @type{*} */(this);
+    var node = /** @type{WebInspector.ProfileDataGridNode} */(any);
     WebInspector.BottomUpProfileDataGridNode.prototype._populate.call(node);
 
     return this;
