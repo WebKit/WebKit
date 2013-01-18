@@ -606,6 +606,9 @@ public:
 
     bool mainFrameIsScrollable() const { return m_mainFrameIsScrollable; }
 
+    void setMinimumLayoutWidth(double);
+    double minimumLayoutWidth() const { return m_minimumLayoutWidth; }
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -932,6 +935,8 @@ private:
     unsigned m_numWheelEventHandlers;
 
     unsigned m_cachedPageCount;
+
+    double m_minimumLayoutWidth;
 
 #if ENABLE(CONTEXT_MENUS)
     bool m_isShowingContextMenu;

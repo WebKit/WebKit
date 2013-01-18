@@ -88,7 +88,7 @@ private:
     // Message handlers.
     virtual void suspendPainting() OVERRIDE;
     virtual void resumePainting() OVERRIDE;
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, double minimumLayoutWidth) OVERRIDE;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
     virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
@@ -118,7 +118,6 @@ private:
 
     WebCore::IntRect m_exposedRect;
 
-    double m_minimumLayoutWidth;
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     bool m_inUpdateGeometry;
 };

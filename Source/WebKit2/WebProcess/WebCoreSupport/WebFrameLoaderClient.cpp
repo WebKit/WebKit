@@ -1242,6 +1242,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
         defaultScrollbarMode, /* lock */ shouldHideScrollbars, defaultScrollbarMode, /* lock */ shouldHideScrollbars);
 
+    int minimumLayoutWidth = webPage->minimumLayoutWidth();
+    if (minimumLayoutWidth)
+        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(minimumLayoutWidth, INT_MAX));
+
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
 
 #if USE(TILED_BACKING_STORE)

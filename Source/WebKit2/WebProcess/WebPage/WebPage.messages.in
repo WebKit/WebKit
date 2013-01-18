@@ -284,6 +284,9 @@ messages -> WebPage {
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
     InsertDictatedText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, WTF::Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, WebKit::EditorState newState)
 #endif
+
+    SetMinimumLayoutWidth(double minimumLayoutWidth)
+
 #if PLATFORM(EFL)
     ConfirmComposition(WTF::String compositionString)
     SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)

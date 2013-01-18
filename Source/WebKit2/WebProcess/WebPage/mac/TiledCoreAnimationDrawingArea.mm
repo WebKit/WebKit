@@ -70,7 +70,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!parameters.isVisible)
-    , m_minimumLayoutWidth(0)
 {
     Page* page = m_webPage->corePage();
 
@@ -220,7 +219,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& contentSize)
 {
-    if (!m_minimumLayoutWidth)
+    if (!m_webPage->minimumLayoutWidth())
         return;
 
     if (m_inUpdateGeometry)
@@ -347,25 +346,22 @@ void TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged(bool isScrolla
     mainFrameTiledBacking()->setClipsToExposedRect(!isScrollable);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, double minimumLayoutWidth)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 {
     m_inUpdateGeometry = true;
-
-    m_minimumLayoutWidth = minimumLayoutWidth;
 
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
-    if (m_minimumLayoutWidth > 0) {
-        m_webPage->setSize(IntSize(m_minimumLayoutWidth, 0));
-        m_webPage->layoutIfNeeded();
+    if (!m_webPage->minimumLayoutWidth())
+        m_webPage->setSize(size);
 
+    m_webPage->layoutIfNeeded();
+
+    if (m_webPage->minimumLayoutWidth()) {
         contentSize = m_webPage->mainWebFrame()->contentBounds().size();
         size = contentSize;
     }
-
-    m_webPage->setSize(size);
-    m_webPage->layoutIfNeeded();
 
     if (m_pageOverlayLayer)
         m_pageOverlayLayer->setSize(size);

@@ -162,7 +162,7 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 
     m_lastSentMinimumLayoutWidth = m_webPageProxy->minimumLayoutWidth();
     m_lastSentSize = m_size;
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size, m_lastSentMinimumLayoutWidth), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size), m_webPageProxy->pageID());
     m_isWaitingForDidUpdateGeometry = true;
 }
 

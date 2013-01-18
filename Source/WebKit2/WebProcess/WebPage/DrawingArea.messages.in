@@ -30,7 +30,7 @@ messages -> DrawingArea {
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.
-    UpdateGeometry(WebCore::IntSize viewSize, double minimumLayoutWidth)
+    UpdateGeometry(WebCore::IntSize viewSize)
     SetDeviceScaleFactor(float deviceScaleFactor)
     SetColorSpace(WebKit::ColorSpaceData colorSpace)
 #endif

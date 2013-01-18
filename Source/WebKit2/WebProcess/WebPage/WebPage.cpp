@@ -273,6 +273,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canShortCircuitHorizontalWheelEvents(false)
     , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
+    , m_minimumLayoutWidth(0)
 #if ENABLE(CONTEXT_MENUS)
     , m_isShowingContextMenu(false)
 #endif
@@ -3778,6 +3779,19 @@ void WebPage::cancelComposition()
 void WebPage::setMainFrameInViewSourceMode(bool inViewSourceMode)
 {
     m_mainFrame->coreFrame()->setInViewSourceMode(inViewSourceMode);
+}
+
+void WebPage::setMinimumLayoutWidth(double minimumLayoutWidth)
+{
+    if (m_minimumLayoutWidth == minimumLayoutWidth)
+        return;
+
+    m_minimumLayoutWidth = minimumLayoutWidth;
+
+    if (minimumLayoutWidth > 0)
+        corePage()->mainFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(minimumLayoutWidth, INT_MAX));
+    else
+        corePage()->mainFrame()->view()->enableAutoSizeMode(false, IntSize(), IntSize());
 }
 
 } // namespace WebKit

@@ -4213,6 +4213,7 @@ void WebPageProxy::setMinimumLayoutWidth(double minimumLayoutWidth)
         return;
 
     m_minimumLayoutWidth = minimumLayoutWidth;
+    m_process->send(Messages::WebPage::SetMinimumLayoutWidth(minimumLayoutWidth), m_pageID, 0);
     m_drawingArea->minimumLayoutWidthDidChange();
 
 #if PLATFORM(MAC)
