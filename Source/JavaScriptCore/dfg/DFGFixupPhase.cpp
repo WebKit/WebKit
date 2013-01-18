@@ -553,7 +553,7 @@ private:
         Node& source = m_graph[m_compileIndex];
         Edge& edge = m_graph.child(source, childIndex);
         
-        if (!m_graph[edge].shouldSpeculateInteger()) {
+        if (m_graph[edge].prediction() & SpecDouble) {
             edge.setUseKind(DoubleUse);
             return;
         }

@@ -1,3 +1,15 @@
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Fix up of ArithDiv nodes for non-x86 CPUs is broken
+        https://bugs.webkit.org/show_bug.cgi?id=107309
+
+        Reviewed by  Filip Pizlo.
+
+        Changed the logic so that we insert an Int32ToDouble node when the existing edge is not SpecDouble.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+
 2013-01-18  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build after r140194.
