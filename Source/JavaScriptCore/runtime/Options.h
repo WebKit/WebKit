@@ -122,7 +122,6 @@ namespace JSC {
     v(double, structureCheckVoteRatioForHoisting, 1) \
     \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100) \
-    v(unsigned, gcMarkStackSegmentSize, pageSize()) \
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7)) \
     v(unsigned, opaqueRootMergeThreshold, 1000) \
     v(double, minHeapUtilization, 0.8) \

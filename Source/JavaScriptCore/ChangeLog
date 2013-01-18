@@ -1,3 +1,31 @@
+2013-01-18  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        r134080 causes heap problem on linux systems where PAGESIZE != 4096
+        https://bugs.webkit.org/show_bug.cgi?id=102828
+
+        Reviewed by Mark Hahnenberg.
+
+        Make MarkStackSegment::blockSize as the capacity of segments of a MarkStackArray.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * heap/MarkStack.cpp:
+        (JSC):
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackArray::expand):
+        (JSC::MarkStackArray::donateSomeCellsTo):
+        (JSC::MarkStackArray::stealSomeCellsFrom):
+        * heap/MarkStack.h:
+        (JSC::MarkStackSegment::data):
+        (CapacityFromSize):
+        (MarkStackArray):
+        * heap/MarkStackInlines.h:
+        (JSC::MarkStackArray::setTopForFullSegment):
+        (JSC::MarkStackArray::append):
+        (JSC::MarkStackArray::isEmpty):
+        (JSC::MarkStackArray::size):
+        * runtime/Options.h:
+        (JSC):
+
 2013-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Weak GC maps should be easier to use

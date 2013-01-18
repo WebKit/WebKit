@@ -52,8 +52,8 @@ inline size_t MarkStackArray::preDecTop()
 
 inline void MarkStackArray::setTopForFullSegment()
 {
-    ASSERT(m_segments.head()->m_top == m_segmentCapacity);
-    m_top = m_segmentCapacity;
+    ASSERT(m_segments.head()->m_top == s_segmentCapacity);
+    m_top = s_segmentCapacity;
 }
 
 inline void MarkStackArray::setTopForEmptySegment()
@@ -82,7 +82,7 @@ inline void MarkStackArray::validatePrevious()
 
 inline void MarkStackArray::append(const JSCell* cell)
 {
-    if (m_top == m_segmentCapacity)
+    if (m_top == s_segmentCapacity)
         expand();
     m_segments.head()->data()[postIncTop()] = cell;
 }
@@ -102,7 +102,7 @@ inline bool MarkStackArray::isEmpty()
     if (m_top)
         return false;
     if (m_segments.head()->next()) {
-        ASSERT(m_segments.head()->next()->m_top == m_segmentCapacity);
+        ASSERT(m_segments.head()->next()->m_top == s_segmentCapacity);
         return false;
     }
     return true;
@@ -110,7 +110,7 @@ inline bool MarkStackArray::isEmpty()
 
 inline size_t MarkStackArray::size()
 {
-    return m_top + m_segmentCapacity * (m_numberOfSegments - 1);
+    return m_top + s_segmentCapacity * (m_numberOfSegments - 1);
 }
 
 } // namespace JSC

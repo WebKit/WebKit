@@ -31,7 +31,6 @@
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
 #include "Heap.h"
-#include "Options.h"
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -45,13 +44,13 @@
 
 namespace JSC {
 
+COMPILE_ASSERT(MarkStackSegment::blockSize == WeakBlock::blockSize, blockSizeMatch);
+
 MarkStackArray::MarkStackArray(BlockAllocator& blockAllocator)
     : m_blockAllocator(blockAllocator)
-    , m_segmentCapacity(MarkStackSegment::capacityFromSize(Options::gcMarkStackSegmentSize()))
     , m_top(0)
     , m_numberOfSegments(0)
 {
-    ASSERT(MarkStackSegment::blockSize == WeakBlock::blockSize);
     m_segments.push(MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>()));
     m_numberOfSegments++;
 }
@@ -64,7 +63,7 @@ MarkStackArray::~MarkStackArray()
 
 void MarkStackArray::expand()
 {
-    ASSERT(m_segments.head()->m_top == m_segmentCapacity);
+    ASSERT(m_segments.head()->m_top == s_segmentCapacity);
     
     MarkStackSegment* nextSegment = MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>());
     m_numberOfSegments++;
@@ -96,8 +95,6 @@ void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
     // Try to donate about 1 / 2 of our cells. To reduce copying costs,
     // we prefer donating whole segments over donating individual cells,
     // even if this skews away from our 1 / 2 target.
-
-    ASSERT(m_segmentCapacity == other.m_segmentCapacity);
 
     size_t segmentsToDonate = m_numberOfSegments / 2; // If we only have one segment (our head) we don't donate any segments.
 
@@ -141,7 +138,6 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
     // To reduce copying costs, we prefer stealing a whole segment over stealing
     // individual cells, even if this skews away from our 1 / N target.
 
-    ASSERT(m_segmentCapacity == other.m_segmentCapacity);
     validatePrevious();
     other.validatePrevious();
         
@@ -151,7 +147,7 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
         MarkStackSegment* otherHead = other.m_segments.removeHead();
         MarkStackSegment* myHead = m_segments.removeHead();
 
-        ASSERT(other.m_segments.head()->m_top == m_segmentCapacity);
+        ASSERT(other.m_segments.head()->m_top == s_segmentCapacity);
 
         m_segments.push(other.m_segments.removeHead());
 

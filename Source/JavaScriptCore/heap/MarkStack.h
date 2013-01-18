@@ -75,16 +75,6 @@ public:
     {
         return bitwise_cast<const JSCell**>(this + 1);
     }
-    
-    static size_t capacityFromSize(size_t size)
-    {
-        return (size - sizeof(MarkStackSegment)) / sizeof(const JSCell*);
-    }
-    
-    static size_t sizeFromCapacity(size_t capacity)
-    {
-        return sizeof(MarkStackSegment) + capacity * sizeof(const JSCell*);
-    }
 
     static const size_t blockSize = 4 * KB;
 
@@ -111,6 +101,10 @@ public:
     bool isEmpty();
 
 private:
+    template <size_t size> struct CapacityFromSize {
+        static const size_t value = (size - sizeof(MarkStackSegment)) / sizeof(const JSCell*);
+    };
+
     JS_EXPORT_PRIVATE void expand();
     
     size_t postIncTop();
@@ -124,7 +118,7 @@ private:
     DoublyLinkedList<MarkStackSegment> m_segments;
     BlockAllocator& m_blockAllocator;
 
-    size_t m_segmentCapacity;
+    JS_EXPORT_PRIVATE static const size_t s_segmentCapacity = CapacityFromSize<MarkStackSegment::blockSize>::value;
     size_t m_top;
     size_t m_numberOfSegments;
    

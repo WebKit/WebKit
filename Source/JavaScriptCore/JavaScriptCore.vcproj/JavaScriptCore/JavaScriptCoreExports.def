@@ -345,6 +345,7 @@ EXPORTS
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
+    ?s_segmentCapacity@MarkStackArray@JSC@@0IB
     ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setCustomAllocation@MemoryClassInfo@WTF@@QAEX_N@Z
