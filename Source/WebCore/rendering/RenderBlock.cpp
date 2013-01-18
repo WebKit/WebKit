@@ -2596,7 +2596,8 @@ bool RenderBlock::simplifiedLayout()
     // For now just always recompute overflow.  This is no worse performance-wise than the old code that called rightmostPosition and
     // lowestPosition on every relayout so it's not a regression.
     m_overflow.clear();
-    computeOverflow(clientLogicalBottom(), true);
+    LayoutUnit logicalScrollHeight = style()->isHorizontalWritingMode() ? scrollHeight() : scrollWidth();
+    computeOverflow(borderBefore() + logicalScrollHeight, true);
 
     statePusher.pop();
     
