@@ -1818,9 +1818,6 @@ webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-
 webkit.org/b/106992 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
 
-webkit.org/b/106997 fast/dom/MicroData/propertiescollection-crash.html [ Failure ]
-webkit.org/b/106997 fast/dom/MicroData/properties-collection-namedgetter-with-invalid-name.html [ Failure ]
-
 webkit.org/b/107001 compositing/layer-creation/overlap-animation-container.html [ Failure ]
 
 webkit.org/b/107013 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure ]
