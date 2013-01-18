@@ -4328,3 +4328,5 @@ webkit.org/b/107316 [ Mac Debug ] fast/inline/fixed-pos-moves-with-abspos-inline
 
 webkit.org/b/107237 [ Debug ] fast/forms/associated-element-crash.html [ Crash ]
 webkit.org/b/107327 [ Debug ] html5lib/run-template.html [ Crash ]
+
+webkit.org/b/107328 http/tests/cache/cancel-multiple-post-xhrs.html [ Missing ]
