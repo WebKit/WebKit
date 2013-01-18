@@ -84,7 +84,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // usually have no need for the anonymous block. And when the wrong objects
     // get included or ignored, needed accessibility signals do not get emitted.
     if (role == ParagraphRole || role == DivRole) {
-        if (textUnderElement().isEmpty())
+        // Don't call textUnderElement() here, because it's slow and it can
+        // crash when called while we're in the middle of a subtree being deleted.
+        if (!renderer()->firstChild())
             return DefaultBehavior;
 
         if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
