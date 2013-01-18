@@ -2455,18 +2455,13 @@ bool BackingStore::isDirectRenderingToWindow() const
     return d->shouldDirectRenderingToWindow();
 }
 
-void BackingStore::createBackingStoreMemory()
+void BackingStore::acquireBackingStoreMemory()
 {
-    if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
-        SurfacePool::globalSurfacePool()->createBuffers();
-    resumeBackingStoreUpdates();
-    resumeScreenUpdates(BackingStore::RenderAndBlit);
+    SurfacePool::globalSurfacePool()->createBuffers();
 }
 
-void BackingStore::releaseBackingStoreMemory()
+void BackingStore::releaseOwnedBackingStoreMemory()
 {
-    suspendBackingStoreUpdates();
-    suspendScreenUpdates();
     if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
         SurfacePool::globalSurfacePool()->releaseBuffers();
 }

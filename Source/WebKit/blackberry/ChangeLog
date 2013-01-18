@@ -1,3 +1,24 @@
+2013-01-18  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] When acquiring/releasing backing store memory, allow web page client control suspend/resuming of backing store
+        https://bugs.webkit.org/show_bug.cgi?id=107307
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        Internal PR276660
+        Have BackingStore::createBackingStoreMemory & releaseBackingStoreMemory only
+        acquire & release the surface pool. It doesn't matter if either is called
+        redundantly since SurfacePool has internal state to protect against that.
+
+        Resuming & suspending backing store and screen updates will be handled by
+        the WebPageClient.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStore::acquireBackingStoreMemory):
+        (BlackBerry::WebKit::BackingStore::releaseOwnedBackingStoreMemory):
+        * Api/BackingStore.h:
+
 2013-01-18  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Set spellchecking calculations on a timer to free up the WebKit thread

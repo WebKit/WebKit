@@ -71,8 +71,8 @@ public:
 
     bool isDirectRenderingToWindow() const;
 
-    void createBackingStoreMemory();
-    void releaseBackingStoreMemory();
+    void acquireBackingStoreMemory();
+    void releaseOwnedBackingStoreMemory();
 
     void drawContents(Platform::Graphics::Drawable*, const Platform::IntRect& /*contentsRect*/, const Platform::IntSize& /*destinationSize*/);
 
