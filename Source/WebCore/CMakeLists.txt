@@ -312,6 +312,7 @@ set(WebCore_IDL_FILES
     css/Counter.idl
     css/CSSCharsetRule.idl
     css/CSSFontFaceRule.idl
+    css/CSSHostRule.idl
     css/CSSImportRule.idl
     css/CSSMediaRule.idl
     css/CSSPageRule.idl
@@ -1033,6 +1034,7 @@ set(WebCore_SOURCES
     css/CSSFunctionValue.cpp
     css/CSSGradientValue.cpp
     css/CSSGroupingRule.cpp
+    css/CSSHostRule.cpp
     css/CSSImageGeneratorValue.cpp
     css/CSSImageSetValue.cpp
     css/CSSImageValue.cpp

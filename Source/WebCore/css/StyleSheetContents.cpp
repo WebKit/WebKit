@@ -444,7 +444,7 @@ static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<Style
                 return true;
             break;
 #if ENABLE(SHADOW_DOM)
-        case StyleRuleBase::Host:
+        case StyleRuleBase::HostInternal:
             if (childRulesHaveFailedOrCanceledSubresources(static_cast<const StyleRuleHost*>(rule)->childRules()))
                 return true;
             break;

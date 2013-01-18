@@ -351,6 +351,9 @@
     attribute CSSRuleConstructor CSSRule;
     attribute CSSCharsetRuleConstructor CSSCharsetRule;
     attribute CSSFontFaceRuleConstructor CSSFontFaceRule;
+#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
+    attribute CSSHostRuleConstructor CSSHostRule;
+#endif
     attribute CSSImportRuleConstructor CSSImportRule;
     attribute CSSMediaRuleConstructor CSSMediaRule;
     attribute CSSPageRuleConstructor CSSPageRule;

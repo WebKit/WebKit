@@ -46,17 +46,18 @@ public:
         Page,
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
-#if ENABLE(SHADOW_DOM)
-        Host,
-#endif
 #if ENABLE(CSS3_CONDITIONAL_RULES)
         Supports = 12,
 #endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         Viewport = 15,
 #endif
-        Region = 16
+        Region = 16,
+#if ENABLE(SHADOW_DOM)
+        HostInternal = 17, // Spec says Host = 1001, but we can use only 5 bit for type().
+#endif
     };
+
     Type type() const { return static_cast<Type>(m_type); }
     
     bool isCharsetRule() const { return type() == Charset; }
@@ -74,7 +75,7 @@ public:
 #endif
     bool isImportRule() const { return type() == Import; }
 #if ENABLE(SHADOW_DOM)
-    bool isHostRule() const { return type() == Host; }
+    bool isHostRule() const { return type() == HostInternal; }
 #endif
 
     PassRefPtr<StyleRuleBase> copy() const;
@@ -273,7 +274,7 @@ public:
     PassRefPtr<StyleRuleHost> copy() const { return adoptRef(new StyleRuleHost(*this)); }
 
 private:
-    StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleBlock(Host, adoptRules) { }
+    StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleBlock(HostInternal, adoptRules) { }
     StyleRuleHost(const StyleRuleHost& o) : StyleRuleBlock(o) { }
 };
 #endif

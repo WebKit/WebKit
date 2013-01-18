@@ -35,6 +35,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
+#include "CSSHostRule.h"
 #include "CSSImportRule.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
@@ -2655,6 +2656,11 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule));
+            break;
+#endif
+#if ENABLE(SHADOW_DOM)
+        case CSSRule::HOST_RULE:
+            collectCSSOMWrappers(wrapperMap, static_cast<CSSHostRule*>(cssRule));
             break;
 #endif
         case CSSRule::STYLE_RULE:

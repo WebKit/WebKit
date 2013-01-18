@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div id="host">This div is a shadow host.</div>
+</body>
+<script>
+description("Test whether CSSHostRule API works correctly or not.");
+var host = document.getElementById('host');
+var shadowRoot = host.webkitCreateShadowRoot();
+shadowRoot.innerHTML = '<style id="style1">@host {}</style><div>Shadow Text</div>';
+  
+debug("Before inserting a border rule into @host @-rules:");
+shouldBe("getComputedStyle(host).borderColor", '"rgb(0, 0, 0)"');
+
+var styleSheet = shadowRoot.getElementById('style1').sheet;
+var hostRule = styleSheet.cssRules[0];
+shouldBe("hostRule.cssRules.length", '0');
+shouldBe("hostRule.type", '1001');
+  
+debug("After inserting a border rule with an id selector into @host @-rules:");
+hostRule.insertRule("#host { border-color: green; }", hostRule.cssRules.length);
+shouldBe("getComputedStyle(host).borderColor", '"rgb(0, 128, 0)"');
+shouldBe("hostRule.cssRules.length", '1');
+shouldBe("hostRule.cssText", '"@host { \\n  #host { border-color: green; }\\n}"');
+shouldBe("hostRule.cssRules[0].cssText", '"#host { border-color: green; }"');
+
+debug("After inserting a border rule with a tag selector into @host @-rules:");
+hostRule.insertRule("div { border-color: blue; }", hostRule.cssRules.length);
+shouldBe("getComputedStyle(host).borderColor", '"rgb(0, 128, 0)"');
+shouldBe("hostRule.cssRules.length", '2');
+shouldBe("hostRule.cssText", '"@host { \\n  #host { border-color: green; }\\n  div { border-color: blue; }\\n}"');
+shouldBe("hostRule.cssRules[0].cssText", '"#host { border-color: green; }"');
+shouldBe("hostRule.cssRules[1].cssText", '"div { border-color: blue; }"');
+
+debug("After deleting the border rule with an id selector from @host @-rules:");
+hostRule.deleteRule(0);
+shouldBe("getComputedStyle(host).borderColor", '"rgb(0, 0, 255)"');
+shouldBe("hostRule.cssRules.length", '1');
+shouldBe("hostRule.cssText", '"@host { \\n  div { border-color: blue; }\\n}"');
+shouldBe("hostRule.cssRules[0].cssText", '"div { border-color: blue; }"');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>

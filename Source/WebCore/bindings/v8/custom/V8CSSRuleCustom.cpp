@@ -33,6 +33,7 @@
 
 #include "V8CSSCharsetRule.h"
 #include "V8CSSFontFaceRule.h"
+#include "V8CSSHostRule.h"
 #include "V8CSSImportRule.h"
 #include "V8CSSMediaRule.h"
 #include "V8CSSPageRule.h"
@@ -85,6 +86,10 @@ v8::Handle<v8::Object> wrap(CSSRule* impl, v8::Handle<v8::Object> creationContex
 #endif
     case CSSRule::WEBKIT_REGION_RULE:
         return wrap(static_cast<WebKitCSSRegionRule*>(impl), creationContext, isolate);
+#if ENABLE(SHADOW_DOM)
+    case CSSRule::HOST_RULE:
+        return wrap(static_cast<CSSHostRule*>(impl), creationContext, isolate);
+#endif
     }
     return V8CSSRule::createWrapper(impl, creationContext, isolate);
 }

@@ -68,6 +68,10 @@
 #import "DOMSVGPaint.h"
 #endif
 
+#if ENABLE(SHADOW_DOM)
+#import "DOMCSSHostRule.h"
+#endif
+
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
 
@@ -113,6 +117,10 @@ Class kitClass(WebCore::CSSRule* impl)
 #if ENABLE(CSS_REGIONS)
         case DOM_WEBKIT_REGION_RULE:
             return [DOMWebKitCSSRegionRule class];
+#endif
+#if ENABLE(SHADOW_DOM)
+        case DOM_HOST_RULE:
+            return [DOMCSSHostRule class];
 #endif
     }
     ASSERT_NOT_REACHED();

@@ -35,6 +35,7 @@
 #include "CSSSupportsRule.h"
 #include "JSCSSCharsetRule.h"
 #include "JSCSSFontFaceRule.h"
+#include "JSCSSHostRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSPageRule.h"
@@ -111,6 +112,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSRegionRule, rule);
+            break;
+#endif
+#if ENABLE(SHADOW_DOM)
+        case CSSRule::HOST_RULE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSHostRule, rule);
             break;
 #endif
         default:

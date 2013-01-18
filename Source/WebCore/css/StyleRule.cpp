@@ -24,6 +24,7 @@
 
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
+#include "CSSHostRule.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
@@ -86,8 +87,8 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Supports:
 #endif
 #if ENABLE(SHADOW_DOM)
-    case Host:
-        static_cast<const StyleRuleBlock*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+    case HostInternal:
+        static_cast<const StyleRuleHost*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -139,7 +140,7 @@ void StyleRuleBase::destroy()
         delete static_cast<StyleRuleKeyframes*>(this);
         return;
 #if ENABLE(SHADOW_DOM)
-    case Host:
+    case HostInternal:
         delete static_cast<StyleRuleHost*>(this);
         return;
 #endif
@@ -186,7 +187,7 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
     case Keyframes:
         return static_cast<const StyleRuleKeyframes*>(this)->copy();
 #if ENABLE(SHADOW_DOM)
-    case Host:
+    case HostInternal:
         return static_cast<const StyleRuleHost*>(this)->copy();
 #endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -245,9 +246,8 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
         break;
 #endif
 #if ENABLE(SHADOW_DOM)
-    case Host:
-        // FIXME: The current CSSOM editor's draft (http://dev.w3.org/csswg/cssom/) does not handle @host rules (see bug 102344).
-        rule = adoptRef(new CSSUnknownRule());
+    case HostInternal:
+        rule = CSSHostRule::create(static_cast<StyleRuleHost*>(self), parentSheet);
         break;
 #endif
     case Unknown:

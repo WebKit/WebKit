@@ -189,6 +189,7 @@ IDL_BINDINGS += \
     $$PWD/css/Counter.idl \
     $$PWD/css/CSSCharsetRule.idl \
     $$PWD/css/CSSFontFaceRule.idl \
+    $$PWD/css/CSSHostRule.idl \
     $$PWD/css/CSSImportRule.idl \
     $$PWD/css/CSSMediaRule.idl \
     $$PWD/css/CSSPageRule.idl \

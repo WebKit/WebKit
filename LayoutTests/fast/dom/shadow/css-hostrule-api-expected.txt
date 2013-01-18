@@ -1,0 +1,29 @@
+Test whether CSSHostRule API works correctly or not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Before inserting a border rule into @host @-rules:
+PASS getComputedStyle(host).borderColor is "rgb(0, 0, 0)"
+PASS hostRule.cssRules.length is 0
+PASS hostRule.type is 1001
+After inserting a border rule with an id selector into @host @-rules:
+PASS getComputedStyle(host).borderColor is "rgb(0, 128, 0)"
+PASS hostRule.cssRules.length is 1
+PASS hostRule.cssText is "@host { \n  #host { border-color: green; }\n}"
+PASS hostRule.cssRules[0].cssText is "#host { border-color: green; }"
+After inserting a border rule with a tag selector into @host @-rules:
+PASS getComputedStyle(host).borderColor is "rgb(0, 128, 0)"
+PASS hostRule.cssRules.length is 2
+PASS hostRule.cssText is "@host { \n  #host { border-color: green; }\n  div { border-color: blue; }\n}"
+PASS hostRule.cssRules[0].cssText is "#host { border-color: green; }"
+PASS hostRule.cssRules[1].cssText is "div { border-color: blue; }"
+After deleting the border rule with an id selector from @host @-rules:
+PASS getComputedStyle(host).borderColor is "rgb(0, 0, 255)"
+PASS hostRule.cssRules.length is 1
+PASS hostRule.cssText is "@host { \n  div { border-color: blue; }\n}"
+PASS hostRule.cssRules[0].cssText is "div { border-color: blue; }"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

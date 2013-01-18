@@ -264,6 +264,7 @@ SOURCES += \
     css/CSSFunctionValue.cpp \
     css/CSSGradientValue.cpp \
     css/CSSGroupingRule.cpp \
+    css/CSSHostRule.cpp \
     css/CSSImageValue.cpp \
     css/CSSImageGeneratorValue.cpp \
     css/CSSImageSetValue.cpp \
