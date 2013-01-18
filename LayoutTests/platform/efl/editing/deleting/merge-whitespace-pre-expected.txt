@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 743x37
+        RenderText {#text} at (0,0) size 743x35
           text run at (0,0) width 364: "This test places the caret before the 'b' in 'bar' and Delete. "
           text run at (364,0) width 379: "Afterword, 'foobar' should be in the first paragraph and 'baz'"
           text run at (0,18) width 152: "should be in the second."
       RenderBlock {DIV} at (0,52) size 784x46
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 41x19
+          RenderText {#text} at (0,0) size 41x17
             text run at (0,0) width 41: "foobar"
         RenderBlock {PRE} at (0,31) size 784x15
           RenderText {#text} at (0,0) size 24x15

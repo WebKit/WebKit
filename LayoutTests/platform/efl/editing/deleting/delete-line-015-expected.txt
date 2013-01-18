@@ -12,15 +12,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 778x55
+        RenderText {#text} at (0,0) size 778x53
           text run at (0,0) width 764: "This tests deletion of an empty line starting inside a <div> element, but ending outside that element (just before a <br>). If"
           text run at (0,18) width 778: "the deletion is successful, the result should have two lines, and the insertion point should be on the second line, at the end of"
           text run at (0,36) width 106: "the editable area."
       RenderBlock {DIV} at (0,70) size 784x36
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 7x19
+          RenderText {#text} at (0,0) size 7x17
             text run at (0,0) width 7: "a"
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderBR {BR} at (0,0) size 0x19
+          RenderBR {BR} at (0,0) size 0x17
         RenderBlock (anonymous) at (0,36) size 784x0
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 3 {DIV} of body

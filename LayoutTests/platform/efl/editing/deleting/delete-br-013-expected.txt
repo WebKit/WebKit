@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 751x37
+        RenderText {#text} at (0,0) size 751x35
           text run at (0,0) width 751: "This tests that we only preserve an empty paragraph's style when moving paragraphs around if the selection is still in an"
           text run at (0,18) width 249: "empty paragraph after the move occurs."
       RenderBlock {DIV} at (0,36) size 784x18
-        RenderText {#text} at (0,0) size 315x19
+        RenderText {#text} at (0,0) size 315x17
           text run at (0,0) width 315: "The test passes if the text below is still underlined."
       RenderBlock (anonymous) at (0,54) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,72) size 784x18
-        RenderInline {SPAN} at (0,0) size 191x19
-          RenderText {#text} at (0,0) size 191x19
+        RenderInline {SPAN} at (0,0) size 191x17
+          RenderText {#text} at (0,0) size 191x17
             text run at (0,0) width 191: "This text should be underlined"
 caret: position 30 of child 0 {#text} of child 0 {SPAN} of child 6 {DIV} of body

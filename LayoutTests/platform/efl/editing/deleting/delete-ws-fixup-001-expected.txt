@@ -41,23 +41,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 750x56
-          RenderText {#text} at (14,14) size 97x28
-            text run at (14,14) width 97: "in Liberty"
-          RenderInline {I} at (0,0) size 117x28
-            RenderText {#text} at (111,14) size 117x28
-              text run at (111,14) width 21: "F "
-              text run at (132,14) width 96: "and seven"
-          RenderText {#text} at (228,14) size 63x28
-            text run at (228,14) width 63: " years "
-          RenderInline {B} at (0,0) size 15x28
-            RenderText {#text} at (291,14) size 15x28
-              text run at (291,14) width 15: "s "
-          RenderText {#text} at (306,14) size 750x56
-            text run at (306,14) width 110: "our fathers "
-            text run at (416,14) width 342: "f upon this continent, a new nation,"
-            text run at (758,14) width 6: " "
-            text run at (14,42) width 232: "conceived    in Liberty, "
-            text run at (246,42) width 386: "and dedicated to the proposition that all"
+        RenderInline {SPAN} at (0,0) size 750x54
+          RenderText {#text} at (14,15) size 97x26
+            text run at (14,15) width 97: "in Liberty"
+          RenderInline {I} at (0,0) size 117x26
+            RenderText {#text} at (111,15) size 117x26
+              text run at (111,15) width 21: "F "
+              text run at (132,15) width 96: "and seven"
+          RenderText {#text} at (228,15) size 63x26
+            text run at (228,15) width 63: " years "
+          RenderInline {B} at (0,0) size 15x26
+            RenderText {#text} at (291,15) size 15x26
+              text run at (291,15) width 15: "s "
+          RenderText {#text} at (306,15) size 750x54
+            text run at (306,15) width 110: "our fathers "
+            text run at (416,15) width 342: "f upon this continent, a new nation,"
+            text run at (758,15) width 6: " "
+            text run at (14,43) width 232: "conceived    in Liberty, "
+            text run at (246,43) width 386: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -17,17 +17,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 753x56
-          text run at (14,14) width 747: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
-          text run at (761,14) width 6: " "
-          text run at (14,42) width 144: "in a green box."
+        RenderText {#text} at (14,15) size 753x54
+          text run at (14,15) width 747: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
+          text run at (761,15) width 6: " "
+          text run at (14,43) width 144: "in a green box."
       RenderBlock {DIV} at (0,108) size 784x140
         RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 34x28
-              text run at (0,0) width 34: "XX"
+            RenderText {#text} at (0,1) size 34x26
+              text run at (0,1) width 34: "XX"
           RenderBlock {DIV} at (14,42) size 756x84 [border: (2px solid #008000)]
             RenderBlock {DIV} at (14,14) size 728x56 [border: (2px solid #FFA500)]
-              RenderText {#text} at (14,14) size 34x28
-                text run at (14,14) width 34: "XX"
+              RenderText {#text} at (14,15) size 34x26
+                text run at (14,15) width 34: "XX"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

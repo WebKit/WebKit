@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x18
   RenderBlock {test} at (0,0) size 800x18
     RenderBlock {div} at (0,0) size 800x18
-      RenderInline {testA} at (0,0) size 304x19 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 304x19
+      RenderInline {testA} at (0,0) size 304x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This paragraph should have a green background"
       RenderText {#text} at (0,0) size 0x0

@@ -11,15 +11,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 749x37
+        RenderText {#text} at (0,0) size 749x35
           text run at (0,0) width 345: "This places the caret before the 'b' in 'bar' and Deletes. "
           text run at (345,0) width 404: "'foo' and 'bar' should end up on the same line, but neither should"
           text run at (0,18) width 82: "change style."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-          RenderInline {SPAN} at (0,0) size 24x19
-            RenderText {#text} at (21,0) size 24x19
+          RenderInline {SPAN} at (0,0) size 24x17
+            RenderText {#text} at (21,0) size 24x17
               text run at (21,0) width 24: "bar"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

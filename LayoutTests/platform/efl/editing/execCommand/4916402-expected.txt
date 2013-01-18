@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 751x37
+        RenderText {#text} at (0,0) size 751x35
           text run at (0,0) width 751: "This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list that is not a"
           text run at (0,18) width 163: "sublist of the original one."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderBlock {UL} at (0,0) size 784x18
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (-18,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 21x19
+            RenderListMarker at (-17,0) size 7x17: bullet
+            RenderText {#text} at (0,0) size 21x17
               text run at (0,0) width 21: "foo"
         RenderBlock {OL} at (0,34) size 784x18
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (-21,0) size 16x19: "1"
-            RenderText {#text} at (0,0) size 20x19
+            RenderListMarker at (-20,0) size 16x17: "1"
+            RenderText {#text} at (0,0) size 20x17
               text run at (0,0) width 20: "bar"
         RenderBlock (anonymous) at (0,68) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {LI} of child 1 {OL} of child 2 {DIV} of body

@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x160 [border: (2px solid #FF0000)]
         RenderBlock {UL} at (14,38) size 756x84
           RenderListItem {LI} at (40,0) size 716x28
-            RenderText {#text} at (0,0) size 84x28
-              text run at (0,0) width 84: "onethree"
+            RenderText {#text} at (0,1) size 84x26
+              text run at (0,1) width 84: "onethree"
           RenderListItem {LI} at (40,28) size 716x28
-            RenderText {#text} at (0,0) size 40x28
-              text run at (0,0) width 40: "four"
+            RenderText {#text} at (0,1) size 40x26
+              text run at (0,1) width 40: "four"
           RenderListItem {LI} at (40,56) size 716x28
-            RenderText {#text} at (0,0) size 38x28
-              text run at (0,0) width 38: "five"
+            RenderText {#text} at (0,1) size 38x26
+              text run at (0,1) width 38: "five"
 caret: position 3 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of body

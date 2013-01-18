@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x267
   RenderBlock {test} at (0,0) size 800x267
     RenderBlock {p} at (0,16) size 800x235
-      RenderInline (generated) at (0,0) size 20x19 [color=#FF0000]
+      RenderInline (generated) at (0,0) size 20x17 [color=#FF0000]
         RenderInline (generated) at (0,0) size 20x36 [color=#00FF00]
           RenderText at (0,0) size 20x36
             text run at (0,0) width 20: "T"
         RenderText at (0,0) size 0x0
-      RenderText {#text} at (20,14) size 779x222
-        text run at (20,14) width 388: "his very long paragraph should have a big green first letter T. "
-        text run at (408,14) width 344: "Dummy text. Dummy text. Dummy text. Dummy text."
+      RenderText {#text} at (20,15) size 779x219
+        text run at (20,15) width 388: "his very long paragraph should have a big green first letter T. "
+        text run at (408,15) width 344: "Dummy text. Dummy text. Dummy text. Dummy text."
         text run at (0,37) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
         text run at (0,55) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
         text run at (0,73) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."

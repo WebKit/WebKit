@@ -15,11 +15,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 292x28
-          text run at (14,14) width 292: "Should see \"XX\" in a red box."
+        RenderText {#text} at (14,15) size 292x26
+          text run at (14,15) width 292: "Should see \"XX\" in a red box."
       RenderBlock {DIV} at (0,80) size 784x56
         RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 34x28
-            text run at (14,14) width 34: "XX"
+          RenderText {#text} at (14,15) size 34x26
+            text run at (14,15) width 34: "XX"
           RenderText {#text} at (0,0) size 0x0
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

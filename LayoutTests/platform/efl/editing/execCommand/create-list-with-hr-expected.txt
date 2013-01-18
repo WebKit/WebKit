@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 514x19
+        RenderText {#text} at (0,0) size 514x17
           text run at (0,0) width 514: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
-        RenderInline {B} at (0,0) size 751x37
-          RenderText {#text} at (514,0) size 751x37
+        RenderInline {B} at (0,0) size 751x35
+          RenderText {#text} at (514,0) size 751x35
             text run at (514,0) width 237: "This demonstrates what might be a"
             text run at (0,18) width 31: "bug:"
-        RenderText {#text} at (31,18) size 421x19
+        RenderText {#text} at (31,18) size 421x17
           text run at (31,18) width 421: " the horizontal rule appears before the list marker in the render tree."
       RenderBlock {DIV} at (0,52) size 784x28
         RenderBlock {UL} at (0,0) size 784x28
           RenderListItem {LI} at (40,0) size 744x28
             RenderBlock {HR} at (0,0) size 744x2 [border: (1px inset #000000)]
             RenderBlock (anonymous) at (0,10) size 744x18
-              RenderListMarker at (-18,0) size 7x19: bullet
+              RenderListMarker at (-17,0) size 7x17: bullet
         RenderBlock (anonymous) at (0,44) size 784x0
 caret: position 0 of child 0 {HR} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 771x55
+        RenderText {#text} at (0,0) size 771x53
           text run at (0,0) width 769: "This tests to see that deleting a selection that starts just before a table and ends inside the table"
           text run at (0,18) width 379: "does not insert a placeholder br unnecessarily. "
           text run at (379,18) width 315: "You should see two ToDos, one empty. "
@@ -15,22 +15,22 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 150x24
             RenderTableRow {TR} at (0,2) size 150x20
               RenderTableCell {TD} at (2,2) size 15x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 13x19
+                RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21D2}"
               RenderTableCell {TD} at (19,2) size 112x20 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 110x19
+                RenderText {#text} at (1,1) size 110x17
                   text run at (1,1) width 110: "ToDo Content"
               RenderTableCell {TD} at (133,2) size 15x20 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 13x19
+                RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21E3}"
         RenderTable {TABLE} at (0,24) size 40x24
           RenderTableSection {TBODY} at (0,0) size 40x24
             RenderTableRow {TR} at (0,2) size 40x20
               RenderTableCell {TD} at (2,2) size 15x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 13x19
+                RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21D2}"
               RenderTableCell {TD} at (19,2) size 2x20 [r=0 c=1 rs=1 cs=1]
               RenderTableCell {TD} at (23,2) size 15x20 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 13x19
+                RenderText {#text} at (1,1) size 13x17
                   text run at (1,1) width 13: "\x{21E3}"
 caret: position 0 of child 3 {TABLE} of child 2 {DIV} of body

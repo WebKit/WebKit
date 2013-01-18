@@ -4,7 +4,7 @@ layer at (0,0) size 800x82
   RenderBlock {test} at (0,0) size 800x82
     RenderBlock {div} at (0,16) size 800x66
       RenderBlock {p} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 237x19
+        RenderText {#text} at (0,0) size 237x17
           text run at (0,0) width 237: "The following block should be green."
       RenderBlock (anonymous) at (0,34) size 800x0
         RenderInline {stub} at (0,0) size 0x0

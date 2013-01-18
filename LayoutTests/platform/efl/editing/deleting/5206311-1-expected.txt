@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 350x19
+        RenderText {#text} at (0,0) size 350x17
           text run at (0,0) width 209: "This empties a row (the second). "
           text run at (209,0) width 141: "It should be removed. "
-        RenderInline {B} at (0,0) size 768x37
-          RenderText {#text} at (350,0) size 768x37
+        RenderInline {B} at (0,0) size 768x35
+          RenderText {#text} at (350,0) size 768x35
             text run at (350,0) width 418: "This demonstrates a bug: the two cells that contained the ends"
             text run at (0,18) width 646: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
       RenderBlock {DIV} at (0,52) size 784x52
@@ -16,79 +16,79 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 36x50
             RenderTableRow {TR} at (0,2) size 36x22
               RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "1"
               RenderTableCell {TD} at (16,2) size 4x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (22,2) size 12x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
             RenderTableRow {TR} at (0,26) size 36x22
               RenderTableCell {TD} at (2,26) size 12x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (16,26) size 4x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (22,26) size 12x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "9"
       RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 593x19
+        RenderText {#text} at (0,0) size 593x17
           text run at (0,0) width 593: "This empties a row (the second), but it still contains the selection and so shouldn't be removed."
       RenderBlock {DIV} at (0,154) size 784x76
         RenderTable {TABLE} at (0,0) size 46x76 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x74
             RenderTableRow {TR} at (0,2) size 44x22
               RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "1"
               RenderTableCell {TD} at (16,2) size 12x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "2"
               RenderTableCell {TD} at (30,2) size 12x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "3"
             RenderTableRow {TR} at (0,26) size 44x22
               RenderTableCell {TD} at (2,26) size 12x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (16,26) size 12x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (30,26) size 12x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
             RenderTableRow {TR} at (0,50) size 44x22
               RenderTableCell {TD} at (2,50) size 12x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "7"
               RenderTableCell {TD} at (16,50) size 12x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "8"
               RenderTableCell {TD} at (30,50) size 12x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "9"
       RenderBlock {P} at (0,246) size 784x18
-        RenderText {#text} at (0,0) size 304x19
+        RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This empties the first row, it should be removed."
       RenderBlock {DIV} at (0,280) size 784x70
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 39x19
+          RenderText {#text} at (0,0) size 39x17
             text run at (0,0) width 35: "Hello"
             text run at (35,0) width 4: " "
         RenderTable {TABLE} at (0,18) size 46x52 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x50
             RenderTableRow {TR} at (0,2) size 44x22
               RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (16,2) size 12x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
+                RenderBR {BR} at (2,2) size 0x17
               RenderTableCell {TD} at (30,2) size 12x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "6"
             RenderTableRow {TR} at (0,26) size 44x22
               RenderTableCell {TD} at (2,26) size 12x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "7"
               RenderTableCell {TD} at (16,26) size 12x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "8"
               RenderTableCell {TD} at (30,26) size 12x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+                RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "9"
 caret: position 6 of child 0 {#text} of child 1 {DIV} of child 14 {DIV} of body

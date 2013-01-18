@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x122
   RenderBlock {test} at (0,0) size 800x122
     RenderBlock {p} at (0,16) size 800x90
-      RenderText {#text} at (0,0) size 800x91
+      RenderText {#text} at (0,0) size 800x89
         text run at (0,0) width 254: "This very long paragraph should have a "
         text run at (254,0) width 491: "first line with green background. This very long paragraph should have a first "
         text run at (745,0) width 55: "line with"

@@ -13,23 +13,23 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 642x28
-            text run at (0,28) width 642: "Non-smart delete when deleting a word selected via the keyboard."
+          RenderText {#text} at (0,29) size 642x26
+            text run at (0,29) width 642: "Non-smart delete when deleting a word selected via the keyboard."
         RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 715x56
-            text run at (0,28) width 715: "The first word should be deleted. The space following it should remain. It"
-            text run at (0,56) width 210: "should look like this: "
+          RenderText {#text} at (0,29) size 715x54
+            text run at (0,29) width 715: "The first word should be deleted. The space following it should remain. It"
+            text run at (0,57) width 210: "should look like this: "
           RenderBR {BR} at (210,78) size 0x0
-          RenderText {#text} at (0,84) size 97x28
-            text run at (0,84) width 97: "\" bar baz\""
+          RenderText {#text} at (0,85) size 97x26
+            text run at (0,85) width 97: "\" bar baz\""
       RenderBlock {DIV} at (0,236) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 77x28
-            text run at (2,2) width 77: " bar baz"
+          RenderText {#text} at (2,3) size 77x26
+            text run at (2,3) width 77: " bar baz"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -12,19 +12,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 756x37
+        RenderText {#text} at (0,0) size 756x35
           text run at (0,0) width 511: "This tests InsertUnorderedList on a selection that ends at the start of a paragraph. "
           text run at (511,0) width 245: "Since we don't paint the gap before the"
           text run at (0,18) width 756: "paragraph for most selections like this, we don't perform InsertUnorderedList on the paragraph that the selection ends in."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderBlock {UL} at (0,0) size 784x18
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (-18,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 213x19
+            RenderListMarker at (-17,0) size 7x17: bullet
+            RenderText {#text} at (0,0) size 213x17
               text run at (0,0) width 213: "This paragraph should be in a list."
         RenderBlock (anonymous) at (0,34) size 784x18
-          RenderText {#text} at (0,0) size 237x19
+          RenderText {#text} at (0,0) size 237x17
             text run at (0,0) width 237: "This paragraph should not be in a list."
-          RenderBR {BR} at (237,15) size 0x0
+          RenderBR {BR} at (237,14) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body
 selection end:   position 35 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

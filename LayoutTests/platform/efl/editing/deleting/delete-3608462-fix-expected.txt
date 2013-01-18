@@ -35,15 +35,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x246 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 181x137
-          RenderText {#text} at (14,95) size 11x28
-            text run at (14,95) width 11: "a"
+        RenderInline {SPAN} at (0,0) size 181x135
+          RenderText {#text} at (14,96) size 11x26
+            text run at (14,96) width 11: "a"
           RenderImage {IMG} at (25,14) size 76x103
-          RenderText {#text} at (101,95) size 46x28
-            text run at (101,95) width 46: "new "
+          RenderText {#text} at (101,96) size 46x26
+            text run at (101,96) width 46: "new "
           RenderBR {BR} at (0,0) size 0x0
           RenderImage {IMG} at (14,123) size 76x103
-          RenderText {#text} at (90,204) size 105x28
-            text run at (90,204) width 105: " conceived"
+          RenderText {#text} at (90,205) size 105x26
+            text run at (90,205) width 105: " conceived"
         RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 4 {IMG} of child 1 {SPAN} of child 1 {DIV} of body

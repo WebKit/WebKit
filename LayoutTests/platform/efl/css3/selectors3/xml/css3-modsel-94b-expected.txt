@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x186
   RenderBlock {test} at (0,0) size 800x186
     RenderBlock {p} at (0,16) size 800x18
-      RenderText {#text} at (0,0) size 181x19
+      RenderText {#text} at (0,0) size 181x17
         text run at (0,0) width 181: "This line should be unstyled."
     RenderBlock {p} at (0,50) size 800x18 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 268x19
+      RenderText {#text} at (0,0) size 268x17
         text run at (0,0) width 268: "This line should have a green background."
     RenderBlock {q} at (0,84) size 800x18 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 268x19
+      RenderText {#text} at (0,0) size 268x17
         text run at (0,0) width 268: "This line should have a green background."
     RenderBlock {p} at (0,118) size 800x18
-      RenderText {#text} at (0,0) size 181x19
+      RenderText {#text} at (0,0) size 181x17
         text run at (0,0) width 181: "This line should be unstyled."
     RenderBlock {p} at (0,152) size 800x18 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 268x19
+      RenderText {#text} at (0,0) size 268x17
         text run at (0,0) width 268: "This line should have a green background."

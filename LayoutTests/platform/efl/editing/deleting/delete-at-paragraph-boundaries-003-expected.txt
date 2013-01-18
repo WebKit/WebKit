@@ -16,26 +16,26 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x240 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x112
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 742x84
-            text run at (0,28) width 742: "Deleting when a selection starts in a blank line created by a block with a BR"
-            text run at (0,56) width 730: "placeholder in it and extends to a character that is not at the end of a block."
-            text run at (0,84) width 735: "This ensures that some of our \"special-case\" code does not run for this case."
+          RenderText {#text} at (0,29) size 742x82
+            text run at (0,29) width 742: "Deleting when a selection starts in a blank line created by a block with a BR"
+            text run at (0,57) width 730: "placeholder in it and extends to a character that is not at the end of a block."
+            text run at (0,85) width 735: "This ensures that some of our \"special-case\" code does not run for this case."
         RenderBlock {DIV} at (14,142) size 756x84
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 682x56
-            text run at (0,28) width 682: "Should see the two lines in the red box. Each should contain \"A\" only."
-            text run at (0,56) width 620: "Insertion point should be blinking at the start of the second line."
+          RenderText {#text} at (0,29) size 682x54
+            text run at (0,29) width 682: "Should see the two lines in the red box. Each should contain \"A\" only."
+            text run at (0,57) width 620: "Insertion point should be blinking at the start of the second line."
       RenderBlock {DIV} at (0,264) size 784x60
         RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderBlock {P} at (2,2) size 780x28
-            RenderText {#text} at (0,0) size 17x28
-              text run at (0,0) width 17: "A"
+            RenderText {#text} at (0,1) size 17x26
+              text run at (0,1) width 17: "A"
           RenderBlock {P} at (2,30) size 780x28
-            RenderText {#text} at (0,0) size 17x28
-              text run at (0,0) width 17: "A"
+            RenderText {#text} at (0,1) size 17x26
+              text run at (0,1) width 17: "A"
 caret: position 0 of child 0 {#text} of child 3 {P} of child 1 {DIV} of child 3 {DIV} of body

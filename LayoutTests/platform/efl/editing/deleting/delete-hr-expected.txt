@@ -17,11 +17,11 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 43x19
+          RenderText {#text} at (0,0) size 43x17
             text run at (0,0) width 43: "Before"
         RenderBlock (anonymous) at (0,18) size 784x18
-          RenderInline {SPAN} at (0,0) size 21x19
-            RenderText {#text} at (0,0) size 21x19
+          RenderInline {SPAN} at (0,0) size 21x17
+            RenderText {#text} at (0,0) size 21x17
               text run at (0,0) width 21: "fter"
           RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 3 {SPAN} of child 0 {DIV} of body

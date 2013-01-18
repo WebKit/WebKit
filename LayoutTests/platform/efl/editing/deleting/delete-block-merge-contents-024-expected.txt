@@ -15,14 +15,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 499x28
-          text run at (14,14) width 499: "Should see \"X\" in a yellow box nested in a red box."
+        RenderText {#text} at (14,15) size 499x26
+          text run at (14,15) width 499: "Should see \"X\" in a yellow box nested in a red box."
       RenderBlock {DIV} at (0,80) size 784x62
         RenderBlock {DIV} at (0,0) size 784x62 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x0
           RenderBlock {DIV} at (14,14) size 756x34 [border: (3px solid #FFFF00)]
             RenderBlock (anonymous) at (3,3) size 750x0
             RenderBlock {DIV} at (3,3) size 750x28
-              RenderText {#text} at (0,0) size 17x28
-                text run at (0,0) width 17: "X"
+              RenderText {#text} at (0,1) size 17x26
+                text run at (0,1) width 17: "X"
 caret: position 0 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of body

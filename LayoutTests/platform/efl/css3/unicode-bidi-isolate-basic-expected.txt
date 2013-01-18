@@ -4,7 +4,7 @@ layer at (0,0) size 800x70
   RenderBlock {HTML} at (0,0) size 800x70
     RenderBody {BODY} at (8,8) size 784x54
       RenderBlock {DIV} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 771x55
+        RenderText {#text} at (0,0) size 771x53
           text run at (0,0) width 711: "This table shows unicode-bidi: isolate behavior (in red) with display: inline-block behavior overlapping in green. "
           text run at (711,0) width 28: "You"
           text run at (0,18) width 186: "should see no red in this test! "
@@ -13,1732 +13,1732 @@ layer at (0,0) size 800x70
 layer at (8,62) size 31x400
   RenderBlock (positioned) {DIV} at (0,0) size 31x400 [color=#FF0000]
     RenderBlock {DIV} at (0,0) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,18) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,36) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,54) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,72) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,90) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,108) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,126) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,144) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,162) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,180) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,198) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,216) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,234) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,252) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,270) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,288) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,306) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,324) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5: ")"
-      RenderText {#text} at (18,0) size 5x19
+      RenderText {#text} at (18,0) size 5x17
         text run at (18,0) width 5: "("
     RenderBlock {DIV} at (0,342) size 31x18
-      RenderText {#text} at (15,0) size 13x19
+      RenderText {#text} at (15,0) size 13x17
         text run at (15,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (10,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (10,0) size 5x17
           text run at (10,0) width 5: ")"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,360) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5: ")"
-      RenderText {#text} at (18,0) size 7x19
+      RenderText {#text} at (18,0) size 7x17
         text run at (18,0) width 7: "c"
     RenderBlock {DIV} at (0,378) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (13,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (13,0) size 7x17
           text run at (13,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 5x19
+      RenderText {#text} at (20,0) size 5x17
         text run at (20,0) width 5: "("
     RenderBlock {DIV} at (0,400) size 31x18
-      RenderText {#text} at (17,0) size 13x19
+      RenderText {#text} at (17,0) size 13x17
         text run at (17,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (10,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (10,0) size 7x17
           text run at (10,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,418) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (13,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (13,0) size 7x17
           text run at (13,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 7x19
+      RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "c"
     RenderBlock {DIV} at (0,436) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (13,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (13,0) size 8x17
           text run at (13,0) width 8: "b"
-      RenderText {#text} at (21,0) size 5x19
+      RenderText {#text} at (21,0) size 5x17
         text run at (21,0) width 5: "("
     RenderBlock {DIV} at (0,454) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,472) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (13,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (13,0) size 8x17
           text run at (13,0) width 8: "b"
-      RenderText {#text} at (21,0) size 7x19
+      RenderText {#text} at (21,0) size 7x17
         text run at (21,0) width 7: "c"
     RenderBlock {DIV} at (0,490) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5 RTL: ")"
-      RenderText {#text} at (18,0) size 5x19
+      RenderText {#text} at (18,0) size 5x17
         text run at (18,0) width 5: "("
     RenderBlock {DIV} at (0,508) size 31x18
-      RenderText {#text} at (15,0) size 13x19
+      RenderText {#text} at (15,0) size 13x17
         text run at (15,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (10,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (10,0) size 5x17
           text run at (10,0) width 5 RTL: ")"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,526) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5 RTL: ")"
-      RenderText {#text} at (18,0) size 7x19
+      RenderText {#text} at (18,0) size 7x17
         text run at (18,0) width 7: "c"
     RenderBlock {DIV} at (0,544) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (13,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (13,0) size 7x17
           text run at (13,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 5x19
+      RenderText {#text} at (20,0) size 5x17
         text run at (20,0) width 5: "("
     RenderBlock {DIV} at (0,562) size 31x18
-      RenderText {#text} at (17,0) size 13x19
+      RenderText {#text} at (17,0) size 13x17
         text run at (17,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (10,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (10,0) size 7x17
           text run at (10,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,580) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (13,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (13,0) size 7x17
           text run at (13,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 7x19
+      RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "c"
     RenderBlock {DIV} at (0,598) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (13,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (13,0) size 8x17
           text run at (13,0) width 8: "b"
-      RenderText {#text} at (21,0) size 5x19
+      RenderText {#text} at (21,0) size 5x17
         text run at (21,0) width 5: "("
     RenderBlock {DIV} at (0,616) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,634) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (13,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (13,0) size 8x17
           text run at (13,0) width 8: "b"
-      RenderText {#text} at (21,0) size 7x19
+      RenderText {#text} at (21,0) size 7x17
         text run at (21,0) width 7: "c"
     RenderBlock {DIV} at (0,652) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,670) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,688) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,706) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,724) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,742) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,760) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,778) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,800) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,818) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,836) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,854) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (7,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,872) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,890) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,908) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (7,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (7,0) size 7x17
           text run at (7,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,926) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,944) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,962) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (7,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,980) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,998) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1016) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,1034) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1052) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1070) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "c"
     RenderBlock {DIV} at (0,1088) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1106) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1124) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "c"
     RenderBlock {DIV} at (0,1142) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1160) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1178) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,1200) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1218) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1236) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "c"
     RenderBlock {DIV} at (0,1254) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1272) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1290) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "c"
     RenderBlock {DIV} at (0,1308) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5: ")"
-      RenderText {#text} at (8,0) size 5x19
+      RenderText {#text} at (8,0) size 5x17
         text run at (8,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1326) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5: ")"
-      RenderText {#text} at (3,0) size 10x19
+      RenderText {#text} at (3,0) size 10x17
         text run at (3,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1344) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5: ")"
-      RenderText {#text} at (6,0) size 7x19
+      RenderText {#text} at (6,0) size 7x17
         text run at (6,0) width 7: "c"
     RenderBlock {DIV} at (0,1362) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (6,0) size 5x19
+      RenderText {#text} at (6,0) size 5x17
         text run at (6,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1380) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (1,0) size 10x19
+      RenderText {#text} at (1,0) size 10x17
         text run at (1,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1398) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (4,0) size 7x19
+      RenderText {#text} at (4,0) size 7x17
         text run at (4,0) width 7: "c"
     RenderBlock {DIV} at (0,1416) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (5,0) size 5x19
+      RenderText {#text} at (5,0) size 5x17
         text run at (5,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1434) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1452) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (3,0) size 7x19
+      RenderText {#text} at (3,0) size 7x17
         text run at (3,0) width 7: "c"
     RenderBlock {DIV} at (0,1470) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5 RTL: ")"
-      RenderText {#text} at (8,0) size 5x19
+      RenderText {#text} at (8,0) size 5x17
         text run at (8,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1488) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5 RTL: ")"
-      RenderText {#text} at (3,0) size 10x19
+      RenderText {#text} at (3,0) size 10x17
         text run at (3,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1506) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (13,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (13,0) size 5x17
           text run at (13,0) width 5 RTL: ")"
-      RenderText {#text} at (6,0) size 7x19
+      RenderText {#text} at (6,0) size 7x17
         text run at (6,0) width 7: "c"
     RenderBlock {DIV} at (0,1524) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (6,0) size 5x19
+      RenderText {#text} at (6,0) size 5x17
         text run at (6,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1542) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (1,0) size 10x19
+      RenderText {#text} at (1,0) size 10x17
         text run at (1,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1560) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (11,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (11,0) size 7x17
           text run at (11,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (4,0) size 7x19
+      RenderText {#text} at (4,0) size 7x17
         text run at (4,0) width 7: "c"
     RenderBlock {DIV} at (0,1578) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (5,0) size 5x19
+      RenderText {#text} at (5,0) size 5x17
         text run at (5,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1600) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1618) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (10,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (10,0) size 8x17
           text run at (10,0) width 8: "b"
-      RenderText {#text} at (3,0) size 7x19
+      RenderText {#text} at (3,0) size 7x17
         text run at (3,0) width 7: "c"
     RenderBlock {DIV} at (0,1636) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1654) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1672) size 31x18
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5: ")"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1690) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1708) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1726) size 31x18
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1744) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1762) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1780) size 31x18
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1798) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1816) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1834) size 31x18
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x19
-        RenderText {#text} at (19,0) size 5x19
+      RenderInline {SPAN} at (0,0) size 5x17
+        RenderText {#text} at (19,0) size 5x17
           text run at (19,0) width 5 RTL: ")"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1852) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1870) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1888) size 31x18
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 7x19
-        RenderText {#text} at (17,0) size 7x19
+      RenderInline {SPAN} at (0,0) size 7x17
+        RenderText {#text} at (17,0) size 7x17
           text run at (17,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1906) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1924) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1942) size 31x18
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x19
-        RenderText {#text} at (16,0) size 8x19
+      RenderInline {SPAN} at (0,0) size 8x17
+        RenderText {#text} at (16,0) size 8x17
           text run at (16,0) width 8: "b"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
 layer at (8,62) size 31x400
   RenderBlock (positioned) {DIV} at (0,0) size 31x400 [color=#008000]
     RenderBlock {DIV} at (0,0) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,18) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,36) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,54) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,72) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,90) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,108) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,126) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,144) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,162) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,180) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,198) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,216) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,234) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,252) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,270) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,288) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,306) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,324) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (18,0) size 5x19
+      RenderText {#text} at (18,0) size 5x17
         text run at (18,0) width 5: "("
     RenderBlock {DIV} at (0,342) size 31x18
-      RenderText {#text} at (15,0) size 13x19
+      RenderText {#text} at (15,0) size 13x17
         text run at (15,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,360) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (18,0) size 7x19
+      RenderText {#text} at (18,0) size 7x17
         text run at (18,0) width 7: "c"
     RenderBlock {DIV} at (0,378) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 5x19
+      RenderText {#text} at (20,0) size 5x17
         text run at (20,0) width 5: "("
     RenderBlock {DIV} at (0,400) size 31x18
-      RenderText {#text} at (17,0) size 13x19
+      RenderText {#text} at (17,0) size 13x17
         text run at (17,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,418) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 7x19
+      RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "c"
     RenderBlock {DIV} at (0,436) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (21,0) size 5x19
+      RenderText {#text} at (21,0) size 5x17
         text run at (21,0) width 5: "("
     RenderBlock {DIV} at (0,454) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,472) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (21,0) size 7x19
+      RenderText {#text} at (21,0) size 7x17
         text run at (21,0) width 7: "c"
     RenderBlock {DIV} at (0,490) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (18,0) size 5x19
+      RenderText {#text} at (18,0) size 5x17
         text run at (18,0) width 5: "("
     RenderBlock {DIV} at (0,508) size 31x18
-      RenderText {#text} at (15,0) size 13x19
+      RenderText {#text} at (15,0) size 13x17
         text run at (15,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,526) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (18,0) size 7x19
+      RenderText {#text} at (18,0) size 7x17
         text run at (18,0) width 7: "c"
     RenderBlock {DIV} at (0,544) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 5x19
+      RenderText {#text} at (20,0) size 5x17
         text run at (20,0) width 5: "("
     RenderBlock {DIV} at (0,562) size 31x18
-      RenderText {#text} at (17,0) size 13x19
+      RenderText {#text} at (17,0) size 13x17
         text run at (17,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,580) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (20,0) size 7x19
+      RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "c"
     RenderBlock {DIV} at (0,598) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (21,0) size 5x19
+      RenderText {#text} at (21,0) size 5x17
         text run at (21,0) width 5: "("
     RenderBlock {DIV} at (0,616) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,634) size 31x18
-      RenderText {#text} at (0,0) size 13x19
+      RenderText {#text} at (0,0) size 13x17
         text run at (0,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (21,0) size 7x19
+      RenderText {#text} at (21,0) size 7x17
         text run at (21,0) width 7: "c"
     RenderBlock {DIV} at (0,652) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,670) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,688) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,706) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,724) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,742) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,760) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,778) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,800) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,818) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5: "("
     RenderBlock {DIV} at (0,836) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 10x19
+      RenderText {#text} at (12,0) size 10x17
         text run at (12,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,854) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,872) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5: "("
     RenderBlock {DIV} at (0,890) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 10x19
+      RenderText {#text} at (14,0) size 10x17
         text run at (14,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,908) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (14,0) size 7x19
+      RenderText {#text} at (14,0) size 7x17
         text run at (14,0) width 7: "c"
     RenderBlock {DIV} at (0,926) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 5x19
+      RenderText {#text} at (15,0) size 5x17
         text run at (15,0) width 5: "("
     RenderBlock {DIV} at (0,944) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 10x19
+      RenderText {#text} at (15,0) size 10x17
         text run at (15,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,962) size 31x18
-      RenderText {#text} at (0,0) size 7x19
+      RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
       RenderBlock {SPAN} at (7,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (15,0) size 7x19
+      RenderText {#text} at (15,0) size 7x17
         text run at (15,0) width 7: "c"
     RenderBlock {DIV} at (0,980) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,998) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1016) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,1034) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1052) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1070) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "c"
     RenderBlock {DIV} at (0,1088) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1106) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1124) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "c"
     RenderBlock {DIV} at (0,1142) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1160) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1178) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "c"
     RenderBlock {DIV} at (0,1200) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1218) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1236) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "c"
     RenderBlock {DIV} at (0,1254) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1272) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1290) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7 RTL: "\""
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "c"
     RenderBlock {DIV} at (0,1308) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (8,0) size 5x19
+      RenderText {#text} at (8,0) size 5x17
         text run at (8,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1326) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (3,0) size 10x19
+      RenderText {#text} at (3,0) size 10x17
         text run at (3,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1344) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (6,0) size 7x19
+      RenderText {#text} at (6,0) size 7x17
         text run at (6,0) width 7: "c"
     RenderBlock {DIV} at (0,1362) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (6,0) size 5x19
+      RenderText {#text} at (6,0) size 5x17
         text run at (6,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1380) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (1,0) size 10x19
+      RenderText {#text} at (1,0) size 10x17
         text run at (1,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1398) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (4,0) size 7x19
+      RenderText {#text} at (4,0) size 7x17
         text run at (4,0) width 7: "c"
     RenderBlock {DIV} at (0,1416) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (5,0) size 5x19
+      RenderText {#text} at (5,0) size 5x17
         text run at (5,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1434) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1452) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (3,0) size 7x19
+      RenderText {#text} at (3,0) size 7x17
         text run at (3,0) width 7: "c"
     RenderBlock {DIV} at (0,1470) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (8,0) size 5x19
+      RenderText {#text} at (8,0) size 5x17
         text run at (8,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1488) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (3,0) size 10x19
+      RenderText {#text} at (3,0) size 10x17
         text run at (3,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1506) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (13,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (6,0) size 7x19
+      RenderText {#text} at (6,0) size 7x17
         text run at (6,0) width 7: "c"
     RenderBlock {DIV} at (0,1524) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (6,0) size 5x19
+      RenderText {#text} at (6,0) size 5x17
         text run at (6,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1542) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (1,0) size 10x19
+      RenderText {#text} at (1,0) size 10x17
         text run at (1,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1560) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (11,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (4,0) size 7x19
+      RenderText {#text} at (4,0) size 7x17
         text run at (4,0) width 7: "c"
     RenderBlock {DIV} at (0,1578) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (5,0) size 5x19
+      RenderText {#text} at (5,0) size 5x17
         text run at (5,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1600) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (0,0) size 10x19
+      RenderText {#text} at (0,0) size 10x17
         text run at (0,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1618) size 31x18
-      RenderText {#text} at (18,0) size 13x19
+      RenderText {#text} at (18,0) size 13x17
         text run at (18,0) width 13 RTL: "\x{5E9}"
       RenderBlock {SPAN} at (10,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (3,0) size 7x19
+      RenderText {#text} at (3,0) size 7x17
         text run at (3,0) width 7: "c"
     RenderBlock {DIV} at (0,1636) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1654) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1672) size 31x18
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5: ")"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1690) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1708) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1726) size 31x18
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1744) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1762) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1780) size 31x18
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1798) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (14,0) size 5x19
+      RenderText {#text} at (14,0) size 5x17
         text run at (14,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1816) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (9,0) size 10x19
+      RenderText {#text} at (9,0) size 10x17
         text run at (9,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1834) size 31x18
-      RenderText {#text} at (12,0) size 7x19
+      RenderText {#text} at (12,0) size 7x17
         text run at (12,0) width 7: "a"
       RenderBlock {SPAN} at (19,0) size 5x18
-        RenderText {#text} at (0,0) size 5x19
+        RenderText {#text} at (0,0) size 5x17
           text run at (0,0) width 5 RTL: ")"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1852) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (12,0) size 5x19
+      RenderText {#text} at (12,0) size 5x17
         text run at (12,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1870) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (7,0) size 10x19
+      RenderText {#text} at (7,0) size 10x17
         text run at (7,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1888) size 31x18
-      RenderText {#text} at (10,0) size 7x19
+      RenderText {#text} at (10,0) size 7x17
         text run at (10,0) width 7: "a"
       RenderBlock {SPAN} at (17,0) size 7x18
-        RenderText {#text} at (0,0) size 7x19
+        RenderText {#text} at (0,0) size 7x17
           text run at (0,0) width 7 RTL: "\x{5E0}"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"
     RenderBlock {DIV} at (0,1906) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (11,0) size 5x19
+      RenderText {#text} at (11,0) size 5x17
         text run at (11,0) width 5 RTL: "("
     RenderBlock {DIV} at (0,1924) size 31x18
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (6,0) size 10x19
+      RenderText {#text} at (6,0) size 10x17
         text run at (6,0) width 10 RTL: "\x{5D1}"
     RenderBlock {DIV} at (0,1942) size 31x18
-      RenderText {#text} at (9,0) size 7x19
+      RenderText {#text} at (9,0) size 7x17
         text run at (9,0) width 7: "a"
       RenderBlock {SPAN} at (16,0) size 8x18
-        RenderText {#text} at (0,0) size 8x19
+        RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "b"
-      RenderText {#text} at (24,0) size 7x19
+      RenderText {#text} at (24,0) size 7x17
         text run at (24,0) width 7: "c"

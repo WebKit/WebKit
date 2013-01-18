@@ -19,16 +19,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 309x19
+        RenderText {#text} at (0,0) size 309x17
           text run at (0,0) width 309: "Should see a blank line between \"foo\" and \"baz\""
       RenderBlock {DIV} at (0,18) size 784x24
       RenderBlock {DIV} at (0,42) size 784x112 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 32x28
-            text run at (0,0) width 32: "foo"
+          RenderText {#text} at (0,1) size 32x26
+            text run at (0,1) width 32: "foo"
         RenderBlock (anonymous) at (14,42) size 756x28
-          RenderBR {BR} at (0,0) size 0x28
+          RenderBR {BR} at (0,1) size 0x26
         RenderBlock {DIV} at (14,70) size 756x28
-          RenderText {#text} at (0,0) size 34x28
-            text run at (0,0) width 34: "baz"
+          RenderText {#text} at (0,1) size 34x26
+            text run at (0,1) width 34: "baz"
 caret: position 0 of child 2 {BR} of child 3 {DIV} of body

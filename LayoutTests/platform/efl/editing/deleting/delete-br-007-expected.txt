@@ -36,12 +36,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 290x28
-          RenderText {#text} at (14,14) size 198x28
-            text run at (14,14) width 102: "Fourscore "
-            text run at (116,14) width 41: "and "
-            text run at (157,14) width 55: "seven"
-          RenderText {#text} at (212,14) size 92x28
-            text run at (212,14) width 92: "years ago"
+        RenderInline {SPAN} at (0,0) size 290x26
+          RenderText {#text} at (14,15) size 198x26
+            text run at (14,15) width 102: "Fourscore "
+            text run at (116,15) width 41: "and "
+            text run at (157,15) width 55: "seven"
+          RenderText {#text} at (212,15) size 92x26
+            text run at (212,15) width 92: "years ago"
         RenderText {#text} at (0,0) size 0x0
 caret: position 22 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -19,46 +19,46 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x324 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x112
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 743x56
-            text run at (0,28) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
-            text run at (0,56) width 691: "block, and extends out of the enclosing block into the following block. "
+          RenderText {#text} at (0,29) size 743x54
+            text run at (0,29) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
+            text run at (0,57) width 691: "block, and extends out of the enclosing block into the following block. "
           RenderBR {BR} at (691,78) size 0x0
-          RenderText {#text} at (0,84) size 553x28
-            text run at (0,84) width 267: "FIXME: Currently broken! "
-            text run at (267,84) width 286: "See rdar://problem/4099839/."
+          RenderText {#text} at (0,85) size 553x26
+            text run at (0,85) width 267: "FIXME: Currently broken! "
+            text run at (267,85) width 286: "See rdar://problem/4099839/."
         RenderBlock {DIV} at (14,142) size 756x168
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 752x140
-            text run at (0,28) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
-            text run at (0,56) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "
-            text run at (675,56) width 47: "Next"
-            text run at (0,84) width 737: "line should be \"cha cha cha\", inside of a nested red box. Next line should be"
-            text run at (0,112) width 52: "\"ur\". "
-            text run at (52,112) width 372: "The last line should be \"cha cha cha\". "
-            text run at (424,112) width 328: "Insertion point should be blinking"
-            text run at (0,140) width 340: "at the start of the fourth line (\"ur\")."
+          RenderText {#text} at (0,29) size 752x138
+            text run at (0,29) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
+            text run at (0,57) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "
+            text run at (675,57) width 47: "Next"
+            text run at (0,85) width 737: "line should be \"cha cha cha\", inside of a nested red box. Next line should be"
+            text run at (0,113) width 52: "\"ur\". "
+            text run at (52,113) width 372: "The last line should be \"cha cha cha\". "
+            text run at (424,113) width 328: "Insertion point should be blinking"
+            text run at (0,141) width 340: "at the start of the fourth line (\"ur\")."
       RenderBlock {DIV} at (0,348) size 784x148
         RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x28
-            RenderText {#text} at (0,0) size 35x28
-              text run at (0,0) width 35: "one"
+            RenderText {#text} at (0,1) size 35x26
+              text run at (0,1) width 35: "one"
           RenderBlock {DIV} at (2,30) size 780x28
-            RenderText {#text} at (0,0) size 36x28
-              text run at (0,0) width 36: "two"
+            RenderText {#text} at (0,1) size 36x26
+              text run at (0,1) width 36: "two"
           RenderBlock {DIV} at (2,58) size 780x32 [border: (2px solid #FF0000)]
             RenderBlock {DIV} at (2,2) size 776x28
-              RenderText {#text} at (0,0) size 114x28
-                text run at (0,0) width 114: "cha cha cha"
+              RenderText {#text} at (0,1) size 114x26
+                text run at (0,1) width 114: "cha cha cha"
             RenderBlock (anonymous) at (2,30) size 776x0
           RenderBlock {DIV} at (2,90) size 780x28
-            RenderText {#text} at (0,0) size 20x28
-              text run at (0,0) width 20: "ur"
+            RenderText {#text} at (0,1) size 20x26
+              text run at (0,1) width 20: "ur"
           RenderBlock {DIV} at (2,118) size 780x28
-            RenderText {#text} at (0,0) size 114x28
-              text run at (0,0) width 114: "cha cha cha"
+            RenderText {#text} at (0,1) size 114x26
+              text run at (0,1) width 114: "cha cha cha"
 caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {DIV} of child 3 {DIV} of body

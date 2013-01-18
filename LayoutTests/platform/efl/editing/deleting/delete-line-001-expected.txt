@@ -12,6 +12,6 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 600x28
-        RenderText {#text} at (0,0) size 197x28
-          text run at (0,0) width 197: "in the affairs of men"
+        RenderText {#text} at (0,1) size 197x26
+          text run at (0,1) width 197: "in the affairs of men"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of body

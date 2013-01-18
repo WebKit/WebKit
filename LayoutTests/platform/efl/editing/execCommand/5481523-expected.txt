@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 748x37
+        RenderText {#text} at (0,0) size 748x35
           text run at (0,0) width 407: "This tests for a hang when indenting a fully selected table twice. "
           text run at (407,0) width 341: "You should see a twice indented table, with four cells,"
           text run at (0,18) width 43: "below."
@@ -15,17 +15,17 @@ layer at (0,0) size 800x600
               RenderTableSection {TBODY} at (1,1) size 81x50
                 RenderTableRow {TR} at (0,2) size 81x22
                   RenderTableCell {TD} at (2,2) size 41x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 27x19
+                    RenderText {#text} at (2,2) size 27x17
                       text run at (2,2) width 27: "One"
                   RenderTableCell {TD} at (45,2) size 34x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 30x19
+                    RenderText {#text} at (2,2) size 30x17
                       text run at (2,2) width 30: "Two"
                 RenderTableRow {TR} at (0,26) size 81x22
                   RenderTableCell {TD} at (2,26) size 41x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 37x19
+                    RenderText {#text} at (2,2) size 37x17
                       text run at (2,2) width 37: "Three"
                   RenderTableCell {TD} at (45,26) size 34x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                    RenderText {#text} at (2,2) size 30x19
+                    RenderText {#text} at (2,2) size 30x17
                       text run at (2,2) width 30: "Four"
         RenderBlock (anonymous) at (0,52) size 784x0
 selection start: position 0 of child 0 {TABLE} of child 0 {BLOCKQUOTE} of child 1 {BLOCKQUOTE} of child 2 {DIV} of body

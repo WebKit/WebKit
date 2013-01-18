@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x68
   RenderBlock {test} at (0,0) size 800x68
     RenderBlock {div} at (0,0) size 800x18
-      RenderText {#text} at (0,0) size 154x19
+      RenderText {#text} at (0,0) size 154x17
         text run at (0,0) width 154: "This should be unstyled."
     RenderBlock {p} at (0,34) size 800x18 [bgcolor=#008000]
-      RenderText {#text} at (0,0) size 241x19
+      RenderText {#text} at (0,0) size 241x17
         text run at (0,0) width 241: "This should have a green background."

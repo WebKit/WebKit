@@ -12,15 +12,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 534x19
+        RenderText {#text} at (0,0) size 534x17
           text run at (0,0) width 534: "This tests deleting the line break before a paragraph that ends with unrendered space."
       RenderBlock {DIV} at (0,34) size 784x36
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-          RenderText {#text} at (21,0) size 20x19
+          RenderText {#text} at (21,0) size 20x17
             text run at (21,0) width 20: "bar"
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderText {#text} at (0,0) size 22x19
+          RenderText {#text} at (0,0) size 22x17
             text run at (0,0) width 22: "baz"
 caret: position 3 of child 0 {#text} of child 2 {DIV} of body

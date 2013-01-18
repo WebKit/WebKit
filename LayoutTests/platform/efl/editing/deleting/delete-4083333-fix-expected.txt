@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 106x28
-          RenderText {#text} at (14,14) size 80x28
-            text run at (14,14) width 80: "this is a "
-          RenderInline {A} at (0,0) size 26x28 [color=#0000EE]
-            RenderText {#text} at (94,14) size 26x28
-              text run at (94,14) width 26: "lin"
+        RenderInline {SPAN} at (0,0) size 106x26
+          RenderText {#text} at (14,15) size 80x26
+            text run at (14,15) width 80: "this is a "
+          RenderInline {A} at (0,0) size 26x26 [color=#0000EE]
+            RenderText {#text} at (94,15) size 26x26
+              text run at (94,15) width 26: "lin"
 caret: position 3 of child 0 {#text} of child 1 {A} of child 1 {SPAN} of child 1 {DIV} of body
