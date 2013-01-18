@@ -27,7 +27,7 @@ webkit.org/b/92948 [ Debug ] fast/js/dfg-osr-entry-hoisted-clobbered-structure-c
 webkit.org/b/74787 [ Debug ] fast/js/dfg-poison-fuzz.html [ Pass Slow ]
 crbug.com/24182 fast/js/regexp-overflow.html [ Pass Slow ]
 crbug.com/24182 [ SnowLeopard Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Timeout ]
-crbug.com/24182 [ Debug ] fast/js/toString-and-valueOf-override.html [ Failure Slow ]
+crbug.com/24182 [ Debug ] fast/js/toString-and-valueOf-override.html [ Failure Timeout ]
 crbug.com/24182 [ SnowLeopard Debug ] fast/loader/javascript-url-iframe-crash.html [ Pass Slow ]
 crbug.com/24182 [ Android ] fast/parser/nested-fragment-parser-crash.html [ Pass Slow ]
 crbug.com/24182 [ Debug ] html5lib/webkit-resumer.html [ Pass Slow ]
