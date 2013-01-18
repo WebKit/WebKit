@@ -83,23 +83,25 @@ TEST(WebCoreLayoutUnit, LayoutUnitRounding)
 {
     ASSERT_EQ(LayoutUnit(-1.9f).round(), -2);
     ASSERT_EQ(LayoutUnit(-1.6f).round(), -2);
-    ASSERT_EQ(LayoutUnit(-1.52f).round(), -2);
-    ASSERT_EQ(LayoutUnit(-1.5f).round(), -1);
-    ASSERT_EQ(LayoutUnit(-1.49f).round(), -1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-1.51f).round(), -2);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-1.5f).round(), -1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-1.49f).round(), -1);
     ASSERT_EQ(LayoutUnit(-1.0f).round(), -1);
-    ASSERT_EQ(LayoutUnit(-0.99f).round(), -1);
-    ASSERT_EQ(LayoutUnit(-0.51f).round(), 0);
-    ASSERT_EQ(LayoutUnit(-0.50f).round(), 0);
-    ASSERT_EQ(LayoutUnit(-0.49f).round(), 0);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-0.99f).round(), -1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-0.51f).round(), -1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-0.50f).round(), 0);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(-0.49f).round(), 0);
     ASSERT_EQ(LayoutUnit(-0.1f).round(), 0);
     ASSERT_EQ(LayoutUnit(0.0f).round(), 0);
     ASSERT_EQ(LayoutUnit(0.1f).round(), 0);
-    ASSERT_EQ(LayoutUnit(0.49f).round(), 0);
-    ASSERT_EQ(LayoutUnit(0.50f).round(), 1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(0.49f).round(), 0);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(0.50f).round(), 1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(0.51f).round(), 1);
     ASSERT_EQ(LayoutUnit(0.99f).round(), 1);
     ASSERT_EQ(LayoutUnit(1.0f).round(), 1);
-    ASSERT_EQ(LayoutUnit(1.49f).round(), 1);
-    ASSERT_EQ(LayoutUnit(1.5f).round(), 2);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(1.49f).round(), 1);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(1.5f).round(), 2);
+    ASSERT_EQ(LayoutUnit::fromFloatRound(1.51f).round(), 2);
 }
 
 TEST(WebCoreLayoutUnit, LayoutUnitSnapSizeToPixel)

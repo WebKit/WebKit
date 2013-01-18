@@ -1,3 +1,18 @@
+2013-01-18  Emil A Eklund  <eae@chromium.org>
+
+        Update LayoutUnit rounding unit test
+        https://bugs.webkit.org/show_bug.cgi?id=107322
+
+        Reviewed by Levi Weintraub.
+        
+        Update the LayoutUnitRounding test to use fromFloatRound for
+        values that cannot accurately be represented as a LayoutUnit
+        (the default behavior is to floor the value to the nearest
+        LayoutUnit).
+
+        * TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp:
+        (TestWebKitAPI::TEST):
+
 2013-01-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         VCSUtils.pm: Stop calling git repo-config.
