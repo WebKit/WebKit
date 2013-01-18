@@ -23,7 +23,8 @@
 namespace WebCore {
 
 GraphicsLayerTransform::GraphicsLayerTransform()
-    : m_flattening(false)
+    : m_anchorPoint(0.5, 0.5, 0)
+    , m_flattening(true)
     , m_dirty(false) // false by default since all default values would be combined as the identity matrix
     , m_childrenDirty(false)
 {
