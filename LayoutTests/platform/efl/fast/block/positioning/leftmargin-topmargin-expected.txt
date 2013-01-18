@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (42,42) size 716x516
       RenderBlock {P} at (0,0) size 716x36
-        RenderText {#text} at (0,0) size 653x37
+        RenderText {#text} at (0,0) size 653x35
           text run at (0,0) width 653: "This test checks for a regression against rdar://problem/4364302 leftmargin and topmargin should match"
           text run at (0,18) width 277: "marginwidth and marginheight respectively."
       RenderBlock {P} at (0,52) size 716x18
-        RenderText {#text} at (0,0) size 460x19
+        RenderText {#text} at (0,0) size 460x17
           text run at (0,0) width 460: "If it passes, the left, top, right, and bottom margins of the page will be 42."

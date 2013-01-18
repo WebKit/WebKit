@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock {P} at (0,0) size 72x584
-        RenderText {#text} at (0,0) size 73x577
+        RenderText {#text} at (0,0) size 71x577
           text run at (0,0) width 544: "In this test, you should see three blocks that are centered vertically within a black box. "
           text run at (0,544) width 33: "They"
           text run at (18,0) width 498: "should be stacked horizontally with the green box in between two olive boxes. "

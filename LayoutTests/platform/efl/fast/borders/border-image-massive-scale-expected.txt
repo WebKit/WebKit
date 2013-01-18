@@ -1,17 +1,17 @@
-layer at (0,0) size 785x722
+layer at (0,0) size 785x724
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x722
-  RenderBlock {HTML} at (0,0) size 785x722
-    RenderBody {BODY} at (8,8) size 769x706
+layer at (0,0) size 785x724
+  RenderBlock {HTML} at (0,0) size 785x724
+    RenderBody {BODY} at (8,8) size 769x708
       RenderBlock {DIV} at (10,10) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
-      RenderText {#text} at (350,335) size 4x19
-        text run at (350,335) width 4: " "
+      RenderText {#text} at (350,336) size 4x17
+        text run at (350,336) width 4: " "
       RenderBlock {DIV} at (364,10) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
-      RenderText {#text} at (704,335) size 4x19
-        text run at (704,335) width 4: " "
+      RenderText {#text} at (704,336) size 4x17
+        text run at (704,336) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,363) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
-      RenderText {#text} at (350,688) size 4x19
-        text run at (350,688) width 4: " "
-      RenderBlock {DIV} at (364,363) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
+      RenderBlock {DIV} at (10,364) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
+      RenderText {#text} at (350,690) size 4x17
+        text run at (350,690) width 4: " "
+      RenderBlock {DIV} at (364,364) size 330x330 [border: (105px none #000000) (150px none #000000) (105px none #000000)]
       RenderText {#text} at (0,0) size 0x0

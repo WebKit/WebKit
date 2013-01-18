@@ -5,14 +5,14 @@ layer at (0,0) size 785x585
 layer at (8,8) size 769x569
   RenderBody {BODY} at (8,8) size 769x569
     RenderBlock {DIV} at (10,10) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-    RenderText {#text} at (146,131) size 4x19
-      text run at (146,131) width 4: " "
+    RenderText {#text} at (146,132) size 4x17
+      text run at (146,132) width 4: " "
     RenderBlock {DIV} at (160,10) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-    RenderText {#text} at (296,131) size 4x19
-      text run at (296,131) width 4: " "
+    RenderText {#text} at (296,132) size 4x17
+      text run at (296,132) width 4: " "
     RenderBR {BR} at (0,0) size 0x0
-    RenderBlock {DIV} at (10,159) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-    RenderText {#text} at (146,280) size 4x19
-      text run at (146,280) width 4: " "
-    RenderBlock {DIV} at (160,159) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+    RenderBlock {DIV} at (10,160) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+    RenderText {#text} at (146,282) size 4x17
+      text run at (146,282) width 4: " "
+    RenderBlock {DIV} at (160,160) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
     RenderText {#text} at (0,0) size 0x0

@@ -4,7 +4,7 @@ layer at (0,0) size 800x356
   RenderBlock {HTML} at (0,0) size 800x356
     RenderBody {BODY} at (8,16) size 784x324
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 579x19
+        RenderText {#text} at (0,0) size 579x17
           text run at (0,0) width 579: "The square should consist of exactly five equal bands, orange, lime, orange, yellow, orange."
       RenderTable {TABLE} at (0,34) size 256x256 [bgcolor=#FFA500] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 250x250
@@ -110,10 +110,10 @@ layer at (0,0) size 800x356
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,306) size 784x18
-        RenderText {#text} at (0,0) size 259x19
+        RenderText {#text} at (0,0) size 259x17
           text run at (0,0) width 259: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 49x19 [color=#0000EE]
-          RenderText {#text} at (259,0) size 49x19
+        RenderInline {A} at (0,0) size 49x17 [color=#0000EE]
+          RenderText {#text} at (259,0) size 49x17
             text run at (259,0) width 49: "test 006"
-        RenderText {#text} at (308,0) size 4x19
+        RenderText {#text} at (308,0) size 4x17
           text run at (308,0) width 4: "."

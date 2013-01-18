@@ -8,9 +8,9 @@ layer at (0,0) size 800x600 layerType: foreground only
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 400x18
         RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 100x22
-  RenderInline (relative positioned) {SPAN} at (0,0) size 100x22
+layer at (8,8) size 100x21
+  RenderInline (relative positioned) {SPAN} at (0,0) size 100x21
     RenderText {#text} at (0,0) size 0x0
-    RenderBR {BR} at (0,0) size 0x19
+    RenderBR {BR} at (0,0) size 0x17
     RenderBlock {DIV} at (0,18) size 100x0 [bgcolor=#FF0000]
     RenderText {#text} at (0,0) size 0x0

@@ -4,5 +4,5 @@ layer at (0,0) size 800x24
   RenderBlock {HTML} at (0,0) size 800x24
     RenderBody {BODY} at (8,16) size 784x0
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 390x19
+        RenderText {#text} at (0,0) size 390x17
           text run at (0,0) width 390: "The entire canvas should be green and there should be no red."

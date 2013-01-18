@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 272x19
+        RenderText {#text} at (0,0) size 272x17
           text run at (0,0) width 272: "If you see any red below the test has failed."
 layer at (8,26) size 300x400
   RenderBlock (relative positioned) {DIV} at (0,18) size 300x400 [bgcolor=#FF0000]

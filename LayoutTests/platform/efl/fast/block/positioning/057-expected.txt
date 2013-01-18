@@ -55,7 +55,7 @@ layer at (8,25) size 566x22
     RenderText {#text} at (0,0) size 0x0
     RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 562x19
-      RenderText {#text} at (2,2) size 562x19
+    RenderInline {SPAN} at (0,0) size 562x17
+      RenderText {#text} at (2,2) size 562x17
         text run at (2,2) width 562: "The green border should fit snugly. No extra space should appear before or after this text."
     RenderText {#text} at (0,0) size 0x0

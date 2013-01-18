@@ -4,8 +4,8 @@ layer at (0,0) size 134x600
   RenderBlock {HTML} at (0,0) size 134x600
     RenderBody {BODY} at (8,8) size 118x584
       RenderBlock (anonymous) at (0,0) size 18x584
-        RenderInline {DIV} at (0,0) size 17x528 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 17x528
+        RenderInline {DIV} at (0,0) size 16x528 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 16x528
             text run at (0,0) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
 layer at (26,8) size 100x300

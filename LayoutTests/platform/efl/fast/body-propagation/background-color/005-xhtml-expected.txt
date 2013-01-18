@@ -6,5 +6,5 @@ layer at (0,0) size 800x50
       RenderInline {body} at (0,0) size 0x0 [color=#000080] [bgcolor=#FFFF00]
     RenderBody {body} at (8,16) size 784x18 [color=#000080] [bgcolor=#FFFF00]
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 240x19
+        RenderText {#text} at (0,0) size 240x17
           text run at (0,0) width 240: "The entire viewport should be yellow."

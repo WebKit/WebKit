@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 106x72
   RenderBlock (positioned) {SPAN} at (0,0) size 106x72
-    RenderText {#text} at (0,0) size 106x73
+    RenderText {#text} at (0,0) size 106x71
       text run at (0,0) width 106: "position:absolute"
       text run at (0,18) width 70: "span inside"
       text run at (0,36) width 100: "position:relative"

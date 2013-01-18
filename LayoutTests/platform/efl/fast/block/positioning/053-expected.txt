@@ -10,16 +10,16 @@ layer at (8,8) size 770x86
       RenderTableSection {TBODY} at (0,0) size 96x68
         RenderTableRow {TR} at (0,2) size 96x20
           RenderTableCell {TD} at (2,2) size 92x20 [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 90x19
+            RenderText {#text} at (1,1) size 90x17
               text run at (1,1) width 90: "Some content."
         RenderTableRow {TR} at (0,24) size 96x20
           RenderTableCell {TD} at (2,24) size 92x20 [r=1 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 86x19
+            RenderText {#text} at (1,1) size 86x17
               text run at (1,1) width 86: "more content."
         RenderTableRow {TR} at (0,46) size 96x20
           RenderTableCell {TD} at (2,46) size 92x20 [r=2 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 70x19
+            RenderText {#text} at (1,1) size 70x17
               text run at (1,1) width 70: "even more."
     RenderBlock {DIV} at (0,68) size 770x18 [color=#FFFFFF] [bgcolor=#008000]
-      RenderText {#text} at (0,0) size 153x19
+      RenderText {#text} at (0,0) size 153x17
         text run at (0,0) width 153: "Hello. Here I am below."

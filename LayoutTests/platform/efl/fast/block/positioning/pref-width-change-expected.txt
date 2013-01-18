@@ -7,5 +7,5 @@ layer at (8,8) size 206x26
   RenderBlock (relative positioned) {DIV} at (0,0) size 206x26 [border: (3px solid #000000)]
 layer at (148,11) size 63x18
   RenderBlock (positioned) {DIV} at (140,3) size 63x18
-    RenderText {#text} at (0,0) size 63x19
+    RenderText {#text} at (0,0) size 63x17
       text run at (0,0) width 63: "longertext"

@@ -4,14 +4,14 @@ layer at (0,0) size 785x1856
   RenderBlock {HTML} at (0,0) size 785x1856
     RenderBody {BODY} at (8,8) size 769x1840
       RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 612x1833
-  RenderInline {SPAN} at (0,0) size 612x1833 [bgcolor=#800000]
-    RenderText {#text} at (0,3) size 612x1833
-      text run at (0,3) width 356: "This"
-      text run at (0,233) width 590: "content"
-      text run at (0,463) width 534: "should"
-      text run at (0,693) width 189: "be"
-      text run at (0,923) width 612: "masked"
-      text run at (0,1153) width 495: "with a"
-      text run at (0,1383) width 301: "soft"
-      text run at (0,1613) width 450: "glow."
+layer at (8,8) size 612x1831
+  RenderInline {SPAN} at (0,0) size 612x1831 [bgcolor=#800000]
+    RenderText {#text} at (0,4) size 612x1831
+      text run at (0,4) width 356: "This"
+      text run at (0,234) width 590: "content"
+      text run at (0,464) width 534: "should"
+      text run at (0,694) width 189: "be"
+      text run at (0,924) width 612: "masked"
+      text run at (0,1154) width 495: "with a"
+      text run at (0,1384) width 301: "soft"
+      text run at (0,1614) width 450: "glow."

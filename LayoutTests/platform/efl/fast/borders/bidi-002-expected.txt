@@ -4,26 +4,26 @@ layer at (0,0) size 800x258
   RenderBlock {HTML} at (0,0) size 800x258
     RenderBody {BODY} at (8,16) size 784x226
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 512x19
+        RenderText {#text} at (0,0) size 512x17
           text run at (0,0) width 512: "The following two blocks should be identical, including overflow. (Force bidi: \x{D7}\x{90})"
       RenderBlock {DIV} at (0,34) size 784x192
         RenderBlock {P} at (16,0) size 294x88 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
           RenderInline {SPAN} at (0,0) size 121x37 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
-            RenderText {#text} at (30,25) size 102x19
-              text run at (30,25) width 102: "AAABBBCCC"
-          RenderText {#text} at (132,25) size 93x19
-            text run at (132,25) width 93: "DDDEEEFFF"
+            RenderText {#text} at (30,26) size 102x17
+              text run at (30,26) width 102: "AAABBBCCC"
+          RenderText {#text} at (132,26) size 93x17
+            text run at (132,26) width 93: "DDDEEEFFF"
           RenderInline {SPAN} at (0,0) size 106x37 [color=#000080] [border: (3px solid #000080) none]
-            RenderText {#text} at (225,25) size 87x19
-              text run at (225,25) width 87: "GGGHHHIII"
-          RenderText {#text} at (11,59) size 198x19
+            RenderText {#text} at (225,26) size 87x17
+              text run at (225,26) width 87: "GGGHHHIII"
+          RenderText {#text} at (11,59) size 198x17
             text run at (11,59) width 198: "JJJKKKLLLMMMNNNOOO"
         RenderBlock {P} at (16,104) size 294x88 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
           RenderInline {SPAN} at (0,0) size 320x37 [color=#000080] [border: (3px solid #000080)]
-            RenderText {#text} at (30,25) size 282x19
-              text run at (30,25) width 102: "AAABBBCCC"
-              text run at (225,25) width 87 RTL override: "\x{202E}IIIHHHGGG"
-          RenderText {#text} at (132,25) size 214x53
-            text run at (132,25) width 93 RTL override: "FFFEEEDDD"
+            RenderText {#text} at (30,26) size 282x17
+              text run at (30,26) width 102: "AAABBBCCC"
+              text run at (225,26) width 87 RTL override: "\x{202E}IIIHHHGGG"
+          RenderText {#text} at (132,26) size 214x50
+            text run at (132,26) width 93 RTL override: "FFFEEEDDD"
             text run at (11,59) width 84 RTL override: "LLLKKKJJJ"
             text run at (95,59) width 114: "\x{202C}MMMNNNOOO"

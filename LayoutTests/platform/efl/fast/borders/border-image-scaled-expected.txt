@@ -1,22 +1,22 @@
-layer at (0,0) size 785x618
+layer at (0,0) size 785x620
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x618
-  RenderBlock {HTML} at (0,0) size 785x618
-    RenderBody {BODY} at (8,8) size 769x602
+layer at (0,0) size 785x620
+  RenderBlock {HTML} at (0,0) size 785x620
+    RenderBody {BODY} at (8,8) size 769x604
       RenderBlock {P} at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 734x37
+        RenderText {#text} at (0,0) size 734x35
           text run at (0,0) width 734: "The purpose of this test case is to illustrate the legacy behavior of -webkit-border-image. The specified border widths"
           text run at (0,18) width 701: "actually end up becoming the real border widths. The border-image property in the specification doesn't do this."
-      RenderBlock (anonymous) at (0,52) size 769x550
+      RenderBlock (anonymous) at (0,52) size 769x552
         RenderBlock {DIV} at (10,10) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
-        RenderText {#text} at (272,257) size 4x19
-          text run at (272,257) width 4: " "
+        RenderText {#text} at (272,258) size 4x17
+          text run at (272,258) width 4: " "
         RenderBlock {DIV} at (286,10) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
-        RenderText {#text} at (548,257) size 4x19
-          text run at (548,257) width 4: " "
+        RenderText {#text} at (548,258) size 4x17
+          text run at (548,258) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBlock {DIV} at (10,285) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
-        RenderText {#text} at (272,532) size 4x19
-          text run at (272,532) width 4: " "
-        RenderBlock {DIV} at (286,285) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderBlock {DIV} at (10,286) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
+        RenderText {#text} at (272,534) size 4x17
+          text run at (272,534) width 4: " "
+        RenderBlock {DIV} at (286,286) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
         RenderText {#text} at (0,0) size 0x0

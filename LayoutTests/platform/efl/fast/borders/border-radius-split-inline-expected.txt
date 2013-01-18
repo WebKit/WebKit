@@ -4,7 +4,7 @@ layer at (0,0) size 800x220
   RenderBlock {HTML} at (0,0) size 800x220
     RenderBody {BODY} at (8,16) size 784x196
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 334x19
+        RenderText {#text} at (0,0) size 334x17
           text run at (0,0) width 334: "Tests border-radius and box-shadow on a split inline."
       RenderBlock {DIV} at (0,34) size 200x162
         RenderInline {SPAN} at (0,0) size 199x148 [border: (2px solid #008000)]
