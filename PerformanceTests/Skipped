@@ -1,5 +1,5 @@
 # Micro benchmarks not worth running at the moment.
-DOM/child-node-traversal.html
+DOM/TraverseChildNodes.html
 
 # Not enabled by default on some ports
 Mutation
