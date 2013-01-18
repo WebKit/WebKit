@@ -278,6 +278,9 @@ bool TextAutosizer::containerShouldBeAutosized(const RenderBlock* container)
     if (containerContainsOneOfTags(container, formInputTags()))
         return false;
 
+    if (containerIsRowOfLinks(container))
+        return false;
+
     // Don't autosize block-level text that can't wrap (as it's likely to
     // expand sideways and break the page's layout).
     if (!container->style()->autoWrap())
@@ -299,6 +302,46 @@ bool TextAutosizer::containerContainsOneOfTags(const RenderBlock* container, con
     }
 
     return false;
+}
+
+bool TextAutosizer::containerIsRowOfLinks(const RenderObject* container)
+{
+    // A "row of links" is a container for which holds:
+    //  1. it should not contain non-link text elements longer than 3 characters
+    //  2. it should contain min. 3 inline links and all links should
+    //     have the same specified font size
+    //  3. it should not contain <br> elements
+    //  4. it should contain only inline elements unless they are containers,
+    //     children of link elements or children of sub-containers.
+    int linkCount = 0;
+    RenderObject* renderer = container->nextInPreOrder(container);
+    float matchingFontSize = -1;
+
+    while (renderer) {
+        if (!isAutosizingContainer(renderer)) {
+            if (renderer->isText() && toRenderText(renderer)->text()->stripWhiteSpace()->length() > 3)
+                return false;
+            if (!renderer->isInline())
+                return false;
+            if (renderer->isBR())
+                return false;
+        }
+        if (renderer->style()->isLink()) {
+            if (matchingFontSize < 0)
+                matchingFontSize = renderer->style()->specifiedFontSize();
+            else {
+                if (matchingFontSize != renderer->style()->specifiedFontSize())
+                    return false;
+            }
+
+            linkCount++;
+            // Skip traversing descendants of the link.
+            renderer = renderer->nextInPreOrderAfterChildren(container);
+        } else
+            renderer = nextInPreOrderSkippingDescendantsOfContainers(renderer, container);
+    }
+
+    return (linkCount >= 3);
 }
 
 bool TextAutosizer::contentHeightIsConstrained(const RenderBlock* container)

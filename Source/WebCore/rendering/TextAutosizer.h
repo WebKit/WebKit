@@ -71,6 +71,7 @@ private:
 
     static bool containerShouldBeAutosized(const RenderBlock* container);
     static bool containerContainsOneOfTags(const RenderBlock* cluster, const Vector<QualifiedName>& tags);
+    static bool containerIsRowOfLinks(const RenderObject* container);
     static bool contentHeightIsConstrained(const RenderBlock* container);
     static bool clusterShouldBeAutosized(const RenderBlock* blockContainingAllText, float blockWidth);
     static void measureDescendantTextWidth(const RenderBlock* container, const RenderBlock* blockContainingAllText, float minTextWidth, float& textWidth);

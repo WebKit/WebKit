@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html style="font-size: 16px">
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+  body {
+    width: 800px;
+    margin: 0;
+    overflow-y: hidden;
+  }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<div>
+    <a href="">These</a>
+    &gt;
+    <a href="" style="font-size: 24px">Links</a>
+    &gt;
+    <a href="">Should</a>
+    &gt;
+    <a href="">Be</a>
+    &gt;
+    <a href="">Autosized</a>
+</div>
+<div>
+    This paragraph should be autosized to 40px computed font-size (16 * 800/320),
+    and the inline links above should not be detected as a row of links because the
+    links have different font sizes, and hence they should be rendered at their default size.
+</div>
+</body>
+</html>
