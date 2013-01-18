@@ -4,5 +4,5 @@ layer at (0,0) size 800x50
   RenderBlock {html} at (0,0) size 800x50
     RenderBody {body} at (8,16) size 784x18
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 503x19
+        RenderText {#text} at (0,0) size 503x17
           text run at (0,0) width 503: "Try selecting some text in this document. It should be have a green background."

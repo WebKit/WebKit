@@ -6,11 +6,11 @@ layer at (0,0) size 800x118
       RenderBlock {DIV} at (0,0) size 784x86
         RenderBlock {DIV} at (0,0) size 784x86
           RenderBlock {P} at (0,0) size 784x18 [bgcolor=#FF0000]
-            RenderText {#text} at (0,0) size 203x19
+            RenderText {#text} at (0,0) size 203x17
               text run at (0,0) width 203: "This line should be unstyled. (2)"
           RenderBlock {P} at (0,34) size 784x18
-            RenderText {#text} at (0,0) size 290x19
+            RenderText {#text} at (0,0) size 290x17
               text run at (0,0) width 290: "This line should have a green background. (3)"
           RenderBlock {P} at (0,68) size 784x18
-            RenderText {#text} at (0,0) size 283x19
+            RenderText {#text} at (0,0) size 283x17
               text run at (0,0) width 283: "This line should be unstyled. (4 moving to 1)"

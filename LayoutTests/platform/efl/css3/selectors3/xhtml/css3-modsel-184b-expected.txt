@@ -4,8 +4,8 @@ layer at (0,0) size 800x84
   RenderBlock {html} at (0,0) size 800x84
     RenderBody {body} at (8,16) size 784x52
       RenderBlock {p} at (0,0) size 784x18 [color=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This text should be green."
       RenderBlock {p} at (0,34) size 784x18 [color=#00FF00]
-        RenderText {#text} at (0,0) size 163x19
+        RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "This text should be green."

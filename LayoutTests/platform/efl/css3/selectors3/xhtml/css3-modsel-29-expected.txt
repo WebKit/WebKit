@@ -5,192 +5,192 @@ layer at (0,0) size 800x512
     RenderBody {body} at (8,16) size 784x488
       RenderBlock {ul} at (0,0) size 784x108
         RenderListItem {li} at (40,0) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 81x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 81x17
             text run at (0,0) width 81: "First list item"
         RenderListItem {li} at (40,18) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 338x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 338x17
             text run at (0,0) width 338: "This second list item should have a green background"
         RenderListItem {li} at (40,36) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 88x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 88x17
             text run at (0,0) width 88: "Third list item"
         RenderListItem {li} at (40,54) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 332x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 332x17
             text run at (0,0) width 332: "This fourth list item should have a green background"
         RenderListItem {li} at (40,72) size 744x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 83x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "Fifth list item"
         RenderListItem {li} at (40,90) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 324x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderText {#text} at (0,0) size 324x17
             text run at (0,0) width 324: "This sixth list item should have a green background"
       RenderBlock {ol} at (0,124) size 784x108
         RenderListItem {li} at (40,0) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-21,0) size 16x19: "1"
-          RenderText {#text} at (0,0) size 318x19
+          RenderListMarker at (-20,0) size 16x17: "1"
+          RenderText {#text} at (0,0) size 318x17
             text run at (0,0) width 318: "This first list item should have a green background"
         RenderListItem {li} at (40,18) size 744x18
-          RenderListMarker at (-21,0) size 16x19: "2"
-          RenderText {#text} at (0,0) size 100x19
+          RenderListMarker at (-20,0) size 16x17: "2"
+          RenderText {#text} at (0,0) size 100x17
             text run at (0,0) width 100: "Second list item"
         RenderListItem {li} at (40,36) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-21,0) size 16x19: "3"
-          RenderText {#text} at (0,0) size 323x19
+          RenderListMarker at (-20,0) size 16x17: "3"
+          RenderText {#text} at (0,0) size 323x17
             text run at (0,0) width 323: "This third list item should have a green background"
         RenderListItem {li} at (40,54) size 744x18
-          RenderListMarker at (-21,0) size 16x19: "4"
-          RenderText {#text} at (0,0) size 95x19
+          RenderListMarker at (-20,0) size 16x17: "4"
+          RenderText {#text} at (0,0) size 95x17
             text run at (0,0) width 95: "Fourth list item"
         RenderListItem {li} at (40,72) size 744x18 [bgcolor=#008000]
-          RenderListMarker at (-21,0) size 16x19: "5"
-          RenderText {#text} at (0,0) size 320x19
+          RenderListMarker at (-20,0) size 16x17: "5"
+          RenderText {#text} at (0,0) size 320x17
             text run at (0,0) width 320: "This fifth list item should have a green background"
         RenderListItem {li} at (40,90) size 744x18
-          RenderListMarker at (-21,0) size 16x19: "6"
-          RenderText {#text} at (0,0) size 86x19
+          RenderListMarker at (-20,0) size 16x17: "6"
+          RenderText {#text} at (0,0) size 86x17
             text run at (0,0) width 86: "Sixth list item"
       RenderBlock {div} at (0,248) size 784x240
         RenderTable {table} at (0,0) size 162x148 [border: (1px outset #808080)]
           RenderTableSection (anonymous) at (1,1) size 160x146
             RenderTableRow {tr} at (0,2) size 160x22
               RenderTableCell {td} at (2,2) size 104x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.1"
               RenderTableCell {td} at (108,2) size 24x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.2"
               RenderTableCell {td} at (134,2) size 24x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.3"
             RenderTableRow {tr} at (0,26) size 160x22
               RenderTableCell {td} at (2,26) size 104x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.1"
               RenderTableCell {td} at (108,26) size 24x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.2"
               RenderTableCell {td} at (134,26) size 24x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.3"
             RenderTableRow {tr} at (0,50) size 160x22 [bgcolor=#008000]
               RenderTableCell {td} at (2,50) size 104x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 100x19
+                RenderText {#text} at (2,2) size 100x17
                   text run at (2,2) width 100: "Green row : 3.1"
               RenderTableCell {td} at (108,50) size 24x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.2"
               RenderTableCell {td} at (134,50) size 24x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.3"
             RenderTableRow {tr} at (0,74) size 160x22 [bgcolor=#008000]
               RenderTableCell {td} at (2,74) size 104x22 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 100x19
+                RenderText {#text} at (2,2) size 100x17
                   text run at (2,2) width 100: "Green row : 4.1"
               RenderTableCell {td} at (108,74) size 24x22 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "4.2"
               RenderTableCell {td} at (134,74) size 24x22 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "4.3"
             RenderTableRow {tr} at (0,98) size 160x22 [bgcolor=#008000]
               RenderTableCell {td} at (2,98) size 104x22 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 100x19
+                RenderText {#text} at (2,2) size 100x17
                   text run at (2,2) width 100: "Green row : 5.1"
               RenderTableCell {td} at (108,98) size 24x22 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "5.2"
               RenderTableCell {td} at (134,98) size 24x22 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "5.3"
             RenderTableRow {tr} at (0,122) size 160x22 [bgcolor=#008000]
               RenderTableCell {td} at (2,122) size 104x22 [border: (1px inset #808080)] [r=5 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 100x19
+                RenderText {#text} at (2,2) size 100x17
                   text run at (2,2) width 100: "Green row : 6.1"
               RenderTableCell {td} at (108,122) size 24x22 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "6.2"
               RenderTableCell {td} at (134,122) size 24x22 [border: (1px inset #808080)] [r=5 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "6.3"
         RenderBlock {p} at (0,164) size 784x0
         RenderTable {table} at (0,164) size 335x76 [border: (1px outset #808080)]
           RenderTableSection (anonymous) at (1,1) size 333x74
             RenderTableRow {tr} at (0,2) size 333x22
               RenderTableCell {td} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.1"
               RenderTableCell {td} at (28,2) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (95,2) size 24x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.3"
               RenderTableCell {td} at (121,2) size 24x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.4"
               RenderTableCell {td} at (147,2) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (214,2) size 24x22 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.6"
               RenderTableCell {td} at (240,2) size 24x22 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "1.7"
               RenderTableCell {td} at (266,2) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=7 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
             RenderTableRow {tr} at (0,26) size 333x22
               RenderTableCell {td} at (2,26) size 24x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.1"
               RenderTableCell {td} at (28,26) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (95,26) size 24x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.3"
               RenderTableCell {td} at (121,26) size 24x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.4"
               RenderTableCell {td} at (147,26) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (214,26) size 24x22 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.6"
               RenderTableCell {td} at (240,26) size 24x22 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "2.7"
               RenderTableCell {td} at (266,26) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
             RenderTableRow {tr} at (0,50) size 333x22
               RenderTableCell {td} at (2,50) size 24x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.1"
               RenderTableCell {td} at (28,50) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (95,50) size 24x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.3"
               RenderTableCell {td} at (121,50) size 24x22 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.4"
               RenderTableCell {td} at (147,50) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"
               RenderTableCell {td} at (214,50) size 24x22 [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.6"
               RenderTableCell {td} at (240,50) size 24x22 [border: (1px inset #808080)] [r=2 c=6 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x17
                   text run at (2,2) width 20: "3.7"
               RenderTableCell {td} at (266,50) size 65x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=7 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 61x19
+                RenderText {#text} at (2,2) size 61x17
                   text run at (2,2) width 61: "green cell"

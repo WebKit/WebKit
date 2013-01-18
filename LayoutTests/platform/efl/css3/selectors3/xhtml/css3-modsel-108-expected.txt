@@ -4,17 +4,17 @@ layer at (0,0) size 800x186
   RenderBlock {html} at (0,0) size 800x186
     RenderBody {body} at (8,16) size 784x154
       RenderBlock {p} at (0,0) size 784x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {q} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 221x19
+        RenderText {#text} at (0,0) size 221x17
           text run at (0,0) width 221: "This paragraph should be unstyled."
       RenderBlock {r} at (0,68) size 784x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {s} at (0,102) size 784x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {t} at (0,136) size 784x18
-        RenderText {#text} at (0,0) size 221x19
+        RenderText {#text} at (0,0) size 221x17
           text run at (0,0) width 221: "This paragraph should be unstyled."

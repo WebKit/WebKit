@@ -4,14 +4,14 @@ layer at (0,0) size 800x152
   RenderBlock {html} at (0,0) size 800x152
     RenderBody {body} at (8,16) size 784x120
       RenderBlock {p} at (0,0) size 784x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {address} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 205x19
+        RenderText {#text} at (0,0) size 205x17
           text run at (0,0) width 205: "This address should be unstyled."
       RenderBlock {q} at (0,68) size 784x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 308x19
+        RenderText {#text} at (0,0) size 308x17
           text run at (0,0) width 308: "This paragraph should have a green background."
       RenderBlock {r} at (0,102) size 784x18
-        RenderText {#text} at (0,0) size 221x19
+        RenderText {#text} at (0,0) size 221x17
           text run at (0,0) width 221: "This paragraph should be unstyled."
