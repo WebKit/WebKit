@@ -29,6 +29,7 @@
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "RuleFeature.h"
+#include "RuleSet.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
@@ -327,7 +328,7 @@ private:
         union {
             struct {
                 unsigned linkMatchType : 2;
-                unsigned isInRegionRule : 1;
+                unsigned whitelistType : 2;
             };
             // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
             void* possiblyPaddedMember;
@@ -352,7 +353,7 @@ private:
         const ContainerNode* scope;
     };
 
-    static void addMatchedProperties(MatchResult&, const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, bool inRegionRule = false);
+    static void addMatchedProperties(MatchResult&, const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
     void addElementStyleProperties(MatchResult&, const StylePropertySet*, bool isCacheable = true);
 
     void matchAllRules(MatchResult&, bool includeSMILProperties);
@@ -384,12 +385,14 @@ private:
     template <StyleApplicationPass pass>
     void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <StyleApplicationPass pass>
-    void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, bool filterRegionProperties);
+    void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, PropertyWhitelistType = PropertyWhitelistNone);
 #if ENABLE(CSS_VARIABLES)
     void resolveVariables(CSSPropertyID, CSSValue*, Vector<std::pair<CSSPropertyID, String> >& knownExpressions);
 #endif
     static bool isValidRegionStyleProperty(CSSPropertyID);
-
+#if ENABLE(VIDEO_TRACK)
+    static bool isValidCueStyleProperty(CSSPropertyID);
+#endif
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
     Settings* documentSettings() { return m_document->settings(); }

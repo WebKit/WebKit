@@ -108,18 +108,29 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
+static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRuleFlags addRuleFlags, const CSSSelector* selector)
+{
+    if (addRuleFlags & RuleIsInRegionRule)
+        return PropertyWhitelistRegion;
+#if ENABLE(VIDEO_TRACK)
+    if (selector->pseudoType() == CSSSelector::PseudoCue)
+        return PropertyWhitelistCue;
+#endif
+    return PropertyWhitelistNone;
+}
+
 RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, AddRuleFlags addRuleFlags)
     : m_rule(rule)
     , m_selectorIndex(selectorIndex)
     , m_position(position)
-    , m_specificity(selector()->specificity())
     , m_hasFastCheckableSelector((addRuleFlags & RuleCanUseFastCheckSelector) && SelectorChecker::isFastCheckableSelector(selector()))
+    , m_specificity(selector()->specificity())
     , m_hasMultipartSelector(!!selector()->tagHistory())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector()))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
-    , m_isInRegionRule(!!(addRuleFlags & RuleIsInRegionRule))
+    , m_propertyWhitelistType(determinePropertyWhitelistType(addRuleFlags, selector()))
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);

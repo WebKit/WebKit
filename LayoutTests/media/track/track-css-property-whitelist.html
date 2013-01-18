@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+        ::cue(c) {padding-left: 10px; color: red;}
+        </style>
+
+        <script>
+
+        var cueNode;
+
+        function skipNonElements(root)
+        {
+            nextElementSibling = root;
+            while (nextElementSibling.nodeType != 1) {
+                nextElementSibling = nextElementSibling.nextSibling;
+            }
+            return nextElementSibling;
+        }
+
+        function seeked()
+        {
+            if (testEnded)
+                return;
+
+            consoleWrite("<br>");
+            consoleWrite("Test that only allowed for the ::cue pseudo-element properties are applied to WebVTT node objects.");
+
+            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
+            skipNonElements(cueNode);
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            testExpected("getComputedStyle(cueNode).padding", "0px");
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            testExpected("getComputedStyle(cueNode).padding", "0px");
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            testExpected("getComputedStyle(cueNode).padding", "0px");
+            endTest();
+        }
+
+        function loaded()
+        {
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = 0.1; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/whitelist.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

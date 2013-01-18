@@ -1,0 +1,13 @@
+EVENT(canplaythrough)
+EVENT(seeked)
+
+
+Test that only allowed for the ::cue pseudo-element properties are applied to WebVTT node objects.
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+END OF TEST
+
