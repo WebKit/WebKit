@@ -97,8 +97,10 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
     } else
         m_client->updateTile(m_ID, updateInfo, m_rect);
 
+    Vector<IntRect> updatedRects;
+    updatedRects.append(m_dirtyRect);
     m_dirtyRect = IntRect();
-    return Vector<IntRect>();
+    return updatedRects;
 }
 
 void CoordinatedTile::swapBackBufferToFront()
