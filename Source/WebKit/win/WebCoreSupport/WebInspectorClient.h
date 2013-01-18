@@ -53,7 +53,7 @@ class WebView;
 
 class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
-    WebInspectorClient(WebView*);
+    explicit WebInspectorClient(WebView*);
 
     // InspectorClient
     virtual void inspectorDestroyed();

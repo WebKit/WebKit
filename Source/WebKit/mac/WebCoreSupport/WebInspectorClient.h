@@ -59,7 +59,7 @@ class WebInspectorFrontendClient;
 
 class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
-    WebInspectorClient(WebView *);
+    explicit WebInspectorClient(WebView *);
 
     virtual void inspectorDestroyed() OVERRIDE;
 

@@ -34,7 +34,7 @@ namespace WebKit {
 
 class InspectorClientWinCE : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
-    InspectorClientWinCE(WebView* webView);
+    explicit InspectorClientWinCE(WebView*);
     ~InspectorClientWinCE();
 
     virtual void inspectorDestroyed();

@@ -1,3 +1,22 @@
+2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Add explicit keyword to constructors in platform-specific InspectorClient
+        https://bugs.webkit.org/show_bug.cgi?id=107255
+
+        Reviewed by Kentaro Hara.
+
+        Add explicit keyword to constructors that take one argument
+        in platform-specific implementation of InspectorClient.
+        And fix some coding style.
+
+        * WebCoreSupport/InspectorClientGtk.h:
+        (WebCore):
+        (WebKit):
+        (InspectorClient):
+        (WebKit::InspectorClient::disconnectFrontendClient):
+        (InspectorFrontendClient):
+        (WebKit::InspectorFrontendClient::disconnectInspectorClient):
+
 2013-01-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Add new method to support addUserScript in DumpRenderTree

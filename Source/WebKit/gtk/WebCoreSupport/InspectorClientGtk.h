@@ -32,77 +32,77 @@
 #include "InspectorClient.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendClientLocal.h"
-#include "webkitwebview.h"
 #include "webkitwebinspector.h"
+#include "webkitwebview.h"
 #include <wtf/Forward.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
-    class Page;
+class Page;
 }
 
 namespace WebKit {
 
-    class InspectorFrontendClient;
+class InspectorFrontendClient;
 
-    class InspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
-    public:
-        InspectorClient(WebKitWebView* webView);
-        ~InspectorClient();
+class InspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
+public:
+    explicit InspectorClient(WebKitWebView*);
+    ~InspectorClient();
 
-        void disconnectFrontendClient() { m_frontendClient = 0; }
+    void disconnectFrontendClient() { m_frontendClient = 0; }
 
-        virtual void inspectorDestroyed();
+    virtual void inspectorDestroyed();
 
-        virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
-        virtual void closeInspectorFrontend();
-        virtual void bringFrontendToFront();
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
+    virtual void closeInspectorFrontend();
+    virtual void bringFrontendToFront();
 
-        virtual void highlight();
-        virtual void hideHighlight();
+    virtual void highlight();
+    virtual void hideHighlight();
 
-        virtual bool sendMessageToFrontend(const WTF::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&);
 
-        void releaseFrontendPage();
-        const char* inspectorFilesPath();
+    void releaseFrontendPage();
+    const char* inspectorFilesPath();
 
-    private:
-        WebKitWebView* m_inspectedWebView;
-        WebCore::Page* m_frontendPage;
-        InspectorFrontendClient* m_frontendClient;
-        GOwnPtr<gchar> m_inspectorFilesPath;
-    };
+private:
+    WebKitWebView* m_inspectedWebView;
+    WebCore::Page* m_frontendPage;
+    InspectorFrontendClient* m_frontendClient;
+    GOwnPtr<gchar> m_inspectorFilesPath;
+};
 
-    class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
-    public:
-        InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, WebCore::Page* inspectorPage, InspectorClient* inspectorClient);
-        virtual ~InspectorFrontendClient();
+class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
+public:
+    InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector*, WebCore::Page* inspectorPage, InspectorClient*);
+    virtual ~InspectorFrontendClient();
 
-        void disconnectInspectorClient() { m_inspectorClient = 0; }
+    void disconnectInspectorClient() { m_inspectorClient = 0; }
 
-        void destroyInspectorWindow(bool notifyInspectorController);
+    void destroyInspectorWindow(bool notifyInspectorController);
 
-        virtual WTF::String localizedStringsURL();
+    virtual WTF::String localizedStringsURL();
 
-        virtual WTF::String hiddenPanels();
+    virtual WTF::String hiddenPanels();
 
-        virtual void bringToFront();
-        virtual void closeWindow();
+    virtual void bringToFront();
+    virtual void closeWindow();
 
-        virtual void attachWindow();
-        virtual void detachWindow();
+    virtual void attachWindow();
+    virtual void detachWindow();
 
-        virtual void setAttachedWindowHeight(unsigned height);
+    virtual void setAttachedWindowHeight(unsigned);
 
-        virtual void inspectedURLChanged(const WTF::String& newURL);
+    virtual void inspectedURLChanged(const WTF::String& newURL);
 
-    private:
-        WebKitWebView* m_inspectorWebView;
-        WebKitWebView* m_inspectedWebView;
-        GRefPtr<WebKitWebInspector> m_webInspector;
-        InspectorClient* m_inspectorClient;
-    };
+private:
+    WebKitWebView* m_inspectorWebView;
+    WebKitWebView* m_inspectedWebView;
+    GRefPtr<WebKitWebInspector> m_webInspector;
+    InspectorClient* m_inspectorClient;
+};
 }
 
 #endif

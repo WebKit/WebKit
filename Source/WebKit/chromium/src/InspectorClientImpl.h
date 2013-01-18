@@ -45,7 +45,7 @@ class WebViewImpl;
 class InspectorClientImpl : public WebCore::InspectorClient,
                             public WebCore::InspectorFrontendChannel {
 public:
-    InspectorClientImpl(WebViewImpl*);
+    explicit InspectorClientImpl(WebViewImpl*);
     ~InspectorClientImpl();
 
     // InspectorClient methods:

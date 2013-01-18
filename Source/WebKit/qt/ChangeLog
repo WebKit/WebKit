@@ -1,3 +1,16 @@
+2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Add explicit keyword to constructors in platform-specific InspectorClient
+        https://bugs.webkit.org/show_bug.cgi?id=107255
+
+        Reviewed by Kentaro Hara.
+
+        Add explicit keyword to constructors that take one argument
+        in platform-specific implementation of InspectorClient.
+
+        * WebCoreSupport/InspectorClientQt.h:
+        (InspectorClientQt):
+
 2013-01-16  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Use the shared HistoryItem serialization for QWebHistory

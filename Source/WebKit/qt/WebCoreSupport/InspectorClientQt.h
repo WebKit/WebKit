@@ -51,7 +51,7 @@ class Page;
 
 class InspectorClientQt : public InspectorClient, public InspectorFrontendChannel {
 public:
-    InspectorClientQt(QWebPageAdapter*);
+    explicit InspectorClientQt(QWebPageAdapter*);
 
     virtual void inspectorDestroyed();
 
