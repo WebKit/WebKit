@@ -53,10 +53,6 @@ AutoscrollController::AutoscrollController()
     : m_autoscrollTimer(this, &AutoscrollController::autoscrollTimerFired)
     , m_autoscrollRenderer(0)
     , m_autoscrollType(NoAutoscroll)
-#if ENABLE(PAN_SCROLLING)
-    , m_panScrollButtonPressed(false)
-    , m_springLoadedPanScrollInProgress(false)
-#endif
 {
 }
 
@@ -89,10 +85,6 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     m_autoscrollTimer.stop();
     m_autoscrollType = NoAutoscroll;
     m_autoscrollRenderer = 0;
-#if ENABLE(PAN_SCROLLING)
-    m_panScrollButtonPressed = false;
-    m_springLoadedPanScrollInProgress = false;
-#endif
 
     if (!scrollable)
         return;
@@ -157,15 +149,20 @@ void AutoscrollController::didPanScrollStop()
 
 void AutoscrollController::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 {
-    if (mouseEvent.button() == MiddleButton)
-        m_panScrollButtonPressed = false;
-    if (m_springLoadedPanScrollInProgress)
+    switch (m_autoscrollType) {
+    case AutoscrollForPan:
+        if (mouseEvent.button() == MiddleButton)
+            m_autoscrollType = AutoscrollForPanCanStop;
+        break;
+    case AutoscrollForPanCanStop:
         stopAutoscrollTimer();
+        break;
+    }
 }
 
 bool AutoscrollController::panScrollInProgress() const
 {
-    return m_autoscrollType == AutoscrollForPan;
+    return m_autoscrollType == AutoscrollForPan || m_autoscrollType == AutoscrollForPanCanStop;
 }
 
 void AutoscrollController::startPanScrolling(RenderBox* scrollable, const IntPoint& lastKnownMousePosition)
@@ -177,7 +174,6 @@ void AutoscrollController::startPanScrolling(RenderBox* scrollable, const IntPoi
     m_autoscrollType = AutoscrollForPan;
     m_autoscrollRenderer = scrollable;
     m_panScrollStartPos = lastKnownMousePosition;
-    m_springLoadedPanScrollInProgress = false;
 
     if (FrameView* view = scrollable->frame()->view())
         view->addPanScrollIcon(lastKnownMousePosition);
@@ -210,6 +206,7 @@ void AutoscrollController::autoscrollTimerFired(Timer<AutoscrollController>*)
     case NoAutoscroll:
         break;
 #if ENABLE(PAN_SCROLLING)
+    case AutoscrollForPanCanStop:
     case AutoscrollForPan:
         // we verify that the main frame hasn't received the order to stop the panScroll
         if (Frame* mainFrame = getMainFrame(frame)) {
@@ -241,8 +238,8 @@ void AutoscrollController::updatePanScrollState(FrameView* view, const IntPoint&
     bool north = m_panScrollStartPos.y() > (lastKnownMousePosition.y() + ScrollView::noPanScrollRadius);
     bool south = m_panScrollStartPos.y() < (lastKnownMousePosition.y() - ScrollView::noPanScrollRadius);
 
-    if ((east || west || north || south) && m_panScrollButtonPressed)
-        m_springLoadedPanScrollInProgress = true;
+    if (m_autoscrollType == AutoscrollForPan && (east || west || north || south))
+        m_autoscrollType = AutoscrollForPanCanStop;
 
     if (north) {
         if (east)

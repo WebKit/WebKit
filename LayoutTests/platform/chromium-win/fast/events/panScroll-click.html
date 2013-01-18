@@ -1,0 +1,123 @@
+<html>
+<head>
+<style type="text/css">
+#draggable {
+  padding: 5pt;
+  border: 3px solid #00cc00;
+  background: #00cccc;
+  width: 80px;
+  cursor: hand;
+}
+
+#scrollable {
+    height: 200px;
+    overflow: auto;
+    border: solid 3px #cc0000;
+    font-size: 80px;
+}
+</style>
+<script>
+function $(id) { return document.getElementById(id); }
+var MIDDLE_BUTTON = 1;
+var PAN_SCROLL_RADIUS = 15; // from WebCore/platform/ScrollView.h
+
+function finishTest() {
+    $('container').innerHTML = '';
+    window.testRunner.notifyDone();
+}
+
+function testIt() {
+    var scrollable = $('scrollable');
+
+    if (!window.eventSender)
+        return;
+
+    // Start pan scroll by click
+    eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + 5);
+    eventSender.mouseDown(MIDDLE_BUTTON);
+    eventSender.mouseUp(MIDDLE_BUTTON);
+    eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + PAN_SCROLL_RADIUS + 6);
+
+    var retryCount = 0;
+    var lastScrollTop = 0;
+
+    function checkScrolled()
+    {
+        if (scrollable.scrollTop > 0) {
+            testPassed('scrollable.scrollTop > 0');
+            // Stop spring loaded pan scroll
+            eventSender.mouseDown(MIDDLE_BUTTON);
+            eventSender.mouseUp(MIDDLE_BUTTON);
+            retryCount = 0;
+            window.setTimeout(checkStopped, 50);
+            return;
+        }
+
+        ++retryCount;
+        if (retryCount > 10) {
+            testFailed('No autoscroll');
+            finishTest();
+            return;
+        }
+
+        // Autoscroll is occurred evey 0.05 sec.
+        window.setTimeout(checkScrolled, 50);
+    }
+
+    function checkStopped()
+    {
+        if (lastScrollTop == scrollable.scrollTop) {
+            testPassed('autoscroll stopped');
+            finishTest();
+            return;
+        }
+
+        ++retryCount;
+        if (retryCount > 10) {
+            testFailed('still autoscroll');
+            finishTest();
+            return;
+        }
+
+        lastScrollTop = scrollable.scrollTop;
+        window.setTimeout(checkStopped, 50);
+    }
+
+    checkScrolled();
+}
+
+function setUpTest()
+{
+    var scrollable = $('scrollable');
+    for (var i = 0; i < 100; ++i) {
+      var line = document.createElement('div');
+      line.innerHTML = "line " + i;
+      scrollable.appendChild(line);
+    }
+
+    if (!window.eventSender) {
+        console.log('Please run within DumpRenderTree');
+        return;
+    }
+
+    window.jsTestIsAsync = true;
+    window.setTimeout(testIt, 0);
+}
+</script>
+</head>
+<body>
+For manual testing, hold middle button in scrollable and move aroudn mouse pointer for scrolling, then release middle button to stop scrolling.
+<div id="container">
+Scrollable
+<div id="scrollable">
+</div>
+</div>
+<div id="console"></div>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+description('Check pan scroll by click mouse');
+setUpTest();
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

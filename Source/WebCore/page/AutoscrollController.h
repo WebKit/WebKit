@@ -42,6 +42,7 @@ enum AutoscrollType {
     NoAutoscroll,
     AutoscrollForSelection,
 #if ENABLE(PAN_SCROLLING)
+    AutoscrollForPanCanStop,
     AutoscrollForPan,
 #endif
 };
@@ -76,8 +77,6 @@ private:
     AutoscrollType m_autoscrollType;
 #if ENABLE(PAN_SCROLLING)
     IntPoint m_panScrollStartPos;
-    bool m_panScrollButtonPressed;
-    bool m_springLoadedPanScrollInProgress;
 #endif
 };
 

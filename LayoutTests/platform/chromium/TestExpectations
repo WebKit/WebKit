@@ -2073,6 +2073,9 @@ webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panS
 webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-event-fired.html [ Skip ]
 webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-nested-divs.html [ Skip ]
 
+webkit.org/b/107205 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-click.html [ Skip ]
+webkit.org/b/107205 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-drag.html [ Skip ]
+
 crbug.com/31623 [ SnowLeopard Win ] http/tests/appcache/remove-cache.html [ Failure Pass Timeout ]
 
 # V8's implementation of getOwnPropertyNames has different results for built-in
