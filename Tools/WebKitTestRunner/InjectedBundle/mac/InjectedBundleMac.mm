@@ -31,6 +31,9 @@
 +(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
 @end
 
+@interface NSSound (Details)
++ (void)_setAlertType:(NSUInteger)alertType;
+@end
 
 namespace WTR {
 
@@ -56,6 +59,8 @@ void InjectedBundle::platformInitialize(WKTypeRef)
 
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
+
+    [NSSound _setAlertType:0];
 }
 
 } // namespace WTR

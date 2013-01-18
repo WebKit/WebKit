@@ -1,3 +1,17 @@
+2013-01-18  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] DumpRenderTree/WebKitTestRunner should disable NSBeep
+        https://bugs.webkit.org/show_bug.cgi?id=107251
+
+        Reviewed by Simon Fraser.
+
+        Disable NSBeep in DumpRenderTree and WebKitTestRunner using NSSound SPI.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2013-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Enable indexed database for development builds
