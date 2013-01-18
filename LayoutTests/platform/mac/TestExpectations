@@ -379,10 +379,6 @@ webarchive/test-link-rel-icon.html
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=64097
-http/tests/inspector/network/network-disable-cache-memory.html
-http/tests/inspector/network/network-disable-cache-xhrs.html
-
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
 storage/storageinfo-no-callbacks.html

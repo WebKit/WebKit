@@ -525,10 +525,13 @@ void CachedResource::removeClient(CachedResourceClient* client)
     }
 
     bool deleted = deleteIfPossible();
-    if (!deleted && !hasClients() && inCache()) {
-        memoryCache()->removeFromLiveResourcesSize(this);
-        memoryCache()->removeFromLiveDecodedResourcesList(this);
-        allClientsRemoved();
+    if (!deleted && !hasClients()) {
+        if (inCache()) {
+            memoryCache()->removeFromLiveResourcesSize(this);
+            memoryCache()->removeFromLiveDecodedResourcesList(this);
+        }
+        if (!m_switchingClientsToRevalidatedResource)
+            allClientsRemoved();
         destroyDecodedDataIfNeeded();
         if (response().cacheControlContainsNoStore()) {
             // RFC2616 14.9.2:
