@@ -7,6 +7,6 @@ layer at (0,0) size 800x69
         RenderInline (generated) at (0,0) size 20x36 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 20x36
             text run at (0,0) width 20: "T"
-        RenderText {#text} at (20,14) size 481x19
-          text run at (20,14) width 331: "his very long paragraph should have a big first letter "
-          text run at (351,14) width 150: "with green background."
+        RenderText {#text} at (20,15) size 481x17
+          text run at (20,15) width 331: "his very long paragraph should have a big first letter "
+          text run at (351,15) width 150: "with green background."

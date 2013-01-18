@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x213
-  RenderBlock {HTML} at (0,0) size 800x213
-    RenderBody {BODY} at (8,16) size 784x189
+layer at (0,0) size 800x214
+  RenderBlock {HTML} at (0,0) size 800x214
+    RenderBody {BODY} at (8,16) size 784x190
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 777x37
-          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 154x19
+        RenderInline {I} at (0,0) size 777x35
+          RenderInline {A} at (0,0) size 154x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 154x17
               text run at (53,0) width 154: "rdar://problem/5862634"
-          RenderText {#text} at (207,0) size 777x37
+          RenderText {#text} at (207,0) size 777x35
             text run at (207,0) width 4: " "
             text run at (211,0) width 566: "REGRESSION (3.1.1): In iChat, inline image not resizable past current size after another"
             text run at (0,18) width 89: "IM is received"
-        RenderText {#text} at (89,18) size 4x19
+        RenderText {#text} at (89,18) size 4x17
           text run at (89,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 315x19
+        RenderText {#text} at (0,0) size 315x17
           text run at (0,0) width 315: "The blue square below should be 100\x{D7}100 pixels."
-      RenderBlock {DIV} at (0,86) size 200x103
-        RenderBlock {DIV} at (0,0) size 100x103
+      RenderBlock {DIV} at (0,86) size 200x104
+        RenderBlock {DIV} at (0,0) size 100x104
           RenderImage {IMG} at (0,0) size 100x100
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

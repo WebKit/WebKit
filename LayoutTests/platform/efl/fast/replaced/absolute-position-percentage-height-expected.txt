@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 752x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 752x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14449"
-          RenderText {#text} at (354,0) size 752x37
+          RenderText {#text} at (354,0) size 752x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 394: "REGRESSION (r14345-r14375): Absolutely positioned image"
             text run at (0,18) width 281: "does not scale to containing element's height"
-        RenderText {#text} at (281,18) size 4x19
+        RenderText {#text} at (281,18) size 4x17
           text run at (281,18) width 4: "."
 layer at (18,60) size 764x200
   RenderBlock (relative positioned) {DIV} at (10,52) size 764x200
@@ -26,5 +26,5 @@ layer at (18,60) size 50x100
 layer at (18,270) size 764x200
   RenderBlock (relative positioned) {DIV} at (10,262) size 764x200
     RenderText {#text} at (0,0) size 0x0
-layer at (18,270) size 50x91
-  RenderImage {IMG} at (0,0) size 50x91 [bgcolor=#0000FF]
+layer at (18,270) size 50x89
+  RenderImage {IMG} at (0,0) size 50x89 [bgcolor=#0000FF]

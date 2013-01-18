@@ -5,6 +5,6 @@ layer at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {FORM} at (0,0) size 784x18 [bgcolor=#00FF00]
         RenderBlock {P} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 353x19
+          RenderText {#text} at (0,0) size 353x17
             text run at (0,0) width 202: "The content of this form should "
             text run at (202,0) width 151: "have a lime background"

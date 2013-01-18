@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 745x37
+        RenderText {#text} at (0,0) size 745x35
           text run at (0,0) width 456: "This tests for a crash when removing a widget whose height is specified "
           text run at (456,0) width 289: "as a percentage of a non-immediate ancestor\x{2019}s"
           text run at (0,18) width 43: "height."

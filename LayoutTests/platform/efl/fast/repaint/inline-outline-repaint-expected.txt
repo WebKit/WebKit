@@ -4,35 +4,35 @@ layer at (0,0) size 800x210
   RenderBlock {HTML} at (0,0) size 800x210
     RenderBody {BODY} at (8,16) size 784x186
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {B} at (0,0) size 62x19
-          RenderText {#text} at (0,0) size 62x19
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
             text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x19
+        RenderText {#text} at (62,0) size 4x17
           text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
-          RenderText {#text} at (66,0) size 117x19
+        RenderInline {A} at (0,0) size 117x17 [color=#0000EE]
+          RenderText {#text} at (66,0) size 117x17
             text run at (66,0) width 117: "Bugzilla bug 8337"
-        RenderText {#text} at (183,0) size 327x19
+        RenderText {#text} at (183,0) size 327x17
           text run at (183,0) width 327: " Incomplete repaint of inlines\x{2019} outline during editing"
       RenderBlock {P} at (0,34) size 784x42 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x19
-          RenderText {#text} at (3,3) size 91x19
+        RenderInline {B} at (0,0) size 91x17
+          RenderText {#text} at (3,3) size 91x17
             text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 757x37
+        RenderText {#text} at (94,3) size 757x35
           text run at (94,3) width 4: " "
           text run at (98,3) width 662: "The words \x{201C}sit amet\x{201D} will be deleted, and the blue outline will shrink to surround only the remaining text,"
           text run at (3,21) width 316: "without leaving behind any trails or other artifacts."
       RenderBlock {P} at (0,92) size 784x42 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x19
-          RenderText {#text} at (3,3) size 90x19
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
             text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 725x37
+        RenderText {#text} at (93,3) size 725x35
           text run at (93,3) width 4: " "
           text run at (97,3) width 631: "As the words \x{201C}sit amet\x{201D} will be deleted, the blue outline will leave trails behind as it shrinks to fit the"
           text run at (3,21) width 94: "remaining text."
       RenderBlock {DIV} at (0,150) size 100x36
-        RenderInline {SPAN} at (0,0) size 88x37
-          RenderText {#text} at (0,0) size 88x37
+        RenderInline {SPAN} at (0,0) size 88x35
+          RenderText {#text} at (0,0) size 88x35
             text run at (0,0) width 84: "Lorem ipsum"
             text run at (84,0) width 4: " "
             text run at (0,18) width 33: "dolor"

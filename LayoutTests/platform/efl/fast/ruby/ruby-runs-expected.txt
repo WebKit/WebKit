@@ -4,48 +4,48 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 227x19
+        RenderText {#text} at (0,0) size 227x17
           text run at (0,0) width 227: "This is a test for multiple ruby runs. "
-        RenderBR {BR} at (227,15) size 0x0
-        RenderBR {BR} at (0,18) size 0x19
-      RenderBlock {P} at (0,52) size 784x29
-        RenderText {#text} at (0,11) size 155x19
-          text run at (0,11) width 155: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 131x19
-          RenderRubyRun (anonymous) at (151,11) size 24x18
-            RenderRubyText {RT} at (0,-11) size 24x10
-              RenderText {#text} at (0,0) size 24x11
+        RenderBR {BR} at (227,14) size 0x0
+        RenderBR {BR} at (0,18) size 0x17
+      RenderBlock {P} at (0,52) size 784x28
+        RenderText {#text} at (0,10) size 155x17
+          text run at (0,10) width 155: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 131x17
+          RenderRubyRun (anonymous) at (151,10) size 24x18
+            RenderRubyText {RT} at (0,-10) size 24x10
+              RenderText {#text} at (0,0) size 24x10
                 text run at (0,0) width 24: "Hyper"
             RenderRubyBase (anonymous) at (0,0) size 24x18
-              RenderText {#text} at (6,0) size 12x19
+              RenderText {#text} at (6,0) size 12x17
                 text run at (6,0) width 12: "H"
-          RenderRubyRun (anonymous) at (175,11) size 18x18
-            RenderRubyText {RT} at (0,-11) size 18x10
-              RenderText {#text} at (0,0) size 18x11
+          RenderRubyRun (anonymous) at (175,10) size 18x18
+            RenderRubyText {RT} at (0,-10) size 18x10
+              RenderText {#text} at (0,0) size 18x10
                 text run at (0,0) width 18: "Text"
             RenderRubyBase (anonymous) at (0,0) size 18x18
-              RenderText {#text} at (4,0) size 10x19
+              RenderText {#text} at (4,0) size 10x17
                 text run at (4,0) width 10: "T"
-          RenderRubyRun (anonymous) at (193,11) size 30x18
-            RenderRubyText {RT} at (0,-11) size 30x10
-              RenderText {#text} at (0,0) size 30x11
+          RenderRubyRun (anonymous) at (193,10) size 30x18
+            RenderRubyText {RT} at (0,-10) size 30x10
+              RenderText {#text} at (0,0) size 30x10
                 text run at (0,0) width 30: "Markup"
             RenderRubyBase (anonymous) at (0,0) size 30x18
-              RenderText {#text} at (8,0) size 14x19
+              RenderText {#text} at (8,0) size 14x17
                 text run at (8,0) width 14: "M"
-          RenderRubyRun (anonymous) at (223,11) size 38x18
-            RenderRubyText {RT} at (0,-11) size 38x10
-              RenderText {#text} at (0,0) size 38x11
+          RenderRubyRun (anonymous) at (223,10) size 38x18
+            RenderRubyText {RT} at (0,-10) size 38x10
+              RenderText {#text} at (0,0) size 38x10
                 text run at (0,0) width 38: "Language"
             RenderRubyBase (anonymous) at (0,0) size 38x18
-              RenderText {#text} at (14,0) size 10x19
+              RenderText {#text} at (14,0) size 10x17
                 text run at (14,0) width 10: "L"
-          RenderRubyRun (anonymous) at (261,11) size 29x18
-            RenderRubyText {RT} at (0,-11) size 29x10
-              RenderText {#text} at (0,0) size 29x11
+          RenderRubyRun (anonymous) at (261,10) size 29x18
+            RenderRubyText {RT} at (0,-10) size 29x10
+              RenderText {#text} at (0,0) size 29x10
                 text run at (0,0) width 29: "Level 5"
             RenderRubyBase (anonymous) at (0,0) size 29x18
-              RenderText {#text} at (10,0) size 9x19
+              RenderText {#text} at (10,0) size 9x17
                 text run at (10,0) width 9: "5"
-        RenderText {#text} at (286,11) size 42x19
-          text run at (286,11) width 42: " specs."
+        RenderText {#text} at (286,10) size 42x17
+          text run at (286,10) width 42: " specs."

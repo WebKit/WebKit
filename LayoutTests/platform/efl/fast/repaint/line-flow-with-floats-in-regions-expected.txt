@@ -18,7 +18,7 @@ Flow Threads
                 RenderBlock {DIV} at (0,0) size 450x50
                   RenderBlock (floating) {DIV} at (370,10) size 70x120 [bgcolor=#FFC0CB]
                 RenderBlock {P} at (0,66) size 418x498 [border: (3px solid #800000)]
-                  RenderText {#text} at (6,6) size 406x109
+                  RenderText {#text} at (6,6) size 406x107
                     text run at (6,6) width 354: "The chief difficulty Alice found at first was in managing"
                     text run at (6,24) width 25: "her "
                     text run at (31,24) width 329: "flamingo: she succeeded in getting its body tucked"
@@ -29,17 +29,17 @@ Flow Threads
                     text run at (6,78) width 176: "neck nicely straightened "
                     text run at (182,78) width 230: "out, and was going to give the"
                     text run at (6,96) width 224: "hedgehog a blow with its head, it "
-                  RenderInline {I} at (0,0) size 39x19
-                    RenderText {#text} at (230,96) size 39x19
+                  RenderInline {I} at (0,0) size 39x17
+                    RenderText {#text} at (230,96) size 39x17
                       text run at (230,96) width 39: "would"
-                  RenderText {#text} at (269,96) size 406x73
+                  RenderText {#text} at (269,96) size 406x71
                     text run at (269,96) width 143: " twist itself round and"
                     text run at (6,114) width 175: "look up in her face, with "
                     text run at (181,114) width 231: "such a puzzled expression that she"
                     text run at (6,132) width 179: "could not help bursting out "
                     text run at (185,132) width 227: "laughing: and when she had got its"
                     text run at (6,150) width 229: "head down, and was going to "
-                  RenderText {#text} at (235,150) size 406x127
+                  RenderText {#text} at (235,150) size 406x125
                     text run at (235,150) width 177: "begin again, it was very"
                     text run at (6,168) width 259: "provoking to find that the hedgehog had "
                     text run at (265,168) width 147: "unrolled itself, and was"
@@ -52,30 +52,30 @@ Flow Threads
                     text run at (6,240) width 292: "getting up and walking off to other parts of "
                     text run at (298,240) width 114: "the ground, Alice"
                     text run at (57,258) width 306: "soon came to the conclusion that it was a very "
-                  RenderBlock (floating) {SPAN} at (6,261) size 48x64 [bgcolor=#ADD8E6]
-                  RenderText {#text} at (363,258) size 355x37
+                  RenderBlock (floating) {SPAN} at (6,261) size 48x65 [bgcolor=#ADD8E6]
+                  RenderText {#text} at (363,258) size 355x35
                     text run at (363,258) width 49: "difficult"
                     text run at (57,276) width 88: "game indeed. "
                   RenderBR {BR} at (0,0) size 0x0
-                  RenderText {#text} at (57,294) size 304x19
-                    text run at (57,294) width 304: "The players all played at once without waiting"
-                  RenderBlock (floating) {SPAN} at (364,297) size 48x80 [bgcolor=#90EE90]
-                  RenderText {#text} at (57,312) size 355x37
+                  RenderText {#text} at (57,294) size 303x17
+                    text run at (57,294) width 303: "The players all played at once without waiting"
+                  RenderBlock (floating) {SPAN} at (364,297) size 48x81 [bgcolor=#90EE90]
+                  RenderText {#text} at (57,312) size 354x35
                     text run at (57,312) width 63: "for turns, "
-                    text run at (120,312) width 241: "quarrelling all the while, and fighting"
+                    text run at (120,312) width 240: "quarrelling all the while, and fighting"
                     text run at (6,330) width 172: "for the hedgehogs; and in "
-                    text run at (178,330) width 116: "a very short time "
-                  RenderInline {SPAN} at (0,0) size 67x19
-                    RenderText {#text} at (294,330) size 67x19
-                      text run at (294,330) width 67: "the Queen"
-                  RenderText {#text} at (6,348) size 355x55
-                    text run at (6,348) width 226: "was in a furious passion, and went "
-                    text run at (232,348) width 129: "stamping about, and"
-                    text run at (6,366) width 288: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
-                    text run at (294,366) width 67: "her head!\x{2019}"
+                    text run at (178,330) width 115: "a very short time "
+                  RenderInline {SPAN} at (0,0) size 67x17
+                    RenderText {#text} at (293,330) size 67x17
+                      text run at (293,330) width 67: "the Queen"
+                  RenderText {#text} at (6,348) size 354x53
+                    text run at (6,348) width 225: "was in a furious passion, and went "
+                    text run at (231,348) width 129: "stamping about, and"
+                    text run at (6,366) width 287: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
+                    text run at (293,366) width 67: "her head!\x{2019}"
                     text run at (6,384) width 151: "about once in a minute. "
                   RenderBR {BR} at (0,0) size 0x0
-                  RenderText {#text} at (6,402) size 406x91
+                  RenderText {#text} at (6,402) size 406x89
                     text run at (6,402) width 387: "Alice began to feel very uneasy: to be sure, she had not as "
                     text run at (393,402) width 19: "yet"
                     text run at (6,420) width 406: "had any dispute with the Queen, but she knew that it might"

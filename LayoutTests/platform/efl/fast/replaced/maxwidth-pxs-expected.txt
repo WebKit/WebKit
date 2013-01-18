@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 462x19
+        RenderText {#text} at (0,0) size 462x17
           text run at (0,0) width 462: "In this test you should see two identical blue squares, each 50px by 50px."
-      RenderBlock (anonymous) at (0,34) size 784x53
+      RenderBlock (anonymous) at (0,34) size 784x54
         RenderImage {IMG} at (0,0) size 50x50
-        RenderText {#text} at (50,35) size 4x19
-          text run at (50,35) width 4: " "
+        RenderText {#text} at (50,36) size 4x17
+          text run at (50,36) width 4: " "
         RenderImage {IMG} at (54,0) size 50x50
         RenderText {#text} at (0,0) size 0x0

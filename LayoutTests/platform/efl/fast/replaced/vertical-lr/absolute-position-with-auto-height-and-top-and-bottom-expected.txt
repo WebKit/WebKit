@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 36x584
-        RenderText {#text} at (0,0) size 37x564
+        RenderText {#text} at (0,0) size 35x564
           text run at (0,0) width 564: "The blue box should be vertically centered in the black box with 25px of white on the top"
           text run at (18,0) width 75: "and bottom."
 layer at (60,8) size 104x154

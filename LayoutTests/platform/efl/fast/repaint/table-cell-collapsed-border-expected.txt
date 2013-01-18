@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 100x19
+        RenderText {#text} at (0,0) size 100x17
           text run at (0,0) width 100: "Repaint test for "
-        RenderInline {I} at (0,0) size 759x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (100,0) size 301x19
+        RenderInline {I} at (0,0) size 759x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (100,0) size 301x17
               text run at (100,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11359"
-          RenderText {#text} at (401,0) size 759x37
+          RenderText {#text} at (401,0) size 759x35
             text run at (401,0) width 4: " "
             text run at (405,0) width 354: "Incomplete repaint of table cell's collapsed border when"
             text run at (0,18) width 139: "changing only the cell"
-        RenderText {#text} at (139,18) size 4x19
+        RenderText {#text} at (139,18) size 4x17
           text run at (139,18) width 4: "."
       RenderTable {TABLE} at (0,52) size 436x405 [border: (5px none #808080)]
         RenderTableSection {TBODY} at (0,5) size 436x400

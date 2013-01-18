@@ -4,32 +4,32 @@ layer at (0,0) size 800x316
   RenderBlock {HTML} at (0,0) size 800x316
     RenderBody {BODY} at (8,16) size 784x292
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline {B} at (0,0) size 62x19
-          RenderText {#text} at (0,0) size 62x19
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
             text run at (0,0) width 62: "BUG ID:"
-        RenderText {#text} at (62,0) size 4x19
+        RenderText {#text} at (62,0) size 4x17
           text run at (62,0) width 4: " "
-        RenderInline {A} at (0,0) size 117x19 [color=#0000EE]
-          RenderText {#text} at (66,0) size 117x19
+        RenderInline {A} at (0,0) size 117x17 [color=#0000EE]
+          RenderText {#text} at (66,0) size 117x17
             text run at (66,0) width 117: "Bugzilla bug 6274"
-        RenderText {#text} at (183,0) size 777x37
+        RenderText {#text} at (183,0) size 777x35
           text run at (183,0) width 594: "Text repainting does not account for glyphs which draw outside the typographic bounds of the"
           text run at (0,18) width 29: "font."
       RenderBlock {P} at (0,52) size 784x24 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x19
-          RenderText {#text} at (3,3) size 91x19
+        RenderInline {B} at (0,0) size 91x17
+          RenderText {#text} at (3,3) size 91x17
             text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 203x19
+        RenderText {#text} at (94,3) size 203x17
           text run at (94,3) width 4: " "
           text run at (98,3) width 199: "The text will entirely disappear."
       RenderBlock {P} at (0,92) size 784x24 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 90x19
-          RenderText {#text} at (3,3) size 90x19
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
             text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 561x19
+        RenderText {#text} at (93,3) size 561x17
           text run at (93,3) width 4: " "
           text run at (97,3) width 557: "Most of the text will be gone, but some artifacts will be left behind at the top of the page."
       RenderBlock {DIV} at (0,132) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,11) size 200x0
       RenderBlock (anonymous) at (0,274) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17

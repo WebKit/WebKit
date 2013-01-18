@@ -4,12 +4,12 @@ layer at (0,0) size 800x260
   RenderBlock {HTML} at (0,0) size 800x260
     RenderBody {BODY} at (8,16) size 784x236
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (53,0) size 305x19
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (53,0) size 305x17
             text run at (53,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=17840"
-        RenderText {#text} at (358,0) size 292x19
+        RenderText {#text} at (358,0) size 292x17
           text run at (358,0) width 292: ". The rotated box should be correctly redrawn."
 layer at (108,150) size 202x202
   RenderBlock (relative positioned) {DIV} at (0,34) size 202x202 [bgcolor=#CCCCCC] [border: (1px solid #000000)]

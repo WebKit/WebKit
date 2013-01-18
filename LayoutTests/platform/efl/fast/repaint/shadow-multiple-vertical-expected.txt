@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,20) size 784x480
       RenderBlock {DIV} at (20,0) size 744x55
-        RenderInline {SPAN} at (0,0) size 313x55
-          RenderText {#text} at (0,0) size 313x55
-            text run at (0,0) width 313: "      multiple    "
-        RenderText {#text} at (313,0) size 348x55
-          text run at (313,0) width 348: "     shadows      "
+        RenderInline {SPAN} at (0,0) size 313x53
+          RenderText {#text} at (0,1) size 313x53
+            text run at (0,1) width 313: "      multiple    "
+        RenderText {#text} at (313,1) size 348x53
+          text run at (313,1) width 348: "     shadows      "
       RenderBlock {DIV} at (100,155) size 100x100

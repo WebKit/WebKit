@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 309x19
+        RenderText {#text} at (0,0) size 309x17
           text run at (0,0) width 309: "The following sets of buttons should not overlap."
       RenderTable {TABLE} at (0,18) size 784x22
         RenderTableSection {TBODY} at (0,0) size 784x22
           RenderTableRow {TR} at (0,1) size 784x20
-            RenderTableCell {TD} at (1,1) size 10x20 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 8x12
-            RenderTableCell {TD} at (12,1) size 10x20 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 8x12
-            RenderTableCell {TD} at (23,1) size 10x20 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {INPUT} at (5,4) size 8x12
-            RenderTableCell {TD} at (34,1) size 749x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+            RenderTableCell {TD} at (1,1) size 11x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {INPUT} at (5,4) size 10x12
+            RenderTableCell {TD} at (13,1) size 11x20 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (5,4) size 10x12
+            RenderTableCell {TD} at (25,1) size 11x20 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {INPUT} at (5,4) size 10x12
+            RenderTableCell {TD} at (37,1) size 746x20 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "

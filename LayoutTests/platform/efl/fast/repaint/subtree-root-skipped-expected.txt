@@ -8,14 +8,14 @@ layer at (8,8) size 300x300
 layer at (8,8) size 200x200
   RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#C0C0C0]
     RenderBlock (anonymous) at (0,0) size 200x32
-      RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
+      RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
       RenderText {#text} at (0,0) size 0x0
     RenderBlock {DIV} at (0,32) size 200x18
-      RenderText {#text} at (0,0) size 103x19
+      RenderText {#text} at (0,0) size 103x17
         text run at (0,0) width 103: "Selection is here"
-layer at (14,16) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 44x19
+layer at (14,16) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 44x17
       text run at (0,0) width 44: "PASS"
 layer at (8,288) size 10x20
   RenderBlock (positioned) {DIV} at (0,280) size 10x20 [bgcolor=#ADD8E6]

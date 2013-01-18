@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 590x19
+        RenderText {#text} at (0,0) size 590x17
           text run at (0,0) width 590: "The following is a test for having a trailing base within a <ruby> with no associated ruby text."
       RenderBlock (anonymous) at (0,34) size 784x36
-        RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,18) size 0x19
-      RenderBlock {P} at (0,86) size 784x29
-        RenderText {#text} at (0,11) size 155x19
-          text run at (0,11) width 155: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 118x19
-          RenderRubyRun (anonymous) at (151,11) size 114x18
-            RenderRubyText {RT} at (0,-11) size 114x10
-              RenderText {#text} at (0,0) size 114x11
+        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,18) size 0x17
+      RenderBlock {P} at (0,86) size 784x28
+        RenderText {#text} at (0,10) size 155x17
+          text run at (0,10) width 155: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 118x17
+          RenderRubyRun (anonymous) at (151,10) size 114x18
+            RenderRubyText {RT} at (0,-10) size 114x10
+              RenderText {#text} at (0,0) size 114x10
                 text run at (0,0) width 114: "Hyper-text Markup Language"
             RenderRubyBase (anonymous) at (0,0) size 114x18
-              RenderText {#text} at (34,0) size 46x19
+              RenderText {#text} at (34,0) size 46x17
                 text run at (34,0) width 46: "HTML"
-          RenderRubyRun (anonymous) at (265,11) size 8x18
+          RenderRubyRun (anonymous) at (265,10) size 8x18
             RenderRubyBase (anonymous) at (0,0) size 8x18
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "5"
-        RenderText {#text} at (273,11) size 4x19
-          text run at (273,11) width 4: "."
+        RenderText {#text} at (273,10) size 4x17
+          text run at (273,10) width 4: "."

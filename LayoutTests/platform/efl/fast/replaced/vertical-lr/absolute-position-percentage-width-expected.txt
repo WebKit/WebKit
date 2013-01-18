@@ -9,5 +9,5 @@ layer at (10,10) size 60x310
   RenderImage {IMG} at (2,2) size 60x310
 layer at (31,15) size 18x300
   RenderBlock (relative positioned) zI: 1 {P} at (23,7) size 18x300
-    RenderText zI: 1 {#text} at (0,37) size 19x226
+    RenderText zI: 1 {#text} at (0,37) size 17x226
       text run at (0,37) width 226: "There should be no red on this page"

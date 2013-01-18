@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x88
-  RenderBlock {HTML} at (0,0) size 800x88
-    RenderBody {BODY} at (16,16) size 768x56 [color=#0000FF]
+layer at (0,0) size 800x86
+  RenderBlock {HTML} at (0,0) size 800x86
+    RenderBody {BODY} at (16,16) size 768x54 [color=#0000FF]
       RenderRuby (inline) {RUBY} at (0,0) size 213x36
-        RenderRubyRun (anonymous) at (0,19) size 192x37
-          RenderRubyText {RT} at (0,-19) size 192x18
-            RenderInline (generated) at (0,0) size 63x19
-              RenderText at (0,0) size 63x19
+        RenderRubyRun (anonymous) at (0,17) size 192x37
+          RenderRubyText {RT} at (0,-17) size 192x18
+            RenderInline (generated) at (0,0) size 63x17
+              RenderText at (0,0) size 63x17
                 text run at (0,0) width 63: "BEFORE"
-            RenderText {#text} at (63,0) size 77x19
+            RenderText {#text} at (63,0) size 77x17
               text run at (63,0) width 77: "CONTENT"
-            RenderInline (generated) at (0,0) size 52x19
-              RenderText at (140,0) size 52x19
+            RenderInline (generated) at (0,0) size 52x17
+              RenderText at (140,0) size 52x17
                 text run at (140,0) width 52: "AFTER"
           RenderRubyBase (anonymous) at (0,0) size 192x37
             RenderText {#text} at (84,0) size 24x36
               text run at (84,0) width 24: "A"
-        RenderRubyRun (anonymous) at (192,19) size 21x37
+        RenderRubyRun (anonymous) at (192,17) size 21x37
           RenderRubyBase (anonymous) at (0,0) size 21x37
             RenderText {#text} at (0,0) size 21x36
               text run at (0,0) width 21: "B"

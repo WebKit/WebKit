@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x34
   RenderBlock {HTML} at (0,0) size 800x34
     RenderBody {BODY} at (8,8) size 784x18
-      RenderText {#text} at (0,0) size 416x19
+      RenderText {#text} at (0,0) size 416x17
         text run at (0,0) width 416: "You should see the text 'after' in the inner box, no mangled pixels."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
@@ -15,5 +15,5 @@ layer at (7,25) size 302x302 backgroundClip at (9,27) size 300x300 clip at (9,27
 layer at (101,119) size 102x102 clip at (102,120) size 100x100
   RenderBlock (positioned) {DIV} at (101,101) size 102x102 [border: (1px solid #008000)]
     RenderBlock {DIV} at (1,1) size 50x50
-      RenderText {#text} at (0,0) size 28x19
+      RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "after"

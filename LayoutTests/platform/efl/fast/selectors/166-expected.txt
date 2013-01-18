@@ -1,1385 +1,1385 @@
-layer at (0,0) size 785x3319
+layer at (0,0) size 785x3324
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x3319
-  RenderBlock {HTML} at (0,0) size 785x3319
-    RenderBody {BODY} at (8,21) size 769x3282
+layer at (0,0) size 785x3324
+  RenderBlock {HTML} at (0,0) size 785x3324
+    RenderBody {BODY} at (8,21) size 769x3287
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 249x36
           text run at (0,0) width 249: "HTML Test Index"
-      RenderBlock {P} at (0,58) size 769x18
-        RenderText {#text} at (0,0) size 310x19
+      RenderBlock {P} at (0,58) size 769x19
+        RenderText {#text} at (0,0) size 310x17
           text run at (0,0) width 310: "The HTML tests are available in several variants."
-      RenderBlock {H2} at (0,95) size 769x28
-        RenderText {#text} at (0,0) size 281x28
-          text run at (0,0) width 281: "Tests With Navigation Aids"
-      RenderBlock {P} at (0,142) size 769x36
-        RenderText {#text} at (0,0) size 769x37
+      RenderBlock {H2} at (0,96) size 769x29
+        RenderText {#text} at (0,1) size 281x26
+          text run at (0,1) width 281: "Tests With Navigation Aids"
+      RenderBlock {P} at (0,144) size 769x37
+        RenderText {#text} at (0,0) size 769x35
           text run at (0,0) width 769: "Each category of test is available using several different harnesses. The name of the harness describes how the test markup"
           text run at (0,18) width 659: "is contained within it, for example the Xlink embed case uses an XLink with the show axis set to embed."
-      RenderBlock {UL} at (0,194) size 769x180
+      RenderBlock {UL} at (0,196) size 769x181
         RenderListItem {LI} at (40,0) size 729x36
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 21x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 21x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 21x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 21x17
               text run at (0,0) width 21: "full"
-          RenderText {#text} at (21,0) size 8x19
+          RenderText {#text} at (21,0) size 8x17
             text run at (21,0) width 8: ": "
-          RenderInline {A} at (0,0) size 94x19 [color=#0000EE]
-            RenderText {#text} at (29,0) size 94x19
+          RenderInline {A} at (0,0) size 94x17 [color=#0000EE]
+            RenderText {#text} at (29,0) size 94x17
               text run at (29,0) width 94: "Self Contained"
-          RenderText {#text} at (123,0) size 8x19
+          RenderText {#text} at (123,0) size 8x17
             text run at (123,0) width 8: ", "
-          RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-            RenderText {#text} at (131,0) size 120x19
+          RenderInline {A} at (0,0) size 120x17 [color=#0000EE]
+            RenderText {#text} at (131,0) size 120x17
               text run at (131,0) width 120: "XHTML <iframe>"
-          RenderText {#text} at (251,0) size 8x19
+          RenderText {#text} at (251,0) size 8x17
             text run at (251,0) width 8: ", "
-          RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
-            RenderText {#text} at (259,0) size 118x19
+          RenderInline {A} at (0,0) size 118x17 [color=#0000EE]
+            RenderText {#text} at (259,0) size 118x17
               text run at (259,0) width 118: "XHTML <object>"
-          RenderText {#text} at (377,0) size 8x19
+          RenderText {#text} at (377,0) size 8x17
             text run at (377,0) width 8: ", "
-          RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-            RenderText {#text} at (385,0) size 116x19
+          RenderInline {A} at (0,0) size 116x17 [color=#0000EE]
+            RenderText {#text} at (385,0) size 116x17
               text run at (385,0) width 116: "XHTML <frame>"
-          RenderText {#text} at (501,0) size 8x19
+          RenderText {#text} at (501,0) size 8x17
             text run at (501,0) width 8: ", "
-          RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
-            RenderText {#text} at (509,0) size 108x19
+          RenderInline {A} at (0,0) size 108x17 [color=#0000EE]
+            RenderText {#text} at (509,0) size 108x17
               text run at (509,0) width 108: "HTML <iframe>"
-          RenderText {#text} at (617,0) size 8x19
+          RenderText {#text} at (617,0) size 8x17
             text run at (617,0) width 8: ", "
-          RenderInline {A} at (0,0) size 671x37 [color=#0000EE]
-            RenderText {#text} at (625,0) size 671x37
+          RenderInline {A} at (0,0) size 671x35 [color=#0000EE]
+            RenderText {#text} at (625,0) size 671x35
               text run at (625,0) width 46: "HTML"
               text run at (0,18) width 56: "<object>"
-          RenderText {#text} at (56,18) size 8x19
+          RenderText {#text} at (56,18) size 8x17
             text run at (56,18) width 8: ", "
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (64,18) size 104x19
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (64,18) size 104x17
               text run at (64,18) width 104: "HTML <frame>"
-          RenderText {#text} at (168,18) size 8x19
+          RenderText {#text} at (168,18) size 8x17
             text run at (168,18) width 8: ", "
-          RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
-            RenderText {#text} at (176,18) size 88x19
+          RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+            RenderText {#text} at (176,18) size 88x17
               text run at (176,18) width 88: "XLink embed"
-          RenderText {#text} at (264,18) size 8x19
+          RenderText {#text} at (264,18) size 8x17
             text run at (264,18) width 8: ", "
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (272,18) size 83x19
+          RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+            RenderText {#text} at (272,18) size 83x17
               text run at (272,18) width 83: "TNG Format"
         RenderListItem {LI} at (40,36) size 729x36
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 32x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 32x17
               text run at (0,0) width 32: "static"
-          RenderText {#text} at (32,0) size 8x19
+          RenderText {#text} at (32,0) size 8x17
             text run at (32,0) width 8: ": "
-          RenderInline {A} at (0,0) size 94x19 [color=#0000EE]
-            RenderText {#text} at (40,0) size 94x19
+          RenderInline {A} at (0,0) size 94x17 [color=#0000EE]
+            RenderText {#text} at (40,0) size 94x17
               text run at (40,0) width 94: "Self Contained"
-          RenderText {#text} at (134,0) size 8x19
+          RenderText {#text} at (134,0) size 8x17
             text run at (134,0) width 8: ", "
-          RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-            RenderText {#text} at (142,0) size 120x19
+          RenderInline {A} at (0,0) size 120x17 [color=#0000EE]
+            RenderText {#text} at (142,0) size 120x17
               text run at (142,0) width 120: "XHTML <iframe>"
-          RenderText {#text} at (262,0) size 8x19
+          RenderText {#text} at (262,0) size 8x17
             text run at (262,0) width 8: ", "
-          RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
-            RenderText {#text} at (270,0) size 118x19
+          RenderInline {A} at (0,0) size 118x17 [color=#0000EE]
+            RenderText {#text} at (270,0) size 118x17
               text run at (270,0) width 118: "XHTML <object>"
-          RenderText {#text} at (388,0) size 8x19
+          RenderText {#text} at (388,0) size 8x17
             text run at (388,0) width 8: ", "
-          RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-            RenderText {#text} at (396,0) size 116x19
+          RenderInline {A} at (0,0) size 116x17 [color=#0000EE]
+            RenderText {#text} at (396,0) size 116x17
               text run at (396,0) width 116: "XHTML <frame>"
-          RenderText {#text} at (512,0) size 8x19
+          RenderText {#text} at (512,0) size 8x17
             text run at (512,0) width 8: ", "
-          RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
-            RenderText {#text} at (520,0) size 108x19
+          RenderInline {A} at (0,0) size 108x17 [color=#0000EE]
+            RenderText {#text} at (520,0) size 108x17
               text run at (520,0) width 108: "HTML <iframe>"
-          RenderText {#text} at (628,0) size 8x19
+          RenderText {#text} at (628,0) size 8x17
             text run at (628,0) width 8: ", "
-          RenderInline {A} at (0,0) size 682x37 [color=#0000EE]
-            RenderText {#text} at (636,0) size 682x37
+          RenderInline {A} at (0,0) size 682x35 [color=#0000EE]
+            RenderText {#text} at (636,0) size 682x35
               text run at (636,0) width 46: "HTML"
               text run at (0,18) width 56: "<object>"
-          RenderText {#text} at (56,18) size 8x19
+          RenderText {#text} at (56,18) size 8x17
             text run at (56,18) width 8: ", "
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (64,18) size 104x19
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (64,18) size 104x17
               text run at (64,18) width 104: "HTML <frame>"
-          RenderText {#text} at (168,18) size 8x19
+          RenderText {#text} at (168,18) size 8x17
             text run at (168,18) width 8: ", "
-          RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
-            RenderText {#text} at (176,18) size 88x19
+          RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+            RenderText {#text} at (176,18) size 88x17
               text run at (176,18) width 88: "XLink embed"
-          RenderText {#text} at (264,18) size 8x19
+          RenderText {#text} at (264,18) size 8x17
             text run at (264,18) width 8: ", "
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (272,18) size 83x19
+          RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+            RenderText {#text} at (272,18) size 83x17
               text run at (272,18) width 83: "TNG Format"
         RenderListItem {LI} at (40,72) size 729x36
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 90x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 90x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 90x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 90x17
               text run at (0,0) width 90: "history-related"
-          RenderText {#text} at (90,0) size 8x19
+          RenderText {#text} at (90,0) size 8x17
             text run at (90,0) width 8: ": "
-          RenderInline {A} at (0,0) size 94x19 [color=#0000EE]
-            RenderText {#text} at (98,0) size 94x19
+          RenderInline {A} at (0,0) size 94x17 [color=#0000EE]
+            RenderText {#text} at (98,0) size 94x17
               text run at (98,0) width 94: "Self Contained"
-          RenderText {#text} at (192,0) size 8x19
+          RenderText {#text} at (192,0) size 8x17
             text run at (192,0) width 8: ", "
-          RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-            RenderText {#text} at (200,0) size 120x19
+          RenderInline {A} at (0,0) size 120x17 [color=#0000EE]
+            RenderText {#text} at (200,0) size 120x17
               text run at (200,0) width 120: "XHTML <iframe>"
-          RenderText {#text} at (320,0) size 8x19
+          RenderText {#text} at (320,0) size 8x17
             text run at (320,0) width 8: ", "
-          RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
-            RenderText {#text} at (328,0) size 118x19
+          RenderInline {A} at (0,0) size 118x17 [color=#0000EE]
+            RenderText {#text} at (328,0) size 118x17
               text run at (328,0) width 118: "XHTML <object>"
-          RenderText {#text} at (446,0) size 8x19
+          RenderText {#text} at (446,0) size 8x17
             text run at (446,0) width 8: ", "
-          RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-            RenderText {#text} at (454,0) size 116x19
+          RenderInline {A} at (0,0) size 116x17 [color=#0000EE]
+            RenderText {#text} at (454,0) size 116x17
               text run at (454,0) width 116: "XHTML <frame>"
-          RenderText {#text} at (570,0) size 8x19
+          RenderText {#text} at (570,0) size 8x17
             text run at (570,0) width 8: ", "
-          RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
-            RenderText {#text} at (578,0) size 108x19
+          RenderInline {A} at (0,0) size 108x17 [color=#0000EE]
+            RenderText {#text} at (578,0) size 108x17
               text run at (578,0) width 108: "HTML <iframe>"
-          RenderText {#text} at (686,0) size 4x19
+          RenderText {#text} at (686,0) size 4x17
             text run at (686,0) width 4: ","
-          RenderInline {A} at (0,0) size 106x19 [color=#0000EE]
-            RenderText {#text} at (0,18) size 106x19
+          RenderInline {A} at (0,0) size 106x17 [color=#0000EE]
+            RenderText {#text} at (0,18) size 106x17
               text run at (0,18) width 106: "HTML <object>"
-          RenderText {#text} at (106,18) size 8x19
+          RenderText {#text} at (106,18) size 8x17
             text run at (106,18) width 8: ", "
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (114,18) size 104x19
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (114,18) size 104x17
               text run at (114,18) width 104: "HTML <frame>"
-          RenderText {#text} at (218,18) size 8x19
+          RenderText {#text} at (218,18) size 8x17
             text run at (218,18) width 8: ", "
-          RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
-            RenderText {#text} at (226,18) size 88x19
+          RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+            RenderText {#text} at (226,18) size 88x17
               text run at (226,18) width 88: "XLink embed"
-          RenderText {#text} at (314,18) size 8x19
+          RenderText {#text} at (314,18) size 8x17
             text run at (314,18) width 8: ", "
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (322,18) size 83x19
+          RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+            RenderText {#text} at (322,18) size 83x17
               text run at (322,18) width 83: "TNG Format"
         RenderListItem {LI} at (40,108) size 729x36
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 65x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 65x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 65x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 65x17
               text run at (0,0) width 65: "interactive"
-          RenderText {#text} at (65,0) size 8x19
+          RenderText {#text} at (65,0) size 8x17
             text run at (65,0) width 8: ": "
-          RenderInline {A} at (0,0) size 94x19 [color=#0000EE]
-            RenderText {#text} at (73,0) size 94x19
+          RenderInline {A} at (0,0) size 94x17 [color=#0000EE]
+            RenderText {#text} at (73,0) size 94x17
               text run at (73,0) width 94: "Self Contained"
-          RenderText {#text} at (167,0) size 8x19
+          RenderText {#text} at (167,0) size 8x17
             text run at (167,0) width 8: ", "
-          RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-            RenderText {#text} at (175,0) size 120x19
+          RenderInline {A} at (0,0) size 120x17 [color=#0000EE]
+            RenderText {#text} at (175,0) size 120x17
               text run at (175,0) width 120: "XHTML <iframe>"
-          RenderText {#text} at (295,0) size 8x19
+          RenderText {#text} at (295,0) size 8x17
             text run at (295,0) width 8: ", "
-          RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
-            RenderText {#text} at (303,0) size 118x19
+          RenderInline {A} at (0,0) size 118x17 [color=#0000EE]
+            RenderText {#text} at (303,0) size 118x17
               text run at (303,0) width 118: "XHTML <object>"
-          RenderText {#text} at (421,0) size 8x19
+          RenderText {#text} at (421,0) size 8x17
             text run at (421,0) width 8: ", "
-          RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-            RenderText {#text} at (429,0) size 116x19
+          RenderInline {A} at (0,0) size 116x17 [color=#0000EE]
+            RenderText {#text} at (429,0) size 116x17
               text run at (429,0) width 116: "XHTML <frame>"
-          RenderText {#text} at (545,0) size 8x19
+          RenderText {#text} at (545,0) size 8x17
             text run at (545,0) width 8: ", "
-          RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
-            RenderText {#text} at (553,0) size 108x19
+          RenderInline {A} at (0,0) size 108x17 [color=#0000EE]
+            RenderText {#text} at (553,0) size 108x17
               text run at (553,0) width 108: "HTML <iframe>"
-          RenderText {#text} at (661,0) size 8x19
+          RenderText {#text} at (661,0) size 8x17
             text run at (661,0) width 8: ", "
-          RenderInline {A} at (0,0) size 715x37 [color=#0000EE]
-            RenderText {#text} at (669,0) size 715x37
+          RenderInline {A} at (0,0) size 715x35 [color=#0000EE]
+            RenderText {#text} at (669,0) size 715x35
               text run at (669,0) width 46: "HTML"
               text run at (0,18) width 56: "<object>"
-          RenderText {#text} at (56,18) size 8x19
+          RenderText {#text} at (56,18) size 8x17
             text run at (56,18) width 8: ", "
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (64,18) size 104x19
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (64,18) size 104x17
               text run at (64,18) width 104: "HTML <frame>"
-          RenderText {#text} at (168,18) size 8x19
+          RenderText {#text} at (168,18) size 8x17
             text run at (168,18) width 8: ", "
-          RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
-            RenderText {#text} at (176,18) size 88x19
+          RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+            RenderText {#text} at (176,18) size 88x17
               text run at (176,18) width 88: "XLink embed"
-          RenderText {#text} at (264,18) size 8x19
+          RenderText {#text} at (264,18) size 8x17
             text run at (264,18) width 8: ", "
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (272,18) size 83x19
+          RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+            RenderText {#text} at (272,18) size 83x17
               text run at (272,18) width 83: "TNG Format"
         RenderListItem {LI} at (40,144) size 729x36
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 54x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 54x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 54x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 54x17
               text run at (0,0) width 54: "dynamic"
-          RenderText {#text} at (54,0) size 8x19
+          RenderText {#text} at (54,0) size 8x17
             text run at (54,0) width 8: ": "
-          RenderInline {A} at (0,0) size 94x19 [color=#0000EE]
-            RenderText {#text} at (62,0) size 94x19
+          RenderInline {A} at (0,0) size 94x17 [color=#0000EE]
+            RenderText {#text} at (62,0) size 94x17
               text run at (62,0) width 94: "Self Contained"
-          RenderText {#text} at (156,0) size 8x19
+          RenderText {#text} at (156,0) size 8x17
             text run at (156,0) width 8: ", "
-          RenderInline {A} at (0,0) size 120x19 [color=#0000EE]
-            RenderText {#text} at (164,0) size 120x19
+          RenderInline {A} at (0,0) size 120x17 [color=#0000EE]
+            RenderText {#text} at (164,0) size 120x17
               text run at (164,0) width 120: "XHTML <iframe>"
-          RenderText {#text} at (284,0) size 8x19
+          RenderText {#text} at (284,0) size 8x17
             text run at (284,0) width 8: ", "
-          RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
-            RenderText {#text} at (292,0) size 118x19
+          RenderInline {A} at (0,0) size 118x17 [color=#0000EE]
+            RenderText {#text} at (292,0) size 118x17
               text run at (292,0) width 118: "XHTML <object>"
-          RenderText {#text} at (410,0) size 8x19
+          RenderText {#text} at (410,0) size 8x17
             text run at (410,0) width 8: ", "
-          RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-            RenderText {#text} at (418,0) size 116x19
+          RenderInline {A} at (0,0) size 116x17 [color=#0000EE]
+            RenderText {#text} at (418,0) size 116x17
               text run at (418,0) width 116: "XHTML <frame>"
-          RenderText {#text} at (534,0) size 8x19
+          RenderText {#text} at (534,0) size 8x17
             text run at (534,0) width 8: ", "
-          RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
-            RenderText {#text} at (542,0) size 108x19
+          RenderInline {A} at (0,0) size 108x17 [color=#0000EE]
+            RenderText {#text} at (542,0) size 108x17
               text run at (542,0) width 108: "HTML <iframe>"
-          RenderText {#text} at (650,0) size 8x19
+          RenderText {#text} at (650,0) size 8x17
             text run at (650,0) width 8: ", "
-          RenderInline {A} at (0,0) size 704x37 [color=#0000EE]
-            RenderText {#text} at (658,0) size 704x37
+          RenderInline {A} at (0,0) size 704x35 [color=#0000EE]
+            RenderText {#text} at (658,0) size 704x35
               text run at (658,0) width 46: "HTML"
               text run at (0,18) width 56: "<object>"
-          RenderText {#text} at (56,18) size 8x19
+          RenderText {#text} at (56,18) size 8x17
             text run at (56,18) width 8: ", "
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (64,18) size 104x19
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (64,18) size 104x17
               text run at (64,18) width 104: "HTML <frame>"
-          RenderText {#text} at (168,18) size 8x19
+          RenderText {#text} at (168,18) size 8x17
             text run at (168,18) width 8: ", "
-          RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
-            RenderText {#text} at (176,18) size 88x19
+          RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+            RenderText {#text} at (176,18) size 88x17
               text run at (176,18) width 88: "XLink embed"
-          RenderText {#text} at (264,18) size 8x19
+          RenderText {#text} at (264,18) size 8x17
             text run at (264,18) width 8: ", "
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (272,18) size 83x19
+          RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+            RenderText {#text} at (272,18) size 83x17
               text run at (272,18) width 83: "TNG Format"
-      RenderBlock {H2} at (0,393) size 769x28
-        RenderText {#text} at (0,0) size 174x28
-          text run at (0,0) width 174: "Unadorned Tests"
-      RenderBlock {UL} at (0,440) size 769x2808
+      RenderBlock {H2} at (0,396) size 769x29
+        RenderText {#text} at (0,1) size 174x26
+          text run at (0,1) width 174: "Unadorned Tests"
+      RenderBlock {UL} at (0,444) size 769x2809
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 122x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 122x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 122x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 122x17
               text run at (0,0) width 122: "Groups of selectors"
-          RenderText {#text} at (122,0) size 30x19
+          RenderText {#text} at (122,0) size 30x17
             text run at (122,0) width 30: " (#1)"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 144x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 144x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 144x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 144x17
               text run at (0,0) width 144: "Type element selectors"
-          RenderText {#text} at (144,0) size 30x19
+          RenderText {#text} at (144,0) size 30x17
             text run at (144,0) width 30: " (#2)"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 164x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 164x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 164x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 164x17
               text run at (0,0) width 164: "Omitted universal selector"
-          RenderText {#text} at (164,0) size 30x19
+          RenderText {#text} at (164,0) size 30x17
             text run at (164,0) width 30: " (#4)"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 170x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 170x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 170x17
               text run at (0,0) width 170: "Attribute existence selector"
-          RenderText {#text} at (170,0) size 30x19
+          RenderText {#text} at (170,0) size 30x17
             text run at (170,0) width 30: " (#5)"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 146x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 146x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 146x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 146x17
               text run at (0,0) width 146: "Attribute value selector"
-          RenderText {#text} at (146,0) size 30x19
+          RenderText {#text} at (146,0) size 30x17
             text run at (146,0) width 30: " (#6)"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 178x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 178x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 178x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 178x17
               text run at (0,0) width 178: "Attribute multivalue selector"
-          RenderText {#text} at (178,0) size 30x19
+          RenderText {#text} at (178,0) size 30x17
             text run at (178,0) width 30: " (#7)"
         RenderListItem {LI} at (40,108) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 178x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 178x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 178x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 178x17
               text run at (0,0) width 178: "Attribute multivalue selector"
-          RenderText {#text} at (178,0) size 38x19
+          RenderText {#text} at (178,0) size 38x17
             text run at (178,0) width 38: " (#7b)"
         RenderListItem {LI} at (40,126) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 338x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 338x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 338x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 338x17
               text run at (0,0) width 338: "Attribute value selectors (hyphen-separated attributes)"
-          RenderText {#text} at (338,0) size 30x19
+          RenderText {#text} at (338,0) size 30x17
             text run at (338,0) width 30: " (#8)"
         RenderListItem {LI} at (40,144) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 306x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 306x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 306x17
               text run at (0,0) width 306: "Substring matching attribute selector (beginning)"
-          RenderText {#text} at (306,0) size 30x19
+          RenderText {#text} at (306,0) size 30x17
             text run at (306,0) width 30: " (#9)"
         RenderListItem {LI} at (40,162) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 266x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 266x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 266x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 266x17
               text run at (0,0) width 266: "Substring matching attribute selector (end)"
-          RenderText {#text} at (266,0) size 38x19
+          RenderText {#text} at (266,0) size 38x17
             text run at (266,0) width 38: " (#10)"
         RenderListItem {LI} at (40,180) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 295x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 295x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 295x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 295x17
               text run at (0,0) width 295: "Substring matching attribute selector (contains)"
-          RenderText {#text} at (295,0) size 38x19
+          RenderText {#text} at (295,0) size 38x17
             text run at (295,0) width 38: " (#11)"
         RenderListItem {LI} at (40,198) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 140x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 140x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 140x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 140x17
               text run at (0,0) width 140: "Default attribute value"
-          RenderText {#text} at (140,0) size 38x19
+          RenderText {#text} at (140,0) size 38x17
             text run at (140,0) width 38: " (#12)"
         RenderListItem {LI} at (40,216) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 92x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 92x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 92x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 92x17
               text run at (0,0) width 92: "Class selectors"
-          RenderText {#text} at (92,0) size 38x19
+          RenderText {#text} at (92,0) size 38x17
             text run at (92,0) width 38: " (#13)"
         RenderListItem {LI} at (40,234) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 178x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 178x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 178x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 178x17
               text run at (0,0) width 178: "More than one class selector"
-          RenderText {#text} at (178,0) size 38x19
+          RenderText {#text} at (178,0) size 38x17
             text run at (178,0) width 38: " (#14)"
         RenderListItem {LI} at (40,252) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 75x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 75x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 75x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 75x17
               text run at (0,0) width 75: "ID selectors"
-          RenderText {#text} at (75,0) size 38x19
+          RenderText {#text} at (75,0) size 38x17
             text run at (75,0) width 38: " (#15)"
         RenderListItem {LI} at (40,270) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 112x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 112x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 112x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 112x17
               text run at (0,0) width 112: ":link pseudo-class"
-          RenderText {#text} at (112,0) size 38x19
+          RenderText {#text} at (112,0) size 38x17
             text run at (112,0) width 38: " (#16)"
         RenderListItem {LI} at (40,288) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 129x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 129x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 129x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 129x17
               text run at (0,0) width 129: ":visited pseudo-class"
-          RenderText {#text} at (129,0) size 38x19
+          RenderText {#text} at (129,0) size 38x17
             text run at (129,0) width 38: " (#17)"
         RenderListItem {LI} at (40,306) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 124x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 124x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 124x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 124x17
               text run at (0,0) width 124: ":hover pseudo-class"
-          RenderText {#text} at (124,0) size 38x19
+          RenderText {#text} at (124,0) size 38x17
             text run at (124,0) width 38: " (#18)"
         RenderListItem {LI} at (40,324) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 124x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 124x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 124x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 124x17
               text run at (0,0) width 124: ":hover pseudo-class"
-          RenderText {#text} at (124,0) size 46x19
+          RenderText {#text} at (124,0) size 46x17
             text run at (124,0) width 46: " (#18b)"
         RenderListItem {LI} at (40,342) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 125x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 125x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 125x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 125x17
               text run at (0,0) width 125: ":active pseudo-class"
-          RenderText {#text} at (125,0) size 38x19
+          RenderText {#text} at (125,0) size 38x17
             text run at (125,0) width 38: " (#19)"
         RenderListItem {LI} at (40,360) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 122x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 122x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 122x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 122x17
               text run at (0,0) width 122: ":focus pseudo-class"
-          RenderText {#text} at (122,0) size 38x19
+          RenderText {#text} at (122,0) size 38x17
             text run at (122,0) width 38: " (#20)"
         RenderListItem {LI} at (40,378) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 123x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 123x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 123x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 123x17
               text run at (0,0) width 123: ":target pseudo-class"
-          RenderText {#text} at (123,0) size 38x19
+          RenderText {#text} at (123,0) size 38x17
             text run at (123,0) width 38: " (#21)"
         RenderListItem {LI} at (40,396) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 123x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 123x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 123x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 123x17
               text run at (0,0) width 123: ":target pseudo-class"
-          RenderText {#text} at (123,0) size 46x19
+          RenderText {#text} at (123,0) size 46x17
             text run at (123,0) width 46: " (#21b)"
         RenderListItem {LI} at (40,414) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 123x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 123x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 123x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 123x17
               text run at (0,0) width 123: ":target pseudo-class"
-          RenderText {#text} at (123,0) size 45x19
+          RenderText {#text} at (123,0) size 45x17
             text run at (123,0) width 45: " (#21c)"
         RenderListItem {LI} at (40,432) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 125x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 125x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 125x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 125x17
               text run at (0,0) width 125: ":lang() pseudo-class"
-          RenderText {#text} at (125,0) size 38x19
+          RenderText {#text} at (125,0) size 38x17
             text run at (125,0) width 38: " (#22)"
         RenderListItem {LI} at (40,450) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 137x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 137x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 137x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 137x17
               text run at (0,0) width 137: ":enabled pseudo-class"
-          RenderText {#text} at (137,0) size 38x19
+          RenderText {#text} at (137,0) size 38x17
             text run at (137,0) width 38: " (#23)"
         RenderListItem {LI} at (40,468) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 140x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 140x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 140x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 140x17
               text run at (0,0) width 140: ":disabled pseudo-class"
-          RenderText {#text} at (140,0) size 38x19
+          RenderText {#text} at (140,0) size 38x17
             text run at (140,0) width 38: " (#24)"
         RenderListItem {LI} at (40,486) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 140x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 140x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 140x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 140x17
               text run at (0,0) width 140: ":checked pseudo-class"
-          RenderText {#text} at (140,0) size 38x19
+          RenderText {#text} at (140,0) size 38x17
             text run at (140,0) width 38: " (#25)"
         RenderListItem {LI} at (40,504) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 113x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 113x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 113x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 113x17
               text run at (0,0) width 113: ":root pseudo-class"
-          RenderText {#text} at (113,0) size 38x19
+          RenderText {#text} at (113,0) size 38x17
             text run at (113,0) width 38: " (#27)"
         RenderListItem {LI} at (40,522) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 154x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 154x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 154x17
               text run at (0,0) width 154: ":nth-child() pseudo-class"
-          RenderText {#text} at (154,0) size 38x19
+          RenderText {#text} at (154,0) size 38x17
             text run at (154,0) width 38: " (#28)"
         RenderListItem {LI} at (40,540) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 154x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 154x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 154x17
               text run at (0,0) width 154: ":nth-child() pseudo-class"
-          RenderText {#text} at (154,0) size 46x19
+          RenderText {#text} at (154,0) size 46x17
             text run at (154,0) width 46: " (#28b)"
         RenderListItem {LI} at (40,558) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 180x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 180x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 180x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 180x17
               text run at (0,0) width 180: ":nth-last-child() pseudo-class"
-          RenderText {#text} at (180,0) size 38x19
+          RenderText {#text} at (180,0) size 38x17
             text run at (180,0) width 38: " (#29)"
         RenderListItem {LI} at (40,576) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 180x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 180x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 180x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 180x17
               text run at (0,0) width 180: ":nth-last-child() pseudo-class"
-          RenderText {#text} at (180,0) size 46x19
+          RenderText {#text} at (180,0) size 46x17
             text run at (180,0) width 46: " (#29b)"
         RenderListItem {LI} at (40,594) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 168x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 168x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 168x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 168x17
               text run at (0,0) width 168: ":nth-of-type() pseudo-class"
-          RenderText {#text} at (168,0) size 38x19
+          RenderText {#text} at (168,0) size 38x17
             text run at (168,0) width 38: " (#30)"
         RenderListItem {LI} at (40,612) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 194x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 194x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 194x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 194x17
               text run at (0,0) width 194: ":nth-last-of-type() pseudo-class"
-          RenderText {#text} at (194,0) size 38x19
+          RenderText {#text} at (194,0) size 38x17
             text run at (194,0) width 38: " (#31)"
         RenderListItem {LI} at (40,630) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 148x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 148x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 148x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 148x17
               text run at (0,0) width 148: ":first-child pseudo-class"
-          RenderText {#text} at (148,0) size 38x19
+          RenderText {#text} at (148,0) size 38x17
             text run at (148,0) width 38: " (#32)"
         RenderListItem {LI} at (40,648) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 145x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 145x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 145x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 145x17
               text run at (0,0) width 145: ":last-child pseudo-class"
-          RenderText {#text} at (145,0) size 38x19
+          RenderText {#text} at (145,0) size 38x17
             text run at (145,0) width 38: " (#33)"
         RenderListItem {LI} at (40,666) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 162x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 162x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 162x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 162x17
               text run at (0,0) width 162: ":first-of-type pseudo-class"
-          RenderText {#text} at (162,0) size 38x19
+          RenderText {#text} at (162,0) size 38x17
             text run at (162,0) width 38: " (#34)"
         RenderListItem {LI} at (40,684) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 159x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 159x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 159x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 159x17
               text run at (0,0) width 159: ":last-of-type pseudo-class"
-          RenderText {#text} at (159,0) size 38x19
+          RenderText {#text} at (159,0) size 38x17
             text run at (159,0) width 38: " (#35)"
         RenderListItem {LI} at (40,702) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 152x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 152x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 152x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 152x17
               text run at (0,0) width 152: ":only-child pseudo-class"
-          RenderText {#text} at (152,0) size 38x19
+          RenderText {#text} at (152,0) size 38x17
             text run at (152,0) width 38: " (#36)"
         RenderListItem {LI} at (40,720) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 166x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 166x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 166x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 166x17
               text run at (0,0) width 166: ":only-of-type pseudo-class"
-          RenderText {#text} at (166,0) size 38x19
+          RenderText {#text} at (166,0) size 38x17
             text run at (166,0) width 38: " (#37)"
         RenderListItem {LI} at (40,738) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 163x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 163x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 163x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 163x17
               text run at (0,0) width 163: "::first-line pseudo-element"
-          RenderText {#text} at (163,0) size 38x19
+          RenderText {#text} at (163,0) size 38x17
             text run at (163,0) width 38: " (#38)"
         RenderListItem {LI} at (40,756) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 171x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 171x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 171x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 171x17
               text run at (0,0) width 171: "::first-letter pseudo-element"
-          RenderText {#text} at (171,0) size 38x19
+          RenderText {#text} at (171,0) size 38x17
             text run at (171,0) width 38: " (#39)"
         RenderListItem {LI} at (40,774) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 358x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 358x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 358x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 358x17
               text run at (0,0) width 358: "::first-letter pseudo-element with ::before pseudo-element"
-          RenderText {#text} at (358,0) size 45x19
+          RenderText {#text} at (358,0) size 45x17
             text run at (358,0) width 45: " (#39a)"
         RenderListItem {LI} at (40,792) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 358x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 358x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 358x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 358x17
               text run at (0,0) width 358: "::first-letter pseudo-element with ::before pseudo-element"
-          RenderText {#text} at (358,0) size 45x19
+          RenderText {#text} at (358,0) size 45x17
             text run at (358,0) width 45: " (#39a)"
         RenderListItem {LI} at (40,810) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 171x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 171x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 171x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 171x17
               text run at (0,0) width 171: "::first-letter pseudo-element"
-          RenderText {#text} at (171,0) size 46x19
+          RenderText {#text} at (171,0) size 46x17
             text run at (171,0) width 46: " (#39b)"
         RenderListItem {LI} at (40,828) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 166x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 166x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 166x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 166x17
               text run at (0,0) width 166: "::selection pseudo-element"
-          RenderText {#text} at (166,0) size 38x19
+          RenderText {#text} at (166,0) size 38x17
             text run at (166,0) width 38: " (#40)"
         RenderListItem {LI} at (40,846) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 151x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 151x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 151x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 151x17
               text run at (0,0) width 151: "::before pseudo-element"
-          RenderText {#text} at (151,0) size 38x19
+          RenderText {#text} at (151,0) size 38x17
             text run at (151,0) width 38: " (#41)"
         RenderListItem {LI} at (40,864) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 139x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 139x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 139x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 139x17
               text run at (0,0) width 139: "::after pseudo-element"
-          RenderText {#text} at (139,0) size 38x19
+          RenderText {#text} at (139,0) size 38x17
             text run at (139,0) width 38: " (#42)"
         RenderListItem {LI} at (40,882) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 149x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 149x17
               text run at (0,0) width 149: "Descendant combinator"
-          RenderText {#text} at (149,0) size 38x19
+          RenderText {#text} at (149,0) size 38x17
             text run at (149,0) width 38: " (#43)"
         RenderListItem {LI} at (40,900) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 149x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 149x17
               text run at (0,0) width 149: "Descendant combinator"
-          RenderText {#text} at (149,0) size 46x19
+          RenderText {#text} at (149,0) size 46x17
             text run at (149,0) width 46: " (#43b)"
         RenderListItem {LI} at (40,918) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 110x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 110x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 110x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 110x17
               text run at (0,0) width 110: "Child combinator"
-          RenderText {#text} at (110,0) size 38x19
+          RenderText {#text} at (110,0) size 38x17
             text run at (110,0) width 38: " (#44)"
         RenderListItem {LI} at (40,936) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 110x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 110x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 110x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 110x17
               text run at (0,0) width 110: "Child combinator"
-          RenderText {#text} at (110,0) size 46x19
+          RenderText {#text} at (110,0) size 46x17
             text run at (110,0) width 46: " (#44b)"
         RenderListItem {LI} at (40,954) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 184x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 184x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 184x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 184x17
               text run at (0,0) width 184: "Child combinator and classes"
-          RenderText {#text} at (184,0) size 45x19
+          RenderText {#text} at (184,0) size 45x17
             text run at (184,0) width 45: " (#44c)"
         RenderListItem {LI} at (40,972) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 168x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 168x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 168x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 168x17
               text run at (0,0) width 168: "Child combinatior and IDs"
-          RenderText {#text} at (168,0) size 46x19
+          RenderText {#text} at (168,0) size 46x17
             text run at (168,0) width 46: " (#44d)"
         RenderListItem {LI} at (40,990) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 170x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 170x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 170x17
               text run at (0,0) width 170: "Direct adjacent combinator"
-          RenderText {#text} at (170,0) size 38x19
+          RenderText {#text} at (170,0) size 38x17
             text run at (170,0) width 38: " (#45)"
         RenderListItem {LI} at (40,1008) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 170x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 170x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 170x17
               text run at (0,0) width 170: "Direct adjacent combinator"
-          RenderText {#text} at (170,0) size 46x19
+          RenderText {#text} at (170,0) size 46x17
             text run at (170,0) width 46: " (#45b)"
         RenderListItem {LI} at (40,1026) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 244x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 244x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 244x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 244x17
               text run at (0,0) width 244: "Direct adjacent combinator and classes"
-          RenderText {#text} at (244,0) size 45x19
+          RenderText {#text} at (244,0) size 45x17
             text run at (244,0) width 45: " (#45c)"
         RenderListItem {LI} at (40,1044) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 179x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 179x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 179x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 179x17
               text run at (0,0) width 179: "Indirect adjacent combinator"
-          RenderText {#text} at (179,0) size 38x19
+          RenderText {#text} at (179,0) size 38x17
             text run at (179,0) width 38: " (#46)"
         RenderListItem {LI} at (40,1062) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 179x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 179x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 179x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 179x17
               text run at (0,0) width 179: "Indirect adjacent combinator"
-          RenderText {#text} at (179,0) size 46x19
+          RenderText {#text} at (179,0) size 46x17
             text run at (179,0) width 46: " (#46b)"
         RenderListItem {LI} at (40,1080) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 395x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 395x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 395x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 395x17
               text run at (0,0) width 395: "NEGATED substring matching attribute selector on beginning"
-          RenderText {#text} at (395,0) size 38x19
+          RenderText {#text} at (395,0) size 38x17
             text run at (395,0) width 38: " (#54)"
         RenderListItem {LI} at (40,1098) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 355x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 355x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 355x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 355x17
               text run at (0,0) width 355: "NEGATED substring matching attribute selector on end"
-          RenderText {#text} at (355,0) size 38x19
+          RenderText {#text} at (355,0) size 38x17
             text run at (355,0) width 38: " (#55)"
         RenderListItem {LI} at (40,1116) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 375x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 375x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 375x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 375x17
               text run at (0,0) width 375: "NEGATED substring matching attribute selector on middle"
-          RenderText {#text} at (375,0) size 38x19
+          RenderText {#text} at (375,0) size 38x17
             text run at (375,0) width 38: " (#56)"
         RenderListItem {LI} at (40,1134) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 309x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 309x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 309x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 309x17
               text run at (0,0) width 309: "Default attribute value and negation pseudo-class"
-          RenderText {#text} at (309,0) size 38x19
+          RenderText {#text} at (309,0) size 38x17
             text run at (309,0) width 38: " (#58)"
         RenderListItem {LI} at (40,1152) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 164x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 164x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 164x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 164x17
               text run at (0,0) width 164: "NEGATED class selector"
-          RenderText {#text} at (164,0) size 38x19
+          RenderText {#text} at (164,0) size 38x17
             text run at (164,0) width 38: " (#59)"
         RenderListItem {LI} at (40,1170) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 151x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 151x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 151x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 151x17
               text run at (0,0) width 151: "NEGATED ID selector"
-          RenderText {#text} at (151,0) size 38x19
+          RenderText {#text} at (151,0) size 38x17
             text run at (151,0) width 38: " (#60)"
         RenderListItem {LI} at (40,1188) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 194x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 194x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 194x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 194x17
               text run at (0,0) width 194: "NEGATED :link pseudo-class"
-          RenderText {#text} at (194,0) size 38x19
+          RenderText {#text} at (194,0) size 38x17
             text run at (194,0) width 38: " (#61)"
         RenderListItem {LI} at (40,1206) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 211x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 211x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 211x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 211x17
               text run at (0,0) width 211: "NEGATED :visited pseudo-class"
-          RenderText {#text} at (211,0) size 38x19
+          RenderText {#text} at (211,0) size 38x17
             text run at (211,0) width 38: " (#62)"
         RenderListItem {LI} at (40,1224) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 206x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 206x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 206x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 206x17
               text run at (0,0) width 206: "NEGATED :hover pseudo-class"
-          RenderText {#text} at (206,0) size 38x19
+          RenderText {#text} at (206,0) size 38x17
             text run at (206,0) width 38: " (#63)"
         RenderListItem {LI} at (40,1242) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 207x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 207x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 207x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 207x17
               text run at (0,0) width 207: "NEGATED :active pseudo-class"
-          RenderText {#text} at (207,0) size 38x19
+          RenderText {#text} at (207,0) size 38x17
             text run at (207,0) width 38: " (#64)"
         RenderListItem {LI} at (40,1260) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 204x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 204x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 204x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 204x17
               text run at (0,0) width 204: "NEGATED :focus pseudo-class"
-          RenderText {#text} at (204,0) size 38x19
+          RenderText {#text} at (204,0) size 38x17
             text run at (204,0) width 38: " (#65)"
         RenderListItem {LI} at (40,1278) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 205x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 205x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 205x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 205x17
               text run at (0,0) width 205: "NEGATED :target pseudo-class"
-          RenderText {#text} at (205,0) size 38x19
+          RenderText {#text} at (205,0) size 38x17
             text run at (205,0) width 38: " (#66)"
         RenderListItem {LI} at (40,1296) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 205x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 205x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 205x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 205x17
               text run at (0,0) width 205: "NEGATED :target pseudo-class"
-          RenderText {#text} at (205,0) size 46x19
+          RenderText {#text} at (205,0) size 46x17
             text run at (205,0) width 46: " (#66b)"
         RenderListItem {LI} at (40,1314) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 207x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 207x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 207x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 207x17
               text run at (0,0) width 207: "NEGATED :lang() pseudo-class"
-          RenderText {#text} at (207,0) size 38x19
+          RenderText {#text} at (207,0) size 38x17
             text run at (207,0) width 38: " (#67)"
         RenderListItem {LI} at (40,1332) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 222x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 222x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 222x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 222x17
               text run at (0,0) width 222: "NEGATED :checked pseudo-class"
-          RenderText {#text} at (222,0) size 38x19
+          RenderText {#text} at (222,0) size 38x17
             text run at (222,0) width 38: " (#70)"
         RenderListItem {LI} at (40,1350) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 195x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 195x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 195x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 195x17
               text run at (0,0) width 195: "NEGATED :root pseudo-class"
-          RenderText {#text} at (195,0) size 38x19
+          RenderText {#text} at (195,0) size 38x17
             text run at (195,0) width 38: " (#72)"
         RenderListItem {LI} at (40,1368) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 195x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 195x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 195x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 195x17
               text run at (0,0) width 195: "NEGATED :root pseudo-class"
-          RenderText {#text} at (195,0) size 46x19
+          RenderText {#text} at (195,0) size 46x17
             text run at (195,0) width 46: " (#72b)"
         RenderListItem {LI} at (40,1386) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 236x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 236x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 236x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 236x17
               text run at (0,0) width 236: "NEGATED :nth-child() pseudo-class"
-          RenderText {#text} at (236,0) size 38x19
+          RenderText {#text} at (236,0) size 38x17
             text run at (236,0) width 38: " (#73)"
         RenderListItem {LI} at (40,1404) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 236x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 236x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 236x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 236x17
               text run at (0,0) width 236: "NEGATED :nth-child() pseudo-class"
-          RenderText {#text} at (236,0) size 46x19
+          RenderText {#text} at (236,0) size 46x17
             text run at (236,0) width 46: " (#73b)"
         RenderListItem {LI} at (40,1422) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 262x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 262x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 262x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 262x17
               text run at (0,0) width 262: "NEGATED :nth-last-child() pseudo-class"
-          RenderText {#text} at (262,0) size 38x19
+          RenderText {#text} at (262,0) size 38x17
             text run at (262,0) width 38: " (#74)"
         RenderListItem {LI} at (40,1440) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 262x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 262x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 262x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 262x17
               text run at (0,0) width 262: "NEGATED :nth-last-child() pseudo-class"
-          RenderText {#text} at (262,0) size 46x19
+          RenderText {#text} at (262,0) size 46x17
             text run at (262,0) width 46: " (#74b)"
         RenderListItem {LI} at (40,1458) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 250x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 250x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 250x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 250x17
               text run at (0,0) width 250: "NEGATED :nth-of-type() pseudo-class"
-          RenderText {#text} at (250,0) size 38x19
+          RenderText {#text} at (250,0) size 38x17
             text run at (250,0) width 38: " (#75)"
         RenderListItem {LI} at (40,1476) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 250x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 250x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 250x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 250x17
               text run at (0,0) width 250: "NEGATED :nth-of-type() pseudo-class"
-          RenderText {#text} at (250,0) size 46x19
+          RenderText {#text} at (250,0) size 46x17
             text run at (250,0) width 46: " (#75b)"
         RenderListItem {LI} at (40,1494) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 276x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 276x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 276x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 276x17
               text run at (0,0) width 276: "NEGATED :nth-last-of-type() pseudo-class"
-          RenderText {#text} at (276,0) size 38x19
+          RenderText {#text} at (276,0) size 38x17
             text run at (276,0) width 38: " (#76)"
         RenderListItem {LI} at (40,1512) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 276x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 276x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 276x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 276x17
               text run at (0,0) width 276: "NEGATED :nth-last-of-type() pseudo-class"
-          RenderText {#text} at (276,0) size 46x19
+          RenderText {#text} at (276,0) size 46x17
             text run at (276,0) width 46: " (#76b)"
         RenderListItem {LI} at (40,1530) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 230x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 230x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 230x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 230x17
               text run at (0,0) width 230: "NEGATED :first-child pseudo-class"
-          RenderText {#text} at (230,0) size 38x19
+          RenderText {#text} at (230,0) size 38x17
             text run at (230,0) width 38: " (#77)"
         RenderListItem {LI} at (40,1548) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 230x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 230x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 230x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 230x17
               text run at (0,0) width 230: "NEGATED :first-child pseudo-class"
-          RenderText {#text} at (230,0) size 46x19
+          RenderText {#text} at (230,0) size 46x17
             text run at (230,0) width 46: " (#77b)"
         RenderListItem {LI} at (40,1566) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 227x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 227x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 227x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 227x17
               text run at (0,0) width 227: "NEGATED :last-child pseudo-class"
-          RenderText {#text} at (227,0) size 38x19
+          RenderText {#text} at (227,0) size 38x17
             text run at (227,0) width 38: " (#78)"
         RenderListItem {LI} at (40,1584) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 227x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 227x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 227x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 227x17
               text run at (0,0) width 227: "NEGATED :last-child pseudo-class"
-          RenderText {#text} at (227,0) size 46x19
+          RenderText {#text} at (227,0) size 46x17
             text run at (227,0) width 46: " (#78b)"
         RenderListItem {LI} at (40,1602) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 244x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 244x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 244x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 244x17
               text run at (0,0) width 244: "NEGATED :first-of-type pseudo-class"
-          RenderText {#text} at (244,0) size 38x19
+          RenderText {#text} at (244,0) size 38x17
             text run at (244,0) width 38: " (#79)"
         RenderListItem {LI} at (40,1620) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 241x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 241x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 241x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 241x17
               text run at (0,0) width 241: "NEGATED :last-of-type pseudo-class"
-          RenderText {#text} at (241,0) size 38x19
+          RenderText {#text} at (241,0) size 38x17
             text run at (241,0) width 38: " (#80)"
         RenderListItem {LI} at (40,1638) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 234x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 234x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 234x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 234x17
               text run at (0,0) width 234: "NEGATED :only-child pseudo-class"
-          RenderText {#text} at (234,0) size 38x19
+          RenderText {#text} at (234,0) size 38x17
             text run at (234,0) width 38: " (#81)"
         RenderListItem {LI} at (40,1656) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 234x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 234x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 234x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 234x17
               text run at (0,0) width 234: "NEGATED :only-child pseudo-class"
-          RenderText {#text} at (234,0) size 46x19
+          RenderText {#text} at (234,0) size 46x17
             text run at (234,0) width 46: " (#81b)"
         RenderListItem {LI} at (40,1674) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 248x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 248x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 248x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 248x17
               text run at (0,0) width 248: "NEGATED :only-of-type pseudo-class"
-          RenderText {#text} at (248,0) size 38x19
+          RenderText {#text} at (248,0) size 38x17
             text run at (248,0) width 38: " (#82)"
         RenderListItem {LI} at (40,1692) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 248x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 248x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 248x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 248x17
               text run at (0,0) width 248: "NEGATED :only-of-type pseudo-class"
-          RenderText {#text} at (248,0) size 46x19
+          RenderText {#text} at (248,0) size 46x17
             text run at (248,0) width 46: " (#82b)"
         RenderListItem {LI} at (40,1710) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 340x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 340x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 340x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 340x17
               text run at (0,0) width 340: "Negation pseudo-class cannot be an argument of itself"
-          RenderText {#text} at (340,0) size 38x19
+          RenderText {#text} at (340,0) size 38x17
             text run at (340,0) width 38: " (#83)"
         RenderListItem {LI} at (40,1728) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 150x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 150x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 150x17
               text run at (0,0) width 150: ":contains() pseudo-class"
-          RenderText {#text} at (150,0) size 38x19
+          RenderText {#text} at (150,0) size 38x17
             text run at (150,0) width 38: " (#84)"
         RenderListItem {LI} at (40,1746) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 150x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 150x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 150x17
               text run at (0,0) width 150: ":contains() pseudo-class"
-          RenderText {#text} at (150,0) size 46x19
+          RenderText {#text} at (150,0) size 46x17
             text run at (150,0) width 46: " (#84b)"
         RenderListItem {LI} at (40,1764) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 232x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 232x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 232x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 232x17
               text run at (0,0) width 232: "NEGATED :contains() pseudo-class"
-          RenderText {#text} at (232,0) size 38x19
+          RenderText {#text} at (232,0) size 38x17
             text run at (232,0) width 38: " (#85)"
         RenderListItem {LI} at (40,1782) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 441x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 441x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 441x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 441x17
               text run at (0,0) width 441: "Nondeterministic matching of direct and indirect adjacent combinators"
-          RenderText {#text} at (441,0) size 38x19
+          RenderText {#text} at (441,0) size 38x17
             text run at (441,0) width 38: " (#87)"
         RenderListItem {LI} at (40,1800) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 441x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 441x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 441x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 441x17
               text run at (0,0) width 441: "Nondeterministic matching of direct and indirect adjacent combinators"
-          RenderText {#text} at (441,0) size 46x19
+          RenderText {#text} at (441,0) size 46x17
             text run at (441,0) width 46: " (#87b)"
         RenderListItem {LI} at (40,1818) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 464x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 464x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 464x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 464x17
               text run at (0,0) width 464: "Nondeterministic matching of descendant and direct adjacent combinators"
-          RenderText {#text} at (464,0) size 38x19
+          RenderText {#text} at (464,0) size 38x17
             text run at (464,0) width 38: " (#88)"
         RenderListItem {LI} at (40,1836) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 464x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 464x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 464x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 464x17
               text run at (0,0) width 464: "Nondeterministic matching of descendant and direct adjacent combinators"
-          RenderText {#text} at (464,0) size 46x19
+          RenderText {#text} at (464,0) size 46x17
             text run at (464,0) width 46: " (#88b)"
         RenderListItem {LI} at (40,1854) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 360x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 360x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 360x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 360x17
               text run at (0,0) width 360: "Simple combination of descendant and child combinators"
-          RenderText {#text} at (360,0) size 38x19
+          RenderText {#text} at (360,0) size 38x17
             text run at (360,0) width 38: " (#89)"
         RenderListItem {LI} at (40,1872) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 397x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 397x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 397x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 397x17
               text run at (0,0) width 397: "Simple combination of direct and indirect adjacent combinators"
-          RenderText {#text} at (397,0) size 38x19
+          RenderText {#text} at (397,0) size 38x17
             text run at (397,0) width 38: " (#90)"
         RenderListItem {LI} at (40,1890) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 397x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 397x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 397x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 397x17
               text run at (0,0) width 397: "Simple combination of direct and indirect adjacent combinators"
-          RenderText {#text} at (397,0) size 46x19
+          RenderText {#text} at (397,0) size 46x17
             text run at (397,0) width 46: " (#90b)"
         RenderListItem {LI} at (40,1908) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 288x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 288x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 288x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 288x17
               text run at (0,0) width 288: "NEGATED :enabled:disabled pseudo-classes"
-          RenderText {#text} at (288,0) size 46x19
+          RenderText {#text} at (288,0) size 46x17
             text run at (288,0) width 46: " (#144)"
         RenderListItem {LI} at (40,1926) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 181x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 181x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 181x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 181x17
               text run at (0,0) width 181: ":empty pseudo-class and text"
-          RenderText {#text} at (181,0) size 46x19
+          RenderText {#text} at (181,0) size 46x17
             text run at (181,0) width 46: " (#148)"
         RenderListItem {LI} at (40,1944) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 256x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 256x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 256x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 256x17
               text run at (0,0) width 256: ":empty pseudo-class and empty elements"
-          RenderText {#text} at (256,0) size 46x19
+          RenderText {#text} at (256,0) size 46x17
             text run at (256,0) width 46: " (#149)"
         RenderListItem {LI} at (40,1962) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 256x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 256x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 256x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 256x17
               text run at (0,0) width 256: ":empty pseudo-class and empty elements"
-          RenderText {#text} at (256,0) size 54x19
+          RenderText {#text} at (256,0) size 54x17
             text run at (256,0) width 54: " (#149b)"
         RenderListItem {LI} at (40,1980) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 228x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 228x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 228x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 228x17
               text run at (0,0) width 228: ":empty pseudo-class and whitespace"
-          RenderText {#text} at (228,0) size 46x19
+          RenderText {#text} at (228,0) size 46x17
             text run at (228,0) width 46: " (#151)"
         RenderListItem {LI} at (40,1998) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 213x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 213x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 213x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 213x17
               text run at (0,0) width 213: ":empty pseudo-class and elements"
-          RenderText {#text} at (213,0) size 46x19
+          RenderText {#text} at (213,0) size 46x17
             text run at (213,0) width 46: " (#152)"
         RenderListItem {LI} at (40,2016) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 46x19
+          RenderText {#text} at (121,0) size 46x17
             text run at (121,0) width 46: " (#154)"
         RenderListItem {LI} at (40,2034) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 46x19
+          RenderText {#text} at (121,0) size 46x17
             text run at (121,0) width 46: " (#155)"
         RenderListItem {LI} at (40,2052) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 53x19
+          RenderText {#text} at (121,0) size 53x17
             text run at (121,0) width 53: " (#155a)"
         RenderListItem {LI} at (40,2070) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 54x19
+          RenderText {#text} at (121,0) size 54x17
             text run at (121,0) width 54: " (#155b)"
         RenderListItem {LI} at (40,2088) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 53x19
+          RenderText {#text} at (121,0) size 53x17
             text run at (121,0) width 53: " (#155c)"
         RenderListItem {LI} at (40,2106) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 54x19
+          RenderText {#text} at (121,0) size 54x17
             text run at (121,0) width 54: " (#155d)"
         RenderListItem {LI} at (40,2124) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 46x19
+          RenderText {#text} at (121,0) size 46x17
             text run at (121,0) width 46: " (#156)"
         RenderListItem {LI} at (40,2142) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 54x19
+          RenderText {#text} at (121,0) size 54x17
             text run at (121,0) width 54: " (#156b)"
         RenderListItem {LI} at (40,2160) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 53x19
+          RenderText {#text} at (121,0) size 53x17
             text run at (121,0) width 53: " (#156c)"
         RenderListItem {LI} at (40,2178) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 46x19
+          RenderText {#text} at (121,0) size 46x17
             text run at (121,0) width 46: " (#157)"
         RenderListItem {LI} at (40,2196) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 121x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 121x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 121x17
               text run at (0,0) width 121: "Syntax and parsing"
-          RenderText {#text} at (121,0) size 46x19
+          RenderText {#text} at (121,0) size 46x17
             text run at (121,0) width 46: " (#158)"
         RenderListItem {LI} at (40,2214) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 278x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 278x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 278x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 278x17
               text run at (0,0) width 278: "Syntax and parsing of new pseudo-elements"
-          RenderText {#text} at (278,0) size 46x19
+          RenderText {#text} at (278,0) size 46x17
             text run at (278,0) width 46: " (#159)"
         RenderListItem {LI} at (40,2232) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 299x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 299x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 299x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 299x17
               text run at (0,0) width 299: "Syntax and parsing of unknown psuedo-classes"
-          RenderText {#text} at (299,0) size 46x19
+          RenderText {#text} at (299,0) size 46x17
             text run at (299,0) width 46: " (#160)"
         RenderListItem {LI} at (40,2250) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 435x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 435x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 435x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 435x17
               text run at (0,0) width 435: "Syntax and parsing of unknown psuedo-classes and pseudo-elements"
-          RenderText {#text} at (435,0) size 46x19
+          RenderText {#text} at (435,0) size 46x17
             text run at (435,0) width 46: " (#161)"
         RenderListItem {LI} at (40,2268) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 136x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 136x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 136x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 136x17
               text run at (0,0) width 136: "Contextual ::selection"
-          RenderText {#text} at (136,0) size 46x19
+          RenderText {#text} at (136,0) size 46x17
             text run at (136,0) width 46: " (#162)"
         RenderListItem {LI} at (40,2286) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 129x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 129x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 129x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 129x17
               text run at (0,0) width 129: "Contextual :contains"
-          RenderText {#text} at (129,0) size 46x19
+          RenderText {#text} at (129,0) size 46x17
             text run at (129,0) width 46: " (#163)"
         RenderListItem {LI} at (40,2304) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 137x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 137x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 137x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 137x17
               text run at (0,0) width 137: ":focus with ::selection"
-          RenderText {#text} at (137,0) size 46x19
+          RenderText {#text} at (137,0) size 46x17
             text run at (137,0) width 46: " (#164)"
         RenderListItem {LI} at (40,2322) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 139x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 139x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 139x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 139x17
               text run at (0,0) width 139: ":hover with ::selection"
-          RenderText {#text} at (139,0) size 46x19
+          RenderText {#text} at (139,0) size 46x17
             text run at (139,0) width 46: " (#165)"
         RenderListItem {LI} at (40,2340) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 168x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 168x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 168x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 168x17
               text run at (0,0) width 168: ":first-letter with ::first-letter"
-          RenderText {#text} at (168,0) size 46x19
+          RenderText {#text} at (168,0) size 46x17
             text run at (168,0) width 46: " (#166)"
         RenderListItem {LI} at (40,2358) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 168x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 168x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 168x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 168x17
               text run at (0,0) width 168: ":first-letter with ::first-letter"
-          RenderText {#text} at (168,0) size 53x19
+          RenderText {#text} at (168,0) size 53x17
             text run at (168,0) width 53: " (#166a)"
         RenderListItem {LI} at (40,2376) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 152x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 152x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 152x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 152x17
               text run at (0,0) width 152: ":first-line with ::first-line"
-          RenderText {#text} at (152,0) size 46x19
+          RenderText {#text} at (152,0) size 46x17
             text run at (152,0) width 46: " (#167)"
         RenderListItem {LI} at (40,2394) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 152x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 152x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 152x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 152x17
               text run at (0,0) width 152: ":first-line with ::first-line"
-          RenderText {#text} at (152,0) size 53x19
+          RenderText {#text} at (152,0) size 53x17
             text run at (152,0) width 53: " (#167a)"
         RenderListItem {LI} at (40,2412) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 128x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 128x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 128x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 128x17
               text run at (0,0) width 128: ":before with ::before"
-          RenderText {#text} at (128,0) size 46x19
+          RenderText {#text} at (128,0) size 46x17
             text run at (128,0) width 46: " (#168)"
         RenderListItem {LI} at (40,2430) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 128x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 128x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 128x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 128x17
               text run at (0,0) width 128: ":before with ::before"
-          RenderText {#text} at (128,0) size 53x19
+          RenderText {#text} at (128,0) size 53x17
             text run at (128,0) width 53: " (#168a)"
         RenderListItem {LI} at (40,2448) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 104x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 104x17
               text run at (0,0) width 104: ":after with ::after"
-          RenderText {#text} at (104,0) size 46x19
+          RenderText {#text} at (104,0) size 46x17
             text run at (104,0) width 46: " (#169)"
         RenderListItem {LI} at (40,2466) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 104x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 104x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 104x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 104x17
               text run at (0,0) width 104: ":after with ::after"
-          RenderText {#text} at (104,0) size 53x19
+          RenderText {#text} at (104,0) size 53x17
             text run at (104,0) width 53: " (#169a)"
         RenderListItem {LI} at (40,2484) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 153x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 153x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 153x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 153x17
               text run at (0,0) width 153: "Long chains of selectors"
-          RenderText {#text} at (153,0) size 46x19
+          RenderText {#text} at (153,0) size 46x17
             text run at (153,0) width 46: " (#170)"
         RenderListItem {LI} at (40,2502) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 153x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 153x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 153x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 153x17
               text run at (0,0) width 153: "Long chains of selectors"
-          RenderText {#text} at (153,0) size 53x19
+          RenderText {#text} at (153,0) size 53x17
             text run at (153,0) width 53: " (#170a)"
         RenderListItem {LI} at (40,2520) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 153x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 153x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 153x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 153x17
               text run at (0,0) width 153: "Long chains of selectors"
-          RenderText {#text} at (153,0) size 54x19
+          RenderText {#text} at (153,0) size 54x17
             text run at (153,0) width 54: " (#170b)"
         RenderListItem {LI} at (40,2538) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 153x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 153x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 153x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 153x17
               text run at (0,0) width 153: "Long chains of selectors"
-          RenderText {#text} at (153,0) size 53x19
+          RenderText {#text} at (153,0) size 53x17
             text run at (153,0) width 53: " (#170c)"
         RenderListItem {LI} at (40,2556) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 153x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 153x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 153x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 153x17
               text run at (0,0) width 153: "Long chains of selectors"
-          RenderText {#text} at (153,0) size 54x19
+          RenderText {#text} at (153,0) size 54x17
             text run at (153,0) width 54: " (#170d)"
         RenderListItem {LI} at (40,2574) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 176x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 176x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 176x17
               text run at (0,0) width 176: "Parsing: Numbers in classes"
-          RenderText {#text} at (176,0) size 53x19
+          RenderText {#text} at (176,0) size 53x17
             text run at (176,0) width 53: " (#175a)"
         RenderListItem {LI} at (40,2592) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 176x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 176x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 176x17
               text run at (0,0) width 176: "Parsing: Numbers in classes"
-          RenderText {#text} at (176,0) size 54x19
+          RenderText {#text} at (176,0) size 54x17
             text run at (176,0) width 54: " (#175b)"
         RenderListItem {LI} at (40,2610) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 176x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 176x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 176x17
               text run at (0,0) width 176: "Parsing: Numbers in classes"
-          RenderText {#text} at (176,0) size 53x19
+          RenderText {#text} at (176,0) size 53x17
             text run at (176,0) width 53: " (#175c)"
         RenderListItem {LI} at (40,2628) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 263x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 263x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 263x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 263x17
               text run at (0,0) width 263: "NEGATED Dynamic handling of :empty"
-          RenderText {#text} at (263,0) size 38x19
+          RenderText {#text} at (263,0) size 38x17
             text run at (263,0) width 38: " (#d1)"
         RenderListItem {LI} at (40,2646) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 263x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 263x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 263x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 263x17
               text run at (0,0) width 263: "NEGATED Dynamic handling of :empty"
-          RenderText {#text} at (263,0) size 46x19
+          RenderText {#text} at (263,0) size 46x17
             text run at (263,0) width 46: " (#d1b)"
         RenderListItem {LI} at (40,2664) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 215x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 215x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 215x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 215x17
               text run at (0,0) width 215: "Dynamic handling of combinators"
-          RenderText {#text} at (215,0) size 38x19
+          RenderText {#text} at (215,0) size 38x17
             text run at (215,0) width 38: " (#d2)"
         RenderListItem {LI} at (40,2682) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 294x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 294x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 294x17
               text run at (0,0) width 294: "Dynamic updating of :first-child and :last-child"
-          RenderText {#text} at (294,0) size 38x19
+          RenderText {#text} at (294,0) size 38x17
             text run at (294,0) width 38: " (#d4)"
         RenderListItem {LI} at (40,2700) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 89x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 89x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 89x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 89x17
               text run at (0,0) width 89: ":indeterminate"
-          RenderText {#text} at (89,0) size 38x19
+          RenderText {#text} at (89,0) size 38x17
             text run at (89,0) width 38: " (#d5)"
         RenderListItem {LI} at (40,2718) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 176x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 176x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 176x17
               text run at (0,0) width 176: ":indeterminate and :checked"
-          RenderText {#text} at (176,0) size 45x19
+          RenderText {#text} at (176,0) size 45x17
             text run at (176,0) width 45: " (#d5a)"
         RenderListItem {LI} at (40,2736) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 258x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 258x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 258x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 258x17
               text run at (0,0) width 258: "NEGATED :indeterminate and :checked"
-          RenderText {#text} at (258,0) size 46x19
+          RenderText {#text} at (258,0) size 46x17
             text run at (258,0) width 46: " (#d5b)"
         RenderListItem {LI} at (40,2754) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 176x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 176x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 176x17
               text run at (0,0) width 176: ":indeterminate and :checked"
-          RenderText {#text} at (176,0) size 45x19
+          RenderText {#text} at (176,0) size 45x17
             text run at (176,0) width 45: " (#d5c)"
         RenderListItem {LI} at (40,2772) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 181x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 181x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 181x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 181x17
               text run at (0,0) width 181: ":indeterminate with :checked"
-          RenderText {#text} at (181,0) size 46x19
+          RenderText {#text} at (181,0) size 46x17
             text run at (181,0) width 46: " (#d5d)"
         RenderListItem {LI} at (40,2790) size 729x18
-          RenderListMarker at (-18,0) size 7x19: bullet
-          RenderInline {A} at (0,0) size 263x19 [color=#0000EE]
-            RenderText {#text} at (0,0) size 263x19
+          RenderListMarker at (-17,0) size 7x17: bullet
+          RenderInline {A} at (0,0) size 263x17 [color=#0000EE]
+            RenderText {#text} at (0,0) size 263x17
               text run at (0,0) width 263: "NEGATED :indeterminate with :checked"
-          RenderText {#text} at (263,0) size 45x19
+          RenderText {#text} at (263,0) size 45x17
             text run at (263,0) width 45: " (#d5e)"
-      RenderBlock {P} at (0,3264) size 769x18
-        RenderText {#text} at (0,0) size 60x19
+      RenderBlock {P} at (0,3268) size 769x19
+        RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
-        RenderInline {A} at (0,0) size 36x19 [color=#0000EE]
-          RenderText {#text} at (60,0) size 36x19
+        RenderInline {A} at (0,0) size 36x17 [color=#0000EE]
+          RenderText {#text} at (60,0) size 36x17
             text run at (60,0) width 36: "Index"
-        RenderText {#text} at (96,0) size 8x19
+        RenderText {#text} at (96,0) size 8x17
           text run at (96,0) width 8: ", "
-        RenderInline {A} at (0,0) size 58x19 [color=#0000EE]
-          RenderText {#text} at (104,0) size 58x19
+        RenderInline {A} at (0,0) size 58x17 [color=#0000EE]
+          RenderText {#text} at (104,0) size 58x17
             text run at (104,0) width 58: "XHTML"
-        RenderText {#text} at (162,0) size 8x19
+        RenderText {#text} at (162,0) size 8x17
           text run at (162,0) width 8: ", "
-        RenderInline {A} at (0,0) size 36x19 [color=#0000EE]
-          RenderText {#text} at (170,0) size 36x19
+        RenderInline {A} at (0,0) size 36x17 [color=#0000EE]
+          RenderText {#text} at (170,0) size 36x17
             text run at (170,0) width 36: "XML"

@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 225x19
+        RenderText {#text} at (0,0) size 225x17
           text run at (0,0) width 225: "This is a initial test for simple ruby. "
-        RenderBR {BR} at (225,15) size 0x0
-        RenderBR {BR} at (0,18) size 0x19
-      RenderBlock {P} at (0,52) size 784x29
-        RenderText {#text} at (0,11) size 161x19
-          text run at (0,11) width 161: "Ruby is often used in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 117x19
-          RenderRubyRun (anonymous) at (161,11) size 117x18
-            RenderRubyText {RT} at (0,-11) size 117x10
-              RenderText {#text} at (41,0) size 35x11
+        RenderBR {BR} at (225,14) size 0x0
+        RenderBR {BR} at (0,18) size 0x17
+      RenderBlock {P} at (0,52) size 784x28
+        RenderText {#text} at (0,10) size 161x17
+          text run at (0,10) width 161: "Ruby is often used in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 117x17
+          RenderRubyRun (anonymous) at (161,10) size 117x18
+            RenderRubyText {RT} at (0,-10) size 117x10
+              RenderText {#text} at (41,0) size 35x10
                 text run at (41,0) width 35: "Nihongo"
             RenderRubyBase (anonymous) at (0,0) size 117x18
-              RenderText {#text} at (0,0) size 117x19
+              RenderText {#text} at (0,0) size 117x17
                 text run at (0,0) width 117: "Japanese language"
-        RenderText {#text} at (278,11) size 4x19
-          text run at (278,11) width 4: "."
+        RenderText {#text} at (278,10) size 4x17
+          text run at (278,10) width 4: "."

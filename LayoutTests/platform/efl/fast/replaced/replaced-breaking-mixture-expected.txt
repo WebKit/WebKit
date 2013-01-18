@@ -4,36 +4,36 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 10x43
-        RenderText {#text} at (0,0) size 25x19
+        RenderText {#text} at (0,0) size 25x17
           text run at (0,0) width 25: "Foo"
         RenderImage {IMG} at (0,18) size 25x25
       RenderBlock {DIV} at (0,43) size 10x60
-        RenderText {#text} at (0,0) size 25x19
+        RenderText {#text} at (0,0) size 25x17
           text run at (0,0) width 25: "Foo"
         RenderMenuList {SELECT} at (2,20) size 86x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 30x18
-            RenderText at (0,0) size 30x19
+            RenderText at (0,0) size 30x17
               text run at (0,0) width 30: "One"
       RenderBlock {DIV} at (0,103) size 10x50
-        RenderText {#text} at (0,0) size 25x19
+        RenderText {#text} at (0,0) size 25x17
           text run at (0,0) width 25: "Foo"
-        RenderTextControl {INPUT} at (2,20) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,20) size 192x28 [bgcolor=#FFFFFF]
       RenderBlock {DIV} at (0,153) size 10x43
         RenderImage {IMG} at (0,0) size 25x25
-        RenderText {#text} at (0,25) size 25x19
+        RenderText {#text} at (0,25) size 25x17
           text run at (0,25) width 25: "Foo"
       RenderBlock {DIV} at (0,196) size 10x60
         RenderMenuList {SELECT} at (2,2) size 86x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 30x18
-            RenderText at (0,0) size 30x19
+            RenderText at (0,0) size 30x17
               text run at (0,0) width 30: "One"
-        RenderText {#text} at (0,42) size 25x19
+        RenderText {#text} at (0,42) size 25x17
           text run at (0,42) width 25: "Foo"
       RenderBlock {DIV} at (0,256) size 10x50
-        RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,32) size 25x19
+        RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,32) size 25x17
           text run at (0,32) width 25: "Foo"
-layer at (14,137) size 186x18
-  RenderBlock {DIV} at (4,6) size 186x18
-layer at (14,272) size 186x18
-  RenderBlock {DIV} at (4,6) size 186x18
+layer at (14,137) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+layer at (14,272) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18

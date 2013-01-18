@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 452x19
+        RenderText {#text} at (0,0) size 452x17
           text run at (0,0) width 452: "The following is a test for having a <rt> immediately following another."
       RenderBlock (anonymous) at (0,34) size 784x36
-        RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,18) size 0x19
-      RenderBlock {P} at (0,86) size 784x29
-        RenderText {#text} at (0,11) size 82x19
-          text run at (0,11) width 82: "<ruby> uses "
-        RenderRuby (inline) {RUBY} at (0,0) size 42x19
-          RenderRubyRun (anonymous) at (82,11) size 27x18
-            RenderRubyText {RT} at (0,-11) size 27x10
-              RenderText {#text} at (4,0) size 19x11
+        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,18) size 0x17
+      RenderBlock {P} at (0,86) size 784x28
+        RenderText {#text} at (0,10) size 82x17
+          text run at (0,10) width 82: "<ruby> uses "
+        RenderRuby (inline) {RUBY} at (0,0) size 42x17
+          RenderRubyRun (anonymous) at (82,10) size 27x18
+            RenderRubyText {RT} at (0,-10) size 27x10
+              RenderText {#text} at (4,0) size 19x10
                 text run at (4,0) width 19: "ruby"
             RenderRubyBase (anonymous) at (0,0) size 27x18
-              RenderText {#text} at (0,0) size 27x19
+              RenderText {#text} at (0,0) size 27x17
                 text run at (0,0) width 27: "<rt>"
-          RenderRubyRun (anonymous) at (109,28) size 15x0
-            RenderRubyText {RT} at (0,-11) size 15x10
-              RenderText {#text} at (0,0) size 15x11
+          RenderRubyRun (anonymous) at (109,26) size 15x0
+            RenderRubyText {RT} at (0,-10) size 15x10
+              RenderText {#text} at (0,0) size 15x10
                 text run at (0,0) width 15: "text"
-        RenderText {#text} at (124,11) size 163x19
-          text run at (124,11) width 163: " to contain the annotation."
+        RenderText {#text} at (124,10) size 163x17
+          text run at (124,10) width 163: " to contain the annotation."
