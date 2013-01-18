@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 714x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 714x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15296"
-          RenderText {#text} at (354,0) size 714x37
+          RenderText {#text} at (354,0) size 714x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 356: "REGRESSION (r19716-r19719): width not specified for"
             text run at (0,18) width 294: "<marquee> tag is causing the alignment issue"
-        RenderText {#text} at (294,18) size 4x19
+        RenderText {#text} at (294,18) size 4x17
           text run at (294,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 269x19
+        RenderText {#text} at (0,0) size 269x17
           text run at (0,0) width 269: "This should be a green 100\x{D7}100px square:"
       RenderBlock {DIV} at (0,86) size 100x100 [bgcolor=#FF0000]
         RenderBlock (floating) {DIV} at (0,0) size 50x100 [bgcolor=#008000]

@@ -9,19 +9,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (202,14) size 285x28
-          text run at (202,14) width 285: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x28
-          RenderText {#text} at (486,14) size 90x28
-            text run at (486,14) width 90: "centered"
-        RenderText {#text} at (575,14) size 7x28
-          text run at (575,14) width 7: "."
+        RenderText {#text} at (202,15) size 285x26
+          text run at (202,15) width 285: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x26
+          RenderText {#text} at (486,15) size 90x26
+            text run at (486,15) width 90: "centered"
+        RenderText {#text} at (575,15) size 7x26
+          text run at (575,15) width 7: "."
       RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,14) size 284x28
-          text run at (14,14) width 284: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x28
-          RenderText {#text} at (298,14) size 90x28
-            text run at (298,14) width 90: "flush left"
-        RenderText {#text} at (388,14) size 6x28
-          text run at (388,14) width 6: "."
+        RenderText {#text} at (14,15) size 284x26
+          text run at (14,15) width 284: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x26
+          RenderText {#text} at (298,15) size 90x26
+            text run at (298,15) width 90: "flush left"
+        RenderText {#text} at (388,15) size 6x26
+          text run at (388,15) width 6: "."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

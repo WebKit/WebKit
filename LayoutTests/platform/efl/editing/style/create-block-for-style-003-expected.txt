@@ -12,21 +12,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 725x56
-          text run at (14,14) width 719: "Should see \"baz\" centered in its own red box, with a two left-aligned lines"
-          text run at (733,14) width 6: " "
-          text run at (14,42) width 226: "above, \"foo\" and \"bar\"."
+        RenderText {#text} at (14,15) size 725x54
+          text run at (14,15) width 719: "Should see \"baz\" centered in its own red box, with a two left-aligned lines"
+          text run at (733,15) width 6: " "
+          text run at (14,43) width 226: "above, \"foo\" and \"bar\"."
       RenderBlock {DIV} at (0,108) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x56
-            RenderText {#text} at (0,0) size 32x28
-              text run at (0,0) width 32: "foo"
+            RenderText {#text} at (0,1) size 32x26
+              text run at (0,1) width 32: "foo"
             RenderBR {BR} at (32,22) size 0x0
-            RenderText {#text} at (0,28) size 31x28
-              text run at (0,28) width 31: "bar"
+            RenderText {#text} at (0,29) size 31x26
+              text run at (0,29) width 31: "bar"
             RenderBR {BR} at (31,50) size 0x0
           RenderBlock {DIV} at (14,70) size 756x28
-            RenderText {#text} at (361,0) size 34x28
-              text run at (361,0) width 34: "baz"
+            RenderText {#text} at (361,1) size 34x26
+              text run at (361,1) width 34: "baz"
           RenderBlock (anonymous) at (14,98) size 756x0
 caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {DIV} of child 3 {DIV} of body

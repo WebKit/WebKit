@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 263x24
                   RenderTableRow {TR} at (0,2) size 263x20
                     RenderTableCell {TD} at (2,2) size 259x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 257x19
+                      RenderText {#text} at (1,1) size 257x17
                         text run at (1,1) width 257: "Look at me contributing some minwidth."
             RenderTableCell {TD} at (269,14) size 302x2 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]

@@ -10,23 +10,23 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 500x100
             RenderBody {BODY} at (8,8) size 484x76
               RenderBlock {P} at (0,0) size 484x18
-                RenderText {#text} at (0,0) size 110x19
+                RenderText {#text} at (0,0) size 110x17
                   text run at (0,0) width 110: "This is some text."
               RenderBlock {P} at (0,34) size 484x18
-                RenderText {#text} at (0,0) size 147x19
+                RenderText {#text} at (0,0) size 147x17
                   text run at (0,0) width 147: "This text is underneath."
-      RenderText {#text} at (504,89) size 4x19
-        text run at (504,89) width 4: " "
-      RenderEmbeddedObject {OBJECT} at (0,107) size 500x100
+      RenderText {#text} at (504,90) size 4x17
+        text run at (504,90) width 4: " "
+      RenderEmbeddedObject {OBJECT} at (0,108) size 500x100
         layer at (0,0) size 500x100
           RenderView at (0,0) size 500x100
         layer at (0,0) size 500x100
           RenderBlock {HTML} at (0,0) size 500x100
             RenderBody {BODY} at (8,8) size 484x76
               RenderBlock {P} at (0,0) size 484x18
-                RenderText {#text} at (0,0) size 110x19
+                RenderText {#text} at (0,0) size 110x17
                   text run at (0,0) width 110: "This is some text."
               RenderBlock {P} at (0,34) size 484x18
-                RenderText {#text} at (0,0) size 147x19
+                RenderText {#text} at (0,0) size 147x17
                   text run at (0,0) width 147: "This text is underneath."
       RenderText {#text} at (0,0) size 0x0

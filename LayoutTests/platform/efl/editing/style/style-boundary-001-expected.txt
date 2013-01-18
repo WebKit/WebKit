@@ -13,27 +13,27 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x156 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 600x28
-            text run at (0,28) width 600: "Style checks performed on boundaries between style changes."
+          RenderText {#text} at (0,29) size 600x26
+            text run at (0,29) width 600: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,86) size 756x56
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 442x28
-            text run at (0,28) width 442: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 25x28
-            RenderText {#text} at (442,28) size 25x28
-              text run at (442,28) width 25: "ab"
+          RenderText {#text} at (0,29) size 442x26
+            text run at (0,29) width 442: "Should see this content in the red box below: "
+          RenderInline {B} at (0,0) size 25x26
+            RenderText {#text} at (442,29) size 25x26
+              text run at (442,29) width 25: "ab"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,180) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 25x28
-            RenderText {#text} at (2,2) size 12x28
-              text run at (2,2) width 12: "a"
-            RenderText {#text} at (14,2) size 13x28
-              text run at (14,2) width 13: "b"
+          RenderInline {B} at (0,0) size 25x26
+            RenderText {#text} at (2,3) size 12x26
+              text run at (2,3) width 12: "a"
+            RenderText {#text} at (14,3) size 13x26
+              text run at (14,3) width 13: "b"
 selection start: position 0 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 1 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

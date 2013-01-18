@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
         RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
           RenderBlock (floating) {SPAN} at (0,0) size 10x100
-            RenderText {#text} at (0,0) size 4x19
+            RenderText {#text} at (0,0) size 4x17
               text run at (0,0) width 4: " "
-          RenderBR {BR} at (10,0) size 0x19
+          RenderBR {BR} at (10,0) size 0x17

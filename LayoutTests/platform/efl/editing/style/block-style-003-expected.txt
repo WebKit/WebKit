@@ -60,20 +60,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (202,14) size 285x28
-          text run at (202,14) width 285: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x28
-          RenderText {#text} at (486,14) size 90x28
-            text run at (486,14) width 90: "centered"
-        RenderText {#text} at (575,14) size 7x28
-          text run at (575,14) width 7: "."
+        RenderText {#text} at (202,15) size 285x26
+          text run at (202,15) width 285: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x26
+          RenderText {#text} at (486,15) size 90x26
+            text run at (486,15) width 90: "centered"
+        RenderText {#text} at (575,15) size 7x26
+          text run at (575,15) width 7: "."
       RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (202,14) size 285x28
-          text run at (202,14) width 285: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x28
-          RenderText {#text} at (486,14) size 90x28
-            text run at (486,14) width 90: "centered"
-        RenderText {#text} at (575,14) size 7x28
-          text run at (575,14) width 7: "."
+        RenderText {#text} at (202,15) size 285x26
+          text run at (202,15) width 285: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x26
+          RenderText {#text} at (486,15) size 90x26
+            text run at (486,15) width 90: "centered"
+        RenderText {#text} at (575,15) size 7x26
+          text run at (575,15) width 7: "."
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of body
 selection end:   position 13 of child 0 {#text} of child 3 {DIV} of body

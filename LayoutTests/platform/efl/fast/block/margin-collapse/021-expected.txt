@@ -4,7 +4,7 @@ layer at (0,0) size 800x224
   RenderBlock {HTML} at (0,0) size 800x224
     RenderBody {BODY} at (8,16) size 784x200
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 295x19
+        RenderText {#text} at (0,0) size 295x17
           text run at (0,0) width 295: "The following two squares should be identical."
       RenderTable {TABLE} at (0,34) size 316x166
         RenderTableSection {TBODY} at (0,0) size 316x166

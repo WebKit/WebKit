@@ -4,6 +4,6 @@ layer at (0,0) size 800x136
   RenderBlock {HTML} at (0,0) size 800x136 [bgcolor=#008000]
     RenderBody {BODY} at (50,50) size 700x36 [bgcolor=#808080]
       RenderBlock {P} at (0,0) size 700x36
-        RenderText {#text} at (0,0) size 677x37
+        RenderText {#text} at (0,0) size 677x35
           text run at (0,0) width 677: "The document background should be red, and the body gray. The rest of the viewport should be white. The"
           text run at (0,18) width 300: "document and body should have opacity of 0.3."

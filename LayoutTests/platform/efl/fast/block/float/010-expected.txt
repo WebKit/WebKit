@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (484,100) size 100x50 [bgcolor=#0000FF]
       RenderBlock (floating) {DIV} at (0,100) size 160x200 [bgcolor=#FF0000]
       RenderBlock (floating) {DIV} at (384,100) size 100x100 [bgcolor=#808000]
-      RenderText {#text} at (492,0) size 415x155
+      RenderText {#text} at (492,0) size 415x153
         text run at (492,0) width 67: "Some text."
         text run at (492,18) width 74: "This should"
         text run at (492,36) width 83: "find a way to"

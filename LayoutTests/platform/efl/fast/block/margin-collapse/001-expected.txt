@@ -4,7 +4,7 @@ layer at (0,0) size 800x480
   RenderBlock {HTML} at (0,0) size 800x480
     RenderBody {BODY} at (8,16) size 784x448
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 504x19
+        RenderText {#text} at (0,0) size 504x17
           text run at (0,0) width 504: "The following two columns should be pixel perfect identical with no red visible."
       RenderTable {TABLE} at (0,34) size 78x380 [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 72x374
@@ -41,10 +41,10 @@ layer at (0,0) size 800x480
                   RenderText {#text} at (0,1) size 33x56
                     text run at (0,1) width 33: "C"
       RenderBlock {P} at (0,430) size 784x18
-        RenderText {#text} at (0,0) size 259x19
+        RenderText {#text} at (0,0) size 259x17
           text run at (0,0) width 259: "This test is meaningless if you don't pass "
-        RenderInline {A} at (0,0) size 49x19 [color=#0000EE]
-          RenderText {#text} at (259,0) size 49x19
+        RenderInline {A} at (0,0) size 49x17 [color=#0000EE]
+          RenderText {#text} at (259,0) size 49x17
             text run at (259,0) width 49: "test 006"
-        RenderText {#text} at (308,0) size 4x19
+        RenderText {#text} at (308,0) size 4x17
           text run at (308,0) width 4: "."

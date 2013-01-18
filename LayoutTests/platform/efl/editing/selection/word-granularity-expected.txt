@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 678x19
+        RenderText {#text} at (0,0) size 678x17
           text run at (0,0) width 379: "This tests modifying a selection created with a double click. "
           text run at (379,0) width 299: "The new selection should use word granularity."
       RenderBlock {P} at (0,34) size 784x54 [color=#008000]
-        RenderText {#text} at (0,0) size 778x55
+        RenderText {#text} at (0,0) size 778x53
           text run at (0,0) width 224: "This test does not run interactively. "
           text run at (224,0) width 352: "It uses the testRunners eventSender to do mouse clicks. "
           text run at (576,0) width 202: "To run it manually, double click"
@@ -22,32 +22,32 @@ layer at (0,0) size 800x600
           text run at (284,18) width 490: "As you drag, watch the selection that is created, it should always start and end"
           text run at (0,36) width 130: "on word boundaries."
       RenderBlock {DIV} at (0,104) size 784x108
-        RenderText {#text} at (0,0) size 84x19
+        RenderText {#text} at (0,0) size 84x17
           text run at (0,0) width 84: "This is a para"
-        RenderInline {SPAN} at (0,0) size 8x19 [color=#0000FF]
-          RenderText {#text} at (84,0) size 8x19
+        RenderInline {SPAN} at (0,0) size 8x17 [color=#0000FF]
+          RenderText {#text} at (84,0) size 8x17
             text run at (84,0) width 8: "g"
-        RenderText {#text} at (92,0) size 32x19
+        RenderText {#text} at (92,0) size 32x17
           text run at (92,0) width 32: "raph."
-        RenderBR {BR} at (124,15) size 0x0
-        RenderText {#text} at (0,18) size 63x19
+        RenderBR {BR} at (124,14) size 0x0
+        RenderText {#text} at (0,18) size 63x17
           text run at (0,18) width 63: "Some text"
-        RenderBR {BR} at (63,33) size 0x0
-        RenderText {#text} at (0,36) size 63x19
+        RenderBR {BR} at (63,32) size 0x0
+        RenderText {#text} at (0,36) size 63x17
           text run at (0,36) width 63: "Some text"
-        RenderBR {BR} at (63,51) size 0x0
-        RenderText {#text} at (0,54) size 63x19
+        RenderBR {BR} at (63,50) size 0x0
+        RenderText {#text} at (0,54) size 63x17
           text run at (0,54) width 63: "Some text"
-        RenderBR {BR} at (63,69) size 0x0
-        RenderText {#text} at (0,72) size 63x19
+        RenderBR {BR} at (63,68) size 0x0
+        RenderText {#text} at (0,72) size 63x17
           text run at (0,72) width 63: "Some text"
-        RenderBR {BR} at (63,87) size 0x0
-        RenderText {#text} at (0,90) size 84x19
+        RenderBR {BR} at (63,86) size 0x0
+        RenderText {#text} at (0,90) size 84x17
           text run at (0,90) width 84: "This is a para"
-        RenderInline {SPAN} at (0,0) size 8x19 [color=#FF0000]
-          RenderText {#text} at (84,90) size 8x19
+        RenderInline {SPAN} at (0,0) size 8x17 [color=#FF0000]
+          RenderText {#text} at (84,90) size 8x17
             text run at (84,90) width 8: "g"
-        RenderText {#text} at (92,90) size 32x19
+        RenderText {#text} at (92,90) size 32x17
           text run at (92,90) width 32: "raph."
 selection start: position 11 of child 0 {#text} of child 5 {DIV} of body
 selection end:   position 4 of child 14 {#text} of child 5 {DIV} of body

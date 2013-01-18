@@ -1,77 +1,77 @@
-layer at (0,0) size 785x1149
+layer at (0,0) size 785x1150
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1149
-  RenderBlock {HTML} at (0,0) size 785x1149
-    RenderBody {BODY} at (8,8) size 769x1111
-      RenderBlock {DIV} at (73,0) size 623x472 [border: (4px solid #000000)]
-        RenderBlock {P} at (4,20) size 615x36
-          RenderText {#text} at (0,0) size 580x37
+layer at (0,0) size 785x1150
+  RenderBlock {HTML} at (0,0) size 785x1151
+    RenderBody {BODY} at (8,8) size 769x1113
+      RenderBlock {DIV} at (72,0) size 625x472 [border: (4px solid #000000)]
+        RenderBlock {P} at (4,20) size 616x36
+          RenderText {#text} at (0,0) size 580x36
             text run at (0,0) width 580: "Affected Browsers: Safari 2.0, Windows Internet Explorer 6"
             text run at (0,18) width 30: "SP2"
-        RenderBlock {HR} at (4,72) size 615x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,90) size 615x54
-          RenderText {#text} at (0,0) size 610x55
+        RenderBlock {HR} at (4,72) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,90) size 616x54
+          RenderText {#text} at (0,0) size 610x54
             text run at (0,0) width 610: "Bug Description: On the Affected Browsers, if a rule sets the"
             text run at (0,18) width 540: "'background-color' of an element, this color cannot be"
             text run at (0,36) width 480: "overridden by 'background:inherit' declarations."
-        RenderBlock {HR} at (4,160) size 615x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,178) size 615x90
-          RenderText {#text} at (0,0) size 600x55
+        RenderBlock {HR} at (4,160) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,178) size 616x90
+          RenderText {#text} at (0,0) size 600x54
             text run at (0,0) width 600: "Example: With the following code, the background color of H1"
             text run at (0,18) width 560: "elements stays pink, no matter what background color the"
             text run at (0,36) width 130: "parents have:"
-          RenderBR {BR} at (130,36) size 0x19
-          RenderText {#text} at (0,54) size 320x19
+          RenderBR {BR} at (130,36) size 0x18
+          RenderText {#text} at (0,54) size 320x18
             text run at (0,54) width 50: "  H1 "
             text run at (50,54) width 270: "{ background-color: pink; }"
-          RenderBR {BR} at (320,54) size 0x19
-          RenderText {#text} at (0,72) size 290x19
+          RenderBR {BR} at (320,54) size 0x18
+          RenderText {#text} at (0,72) size 290x18
             text run at (0,72) width 50: "  H1 "
             text run at (50,72) width 240: "{ background: inherit; }"
-        RenderBlock {HR} at (4,284) size 615x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,302) size 615x54
-          RenderText {#text} at (0,0) size 610x55
+        RenderBlock {HR} at (4,284) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,302) size 616x54
+          RenderText {#text} at (0,0) size 610x54
             text run at (0,0) width 610: "Work-around: The 'background-color' can only be overridden by"
             text run at (0,18) width 600: "another 'background-color' declaration, or by a 'background'"
             text run at (0,36) width 380: "declaration that does specify a color."
-        RenderBlock {HR} at (4,372) size 615x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (4,382) size 615x18
-          RenderText {#text} at (0,0) size 401x19
+        RenderBlock {HR} at (4,372) size 616x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (4,382) size 616x18
+          RenderText {#text} at (0,0) size 401x17
             text run at (0,0) width 401: "This is in contradiction with the CSS2 specification which says:"
-        RenderBlock {UL} at (4,416) size 615x36
-          RenderListItem {LI} at (40,0) size 575x36
-            RenderListMarker at (-18,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 29x19
+        RenderBlock {UL} at (4,416) size 616x36
+          RenderListItem {LI} at (40,0) size 576x36
+            RenderListMarker at (-17,0) size 7x17: bullet
+            RenderText {#text} at (0,0) size 29x17
               text run at (0,0) width 29: "The "
-            RenderInline {A} at (0,0) size 81x19 [color=#0000EE]
-              RenderText {#text} at (29,0) size 81x19
+            RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+              RenderText {#text} at (29,0) size 81x17
                 text run at (29,0) width 81: "'background'"
-            RenderText {#text} at (110,0) size 563x37
+            RenderText {#text} at (110,0) size 563x35
               text run at (110,0) width 453: " property first sets all the individual background properties to their initial"
               text run at (0,18) width 373: "values, then assigns explicit values given in the declaration."
-      RenderBlock {DIV} at (73,502) size 623x609 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
-        RenderBlock (anonymous) at (4,4) size 615x18
-          RenderText {#text} at (0,0) size 219x19
+      RenderBlock {DIV} at (72,502) size 625x611 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
+        RenderBlock (anonymous) at (4,4) size 616x18
+          RenderText {#text} at (0,0) size 219x17
             text run at (0,0) width 219: "This DIV has a green background."
-        RenderBlock {H1} at (61,43) size 500x156 [border: (4px solid #008000)]
+        RenderBlock {H1} at (61,43) size 501x157 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 445x147
             text run at (4,4) width 441: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 445: "inline style rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
-        RenderBlock (anonymous) at (4,229) size 615x18
-          RenderText {#text} at (0,0) size 157x19
+        RenderBlock (anonymous) at (4,229) size 616x19
+          RenderText {#text} at (0,0) size 157x17
             text run at (0,0) width 157: "The DIV continues here."
-        RenderBlock {H1} at (61,268) size 500x156 [border: (4px solid #008000)]
+        RenderBlock {H1} at (61,268) size 501x157 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 449x147
             text run at (4,4) width 441: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 449: "!important rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
-        RenderBlock (anonymous) at (4,454) size 615x18
-          RenderText {#text} at (0,0) size 157x19
+        RenderBlock (anonymous) at (4,454) size 616x19
+          RenderText {#text} at (0,0) size 157x17
             text run at (0,0) width 157: "The DIV continues here."
-        RenderBlock {H1} at (61,493) size 500x82 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
+        RenderBlock {H1} at (61,494) size 501x83 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
           RenderText {#text} at (4,4) size 485x73
             text run at (4,4) width 485: "This header has a pink background"
             text run at (4,41) width 219: "and that's good."

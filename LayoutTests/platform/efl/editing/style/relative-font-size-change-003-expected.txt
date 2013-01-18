@@ -42,32 +42,32 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 744x84
-          text run at (14,14) width 723: "Size check should say: 24px. The first two words of the second line should"
-          text run at (737,14) width 6: " "
-          text run at (14,42) width 332: "appear to be 24px. The rest of the "
-          text run at (346,42) width 406: "words on the second line should appear to"
-          text run at (752,42) width 6: " "
-          text run at (14,70) width 83: "be 30px."
+        RenderText {#text} at (14,15) size 744x82
+          text run at (14,15) width 723: "Size check should say: 24px. The first two words of the second line should"
+          text run at (737,15) width 6: " "
+          text run at (14,43) width 332: "appear to be 24px. The rest of the "
+          text run at (346,43) width 406: "words on the second line should appear to"
+          text run at (752,43) width 6: " "
+          text run at (14,71) width 83: "be 30px."
       RenderBlock {DIV} at (0,136) size 784x28
-        RenderText {#text} at (0,0) size 118x28
-          text run at (0,0) width 118: "Size check: "
-        RenderInline {SPAN} at (0,0) size 48x28
-          RenderText {#text} at (118,0) size 48x28
-            text run at (118,0) width 48: "24px"
+        RenderText {#text} at (0,1) size 118x26
+          text run at (0,1) width 118: "Size check: "
+        RenderInline {SPAN} at (0,0) size 48x26
+          RenderText {#text} at (118,1) size 48x26
+            text run at (118,1) width 48: "24px"
       RenderBlock {DIV} at (0,180) size 784x147
         RenderBlock {DIV} at (0,0) size 784x147 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 139x28
-              text run at (0,0) width 139: "There is a tide"
+            RenderText {#text} at (0,1) size 139x26
+              text run at (0,1) width 139: "There is a tide"
           RenderBlock {DIV} at (14,42) size 756x63 [border: (2px solid #FF0000)]
-            RenderInline {SPAN} at (0,0) size 56x28
-              RenderText {#text} at (14,19) size 56x28
-                text run at (14,19) width 56: "In the"
-            RenderText {#text} at (70,14) size 176x34
-              text run at (70,14) width 176: " affairs of men"
+            RenderInline {SPAN} at (0,0) size 56x26
+              RenderText {#text} at (14,21) size 56x26
+                text run at (14,21) width 56: "In the"
+            RenderText {#text} at (70,15) size 176x33
+              text run at (70,15) width 176: " affairs of men"
           RenderBlock (anonymous) at (14,105) size 756x28
-            RenderText {#text} at (0,0) size 241x28
-              text run at (0,0) width 241: "Which taken at the flood"
+            RenderText {#text} at (0,1) size 241x26
+              text run at (0,1) width 241: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 6 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

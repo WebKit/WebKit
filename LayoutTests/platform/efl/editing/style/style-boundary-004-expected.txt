@@ -14,38 +14,38 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 600x28
-            text run at (0,28) width 600: "Style checks performed on boundaries between style changes."
+          RenderText {#text} at (0,29) size 600x26
+            text run at (0,29) width 600: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,86) size 756x112
           RenderBlock (anonymous) at (0,0) size 756x56
-            RenderText {#text} at (0,0) size 189x28
-              text run at (0,0) width 189: "Expected Results: "
+            RenderText {#text} at (0,1) size 189x26
+              text run at (0,1) width 189: "Expected Results: "
             RenderBR {BR} at (189,22) size 0x0
-            RenderText {#text} at (0,28) size 436x28
-              text run at (0,28) width 436: "Should see this content in the red box below:"
+            RenderText {#text} at (0,29) size 436x26
+              text run at (0,29) width 436: "Should see this content in the red box below:"
             RenderInline {B} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,56) size 756x56
             RenderBlock {DIV} at (0,0) size 756x28
-              RenderText {#text} at (0,0) size 12x28
-                text run at (0,0) width 12: "a"
+              RenderText {#text} at (0,1) size 12x26
+                text run at (0,1) width 12: "a"
             RenderBlock {DIV} at (0,28) size 756x28
-              RenderText {#text} at (0,0) size 13x28
-                text run at (0,0) width 13: "b"
+              RenderText {#text} at (0,1) size 13x26
+                text run at (0,1) width 13: "b"
           RenderBlock (anonymous) at (0,112) size 756x0
             RenderInline {B} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,236) size 784x60
         RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (2,2) size 780x28
-            RenderInline {B} at (0,0) size 12x28
-              RenderText {#text} at (0,0) size 12x28
-                text run at (0,0) width 12: "a"
+            RenderInline {B} at (0,0) size 12x26
+              RenderText {#text} at (0,1) size 12x26
+                text run at (0,1) width 12: "a"
           RenderBlock {DIV} at (2,30) size 780x28
-            RenderInline {B} at (0,0) size 13x28
-              RenderText {#text} at (0,0) size 13x28
-                text run at (0,0) width 13: "b"
+            RenderInline {B} at (0,0) size 13x26
+              RenderText {#text} at (0,1) size 13x26
+                text run at (0,1) width 13: "b"
 selection start: position 1 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 1 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

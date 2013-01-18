@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x37
+        RenderText {#text} at (0,0) size 776x35
           text run at (0,0) width 776: "The box below should be solid green. If there are 10 pixels of red visible on the top and left, the background image is being"
           text run at (0,18) width 130: "repeated improperly."
       RenderBlock {P} at (0,52) size 784x0

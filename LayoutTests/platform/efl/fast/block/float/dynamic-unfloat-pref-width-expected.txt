@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
 layer at (8,8) size 35x44
   RenderBlock (positioned) {DIV} at (8,8) size 35x44 [border: (2px solid #0000FF)]
     RenderBlock {DIV} at (2,2) size 31x22 [border: (2px solid #FFA500)]
-      RenderText {#text} at (2,2) size 27x19
+      RenderText {#text} at (2,2) size 27x17
         text run at (2,2) width 27: "One"
     RenderBlock (floating) {DIV} at (2,24) size 30x18
-      RenderText {#text} at (0,0) size 30x19
+      RenderText {#text} at (0,0) size 30x17
         text run at (0,0) width 30: "Two"

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 146x132 [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 137x127
+        RenderText {#text} at (3,3) size 137x125
           text run at (3,3) width 137: "Test float positioning."
           text run at (3,21) width 132: "There should be four"
           text run at (3,39) width 93: "red boxes with"
@@ -13,18 +13,18 @@ layer at (0,0) size 800x600
           text run at (3,93) width 107: "boxes should not"
           text run at (3,111) width 104: "overlap this text."
         RenderBlock (floating) {DIV} at (3,129) size 76x24 [border: (3px solid #FF0000)]
-          RenderText {#text} at (3,3) size 8x19
+          RenderText {#text} at (3,3) size 8x17
             text run at (3,3) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (3,153) size 76x24 [border: (3px solid #FF0000)]
-          RenderText {#text} at (3,3) size 8x19
+          RenderText {#text} at (3,3) size 8x17
             text run at (3,3) width 8: "2"
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (3,177) size 76x24 [border: (3px solid #FF0000)]
-          RenderText {#text} at (3,3) size 8x19
+          RenderText {#text} at (3,3) size 8x17
             text run at (3,3) width 8: "3"
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (3,201) size 76x24 [border: (3px solid #FF0000)]
-          RenderText {#text} at (3,3) size 8x19
+          RenderText {#text} at (3,3) size 8x17
             text run at (3,3) width 8: "4"
         RenderText {#text} at (0,0) size 0x0

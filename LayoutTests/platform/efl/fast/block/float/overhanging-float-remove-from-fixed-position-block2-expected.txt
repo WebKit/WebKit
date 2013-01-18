@@ -11,6 +11,6 @@ layer at (8,8) size 63x68
     RenderBlock {DIV} at (0,0) size 63x18
       RenderBlock (floating) {DIV} at (58,0) size 5x50 [bgcolor=#FFA500]
       RenderBlock {DIV} at (0,0) size 63x18 [bgcolor=#0000FF]
-        RenderText {#text} at (0,0) size 58x19
+        RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "A B C D"
         RenderBlock (floating) {DIV} at (53,18) size 5x50 [bgcolor=#008000]

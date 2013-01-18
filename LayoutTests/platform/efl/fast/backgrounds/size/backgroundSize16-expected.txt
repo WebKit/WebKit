@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 782x271
-        RenderText {#text} at (0,0) size 782x271
+      RenderInline {SPAN} at (0,0) size 782x269
+        RenderText {#text} at (0,0) size 782x269
           text run at (0,0) width 469: "I am typing a lot of text so that this goes onto many lines. I am still typing. "
           text run at (469,0) width 283: "I am typing a lot of text so that this goes onto"
           text run at (0,18) width 771: "many lines. I am still typing. I am typing a lot of text so that this goes onto many lines. I am still typing. I am typing a lot of"

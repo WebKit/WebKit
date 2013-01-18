@@ -7,16 +7,16 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 669x128
           RenderTableRow {TR} at (0,0) size 669x128
             RenderTableCell {TD} at (0,51) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+              RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,0) size 657x128 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (4,4) size 50x50 [bgcolor=#FFA500]
               RenderBlock {P} at (4,4) size 649x18
-                RenderText {#text} at (53,0) size 595x19
+                RenderText {#text} at (53,0) size 595x17
                   text run at (53,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
               RenderBlock {DIV} at (4,38) size 649x18 [bgcolor=#008000]
-                RenderBR {BR} at (53,0) size 0x19
+                RenderBR {BR} at (53,0) size 0x17
               RenderImage {IMG} at (4,56) size 50x50 [bgcolor=#FFA500]
               RenderBlock {DIV} at (4,106) size 649x18
-                RenderText {#text} at (0,0) size 649x19
+                RenderText {#text} at (0,0) size 649x17
                   text run at (0,0) width 649: "This paragraph should appear below the tall orange rectangle above and to the left, and not flow past it."

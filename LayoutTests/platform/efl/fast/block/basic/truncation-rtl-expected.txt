@@ -4,22 +4,22 @@ layer at (0,0) size 800x222
   RenderBlock {HTML} at (0,0) size 800x222
     RenderBody {BODY} at (8,16) size 784x198
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 253x19
+        RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 726x37
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (253,0) size 307x19
+        RenderInline {I} at (0,0) size 726x35
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (253,0) size 307x17
               text run at (253,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=24118"
-          RenderText {#text} at (560,0) size 726x37
+          RenderText {#text} at (560,0) size 726x35
             text run at (560,0) width 166: " RTL: Truncation behaves"
             text run at (0,18) width 183: "differently than IE/FF/Opera"
-        RenderText {#text} at (183,18) size 4x19
+        RenderText {#text} at (183,18) size 4x17
           text run at (183,18) width 4: "."
-        RenderBR {BR} at (187,18) size 0x19
-        RenderText {#text} at (0,36) size 415x19
+        RenderBR {BR} at (187,18) size 0x17
+        RenderText {#text} at (0,36) size 415x17
           text run at (0,36) width 415: "This test passes if the red block below is truncated on the left side."
       RenderBlock {DIV} at (-218,70) size 1002x128 [border: (1px solid #FF0000)]
-        RenderText {#text} at (12,1) size 999x127
+        RenderText {#text} at (12,1) size 999x125
           text run at (12,1) width 989: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisl tellus. Vivamus aliquam elit non arcu scelerisque eget dapibus nunc vulputate. Maecenas"
           text run at (22,19) width 979: "scelerisque egestas purus, id bibendum magna venenatis vel. Vestibulum bibendum volutpat aliquam. Cum sociis natoque penatibus et magnis dis parturient"
           text run at (2,37) width 999: "montes, nascetur ridiculus mus. Vestibulum eget risus sodales mi tristique dignissim et sed lectus. Cras convallis, nibh ut dapibus gravida, enim mauris molestie"

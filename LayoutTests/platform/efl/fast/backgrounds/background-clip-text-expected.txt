@@ -4,13 +4,13 @@ layer at (0,0) size 800x278
   RenderBlock {HTML} at (0,0) size 800x278
     RenderBody {BODY} at (8,16) size 784x254
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 305x19
+        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 305x17
             text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=25829"
-        RenderBR {BR} at (305,15) size 0x0
-        RenderText {#text} at (0,18) size 572x19
+        RenderBR {BR} at (305,14) size 0x0
+        RenderText {#text} at (0,18) size 572x17
           text run at (0,18) width 572: "You should see no areas of read below. (This paragraph is required for the test to be valid.)"
       RenderBlock {DIV} at (0,52) size 502x202 [color=#008000] [bgcolor=#FF0000] [border: (1px solid #000000)]
-        RenderText {#text} at (1,2) size 431x146
+        RenderText {#text} at (1,2) size 431x145
           text run at (1,2) width 431: "This background"
           text run at (1,76) width 409: "clips to the text."

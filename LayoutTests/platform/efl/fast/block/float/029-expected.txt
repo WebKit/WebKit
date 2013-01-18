@@ -4,29 +4,29 @@ layer at (0,0) size 800x166
   RenderBlock {HTML} at (0,0) size 800x166
     RenderBody {BODY} at (8,8) size 784x38
       RenderBlock (floating) {DIV} at (532,0) size 252x102 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 86x19
+        RenderText {#text} at (1,1) size 86x17
           text run at (1,1) width 86: "TOP-RIGHT"
-        RenderBR {BR} at (87,1) size 0x19
-        RenderText {#text} at (1,19) size 65x19
+        RenderBR {BR} at (87,1) size 0x17
+        RenderText {#text} at (1,19) size 65x17
           text run at (1,19) width 65: "float:right;"
-        RenderBR {BR} at (66,19) size 0x19
-        RenderText {#text} at (1,37) size 88x19
+        RenderBR {BR} at (66,19) size 0x17
+        RenderText {#text} at (1,37) size 88x17
           text run at (1,37) width 88: "width: 250px;"
-        RenderBR {BR} at (89,37) size 0x19
-        RenderText {#text} at (1,55) size 87x19
+        RenderBR {BR} at (89,37) size 0x17
+        RenderText {#text} at (1,55) size 87x17
           text run at (1,55) width 87: "height:100px;"
       RenderBlock {DIV} at (0,0) size 394x38 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 31x19
+        RenderText {#text} at (1,1) size 31x17
           text run at (1,1) width 31: "TOP"
-        RenderBR {BR} at (32,1) size 0x19
-        RenderText {#text} at (1,19) size 73x19
+        RenderBR {BR} at (32,1) size 0x17
+        RenderText {#text} at (1,19) size 73x17
           text run at (1,19) width 73: "width:50%;"
       RenderBlock (floating) {DIV} at (0,102) size 115x56 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,1) size 113x19
+        RenderText {#text} at (1,1) size 113x17
           text run at (1,1) width 113: "BOTTOM-LEFT"
-        RenderBR {BR} at (114,1) size 0x19
-        RenderText {#text} at (1,19) size 60x19
+        RenderBR {BR} at (114,1) size 0x17
+        RenderText {#text} at (1,19) size 60x17
           text run at (1,19) width 60: "float: left;"
-        RenderBR {BR} at (61,19) size 0x19
-        RenderText {#text} at (1,37) size 70x19
+        RenderBR {BR} at (61,19) size 0x17
+        RenderText {#text} at (1,37) size 70x17
           text run at (1,37) width 70: "clear: both;"

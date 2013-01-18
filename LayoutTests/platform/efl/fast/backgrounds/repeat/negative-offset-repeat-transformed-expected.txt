@@ -4,50 +4,50 @@ layer at (0,0) size 785x1020
   RenderBlock {HTML} at (0,0) size 785x1020
     RenderBody {BODY} at (8,16) size 769x996
       RenderBlock {P} at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 722x37
-          RenderInline {A} at (0,0) size 293x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 293x19
+        RenderInline {I} at (0,0) size 722x35
+          RenderInline {A} at (0,0) size 293x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 293x17
               text run at (53,0) width 293: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (346,0) size 722x37
+          RenderText {#text} at (346,0) size 722x35
             text run at (346,0) width 4: " "
             text run at (350,0) width 372: "no-repeat on negatively positioned background images are"
             text run at (0,18) width 49: "ignored"
-        RenderText {#text} at (49,18) size 4x19
+        RenderText {#text} at (49,18) size 4x17
           text run at (49,18) width 4: "."
       RenderBlock {P} at (0,52) size 769x18
-        RenderText {#text} at (0,0) size 454x19
+        RenderText {#text} at (0,0) size 454x17
           text run at (0,0) width 454: "Element with background image starting at (-13, -13) with no-repeat set:"
       RenderBlock (floating) {DIV} at (6,92) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,92) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,92) size 24x24 [border: (1px dotted #008000)]
       RenderBlock {P} at (0,132) size 769x18
-        RenderText {#text} at (0,0) size 446x19
+        RenderText {#text} at (0,0) size 446x17
           text run at (0,0) width 446: "Element with background image starting at (-13, -13) with repeat-y set:"
       RenderBlock (floating) {DIV} at (6,172) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,172) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,172) size 24x24 [border: (1px dotted #008000)]
       RenderBlock {P} at (0,212) size 769x18
-        RenderText {#text} at (0,0) size 446x19
+        RenderText {#text} at (0,0) size 446x17
           text run at (0,0) width 446: "Element with background image starting at (-13, -13) with repeat-x set:"
       RenderBlock (floating) {DIV} at (6,252) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,252) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,252) size 24x24 [border: (1px dotted #008000)]
       RenderBlock {P} at (0,292) size 769x18
-        RenderText {#text} at (0,0) size 444x19
+        RenderText {#text} at (0,0) size 444x17
           text run at (0,0) width 444: "Element with background image starting at (13, 13) with no-repeat set:"
       RenderBlock (floating) {DIV} at (6,332) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,332) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,332) size 24x24 [border: (1px dotted #008000)]
       RenderBlock {P} at (0,372) size 769x18
-        RenderText {#text} at (0,0) size 436x19
+        RenderText {#text} at (0,0) size 436x17
           text run at (0,0) width 436: "Element with background image starting at (13, 13) with repeat-y set:"
       RenderBlock (floating) {DIV} at (6,412) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,412) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,412) size 24x24 [border: (1px dotted #008000)]
       RenderBlock {P} at (0,452) size 769x18
-        RenderText {#text} at (0,0) size 436x19
+        RenderText {#text} at (0,0) size 436x17
           text run at (0,0) width 436: "Element with background image starting at (13, 13) with repeat-x set:"
       RenderBlock (floating) {DIV} at (6,492) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,492) size 29x29 [border: (1px dotted #008000)]
@@ -61,31 +61,31 @@ layer at (8,548) size 464x464
           RenderBlock (floating) {DIV} at (54,8) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,8) size 24x24 [border: (1px dotted #008000)]
           RenderBlock {P} at (2,48) size 446x18
-            RenderText {#text} at (0,0) size 446x19
+            RenderText {#text} at (0,0) size 446x17
               text run at (0,0) width 446: "Element with background image starting at (-13, -13) with repeat-y set:"
           RenderBlock (floating) {DIV} at (8,88) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,88) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,88) size 24x24 [border: (1px dotted #008000)]
           RenderBlock {P} at (2,128) size 446x18
-            RenderText {#text} at (0,0) size 446x19
+            RenderText {#text} at (0,0) size 446x17
               text run at (0,0) width 446: "Element with background image starting at (-13, -13) with repeat-x set:"
           RenderBlock (floating) {DIV} at (8,168) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,168) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,168) size 24x24 [border: (1px dotted #008000)]
           RenderBlock {P} at (2,208) size 446x18
-            RenderText {#text} at (0,0) size 444x19
+            RenderText {#text} at (0,0) size 444x17
               text run at (0,0) width 444: "Element with background image starting at (13, 13) with no-repeat set:"
           RenderBlock (floating) {DIV} at (8,248) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,248) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,248) size 24x24 [border: (1px dotted #008000)]
           RenderBlock {P} at (2,288) size 446x18
-            RenderText {#text} at (0,0) size 436x19
+            RenderText {#text} at (0,0) size 436x17
               text run at (0,0) width 436: "Element with background image starting at (13, 13) with repeat-y set:"
           RenderBlock (floating) {DIV} at (8,328) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,328) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,328) size 24x24 [border: (1px dotted #008000)]
           RenderBlock {P} at (2,368) size 446x18
-            RenderText {#text} at (0,0) size 436x19
+            RenderText {#text} at (0,0) size 436x17
               text run at (0,0) width 436: "Element with background image starting at (13, 13) with repeat-x set:"
           RenderBlock (floating) {DIV} at (8,408) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,408) size 29x29 [border: (1px dotted #008000)]

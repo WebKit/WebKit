@@ -17,59 +17,59 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x222 [border: (4px solid #0000FF)]
         RenderBlock {DIV} at (20,20) size 744x70
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,1) size 67x26
+            text run at (0,1) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 663x21
+          RenderText {#text} at (0,28) size 663x20
             text run at (0,28) width 663: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
-          RenderBR {BR} at (663,45) size 0x0
-          RenderInline {I} at (0,0) size 99x21
-            RenderText {#text} at (0,49) size 99x21
+          RenderBR {BR} at (663,44) size 0x0
+          RenderInline {I} at (0,0) size 99x20
+            RenderText {#text} at (0,49) size 99x20
               text run at (0,49) width 99: "For this test: "
-          RenderText {#text} at (99,49) size 228x21
+          RenderText {#text} at (99,49) size 228x20
             text run at (99,49) width 228: "Test typing at the start of a list."
         RenderBlock (anonymous) at (20,90) size 744x21
-          RenderBR {BR} at (0,0) size 0x21
+          RenderBR {BR} at (0,0) size 0x20
         RenderBlock {DIV} at (20,111) size 744x91
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
+          RenderText {#text} at (0,1) size 189x26
+            text run at (0,1) width 189: "Expected Results: "
           RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 709x42
+          RenderText {#text} at (0,28) size 709x41
             text run at (0,28) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,49) width 53: "color). "
-          RenderBR {BR} at (53,66) size 0x0
-          RenderInline {I} at (0,0) size 99x21
-            RenderText {#text} at (0,70) size 99x21
+          RenderBR {BR} at (53,65) size 0x0
+          RenderInline {I} at (0,0) size 99x20
+            RenderText {#text} at (0,70) size 99x20
               text run at (0,70) width 99: "For this test: "
-          RenderText {#text} at (99,70) size 415x21
+          RenderText {#text} at (99,70) size 415x20
             text run at (99,70) width 415: "Typed text should appear at the start of the first list item."
       RenderBlock {DIV} at (0,232) size 784x136 [border: (2px solid #008000)]
         RenderBlock {UL} at (2,26) size 780x84
           RenderListItem {LI} at (40,0) size 740x28
-            RenderListMarker at (-22,0) size 9x28: bullet
-            RenderText {#text} at (0,0) size 114x28
-              text run at (0,0) width 114: "xxxline one"
+            RenderListMarker at (-22,1) size 9x26: bullet
+            RenderText {#text} at (0,1) size 114x26
+              text run at (0,1) width 114: "xxxline one"
           RenderListItem {LI} at (40,28) size 740x28
-            RenderListMarker at (-22,0) size 9x28: bullet
-            RenderText {#text} at (0,0) size 79x28
-              text run at (0,0) width 79: "line two"
+            RenderListMarker at (-22,1) size 9x26: bullet
+            RenderText {#text} at (0,1) size 79x26
+              text run at (0,1) width 79: "line two"
           RenderListItem {LI} at (40,56) size 740x28
-            RenderListMarker at (-22,0) size 9x28: bullet
-            RenderText {#text} at (0,0) size 92x28
-              text run at (0,0) width 92: "line three"
+            RenderListMarker at (-22,1) size 9x26: bullet
+            RenderText {#text} at (0,1) size 92x26
+              text run at (0,1) width 92: "line three"
       RenderBlock {DIV} at (0,378) size 784x136
         RenderBlock {DIV} at (0,0) size 784x136 [border: (2px solid #FF0000)]
           RenderBlock {UL} at (2,26) size 780x84
             RenderListItem {LI} at (40,0) size 740x28
-              RenderListMarker at (-22,0) size 9x28: bullet
-              RenderText {#text} at (0,0) size 114x28
-                text run at (0,0) width 114: "xxxline one"
+              RenderListMarker at (-22,1) size 9x26: bullet
+              RenderText {#text} at (0,1) size 114x26
+                text run at (0,1) width 114: "xxxline one"
             RenderListItem {LI} at (40,28) size 740x28
-              RenderListMarker at (-22,0) size 9x28: bullet
-              RenderText {#text} at (0,0) size 79x28
-                text run at (0,0) width 79: "line two"
+              RenderListMarker at (-22,1) size 9x26: bullet
+              RenderText {#text} at (0,1) size 79x26
+                text run at (0,1) width 79: "line two"
             RenderListItem {LI} at (40,56) size 740x28
-              RenderListMarker at (-22,0) size 9x28: bullet
-              RenderText {#text} at (0,0) size 92x28
-                text run at (0,0) width 92: "line three"
+              RenderListMarker at (-22,1) size 9x26: bullet
+              RenderText {#text} at (0,1) size 92x26
+                text run at (0,1) width 92: "line three"
 caret: position 3 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of child 5 {DIV} of body

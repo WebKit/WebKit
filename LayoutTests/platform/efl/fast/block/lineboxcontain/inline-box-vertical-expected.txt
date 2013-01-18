@@ -4,10 +4,10 @@ layer at (0,0) size 226x600
   RenderBlock {HTML} at (0,0) size 226x600
     RenderBody {BODY} at (8,8) size 210x584
       RenderBlock (anonymous) at (0,0) size 18x584
-        RenderText {#text} at (0,0) size 19x493
+        RenderText {#text} at (0,0) size 17x493
           text run at (0,0) width 260: "You should see a green rectangle below. "
           text run at (0,260) width 233: "If you see any red, the test has failed."
       RenderBlock {DIV} at (18,0) size 192x384 [bgcolor=#FF0000]
-        RenderInline {SPAN} at (0,0) size 97x384 [bgcolor=#008000]
-        RenderBR {BR} at (0,384) size 65x0
-        RenderBlock {DIV} at (66,0) size 128x384 [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 96x384 [bgcolor=#008000]
+        RenderBR {BR} at (0,384) size 64x0
+        RenderBlock {DIV} at (64,0) size 128x384 [bgcolor=#008000]

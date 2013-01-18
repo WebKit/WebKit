@@ -11,11 +11,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x40 [bgcolor=#808080]
       RenderBlock {DIV} at (0,120) size 784x80 [bgcolor=#C0C0C0]
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 245x19
+          RenderText {#text} at (0,0) size 245x17
             text run at (0,0) width 245: "This line should start at the left margin."
       RenderBlock {DIV} at (0,200) size 784x20
         RenderBlock {DIV} at (0,0) size 784x40 [bgcolor=#808080]
           RenderBlock (floating) {DIV} at (0,0) size 100x30 [bgcolor=#0000FF]
       RenderBlock {DIV} at (0,220) size 784x80 [bgcolor=#C0C0C0]
-        RenderText {#text} at (100,0) size 262x19
+        RenderText {#text} at (100,0) size 262x17
           text run at (100,0) width 262: "This line should not overlap the blue box."

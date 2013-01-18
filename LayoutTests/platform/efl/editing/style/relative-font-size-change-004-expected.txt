@@ -37,28 +37,28 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 721x84
-          text run at (14,14) width 715: "Size check should say: 30px. All text in the red boxes should appear to be"
-          text run at (729,14) width 6: " "
-          text run at (14,42) width 688: "24px. This test checks removing font size tags when they are no longer"
-          text run at (702,42) width 6: " "
-          text run at (14,70) width 100: "necessary."
+        RenderText {#text} at (14,15) size 721x82
+          text run at (14,15) width 715: "Size check should say: 30px. All text in the red boxes should appear to be"
+          text run at (729,15) width 6: " "
+          text run at (14,43) width 688: "24px. This test checks removing font size tags when they are no longer"
+          text run at (702,43) width 6: " "
+          text run at (14,71) width 100: "necessary."
       RenderBlock {DIV} at (0,136) size 784x28
-        RenderText {#text} at (0,0) size 118x28
-          text run at (0,0) width 118: "Size check: "
-        RenderInline {SPAN} at (0,0) size 48x28
-          RenderText {#text} at (118,0) size 48x28
-            text run at (118,0) width 48: "30px"
+        RenderText {#text} at (0,1) size 118x26
+          text run at (0,1) width 118: "Size check: "
+        RenderInline {SPAN} at (0,0) size 48x26
+          RenderText {#text} at (118,1) size 48x26
+            text run at (118,1) width 48: "30px"
       RenderBlock {DIV} at (0,180) size 784x140
         RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x28
-            RenderText {#text} at (0,0) size 139x28
-              text run at (0,0) width 139: "There is a tide"
+            RenderText {#text} at (0,1) size 139x26
+              text run at (0,1) width 139: "There is a tide"
           RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 198x28
-              text run at (14,14) width 198: "In the affairs of men"
+            RenderText {#text} at (14,15) size 198x26
+              text run at (14,15) width 198: "In the affairs of men"
           RenderBlock (anonymous) at (14,98) size 756x28
-            RenderText {#text} at (0,0) size 241x28
-              text run at (0,0) width 241: "Which taken at the flood"
+            RenderText {#text} at (0,1) size 241x26
+              text run at (0,1) width 241: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 21 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

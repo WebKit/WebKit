@@ -4,7 +4,7 @@ layer at (0,0) size 800x214
   RenderBlock {HTML} at (0,0) size 800x214
     RenderBody {BODY} at (8,16) size 784x190
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 447x19
+        RenderText {#text} at (0,0) size 447x17
           text run at (0,0) width 447: "The following three rectangles should be identical, with no red present."
       RenderTable {TABLE} at (0,34) size 316x156
         RenderTableSection {TBODY} at (0,0) size 316x156

@@ -4,24 +4,24 @@ layer at (0,0) size 800x158
   RenderBlock {HTML} at (0,0) size 800x158
     RenderBody {BODY} at (8,16) size 784x126
       RenderBlock (floating) {DIV} at (556,0) size 228x58 [bgcolor=#CC6666]
-        RenderText {#text} at (20,20) size 188x19
+        RenderText {#text} at (20,20) size 188x17
           text run at (20,20) width 188: "DIV NUMBER 1: float:right;"
       RenderBlock (floating) {DIV} at (485,58) size 299x58 [bgcolor=#99CC66]
-        RenderText {#text} at (20,20) size 259x19
+        RenderText {#text} at (20,20) size 259x17
           text run at (20,20) width 259: "DIV NUMBER 2: clear:right; float:right;"
       RenderBlock (floating) {DIV} at (0,58) size 219x58 [bgcolor=#6699FF]
-        RenderText {#text} at (20,20) size 179x19
+        RenderText {#text} at (20,20) size 179x17
           text run at (20,20) width 179: "DIV NUMBER 3: float:left;"
       RenderBlock {P} at (0,0) size 784x126
-        RenderText {#text} at (0,0) size 556x109
+        RenderText {#text} at (0,0) size 556x107
           text run at (0,0) width 528: "The first element is floated to the right. The second element clears the right float and"
           text run at (0,18) width 556: "also floats right. The third element is floated to the left, but is forced below the bottom of"
           text run at (0,36) width 525: "the first element. Yet, somehow this paragraph comes at the end of the markup, and"
           text run at (219,54) width 238: "manages to rise to the top of the page."
           text run at (219,72) width 261: "This behavior is present in Firefox, Safari"
           text run at (219,90) width 74: "and Opera. "
-        RenderInline {A} at (0,0) size 254x37 [color=#0000EE]
-          RenderInline {STRONG} at (0,0) size 254x37
-            RenderText {#text} at (293,90) size 254x37
+        RenderInline {A} at (0,0) size 254x35 [color=#0000EE]
+          RenderInline {STRONG} at (0,0) size 254x35
+            RenderText {#text} at (293,90) size 254x35
               text run at (293,90) width 180: "Click here for a real world"
               text run at (219,108) width 135: "example of this bug."

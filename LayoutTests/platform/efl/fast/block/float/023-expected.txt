@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 572x19
+        RenderText {#text} at (0,0) size 572x17
           text run at (0,0) width 339: "You should see a single 100x100 green block below. "
           text run at (339,0) width 233: "If you see any red, the test has failed."
       RenderBlock {UL} at (0,34) size 784x0

@@ -11,20 +11,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 698x56
-          text run at (14,14) width 692: "Should see \"foo\" centered in its own red box. The \"bar\" and \"baz\" lines"
-          text run at (706,14) width 6: " "
-          text run at (14,42) width 225: "should not be centered."
+        RenderText {#text} at (14,15) size 698x54
+          text run at (14,15) width 692: "Should see \"foo\" centered in its own red box. The \"bar\" and \"baz\" lines"
+          text run at (706,15) width 6: " "
+          text run at (14,43) width 225: "should not be centered."
       RenderBlock {DIV} at (0,108) size 784x140
         RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 756x28
-            RenderText {#text} at (362,0) size 32x28
-              text run at (362,0) width 32: "foo"
+            RenderText {#text} at (362,1) size 32x26
+              text run at (362,1) width 32: "foo"
           RenderBlock (anonymous) at (14,42) size 756x0
           RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 31x28
-              text run at (14,14) width 31: "bar"
+            RenderText {#text} at (14,15) size 31x26
+              text run at (14,15) width 31: "bar"
           RenderBlock (anonymous) at (14,98) size 756x28
-            RenderText {#text} at (0,0) size 34x28
-              text run at (0,0) width 34: "baz"
+            RenderText {#text} at (0,1) size 34x26
+              text run at (0,1) width 34: "baz"
 caret: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of body

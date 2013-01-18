@@ -5,24 +5,24 @@ layer at (0,0) size 800x138
     RenderBody {BODY} at (8,8) size 784x122
       RenderBlock {DIV} at (0,0) size 800x50
         RenderBlock (floating) {DIV} at (0,0) size 554x22 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 501x19
+          RenderText {#text} at (2,2) size 501x17
             text run at (2,2) width 501: "(Parent DIV have no border set) There should be a green table below this block"
         RenderTable {TABLE} at (0,22) size 800x28 [border: (2px solid #008000)]
           RenderTableSection {TBODY} at (2,2) size 796x24
             RenderTableRow {TR} at (0,2) size 796x20
               RenderTableCell {TD} at (2,2) size 792x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 21x19
+                RenderText {#text} at (1,1) size 21x17
                   text run at (1,1) width 21: "test"
       RenderBlock (anonymous) at (0,50) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,68) size 804x54 [border: (2px solid #0000FF)]
         RenderBlock (floating) {DIV} at (2,2) size 554x22 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 540x19
+          RenderText {#text} at (2,2) size 540x17
             text run at (2,2) width 246: "(Parent DIV have 2px blue border set) "
             text run at (248,2) width 294: "There should be a green table below this block"
         RenderTable {TABLE} at (2,24) size 800x28 [border: (2px solid #008000)]
           RenderTableSection {TBODY} at (2,2) size 796x24
             RenderTableRow {TR} at (0,2) size 796x20
               RenderTableCell {TD} at (2,2) size 792x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 21x19
+                RenderText {#text} at (1,1) size 21x17
                   text run at (1,1) width 21: "test"

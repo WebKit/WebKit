@@ -4,7 +4,7 @@ layer at (0,0) size 800x206
   RenderBlock {HTML} at (0,0) size 800x206
     RenderBody {BODY} at (8,16) size 784x174
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 230x19
+        RenderText {#text} at (0,0) size 230x17
           text run at (0,0) width 230: "There should be no red on this page."
       RenderTable {TABLE} at (0,34) size 156x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 150x100
@@ -22,10 +22,10 @@ layer at (0,0) size 800x206
                 RenderBlock {DIV} at (0,0) size 50x50
               RenderBlock {DIV} at (0,45) size 50x55 [bgcolor=#00FF00]
       RenderBlock {P} at (0,156) size 784x18
-        RenderText {#text} at (0,0) size 60x19
+        RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
-        RenderInline {A} at (0,0) size 73x19 [color=#0000EE]
-          RenderText {#text} at (60,0) size 73x19
+        RenderInline {A} at (0,0) size 73x17 [color=#0000EE]
+          RenderText {#text} at (60,0) size 73x17
             text run at (60,0) width 73: "prerequisite"
-        RenderText {#text} at (133,0) size 4x19
+        RenderText {#text} at (133,0) size 4x17
           text run at (133,0) width 4: "."
