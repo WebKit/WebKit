@@ -1,5 +1,84 @@
 2013-01-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Objective-C API: Clean up JSValue.mm
+        https://bugs.webkit.org/show_bug.cgi?id=107163
+
+        Reviewed by Darin Adler.
+
+        m_context is no longer weak, so there is now a lot of dead code in in JSValue.mm, and a wasted message send 
+        on every API call.  In the head of just about every method in JSValue.mm we're doing:
+
+        JSContext *context = [self context];
+        if (!context)
+            return nil;
+
+        This is getting a retained copy of the context, which is no longer necessary now m_context is no longer weak.  
+        We can just delete all these lines from all functions doing this, and where they were referring to the local 
+        variable 'context', instead we can just access m_context directly.
+
+        Since we're already going to be modifying most of JSValue.mm, we'll also do the following:
+
+        1) context @property is no longer weak – the context property is declared as:
+
+            @property(readonly, weak) JSContext *context;
+
+        This is really only informative (since we're not presently synthesizing the ivar), but it is now misleading. 
+        We should change it to:
+
+            @property(readonly, retain) JSContext *context;
+
+        2) the JSContext ivar and accessor can be automatically generated.  Since we're no longer doing anything 
+        special with m_context, we can just let the compiler handle the ivar for us.  We'll delete:
+
+            JSContext *m_context;
+
+        and:
+
+            - (JSContext *)context
+            {
+                return m_context;
+        
+            }
+
+        and find&replace "m_context" to "_context" in JSValue.mm.
+
+        * API/APIJSValue.h:
+        * API/JSValue.mm:
+        (-[JSValue toObject]):
+        (-[JSValue toBool]):
+        (-[JSValue toDouble]):
+        (-[JSValue toNumber]):
+        (-[JSValue toString]):
+        (-[JSValue toDate]):
+        (-[JSValue toArray]):
+        (-[JSValue toDictionary]):
+        (-[JSValue valueForProperty:]):
+        (-[JSValue setValue:forProperty:]):
+        (-[JSValue deleteProperty:]):
+        (-[JSValue hasProperty:]):
+        (-[JSValue defineProperty:descriptor:]):
+        (-[JSValue valueAtIndex:]):
+        (-[JSValue setValue:atIndex:]):
+        (-[JSValue isUndefined]):
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+        (-[JSValue isObject]):
+        (-[JSValue isEqualToObject:]):
+        (-[JSValue isEqualWithTypeCoercionToObject:]):
+        (-[JSValue isInstanceOf:]):
+        (-[JSValue callWithArguments:]):
+        (-[JSValue constructWithArguments:]):
+        (-[JSValue invokeMethod:withArguments:]):
+        (-[JSValue objectForKeyedSubscript:]):
+        (-[JSValue setObject:forKeyedSubscript:]):
+        (-[JSValue initWithValue:inContext:]):
+        (-[JSValue dealloc]):
+        (-[JSValue description]):
+
+2013-01-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Objective-C API: Clean up JSValue
         https://bugs.webkit.org/show_bug.cgi?id=107156
 

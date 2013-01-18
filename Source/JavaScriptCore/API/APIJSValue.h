@@ -198,7 +198,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments;
 
 // The JSContext that this value originates from.
-@property(readonly, weak) JSContext *context;
+@property(readonly, retain) JSContext *context;
 
 @end
 
