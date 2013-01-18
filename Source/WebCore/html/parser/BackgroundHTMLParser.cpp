@@ -30,12 +30,17 @@
 #include "BackgroundHTMLParser.h"
 
 #include "HTMLDocumentParser.h"
+#include "HTMLNames.h"
 #include "HTMLParserThread.h"
 #include "HTMLTokenizer.h"
+#include "MathMLNames.h"
+#include "SVGNames.h"
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 #ifndef NDEBUG
 
@@ -49,6 +54,18 @@ static void checkThatTokensAreSafeToSendToAnotherThread(const Vector<CompactHTML
 
 // FIXME: Tune this constant based on a benchmark. The current value was choosen arbitrarily.
 static const size_t pendingTokenLimit = 4000;
+
+static bool threadSafeEqual(StringImpl* a, StringImpl* b)
+{
+    if (a->hash() != b->hash())
+        return false;
+    return StringHash::equal(a, b);
+}
+
+static bool threadSafeMatch(const String& localName, const QualifiedName& qName)
+{
+    return threadSafeEqual(localName.impl(), qName.localName().impl());
+}
 
 typedef const void* ParserIdentifier;
 class HTMLDocumentParser;
@@ -106,52 +123,37 @@ void BackgroundHTMLParser::pumpTokenizer()
     if (m_isPausedWaitingForScripts)
         return;
 
-    // It's unclear whether we want to use AtomicStrings on the background
-    // thread. We will likely eventually use libdispatch to schedule parsing
-    // in a separate sequenced queue for each HTMLDocumentParser instance.
-    // Once we do that, the code below will be unsafe because libdispatch
-    // might schedule us on many different threads.
-    DEFINE_STATIC_LOCAL(AtomicString, iframeTag, ("iframe", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, mathTag, ("math", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, noembedTag, ("noembed", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, noframesTag, ("noframes", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, noscriptTag, ("noscript", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, plaintextTag, ("plaintext", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, scriptTag, ("script", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, styleTag, ("style", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, svgTag, ("svg", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, textareaTag, ("textarea", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, titleTag, ("title", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, xmpTag, ("xmp", AtomicString::ConstructFromLiteral));
-
     while (m_tokenizer->nextToken(m_input.current(), m_token)) {
         m_pendingTokens.append(CompactHTMLToken(m_token));
 
-        if (m_token.type() == HTMLTokenTypes::StartTag) {
-            AtomicString tagName(m_token.name().data(), m_token.name().size());
-            if (tagName == svgTag || tagName == mathTag)
+        const CompactHTMLToken& token = m_pendingTokens.last();
+
+        if (token.type() == HTMLTokenTypes::StartTag) {
+            const String& tagName = token.data();
+            if (threadSafeMatch(tagName, SVGNames::svgTag)
+                || threadSafeMatch(tagName, MathMLNames::mathTag))
                 m_inForeignContent = true;
 
             // FIXME: This is just a copy of Tokenizer::updateStateFor which doesn't use HTMLNames.
-            if (tagName == textareaTag || tagName == titleTag)
+            if (threadSafeMatch(tagName, textareaTag) || threadSafeMatch(tagName, titleTag))
                 m_tokenizer->setState(HTMLTokenizerState::RCDATAState);
-            else if (tagName == plaintextTag)
+            else if (threadSafeMatch(tagName, plaintextTag))
                 m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
-            else if (tagName == scriptTag)
+            else if (threadSafeMatch(tagName, scriptTag))
                 m_tokenizer->setState(HTMLTokenizerState::ScriptDataState);
-            else if (tagName == styleTag
-                || tagName == iframeTag
-                || tagName == xmpTag
-                || (tagName == noembedTag && m_options.pluginsEnabled)
-                || tagName == noframesTag
-                || (tagName == noscriptTag && m_options.scriptEnabled))
+            else if (threadSafeMatch(tagName, styleTag)
+                || threadSafeMatch(tagName, iframeTag)
+                || threadSafeMatch(tagName, xmpTag)
+                || (threadSafeMatch(tagName, noembedTag) && m_options.pluginsEnabled)
+                || threadSafeMatch(tagName, noframesTag)
+                || (threadSafeMatch(tagName, noscriptTag) && m_options.scriptEnabled))
                 m_tokenizer->setState(HTMLTokenizerState::RAWTEXTState);
         }
-        if (m_token.type() == HTMLTokenTypes::EndTag) {
-            AtomicString tagName(m_token.name().data(), m_token.name().size());
-            if (tagName == svgTag || tagName == mathTag)
+        if (token.type() == HTMLTokenTypes::EndTag) {
+            const String& tagName = token.data();
+            if (threadSafeMatch(tagName, SVGNames::svgTag) || threadSafeMatch(tagName, MathMLNames::mathTag))
                 m_inForeignContent = false;
-            if (tagName == scriptTag) {
+            if (threadSafeMatch(tagName, scriptTag)) {
                 m_isPausedWaitingForScripts = true;
                 m_token.clear();
                 break;
