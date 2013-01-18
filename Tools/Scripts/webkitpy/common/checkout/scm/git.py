@@ -41,12 +41,6 @@ from .svn import SVN, SVNRepository
 _log = logging.getLogger(__name__)
 
 
-def run_command(*args, **kwargs):
-    # FIXME: This should not be a global static.
-    # New code should use Executive.run_command directly instead
-    return Executive().run_command(*args, **kwargs)
-
-
 class AmbiguousCommitError(Exception):
     def __init__(self, num_local_commits, has_working_directory_changes):
         Exception.__init__(self, "Found %s local commits and the working directory is %s" % (
@@ -128,12 +122,13 @@ class Git(SCM, SVNRepository):
         return filepath.replace(root_end_with_slash, '')
 
     @classmethod
-    def read_git_config(cls, key, cwd=None):
+    def read_git_config(cls, key, cwd=None, executive=None):
         # FIXME: This should probably use cwd=self.checkout_root.
         # Pass --get-all for cases where the config has multiple values
         # Pass the cwd if provided so that we can handle the case of running webkit-patch outside of the working directory.
         # FIXME: This should use an Executive.
-        return run_command([cls.executable_name, "config", "--get-all", key], error_handler=Executive.ignore_error, cwd=cwd).rstrip('\n')
+        executive = executive or Executive()
+        return executive.run_command([cls.executable_name, "config", "--get-all", key], error_handler=Executive.ignore_error, cwd=cwd).rstrip('\n')
 
     @staticmethod
     def commit_success_regexp():
@@ -184,7 +179,7 @@ class Git(SCM, SVNRepository):
 
     def _upstream_branch(self):
         current_branch = self._current_branch()
-        return self._branch_from_ref(self.read_git_config('branch.%s.merge' % current_branch, cwd=self.checkout_root).strip())
+        return self._branch_from_ref(self.read_git_config('branch.%s.merge' % current_branch, cwd=self.checkout_root, executive=self._executive).strip())
 
     def merge_base(self, git_commit):
         if git_commit:
@@ -337,7 +332,7 @@ class Git(SCM, SVNRepository):
         self._run_git(['checkout', 'HEAD'] + file_paths)
 
     def _assert_can_squash(self, has_working_directory_changes):
-        squash = Git.read_git_config('webkit-patch.commit-should-always-squash', cwd=self.checkout_root)
+        squash = self.read_git_config('webkit-patch.commit-should-always-squash', cwd=self.checkout_root, executive=self._executive)
         should_squash = squash and squash.lower() == "true"
 
         if not should_squash:
@@ -437,7 +432,7 @@ class Git(SCM, SVNRepository):
 
     def remote_branch_ref(self):
         # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
-        remote_branch_refs = Git.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root)
+        remote_branch_refs = self.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root, executive=self._executive)
         if not remote_branch_refs:
             remote_master_ref = 'refs/remotes/origin/master'
             if not self._branch_ref_exists(remote_master_ref):

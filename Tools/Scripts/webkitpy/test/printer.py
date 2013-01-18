@@ -24,7 +24,6 @@
 import logging
 import StringIO
 
-from webkitpy.common.system import outputcapture
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
@@ -104,6 +103,8 @@ class Printer(object):
         handler.addFilter(testing_filter)
 
         if self.options.pass_through:
+            # FIXME: Can't import at top of file, as outputcapture needs unittest2
+            from webkitpy.common.system import outputcapture
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
 
     def write_update(self, msg):

@@ -49,6 +49,7 @@ from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive
 from .git import Git, AmbiguousCommitError
@@ -1239,8 +1240,8 @@ class GitSVNTest(SCMTest):
         self.assertRaises(ScriptError, self.scm.commit_with_message, "another test commit", git_commit="HEAD^")
 
     def test_commit_with_message_multiple_local_commits_always_squash(self):
+        run_command(['git', 'config', 'webkit-patch.commit-should-always-squash', 'true'])
         self._two_local_commits()
-        self.scm._assert_can_squash = lambda working_directory_is_clean: True
         commit_text = self.scm.commit_with_message("yet another test commit")
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
@@ -1547,16 +1548,23 @@ class GitSVNTest(SCMTest):
 # We need to split off more of these SCM tests to use mocks instead of the filesystem.
 # This class is the first part of that.
 class GitTestWithMock(unittest.TestCase):
+    maxDiff = None
+
     def make_scm(self, logging_executive=False):
         # We do this should_log dance to avoid logging when Git.__init__ runs sysctl on mac to check for 64-bit support.
-        scm = Git(cwd=None, executive=MockExecutive())
+        scm = Git(cwd=".", executive=MockExecutive(), filesystem=MockFileSystem())
+        scm.read_git_config = lambda *args, **kw: "MOCKKEY:MOCKVALUE"
         scm._executive._should_log = logging_executive
         return scm
 
     def test_create_patch(self):
         scm = self.make_scm(logging_executive=True)
-        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD'], cwd=%(checkout)s\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--'], cwd=%(checkout)s\nMOCK run_command: ['git', 'log', '-25'], cwd=None\n" % {'checkout': scm.checkout_root}
-        OutputCapture().assert_outputs(self, scm.create_patch, expected_stderr=expected_stderr)
+        expected_stderr = """\
+MOCK run_command: ['git', 'merge-base', 'MOCKVALUE', 'HEAD'], cwd=%(checkout)s
+MOCK run_command: ['git', 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames', '', 'MOCK output of child process', '--'], cwd=%(checkout)s
+MOCK run_command: ['git', 'log', '-25', './MOCK output of child process'], cwd=%(checkout)s
+""" % {'checkout': scm.checkout_root}
+        OutputCapture().assert_outputs(self, scm.create_patch, expected_logs=expected_stderr)
 
     def test_push_local_commits_to_server_with_username_and_password(self):
         self.assertEqual(self.make_scm().push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")

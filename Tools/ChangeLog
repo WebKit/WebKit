@@ -1,3 +1,28 @@
+2013-01-17  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Fixing webkitpy's SCM unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=106429
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py:
+        (SCMDetectorTest.test_detect_scm_system):
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.in_working_directory):
+        (Git.read_git_config):
+        (Git._assert_can_squash):
+        (Git.remote_branch_ref):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitSVNTest.test_commit_with_message_multiple_local_commits_always_squash):
+        (GitTestWithMock):
+        (GitTestWithMock.make_scm):
+        (GitTestWithMock.test_create_patch):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.assert_outputs):
+        (OutputCaptureTestCaseBase):
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.configure):
+
 2013-01-17  Julie Parent  <jparent@chromium.org>
 
         Flakiness dashboard assumes there must be ToT tests

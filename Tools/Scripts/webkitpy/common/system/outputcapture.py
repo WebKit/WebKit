@@ -29,8 +29,8 @@
 # Class for unittest support.  Used for capturing stderr/stdout.
 
 import logging
+import unittest2 as unittest
 import sys
-import unittest
 from StringIO import StringIO
 
 
@@ -94,15 +94,22 @@ class OutputCapture(object):
         finally:
             (stdout_string, stderr_string, logs_string) = self.restore_output()
 
-        testcase.assertEqual(stdout_string, expected_stdout)
-        testcase.assertEqual(stderr_string, expected_stderr)
+        if hasattr(testcase, 'assertMultiLineEqual'):
+            testassert = testcase.assertMultiLineEqual
+        else:
+            testassert = testcase.assertEqual
+
+        testassert(stdout_string, expected_stdout)
+        testassert(stderr_string, expected_stderr)
         if expected_logs is not None:
-            testcase.assertEqual(logs_string, expected_logs)
+            testassert(logs_string, expected_logs)
         # This is a little strange, but I don't know where else to return this information.
         return return_value
 
 
 class OutputCaptureTestCaseBase(unittest.TestCase):
+    maxDiff = None
+
     def setUp(self):
         unittest.TestCase.setUp(self)
         self.output_capture = OutputCapture()
