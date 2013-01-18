@@ -63,7 +63,7 @@ inline static bool isUnauthorized(int statusCode)
     return statusCode == 401;
 }
 
-static char* const appendableHeaders[] = {"access-control-allow-origin", "allow",
+static const char* const appendableHeaders[] = {"access-control-allow-origin", "allow",
     "set-cookie", "set-cookie2", "vary", "via", "warning"};
 
 static bool isAppendableHeader(const String& key)
@@ -72,7 +72,7 @@ static bool isAppendableHeader(const String& key)
     if (key.startsWith("x-"))
         return true;
 
-    for (int i = 0; i < sizeof(appendableHeaders) /sizeof(char*); i++)
+    for (size_t i = 0; i < sizeof(appendableHeaders) /sizeof(char*); i++)
         if (key == appendableHeaders[i])
             return true;
 
