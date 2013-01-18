@@ -160,6 +160,21 @@ static void createFile(const String& fileName)
         fclose(fd);
 }
 
+static bool isFullUrl(const String& url)
+{
+    static Vector<String> *prefixes = 0;
+    if (!prefixes)  {
+        prefixes = new Vector<String>();
+        prefixes->append("http://");
+        prefixes->append("file://");
+    }
+    for (unsigned i = 0; i < prefixes->size(); ++i) {
+        if (url.startsWith(prefixes->at(i), false))
+            return true;
+    }
+    return false;
+}
+
 DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     : m_gcController(0)
     , m_accessibilityController(0)
@@ -234,7 +249,9 @@ void DumpRenderTree::runCurrentTest()
         m_currentHttpTest = m_currentTest->utf8().data();
         m_currentHttpTest.remove(0, strlen(httpTestSyntax));
         runTest(httpPrefixURL + m_currentHttpTest, imageHash);
-    } else
+    } else if (isFullUrl(*m_currentTest))
+        runTest(*m_currentTest, imageHash);
+    else
         runTest(kSDCLayoutTestsURI + *m_currentTest, imageHash);
 }
 
