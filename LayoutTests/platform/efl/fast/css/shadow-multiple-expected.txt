@@ -4,26 +4,26 @@ layer at (0,0) size 785x630
   RenderBlock {HTML} at (0,0) size 785x630
     RenderBody {BODY} at (8,20) size 769x560
       RenderBlock {DIV} at (20,0) size 729x110
-        RenderInline {SPAN} at (0,0) size 98x55 [textStrokeWidth=1.00]
-          RenderText {#text} at (0,0) size 98x55
-            text run at (0,0) width 98: "This"
-        RenderText {#text} at (98,0) size 13x55
-          text run at (98,0) width 13: " "
-        RenderInline {SPAN} at (0,0) size 86x55 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-          RenderText {#text} at (111,0) size 86x55
-            text run at (111,0) width 86: "text"
-        RenderText {#text} at (197,0) size 13x55
-          text run at (197,0) width 13: " "
-        RenderInline {SPAN} at (0,0) size 124x55 [color=#0000004C]
-          RenderText {#text} at (210,0) size 124x55
-            text run at (210,0) width 124: "casts"
-        RenderText {#text} at (334,0) size 13x55
-          text run at (334,0) width 13: " "
-        RenderInline {SPAN} at (0,0) size 183x55
-          RenderText {#text} at (347,0) size 183x55
-            text run at (347,0) width 183: "multiple"
-        RenderText {#text} at (0,55) size 205x55
-          text run at (0,55) width 205: "shadows"
+        RenderInline {SPAN} at (0,0) size 98x53 [textStrokeWidth=1.00]
+          RenderText {#text} at (0,1) size 98x53
+            text run at (0,1) width 98: "This"
+        RenderText {#text} at (98,1) size 13x53
+          text run at (98,1) width 13: " "
+        RenderInline {SPAN} at (0,0) size 86x53 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+          RenderText {#text} at (111,1) size 86x53
+            text run at (111,1) width 86: "text"
+        RenderText {#text} at (197,1) size 13x53
+          text run at (197,1) width 13: " "
+        RenderInline {SPAN} at (0,0) size 124x53 [color=#0000004C]
+          RenderText {#text} at (210,1) size 124x53
+            text run at (210,1) width 124: "casts"
+        RenderText {#text} at (334,1) size 13x53
+          text run at (334,1) width 13: " "
+        RenderInline {SPAN} at (0,0) size 183x53
+          RenderText {#text} at (347,1) size 183x53
+            text run at (347,1) width 183: "multiple"
+        RenderText {#text} at (0,56) size 205x53
+          text run at (0,56) width 205: "shadows"
       RenderBlock {DIV} at (50,160) size 100x100
       RenderBlock {DIV} at (50,310) size 100x100 [bgcolor=#FFFFFF]
       RenderBlock {DIV} at (50,460) size 100x100 [bgcolor=#00000033]

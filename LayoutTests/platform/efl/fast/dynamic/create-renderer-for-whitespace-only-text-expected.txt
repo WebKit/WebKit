@@ -4,83 +4,83 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 784x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 784x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14134"
-          RenderText {#text} at (354,0) size 784x37
+          RenderText {#text} at (354,0) size 784x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 426: "REGRESSION (r25353): Whitespace nodes ignored between inline"
             text run at (0,18) width 55: "list items"
-        RenderText {#text} at (55,18) size 4x19
+        RenderText {#text} at (55,18) size 4x17
           text run at (55,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 744x19
+        RenderText {#text} at (0,0) size 744x17
           text run at (0,0) width 466: "This tests that whitespace-only text nodes get renderers when they should "
           text run at (466,0) width 278: "even if initially they did not need a renderer."
       RenderBlock {P} at (0,86) size 784x18
-        RenderText {#text} at (0,0) size 349x19
+        RenderText {#text} at (0,0) size 349x17
           text run at (0,0) width 349: "The left column should be identical to the right column."
       RenderTable {TABLE} at (0,120) size 197x98 [border: none]
         RenderTableSection {TBODY} at (0,0) size 196x97
           RenderTableRow {TR} at (0,0) size 196x27
             RenderTableCell {TD} at (0,0) size 98x27 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 89x18
-                RenderText {#text} at (0,0) size 23x19
+                RenderText {#text} at (0,0) size 23x17
                   text run at (0,0) width 23: "wet"
-                RenderText {#text} at (23,0) size 4x19
+                RenderText {#text} at (23,0) size 4x17
                   text run at (23,0) width 4: " "
-                RenderText {#text} at (27,0) size 22x19
+                RenderText {#text} at (27,0) size 22x17
                   text run at (27,0) width 22: "suit"
             RenderTableCell {TD} at (98,0) size 98x27 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 89x18
-                RenderText {#text} at (0,0) size 49x19
+                RenderText {#text} at (0,0) size 49x17
                   text run at (0,0) width 49: "wet suit"
           RenderTableRow {TR} at (0,27) size 196x43
             RenderTableCell {TD} at (0,27) size 98x43 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 89x18
-                RenderInline {LI} at (0,0) size 23x19
-                  RenderText {#text} at (40,0) size 23x19
+                RenderInline {LI} at (0,0) size 23x17
+                  RenderText {#text} at (40,0) size 23x17
                     text run at (40,0) width 23: "wet"
-                RenderText {#text} at (63,0) size 4x19
+                RenderText {#text} at (63,0) size 4x17
                   text run at (63,0) width 4: " "
-                RenderInline {LI} at (0,0) size 22x19
-                  RenderText {#text} at (67,0) size 22x19
+                RenderInline {LI} at (0,0) size 22x17
+                  RenderText {#text} at (67,0) size 22x17
                     text run at (67,0) width 22: "suit"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (98,27) size 98x43 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 89x18
-                RenderInline {LI} at (0,0) size 23x19
-                  RenderText {#text} at (40,0) size 23x19
+                RenderInline {LI} at (0,0) size 23x17
+                  RenderText {#text} at (40,0) size 23x17
                     text run at (40,0) width 23: "wet"
-                RenderText {#text} at (63,0) size 4x19
+                RenderText {#text} at (63,0) size 4x17
                   text run at (63,0) width 4: " "
-                RenderInline {LI} at (0,0) size 22x19
-                  RenderText {#text} at (67,0) size 22x19
+                RenderInline {LI} at (0,0) size 22x17
+                  RenderText {#text} at (67,0) size 22x17
                     text run at (67,0) width 22: "suit"
                 RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,70) size 196x27
             RenderTableCell {TD} at (0,70) size 98x27 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 89x18
-                RenderInline {DIV} at (0,0) size 23x19
-                  RenderText {#text} at (0,0) size 23x19
+                RenderInline {DIV} at (0,0) size 23x17
+                  RenderText {#text} at (0,0) size 23x17
                     text run at (0,0) width 23: "wet"
-                RenderText {#text} at (23,0) size 4x19
+                RenderText {#text} at (23,0) size 4x17
                   text run at (23,0) width 4: " "
-                RenderInline {DIV} at (0,0) size 22x19
-                  RenderText {#text} at (27,0) size 22x19
+                RenderInline {DIV} at (0,0) size 22x17
+                  RenderText {#text} at (27,0) size 22x17
                     text run at (27,0) width 22: "suit"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (98,70) size 98x27 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 89x18
-                RenderInline {DIV} at (0,0) size 23x19
-                  RenderText {#text} at (0,0) size 23x19
+                RenderInline {DIV} at (0,0) size 23x17
+                  RenderText {#text} at (0,0) size 23x17
                     text run at (0,0) width 23: "wet"
-                RenderText {#text} at (23,0) size 4x19
+                RenderText {#text} at (23,0) size 4x17
                   text run at (23,0) width 4: " "
-                RenderInline {DIV} at (0,0) size 22x19
-                  RenderText {#text} at (27,0) size 22x19
+                RenderInline {DIV} at (0,0) size 22x17
+                  RenderText {#text} at (27,0) size 22x17
                     text run at (27,0) width 22: "suit"
                 RenderText {#text} at (0,0) size 0x0

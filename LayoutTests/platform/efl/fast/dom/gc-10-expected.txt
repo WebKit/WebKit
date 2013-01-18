@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 772x37
+        RenderText {#text} at (0,0) size 772x35
           text run at (0,0) width 772: "This page tests to make sure that the refresh of a page which holds a document reference in its DOM wrapper tree does not"
           text run at (0,18) width 219: "leak all of its associated JS objects."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 374x19
+        RenderText {#text} at (0,0) size 374x17
           text run at (0,0) width 374: "If the test passes, you'll see a single 'PASS' message below."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 784x15

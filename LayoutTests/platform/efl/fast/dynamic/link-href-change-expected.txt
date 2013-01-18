@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,20) size 800x560
-      RenderInline {A} at (0,0) size 366x49 [color=#008000] [border: (10px solid #000000)]
-        RenderText {#text} at (15,0) size 336x19
+      RenderInline {A} at (0,0) size 366x47 [color=#008000] [border: (10px solid #000000)]
+        RenderText {#text} at (15,0) size 336x17
           text run at (15,0) width 336: "This should have a 10px solid black border around it."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

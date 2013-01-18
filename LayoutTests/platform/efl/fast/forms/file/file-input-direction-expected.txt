@@ -9,13 +9,13 @@ layer at (0,0) size 800x585
             RenderTableCell {TH} at (2,11) size 83x2 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TH} at (87,11) size 314x2 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TH} at (403,2) size 314x20 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (112,1) size 90x19
+              RenderText {#text} at (112,1) size 90x17
                 text run at (112,1) width 90: "text-align:left"
             RenderTableCell {TH} at (719,2) size 314x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (102,1) size 110x19
+              RenderText {#text} at (102,1) size 110x17
                 text run at (102,1) width 110: "text-align:center"
             RenderTableCell {TH} at (1035,2) size 314x20 [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (106,1) size 102x19
+              RenderText {#text} at (106,1) size 102x17
                 text run at (106,1) width 102: "text-align:right"
           RenderTableRow {TR} at (0,24) size 1351x48
             RenderTableCell {TH} at (2,47) size 83x2 [r=1 c=0 rs=1 cs=1]
@@ -23,79 +23,79 @@ layer at (0,0) size 800x585
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (403,24) size 314x48 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (719,24) size 314x48 [border: (1px solid #000000)] [r=1 c=3 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (1035,24) size 314x48 [border: (1px solid #000000)] [r=1 c=4 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
           RenderTableRow {TR} at (0,74) size 1351x48
             RenderTableCell {TH} at (2,88) size 83x20 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 81x19
+              RenderText {#text} at (1,1) size 81x17
                 text run at (1,1) width 81: "direction:ltr"
             RenderTableCell {TD} at (87,74) size 314x48 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (403,74) size 314x48 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (719,74) size 314x48 [border: (1px solid #000000)] [r=2 c=3 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (1035,74) size 314x48 [border: (1px solid #000000)] [r=2 c=4 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (0,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
           RenderTableRow {TR} at (0,124) size 1351x48
             RenderTableCell {TH} at (2,138) size 83x20 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 81x19
+              RenderText {#text} at (1,1) size 81x17
                 text run at (1,1) width 81: "direction:rtl"
             RenderTableCell {TD} at (87,124) size 314x48 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (185,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (403,124) size 314x48 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (185,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (719,124) size 314x48 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (185,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"
             RenderTableCell {TD} at (1035,124) size 314x48 [border: (1px solid #000000)] [r=3 c=4 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (4,4) size 306x40 "No file selected"
                 RenderButton {INPUT} at (185,0) size 121x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (17,10) size 87x18
-                    RenderText at (0,0) size 87x19
+                    RenderText at (0,0) size 87x17
                       text run at (0,0) width 87: "Choose File"

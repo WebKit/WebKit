@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 744x37
-          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x19
+        RenderInline {I} at (0,0) size 744x35
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 307x17
               text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=19278"
-          RenderText {#text} at (360,0) size 744x37
+          RenderText {#text} at (360,0) size 744x35
             text run at (360,0) width 4: " "
             text run at (364,0) width 380: "REGRESSION (r31114-r31132): image float disappears on"
             text run at (0,18) width 44: "refresh"
-        RenderText {#text} at (44,18) size 4x19
+        RenderText {#text} at (44,18) size 4x17
           text run at (44,18) width 4: "."
       RenderBlock {DIV} at (0,52) size 784x72
         RenderBlock (anonymous) at (0,0) size 784x36
-          RenderText {#text} at (0,0) size 259x19
+          RenderText {#text} at (0,0) size 259x17
             text run at (0,0) width 259: "Somewhere on this page, there should be"
-          RenderBR {BR} at (259,15) size 0x0
-          RenderBR {BR} at (0,18) size 0x19
+          RenderBR {BR} at (259,14) size 0x0
+          RenderBR {BR} at (0,18) size 0x17
           RenderBlock (floating) {DIV} at (0,36) size 100x100 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (0,36) size 150x36
-          RenderText {#text} at (100,0) size 46x37
+          RenderText {#text} at (100,0) size 46x35
             text run at (100,0) width 46: "a green"
             text run at (100,18) width 45: "square."

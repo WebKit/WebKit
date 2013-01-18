@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x160
         RenderBlock {DIV} at (0,0) size 80x80 [bgcolor=#0000FF]
         RenderBlock {DIV} at (0,80) size 80x80 [bgcolor=#FFFF00]
-          RenderText {#text} at (0,0) size 176x49
+          RenderText {#text} at (0,0) size 176x48
             text run at (0,0) width 64: "Test"
             text run at (0,16) width 176: "overhanging"
             text run at (0,32) width 96: "floats"

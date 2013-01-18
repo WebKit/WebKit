@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 229x19
+        RenderText {#text} at (0,0) size 229x17
           text run at (0,0) width 229: "Tests that buttons clip their contents."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 738x37
+        RenderText {#text} at (0,0) size 738x35
           text run at (0,0) width 481: "Each button below should have a yellow border and a black dashed outline. "
           text run at (481,0) width 257: "Contents should not overflow the yellow"
           text run at (0,18) width 45: "border."
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,12) size 76x204
             RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
               RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-              RenderText {#text} at (9,2) size 48x73
+              RenderText {#text} at (9,2) size 48x71
                 text run at (9,2) width 36: "short"
                 text run at (5,20) width 44: "words"
                 text run at (12,38) width 30: "only"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (12,12) size 76x204
           RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
             RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-            RenderText {#text} at (9,2) size 48x73
+            RenderText {#text} at (9,2) size 48x71
               text run at (9,2) width 36: "short"
               text run at (5,20) width 44: "words"
               text run at (12,38) width 30: "only"
@@ -37,7 +37,7 @@ layer at (8,226) size 100x50
     RenderBlock (anonymous) at (12,12) size 76x204
       RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
         RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-        RenderText {#text} at (9,2) size 48x73
+        RenderText {#text} at (9,2) size 48x71
           text run at (9,2) width 36: "short"
           text run at (5,20) width 44: "words"
           text run at (12,38) width 30: "only"

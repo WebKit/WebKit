@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 18x584
-        RenderText {#text} at (0,0) size 19x225
+        RenderText {#text} at (0,0) size 17x225
           text run at (0,0) width 225: "These two lines should be identical:"
       RenderBlock {DIV} at (34,0) size 28x584
-        RenderText {#text} at (0,0) size 28x274
-          text run at (0,0) width 274: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
-        RenderInline {SPAN} at (0,0) size 28x54
-          RenderCombineText {#text} at (0,274) size 28x54
-            text run at (0,274) width 54: "3.667"
-        RenderText {#text} at (0,328) size 28x144
-          text run at (0,328) width 144: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
+        RenderText {#text} at (1,0) size 26x274
+          text run at (1,0) width 274: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
+        RenderInline {SPAN} at (0,0) size 26x54
+          RenderCombineText {#text} at (1,274) size 26x54
+            text run at (1,274) width 54: "3.667"
+        RenderText {#text} at (1,328) size 26x144
+          text run at (1,328) width 144: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
       RenderBlock {DIV} at (62,0) size 28x584
-        RenderText {#text} at (0,0) size 28x274
-          text run at (0,0) width 274: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
-        RenderInline {SPAN} at (0,0) size 28x54
-          RenderText {#text} at (0,274) size 28x54
-            text run at (0,274) width 54: "3.667"
-        RenderText {#text} at (0,328) size 28x144
-          text run at (0,328) width 144: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
+        RenderText {#text} at (1,0) size 26x274
+          text run at (1,0) width 274: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
+        RenderInline {SPAN} at (0,0) size 26x54
+          RenderText {#text} at (1,274) size 26x54
+            text run at (1,274) width 54: "3.667"
+        RenderText {#text} at (1,328) size 26x144
+          text run at (1,328) width 144: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"

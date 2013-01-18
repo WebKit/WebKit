@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 784x55
+        RenderText {#text} at (0,0) size 784x53
           text run at (0,0) width 320: "You should see a 300x100 green rectangle below. "
           text run at (320,0) width 464: "If you see any red, the test has failed. This test makes a positioned vertical"
           text run at (0,18) width 154: "box with three children. "

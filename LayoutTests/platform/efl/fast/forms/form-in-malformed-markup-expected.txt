@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 230x24
           RenderTableRow {TR} at (0,2) size 230x20
             RenderTableCell {TD} at (2,2) size 222x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 220x19
+              RenderText {#text} at (1,1) size 220x17
                 text run at (1,1) width 220: "This test passes if it does not crash."
             RenderTableCell {TD} at (226,3) size 2x18 [r=0 c=1 rs=1 cs=1]
               RenderBlock {P} at (1,17) size 0x0

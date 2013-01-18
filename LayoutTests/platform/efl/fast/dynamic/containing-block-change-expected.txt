@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 172x19
+        RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 763x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (172,0) size 301x19
+        RenderInline {I} at (0,0) size 763x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (172,0) size 301x17
               text run at (172,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11672"
-          RenderText {#text} at (473,0) size 763x37
+          RenderText {#text} at (473,0) size 763x35
             text run at (473,0) width 4: " "
             text run at (477,0) width 286: "REGRESSION (r17068): Repro crash due to"
             text run at (0,18) width 146: "painting without layout"
-        RenderText {#text} at (146,18) size 128x19
+        RenderText {#text} at (146,18) size 128x17
           text run at (146,18) width 128: ". It should not crash."
 layer at (8,60) size 6x6
   RenderTable {TABLE} at (0,52) size 6x6
@@ -23,6 +23,6 @@ layer at (8,60) size 6x6
         RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (11,63) size 42x36
   RenderBlock (positioned) {DIV} at (3,3) size 42x36
-    RenderText {#text} at (0,0) size 42x37
+    RenderText {#text} at (0,0) size 42x35
       text run at (0,0) width 42: "Lorem"
       text run at (0,18) width 38: "ipsum"

@@ -5,20 +5,20 @@ layer at (0,0) size 785x4248
     RenderBody {BODY} at (8,8) size 769x4230
       RenderBlock {DIV} at (0,0) size 769x104
         RenderBlock (anonymous) at (0,0) size 769x36
-          RenderText {#text} at (0,0) size 736x37
+          RenderText {#text} at (0,0) size 736x35
             text run at (0,0) width 578: "Test how many resize events are emitted during page load and dynamic content generation. "
             text run at (578,0) width 158: "Do not resize the page. It"
             text run at (0,18) width 119: "invalidates the test."
         RenderBlock {P} at (0,52) size 769x52
           RenderBlock (anonymous) at (0,0) size 769x18
-            RenderText {#text} at (10,0) size 181x19
+            RenderText {#text} at (10,0) size 181x17
               text run at (10,0) width 181: "Resize events (should be 0): "
-            RenderInline {SPAN} at (0,0) size 8x19
-              RenderText {#text} at (191,0) size 8x19
+            RenderInline {SPAN} at (0,0) size 8x17
+              RenderText {#text} at (191,0) size 8x17
                 text run at (191,0) width 8: "0"
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,34) size 769x18 [color=#008000]
-            RenderText {#text} at (10,0) size 39x19
+            RenderText {#text} at (10,0) size 39x17
               text run at (10,0) width 39: "PASS"
       RenderBlock {DIV} at (0,120) size 769x4110
         RenderBlock {DIV} at (10,0) size 749x402 [border: (1px solid #000000)]

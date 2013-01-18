@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x138
-  RenderBlock {HTML} at (0,0) size 800x138
-    RenderBody {BODY} at (8,16) size 784x114
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 301x19
+layer at (0,0) size 800x137
+  RenderBlock {HTML} at (0,0) size 800x137
+    RenderBody {BODY} at (8,16) size 784x113
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 301x17
           text run at (0,0) width 301: "This test checks that text input fields handle the "
         RenderInline {CODE} at (0,0) size 168x15
-          RenderText {#text} at (301,4) size 168x15
-            text run at (301,4) width 168: "-webkit-border-radius"
-        RenderText {#text} at (469,0) size 295x19
+          RenderText {#text} at (301,3) size 168x15
+            text run at (301,3) width 168: "-webkit-border-radius"
+        RenderText {#text} at (469,0) size 295x17
           text run at (469,0) width 295: " CSS property correctly, or degrade gracefully."
-      RenderBlock {P} at (0,35) size 784x18
-        RenderText {#text} at (0,0) size 617x19
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 617x17
           text run at (0,0) width 617: "If the test passes, you will see a text entry field containing \"default text\" inside the grey div below."
-      RenderBlock {DIV} at (0,69) size 163x45 [bgcolor=#888888]
+      RenderBlock {DIV} at (0,68) size 163x45 [bgcolor=#888888]
         RenderTextControl {INPUT} at (11,9) size 133x28 [bgcolor=#00FF00]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 126x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 126x18
             RenderBlock {DIV} at (126,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (23,100) size 126x18 scrollHeight 19
+layer at (23,99) size 126x18
   RenderBlock {DIV} at (0,0) size 126x18
-    RenderText {#text} at (0,0) size 77x19
+    RenderText {#text} at (0,0) size 77x17
       text run at (0,0) width 77: "default text"

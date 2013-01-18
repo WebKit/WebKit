@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 768x37
+        RenderText {#text} at (0,0) size 768x35
           text run at (0,0) width 468: "You should see a green cross below (300 pixels wide and 300 pixels tall). "
           text run at (468,0) width 300: "This is a test to ensure that boxes don't obey the"
           text run at (0,18) width 638: "overconstraint correction (margin-top/bottom should not be corrected when a box is overconstrained)."

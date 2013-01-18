@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {FORM} at (0,0) size 784x21
-        RenderBlock {INPUT} at (4,6) size 12x12
-        RenderText {#text} at (20,0) size 34x19
-          text run at (20,0) width 34: "Two "
-        RenderBlock {INPUT} at (58,6) size 12x12
-        RenderText {#text} at (74,0) size 37x19
-          text run at (74,0) width 37: "Three"
-      RenderBlock {FORM} at (0,37) size 784x21
-        RenderBlock {INPUT} at (4,6) size 12x12
-        RenderText {#text} at (20,0) size 31x19
-          text run at (20,0) width 31: "One "
-        RenderBlock {INPUT} at (55,6) size 12x12
-        RenderText {#text} at (71,0) size 34x19
-          text run at (71,0) width 34: "Two "
-        RenderBlock {INPUT} at (109,6) size 12x12
-        RenderText {#text} at (125,0) size 41x19
-          text run at (125,0) width 41: "Three "
-        RenderBlock {INPUT} at (170,6) size 12x12
-        RenderText {#text} at (186,0) size 27x19
-          text run at (186,0) width 27: "One"
-      RenderBlock (anonymous) at (0,74) size 784x36
-        RenderText {#text} at (0,0) size 766x37
+      RenderBlock {FORM} at (0,0) size 784x20
+        RenderBlock {INPUT} at (4,5) size 13x12
+        RenderText {#text} at (21,0) size 34x17
+          text run at (21,0) width 34: "Two "
+        RenderBlock {INPUT} at (59,5) size 13x12
+        RenderText {#text} at (76,0) size 37x17
+          text run at (76,0) width 37: "Three"
+      RenderBlock {FORM} at (0,36) size 784x20
+        RenderBlock {INPUT} at (4,5) size 13x12
+        RenderText {#text} at (21,0) size 31x17
+          text run at (21,0) width 31: "One "
+        RenderBlock {INPUT} at (56,5) size 13x12
+        RenderText {#text} at (73,0) size 34x17
+          text run at (73,0) width 34: "Two "
+        RenderBlock {INPUT} at (111,5) size 13x12
+        RenderText {#text} at (128,0) size 41x17
+          text run at (128,0) width 41: "Three "
+        RenderBlock {INPUT} at (173,5) size 13x12
+        RenderText {#text} at (190,0) size 27x17
+          text run at (190,0) width 27: "One"
+      RenderBlock (anonymous) at (0,72) size 784x36
+        RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 505: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
           text run at (505,0) width 261: "The count in form 1 is 2, and the count in"
           text run at (0,18) width 68: "form 2 is 4"

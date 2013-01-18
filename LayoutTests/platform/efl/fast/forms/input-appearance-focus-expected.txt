@@ -4,32 +4,32 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 755x19
+        RenderText {#text} at (0,0) size 755x17
           text run at (0,0) width 755: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire correctly."
       RenderBlock {P} at (0,34) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
-        RenderText {#text} at (197,8) size 4x19
-          text run at (197,8) width 4: " "
-        RenderTextControl {INPUT} at (203,2) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
+        RenderText {#text} at (196,8) size 4x17
+          text run at (196,8) width 4: " "
+        RenderTextControl {INPUT} at (202,2) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,82) size 784x72
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 322x19
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 322x17
           text run at (0,18) width 322: "Test Passed. Text field 1's onFocus event has fired."
-        RenderBR {BR} at (322,33) size 0x0
-        RenderText {#text} at (0,36) size 312x19
+        RenderBR {BR} at (322,32) size 0x0
+        RenderText {#text} at (0,36) size 312x17
           text run at (0,36) width 312: "Test Passed. Text field 1's onBlur event has fired."
-        RenderBR {BR} at (312,51) size 0x0
-        RenderText {#text} at (0,54) size 322x19
+        RenderBR {BR} at (312,50) size 0x0
+        RenderText {#text} at (0,54) size 322x17
           text run at (0,54) width 322: "Test Passed. Text field 2's onFocus event has fired."
       RenderBlock {P} at (0,170) size 784x0
-layer at (14,50) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 109x19
+layer at (14,50) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 109x17
       text run at (0,0) width 109: "My Text Field 1"
-layer at (215,50) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 109x19
+layer at (214,50) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 109x17
       text run at (0,0) width 109: "My Text Field 2"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of child 1 {P} of body
 selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of child 1 {P} of body

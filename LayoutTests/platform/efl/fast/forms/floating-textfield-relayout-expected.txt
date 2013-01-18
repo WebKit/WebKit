@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 104x19
+        RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 750x37
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (104,0) size 348x19
+        RenderInline {I} at (0,0) size 750x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
-          RenderText {#text} at (452,0) size 750x37
+          RenderText {#text} at (452,0) size 750x35
             text run at (452,0) width 4: " "
             text run at (456,0) width 294: "REGRESSION: text field width shrinks on first"
             text run at (0,18) width 59: "keystroke"
-        RenderText {#text} at (59,18) size 4x19
+        RenderText {#text} at (59,18) size 4x17
           text run at (59,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 784x0
   RenderBlock (relative positioned) {DIV} at (0,62) size 784x0
     RenderTextControl {INPUT} at (0,2) size 392x28 [bgcolor=#FFFFFF]
-layer at (12,78) size 385x18 scrollHeight 19
+layer at (12,78) size 385x18
   RenderBlock {DIV} at (4,6) size 385x18
-    RenderText {#text} at (0,0) size 22x19
+    RenderText {#text} at (0,0) size 22x17
       text run at (0,0) width 22: "foo"
