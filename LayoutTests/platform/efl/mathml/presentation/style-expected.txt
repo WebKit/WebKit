@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x102
-  RenderBlock {html} at (0,0) size 800x102
-    RenderBody {body} at (8,16) size 784x70
-      RenderBlock {p} at (0,0) size 784x23
+layer at (0,0) size 800x101
+  RenderBlock {html} at (0,0) size 800x101
+    RenderBody {body} at (8,16) size 784x69
+      RenderBlock {p} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,39) size 784x31
-        RenderText {#text} at (0,3) size 332x19
-          text run at (0,3) width 332: "Square root, green on yellow, padded and bordered: "
-layer at (8,20) size 35x19
-  RenderMathMLMath {math} at (0,4) size 35x19 [padding: 0 1 0 1]
-    RenderBlock {mi} at (1,3) size 8x9
+      RenderBlock {p} at (0,38) size 784x31
+        RenderText {#text} at (0,4) size 332x17
+          text run at (0,4) width 332: "Square root, green on yellow, padded and bordered: "
+layer at (8,19) size 36x19
+  RenderMathMLMath {math} at (0,3) size 36x20 [padding: 0 1 0 1]
+    RenderBlock {mi} at (1,3) size 9x9
       RenderText {#text} at (0,-9) size 7x25
         text run at (0,-9) width 7: "x"
-    RenderMathMLOperator {mo} at (12,2) size 11x10
+    RenderMathMLOperator {mo} at (12,2) size 12x10
       RenderMathMLBlock (flex) {mo} at (0,0) size 11x10
         RenderBlock (anonymous) at (0,0) size 11x10
           RenderText {mo} at (0,-8) size 11x25
             text run at (0,-8) width 11: "+"
-    RenderBlock {mn} at (26,0) size 8x12
+    RenderBlock {mn} at (26,0) size 9x12
       RenderText {#text} at (0,-6) size 8x25
         text run at (0,-6) width 8: "1"
-layer at (340,55) size 46x31
+layer at (340,54) size 46x31
   RenderMathMLMath {math} at (332,0) size 46x31 [padding: 0 1 0 1]
     RenderMathMLSquareRoot {msqrt} at (1,0) size 44x31 [color=#008000] [bgcolor=#FFFF00] [border: (1px solid #008000) (2px solid #008000) (3px solid #008000) (4px solid #008000)] [intrinsic + CSS padding: 6 6 9 24]
       RenderMathMLRow (anonymous) at (28,7) size 8x12

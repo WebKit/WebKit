@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x197
-  RenderBlock {HTML} at (0,0) size 800x197
-    RenderBody {BODY} at (8,16) size 784x173
+layer at (0,0) size 800x198
+  RenderBlock {HTML} at (0,0) size 800x198
+    RenderBody {BODY} at (8,16) size 784x174
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 303x19
+        RenderText {#text} at (0,0) size 303x17
           text run at (0,0) width 303: "Test passes if there is no red visible on the page."
-      RenderBlock (anonymous) at (0,34) size 784x139
+      RenderBlock (anonymous) at (0,34) size 784x140
         RenderImage {IMG} at (0,0) size 136x136 [border: (10px solid #000000)]
         RenderText {#text} at (0,0) size 0x0

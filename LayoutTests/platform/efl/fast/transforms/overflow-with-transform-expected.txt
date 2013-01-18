@@ -4,14 +4,14 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 318x19
+        RenderText {#text} at (0,0) size 318x17
           text run at (0,0) width 318: "Gray div should be clipped by overflow: scroll div"
 layer at (8,50) size 202x202 clip at (9,51) size 200x200 scrollHeight 516
   RenderBlock (positioned) {DIV} at (8,50) size 202x202 [border: (1px solid #000000)]
 layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51) size 200x200 outlineClip at (9,51) size 200x200
   RenderBlock (relative positioned) {DIV} at (1,17) size 200x500 [bgcolor=#808080]
     RenderBlock {P} at (0,0) size 200x108
-      RenderText {#text} at (0,0) size 200x109
+      RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
         text run at (0,36) width 45: "aksd h "
@@ -21,7 +21,7 @@ layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51
         text run at (116,72) width 84: "asd asd asdas"
         text run at (0,90) width 33: "das d"
     RenderBlock {P} at (0,124) size 200x108
-      RenderText {#text} at (0,0) size 200x109
+      RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
         text run at (0,36) width 45: "aksd h "
@@ -31,7 +31,7 @@ layer at (9,67) size 200x500 backgroundClip at (9,51) size 200x200 clip at (9,51
         text run at (116,72) width 84: "asd asd asdas"
         text run at (0,90) width 33: "das d"
     RenderBlock {P} at (0,248) size 200x108
-      RenderText {#text} at (0,0) size 200x109
+      RenderText {#text} at (0,0) size 200x107
         text run at (0,0) width 189: "ihasdkas sdkha sjdkahk dahsd"
         text run at (0,18) width 197: "jashd kashd kasdh aksd haskdh"
         text run at (0,36) width 45: "aksd h "

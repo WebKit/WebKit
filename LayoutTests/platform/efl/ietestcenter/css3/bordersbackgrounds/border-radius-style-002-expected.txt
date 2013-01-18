@@ -4,6 +4,6 @@ layer at (0,0) size 800x288
   RenderBlock {HTML} at (0,0) size 800x288
     RenderBody {BODY} at (8,16) size 784x264
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 477x19
+        RenderText {#text} at (0,0) size 477x17
           text run at (0,0) width 477: "Test passes if there is a box below with dashed border and rounded corners."
       RenderBlock {DIV} at (0,34) size 230x230 [border: (19px dashed #000000)]

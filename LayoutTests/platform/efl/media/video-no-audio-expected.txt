@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 413x19
+        RenderText {#text} at (0,0) size 413x17
           text run at (0,0) width 413: "Movie with no audio track. The volume button should not render."
       RenderBlock (anonymous) at (0,34) size 784x288
         RenderText {#text} at (0,0) size 0x0
@@ -18,7 +18,7 @@ layer at (8,310) size 352x20 scrollHeight 28
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 272x20
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28
         RenderBlock (anonymous) at (4,4) size 55x20
-          RenderText {#text} at (0,0) size 55x12
+          RenderText {#text} at (0,0) size 55x11
             text run at (0,0) width 55: "00:00 / 00:09"
       RenderSlider {INPUT} at (63,0) size 209x20
         RenderFlexibleBox {DIV} at (2,0) size 205x20

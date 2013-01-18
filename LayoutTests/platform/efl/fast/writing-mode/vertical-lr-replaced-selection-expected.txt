@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 165x600
-  RenderBlock {HTML} at (0,0) size 165x600
-    RenderBody {BODY} at (8,8) size 149x584
-      RenderText {#text} at (0,0) size 41x391
+layer at (0,0) size 166x600
+  RenderBlock {HTML} at (0,0) size 166x600
+    RenderBody {BODY} at (8,8) size 150x584
+      RenderText {#text} at (0,0) size 40x391
         text run at (0,0) width 391: "This is the first line of text."
-      RenderBR {BR} at (0,391) size 41x0
+      RenderBR {BR} at (0,391) size 40x0
       RenderImage {IMG} at (49,0) size 50x20 [bgcolor=#008000]
-      RenderText {#text} at (41,20) size 41x379
+      RenderText {#text} at (41,20) size 40x379
         text run at (41,20) width 379: " This is the second line of "
       RenderImage {IMG} at (49,399) size 100x20 [bgcolor=#800080]
-      RenderText {#text} at (41,419) size 41x72
+      RenderText {#text} at (41,419) size 40x72
         text run at (41,419) width 72: " text."
 selection start: position 1 of child 0 {#text} of body
 selection end:   position 1 of child 3 {IMG} of body

@@ -4,10 +4,10 @@ layer at (0,0) size 800x378
   RenderBlock {HTML} at (0,0) size 800x378
     RenderBody {BODY} at (8,16) size 784x354
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 506x19
+        RenderText {#text} at (0,0) size 506x17
           text run at (0,0) width 506: "You should see a green box inside a gray box. If you see red, the test has failed. "
-        RenderInline {A} at (0,0) size 750x37 [color=#0000EE]
-          RenderText {#text} at (506,0) size 750x37
+        RenderInline {A} at (0,0) size 750x35 [color=#0000EE]
+          RenderText {#text} at (506,0) size 750x35
             text run at (506,0) width 244: "https://bugs.webkit.org/show_bug.cgi?"
             text run at (0,18) width 61: "id=18885"
         RenderText {#text} at (0,0) size 0x0

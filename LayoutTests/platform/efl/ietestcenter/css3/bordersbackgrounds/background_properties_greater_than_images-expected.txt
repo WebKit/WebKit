@@ -4,7 +4,7 @@ layer at (0,0) size 800x344
   RenderBlock {HTML} at (0,0) size 800x344
     RenderBody {BODY} at (8,16) size 784x320
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 595x19
+        RenderText {#text} at (0,0) size 595x17
           text run at (0,0) width 595: "Test passes if there is green on the page and contents of the black boxes look exactly the same."
       RenderTable {TABLE} at (0,34) size 570x286
         RenderTableSection {TBODY} at (0,0) size 570x286

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 623x19
+        RenderText {#text} at (0,0) size 623x17
           text run at (0,0) width 623: "Test video sizing. You should see one bigger image (paused video) and 7 small ones of 1/4 its size."
       RenderBlock (anonymous) at (0,34) size 784x480
         RenderBR {BR} at (320,240) size 0x0

@@ -4,13 +4,13 @@ layer at (0,0) size 800x368
   RenderBlock {HTML} at (0,0) size 800x368
     RenderBody {BODY} at (8,16) size 784x344
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x37
+        RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "Test passes if the images of all the cats scroll when the box is scrolled. (Presence of cats behind the double border is UA"
           text run at (0,18) width 74: "dependent)."
       RenderBlock {DIV} at (0,344) size 784x0
-layer at (8,68) size 292x292 clip at (58,118) size 177x177 scrollY 112 scrollHeight 289
+layer at (8,68) size 292x292 clip at (58,118) size 177x177 scrollY 111 scrollHeight 288
   RenderBlock {DIV} at (0,52) size 292x292 [border: (50px double #000000)]
-    RenderText {#text} at (50,50) size 173x289
+    RenderText {#text} at (50,50) size 173x287
       text run at (50,50) width 140: "Filler Text Filler Text "
       text run at (190,50) width 33: "Filler"
       text run at (50,68) width 169: "Text Filler Text Filler Text"

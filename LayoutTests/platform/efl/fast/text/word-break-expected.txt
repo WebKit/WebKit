@@ -4,7 +4,7 @@ layer at (0,0) size 785x1016
   RenderBlock {HTML} at (0,0) size 785x1016
     RenderBody {BODY} at (8,8) size 769x1000
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 683x19
+        RenderText {#text} at (0,0) size 683x17
           text run at (0,0) width 683: "This example tests that word-break properly shrinks a cell to one character per line when it is set to break-all."
       RenderTable {TABLE} at (0,18) size 769x104 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x102
@@ -21,16 +21,16 @@ layer at (0,0) size 785x1016
               RenderText {#text} at (6,6) size 168x15
                 text run at (6,6) width 168: "This cell should grow"
       RenderBlock (anonymous) at (0,122) size 769x36
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 430x19
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 430x17
           text run at (0,18) width 430: "This test checks that word-break is ignored when white-space is pre."
       RenderBlock {PRE} at (0,171) size 110x25 [border: (5px solid #000000)]
         RenderText {#text} at (5,5) size 448x15
           text run at (5,5) width 448: "Thislongwordshouldnotgetbrokenbutshouldstickoutofthepre."
           text run at (453,5) width 0: " "
       RenderBlock (anonymous) at (0,209) size 769x72
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 760x55
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 760x53
           text run at (0,18) width 468: "The next two examples test our custom break-word value for word-break. "
           text run at (468,18) width 292: "We should get the same results as break-all for"
           text run at (0,36) width 751: "the first test, but we should break up the word in the second test (since our behavior matches word-wrap: break-word in"
@@ -50,7 +50,7 @@ layer at (0,0) size 785x1016
               RenderText {#text} at (6,6) size 168x15
                 text run at (6,6) width 168: "This cell should grow"
       RenderBlock (anonymous) at (0,385) size 769x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock {PRE} at (0,416) size 110x85 [border: (5px solid #000000)]
         RenderText {#text} at (5,5) size 96x75
           text run at (5,5) width 96: "Thislongword"
@@ -60,8 +60,8 @@ layer at (0,0) size 785x1016
           text run at (5,65) width 64: "fthepre."
           text run at (69,65) width 0: " "
       RenderBlock (anonymous) at (0,514) size 769x72
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 764x55
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 764x53
           text run at (0,18) width 626: "This test makes sure floating and positioned elements do the right thing with word-break: break-all. "
           text run at (626,18) width 129: "The minimum width"
           text run at (0,36) width 299: "should be less than the containing block width. "
@@ -75,10 +75,10 @@ layer at (0,0) size 785x1016
             text run at (0,30) width 40: "lock."
         RenderBR {BR} at (302,2) size 0x15
       RenderBlock (anonymous) at (0,635) size 769x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
       RenderBlock (anonymous) at (0,757) size 769x72
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,18) size 735x55
+        RenderBR {BR} at (0,0) size 0x17
+        RenderText {#text} at (0,18) size 735x53
           text run at (0,18) width 644: "This test makes sure floating and positioned elements do the right thing with word-break: break-word. "
           text run at (644,18) width 89: "The minimum"
           text run at (0,36) width 339: "width should be less than the containing block width. "
@@ -92,7 +92,7 @@ layer at (0,0) size 785x1016
             text run at (0,30) width 200: "oftheenclosing300pxblock."
         RenderBR {BR} at (302,2) size 0x15
       RenderBlock (anonymous) at (0,878) size 769x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
 layer at (8,661) size 304x104
   RenderBlock (relative positioned) {DIV} at (0,653) size 304x104 [border: (2px solid #000000)]
 layer at (10,663) size 300x45

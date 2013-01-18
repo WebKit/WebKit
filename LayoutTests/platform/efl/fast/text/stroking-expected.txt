@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x148 [textFillColor=#800080] [textStrokeWidth=2.00]
-        RenderText {#text} at (0,1) size 616x146
+        RenderText {#text} at (0,1) size 616x145
           text run at (0,1) width 616: "Purple\x{300} fill, black stroke,"
           text run at (0,75) width 332: "complex text"
       RenderBlock {DIV} at (0,148) size 784x74 [textStrokeColor=#FFA500] [textStrokeWidth=1.33]
-        RenderText {#text} at (0,1) size 636x72
+        RenderText {#text} at (0,1) size 636x71
           text run at (0,1) width 636: "Orange stroke, black fill."
       RenderBlock {DIV} at (0,222) size 784x148 [textStrokeColor=#0000FF] [textStrokeWidth=1.33]
-        RenderText {#text} at (0,1) size 593x146
+        RenderText {#text} at (0,1) size 593x145
           text run at (0,1) width 593: "Blue stroke, no fill, red"
           text run at (0,75) width 211: "shadow."

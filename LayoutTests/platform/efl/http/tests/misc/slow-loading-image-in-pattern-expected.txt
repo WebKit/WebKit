@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x52
   RenderBlock {HTML} at (0,0) size 800x52
     RenderBody {BODY} at (8,8) size 784x36
-      RenderText {#text} at (0,0) size 627x19
+      RenderText {#text} at (0,0) size 627x17
         text run at (0,0) width 627: "This tests slow loading png images referenced from a image element inside a SVG pattern resource."
-      RenderBR {BR} at (627,0) size 0x19
-      RenderText {#text} at (0,18) size 563x19
+      RenderBR {BR} at (627,0) size 0x17
+      RenderText {#text} at (0,18) size 563x17
         text run at (0,18) width 563: "You should see a 400x300 rect containing a tiled rendering of the Acid3 reference image."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

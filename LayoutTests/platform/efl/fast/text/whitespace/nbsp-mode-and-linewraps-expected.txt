@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (100,8) size 700x196
   RenderBlock (positioned) {DIV} at (100,8) size 700x196 [border: (2px solid #FF0000)]
-    RenderText {#text} at (14,14) size 666x168
-      text run at (14,14) width 666: "This div is absolutely positioned to the left. All the spaces in this div"
-      text run at (14,42) width 643: "are replaced with non-breaking spaces, and the nbsp-mode for this"
-      text run at (14,70) width 615: "div is 'space', so when calculating line breaks, the non-breaking"
-      text run at (14,98) width 657: "spaces should be treated as normal spaces. If this isn't the case, then"
-      text run at (14,126) width 629: "all the text for this paragraph will be rendered in two lines, and a"
-      text run at (14,154) width 488: "horizontal scroll bar will appear along the bottom."
+    RenderText {#text} at (14,15) size 666x166
+      text run at (14,15) width 666: "This div is absolutely positioned to the left. All the spaces in this div"
+      text run at (14,43) width 643: "are replaced with non-breaking spaces, and the nbsp-mode for this"
+      text run at (14,71) width 615: "div is 'space', so when calculating line breaks, the non-breaking"
+      text run at (14,99) width 657: "spaces should be treated as normal spaces. If this isn't the case, then"
+      text run at (14,127) width 629: "all the text for this paragraph will be rendered in two lines, and a"
+      text run at (14,155) width 488: "horizontal scroll bar will appear along the bottom."

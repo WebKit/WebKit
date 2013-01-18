@@ -4,9 +4,9 @@ layer at (0,0) size 800x130
   RenderBlock {HTML} at (0,0) size 800x130
     RenderBody {BODY} at (8,16) size 784x89
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 689x19
+        RenderText {#text} at (0,0) size 689x17
           text run at (0,0) width 689: "Test passes if there are three black and three blue instances of 'Filler Text' such that all text has a line above it."
       RenderBlock {DIV} at (25,43) size 734x46
-        RenderText {#text} at (0,0) size 544x46
-          text run at (0,0) width 544: "Filler Text Filler Text Filler Text"
+        RenderText {#text} at (0,1) size 544x44
+          text run at (0,1) width 544: "Filler Text Filler Text Filler Text"
       RenderBlock {DIV} at (0,114) size 784x0

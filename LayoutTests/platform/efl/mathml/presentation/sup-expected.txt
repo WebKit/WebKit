@@ -1,33 +1,33 @@
 layer at (0,0) size 822x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x102
-  RenderBlock {html} at (0,0) size 800x102
-    RenderBody {body} at (8,16) size 784x70
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 76x19
-          text run at (0,0) width 76: "superscript: "
-        RenderMathMLMath {math} at (76,0) size 16x16 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msup} at (1,0) size 14x16
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 8x16 [padding: 7 0 0 0]
-              RenderBlock {mi} at (0,7) size 8x9
+layer at (0,0) size 800x103
+  RenderBlock {html} at (0,0) size 800x103
+    RenderBody {body} at (8,16) size 784x71
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,1) size 76x17
+          text run at (0,1) width 76: "superscript: "
+        RenderMathMLMath {math} at (76,0) size 17x16 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 15x16
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x16 [padding: 7 0 0 0]
+              RenderBlock {mi} at (0,7) size 9x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (8,0) size 6x10
+            RenderMathMLBlock (anonymous, flex) at (8,0) size 7x10
               RenderBlock {mn} at (0,0) size 6x10
                 RenderText {#text} at (0,-4) size 6x19
                   text run at (0,-4) width 6: "2"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 26x19
+      RenderBlock {p} at (0,35) size 784x36
+        RenderText {#text} at (0,0) size 26x17
           text run at (0,0) width 26: "For "
-        RenderInline {a} at (0,0) size 71x19 [color=#0000EE]
-          RenderText {#text} at (26,0) size 71x19
+        RenderInline {a} at (0,0) size 71x17 [color=#0000EE]
+          RenderText {#text} at (26,0) size 71x17
             text run at (26,0) width 71: "Bug 95404"
-        RenderText {#text} at (97,0) size 397x19
+        RenderText {#text} at (97,0) size 397x17
           text run at (97,0) width 13: " - "
           text run at (110,0) width 384: "mathml.css: Add more { white-space: nowrap } declarations:"
-        RenderBR {br} at (494,0) size 0x19
-        RenderMathMLMath {math} at (0,20) size 814x14 [padding: 0 1 0 1]
+        RenderBR {br} at (494,0) size 0x17
+        RenderMathMLMath {math} at (0,19) size 814x14 [padding: 0 1 0 1]
           RenderMathMLSubSup {msup} at (1,0) size 812x14
             RenderMathMLBlock (anonymous, flex) at (0,0) size 407x14 [padding: 5 0 0 0]
               RenderBlock {mi} at (0,5) size 407x9

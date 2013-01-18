@@ -4,29 +4,29 @@ layer at (0,0) size 800x84
   RenderBlock {html} at (0,0) size 800x84
     RenderBody {body} at (8,16) size 784x52
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 291x19
+        RenderText {#text} at (0,0) size 291x17
           text run at (0,0) width 291: "Following elements should use a regular font: "
-        RenderMathMLMath {math} at (291,4) size 63x12 [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (291,3) size 64x12 [padding: 0 1 0 1]
           RenderBlock {mn} at (1,0) size 8x12
             RenderText {#text} at (0,-6) size 8x25
               text run at (0,-6) width 8: "1"
-          RenderMathMLOperator {mo} at (12,0) size 12x12
+          RenderMathMLOperator {mo} at (12,0) size 13x12
             RenderMathMLBlock (flex) {mo} at (0,0) size 12x12
               RenderBlock (anonymous) at (0,0) size 12x12
                 RenderText {mo} at (0,-6) size 12x25
                   text run at (0,-6) width 12: "\x{2207}"
-          RenderBlock {mtext} at (27,1) size 23x11
+          RenderBlock {mtext} at (27,1) size 24x11
             RenderText {#text} at (0,-7) size 23x25
               text run at (0,-7) width 23: "text"
-          RenderBlock {ms} at (50,0) size 12x12
+          RenderBlock {ms} at (50,0) size 13x12
             RenderText {#text} at (0,-6) size 12x25
               text run at (0,-6) width 12: "&"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 241x19
+        RenderText {#text} at (0,0) size 241x17
           text run at (0,0) width 241: "Following element should be in italic: "
-        RenderMathMLMath {math} at (241,7) size 10x9 [padding: 0 1 0 1]
-          RenderBlock {mi} at (1,0) size 8x9
+        RenderMathMLMath {math} at (241,6) size 11x9 [padding: 0 1 0 1]
+          RenderBlock {mi} at (1,0) size 9x9
             RenderText {#text} at (0,-9) size 7x25
               text run at (0,-9) width 7: "x"
         RenderText {#text} at (0,0) size 0x0

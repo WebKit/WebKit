@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x454
-  RenderBlock {HTML} at (0,0) size 800x454
-    RenderBody {BODY} at (8,16) size 784x430
+  RenderBlock {HTML} at (0,0) size 800x455
+    RenderBody {BODY} at (8,16) size 784x431
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 778x37
+        RenderText {#text} at (0,0) size 778x35
           text run at (0,0) width 778: "Test passes if there are four unclipped cats below, if the cats are equally spaced from each other, and if the cats do not touch"
           text run at (0,18) width 183: "or overlap the double border."
-      RenderBlock {DIV} at (0,52) size 378x378 [border: (25px double #000000)]
+      RenderBlock {DIV} at (0,52) size 379x379 [border: (25px double #000000)]

@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 360x19
+        RenderText {#text} at (0,0) size 360x17
           text run at (0,0) width 360: "Test dynamic removal of transformed and reflected video"
-      RenderBlock (anonymous) at (0,34) size 784x336
-        RenderText {#text} at (0,0) size 4x19
+      RenderBlock (anonymous) at (0,34) size 784x338
+        RenderText {#text} at (0,0) size 4x17
           text run at (0,0) width 4: " "
-        RenderBR {BR} at (4,15) size 0x0
-        RenderText {#text} at (0,159) size 4x19
-          text run at (0,159) width 4: " "
+        RenderBR {BR} at (4,14) size 0x0
+        RenderText {#text} at (0,160) size 4x17
+          text run at (0,160) width 4: " "
         RenderBR {BR} at (210,174) size 0x0
-        RenderText {#text} at (0,318) size 4x19
-          text run at (0,318) width 4: " "
-        RenderBR {BR} at (210,333) size 0x0
+        RenderText {#text} at (0,320) size 4x17
+          text run at (0,320) width 4: " "
+        RenderBR {BR} at (210,334) size 0x0
 layer at (12,60) size 206x156
   RenderVideo {VIDEO} at (4,18) size 206x156 [border: (3px solid #FF0000)]
-layer at (12,219) size 206x156
-  RenderVideo {VIDEO} at (4,177) size 206x156 [border: (3px solid #FF0000)]
+layer at (12,220) size 206x156
+  RenderVideo {VIDEO} at (4,178) size 206x156 [border: (3px solid #FF0000)]

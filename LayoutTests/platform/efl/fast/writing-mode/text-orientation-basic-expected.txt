@@ -1,57 +1,57 @@
-layer at (0,0) size 785x705
+layer at (0,0) size 785x704
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x705
-  RenderBlock {HTML} at (0,0) size 785x705
-    RenderBody {BODY} at (8,8) size 769x689
-      RenderBlock {P} at (0,0) size 769x73
-        RenderText {#text} at (0,0) size 751x37
+layer at (0,0) size 785x704
+  RenderBlock {HTML} at (0,0) size 785x704
+    RenderBody {BODY} at (8,8) size 769x688
+      RenderBlock {P} at (0,0) size 769x72
+        RenderText {#text} at (0,0) size 751x35
           text run at (0,0) width 358: "This test shows the following bugs with text-orientation. "
           text run at (358,0) width 393: "The far right test mis-renders differently in both the simple and"
           text run at (0,18) width 389: "complex text paths. The simple text path mis-renders because "
         RenderInline {TT} at (0,0) size 304x15
-          RenderText {#text} at (389,22) size 304x15
-            text run at (389,22) width 304: "CTFontGetVerticalTranslationsForGlyphs"
-        RenderText {#text} at (693,18) size 757x56
+          RenderText {#text} at (389,21) size 304x15
+            text run at (389,21) width 304: "CTFontGetVerticalTranslationsForGlyphs"
+        RenderText {#text} at (693,18) size 757x53
           text run at (693,18) width 47: " returns"
-          text run at (0,37) width 434: "incorrect values for horizontal glyphs that have vertical counterparts. "
-          text run at (434,37) width 323: "The complex text code path mis-renders because of"
-          text run at (0,55) width 103: "API deficiency. "
-          text run at (103,55) width 603: "There is no way to tell CoreText to use upright horizontal glyphs when rendering a vertical line."
-      RenderBlock {DIV} at (0,89) size 166x600
+          text run at (0,36) width 434: "incorrect values for horizontal glyphs that have vertical counterparts. "
+          text run at (434,36) width 323: "The complex text code path mis-renders because of"
+          text run at (0,54) width 103: "API deficiency. "
+          text run at (103,54) width 603: "There is no way to tell CoreText to use upright horizontal glyphs when rendering a vertical line."
+      RenderBlock {DIV} at (0,88) size 166x600
         RenderBlock {DIV} at (0,0) size 166x175 [border: (1px solid #008000)]
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (1,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (1,1) size 40x173
               text run at (1,1) width 173: "Hello world"
           RenderBR {BR} at (9,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (42,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (42,1) size 40x173
               text run at (42,1) width 173: "Hello world"
           RenderBR {BR} at (50,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (83,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (83,1) size 40x173
               text run at (83,1) width 173: "Hello world"
           RenderBR {BR} at (91,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (124,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (124,1) size 40x173
               text run at (124,1) width 173: "Hello world"
           RenderBR {BR} at (132,174) size 0x0
-        RenderText {#text} at (1,175) size 41x9
-          text run at (1,175) width 9: " "
+        RenderText {#text} at (2,175) size 40x9
+          text run at (2,175) width 9: " "
         RenderBlock {DIV} at (0,184) size 166x175 [border: (1px solid #008000)]
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (1,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (1,1) size 40x173
               text run at (1,1) width 173: "Hello world"
           RenderBR {BR} at (9,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (42,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (42,1) size 40x173
               text run at (42,1) width 173: "Hello world"
           RenderBR {BR} at (50,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (83,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (83,1) size 40x173
               text run at (83,1) width 173: "Hello world"
           RenderBR {BR} at (91,174) size 0x0
-          RenderInline {SPAN} at (0,0) size 41x173
-            RenderText {#text} at (124,1) size 41x173
+          RenderInline {SPAN} at (0,0) size 40x173
+            RenderText {#text} at (124,1) size 40x173
               text run at (124,1) width 173: "Hello world"
           RenderBR {BR} at (132,174) size 0x0
         RenderText {#text} at (0,0) size 0x0

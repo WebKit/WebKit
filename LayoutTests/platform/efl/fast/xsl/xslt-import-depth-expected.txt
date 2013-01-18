@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 57x19
+        RenderText {#text} at (0,0) size 57x17
           text run at (0,0) width 57: "This is a "
-        RenderInline {I} at (0,0) size 56x19
-          RenderText {#text} at (57,0) size 56x19
+        RenderInline {I} at (0,0) size 56x17
+          RenderText {#text} at (57,0) size 56x17
             text run at (57,0) width 56: "test page"
-        RenderText {#text} at (113,0) size 4x19
+        RenderText {#text} at (113,0) size 4x17
           text run at (113,0) width 4: "."

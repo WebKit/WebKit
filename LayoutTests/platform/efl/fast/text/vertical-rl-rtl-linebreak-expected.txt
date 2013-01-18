@@ -4,7 +4,7 @@ layer at (0,0) size 800x241
   RenderBlock {HTML} at (0,0) size 800x241
     RenderBody {BODY} at (8,16) size 784x217
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 760x37
+        RenderText {#text} at (0,0) size 760x35
           text run at (0,0) width 760: "This tests line break on vertical text. The test should be run on a cold font cache and refreshing the page should not show"
           text run at (0,18) width 67: "difference."
       RenderBlock {DIV} at (0,52) size 98x165

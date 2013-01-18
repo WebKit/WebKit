@@ -4,12 +4,12 @@ layer at (0,0) size 800x76
   RenderBlock {HTML} at (0,0) size 800x76
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 298x19
+        RenderText {#text} at (0,0) size 298x17
           text run at (0,0) width 298: "Test passes if there is green visible on the page."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderInline (generated) at (0,0) size 9x19
-          RenderText {#text} at (0,0) size 9x19
+        RenderInline (generated) at (0,0) size 9x17
+          RenderText {#text} at (0,0) size 9x17
             text run at (0,0) width 9: "F"
-        RenderText {#text} at (9,0) size 57x19
+        RenderText {#text} at (9,0) size 57x17
           text run at (9,0) width 57: "iller Text"
       RenderBlock {DIV} at (0,52) size 784x0

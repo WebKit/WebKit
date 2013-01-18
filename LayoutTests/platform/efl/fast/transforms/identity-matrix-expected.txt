@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 250x19
+      RenderText {#text} at (0,0) size 250x17
         text run at (0,0) width 250: "The following divs should be identical: "
       RenderBR {BR} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (5,23) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]

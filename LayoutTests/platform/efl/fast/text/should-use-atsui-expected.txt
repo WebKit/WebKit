@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 736x37
-          RenderText {#text} at (53,0) size 736x37
+        RenderInline {I} at (0,0) size 736x35
+          RenderText {#text} at (53,0) size 736x35
             text run at (53,0) width 683: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6132 Incorrect selection highlighting for ATSUI text when"
             text run at (0,18) width 176: "selected range is \"CG-safe\""
-        RenderText {#text} at (176,18) size 4x19
+        RenderText {#text} at (176,18) size 4x17
           text run at (176,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 709x19
+        RenderText {#text} at (0,0) size 709x17
           text run at (0,0) width 709: "The word \x{201C}dolor\x{201D} below should be highlighted in its entirety. The highlight should not extend beyond that word."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,96) size 784x18
-        RenderInline {SPAN} at (0,0) size 173x19
-          RenderText {#text} at (0,0) size 173x19
+        RenderInline {SPAN} at (0,0) size 173x17
+          RenderText {#text} at (0,0) size 173x17
             text run at (0,0) width 173: "Lo\x{308}re\x{300}m ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 14 of child 0 {#text} of child 7 {SPAN} of body

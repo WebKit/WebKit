@@ -4,28 +4,28 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 29x19
+        RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderInline {SPAN} at (0,0) size 138x19
-          RenderText {#text} at (29,0) size 138x19
+        RenderInline {SPAN} at (0,0) size 138x17
+          RenderText {#text} at (29,0) size 138x17
             text run at (29,0) width 138: "span in this paragraph"
-        RenderText {#text} at (167,0) size 300x19
+        RenderText {#text} at (167,0) size 300x17
           text run at (167,0) width 300: " has a transform, which has no effect on inlines."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 29x19
+        RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderText {#text} at (167,0) size 616x19
+        RenderText {#text} at (167,0) size 616x17
           text run at (167,0) width 616: " has a transform, which has no effect on inlines. It also has opacity to throw it into a RenderLayer."
       RenderBlock {P} at (0,68) size 784x18
-        RenderText {#text} at (0,0) size 29x19
+        RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderText {#text} at (167,0) size 542x19
+        RenderText {#text} at (167,0) size 542x17
           text run at (167,0) width 542: " has a transform and opacity, and is an inline-block. So it should respect the transform."
-layer at (8,42) size 138x19
-  RenderInline {SPAN} at (0,0) size 138x19
-    RenderText {#text} at (29,0) size 138x19
+layer at (8,42) size 138x17
+  RenderInline {SPAN} at (0,0) size 138x17
+    RenderText {#text} at (29,0) size 138x17
       text run at (29,0) width 138: "span in this paragraph"
 layer at (37,76) size 138x18
   RenderBlock {SPAN} at (29,0) size 138x18
-    RenderText {#text} at (0,0) size 138x19
+    RenderText {#text} at (0,0) size 138x17
       text run at (0,0) width 138: "span in this paragraph"

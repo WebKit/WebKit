@@ -4,7 +4,7 @@ layer at (0,0) size 800x338
   RenderBlock {HTML} at (0,0) size 800x338
     RenderBody {BODY} at (8,16) size 784x312
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 260x19
+        RenderText {#text} at (0,0) size 260x17
           text run at (0,0) width 260: "Test passes if the two boxes are identical."
       RenderBlock {DIV} at (10,34) size 134x134 [border: (19px solid #000000)]
       RenderBlock {DIV} at (10,178) size 134x134 [border: (19px solid #000000)]

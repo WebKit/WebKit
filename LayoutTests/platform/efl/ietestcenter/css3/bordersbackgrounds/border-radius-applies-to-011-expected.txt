@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x163
-  RenderBlock {HTML} at (0,0) size 800x163
-    RenderBody {BODY} at (8,16) size 784x139
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBody {BODY} at (8,16) size 784x140
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 357x19
+        RenderText {#text} at (0,0) size 357x17
           text run at (0,0) width 357: "Test passes if there is a box with rounded corners below."
-      RenderBlock (anonymous) at (0,34) size 784x105
+      RenderBlock (anonymous) at (0,34) size 784x106
         RenderTable {DIV} at (0,0) size 102x102 [border: (3px solid #008000)]
           RenderTableSection (anonymous) at (3,3) size 96x96
             RenderTableRow {DIV} at (0,0) size 96x96

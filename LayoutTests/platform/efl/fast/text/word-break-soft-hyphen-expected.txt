@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x19
+        RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 781x37
-          RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x19
+        RenderInline {I} at (0,0) size 781x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15367"
-          RenderText {#text} at (354,0) size 781x37
+          RenderText {#text} at (354,0) size 781x35
             text run at (354,0) width 4: " "
             text run at (358,0) width 423: "Assertion failure inspecting a document including soft hyphen code"
             text run at (0,18) width 41: "(0xad)"
-        RenderText {#text} at (41,18) size 4x19
+        RenderText {#text} at (41,18) size 4x17
           text run at (41,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 489x19
+        RenderText {#text} at (0,0) size 489x17
           text run at (0,0) width 489: "The following text should not wrap and the border should fit tightly around it."
 layer at (8,94) size 116x24
   RenderBlock (positioned) {DIV} at (8,94) size 116x24 [border: (3px solid #000000)]
-    RenderText {#text} at (3,3) size 110x19
+    RenderText {#text} at (3,3) size 110x17
       text run at (3,3) width 110: "Two soft\x{AD}hyp\x{AD}hens"

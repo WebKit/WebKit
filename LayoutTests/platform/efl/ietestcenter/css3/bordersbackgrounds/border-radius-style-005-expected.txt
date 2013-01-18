@@ -4,6 +4,6 @@ layer at (0,0) size 800x250
   RenderBlock {HTML} at (0,0) size 800x250
     RenderBody {BODY} at (8,16) size 784x226
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 602x19
+        RenderText {#text} at (0,0) size 602x17
           text run at (0,0) width 602: "Test passes if there is a black box below with rounded corners and no red is visible on the page."
       RenderBlock {DIV} at (0,34) size 192x192 [bgcolor=#000000]

@@ -4,31 +4,31 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 126x500
-        RenderInline {SPAN} at (0,0) size 21x395
-          RenderText {#text} at (0,0) size 21x395
+        RenderInline {SPAN} at (0,0) size 20x395
+          RenderText {#text} at (0,0) size 20x395
             text run at (0,0) width 395: "This text should be rotated 90 degrees and underlined."
-        RenderText {#text} at (0,395) size 21x5
+        RenderText {#text} at (0,395) size 20x5
           text run at (0,395) width 5: " "
         RenderBR {BR} at (4,400) size 0x0
-        RenderInline {SPAN} at (0,0) size 21x386
-          RenderText {#text} at (21,0) size 21x386
+        RenderInline {SPAN} at (0,0) size 20x386
+          RenderText {#text} at (21,0) size 20x386
             text run at (21,0) width 386: "This text should be rotated 90 degrees and overlined."
-        RenderText {#text} at (21,386) size 21x5
+        RenderText {#text} at (21,386) size 20x5
           text run at (21,386) width 5: " "
         RenderBR {BR} at (25,391) size 0x0
-        RenderInline {SPAN} at (0,0) size 21x423
-          RenderText {#text} at (42,0) size 21x423
+        RenderInline {SPAN} at (0,0) size 20x423
+          RenderText {#text} at (42,0) size 20x423
             text run at (42,0) width 423: "This text should be rotated 90 degrees and struck through."
-        RenderText {#text} at (42,423) size 21x5
+        RenderText {#text} at (42,423) size 20x5
           text run at (42,423) width 5: " "
         RenderBR {BR} at (46,428) size 0x0
-        RenderInline {SPAN} at (0,0) size 21x449
-          RenderText {#text} at (63,0) size 21x449
+        RenderInline {SPAN} at (0,0) size 20x449
+          RenderText {#text} at (63,0) size 20x449
             text run at (63,0) width 449: "This text should have a red shadow that is offset horizontally."
-        RenderText {#text} at (63,449) size 21x5
+        RenderText {#text} at (63,449) size 20x5
           text run at (63,449) width 5: " "
         RenderBR {BR} at (67,454) size 0x0
-        RenderBR {BR} at (84,0) size 21x0
-        RenderInline {SPAN} at (0,0) size 21x460
-          RenderText {#text} at (105,0) size 21x460
+        RenderBR {BR} at (84,0) size 20x0
+        RenderInline {SPAN} at (0,0) size 20x460
+          RenderText {#text} at (105,0) size 20x460
             text run at (105,0) width 460: "This text should have an overline plus horizontal green shadow"

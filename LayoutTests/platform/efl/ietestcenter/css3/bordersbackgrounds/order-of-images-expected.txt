@@ -4,6 +4,6 @@ layer at (0,0) size 800x308
   RenderBlock {HTML} at (0,0) size 800x308
     RenderBody {BODY} at (8,16) size 784x284
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 490x19
+        RenderText {#text} at (0,0) size 490x17
           text run at (0,0) width 490: "Test passes if a blue box overlaps an orange box, which overlaps a black box."
       RenderBlock {DIV} at (0,34) size 250x250

@@ -4,17 +4,17 @@ layer at (0,0) size 800x377
   RenderBlock {HTML} at (0,0) size 800x377
     RenderBody {BODY} at (50,50) size 700x277
       RenderBlock {DIV} at (0,0) size 556x277 [bgcolor=#EEEEEE]
-        RenderBlock {DIV} at (1,1) size 277x127 [bgcolor=#FFEEEE]
-          RenderBlock {P} at (14,28) size 249x22 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 200x21
-              text run at (21,1) width 200: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} paragraph 1"
-          RenderBlock {P} at (14,77) size 249x22 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 200x21
-              text run at (21,1) width 200: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} paragraph 2"
+        RenderBlock {DIV} at (1,1) size 277x129 [bgcolor=#FFEEEE]
+          RenderBlock {P} at (14,28) size 249x23 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (21,0) size 200x21
+              text run at (21,0) width 200: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} paragraph 1"
+          RenderBlock {P} at (14,78) size 249x22 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (21,0) size 200x21
+              text run at (21,0) width 200: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} paragraph 2"
         RenderBlock {DIV} at (278,1) size 277x275 [bgcolor=#FFFFEE]
-          RenderBlock {P} at (14,28) size 62x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 21x200
-              text run at (21,1) width 200: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} paragraph 1"
-          RenderBlock {P} at (89,28) size 62x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 21x200
-              text run at (21,1) width 200: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} paragraph 2"
+          RenderBlock {P} at (14,28) size 63x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (20,1) size 21x200
+              text run at (20,1) width 200: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} paragraph 1"
+          RenderBlock {P} at (90,28) size 63x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
+            RenderText {#text} at (20,1) size 21x200
+              text run at (20,1) width 200: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} paragraph 2"

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x252
-  RenderBlock {html} at (0,0) size 800x252
-    RenderBlock {parsererror} at (16,16) size 768x186 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-      RenderBlock {h3} at (18,20) size 732x22
-        RenderText {#text} at (0,0) size 324x22
+layer at (0,0) size 800x255
+  RenderBlock {html} at (0,0) size 800x255
+    RenderBlock {parsererror} at (16,16) size 768x189 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
           text run at (0,0) width 324: "This page contains the following errors:"
-      RenderBlock {div} at (18,60) size 732x14
+      RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 490x14
           text run at (0,0) width 490: "error on line 1 at column 76: Extra content at the end of the document"
           text run at (490,0) width 0: " "
-      RenderBlock {h3} at (18,92) size 732x22
-        RenderText {#text} at (0,0) size 429x22
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 429x21
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-      RenderBlock {p} at (18,132) size 732x36
-        RenderText {#text} at (0,0) size 731x37
+      RenderBlock {p} at (18,134) size 732x37
+        RenderText {#text} at (0,0) size 731x35
           text run at (0,0) width 731: "This document was created as the result of an XSL transformation. The line and column numbers given are from the"
           text run at (0,18) width 117: "transformed result."
-    RenderBody {body} at (8,218) size 784x18
+    RenderBody {body} at (8,220) size 784x19
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 227x19
+        RenderText {#text} at (0,0) size 227x17
           text run at (0,0) width 227: "You should see error text above this"

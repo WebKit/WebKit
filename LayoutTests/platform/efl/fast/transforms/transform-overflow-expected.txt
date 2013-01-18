@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,216) size 800x18
-        RenderText {#text} at (0,0) size 251x19
+        RenderText {#text} at (0,0) size 251x17
           text run at (0,0) width 251: "You should see one green square above"
 layer at (50,50) size 100x100
   RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF0000]

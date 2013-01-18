@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (12,12) size 776x543
       RenderBlock {P} at (0,0) size 776x28
-        RenderText {#text} at (0,0) size 280x28
-          text run at (0,0) width 280: "Zoomed video with controls."
+        RenderText {#text} at (0,1) size 280x26
+          text run at (0,1) width 280: "Zoomed video with controls."
 layer at (57,85) size 240x180
   RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
@@ -16,7 +16,7 @@ layer at (57,235) size 240x30
     RenderDeprecatedFlexibleBox {DIV} at (30,0) size 90x30
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 0x42
         RenderBlock (anonymous) at (6,6) size 78x30
-          RenderText {#text} at (17,0) size 44x35
+          RenderText {#text} at (17,0) size 44x33
             text run at (17,0) width 44: "00:00 /"
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30
@@ -39,7 +39,7 @@ layer at (57,460) size 240x30
     RenderDeprecatedFlexibleBox {DIV} at (30,0) size 90x30
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 0x42
         RenderBlock (anonymous) at (6,6) size 78x30
-          RenderText {#text} at (17,0) size 44x35
+          RenderText {#text} at (17,0) size 44x33
             text run at (17,0) width 44: "00:00 /"
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30

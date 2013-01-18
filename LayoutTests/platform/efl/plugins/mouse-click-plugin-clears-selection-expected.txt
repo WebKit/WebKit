@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x132
         RenderEmbeddedObject {EMBED} at (0,0) size 100x100
         RenderBR {BR} at (100,100) size 0x0
-        RenderTextControl {INPUT} at (2,102) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,102) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,132) size 784x0
-layer at (14,116) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 35x19
+layer at (14,116) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "hello"

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x301
-  RenderBlock {HTML} at (0,0) size 800x301
-    RenderBody {BODY} at (8,16) size 784x277
+layer at (0,0) size 800x302
+  RenderBlock {HTML} at (0,0) size 800x302
+    RenderBody {BODY} at (8,16) size 784x278
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 226x19
+        RenderText {#text} at (0,0) size 226x17
           text run at (0,0) width 226: "Drawing the controls in strict mode."
-      RenderBlock (anonymous) at (0,34) size 784x243
+      RenderBlock (anonymous) at (0,34) size 784x244
         RenderText {#text} at (0,0) size 0x0
 layer at (8,50) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
@@ -18,7 +18,7 @@ layer at (8,270) size 320x20 scrollHeight 28
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
       RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28
         RenderBlock (anonymous) at (4,4) size 55x20
-          RenderText {#text} at (0,0) size 55x12
+          RenderText {#text} at (0,0) size 55x11
             text run at (0,0) width 55: "00:00 / 00:06"
       RenderSlider {INPUT} at (63,0) size 157x20
         RenderFlexibleBox {DIV} at (2,0) size 153x20
