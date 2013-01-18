@@ -33,12 +33,19 @@
 
 namespace WebCore {
 
+static const int infinity = intMaxForLayoutUnit;
+
 class GridTrack {
 public:
     GridTrack()
         : m_usedBreadth(0)
         , m_maxBreadth(0)
     {
+    }
+
+    LayoutUnit maxBreadthIfNotInfinite() const
+    {
+        return (m_maxBreadth == infinity) ? m_usedBreadth : m_maxBreadth;
     }
 
     LayoutUnit m_usedBreadth;
@@ -149,17 +156,18 @@ void RenderGrid::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& tracks)
+void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks)
 {
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
     LayoutUnit availableLogicalSpace = (direction == ForColumns) ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding);
+    Vector<GridTrack>& tracks = (direction == ForColumns) ? columnTracks : rowTracks;
     for (size_t i = 0; i < trackStyles.size(); ++i) {
         GridTrack track;
         const Length& minTrackBreadth = trackStyles[i].minTrackBreadth();
         const Length& maxTrackBreadth = trackStyles[i].maxTrackBreadth();
 
-        track.m_usedBreadth = computeUsedBreadthOfLength(direction, minTrackBreadth);
-        track.m_maxBreadth = computeUsedBreadthOfLength(direction, maxTrackBreadth);
+        track.m_usedBreadth = computeUsedBreadthOfMinLength(direction, minTrackBreadth);
+        track.m_maxBreadth = computeUsedBreadthOfMaxLength(direction, maxTrackBreadth);
 
         track.m_maxBreadth = std::max(track.m_maxBreadth, track.m_usedBreadth);
 
@@ -168,7 +176,8 @@ void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction,
         tracks.append(track);
     }
 
-    // FIXME: Implement content-based sizing (step 2 of the algorithm).
+    // FIXME: We shouldn't call resolveContentBasedTrackSizingFunctions if we have no min-content / max-content tracks.
+    resolveContentBasedTrackSizingFunctions(direction, columnTracks, rowTracks, availableLogicalSpace);
 
     if (availableLogicalSpace <= 0)
         return;
@@ -176,19 +185,105 @@ void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction,
     distributeSpaceToTracks(direction, tracks, availableLogicalSpace);
 }
 
-LayoutUnit RenderGrid::computeUsedBreadthOfLength(TrackSizingDirection direction, const Length& trackLength)
+LayoutUnit RenderGrid::computeUsedBreadthOfMinLength(TrackSizingDirection direction, const Length& trackLength) const
 {
-    // FIXME: We still need to support calc() here (bug 103761).
     if (trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage())
-        return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style()->logicalHeight()), view());
+        return computeUsedBreadthOfSpecifiedLength(direction, trackLength);
 
-    notImplemented();
+    ASSERT(trackLength.isMinContent() || trackLength.isMaxContent() || trackLength.isAuto());
     return 0;
+}
+
+LayoutUnit RenderGrid::computeUsedBreadthOfMaxLength(TrackSizingDirection direction, const Length& trackLength) const
+{
+    if (trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage()) {
+        LayoutUnit computedBreadth = computeUsedBreadthOfSpecifiedLength(direction, trackLength);
+        // FIXME: We should ASSERT that computedBreadth cannot return infinity but it's currently
+        // possible. See https://bugs.webkit.org/show_bug.cgi?id=107053
+        return computedBreadth;
+    }
+
+    ASSERT(trackLength.isMinContent() || trackLength.isMaxContent() || trackLength.isAuto());
+    return infinity;
+}
+
+LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(TrackSizingDirection direction, const Length& trackLength) const
+{
+    // FIXME: We still need to support calc() here (https://webkit.org/b/103761).
+    ASSERT(trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage());
+    return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style()->logicalHeight()), view());
 }
 
 static bool sortByGridTrackGrowthPotential(GridTrack* track1, GridTrack* track2)
 {
     return (track1->m_maxBreadth - track1->m_usedBreadth) <= (track2->m_maxBreadth - track2->m_usedBreadth);
+}
+
+LayoutUnit RenderGrid::minContentForChild(RenderBox* child, TrackSizingDirection direction, Vector<GridTrack>& columnTracks)
+{
+    bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
+    // FIXME: Properly support orthogonal writing mode.
+    if (hasOrthogonalWritingMode)
+        return 0;
+
+    if (direction == ForColumns) {
+        // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
+        // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
+        return child->minPreferredLogicalWidth();
+    }
+
+    if (child->needsLayout()) {
+        size_t columnTrack = resolveGridPosition(ForColumns, child);
+        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+        child->layout();
+    }
+    return child->logicalHeight();
+}
+
+void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace)
+{
+    // FIXME: Split the grid tracks once we support spanning or fractions (step 1 and 2 of the algorithm).
+
+    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
+    Vector<GridTrack>& tracks = (direction == ForColumns) ? columnTracks : rowTracks;
+
+    for (size_t i = 0; i < tracks.size(); ++i) {
+        GridTrack& track = tracks[i];
+        // FIXME: Add support MaxContent.
+        const Length& minTrackBreadth = trackStyles[i].minTrackBreadth();
+        if (minTrackBreadth.isMinContent()) {
+            // FIXME: The specification factors this logic into resolveContentBasedTrackSizingFunctionsForItems
+            // to reuse code between the branches and also calls distributeSpaceToTracks.
+            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+                size_t cellIndex = resolveGridPosition(direction, child);
+                if (cellIndex != i)
+                    continue;
+
+                LayoutUnit additionalBreadthSpace = minContentForChild(child, direction, columnTracks) - track.m_usedBreadth;
+                ASSERT(additionalBreadthSpace >= 0);
+                track.m_usedBreadth += additionalBreadthSpace;
+                availableLogicalSpace -= additionalBreadthSpace;
+            }
+        }
+
+        const Length& maxTrackBreadth = trackStyles[i].maxTrackBreadth();
+        if (maxTrackBreadth.isMinContent()) {
+            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+                size_t cellIndex = resolveGridPosition(direction, child);
+                if (cellIndex != i)
+                    continue;
+
+                LayoutUnit additionalBreadthSpace = minContentForChild(child, direction, columnTracks) - track.maxBreadthIfNotInfinite();
+                LayoutUnit share = std::min(additionalBreadthSpace, tracks[i].m_maxBreadth - track.maxBreadthIfNotInfinite());
+                if (track.m_maxBreadth == infinity)
+                    track.m_maxBreadth = track.m_usedBreadth + share;
+                else
+                    track.m_maxBreadth += share;
+            }
+        }
+    }
+
+    // FIXME: The spec says to update maxBreadth if it is Infinity.
 }
 
 void RenderGrid::distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>& tracks, LayoutUnit availableLogicalSpace)
@@ -203,7 +298,10 @@ void RenderGrid::distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>
     for (size_t i = 0; i < tracksSize; ++i) {
         GridTrack& track = *sortedTracks[i];
         LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
-        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, track.m_maxBreadth - track.m_usedBreadth);
+        // We never shrink the used breadth by clamping the difference between max and used breadth. The spec uses
+        // 2 extra-variables and 2 extra iterations over the tracks to achieve that (because distributeSpaceToTracks
+        // is shared with other methods). If we start sharing the method, we should probably remove this clamping.
+        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, std::max(LayoutUnit(0), track.m_maxBreadth - track.m_usedBreadth));
         track.m_usedBreadth += growthShare;
         availableLogicalSpace -= growthShare;
     }
@@ -211,14 +309,26 @@ void RenderGrid::distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>
     // FIXME: We don't implement the last 2 steps of the algorithm as we don't implement content based sizing.
 }
 
+#ifndef NDEBUG
+bool RenderGrid::tracksAreWiderThanMinTrackBreadth(TrackSizingDirection direction, const Vector<GridTrack>& tracks)
+{
+    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
+    for (size_t i = 0; i < trackStyles.size(); ++i) {
+        const Length& minTrackBreadth = trackStyles[i].minTrackBreadth();
+        if (computeUsedBreadthOfMinLength(direction, minTrackBreadth) > tracks[i].m_usedBreadth)
+            return false;
+    }
+    return true;
+}
+#endif
+
 void RenderGrid::layoutGridItems()
 {
     Vector<GridTrack> columnTracks, rowTracks;
-    computedUsedBreadthOfGridTracks(ForColumns, columnTracks);
-    // FIXME: The logical width of Grid Columns from the prior step is used in
-    // the formatting of Grid items in content-sized Grid Rows to determine
-    // their required height. We will probably need to pass columns through.
-    computedUsedBreadthOfGridTracks(ForRows, rowTracks);
+    computedUsedBreadthOfGridTracks(ForColumns, columnTracks, rowTracks);
+    ASSERT(tracksAreWiderThanMinTrackBreadth(ForColumns, columnTracks));
+    computedUsedBreadthOfGridTracks(ForRows, columnTracks, rowTracks);
+    ASSERT(tracksAreWiderThanMinTrackBreadth(ForRows, rowTracks));
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         LayoutPoint childPosition = findChildLogicalPosition(child, columnTracks, rowTracks);
@@ -256,6 +366,12 @@ void RenderGrid::layoutGridItems()
     // FIXME: We should handle min / max logical height.
 
     setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
+}
+
+size_t RenderGrid::resolveGridPosition(TrackSizingDirection direction, const RenderObject* gridItem) const
+{
+    const GridPosition& position = (direction == ForColumns) ? gridItem->style()->gridItemColumn() : gridItem->style()->gridItemRow();
+    return resolveGridPosition(position);
 }
 
 size_t RenderGrid::resolveGridPosition(const GridPosition& position) const

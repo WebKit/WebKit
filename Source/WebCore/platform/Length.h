@@ -225,6 +225,8 @@ public:
     bool isSpecified() const { return type() == Fixed || type() == Percent || type() == Calculated || isViewportPercentage(); }
     bool isCalculated() const { return type() == Calculated; }
     bool isCalculatedEqual(const Length&) const;
+    bool isMinContent() const { return type() == MinContent; }
+    bool isMaxContent() const { return type() == MaxContent; }
 
     Length blend(const Length& from, double progress) const
     {

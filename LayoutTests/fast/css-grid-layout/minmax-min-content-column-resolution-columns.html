@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<style>
+.gridMinMinContent {
+    display: -webkit-grid;
+    background-color: grey;
+    -webkit-grid-columns: minmax(-webkit-min-content, 40px);
+    -webkit-grid-rows: 50px;
+}
+
+.gridMaxMinContent {
+    display: -webkit-grid;
+    background-color: grey;
+    -webkit-grid-columns: minmax(30px, -webkit-min-content);
+    -webkit-grid-rows: 20px;
+}
+
+/* This rule makes sure the container is smaller than any grid items to avoid distributing any extra logical space to them. */
+.constrainedContainer {
+    width: 10px;
+    height: 10px;
+}
+
+#a {
+    background-color: blue;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 1;
+    font: 10px/1 Ahem;
+    /* Make us fit our grid area. */
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.gridMinMinContent'); checkLayout('.gridMaxMinContent')">
+
+<p>Test that resolving minmax function with min-content on grid items works properly.</p>
+
+<div class="constrainedContainer">
+    <div class="gridMinMinContent">
+        <div id="a" data-expected-width="30" data-expected-height="50">XXX XXX XXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="gridMinMinContent">
+        <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
+        <div id="a" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="gridMinMinContent">
+        <div id="a" data-expected-width="20" data-expected-height="50">XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+<!-- Allow the extra logical space distribution to occur. -->
+<div style="width: 40px; height: 10px">
+    <div class="gridMinMinContent">
+        <div id="a" data-expected-width="40" data-expected-height="50">XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+<div style="width: 100px; height: 10px;">
+    <div class="gridMinMinContent">
+        <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
+        <div id="a" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="gridMaxMinContent">
+        <div id="a" data-expected-width="30" data-expected-height="20">XXX XXX XXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="gridMaxMinContent">
+        <div id="a" data-expected-width="30" data-expected-height="20">XXXXX XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="constrainedContainer">
+    <div class="gridMaxMinContent">
+        <div id="a" data-expected-width="30" data-expected-height="20">XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+<!-- Allow the extra logical space distribution to occur. -->
+
+<div style="width: 100px; height: 20px">
+    <div class="gridMaxMinContent">
+        <div id="a" data-expected-width="50" data-expected-height="20">XXXXX XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div style="width: 100px; height: 20px">
+    <div class="gridMaxMinContent">
+        <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
+        <div id="a" data-expected-width="30" data-expected-height="20">XX XX XX XX XX XX</div>
+    </div>
+</div>
+
+</body>
+</html>
