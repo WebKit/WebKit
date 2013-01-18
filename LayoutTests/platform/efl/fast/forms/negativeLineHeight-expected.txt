@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 666x19
+        RenderText {#text} at (0,0) size 666x17
           text run at (0,0) width 666: "The textarea below should have standard line-height because textareas should ignore negative line-heights"
-        RenderBR {BR} at (666,15) size 0x0
-      RenderBlock {P} at (0,34) size 784x239
-        RenderText {#text} at (0,0) size 87x19
+        RenderBR {BR} at (666,14) size 0x0
+      RenderBlock {P} at (0,34) size 784x240
+        RenderText {#text} at (0,0) size 87x17
           text run at (0,0) width 87: "TEXTAREA"
-        RenderBR {BR} at (87,15) size 0x0
-        RenderText {#text} at (400,203) size 4x19
-          text run at (400,203) width 4: " "
+        RenderBR {BR} at (87,14) size 0x0
+        RenderText {#text} at (400,204) size 4x17
+          text run at (400,204) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,221) size 0x19
+        RenderBR {BR} at (0,222) size 0x17
 layer at (8,60) size 400x200 clip at (9,61) size 398x198
   RenderTextControl {TEXTAREA} at (0,18) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (3,3) size 394x30

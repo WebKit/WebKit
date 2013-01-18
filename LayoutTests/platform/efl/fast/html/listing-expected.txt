@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 406x19
+        RenderText {#text} at (0,0) size 406x17
           text run at (0,0) width 406: "This tests the listing tag. It's an obsolete synonym for the pre tag."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 168x19
+        RenderText {#text} at (0,0) size 168x17
           text run at (0,0) width 168: "Text just before the listing."
       RenderBlock {LISTING} at (0,65) size 784x45
         RenderText {#text} at (0,0) size 792x45
@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
           text run at (0,30) width 792: "Also, it eats the very first newline inside the listing, so there should not be a blank line above."
           text run at (792,30) width 0: " "
       RenderBlock {P} at (0,126) size 784x18
-        RenderText {#text} at (0,0) size 588x19
+        RenderText {#text} at (0,0) size 588x17
           text run at (0,0) width 588: "The listing tag has a width in it. To test the JavaScript binding, this page gets the width, here: "
-        RenderInline {A} at (0,0) size 24x19
-          RenderText {#text} at (588,0) size 24x19
+        RenderInline {A} at (0,0) size 24x17
+          RenderText {#text} at (588,0) size 24x17
             text run at (588,0) width 24: "100"

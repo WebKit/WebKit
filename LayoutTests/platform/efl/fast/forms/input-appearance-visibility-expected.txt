@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 480x19
+        RenderText {#text} at (0,0) size 480x17
           text run at (0,0) width 480: "This tests that the value becomes visible when the text field becomes visible."
       RenderBlock {P} at (0,34) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,82) size 784x0
       RenderBlock {P} at (0,82) size 784x0
-layer at (14,50) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 89x19
+layer at (14,50) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 89x17
       text run at (0,0) width 89: "Test Passed"

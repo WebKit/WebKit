@@ -4,39 +4,39 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 403x19
+        RenderText {#text} at (0,0) size 403x17
           text run at (0,0) width 403: "All of these selects should have the same amount of whitespace."
-      RenderBlock (anonymous) at (0,34) size 784x368
-        RenderText {#text} at (0,63) size 71x19
-          text run at (0,63) width 71: "Five Tabs: "
-        RenderListBox {SELECT} at (73,2) size 92x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (167,78) size 0x0
-        RenderBR {BR} at (0,85) size 0x19
-        RenderText {#text} at (0,166) size 84x19
-          text run at (0,166) width 84: "Five Spaces: "
-        RenderListBox {SELECT} at (86,105) size 92x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderBR {BR} at (180,181) size 0x0
-        RenderBR {BR} at (0,188) size 0x19
-        RenderText {#text} at (0,218) size 298x19
-          text run at (0,218) width 298: "Five Spaces (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (300,208) size 145x38 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (0,34) size 784x352
+        RenderText {#text} at (0,56) size 71x17
+          text run at (0,56) width 71: "Five Tabs: "
+        RenderListBox {SELECT} at (73,2) size 92x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (167,70) size 0x0
+        RenderBR {BR} at (0,77) size 0x17
+        RenderText {#text} at (0,151) size 84x17
+          text run at (0,151) width 84: "Five Spaces: "
+        RenderListBox {SELECT} at (86,97) size 92x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (180,165) size 0x0
+        RenderBR {BR} at (0,172) size 0x17
+        RenderText {#text} at (0,202) size 298x17
+          text run at (0,202) width 298: "Five Spaces (with leading/trailing whitespace): "
+        RenderMenuList {SELECT} at (300,192) size 145x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 89x18
-            RenderText at (0,0) size 89x19
+            RenderText at (0,0) size 89x17
               text run at (0,0) width 89: "Five Spaces"
-        RenderBR {BR} at (447,233) size 0x0
-        RenderBR {BR} at (0,248) size 0x19
-        RenderText {#text} at (0,278) size 285x19
-          text run at (0,278) width 285: "Five Tabs (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (287,268) size 127x38 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (447,216) size 0x0
+        RenderBR {BR} at (0,232) size 0x17
+        RenderText {#text} at (0,262) size 285x17
+          text run at (0,262) width 285: "Five Tabs (with leading/trailing whitespace): "
+        RenderMenuList {SELECT} at (287,252) size 127x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 71x18
-            RenderText at (0,0) size 71x19
+            RenderText at (0,0) size 71x17
               text run at (0,0) width 71: "Five Tabs"
-        RenderBR {BR} at (416,293) size 0x0
-        RenderBR {BR} at (0,308) size 0x19
-        RenderText {#text} at (0,338) size 126x19
-          text run at (0,338) width 126: "Mixed Whitespace: "
-        RenderMenuList {SELECT} at (128,328) size 127x38 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (416,276) size 0x0
+        RenderBR {BR} at (0,292) size 0x17
+        RenderText {#text} at (0,322) size 126x17
+          text run at (0,322) width 126: "Mixed Whitespace: "
+        RenderMenuList {SELECT} at (128,312) size 127x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 71x18
-            RenderText at (0,0) size 71x19
+            RenderText at (0,0) size 71x17
               text run at (0,0) width 71: "Five Tabs"
         RenderText {#text} at (0,0) size 0x0

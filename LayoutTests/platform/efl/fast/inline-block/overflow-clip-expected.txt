@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 104x19
+        RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 754x37
-          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
-            RenderText {#text} at (104,0) size 348x19
+        RenderInline {I} at (0,0) size 754x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
-          RenderText {#text} at (452,0) size 754x37
+          RenderText {#text} at (452,0) size 754x35
             text run at (452,0) width 302: " REGRESSION (r13595): Inline block's clipped"
             text run at (0,18) width 225: "overflow increases table row height"
-        RenderText {#text} at (225,18) size 4x19
+        RenderText {#text} at (225,18) size 4x17
           text run at (225,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 268x19
+        RenderText {#text} at (0,0) size 268x17
           text run at (0,0) width 268: "You should see a green square and no red."
       RenderTable {TABLE} at (0,86) size 100x100 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 100x100

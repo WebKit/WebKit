@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 180x486
             RenderBody {BODY} at (8,8) size 164x470
               RenderBlock {P} at (0,0) size 164x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 180x486
             RenderBody {BODY} at (8,8) size 164x470
               RenderBlock {P} at (0,0) size 164x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 180x486
             RenderBody {BODY} at (8,8) size 164x470
               RenderBlock {P} at (0,0) size 164x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 182x486
             RenderBody {BODY} at (8,8) size 166x470
               RenderBlock {P} at (0,0) size 166x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 180x486
             RenderBody {BODY} at (8,8) size 164x470
               RenderBlock {P} at (0,0) size 164x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 195x486
             RenderBody {BODY} at (8,8) size 179x470
               RenderBlock {P} at (0,0) size 179x54
-                RenderText {#text} at (0,0) size 178x55
+                RenderText {#text} at (0,0) size 178x53
                   text run at (0,0) width 178: "This page is large enough to"
                   text run at (0,18) width 145: "need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 180x486
             RenderBody {BODY} at (8,8) size 164x470
               RenderBlock {P} at (0,0) size 164x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."
@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 182x486
             RenderBody {BODY} at (8,8) size 166x470
               RenderBlock {P} at (0,0) size 166x54
-                RenderText {#text} at (0,0) size 162x55
+                RenderText {#text} at (0,0) size 162x53
                   text run at (0,0) width 162: "This page is large enough"
                   text run at (0,18) width 161: "to need to be scrolled in a"
                   text run at (0,36) width 100: "200x200 frame."

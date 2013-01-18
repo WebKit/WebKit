@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,48) size 784x18
-        RenderText {#text} at (0,0) size 644x19
+        RenderText {#text} at (0,0) size 644x17
           text run at (0,0) width 644: "Tests option-deleting a word. If the test succeeds, the word \"word\" should end up with a space after it."
-layer at (14,16) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 39x19
+layer at (14,16) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 39x17
       text run at (0,0) width 39: "word "
 caret: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 368x19
+      RenderText {#text} at (0,0) size 368x17
         text run at (0,0) width 368: "This tests that aqua-style search fields do not honor height."
-      RenderBR {BR} at (368,15) size 0x0
-      RenderTextControl {INPUT} at (0,118) size 70x10 [bgcolor=#FFFFFF]
-        RenderDeprecatedFlexibleBox {DIV} at (4,2) size 63x7
-          RenderBlock {DIV} at (0,3) size 0x0
-          RenderBlock {DIV} at (0,0) size 63x7
-          RenderBlock {DIV} at (63,3) size 0x0
-      RenderText {#text} at (70,113) size 4x19
-        text run at (70,113) width 4: " "
-      RenderTextControl {INPUT} at (76,102) size 173x40 [bgcolor=#FFFFFF]
+      RenderBR {BR} at (368,14) size 0x0
+      RenderTextControl {INPUT} at (0,117) size 69x10 [bgcolor=#FFFFFF]
+        RenderDeprecatedFlexibleBox {DIV} at (4,2) size 62x8
+          RenderBlock {DIV} at (0,3) size 0x1
+          RenderBlock {DIV} at (0,0) size 62x7
+          RenderBlock {DIV} at (62,3) size 0x1
+      RenderText {#text} at (69,113) size 4x17
+        text run at (69,113) width 4: " "
+      RenderTextControl {INPUT} at (75,101) size 173x40 [bgcolor=#FFFFFF]
         RenderDeprecatedFlexibleBox {DIV} at (4,6) size 166x30
           RenderBlock {DIV} at (0,15) size 0x0
-          RenderBlock {DIV} at (0,6) size 166x17
+          RenderBlock {DIV} at (0,6) size 166x18
           RenderBlock {DIV} at (166,15) size 0x0
-      RenderText {#text} at (251,113) size 4x19
-        text run at (251,113) width 4: " "
-      RenderTextControl {INPUT} at (257,18) size 317x200 [bgcolor=#FFFFFF]
-        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 310x190
+      RenderText {#text} at (250,113) size 4x17
+        text run at (250,113) width 4: " "
+      RenderTextControl {INPUT} at (256,18) size 316x200 [bgcolor=#FFFFFF]
+        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 309x190
           RenderBlock {DIV} at (0,95) size 0x0
-          RenderBlock {DIV} at (0,79) size 310x31
-          RenderBlock {DIV} at (310,95) size 0x0
+          RenderBlock {DIV} at (0,79) size 309x32
+          RenderBlock {DIV} at (309,95) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (12,128) size 63x7 scrollHeight 8
-  RenderBlock {DIV} at (0,0) size 63x7
-    RenderText {#text} at (0,0) size 10x8
+layer at (12,128) size 62x7
+  RenderBlock {DIV} at (0,0) size 62x7
+    RenderText {#text} at (0,0) size 10x6
       text run at (0,0) width 10: "mini"
-layer at (88,122) size 166x17 scrollHeight 18
+layer at (87,122) size 166x17
   RenderBlock {DIV} at (0,0) size 166x17
-    RenderText {#text} at (0,0) size 35x18
+    RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "small"
-layer at (269,111) size 310x31
-  RenderBlock {DIV} at (0,0) size 310x31
-    RenderText {#text} at (0,0) size 84x31
+layer at (268,112) size 309x31
+  RenderBlock {DIV} at (0,0) size 309x31
+    RenderText {#text} at (0,0) size 84x30
       text run at (0,0) width 84: "regular"

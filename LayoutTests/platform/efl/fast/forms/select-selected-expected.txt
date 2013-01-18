@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (2,2) size 361x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 305x18
-          RenderText at (0,0) size 219x19
+          RenderText at (0,0) size 219x17
             text run at (0,0) width 219: "should see this option selected"
       RenderText {#text} at (0,0) size 0x0

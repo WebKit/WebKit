@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x37
+        RenderText {#text} at (0,0) size 776x35
           text run at (0,0) width 776: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn for an <area>."
           text run at (0,18) width 642: "This test PASSED if a green-colored focus ring is drawn around the <area> in the imagemap (below)."
       RenderBlock (anonymous) at (0,52) size 784x128

@@ -11,7 +11,7 @@ layer at (0,0) size 785x607
             RenderBlock {HTML} at (0,0) size 350x207
               RenderBody {BODY} at (8,8) size 334x183 [bgcolor=#008000]
                 RenderBlock {P} at (0,0) size 334x36
-                  RenderText {#text} at (0,0) size 297x37
+                  RenderText {#text} at (0,0) size 297x35
                     text run at (0,0) width 297: "Test for frameset flattening. The flattening only"
                     text run at (0,18) width 144: "works inside the DRT."
           layer at (0,0) size 350x50

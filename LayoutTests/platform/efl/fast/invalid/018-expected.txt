@@ -26,6 +26,6 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 0x0
         RenderInline {A} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
-        RenderInline {FONT} at (0,0) size 366x19
-          RenderText {#text} at (0,0) size 366x19
+        RenderInline {FONT} at (0,0) size 366x17
+          RenderText {#text} at (0,0) size 366x17
             text run at (0,0) width 366: "This page contains an insanely badly-nested tag sequence."

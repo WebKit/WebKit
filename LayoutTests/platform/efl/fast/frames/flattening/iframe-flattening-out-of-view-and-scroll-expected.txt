@@ -5,7 +5,7 @@ layer at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x561
       RenderBlock {DIV} at (0,0) size 784x18
         RenderBlock {P} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 592x19
+          RenderText {#text} at (0,0) size 592x17
             text run at (0,0) width 592: "Test that an off-screen iframe with positive coordinates is flattened, and so are its child frames."
       RenderBlock {P} at (0,34) size 784x0
 layer at (1200,0) size 828x200
@@ -22,7 +22,7 @@ layer at (1200,0) size 828x200
               RenderBlock {HTML} at (0,0) size 816x150
                 RenderBody {BODY} at (8,8) size 800x134
                   RenderBlock {DIV} at (0,0) size 800x18 [bgcolor=#C0C0C0]
-                    RenderText {#text} at (0,0) size 383x19
+                    RenderText {#text} at (0,0) size 383x17
                       text run at (0,0) width 383: "This is a nested frame that is flattened and scrolled into view."
           RenderText {#text} at (0,0) size 0x0
 scrolled to 1200,0

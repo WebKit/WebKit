@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (2,2) size 33x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 31x18
-          RenderBR at (0,0) size 0x19 [bgcolor=#FFFFFF]
+          RenderBR at (0,0) size 0x17 [bgcolor=#FFFFFF]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

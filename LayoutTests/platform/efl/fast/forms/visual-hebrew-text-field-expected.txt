@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 275x19
+        RenderText {#text} at (0,0) size 275x17
           text run at (0,0) width 275 LTR override: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 701x37
-          RenderInline {A} at (0,0) size 426x19 [color=#0000EE]
-            RenderText {#text} at (275,0) size 426x19
+        RenderInline {I} at (0,0) size 701x35
+          RenderInline {A} at (0,0) size 426x17 [color=#0000EE]
+            RenderText {#text} at (275,0) size 426x17
               text run at (275,0) width 426 LTR override: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8076"
-          RenderText {#text} at (0,18) size 563x19
+          RenderText {#text} at (0,18) size 563x17
             text run at (0,18) width 563 LTR override: "REGRESSION: native text fields are reversed on \"visual Hebrew\" pages"
-        RenderText {#text} at (563,18) size 5x19
+        RenderText {#text} at (563,18) size 5x17
           text run at (563,18) width 5 LTR override: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
-        RenderText {#text} at (0,0) size 337x19
+        RenderText {#text} at (0,0) size 337x17
           text run at (0,0) width 337 LTR override: "Text in the field should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,104) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-layer at (14,120) size 186x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 186x18
-    RenderText {#text} at (0,0) size 43x19
+layer at (14,120) size 185x18
+  RenderBlock {DIV} at (4,6) size 185x18
+    RenderText {#text} at (0,0) size 43x17
       text run at (0,0) width 43 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"

@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
 layer at (8,200) size 792x154
   RenderBlock (positioned) {DIV} at (8,200) size 792x154
     RenderBlock {P} at (0,16) size 792x36
-      RenderText {#text} at (0,0) size 768x37
+      RenderText {#text} at (0,0) size 768x35
         text run at (0,0) width 446: "Test for iframe flattening, with three inner frames just outside the view "
         text run at (446,0) width 322: "and of the size 200x200 px, plus one inner frame is"
         text run at (0,18) width 85: "partly visible."
     RenderBlock {P} at (0,68) size 792x36
-      RenderText {#text} at (0,0) size 731x37
+      RenderText {#text} at (0,0) size 731x35
         text run at (0,0) width 444: "This yellow, red and blue inner frames must remain offscreen, and the "
         text run at (444,0) width 287: "green inner frames should be of size 300x300"
         text run at (0,18) width 115: "(200x200 visible)."
     RenderBlock {P} at (0,120) size 792x18
-      RenderText {#text} at (0,0) size 462x19
+      RenderText {#text} at (0,0) size 462x17
         text run at (0,0) width 462: "NOTE: The test only works in the DRT or with frame flattening enabled."
 layer at (-100,-100) size 300x300 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
   RenderPartObject {IFRAME} at (-100,-100) size 300x300

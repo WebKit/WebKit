@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x34
   RenderBlock {HTML} at (0,0) size 800x34
     RenderBody {BODY} at (8,8) size 784x18
-      RenderTextControl {INPUT} at (0,13) size 102x2 [bgcolor=#FFFFFF]
+      RenderTextControl {INPUT} at (0,12) size 102x2 [bgcolor=#FFFFFF]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

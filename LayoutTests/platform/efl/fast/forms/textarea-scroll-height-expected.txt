@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (200,185) size 4x19
-        text run at (200,185) width 4: " "
-      RenderText {#text} at (204,185) size 52x19
-        text run at (204,185) width 52: "183 436"
+      RenderText {#text} at (200,186) size 4x17
+        text run at (200,186) width 4: " "
+      RenderText {#text} at (204,186) size 52x17
+        text run at (204,186) width 52: "183 436"
 layer at (8,8) size 200x200 clip at (9,9) size 183x198 scrollHeight 436
   RenderTextControl {TEXTAREA} at (0,0) size 200x200 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 179x432
-      RenderText {#text} at (0,0) size 107x415
+      RenderText {#text} at (0,0) size 107x413
         text run at (0,0) width 107: "Lots of content."
         text run at (107,0) width 0: " "
         text run at (0,18) width 107: "Lots of content."
@@ -50,4 +50,4 @@ layer at (8,8) size 200x200 clip at (9,9) size 183x198 scrollHeight 436
         text run at (0,378) width 107: "Lots of content."
         text run at (107,378) width 0: " "
         text run at (0,396) width 0: " "
-      RenderBR {BR} at (0,414) size 0x19
+      RenderBR {BR} at (0,414) size 0x17

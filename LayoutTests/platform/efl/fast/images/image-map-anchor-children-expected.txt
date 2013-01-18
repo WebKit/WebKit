@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderImage {IMG} at (0,0) size 479x150
-      RenderText {#text} at (479,135) size 4x19
-        text run at (479,135) width 4: " "
-      RenderInline {MAP} at (0,0) size 224x19
+      RenderText {#text} at (479,136) size 4x17
+        text run at (479,136) width 4: " "
+      RenderInline {MAP} at (0,0) size 224x17
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 91x19 [color=#0000EE]
-          RenderText {#text} at (0,153) size 91x19
-            text run at (0,153) width 91: "John Hancock"
-        RenderText {#text} at (91,153) size 11x19
-          text run at (91,153) width 11: " | "
-        RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
-          RenderText {#text} at (102,153) size 39x19
-            text run at (102,153) width 39: "Nokia"
-        RenderText {#text} at (141,153) size 11x19
-          text run at (141,153) width 11: " | "
-        RenderInline {A} at (0,0) size 72x19 [color=#0000EE]
-          RenderText {#text} at (152,153) size 72x19
-            text run at (152,153) width 72: "Downtown"
+        RenderInline {A} at (0,0) size 91x17 [color=#0000EE]
+          RenderText {#text} at (0,154) size 91x17
+            text run at (0,154) width 91: "John Hancock"
+        RenderText {#text} at (91,154) size 11x17
+          text run at (91,154) width 11: " | "
+        RenderInline {A} at (0,0) size 39x17 [color=#0000EE]
+          RenderText {#text} at (102,154) size 39x17
+            text run at (102,154) width 39: "Nokia"
+        RenderText {#text} at (141,154) size 11x17
+          text run at (141,154) width 11: " | "
+        RenderInline {A} at (0,0) size 72x17 [color=#0000EE]
+          RenderText {#text} at (152,154) size 72x17
+            text run at (152,154) width 72: "Downtown"
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

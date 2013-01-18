@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {B} at (0,0) size 36x19
-          RenderText {#text} at (0,0) size 36x19
+        RenderInline {B} at (0,0) size 36x17
+          RenderText {#text} at (0,0) size 36x17
             text run at (0,0) width 36: "Bold "
-        RenderText {#text} at (36,0) size 56x19
+        RenderText {#text} at (36,0) size 56x17
           text run at (36,0) width 56: "Not bold"
       RenderBlock (anonymous) at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 90x19
+        RenderText {#text} at (0,0) size 90x17
           text run at (0,0) width 90: "Also not bold."

@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 113x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 113x17
           text run at (0,0) width 113: "This tests that the "
         RenderInline {CODE} at (0,0) size 72x15
-          RenderText {#text} at (113,4) size 72x15
-            text run at (113,4) width 72: "word-wrap"
-        RenderText {#text} at (185,0) size 299x19
+          RenderText {#text} at (113,3) size 72x15
+            text run at (113,3) width 72: "word-wrap"
+        RenderText {#text} at (185,0) size 299x17
           text run at (185,0) width 299: " property is ignored for single-line text controls."
-      RenderBlock (anonymous) at (0,35) size 784x48
-        RenderTextControl {INPUT} at (2,0) size 193x48 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (0,34) size 784x48
+        RenderTextControl {INPUT} at (2,0) size 192x48 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-layer at (14,59) size 186x18 scrollWidth 342 scrollHeight 19
-  RenderBlock {DIV} at (4,16) size 186x18
-    RenderText {#text} at (0,0) size 341x19
+layer at (14,58) size 185x18 scrollWidth 342
+  RenderBlock {DIV} at (4,16) size 185x18
+    RenderText {#text} at (0,0) size 341x17
       text run at (0,0) width 341: "This sentence should not wrap into the next line."

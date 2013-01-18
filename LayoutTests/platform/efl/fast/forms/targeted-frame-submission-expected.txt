@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,0) size 784x44
         RenderButton {INPUT} at (2,2) size 65x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (17,10) size 31x18
-            RenderText at (0,0) size 31x19
+            RenderText at (0,0) size 31x17
               text run at (0,0) width 31: "form"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,60) size 784x36
-        RenderText {#text} at (0,0) size 765x37
+        RenderText {#text} at (0,0) size 765x35
           text run at (0,0) width 288: "This tests Targetted frame submission works. "
           text run at (288,0) width 477: "If the test is successful, the text \"SUCCESS\" should be shown in the iframe"
           text run at (0,18) width 43: "below."

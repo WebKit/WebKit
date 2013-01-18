@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 784x180 clip at (8,8) size 769x165
-  RenderBlock {DIV} at (0,0) size 784x180
+layer at (8,8) size 784x164 clip at (8,8) size 769x149
+  RenderBlock {DIV} at (0,0) size 784x164
     RenderText {#text} at (0,0) size 0x0
-layer at (10,10) size 67x161 clip at (11,11) size 65x159
-  RenderListBox {SELECT} at (2,2) size 67x161 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+layer at (10,10) size 67x145 clip at (11,11) size 65x143
+  RenderListBox {SELECT} at (2,2) size 67x145 [bgcolor=#FFFFFF] [border: (1px inset #808080)]

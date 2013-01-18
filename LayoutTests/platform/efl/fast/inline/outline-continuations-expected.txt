@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x573
       RenderBlock (anonymous) at (0,0) size 784x22
-        RenderInline {BIG} at (0,0) size 50x22
+        RenderInline {BIG} at (0,0) size 50x21
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {PARSERERROR} at (0,0) size 50x22
-            RenderText {#text} at (0,0) size 50x22
+          RenderInline {PARSERERROR} at (0,0) size 50x21
+            RenderText {#text} at (0,0) size 50x21
               text run at (0,0) width 50: "TEXT"
-      RenderBlock (anonymous) at (0,41) size 784x0
+      RenderBlock (anonymous) at (0,41) size 784x1
         RenderBlock {P} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,41) size 784x0
+      RenderBlock (anonymous) at (0,41) size 784x1
         RenderInline {BIG} at (0,0) size 0x0
           RenderInline {PARSERERROR} at (0,0) size 0x0

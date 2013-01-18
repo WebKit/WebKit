@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (0,0) size 282x32 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 226x12
-          RenderText at (0,0) size 226x13
+          RenderText at (0,0) size 226x11
             text run at (0,0) width 226: "No overflow should be allowed on popup menus!"
       RenderText {#text} at (0,0) size 0x0

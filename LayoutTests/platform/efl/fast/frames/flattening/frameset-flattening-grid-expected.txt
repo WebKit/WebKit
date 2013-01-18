@@ -10,10 +10,10 @@ layer at (0,0) size 785x800
           RenderBlock {HTML} at (0,0) size 600x200
             RenderBody {BODY} at (8,8) size 584x176 [bgcolor=#008000]
               RenderBlock {P} at (0,0) size 584x18
-                RenderText {#text} at (0,0) size 445x19
+                RenderText {#text} at (0,0) size 445x17
                   text run at (0,0) width 445: "Test for frameset flattening. The flattening only works inside the DRT."
               RenderBlock {P} at (0,34) size 584x18
-                RenderText {#text} at (0,0) size 529x19
+                RenderText {#text} at (0,0) size 529x17
                   text run at (0,0) width 529: "This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 300x200
           RenderBlock (positioned) {DIV} at (0,0) size 300x200
@@ -24,7 +24,7 @@ layer at (0,0) size 785x800
           RenderBlock {HTML} at (0,0) size 600x200
             RenderBody {BODY} at (8,8) size 584x176 [bgcolor=#FF0000]
               RenderBlock {P} at (0,0) size 584x18
-                RenderText {#text} at (0,0) size 529x19
+                RenderText {#text} at (0,0) size 529x17
                   text run at (0,0) width 529: "This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 300x50
           RenderBlock (positioned) {DIV} at (0,0) size 300x50
@@ -35,7 +35,7 @@ layer at (0,0) size 785x800
           RenderBlock {HTML} at (0,0) size 600x600
             RenderBody {BODY} at (8,8) size 584x576 [bgcolor=#FFFF00]
               RenderBlock {P} at (0,0) size 584x18
-                RenderText {#text} at (0,0) size 529x19
+                RenderText {#text} at (0,0) size 529x17
                   text run at (0,0) width 529: "This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 600x600
           RenderBlock (positioned) {DIV} at (0,0) size 600x600
@@ -46,7 +46,7 @@ layer at (0,0) size 785x800
           RenderBlock {HTML} at (0,0) size 600x600
             RenderBody {BODY} at (8,8) size 584x576 [bgcolor=#0000FF]
               RenderBlock {P} at (0,0) size 584x18
-                RenderText {#text} at (0,0) size 529x19
+                RenderText {#text} at (0,0) size 529x17
                   text run at (0,0) width 529: "This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 600x600
           RenderBlock (positioned) {DIV} at (0,0) size 600x600

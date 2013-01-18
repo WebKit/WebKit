@@ -6,28 +6,28 @@ layer at (0,0) size 800x600
 layer at (18,10) size 764x102
   RenderBlock (relative positioned) {DIV} at (10,0) size 764x102 [border: (1px solid #000000)]
     RenderText {#text} at (0,0) size 0x0
-layer at (18,10) size 34x37
-  RenderInline (relative positioned) {SPAN} at (0,0) size 34x37 [bgcolor=#808080]
-    RenderBR {BR} at (1,1) size 0x19
-    RenderText {#text} at (1,19) size 34x19
+layer at (18,10) size 34x35
+  RenderInline (relative positioned) {SPAN} at (0,0) size 34x35 [bgcolor=#808080]
+    RenderBR {BR} at (1,1) size 0x17
+    RenderText {#text} at (1,19) size 34x17
       text run at (1,19) width 34: "again"
 layer at (18,122) size 764x102
   RenderBlock (relative positioned) {DIV} at (10,112) size 764x102 [border: (1px solid #000000)]
     RenderText {#text} at (0,0) size 0x0
-layer at (19,123) size 50x19
-  RenderImage {IMG} at (1,1) size 50x19 [bgcolor=#0000FF]
+layer at (19,123) size 50x17
+  RenderImage {IMG} at (1,1) size 50x17 [bgcolor=#0000FF]
 layer at (18,234) size 764x102
   RenderBlock (relative positioned) {DIV} at (10,224) size 764x102 [border: (1px solid #000000)]
     RenderText {#text} at (0,0) size 0x0
-layer at (19,235) size 50x19
-  RenderImage {IMG} at (1,1) size 50x19 [bgcolor=#0000FF]
+layer at (19,235) size 50x17
+  RenderImage {IMG} at (1,1) size 50x17 [bgcolor=#0000FF]
 layer at (18,346) size 764x102
   RenderBlock (relative positioned) {DIV} at (10,336) size 764x102 [border: (1px solid #000000)]
     RenderText {#text} at (0,0) size 0x0
-layer at (19,347) size 50x37
-  RenderImage {IMG} at (1,1) size 50x37 [bgcolor=#0000FF]
+layer at (19,347) size 50x35
+  RenderImage {IMG} at (1,1) size 50x35 [bgcolor=#0000FF]
 layer at (18,458) size 764x102
   RenderBlock (relative positioned) {DIV} at (10,448) size 764x102 [border: (1px solid #000000)]
     RenderText {#text} at (0,0) size 0x0
-layer at (19,459) size 50x73
-  RenderImage {IMG} at (1,1) size 50x73 [bgcolor=#0000FF]
+layer at (19,459) size 50x71
+  RenderImage {IMG} at (1,1) size 50x71 [bgcolor=#0000FF]
