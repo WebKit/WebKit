@@ -1,3 +1,18 @@
+2013-01-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        VCSUtils.pm: Stop calling git repo-config.
+        https://bugs.webkit.org/show_bug.cgi?id=107294
+
+        Reviewed by Dirk Pranke.
+
+        The `repo-config' git command has been deprecated since early
+        2008, and recent versions have started warning it is deprecated.
+
+        Basically revert r27870 and use the `config' command all the time.
+
+        * Scripts/VCSUtils.pm:
+        (gitConfig):
+
 2013-01-18  Levi Weintraub  <leviw@chromium.org>
 
         LayoutUnit should round half consistently, not away from zero

@@ -1815,9 +1815,6 @@ sub gitConfig($)
     my ($config) = @_;
 
     my $result = `git config $config`;
-    if (($? >> 8)) {
-        $result = `git repo-config $config`;
-    }
     chomp $result;
     return $result;
 }
