@@ -165,7 +165,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayR
 
     RetainPtr<CGContextRef> context;
     if (windowSnapshot)
-        context.adoptCF(createCGContextFromImage(windowSnapshot.get(), FlipGraphicsContext));
+        context.adoptCF(createCGContextFromImage(windowSnapshot.get(), DontFlipGraphicsContext));
     else
         context.adoptCF(createCGContextFromImage(image));
 
