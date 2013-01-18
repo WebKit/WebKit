@@ -542,7 +542,7 @@ bool BackingStorePrivate::shouldSuppressNonVisibleRegularRenderJobs() const
 
 bool BackingStorePrivate::shouldPerformRenderJobs() const
 {
-    return (m_webPage->isVisible() || shouldDirectRenderingToWindow()) && !m_suspendRenderJobs && !m_suspendBackingStoreUpdates && !m_renderQueue->isEmpty(!m_suspendRegularRenderJobs);
+    return (isActive() || shouldDirectRenderingToWindow()) && !m_suspendRenderJobs && !m_suspendBackingStoreUpdates && !m_renderQueue->isEmpty(!m_suspendRegularRenderJobs);
 }
 
 bool BackingStorePrivate::shouldPerformRegularRenderJobs() const
