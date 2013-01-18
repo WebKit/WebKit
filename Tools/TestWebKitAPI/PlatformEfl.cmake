@@ -64,6 +64,7 @@ set(test_webkit2_api_BINARIES
     GetInjectedBundleInitializationUserDataCallback
     HitTestResultNodeHandle
     InjectedBundleBasic
+    InjectedBundleFrameHitTest
     InjectedBundleInitializationUserDataCallbackWins
     LoadAlternateHTMLStringWithNonDirectoryURL
     LoadCanceledNoServerRedirectCallback

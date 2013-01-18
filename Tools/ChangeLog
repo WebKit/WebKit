@@ -1,3 +1,16 @@
+2013-01-18  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Enable API test InjectedBundleFrameHitTest on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=107264
+
+        Reviewed by Laszlo Gombos.
+
+        Enable API test InjectedBundleFrameHitTest for hit-testing,
+        since it is now passing on both Debug and Release builds.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2013-01-18  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Implement TestRunner::addUserScript
