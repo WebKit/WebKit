@@ -1,3 +1,15 @@
+2013-01-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Weak GC maps should be easier to use
+        https://bugs.webkit.org/show_bug.cgi?id=107312
+
+        Reviewed by Ryosuke Niwa.
+
+        Build fix for linux platforms after r140194.
+
+        * runtime/WeakGCMap.h:
+        (WeakGCMap):
+
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
         Harden ArithDiv of integers fix-up by inserting Int32ToDouble node directly

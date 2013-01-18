@@ -43,10 +43,10 @@ class WeakGCMap : public HashMap<KeyArg, Weak<RawMappedArg>, HashArg, KeyTraitsA
     typedef typename MappedTraits::PassInType MappedPassInType;
 
 public:
-    using typename Base::KeyType;
-    using typename Base::AddResult;
-    using typename Base::iterator;
-    using typename Base::const_iterator;
+    typedef typename Base::KeyType KeyType;
+    typedef typename Base::AddResult AddResult;
+    typedef typename Base::iterator iterator;
+    typedef typename Base::const_iterator const_iterator;
     using Base::begin;
     using Base::end;
     using Base::size;
