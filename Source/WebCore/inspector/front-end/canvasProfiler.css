@@ -64,50 +64,12 @@
     margin: -16px 0 0 -16px;
 }
 
-.canvas-replay-controls {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 26px;
-    border: 1px solid #aaa;
-    background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
-}
-
 .canvas-replay-log {
     position: absolute;
     top: 24px;
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-.canvas-control-button {
-    display: inline-block;
-    position: relative;
-    width: 32px;
-    height: 24px;
-    padding: 0;
-    margin-left: -1px;
-    vertical-align: top;
-    background-color: transparent;
-    border: 0 transparent none;
-    border-left: 1px solid rgb(202, 202, 202);
-    border-right: 1px solid rgb(202, 202, 202);
-}
-
-.canvas-control-button:active {
-    background-color: rgb(163,163,163);
-    border-left: 1px solid rgb(120, 120, 120);
-    border-right: 1px solid rgb(120, 120, 120);
-}
-
-.canvas-control-button:disabled {
-    opacity: 0.5;
-}
-
-.canvas-control-button img {
-    margin-top: 1px;
 }
 
 .canvas-replay-first-step img {

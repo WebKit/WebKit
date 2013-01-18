@@ -694,6 +694,10 @@ button.status-bar-item {
     margin: 0 -1px;
 }
 
+.status-bar button.status-bar-item img {
+    margin-top: 1px;
+}
+
 .status-bar select.status-bar-item:active,
 .status-bar button.status-bar-item:active {
     background-color: rgb(163,163,163);
