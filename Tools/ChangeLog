@@ -1,3 +1,14 @@
+2013-01-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Implement TestRunner::addUserScript
+        https://bugs.webkit.org/show_bug.cgi?id=107275
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::addUserScript): Implement method using
+        DumpRenderTreeSupportGtk::addUserScript.
+
 2013-01-18  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed, add my secondary email address to the list.

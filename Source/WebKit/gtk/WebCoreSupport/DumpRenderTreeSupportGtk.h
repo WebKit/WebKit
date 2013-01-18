@@ -60,6 +60,7 @@ public:
     static GSList* getFrameChildren(WebKitWebFrame*);
     static WTF::CString getInnerText(WebKitWebFrame*);
     static WTF::CString dumpRenderTree(WebKitWebFrame*);
+    static void addUserScript(WebKitWebFrame*, const char*, bool, bool);
     static void addUserStyleSheet(WebKitWebFrame*, const char* sourceCode, bool allFrames);
     static guint getPendingUnloadEventCount(WebKitWebFrame*);
     static bool pauseAnimation(WebKitWebFrame*, const char* name, double time, const char* element);

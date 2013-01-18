@@ -552,7 +552,6 @@ Bug(GTK) http/tests/xmlhttprequest/access-control-basic-whitelist-request-header
 Bug(GTK) http/tests/xmlhttprequest/origin-exact-matching.html [ Pass ]
 Bug(GTK) plugins/form-value.html [ Pass ]
 Bug(GTK) plugins/npruntime/delete-plugin-within-getProperty.html [ Pass ]
-Bug(GTK) plugins/plugin-document-load-prevented-userscript.html [ Pass ]
 Bug(GTK) fullscreen/full-screen-keyboard-enabled.html [ Pass ]
 
 # Will need rebaselining after bug 98527 fixed

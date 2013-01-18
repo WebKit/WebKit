@@ -1042,9 +1042,6 @@ Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.
 webkit.org/b/44316 platform/gtk/accessibility/object-attributes.html [ Failure ]
 webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
 
-# LayoutTestController::addUserScript not implemented for gtk
-Bug(GTK) plugins/plugin-document-load-prevented-userscript.html [ Failure ]
-
 # The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in gtk port since gtk port can't
 # not get user gesture in frameload callbacks.
