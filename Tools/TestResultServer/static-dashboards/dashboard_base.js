@@ -196,7 +196,6 @@ function handleValidHashParameterWrapper(key, value)
 }
 
 var g_defaultCrossDashboardStateValues = {
-    group: '@ToT - chromium.org',
     showAllRuns: false,
     testType: 'layout-tests',
     useTestData: false,
@@ -297,8 +296,6 @@ function parseCrossDashboardParameters()
         parseParameter(parameters, parameterName);
 
     fillMissingValues(g_crossDashboardState, g_defaultCrossDashboardStateValues);
-    if (currentBuilderGroup() === undefined)
-        g_crossDashboardState.group = g_defaultCrossDashboardStateValues.group;
 }
 
 function parseDashboardSpecificParameters()
@@ -412,9 +409,14 @@ function currentBuilderGroupCategory()
     }
 }
 
+function currentBuilderGroupName()
+{
+    return g_crossDashboardState.group || Object.keys(currentBuilderGroupCategory())[0];
+}
+
 function currentBuilderGroup()
 {
-    return currentBuilderGroupCategory()[g_crossDashboardState.group]
+    return currentBuilderGroupCategory()[currentBuilderGroupName()];
 }
 
 function currentBuilders()

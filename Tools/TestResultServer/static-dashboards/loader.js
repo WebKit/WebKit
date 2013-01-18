@@ -94,7 +94,7 @@ loader.Loader.prototype = {
     },
     _loadBuildersList: function()
     {
-        loadBuildersList(g_crossDashboardState.group, g_crossDashboardState.testType);
+        loadBuildersList(currentBuilderGroupName(), g_crossDashboardState.testType);
         this._loadNext();
     },
     _loadResultsFiles: function()

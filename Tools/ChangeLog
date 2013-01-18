@@ -1,3 +1,26 @@
+2013-01-17  Julie Parent  <jparent@chromium.org>
+
+        Flakiness dashboard assumes there must be ToT tests
+        https://bugs.webkit.org/show_bug.cgi?id=107155
+
+        Remove group as a default parameter, since we can't actually know
+        the name of a group initially.  Instead, introduces 
+        currentBuilderGroupName which returns the current builder group
+        if it has been explicitly set, or picks the first one available
+        as a default. Allows us to remove some extra code tracking this
+        stuff as well.
+        
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseCrossDashboardParameters):
+        (currentBuilderGroupName):
+        (currentBuilderGroup):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (platformAndBuildType):
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+
 2013-01-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove NodeListsNodeData when it's no longer needed
