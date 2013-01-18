@@ -22,8 +22,8 @@ Flow Threads
     layer at (54,56) size 293x245 clip at (55,57) size 291x243 scrollWidth 500
       RenderBlock {DIV} at (48,51) size 294x245 [border: (1px solid #008000)]
         RenderBlock {DIV} at (1,1) size 500x20
-          RenderText {#text} at (-13,0) size 270x19
-            text run at (-13,0) width 270: "Clipped line of text that should not be visible."
+          RenderText {#text} at (-12,0) size 270x19
+            text run at (-12,0) width 270: "Clipped line of text that should not be visible."
         RenderBlock {P} at (1,44) size 291x80
           RenderText {#text} at (0,0) size 291x79
             text run at (0,0) width 291: "These lines will not spill out of the regions."
@@ -37,8 +37,8 @@ Flow Threads
             text run at (0,40) width 291: "These lines will not spill out of the regions."
             text run at (0,60) width 252: "These lines will not spill out of the regions."
         RenderBlock {DIV} at (1,224) size 500x20
-          RenderText {#text} at (-23,0) size 270x19
-            text run at (-23,0) width 270: "Clipped line of text that should not be visible."
+          RenderText {#text} at (-22,0) size 270x19
+            text run at (-22,0) width 270: "Clipped line of text that should not be visible."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1
     RenderRegion {DIV} #region2

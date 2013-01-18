@@ -3664,8 +3664,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         ClipRectsContext clipRectsContext(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize, localPaintFlags & PaintLayerPaintingOverflowContents ? IgnoreOverflowClip : RespectOverflowClip);
         calculateRects(clipRectsContext, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, &offsetFromRoot);
         paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation);
-        if (this == localPaintingInfo.rootLayer)
-            paintOffset = roundedIntPoint(paintOffset);
     }
 
     bool forceBlackText = localPaintingInfo.paintBehavior & PaintBehaviorForceBlackText;

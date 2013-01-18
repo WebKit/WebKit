@@ -228,11 +228,11 @@ public:
 #if ENABLE(SUBPIXEL_LAYOUT) && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         if (m_value > 0)
             return saturatedAddition(rawValue(), kEffectiveFixedPointDenominator / 2) / kEffectiveFixedPointDenominator;
-        return saturatedSubtraction(rawValue(), kEffectiveFixedPointDenominator / 2) / kEffectiveFixedPointDenominator;
+        return saturatedSubtraction(rawValue(), (kEffectiveFixedPointDenominator / 2) - 1) / kEffectiveFixedPointDenominator;
 #elif ENABLE(SUBPIXEL_LAYOUT)
         if (m_value > 0)
             return (m_value + (kEffectiveFixedPointDenominator / 2)) / kEffectiveFixedPointDenominator;
-        return (m_value - (kEffectiveFixedPointDenominator / 2)) / kEffectiveFixedPointDenominator;
+        return (m_value - ((kEffectiveFixedPointDenominator / 2) - 1)) / kEffectiveFixedPointDenominator;
 #else
         return m_value;
 #endif

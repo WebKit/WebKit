@@ -1,3 +1,13 @@
+2013-01-18  Levi Weintraub  <leviw@chromium.org>
+
+        LayoutUnit should round half consistently, not away from zero
+        https://bugs.webkit.org/show_bug.cgi?id=107208
+
+        Reviewed by Eric Seidel.
+
+        * TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp: Updating to reflect and
+        cover this change in rounding behavior.
+
 2013-01-18  Tim Horton  <timothy_horton@apple.com>
 
         [mac] DumpRenderTree/WebKitTestRunner should not participate in Exposé/Mission Control

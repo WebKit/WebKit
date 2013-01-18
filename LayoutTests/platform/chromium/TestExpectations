@@ -3910,6 +3910,11 @@ webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 # Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
 webkit.org/b/11645 [ Mac Android ] fast/table/025.html [ Failure ]
 
+# Rebaseline required after https://webkit.org/b/107208
+Bug(leviw) [ Mac Android Win ] fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
+Bug(leviw) [ Mac Android Win ] fast/regions/overflow-size-change-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
+Bug(leviw) [ Mac Android Win ] fast/regions/overflow-size-change-with-stacking-context.html [ Pass Failure ImageOnlyFailure ]
+
 # Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=101177
 webkit.org/b/101177 svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html [ ImageOnlyFailure Pass ]
 webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure Pass ]

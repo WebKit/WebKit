@@ -1279,3 +1279,9 @@ webkit.org/b/103955 fast/repaint/4776765.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
+
+# Rebaseline required after https://webkit.org/b/107208
+webkit.org/b/107208 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/107208 fast/regions/overflow-size-change-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/107208 fast/regions/overflow-size-change-with-stacking-context.html [ Pass Failure ImageOnlyFailure ]
+
