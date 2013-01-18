@@ -422,7 +422,7 @@ WebInspector.NetworkLogView.prototype = {
             var request = this._requests[i];
             var requestTransferSize = (request.cached || !request.transferSize) ? 0 : request.transferSize;
             transferSize += requestTransferSize;
-            if ((!this._hiddenCategories.all || !this._hiddenCategories[request.type.name()]) && !this._filteredOutRequests.get(request)) {
+            if ((!this._hiddenCategories["all"] || !this._hiddenCategories[request.type.name()]) && !this._filteredOutRequests.get(request)) {
                 selectedRequestsNumber++;
                 selectedTransferSize += requestTransferSize;
             }
@@ -1881,6 +1881,8 @@ WebInspector.NetworkTransferDurationCalculator.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.DataGridNode}
+ * @param {!WebInspector.NetworkLogView} parentView
+ * @param {!WebInspector.NetworkRequest} request
  */
 WebInspector.NetworkDataGridNode = function(parentView, request)
 {
@@ -1911,7 +1913,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         if (this._parentView._filteredOutRequests.get(this._request))
             return true;
-        if (!this._parentView._hiddenCategories.all)
+        if (!this._parentView._hiddenCategories["all"])
             return false;
         return this._request.type.name() in this._parentView._hiddenCategories;
     },
@@ -2015,9 +2017,18 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._graphElement.addStyleClass("resource-cached");
 
         this._element.addStyleClass("network-item");
-        if (!this._element.hasStyleClass("network-type-" + this._request.type.name())) {
-            this._element.removeMatchingStyleClasses("network-type-\\w+");
-            this._element.addStyleClass("network-type-" + this._request.type.name());
+        this._updateElementStyleClasses(this._element);
+    },
+
+    /**
+     * @param {!Element} element
+     */
+    _updateElementStyleClasses: function(element)
+    {
+        var typeClassName = "network-type-" + this._request.type.name();
+        if (!element.hasStyleClass(typeClassName)) {
+            element.removeMatchingStyleClasses("network-type-\\w+");
+            element.addStyleClass(typeClassName);
         }
     },
 
@@ -2065,7 +2076,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this.element.removeStyleClass("network-error-row");
 
         if (this._request.statusCode) {
-            this._statusCell.appendChild(document.createTextNode(this._request.statusCode));
+            this._statusCell.appendChild(document.createTextNode("" + this._request.statusCode));
             this._appendSubtitle(this._statusCell, this._request.statusText);
             this._statusCell.title = this._request.statusCode + " " + this._request.statusText;
             if (this._request.statusCode >= 400)
@@ -2109,13 +2120,13 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._initiatorCell.removeStyleClass("network-dim-cell");
         this._initiatorCell.removeStyleClass("network-script-initiated");
         delete this._initiatorCell.request;
-        this._initiatorCell.title = null;
+        this._initiatorCell.title = "";
 
         var initiator = this._request.initiator;
         if ((initiator && initiator.type !== "other") || this._request.redirectSource) {
             this._initiatorCell.removeChildren();
-            if (this._request.redirectSource) {
-                var redirectSource = this._request.redirectSource;
+            var redirectSource = this._request.redirectSource;
+            if (redirectSource) {
                 this._initiatorCell.title = redirectSource.url;
                 this._initiatorCell.appendChild(WebInspector.linkifyRequestAsNode(redirectSource));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Redirect"));
@@ -2128,7 +2139,7 @@ WebInspector.NetworkDataGridNode.prototype = {
                     return;
                 }
                 var urlElement = this._parentView._linkifier.linkifyLocation(topFrame.url, topFrame.lineNumber - 1, 0);
-                urlElement.title = null;
+                urlElement.title = "";
                 this._initiatorCell.appendChild(urlElement);
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
                 this._initiatorCell.addStyleClass("network-script-initiated");
@@ -2184,11 +2195,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._percentages = percentages;
 
         this._barAreaElement.removeStyleClass("hidden");
-
-        if (!this._graphElement.hasStyleClass("network-type-" + this._request.type.name())) {
-            this._graphElement.removeMatchingStyleClasses("network-type-\\w+");
-            this._graphElement.addStyleClass("network-type-" + this._request.type.name());
-        }
+        this._updateElementStyleClasses(this._graphElement);
 
         this._barLeftElement.style.setProperty("left", percentages.start + "%");
         this._barRightElement.style.setProperty("right", (100 - percentages.end) + "%");

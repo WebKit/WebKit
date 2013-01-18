@@ -432,7 +432,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @return {WebInspector.Resource|undefined}
+     * @return {?WebInspector.NetworkRequest}
      */
     get redirectSource()
     {
