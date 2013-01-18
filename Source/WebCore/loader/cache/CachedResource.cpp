@@ -497,8 +497,8 @@ bool CachedResource::addClientToSet(CachedResourceClient* client)
     if (!hasClients() && inCache())
         memoryCache()->addToLiveResourcesSize(this);
 
-    if ((m_type == RawResource || m_type == MainResource) && !m_response.isNull() && !m_proxyResource) {
-        // Certain resources (especially XHRs and main resources) do crazy things if an asynchronous load returns
+    if (m_type == RawResource && !m_response.isNull() && !m_proxyResource) {
+        // Certain resources (especially XHRs) do crazy things if an asynchronous load returns
         // synchronously (e.g., scripts may not have set all the state they need to handle the load).
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
         // we schedule the callbacks and ensure we never finish synchronously.
