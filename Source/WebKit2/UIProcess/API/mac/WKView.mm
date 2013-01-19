@@ -2857,7 +2857,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize
 {
-    _data->_intrinsicContentSize = intrinsicContentSize;
+    // If the intrinsic content size is the same as the minimum layout width, the content flowed to fit,
+    // so we can report that that dimension is flexible. If not, we need to report our greater intrinsic width
+    // so that autolayout will know to provide space for us.
+
+    NSSize intrinsicContentSizeAcknowledgingFlexibleWidth = intrinsicContentSize;
+    if (intrinsicContentSize.width <= _data->_page->minimumLayoutWidth())
+        intrinsicContentSizeAcknowledgingFlexibleWidth.width = NSViewNoInstrinsicMetric;
+
+    _data->_intrinsicContentSize = intrinsicContentSizeAcknowledgingFlexibleWidth;
     [self invalidateIntrinsicContentSize];
 }
 

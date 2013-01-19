@@ -1,3 +1,18 @@
+2013-01-18  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Intrinsic content size should report a flexible width if the content is not wider than the minimum layout width
+        https://bugs.webkit.org/show_bug.cgi?id=107334
+        <rdar://problem/12960009>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setIntrinsicContentSize:]): If the content is laid-out at or below the minimum layout width, it's flexible; otherwise, we need to inform autolayout that we require more space via our intrinsic content size.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Allow auto-sizing to expand its width beyond the minimum if needed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setMinimumLayoutWidth): Allow auto-sizing to expand its width beyond the minimum if needed.
+
 2013-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13042826> REGRESSION (r139985): Full Screen Youtube loses keyboard and mouse control

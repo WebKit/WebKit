@@ -3788,8 +3788,10 @@ void WebPage::setMinimumLayoutWidth(double minimumLayoutWidth)
 
     m_minimumLayoutWidth = minimumLayoutWidth;
 
+    int maximumSize = std::numeric_limits<int>::max();
+
     if (minimumLayoutWidth > 0)
-        corePage()->mainFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(minimumLayoutWidth, INT_MAX));
+        corePage()->mainFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(maximumSize, maximumSize));
     else
         corePage()->mainFrame()->view()->enableAutoSizeMode(false, IntSize(), IntSize());
 }
