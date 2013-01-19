@@ -94,7 +94,7 @@ sub getApacheVersion
 {
     my $httpdPath = getHTTPDPath();
     my $version = `$httpdPath -v`;
-    $version =~ s/.*Server version: Apache\/(\d+\.\d+).*/\1/s;
+    $version =~ s/.*Server version: Apache\/(\d+\.\d+).*/$1/s;
     return $version;
 }
 

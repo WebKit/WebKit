@@ -1,3 +1,13 @@
+2013-01-18  Dan Winship  <danw@gnome.org>
+
+        REGRESSION (r139071): run-webkit-httpd complains at launch
+        https://bugs.webkit.org/show_bug.cgi?id=107310
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitperl/httpd.pm:
+        (getApacheVersion): use preferred perl syntax
+
 2013-01-18  Julie Parent  <jparent@chromium.org>
 
         Add back 'group' as a default cross dashboard parameter, but with null as its value.
