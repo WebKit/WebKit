@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 346x39 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 346x18
-          RenderText {#text} at (110,0) size 126x19
+          RenderText {#text} at (110,0) size 126x17
             text run at (110,0) width 126: "Complete Price List"
         RenderTableSection {TBODY} at (1,19) size 344x19
           RenderTableRow {TR} at (0,0) size 344x19

@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                                 RenderBlock {FORM} at (1,1) size 192x44
                                   RenderButton {INPUT} at (2,2) size 188x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                                     RenderBlock (anonymous) at (17,10) size 154x18
-                                      RenderText at (0,0) size 154x19
+                                      RenderText at (0,0) size 154x17
                                         text run at (0,0) width 154: "ApplyForThisPosition"
                                   RenderText {#text} at (0,0) size 0x0
               RenderBlock (anonymous) at (1,73) size 204x0

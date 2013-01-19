@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,1) size 7x15 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 7x15
             RenderTableCell {TD} at (7,0) size 39x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 39x19
+              RenderText {#text} at (0,0) size 39x17
                 text run at (0,0) width 39: "Home"
             RenderTableCell {TD} at (46,1) size 6x15 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 6x15

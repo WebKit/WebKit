@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 71x24
             RenderTableRow {TR} at (0,2) size 71x20
               RenderTableCell {TD} at (2,2) size 28x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 26x19
+                RenderText {#text} at (1,1) size 26x17
                   text run at (1,1) width 26: "Left"
               RenderTableCell {TD} at (32,2) size 37x20 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 35x19
+                RenderText {#text} at (1,1) size 35x17
                   text run at (1,1) width 35: "Right"

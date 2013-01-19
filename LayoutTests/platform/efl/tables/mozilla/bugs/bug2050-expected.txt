@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 318x19
+        RenderText {#text} at (0,0) size 318x17
           text run at (0,0) width 318: "If the text is too low, then it is probably Bug 6920."
         RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,18) size 271x62 [bgcolor=#FFCC00] [border: (1px outset #808080)]
@@ -17,11 +17,11 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (0,0) size 0x0
                 RenderBlock (anonymous) at (0,0) size 261x18
                   RenderBlock {DT} at (0,0) size 261x18
-                    RenderText {#text} at (0,0) size 25x19
+                    RenderText {#text} at (0,0) size 25x17
                       text run at (0,0) width 25: "Baz"
                 RenderBlock (anonymous) at (0,18) size 261x0
                   RenderInline {FONT} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
                 RenderBlock {DD} at (40,18) size 221x18
-                  RenderText {#text} at (0,0) size 221x19
+                  RenderText {#text} at (0,0) size 221x17
                     text run at (0,0) width 221: "foo foo foo foo foo foo foo foo foo"

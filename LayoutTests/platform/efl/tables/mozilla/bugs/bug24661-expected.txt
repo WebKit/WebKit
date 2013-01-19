@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 222x48
                   RenderTableRow {TR} at (0,0) size 222x38
                     RenderTableCell {TD} at (0,0) size 222x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 207x37
+                      RenderText {#text} at (1,1) size 207x35
                         text run at (1,1) width 207: "this doesn't show until a window"
                         text run at (1,19) width 36: "resize"
                   RenderTableRow {TR} at (0,38) size 222x10

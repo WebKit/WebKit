@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 257x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {UL} at (2,2) size 253x18
                 RenderListItem {LI} at (40,0) size 213x18
-                  RenderListMarker at (-18,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 213x19
+                  RenderListMarker at (-17,0) size 7x17: bullet
+                  RenderText {#text} at (0,0) size 213x17
                     text run at (0,0) width 213: "blah blah blah blah blah blah blah"

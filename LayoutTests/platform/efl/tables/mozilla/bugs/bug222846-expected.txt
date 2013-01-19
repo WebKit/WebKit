@@ -4,7 +4,7 @@ layer at (0,0) size 800x202
   RenderBlock {HTML} at (0,0) size 800x202
     RenderBody {BODY} at (8,8) size 784x186
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 206x19
+        RenderText {#text} at (0,0) size 206x17
           text run at (0,0) width 206: "Both tables should look identical"
       RenderTable {TABLE} at (0,18) size 200x84 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 200x37

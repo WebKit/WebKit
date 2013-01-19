@@ -8,8 +8,8 @@ layer at (0,0) size 785x1136
         RenderTableSection {TBODY} at (0,0) size 102x24
           RenderTableRow {TR} at (0,2) size 102x20
             RenderTableCell {TD} at (2,2) size 98x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 96x19
+              RenderText {#text} at (1,1) size 96x17
                 text run at (1,1) width 96: "I'm down here!"
       RenderBlock (anonymous) at (0,1102) size 769x18
-        RenderText {#text} at (0,0) size 56x19
+        RenderText {#text} at (0,0) size 56x17
           text run at (0,0) width 56: "The end."

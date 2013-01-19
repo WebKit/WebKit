@@ -20,11 +20,11 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (0,0) size 0x0
                   RenderTableRow {TR} at (0,9) size 297x78
                     RenderTableCell {TD} at (0,9) size 149x42 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 130x37
+                      RenderText {#text} at (3,3) size 130x35
                         text run at (3,3) width 130: "New WidgetMasters"
                         text run at (3,21) width 81: "every Week!"
                     RenderTableCell {TD} at (149,9) size 148x78 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 138x73
+                      RenderText {#text} at (3,3) size 138x71
                         text run at (3,3) width 115: "WidgetMaster can"
                         text run at (3,21) width 138: "build your company a"
                         text run at (3,39) width 45: "custom"
@@ -34,5 +34,5 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 24x20
                   RenderTableRow {TR} at (0,0) size 24x20
                     RenderTableCell {TD} at (0,0) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 22x19
+                      RenderText {#text} at (1,1) size 22x17
                         text run at (1,1) width 22: "cell"

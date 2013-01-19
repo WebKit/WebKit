@@ -9,7 +9,7 @@ layer at (0,0) size 800x134
             RenderTableCell {TH} at (2,27) size 38x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (42,2) size 41x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {P} at (2,18) size 37x18
-                RenderText {#text} at (0,0) size 37x19
+                RenderText {#text} at (0,0) size 37x17
                   text run at (0,0) width 37: "TWO"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -17,7 +17,7 @@ layer at (0,0) size 800x134
           RenderTableRow {TR} at (0,2) size 85x54
             RenderTableCell {TD} at (2,2) size 38x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (2,18) size 34x18
-                RenderText {#text} at (0,0) size 34x19
+                RenderText {#text} at (0,0) size 34x17
                   text run at (0,0) width 34: "ONE"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

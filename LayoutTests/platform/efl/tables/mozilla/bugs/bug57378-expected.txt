@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderTableSection {THEAD} at (1,1) size 89x26
           RenderTableRow {TR} at (0,2) size 89x22
             RenderTableCell {TH} at (2,2) size 85x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 81x19
+              RenderText {#text} at (2,2) size 81x17
                 text run at (2,2) width 81: "inside thead"
         RenderTableSection {TBODY} at (1,27) size 89x26
           RenderTableRow {TR} at (0,2) size 89x22
             RenderTableCell {TD} at (2,2) size 85x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 77x19
+              RenderText {#text} at (2,2) size 77x17
                 text run at (2,2) width 77: "inside tbody"

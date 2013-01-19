@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection (anonymous) at (0,0) size 41x18
           RenderTableRow (anonymous) at (0,0) size 41x18
             RenderTableCell {SPAN} at (0,0) size 21x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 21x19
+              RenderText {#text} at (0,0) size 21x17
                 text run at (0,0) width 21: "foo"
             RenderTableCell {SPAN} at (21,0) size 20x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 20x19
+              RenderText {#text} at (0,0) size 20x17
                 text run at (0,0) width 20: "bar"
