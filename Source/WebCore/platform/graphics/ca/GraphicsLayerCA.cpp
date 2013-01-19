@@ -1065,13 +1065,13 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
     if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged))
-        updateStructuralLayer(pageScaleFactor, positionRelativeToBase);
+        updateStructuralLayer();
 
     if (m_uncommittedChanges & GeometryChanged)
         updateGeometry(pageScaleFactor, positionRelativeToBase);
 
     if (m_uncommittedChanges & DrawsContentChanged)
-        updateLayerDrawsContent(pageScaleFactor, positionRelativeToBase);
+        updateLayerDrawsContent(pageScaleFactor);
 
     if (m_uncommittedChanges & NameChanged)
         updateLayerNames();
@@ -1123,7 +1123,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     // Updating the contents scale can cause parts of the layer to be invalidated,
     // so make sure to update the contents scale before updating the dirty rects.
     if (m_uncommittedChanges & ContentsScaleChanged)
-        updateContentsScale(pageScaleFactor, positionRelativeToBase);
+        updateContentsScale(pageScaleFactor);
 
     if (m_uncommittedChanges & VisibleRectChanged)
         updateVisibleRect(oldVisibleRect);
@@ -1237,7 +1237,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
+        swapFromOrToTiledLayer(needTiledLayer);
 
     FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : scaledSize;
     FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, usedSize);
@@ -1406,12 +1406,12 @@ void GraphicsLayerCA::updateFilters()
 }
 #endif
 
-void GraphicsLayerCA::updateStructuralLayer(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
+void GraphicsLayerCA::updateStructuralLayer()
 {
-    ensureStructuralLayer(structuralLayerPurpose(), pageScaleFactor, positionRelativeToBase);
+    ensureStructuralLayer(structuralLayerPurpose());
 }
 
-void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, float /*pageScaleFactor*/, const FloatPoint& /*positionRelativeToBase*/)
+void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 {
     const LayerChangeFlags structuralLayerChangeFlags = NameChanged
         | GeometryChanged
@@ -1505,11 +1505,11 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
     return NoStructuralLayer;
 }
 
-void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
+void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor)
 {
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
+        swapFromOrToTiledLayer(needTiledLayer);
 
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
@@ -2482,11 +2482,11 @@ static float clampedContentsScaleForScale(float scale)
     return max(minScale, min(scale, maxScale));
 }
 
-void GraphicsLayerCA::updateContentsScale(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
+void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
     if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
+        swapFromOrToTiledLayer(needTiledLayer);
 
     float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
     
@@ -2603,7 +2603,7 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
     return m_size.width() * pageScaleFactor > cMaxPixelDimension || m_size.height() * pageScaleFactor > cMaxPixelDimension;
 }
 
-void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float /*pageScaleFactor*/, const FloatPoint& /*positionRelativeToBase*/)
+void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 {
     ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTileCacheLayer);
     ASSERT(useTiledLayer != m_usingTiledLayer);
