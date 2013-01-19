@@ -1494,6 +1494,13 @@ void FrameView::removeViewportConstrainedObject(RenderObject* object)
     }
 }
 
+LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
+{
+    LayoutRect viewportRect = visibleContentRect();
+    viewportRect.setLocation(toPoint(scrollOffsetForFixedPosition()));
+    return viewportRect;
+}
+
 IntSize FrameView::scrollOffsetForFixedPosition() const
 {
     IntRect visibleContentRect = this->visibleContentRect();

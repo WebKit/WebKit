@@ -2728,9 +2728,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     ASSERT(layer->isComposited());
 
     FrameView* frameView = m_renderView->frameView();
-
-    LayoutRect viewportRect = frameView->visibleContentRect();
-    viewportRect.setLocation(toPoint(frameView->scrollOffsetForFixedPosition()));
+    LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
 
     FixedPositionViewportConstraints constraints = FixedPositionViewportConstraints();
 
@@ -2768,7 +2766,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     ASSERT(layer->isComposited());
 
     FrameView* frameView = m_renderView->frameView();
-    LayoutRect viewportRect = frameView->visibleContentRect();
+    LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
 
     StickyPositionViewportConstraints constraints = StickyPositionViewportConstraints();
 
