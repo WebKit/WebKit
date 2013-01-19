@@ -549,14 +549,4 @@ void ResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_options);
 }
 
-#if PLATFORM(MAC)
-void ResourceLoader::setIdentifier(unsigned long identifier)
-{
-    // FIXME (NetworkProcess): This is temporary to allow WebKit to directly set the identifier on a ResourceLoader.
-    // More permanently we'll want the identifier to be piped through ResourceLoader::init/start so
-    // it always has it, especially in willSendRequest.
-    m_identifier = identifier;
-}
-#endif
-
 }

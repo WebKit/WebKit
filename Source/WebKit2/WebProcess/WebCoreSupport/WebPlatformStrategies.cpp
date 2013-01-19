@@ -214,16 +214,16 @@ ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
     return scheduler;
 }
 
-void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (!WebProcess::shared().usesNetworkProcess()) {
-        LoaderStrategy::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
+        LoaderStrategy::loadResourceSynchronously(context, resourceLoadIdentifier, request, storedCredentials, error, response, data);
         return;
     }
 
     CoreIPC::DataReference dataReference;
 
-    NetworkResourceLoadParameters loadParameters(request, ResourceLoadPriorityHighest, SniffContent, storedCredentials, context->storageSession().isPrivateBrowsingSession());
+    NetworkResourceLoadParameters loadParameters(resourceLoadIdentifier, request, ResourceLoadPriorityHighest, SniffContent, storedCredentials, context->storageSession().isPrivateBrowsingSession());
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, dataReference), 0)) {
         response = ResourceResponse();
         error = internalError(request.url());

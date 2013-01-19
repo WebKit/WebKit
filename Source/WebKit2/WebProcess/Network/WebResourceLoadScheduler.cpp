@@ -89,27 +89,22 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
         startResourceLoader(resourceLoader);
         return;
     }
-    
-    ResourceLoadIdentifier identifier;
-    
-    ResourceRequest request = resourceLoader->request();
-    
-    // FIXME (NetworkProcess): When the ResourceLoader asks its FrameLoaderClient about using
-    // credential storage it passes along its identifier.
-    // But at this point it doesn't have the correct identifier yet.
-    // In practice clients we know about don't care about the identifier, but this is another reason
-    // we need to make sure ResourceLoaders get correct identifiers right off the bat.
-    StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
-    NetworkResourceLoadParameters loadParameters(request, priority, resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent, allowStoredCredentials, resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled());
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad::Reply(identifier), 0)) {
+    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ASSERT(identifier);
+    
+    ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
+    StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    bool privateBrowsingEnabled = resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled();
+
+    NetworkResourceLoadParameters loadParameters(identifier, resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled);
+    if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
         addUnschedulableLoad(resourceLoader);
         return;
     }
     
-    resourceLoader->setIdentifier(identifier);
     m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
     
     notifyDidScheduleResourceRequest(resourceLoader);

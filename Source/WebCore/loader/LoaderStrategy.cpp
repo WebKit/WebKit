@@ -38,7 +38,7 @@ ResourceLoadScheduler* LoaderStrategy::resourceLoadScheduler()
     return WebCore::resourceLoadScheduler();
 }
 
-void LoaderStrategy::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void LoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ResourceHandle::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }

@@ -43,6 +43,7 @@ namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkResourceLoader;
+class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, CoreIPC::Connection::Client {
@@ -67,7 +68,7 @@ private:
     void didReceiveNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didReceiveSyncNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     
-    void scheduleResourceLoad(const NetworkResourceLoadParameters&, ResourceLoadIdentifier&);
+    void scheduleResourceLoad(const NetworkResourceLoadParameters&);
     void performSynchronousLoad(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
@@ -84,7 +85,8 @@ private:
 
     RefPtr<CoreIPC::Connection> m_connection;
 
-    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> > m_resourceLoaders;
+    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> > m_networkResourceLoaders;
+    HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> > m_syncNetworkResourceLoaders;
 
     bool m_serialLoadingEnabled;
 };

@@ -47,10 +47,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& requestParameters, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
-    : m_requestParameters(requestParameters)
-    , m_identifier(identifier)
-    , m_connection(connection)
+NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
+    : SchedulableLoader(loadParameters, connection)
 {
     ASSERT(isMainThread());
 }
@@ -62,12 +60,12 @@ NetworkResourceLoader::~NetworkResourceLoader()
 
 CoreIPC::Connection* NetworkResourceLoader::connection() const
 {
-    return m_connection->connection();
+    return connectionToWebProcess()->connection();
 }
 
-ResourceLoadPriority NetworkResourceLoader::priority() const
+uint64_t NetworkResourceLoader::destinationID() const
 {
-    return m_requestParameters.priority();
+    return loadParameters().identifier();
 }
 
 void NetworkResourceLoader::start()
@@ -78,10 +76,10 @@ void NetworkResourceLoader::start()
     ref();
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    m_networkingContext = RemoteNetworkingContext::create(false, false, m_requestParameters.inPrivateBrowsingMode());
+    m_networkingContext = RemoteNetworkingContext::create(false, false, loadParameters().inPrivateBrowsingMode());
 
     // FIXME (NetworkProcess): Pass an actual value for defersLoading
-    m_handle = ResourceHandle::create(m_networkingContext.get(), m_requestParameters.request(), this, false /* defersLoading */, m_requestParameters.contentSniffingPolicy() == SniffContent);
+    m_handle = ResourceHandle::create(m_networkingContext.get(), loadParameters().request(), this, false /* defersLoading */, loadParameters().contentSniffingPolicy() == SniffContent);
 }
 
 static bool stopRequestsCalled = false;
@@ -130,22 +128,17 @@ void NetworkResourceLoader::stop()
     ASSERT(isMainThread());
 
     // Remove this load identifier soon so we can start more network requests.
-    NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoadIdentifier(m_identifier);
+    NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
     
-    // Explicit deref() balanced by a ref() in NetworkResourceLoader::stop()
+    // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
     // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
     deref();
-}
-
-void NetworkResourceLoader::connectionToWebProcessDidClose()
-{
-    // FIXME (NetworkProcess): Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
     // FIXME (NetworkProcess): Cache the response.
-    if (FormData* formData = m_requestParameters.request().httpBody())
+    if (FormData* formData = loadParameters().request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
     send(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
 }
@@ -171,7 +164,7 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    if (FormData* formData = m_requestParameters.request().httpBody())
+    if (FormData* formData = loadParameters().request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
     scheduleStopOnMainThread();
@@ -190,7 +183,7 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     if (!sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(request)))
         request = ResourceRequest();
 
-    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
+    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, request.url()));
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
@@ -221,7 +214,7 @@ bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)
     // When the WebProcess is handling loading a client is consulted each time this shouldUseCredentialStorage question is asked.
     // In NetworkProcess mode we ask the WebProcess client up front once and then reuse the cached answer.
 
-    return m_requestParameters.allowStoredCredentials() == AllowStoredCredentials;
+    return loadParameters().allowStoredCredentials() == AllowStoredCredentials;
 }
 
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)

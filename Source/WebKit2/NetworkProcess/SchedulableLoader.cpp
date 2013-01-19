@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#include "config.h"
+#include "SchedulableLoader.h"
 
-#if USE(PLATFORM_STRATEGIES)
+#if ENABLE(NETWORK_PROCESS)
 
-#include "ResourceHandleTypes.h"
-#include <wtf/Vector.h>
+namespace WebKit {
 
-namespace WebCore {
+SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
+    : m_networkResourceLoadParameters(parameters)
+    , m_connection(connection)
+{
+}
 
-class NetworkingContext;
-class ResourceError;
-class ResourceLoadScheduler;
-class ResourceRequest;
-class ResourceResponse;
+SchedulableLoader::~SchedulableLoader()
+{
+    ASSERT(!m_hostRecord);
+}
 
-class LoaderStrategy {
-public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
+void SchedulableLoader::connectionToWebProcessDidClose()
+{
+    m_connection = 0;
 
-    virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
+    // FIXME (NetworkProcess): Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
+}
 
-protected:
-    virtual ~LoaderStrategy()
-    {
-    }
-};
+} // namespace WebKit
 
-} // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
-
-#endif // LoaderStrategy_h
+#endif // ENABLE(NETWORK_PROCESS)

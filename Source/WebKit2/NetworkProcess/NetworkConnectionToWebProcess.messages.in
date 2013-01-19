@@ -24,11 +24,7 @@
 
 messages -> NetworkConnectionToWebProcess {
 
-    // FIXME (NetworkProcess): At least some of these synchronous messages are synchronous due to the requirement
-    // that we synchronously get an identifier for new ResourceLoaders as they are created.
-    // There's possible ResourceLoader identifier refactoring that can remove that requirement.
-    // We might also have the NetworkProcess divvy up identifiers in blocks to each WebProcess beforehand.
-    ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (uint64_t resourceLoadIdentifier)
+    ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, CoreIPC::DataReference data) Delayed
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     

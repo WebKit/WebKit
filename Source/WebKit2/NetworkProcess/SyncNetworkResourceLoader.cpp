@@ -39,10 +39,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-SyncNetworkResourceLoader::SyncNetworkResourceLoader(const NetworkResourceLoadParameters& parameters, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
-    : m_networkResourceLoadParameters(parameters)
+SyncNetworkResourceLoader::SyncNetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+    : SchedulableLoader(parameters, connection)
     , m_delayedReply(reply)
-    , m_identifier(0)
 {
 }
 
@@ -54,20 +53,21 @@ void SyncNetworkResourceLoader::start()
     //   B - Write custom loading logic that is known to be safe on a background thread.
     
     ASSERT(isMainThread());
-    ASSERT(m_identifier);
 
     ResourceError error;
     ResourceResponse response;
     Vector<char> data;
     
+    const NetworkResourceLoadParameters& parameters = loadParameters();
+
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, m_networkResourceLoadParameters.inPrivateBrowsingMode());
+    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, parameters.inPrivateBrowsingMode());
     
-    ResourceHandle::loadResourceSynchronously(networkingContext.get(), m_networkResourceLoadParameters.request(), m_networkResourceLoadParameters.allowStoredCredentials(), error, response, data);
+    ResourceHandle::loadResourceSynchronously(networkingContext.get(), parameters.request(), parameters.allowStoredCredentials(), error, response, data);
 
     m_delayedReply->send(error, response, CoreIPC::DataReference((uint8_t*)data.data(), data.size()));
     
-    NetworkProcess::shared().networkResourceLoadScheduler().removeLoadIdentifier(m_identifier);
+    NetworkProcess::shared().networkResourceLoadScheduler().removeLoader(this);
 }
 
 } // namespace WebKit

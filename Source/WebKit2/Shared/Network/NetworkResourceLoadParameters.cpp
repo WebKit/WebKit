@@ -45,8 +45,9 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
 {
 }
 
-NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
-    : m_request(request)
+NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentifier identifier, const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
+    : m_identifier(identifier)
+    , m_request(request)
     , m_priority(priority)
     , m_contentSniffingPolicy(contentSniffingPolicy)
     , m_allowStoredCredentials(allowStoredCredentials)
@@ -56,6 +57,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceReque
 
 void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
+    encoder.encode(m_identifier);
     encoder.encode(m_request);
 
     encoder.encode(static_cast<bool>(m_request.httpBody()));
@@ -73,6 +75,9 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkResourceLoadParameters& result)
 {
+    if (!decoder->decode(result.m_identifier))
+        return false;
+
     if (!decoder->decode(result.m_request))
         return false;
 

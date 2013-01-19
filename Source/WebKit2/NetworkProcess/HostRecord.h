@@ -31,40 +31,46 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class NetworkResourceLoader;
+class SchedulableLoader;
 class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
-class HostRecord {
-    WTF_MAKE_NONCOPYABLE(HostRecord); WTF_MAKE_FAST_ALLOCATED;
+class HostRecord : public RefCounted<HostRecord> {
 public:
-    HostRecord(const String& name, int maxRequestsInFlight);
+    static PassRefPtr<HostRecord> create(const String& name, int maxRequestsInFlight)
+    {
+        return adoptRef(new HostRecord(name, maxRequestsInFlight));
+    }
+    
     ~HostRecord();
     
     const String& name() const { return m_name; }
-    void schedule(PassRefPtr<NetworkResourceLoader>);
-    void addLoadInProgress(ResourceLoadIdentifier);
-    void remove(ResourceLoadIdentifier);
-    bool hasRequests() const;
-    bool limitRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
-
-    typedef Deque<RefPtr<NetworkResourceLoader> > LoaderQueue;
-    LoaderQueue& loadersPending(WebCore::ResourceLoadPriority priority) { return m_loadersPending[priority]; }
-
-    typedef Deque<RefPtr<SyncNetworkResourceLoader> > SyncLoaderQueue;
-    SyncLoaderQueue& syncLoadersPending() { return m_syncLoadersPending; }
-
-private:                    
-    LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
-    typedef HashSet<ResourceLoadIdentifier> ResourceLoadIdentifierSet;
-    ResourceLoadIdentifierSet m_resourceIdentifiersLoading;
     
-    SyncLoaderQueue m_syncLoadersPending;
-    HashSet<RefPtr<SyncNetworkResourceLoader> > m_syncLoadersLoading;
+    void scheduleResourceLoader(PassRefPtr<SchedulableLoader>);
+    void addLoaderInProgress(SchedulableLoader*);
+    void removeLoader(SchedulableLoader*);
+    bool hasRequests() const;
+    void servePendingRequests(WebCore::ResourceLoadPriority);
+
+private:
+    HostRecord(const String& name, int maxRequestsInFlight);
+
+    typedef Deque<RefPtr<SchedulableLoader> > LoaderQueue;
+
+    void servePendingRequestsForQueue(LoaderQueue&, WebCore::ResourceLoadPriority);
+    bool limitsRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
+
+    LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
+    LoaderQueue m_syncLoadersPending;
+
+    typedef HashSet<RefPtr<SchedulableLoader> > SchedulableLoaderSet;
+    SchedulableLoaderSet m_loadersInProgress;
 
     const String m_name;
     int m_maxRequestsInFlight;

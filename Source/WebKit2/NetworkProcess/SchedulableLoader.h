@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#ifndef SchedulableLoader_h
+#define SchedulableLoader_h
 
-#if USE(PLATFORM_STRATEGIES)
+#include "HostRecord.h"
+#include "NetworkConnectionToWebProcess.h"
+#include "NetworkResourceLoadParameters.h"
+#include <wtf/MainThread.h>
+#include <wtf/RefCounted.h>
 
-#include "ResourceHandleTypes.h"
-#include <wtf/Vector.h>
+#if ENABLE(NETWORK_PROCESS)
 
-namespace WebCore {
+namespace WebKit {
 
-class NetworkingContext;
-class ResourceError;
-class ResourceLoadScheduler;
-class ResourceRequest;
-class ResourceResponse;
-
-class LoaderStrategy {
+class SchedulableLoader : public RefCounted<SchedulableLoader> {
 public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
+    virtual ~SchedulableLoader();
 
-    virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
+    const NetworkResourceLoadParameters& loadParameters() const { return m_networkResourceLoadParameters; }
+
+    NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
+    void connectionToWebProcessDidClose();
+
+    virtual void start() = 0;
+    
+    virtual bool isSynchronous() { return false; }
+
+    void setHostRecord(HostRecord* hostRecord) { ASSERT(isMainThread()); m_hostRecord = hostRecord; }
+    HostRecord* hostRecord() const { ASSERT(isMainThread()); return m_hostRecord.get(); }
 
 protected:
-    virtual ~LoaderStrategy()
-    {
-    }
+    SchedulableLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
+
+private:
+    NetworkResourceLoadParameters m_networkResourceLoadParameters;
+    RefPtr<NetworkConnectionToWebProcess> m_connection;
+    
+    RefPtr<HostRecord> m_hostRecord;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // USE(PLATFORM_STRATEGIES)
+#endif // ENABLE(NETWORK_PROCESS)
 
-#endif // LoaderStrategy_h
+#endif // SchedulableLoader_h

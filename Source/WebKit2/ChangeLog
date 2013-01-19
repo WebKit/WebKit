@@ -1,3 +1,111 @@
+2013-01-18  Brady Eidson  <beidson@apple.com>
+
+        Rework NetworkProcess resource load identifiers.
+        <rdar://problem/12934449> and https://bugs.webkit.org/show_bug.cgi?id=107192
+
+        Reviewed by Alexey Proskuryakov.
+
+        Having the NetworkProcess vend out identifiers to WebProcesses was a bad idea.
+        This patch reverts that so that WebProcesses are in control of their own unique identifiers.
+
+        The NetworkProcess doesn't need identifiers at all.
+        It can represent outstanding loads with the loaders themselves.
+
+        This patch adds a "SchedulableLoader" base class for normal and synchronous loaders.
+        It reworks each use of identifiers into using SchedulableLoaders instead.
+
+        This also gave an opportunity to move the serving of pending requests for a host into the 
+        HostRecord itself which cleans certain things up nicely.
+
+        Change HostRecord to have queues of SchedulableLoaders instead of identifiers.
+        Make HostRecord responsible for actually starting the loaders in its queues:
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::~HostRecord):
+        (WebKit::HostRecord::scheduleResourceLoader):
+        (WebKit::HostRecord::addLoaderInProgress):
+        (WebKit::HostRecord::removeLoader):
+        (WebKit::HostRecord::hasRequests):
+        (WebKit::HostRecord::servePendingRequestsForQueue):
+        (WebKit::HostRecord::servePendingRequests):
+        (WebKit::HostRecord::limitsRequests):
+        * NetworkProcess/HostRecord.h:
+        (WebKit::HostRecord::create): HostRecord is now also RefCounted. new and delete are so 2004.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad): Create the loader then schedule
+          it with the scheduler, instead of having the scheduler create it.
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        Remove maps and sets of identifiers, replacing them with sets of SchedulableLoaders where needed.
+        Rely on HostRecords to actually manage sets of SchedulableLoaders.
+        Rely on HostRecord to do the actual serving of its pending requests:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::NetworkResourceLoadScheduler):
+        (WebKit::NetworkResourceLoadScheduler::scheduleLoader):
+        (WebKit::NetworkResourceLoadScheduler::hostForURL):
+        (WebKit::NetworkResourceLoadScheduler::removeLoader):
+        (WebKit::NetworkResourceLoadScheduler::receivedRedirect):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests):
+        (WebKit::NetworkResourceLoadScheduler::removeScheduledLoaders):
+        (WebKit::NetworkResourceLoadScheduler::scheduleRemoveLoader):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        A new base class for all loaders that the scheduler and HostRecords might need to know about:
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader):
+        (WebKit::SchedulableLoader::~SchedulableLoader):
+        * NetworkProcess/SchedulableLoader.h:
+        (WebKit::SchedulableLoader::loadParameters):
+        (WebKit::SchedulableLoader::connectionToWebProcess):
+        (WebKit::SchedulableLoader::isSynchronous):
+        (WebKit::SchedulableLoader::setHostRecord):
+        (WebKit::SchedulableLoader::hostRecord):
+
+        Change to inherit from SchedulableLoader, removing some of the duplicated data and methods:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::connection):
+        (WebKit::NetworkResourceLoader::destinationID):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::stop):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::create):
+
+        Change to inherit from SchedulableLoader, removing some of the duplicated data and methods:
+        * NetworkProcess/SyncNetworkResourceLoader.cpp:
+        (WebKit::SyncNetworkResourceLoader::SyncNetworkResourceLoader):
+        (WebKit::SyncNetworkResourceLoader::start):
+        * NetworkProcess/SyncNetworkResourceLoader.h:
+        (WebKit::SyncNetworkResourceLoader::create):
+        (WebKit::SyncNetworkResourceLoader::isSynchronous):
+
+        Fold the WebProcess resource load identifier in with the load parameters:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::identifier):
+
+        The identifier is preset in the WebProcess and doesn't come from the NetworkProcess,
+        so the message to schedule a load can now be asynchronous:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+        Update to include a WebProcess generated identifier along with synchronous loads:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-18  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: CoordinatedTile::updateBackBuffer() returns a dirty rect.

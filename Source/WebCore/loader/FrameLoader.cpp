@@ -2584,7 +2584,10 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         
         if (!documentLoader()->applicationCacheHost()->maybeLoadSynchronously(newRequest, error, response, data)) {
 #if USE(PLATFORM_STRATEGIES)
-            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), newRequest, storedCredentials, error, response, data);
+            unsigned long identifier = 0;
+            if (m_frame->page())
+                identifier = m_frame->page()->progress()->createUniqueIdentifier();
+            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, error, response, data);
 #else
             ResourceHandle::loadResourceSynchronously(networkingContext(), newRequest, storedCredentials, error, response, data);
 #endif

@@ -27,35 +27,28 @@
 #define SyncNetworkResourceLoader_h
 
 #include "NetworkConnectionToWebProcessMessages.h"
-#include "NetworkResourceLoadParameters.h"
+#include "SchedulableLoader.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
 namespace WebKit {
 
-typedef uint64_t ResourceLoadIdentifier;
-
-class SyncNetworkResourceLoader : public RefCounted<SyncNetworkResourceLoader> {
+class SyncNetworkResourceLoader : public SchedulableLoader {
 public:
-    static PassRefPtr<SyncNetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+    static PassRefPtr<SyncNetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
     {
-        return adoptRef(new SyncNetworkResourceLoader(parameters, reply));
+        return adoptRef(new SyncNetworkResourceLoader(parameters, connection, reply));
     }
-    
-    void setIdentifier(ResourceLoadIdentifier identifier) { m_identifier = identifier; }
-    ResourceLoadIdentifier identifier() const { return m_identifier; }
-    
-    const NetworkResourceLoadParameters& loadParameters() { return m_networkResourceLoadParameters; }
 
-    void start();
+    virtual void start();
+    
+    virtual bool isSynchronous() { return true; }
 
 private:
-    SyncNetworkResourceLoader(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
+    SyncNetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
     
-    NetworkResourceLoadParameters m_networkResourceLoadParameters;
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
-    ResourceLoadIdentifier m_identifier;
 };
 
 } // namespace WebKit

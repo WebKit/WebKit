@@ -44,11 +44,12 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadParameters {
 public:
     NetworkResourceLoadParameters();
-    NetworkResourceLoadParameters(const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode);
+    NetworkResourceLoadParameters(ResourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, NetworkResourceLoadParameters&);
 
+    ResourceLoadIdentifier identifier() const { return m_identifier; }
     const WebCore::ResourceRequest& request() const { return m_request; }
     WebCore::ResourceLoadPriority priority() const { return m_priority; }
     WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
@@ -56,6 +57,7 @@ public:
     bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
 
 private:
+    ResourceLoadIdentifier m_identifier;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
