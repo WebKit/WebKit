@@ -1,0 +1,4 @@
+ALERT: error decoding file data: ../../resources/media/vbr-128kbps-44khz.ogg
+ALERT: BufferLoader: callback problem
+FAIL: Timed out waiting for notifyDone to be called
+
