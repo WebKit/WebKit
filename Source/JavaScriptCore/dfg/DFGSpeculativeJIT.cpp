@@ -2471,8 +2471,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node& node)
     // than a int->double conversion. On 32_64, unfortunately, we currently don't have
     // any such mechanism - though we could have it, if we just provisioned some memory
     // in CodeBlock for the double form of integer constants.
-    if (at(node.child1()).hasConstant()) {
-        ASSERT(isInt32Constant(node.child1().index()));
+    if (isInt32Constant(node.child1().index())) {
         FPRTemporary result(this);
         GPRTemporary temp(this);
         m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(valueOfNumberConstant(node.child1().index()))), temp.gpr());

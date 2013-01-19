@@ -1,3 +1,19 @@
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Change set r140201 broke editing/selection/move-by-word-visually-multi-line.html
+        https://bugs.webkit.org/show_bug.cgi?id=107340
+
+        Reviewed by Filip Pizlo.
+
+        Due to the change landed in r140201, more nodes might end up
+        generating Int32ToDouble nodes.  Therefore, changed the JSVALUE64
+        constant path of compileInt32ToDouble() to use the more
+        restrictive isInt32Constant() check on the input.  This check was
+        the same as the existing ASSERT() so the ASSERT was eliminated.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+
 2013-01-18  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Weak GC maps should be easier to use
