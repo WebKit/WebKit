@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 782x35
+          text run at (0,0) width 782: "Test that <ruby> rendered as inline-table (or somesuch) is not affected by ruby rendering. Both <div> below should look the"
+          text run at (0,18) width 40: "same. "
+        RenderBR {BR} at (40,32) size 0x0
+        RenderBR {BR} at (0,36) size 0x17
+      RenderBlock {DIV} at (3,57) size 778x49 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+        RenderText {#text} at (9,21) size 224x17
+          text run at (9,21) width 224: "This is some XHTML1.1 text with "
+        RenderTable {SPAN} at (233,9) size 40x30
+          RenderTableSection {SPAN} at (0,12) size 40x18
+            RenderTableRow (anonymous) at (0,0) size 40x18
+              RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,0) size 36x17
+                  text run at (2,0) width 36: "Ruby"
+          RenderTableSection {SPAN} at (0,0) size 40x12
+            RenderTableRow (anonymous) at (0,0) size 40x12
+              RenderTableCell (anonymous) at (0,0) size 40x12 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 40x11
+                  text run at (0,0) width 40: "guide text"
+        RenderText {#text} at (273,21) size 56x17
+          text run at (273,21) width 56: " markup."
+      RenderBlock (anonymous) at (0,108) size 784x19
+        RenderBR {BR} at (0,0) size 0x17
+      RenderBlock {DIV} at (3,129) size 778x49 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
+        RenderText {#text} at (9,21) size 224x17
+          text run at (9,21) width 224: "This is some XHTML1.1 text with "
+        RenderTable {RUBY} at (233,9) size 40x30
+          RenderTableSection {RB} at (0,12) size 40x18
+            RenderTableRow (anonymous) at (0,0) size 40x18
+              RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,0) size 36x17
+                  text run at (2,0) width 36: "Ruby"
+          RenderTableSection {RT} at (0,0) size 40x12
+            RenderTableRow (anonymous) at (0,0) size 40x12
+              RenderTableCell (anonymous) at (0,0) size 40x12 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 40x11
+                  text run at (0,0) width 40: "guide text"
+        RenderText {#text} at (273,21) size 56x17
+          text run at (273,21) width 56: " markup."

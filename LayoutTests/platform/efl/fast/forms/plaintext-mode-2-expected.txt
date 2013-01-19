@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x32
+        RenderTextControl {INPUT} at (0,2) size 600x28 [bgcolor=#FFFFFF]
+        RenderText {#text} at (600,8) size 4x17
+          text run at (600,8) width 4: " "
+        RenderBR {BR} at (604,22) size 0x0
+      RenderBlock {DIV} at (0,32) size 784x18
+        RenderText {#text} at (0,0) size 32x17
+          text run at (0,0) width 32: "This "
+        RenderInline {B} at (0,0) size 66x17
+          RenderText {#text} at (32,0) size 43x17
+            text run at (32,0) width 43: "styled "
+          RenderInline {I} at (0,0) size 23x17
+            RenderText {#text} at (75,0) size 23x17
+              text run at (75,0) width 23: "text"
+        RenderText {#text} at (98,0) size 35x17
+          text run at (98,0) width 35: ", and "
+        RenderInline {A} at (0,0) size 24x17 [color=#0000EE]
+          RenderText {#text} at (133,0) size 24x17
+            text run at (133,0) width 24: "link"
+        RenderText {#text} at (157,0) size 403x17
+          text run at (157,0) width 205: " will be pasted into the textfield. "
+          text run at (362,0) width 198: "All richness should be stripped."
+      RenderBlock {OL} at (0,66) size 784x36
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-20,0) size 16x17: "1"
+          RenderText {#text} at (0,0) size 328x17
+            text run at (0,0) width 328: "Success: document.execCommand(\"Copy\") == true"
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (-20,0) size 16x17: "2"
+          RenderText {#text} at (0,0) size 326x17
+            text run at (0,0) width 326: "Success: document.execCommand(\"Paste\") == true"
+layer at (12,16) size 593x18
+  RenderBlock {DIV} at (4,6) size 593x18
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body
