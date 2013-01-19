@@ -65241,6 +65241,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\track\WebVTTElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\track\WebVTTParser.cpp"
 					>
 				</File>

@@ -53,6 +53,10 @@
 #include "StyledElement.h"
 #include "Text.h"
 
+#if ENABLE(VIDEO_TRACK)
+#include "WebVTTElement.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -941,7 +945,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
             return element->isOutOfRange();
 #if ENABLE(VIDEO_TRACK)
         case CSSSelector::PseudoFutureCue:
-            return element->webVTTNodeType() == WebVTTNodeTypeFuture;
+            return (element->isWebVTTElement() && toWebVTTElement(element)->webVTTNodeType() == WebVTTNodeTypeFuture);
 #endif
 
         case CSSSelector::PseudoHorizontal:

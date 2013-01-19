@@ -31,9 +31,6 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrack.h"
-#endif
 
 namespace WebCore {
 
@@ -450,11 +447,6 @@ public:
     void setHasPendingResources();
     void clearHasPendingResources();
     virtual void buildPendingResource() { };
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-    WebVTTNodeType webVTTNodeType() const;
-    void setWebVTTNodeType(WebVTTNodeType);
 #endif
 
 #if ENABLE(FULLSCREEN_API)

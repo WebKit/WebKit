@@ -1584,6 +1584,7 @@ set(WebCore_SOURCES
     html/track/TextTrackList.cpp
     html/track/TrackBase.cpp
     html/track/TrackEvent.cpp
+    html/track/WebVTTElement.cpp
     html/track/WebVTTParser.cpp
     html/track/WebVTTTokenizer.cpp
 

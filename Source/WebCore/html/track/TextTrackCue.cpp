@@ -47,6 +47,7 @@
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
+#include "WebVTTElement.h"
 #include "WebVTTParser.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -695,8 +696,8 @@ void TextTrackCue::markFutureAndPastNodes(ContainerNode* root, double previousTi
                 isPastNode = false;
         }
         
-        if (child->isElementNode()) {
-            toElement(child)->setWebVTTNodeType(isPastNode ? WebVTTNodeTypePast : WebVTTNodeTypeFuture);
+        if (child->isWebVTTElement()) {
+            toWebVTTElement(child)->setWebVTTNodeType(isPastNode ? WebVTTNodeTypePast : WebVTTNodeTypeFuture);
             // Make an elemenet id match a cue id for style matching purposes.
             if (!m_id.isEmpty())
                 toElement(child)->setIdAttribute(AtomicString(m_id.characters(), m_id.length()));

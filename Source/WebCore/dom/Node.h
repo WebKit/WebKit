@@ -236,6 +236,9 @@ public:
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
+#if ENABLE(VIDEO_TRACK)
+    virtual bool isWebVTTElement() const { return false; }
+#endif
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isCharacterDataNode() const { return false; }

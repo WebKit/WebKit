@@ -178,6 +178,10 @@
 #include "StyleCachedImageSet.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+#include "WebVTTElement.h"
+#endif
+
 using namespace std;
 
 namespace WTF {
@@ -656,7 +660,7 @@ void StyleResolver::collectMatchingRules(const MatchRequest& matchRequest, int& 
     }
 
 #if ENABLE(VIDEO_TRACK)
-    if (m_element->webVTTNodeType())
+    if (m_element->isWebVTTElement() && toWebVTTElement(m_element)->webVTTNodeType())
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, firstRuleIndex, lastRuleIndex);
 #endif
     // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
@@ -1243,7 +1247,11 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
 
 #if ENABLE(VIDEO_TRACK)
-    if (element->webVTTNodeType() != m_element->webVTTNodeType())
+    // Deny sharing styles between WebVTT and non-WebVTT nodes.
+    if (element->isWebVTTElement() != m_element->isWebVTTElement())
+        return false;
+
+    if (element->isWebVTTElement() && m_element->isWebVTTElement() && toWebVTTElement(element)->webVTTNodeType() != toWebVTTElement(m_element)->webVTTNodeType())
         return false;
 #endif
 

@@ -53,12 +53,6 @@ public:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
 };
 
-enum WebVTTNodeType {
-    WebVTTNodeTypeNone = 0,
-    WebVTTNodeTypeFuture,
-    WebVTTNodeTypePast
-};
-
 class TextTrack : public TrackBase {
 public:
     static PassRefPtr<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language)

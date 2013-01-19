@@ -2345,18 +2345,6 @@ bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext
 }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
-WebVTTNodeType Element::webVTTNodeType() const
-{
-    return hasRareData() ? elementRareData()->webVTTNodeType() : WebVTTNodeTypeNone;
-}
-
-void Element::setWebVTTNodeType(WebVTTNodeType type)
-{
-    ensureElementRareData()->setWebVTTNodeType(type);
-}
-#endif
-
 #if ENABLE(FULLSCREEN_API)
 void Element::webkitRequestFullscreen()
 {

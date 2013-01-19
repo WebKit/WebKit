@@ -3447,6 +3447,8 @@
             'html/track/TextTrackList.cpp',
             'html/track/TrackBase.cpp',
             'html/track/TrackEvent.cpp',
+            'html/track/WebVTTElement.cpp',
+            'html/track/WebVTTElement.h',
             'html/track/WebVTTParser.cpp',
             'html/track/WebVTTParser.h',
             'html/track/WebVTTToken.h',

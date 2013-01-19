@@ -38,6 +38,7 @@
 #include "ProcessingInstruction.h"
 #include "SegmentedString.h"
 #include "Text.h"
+#include "WebVTTElement.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -355,13 +356,13 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         break;
     }
     case WebVTTTokenTypes::StartTag: {
-        RefPtr<Element> child;
+        RefPtr<WebVTTElement> child;
         if (isRecognizedTag(tokenTagName))
-            child = HTMLElement::create(tagName, document);
+            child = WebVTTElement::create(tagName, document);
         else if (m_token.name().size() == 1 && m_token.name()[0] == 'c')
-            child = Element::create(TextTrackCue::classElementTagName(), document);
+            child = WebVTTElement::create(TextTrackCue::classElementTagName(), document);
         else if (m_token.name().size() == 1 && m_token.name()[0] == 'v')
-            child = Element::create(TextTrackCue::voiceElementTagName(), document);
+            child = WebVTTElement::create(TextTrackCue::voiceElementTagName(), document);
 
         if (child) {
             if (m_token.classes().size() > 0)
