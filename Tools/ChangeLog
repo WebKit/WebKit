@@ -1,3 +1,17 @@
+2013-01-19  Eric Seidel  <eric@webkit.org>
+
+        Update error regexps so that Parser/html-parser-srcdoc.html can "pass"
+        https://bugs.webkit.org/show_bug.cgi?id=107367
+
+        Reviewed by Ryosuke Niwa.
+
+        Using srcdoc instead of document.write changes the error output
+        ever so slightly.  Clearly we were already trying to ignore these
+        messages, just not succeeding.  This change makes this new test "pass" correctly.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+
 2013-01-18  Dan Winship  <danw@gnome.org>
 
         REGRESSION (r139071): run-webkit-httpd complains at launch
