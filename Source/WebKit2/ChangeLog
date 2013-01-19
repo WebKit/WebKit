@@ -1,3 +1,40 @@
+2013-01-17  Sam Weinig  <sam@webkit.org>
+
+        Don't initialize AppKit for processes that don't use it
+        https://bugs.webkit.org/show_bug.cgi?id=107216
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMainDelegate::doPreInitializationWork):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMainDelegate::doPreInitializationWork):
+        Move AppKit initialization to the two places it is used, the WebProcessMain and the PluginProcessMain.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        Remove redundant call to InitializeWebKit2().
+
+        * Shared/mac/ChildProcessMain.h:
+        (WebKit::ChildProcessMain):
+        Remove initialization of AppKit now that the delegate does it if necessary,
+        and move InitializeWebKit2() to after delegate.doPreInitializationWork(), so
+        the delegate has a chance to set things up it, in this case, calling 
+        RunLoop::setUseApplicationRunLoopOnMainRunLoop if needed.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+        Remove now redundant call to RunLoop::setUseApplicationRunLoopOnMainRunLoop().
+
+        * WebProcess/mac/WebProcessServiceEntryPoints.mm:
+        (WebKit::WebProcessServiceEventHandler):
+        (webProcessServiceMain):
+        (initializeWebProcessForWebProcessServiceForWebKitDevelopment):
+        Call WebCore::RunLoop::setUseApplicationRunLoopOnMainRunLoop() and make call to InitializeWebKit2()
+        more consistent.
+
 2013-01-18  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Intrinsic content size should report a flexible width if the content is not wider than the minimum layout width

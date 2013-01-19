@@ -26,12 +26,13 @@
 #import "config.h"
 #import "WebProcessMain.h"
 
-#import "CommandLine.h"
 #import "ChildProcessMain.h"
+#import "CommandLine.h"
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
 #import "StringUtilities.h"
 #import "WebProcess.h"
+#import <WebCore/RunLoop.h>
 #import <mach/mach_error.h>
 #import <servers/bootstrap.h>
 #import <spawn.h>
@@ -40,7 +41,15 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPKIT)
+@interface NSApplication (WebNSApplicationDetails)
+-(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
+@end
+#endif
+
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -56,6 +65,17 @@ public:
         // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
         // the WebProcess don't try to insert the shim and crash.
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
+    
+#if USE(APPKIT)
+        RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+
+        // Initialize AppKit.
+        [NSApplication sharedApplication];
+
+        // Installs autorelease pools on the current runloop which prevents memory from accumulating between user events.
+        // FIXME: Remove when <rdar://problem/8929426> is fixed.
+        [NSApp _installAutoreleasePoolsOnCurrentThreadIfNecessary];
+#endif
     }
 
     virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)

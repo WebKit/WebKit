@@ -33,12 +33,6 @@
 #import <WebKitSystemInterface.h>
 #import <sysexits.h>
 
-#if USE(APPKIT)
-@interface NSApplication (WebNSApplicationDetails)
--(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
-@end
-#endif
-
 namespace WebKit {
 
 class ChildProcessMainDelegate {
@@ -69,10 +63,10 @@ int ChildProcessMain(const CommandLine& commandLine)
     ChildProcessMainDelegateType delegate(commandLine);
 
     @autoreleasepool {
-        InitializeWebKit2();
-
         delegate.installSignalHandlers();
         delegate.doPreInitializationWork();
+
+        InitializeWebKit2();
 
         ChildProcessInitializationParameters parameters;
         if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
@@ -89,16 +83,6 @@ int ChildProcessMain(const CommandLine& commandLine)
         RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
         if (cfLocalization)
             WKSetDefaultLocalization(cfLocalization.get());
-
-#if USE(APPKIT)
-        // FIXME: We should not need to use AppKit in every process, but right now, WebCore::RunLoop depends
-        // on the outer most runloop being an AppKit runloop.
-        [NSApplication sharedApplication];
-
-        // Installs autorelease pools on the current CFRunLoop which prevents memory from accumulating between user events.
-        // FIXME: Remove when <rdar://problem/8929426> is fixed.
-        [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
-#endif
 
         ChildProcessType::shared().initialize(parameters);
     }

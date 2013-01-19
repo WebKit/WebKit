@@ -32,6 +32,15 @@
 #import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
+#import <WebCore/RunLoop.h>
+
+#if USE(APPKIT)
+@interface NSApplication (WebNSApplicationDetails)
+-(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
+@end
+#endif
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -48,9 +57,23 @@ public:
         // spawned by the PluginProcess don't try to insert the shim and crash.
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
+#if USE(APPKIT)
+        RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+
+        // Initialize AppKit.
+        [NSApplication sharedApplication];
+
+        // Installs autorelease pools on the current runloop which prevents memory from accumulating between user events.
+        // FIXME: Remove when <rdar://problem/8929426> is fixed.
+        [NSApp _installAutoreleasePoolsOnCurrentThreadIfNecessary];
+#endif
+
         // Check if we're being spawned to write a MIME type preferences file.
         String pluginPath = m_commandLine["createPluginMIMETypesPreferences"];
         if (!pluginPath.isEmpty()) {
+            // We are never going to get to the actual initialization, so initialize WebKit2 now.
+            InitializeWebKit2();
+
             if (!NetscapePluginModule::createPluginMIMETypesPreferences(pluginPath))
                 exit(EXIT_FAILURE);
             exit(EXIT_SUCCESS);

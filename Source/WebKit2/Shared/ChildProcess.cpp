@@ -66,8 +66,6 @@ static void didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::Connect
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
 {
-    InitializeWebKit2();
-
     platformInitialize();
 
     initializeProcess(parameters);

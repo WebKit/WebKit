@@ -31,6 +31,7 @@
 #import "EnvironmentUtilities.h"
 #import "WebKit2Initialize.h"
 #import "WebProcess.h"
+#import <WebCore/RunLoop.h>
 #import <stdio.h>
 #import <stdlib.h>
 #import <xpc/xpc.h>
@@ -58,8 +59,6 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                InitializeWebKit2();
-
                 ChildProcessInitializationParameters parameters;
                 parameters.uiProcessName = xpc_dictionary_get_string(event, "ui-process-name");
                 parameters.clientIdentifier = xpc_dictionary_get_string(event, "client-identifier");
@@ -75,13 +74,19 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
 
 } // namespace WebKit
 
+using namespace WebCore;
+using namespace WebKit;
+
 int webProcessServiceMain(int argc, char** argv)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
-    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
-    xpc_main(WebKit::WebProcessServiceEventHandler);
+    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+    InitializeWebKit2();
+
+    xpc_main(WebProcessServiceEventHandler);
     return 0;
 }
 
@@ -89,16 +94,17 @@ void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* cl
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
-    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
-    WebKit::InitializeWebKit2();
+    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+    InitializeWebKit2();
 
-    WebKit::ChildProcessInitializationParameters parameters;
+    ChildProcessInitializationParameters parameters;
     parameters.uiProcessName = uiProcessName;
     parameters.clientIdentifier = clientIdentifier;
     parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
 
-    WebKit::WebProcess::shared().initialize(parameters);
+    WebProcess::shared().initialize(parameters);
 }
 
 #endif // HAVE(XPC)
