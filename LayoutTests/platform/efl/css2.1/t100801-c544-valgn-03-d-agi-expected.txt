@@ -1,0 +1,81 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x318
+  RenderBlock {HTML} at (0,0) size 800x318
+    RenderBody {BODY} at (8,16) size 784x287
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 750x35
+          text run at (0,0) width 387: "Change your window size. However the lines wrap, the blue "
+          text run at (387,0) width 363: "rectanglues should always have their middles on the same"
+          text run at (0,18) width 83: "alignment as "
+          text run at (83,18) width 204: "other blue rectangles on the line."
+      RenderBlock {P} at (15,52) size 754x235 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
+        RenderText {#text} at (9,36) size 60x16
+          text run at (9,36) width 60: "\x{C9}\x{C9}\x{C9} "
+        RenderImage {IMG} at (69,26) size 30x31
+        RenderText {#text} at (99,36) size 15x16
+          text run at (99,36) width 15: " "
+        RenderInline {SPAN} at (0,0) size 114x39 [color=#C0C0C0]
+          RenderText {#text} at (114,18) size 114x39
+            text run at (114,18) width 114: "xxx"
+        RenderText {#text} at (228,36) size 15x16
+          text run at (228,36) width 15: " "
+        RenderImage {IMG} at (243,16) size 50x51
+        RenderText {#text} at (293,36) size 75x16
+          text run at (293,36) width 15: " "
+          text run at (308,36) width 60: "\x{C9}\x{C9}\x{C9} "
+        RenderImage {IMG} at (368,35) size 10x11
+        RenderText {#text} at (378,36) size 15x16
+          text run at (378,36) width 15: " "
+        RenderInline {SMALL} at (0,0) size 30x11 [color=#C0C0C0]
+          RenderText {#text} at (393,40) size 30x11
+            text run at (393,40) width 30: "xxx"
+        RenderText {#text} at (423,36) size 15x16
+          text run at (423,36) width 15: " "
+        RenderImage {IMG} at (438,31) size 20x21
+        RenderText {#text} at (458,36) size 75x16
+          text run at (458,36) width 15: " "
+          text run at (473,36) width 60: "\x{C9}\x{C9}\x{C9} "
+        RenderImage {IMG} at (533,8) size 65x66
+        RenderText {#text} at (598,36) size 75x16
+          text run at (598,36) width 15: " "
+          text run at (613,36) width 60: "\x{C9}\x{C9}\x{C9} "
+        RenderImage {IMG} at (673,23) size 35x36
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 90x31 [color=#C0C0C0]
+          RenderText {#text} at (9,94) size 90x31
+            text run at (9,94) width 90: "xxx"
+        RenderText {#text} at (99,106) size 15x16
+          text run at (99,106) width 15: " "
+        RenderImage {IMG} at (114,86) size 50x51
+        RenderText {#text} at (164,106) size 15x16
+          text run at (164,106) width 15: " "
+        RenderInline {SPAN} at (0,0) size 352x24 [color=#C0C0C0]
+          RenderText {#text} at (179,100) size 92x24
+            text run at (179,100) width 92: "xxx "
+          RenderInline {SPAN} at (0,0) size 168x57
+            RenderText {#text} at (271,73) size 168x57
+              text run at (271,73) width 168: "xxx"
+          RenderText {#text} at (439,100) size 92x24
+            text run at (439,100) width 92: " xxx"
+        RenderText {#text} at (531,106) size 15x16
+          text run at (531,106) width 15: " "
+        RenderImage {IMG} at (546,86) size 50x51
+        RenderText {#text} at (596,106) size 15x16
+          text run at (596,106) width 15: " "
+        RenderInline {SMALL} at (0,0) size 30x11 [color=#C0C0C0]
+          RenderText {#text} at (611,110) size 30x11
+            text run at (611,110) width 30: "xxx"
+        RenderText {#text} at (641,106) size 15x16
+          text run at (641,106) width 15: " "
+        RenderImage {IMG} at (656,103) size 15x16
+        RenderText {#text} at (671,106) size 15x16
+          text run at (671,106) width 15: " "
+        RenderInline {BIG} at (0,0) size 60x21 [color=#C0C0C0]
+          RenderText {#text} at (686,102) size 60x21
+            text run at (686,102) width 60: "xxx"
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (9,136) size 90x91
+        RenderText {#text} at (99,176) size 60x16
+          text run at (99,176) width 15: " "
+          text run at (114,176) width 45: "\x{C9}\x{C9}\x{C9}"

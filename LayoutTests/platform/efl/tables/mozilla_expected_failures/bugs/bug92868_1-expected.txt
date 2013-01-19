@@ -5,14 +5,14 @@ layer at (0,0) size 800x76
   RenderBlock {HTML} at (0,0) size 800x76
     RenderBody {BODY} at (8,8) size 784x60
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 191x19
+        RenderText {#text} at (0,0) size 191x17
           text run at (0,0) width 191: "the text should be courier 24pt"
       RenderTable {TABLE} at (0,18) size 80x24
         RenderTableSection {TBODY} at (0,0) size 80x24
           RenderTableRow {TR} at (0,2) size 80x20
             RenderTableCell {TD} at (2,2) size 76x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 74x19
+              RenderText {#text} at (1,1) size 74x17
                 text run at (1,1) width 74: "inside a cell"
       RenderBlock {DIV} at (0,42) size 784x18
-        RenderText {#text} at (0,0) size 72x19
+        RenderText {#text} at (0,0) size 72x17
           text run at (0,0) width 72: "inside a div"
