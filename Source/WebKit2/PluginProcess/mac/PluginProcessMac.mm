@@ -272,6 +272,8 @@ static void initializeCocoaOverrides()
 
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
+    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
+
 #if defined(__i386__)
     // Initialize the shim.
     initializeShim();
@@ -340,8 +342,6 @@ static void muteAudio(void)
 
 void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)",

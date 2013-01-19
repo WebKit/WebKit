@@ -1,3 +1,18 @@
+2013-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13042826> REGRESSION (r139985): Full Screen Youtube loses keyboard and mouse control
+        https://bugs.webkit.org/show_bug.cgi?id=107191
+
+        Reviewed by Darin Adler.
+
+        Moved initialization from platformInitializePluginProcess to platformInitializeProcess,
+        because the former is called too late. In r139985, I used a correct location for
+        WebProcess, but not for PluginProcess.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+
 2013-01-18  Brady Eidson  <beidson@apple.com>
 
         Rework NetworkProcess resource load identifiers.
