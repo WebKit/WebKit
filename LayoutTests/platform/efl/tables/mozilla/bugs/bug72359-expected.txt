@@ -8,7 +8,7 @@ layer at (0,0) size 800x62
           RenderTableSection (anonymous) at (0,0) size 157x54
             RenderTableRow (anonymous) at (0,0) size 157x18
               RenderTableCell {cell} at (0,0) size 157x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (52,0) size 53x19
+                RenderText {#text} at (52,0) size 53x17
                   text run at (52,0) width 53: "THERE"
             RenderTableRow {row} at (0,18) size 157x18
               RenderTableCell (anonymous) at (0,18) size 157x18 [r=1 c=0 rs=1 cs=1]
@@ -16,15 +16,15 @@ layer at (0,0) size 800x62
                   RenderTableSection (anonymous) at (0,0) size 157x18
                     RenderTableRow (anonymous) at (0,0) size 157x18
                       RenderTableCell {cell} at (0,0) size 82x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 82x19
+                        RenderText {#text} at (0,0) size 82x17
                           text run at (0,0) width 82: "SHOULD B"
                       RenderTableCell {cell} at (82,0) size 26x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 26x19
+                        RenderText {#text} at (0,0) size 26x17
                           text run at (0,0) width 26: "E N"
                       RenderTableCell {cell} at (108,0) size 49x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=2 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 49x19
+                        RenderText {#text} at (0,0) size 49x17
                           text run at (0,0) width 49: "O RED"
             RenderTableRow (anonymous) at (0,36) size 157x18
               RenderTableCell {cell} at (0,36) size 157x18 [color=#FFFFFF] [bgcolor=#008000] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (31,0) size 95x19
+                RenderText {#text} at (31,0) size 95x17
                   text run at (31,0) width 95: "ANYWHERE"

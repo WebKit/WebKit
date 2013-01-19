@@ -7,13 +7,13 @@ layer at (0,0) size 785x742
         RenderTableSection {TBODY} at (0,0) size 769x726
           RenderTableRow {TR} at (0,2) size 769x722
             RenderTableCell {TD} at (2,326) size 728x74 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 726x73
+              RenderText {#text} at (1,1) size 726x71
                 text run at (1,1) width 708: "This is some text to fill a table cell. This is some text to fill a table cell. This is some text to fill a table cell. This is"
                 text run at (1,19) width 726: "some text to fill a table cell. This is some text to fill a table cell. This is some text to fill a table cell. This is some text"
                 text run at (1,37) width 710: "to fill a table cell. This is some text to fill a table cell. This is some text to fill a table cell. This is some text to fill a"
                 text run at (1,55) width 504: "table cell. This is some text to fill a table cell. This is some text to fill a table cell."
             RenderTableCell {TD} at (732,2) size 35x722 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 33x721
+              RenderText {#text} at (1,1) size 33x719
                 text run at (1,1) width 28: "This"
                 text run at (1,19) width 10: "is"
                 text run at (1,37) width 33: "some"

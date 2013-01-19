@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 94x54 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 92x52
                 RenderBlock {P} at (0,0) size 92x18
-                  RenderText {#text} at (0,0) size 91x19
+                  RenderText {#text} at (0,0) size 91x17
                     text run at (0,0) width 91: "Paragraph one"
                 RenderBlock {P} at (0,34) size 92x18
-                  RenderText {#text} at (0,0) size 92x19
+                  RenderText {#text} at (0,0) size 92x17
                     text run at (0,0) width 92: "Paragraph two"

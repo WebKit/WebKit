@@ -7,8 +7,8 @@ layer at (0,0) size 800x176
         RenderTableSection {TBODY} at (0,0) size 200x140
           RenderTableRow {TR} at (0,60) size 200x20 [bgcolor=#FF0000]
             RenderTableCell {TD} at (60,60) size 80x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
+              RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "foo"
       RenderBlock {DIV} at (0,140) size 262x20 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 40x19
+        RenderText {#text} at (1,1) size 40x17
           text run at (1,1) width 40: "260px"

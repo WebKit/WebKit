@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 496x80
                           RenderTableRow {TR} at (0,10) size 496x60
                             RenderTableCell {TD} at (10,10) size 476x60 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 468x19 [color=#0000EE]
+                              RenderInline {A} at (0,0) size 468x17 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 468x60
                       RenderBlock (anonymous) at (2,82) size 496x72
-                        RenderText {#text} at (0,0) size 480x73
+                        RenderText {#text} at (0,0) size 480x71
                           text run at (0,0) width 296: "Your donation to protect our wildlife was paid "
                           text run at (296,0) width 166: "for by the sponsors on this"
                           text run at (0,18) width 109: "page, so it's free. "
