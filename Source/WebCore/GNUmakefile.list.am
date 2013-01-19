@@ -3678,6 +3678,8 @@ webcore_sources += \
 	Source/WebCore/html/track/TrackBase.h \
 	Source/WebCore/html/track/TrackEvent.cpp \
 	Source/WebCore/html/track/TrackEvent.h \
+	Source/WebCore/html/track/WebVTTElement.cpp \
+	Source/WebCore/html/track/WebVTTElement.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
 	Source/WebCore/html/track/WebVTTParser.h \
 	Source/WebCore/html/track/WebVTTToken.h \
