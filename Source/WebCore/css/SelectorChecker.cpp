@@ -530,7 +530,7 @@ static bool anyAttributeMatches(Element* element, CSSSelector::Match match, cons
     for (size_t i = 0; i < element->attributeCount(); ++i) {
         const Attribute* attributeItem = element->attributeItem(i);
 
-        if (!SelectorChecker::attributeNameMatches(attributeItem, selectorAttr))
+        if (!attributeItem->matches(selectorAttr))
             continue;
 
         if (attributeValueMatches(attributeItem, match, selectorValue, caseSensitive))

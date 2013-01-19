@@ -91,7 +91,6 @@ public:
     void setMode(Mode mode) { m_mode = mode; }
 
     static bool tagMatches(const Element*, const CSSSelector*);
-    static bool attributeNameMatches(const Attribute*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     bool matchesFocusPseudoClass(const Element*) const;
     static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
@@ -141,13 +140,6 @@ inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelecto
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
 
-inline bool SelectorChecker::attributeNameMatches(const Attribute* attribute, const QualifiedName& selectorAttributeName)
-{
-    if (selectorAttributeName.localName() != attribute->localName())
-        return false;
-    return selectorAttributeName.prefix() == starAtom || selectorAttributeName.namespaceURI() == attribute->namespaceURI();
-}
-
 inline bool SelectorChecker::checkExactAttribute(const Element* element, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)
 {
     if (!element->hasAttributesWithoutUpdate())
@@ -155,7 +147,7 @@ inline bool SelectorChecker::checkExactAttribute(const Element* element, const Q
     unsigned size = element->attributeCount();
     for (unsigned i = 0; i < size; ++i) {
         const Attribute* attribute = element->attributeItem(i);
-        if (attributeNameMatches(attribute, selectorAttributeName) && (!value || attribute->value().impl() == value))
+        if (attribute->matches(selectorAttributeName) && (!value || attribute->value().impl() == value))
             return true;
     }
     return false;
