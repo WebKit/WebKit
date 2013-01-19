@@ -1912,7 +1912,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         bool oldStyleSlowScroll = m_style && !shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage();
 
 #if USE(ACCELERATED_COMPOSITING)
-        bool drawsRootBackground = isRoot() || (isBody() && rendererHasBackground(document()->documentElement()->renderer()));
+        bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document()->documentElement()->renderer()));
         if (drawsRootBackground && !shouldBlitOnFixedBackgroundImage) {
             if (view()->compositor()->supportsFixedRootBackgroundCompositing()) {
                 if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
