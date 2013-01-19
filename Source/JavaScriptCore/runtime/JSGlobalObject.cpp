@@ -223,8 +223,8 @@ void JSGlobalObject::reset(JSValue prototype)
     m_strictEvalActivationStructure.set(exec->globalData(), this, StrictEvalActivation::createStructure(exec->globalData(), this, jsNull()));
     m_withScopeStructure.set(exec->globalData(), this, JSWithScope::createStructure(exec->globalData(), this, jsNull()));
 
-    m_emptyObjectStructure.set(exec->globalData(), this, m_objectPrototype->inheritorID(exec->globalData()));
-    m_nullPrototypeObjectStructure.set(exec->globalData(), this, createEmptyObjectStructure(exec->globalData(), this, jsNull()));
+    m_emptyObjectStructure.set(exec->globalData(), this, globalData().prototypeMap.emptyObjectStructureForPrototype(m_objectPrototype.get()));
+    m_nullPrototypeObjectStructure.set(exec->globalData(), this, JSFinalObject::createStructure(globalData(), this, jsNull()));
 
     m_callbackFunctionStructure.set(exec->globalData(), this, JSCallbackFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     m_argumentsStructure.set(exec->globalData(), this, Arguments::createStructure(exec->globalData(), this, m_objectPrototype.get()));

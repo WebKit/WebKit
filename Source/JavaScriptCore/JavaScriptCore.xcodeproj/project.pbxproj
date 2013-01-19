@@ -398,6 +398,8 @@
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
 		146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */; };
 		146FE51211A710430087AE66 /* JITCall32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146FE51111A710430087AE66 /* JITCall32_64.cpp */; };
+		1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D844A316AA2C7000A65AF0 /* PrototypeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */; };
 		1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 146FA5A81378F6B0003627A3 /* HandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */; };
 		147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B84620E6DE6B1004775A4 /* PutPropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1277,6 +1279,8 @@
 		14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
 		14D2F3D9139F4BE200491031 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* JSStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStack.h; sourceTree = "<group>"; };
+		14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrototypeMap.cpp; sourceTree = "<group>"; };
+		14D844A316AA2C7000A65AF0 /* PrototypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeMap.h; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
 		14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSActivation.cpp; sourceTree = "<group>"; };
@@ -2321,7 +2325,6 @@
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
 				C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */,
-				C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */,
 				DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
@@ -2439,6 +2442,8 @@
 				65621E6C089E859700760F35 /* PropertySlot.h */,
 				0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */,
 				65C02FBB0637462A003E7EE6 /* Protect.h */,
+				14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */,
+				14D844A316AA2C7000A65AF0 /* PrototypeMap.h */,
 				0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */,
 				147B84620E6DE6B1004775A4 /* PutPropertySlot.h */,
 				F692A87D0255597D01FF60F7 /* RegExp.cpp */,
@@ -2490,6 +2495,7 @@
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
+				C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -3270,6 +3276,7 @@
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
+				1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3897,6 +3904,7 @@
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
+				1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

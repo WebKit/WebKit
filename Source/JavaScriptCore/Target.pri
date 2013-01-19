@@ -287,6 +287,7 @@ SOURCES += \
     runtime/PropertyDescriptor.cpp \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
+    runtime/PrototypeMap.cpp \
     runtime/RegExpConstructor.cpp \
     runtime/RegExpCachedResult.cpp \
     runtime/RegExpMatchesArray.cpp \

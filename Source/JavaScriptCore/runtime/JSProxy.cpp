@@ -52,7 +52,7 @@ void JSProxy::setTarget(JSGlobalData& globalData, JSGlobalObject* globalObject)
     ASSERT_ARG(globalObject, globalObject);
     m_target.set(globalData, this, globalObject);
     setPrototype(globalData, globalObject->prototype());
-    resetInheritorID(globalData);
+    globalData.prototypeMap.clearEmptyObjectStructureForPrototype(this);
 }
 
 String JSProxy::className(const JSObject* object)

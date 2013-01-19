@@ -350,7 +350,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
     if (!exec->argument(0).isObject() && !exec->argument(0).isNull())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object prototype may only be an Object or null.")));
     JSValue proto = exec->argument(0);
-    JSObject* newObject = proto.isObject() ? constructEmptyObject(exec, asObject(proto)->inheritorID(exec->globalData())) : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
+    JSObject* newObject = proto.isObject()
+        ? constructEmptyObject(exec, exec->globalData().prototypeMap.emptyObjectStructureForPrototype(asObject(proto)))
+        : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);
     if (!exec->argument(1).isObject())

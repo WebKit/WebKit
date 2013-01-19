@@ -132,7 +132,7 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
     JSGlobalData& globalData = globalObject->globalData();
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
-    notifyUsedAsPrototype(globalData);
+    globalData.prototypeMap.addPrototype(this);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -596,7 +596,7 @@ void JSObject::notifyPresenceOfIndexedAccessors(JSGlobalData& globalData)
     
     setStructure(globalData, Structure::nonPropertyTransition(globalData, structure(), AddIndexedAccessors));
     
-    if (!mayBeUsedAsPrototype(globalData))
+    if (!globalData.prototypeMap.isPrototype(this))
         return;
     
     globalObject()->haveABadTime(globalData);
@@ -1149,7 +1149,7 @@ void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 {
     ASSERT(prototype);
     if (prototype.isObject())
-        asObject(prototype)->notifyUsedAsPrototype(globalData);
+        globalData.prototypeMap.addPrototype(asObject(prototype));
     
     Structure* newStructure = Structure::changePrototypeTransition(globalData, structure(), prototype);
     setStructure(globalData, newStructure);
@@ -1157,7 +1157,7 @@ void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
     if (!newStructure->anyObjectInChainMayInterceptIndexedAccesses())
         return;
     
-    if (mayBeUsedAsPrototype(globalData)) {
+    if (globalData.prototypeMap.isPrototype(this)) {
         newStructure->globalObject()->haveABadTime(globalData);
         return;
     }
@@ -1185,28 +1185,6 @@ bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSValue prot
     }
     setPrototype(globalData, prototype);
     return true;
-}
-
-void JSObject::resetInheritorID(JSGlobalData& globalData)
-{
-    PropertyOffset offset = structure()->get(globalData, globalData.m_inheritorIDKey);
-    if (!isValidOffset(offset))
-        return;
-    
-    putDirect(globalData, offset, jsUndefined());
-}
-
-Structure* JSObject::inheritorID(JSGlobalData& globalData)
-{
-    if (JSValue value = getDirect(globalData, globalData.m_inheritorIDKey)) {
-        if (value.isCell()) {
-            Structure* inheritorID = jsCast<Structure*>(value);
-            ASSERT(inheritorID->isEmpty());
-            return inheritorID;
-        }
-        ASSERT(value.isUndefined());
-    }
-    return createInheritorID(globalData);
 }
 
 bool JSObject::allowsAccessFrom(ExecState* exec)
@@ -1661,42 +1639,6 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, PropertyO
             slot.setGetterSlot(getterFunction);
     } else
         slot.setUndefined();
-}
-
-void JSObject::notifyUsedAsPrototype(JSGlobalData& globalData)
-{
-    PropertyOffset offset = structure()->get(globalData, globalData.m_inheritorIDKey);
-    if (isValidOffset(offset))
-        return;
-    
-    PutPropertySlot slot;
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, globalData.m_inheritorIDKey, jsUndefined(), DontEnum, slot, 0);
-    
-    // Note that this method makes the somewhat odd decision to not check if this
-    // object currently has indexed accessors. We could do that check here, and if
-    // indexed accessors were found, we could tell the global object to have a bad
-    // time. But we avoid this, to allow the following to be always fast:
-    //
-    // 1) Create an object.
-    // 2) Give it a setter or read-only property that happens to have a numeric name.
-    // 3) Allocate objects that use this object as a prototype.
-    //
-    // This avoids anyone having a bad time. Even if the instance objects end up
-    // having indexed storage, the creation of indexed storage leads to a prototype
-    // chain walk that detects the presence of indexed setters and then does the
-    // right thing. As a result, having a bad time only happens if you add an
-    // indexed setter (or getter, or read-only field) to an object that is already
-    // used as a prototype.
-}
-
-Structure* JSObject::createInheritorID(JSGlobalData& globalData)
-{
-    Structure* inheritorID = createEmptyObjectStructure(globalData, globalObject(), this);
-    ASSERT(inheritorID->isEmpty());
-
-    PutPropertySlot slot;
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, globalData.m_inheritorIDKey, inheritorID, DontEnum, slot, 0);
-    return inheritorID;
 }
 
 void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)

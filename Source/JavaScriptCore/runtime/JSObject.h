@@ -124,14 +124,6 @@ public:
     void setPrototype(JSGlobalData&, JSValue prototype);
     bool setPrototypeWithCycleCheck(JSGlobalData&, JSValue prototype);
         
-    Structure* inheritorID(JSGlobalData&);
-    void notifyUsedAsPrototype(JSGlobalData&);
-        
-    bool mayBeUsedAsPrototype(JSGlobalData& globalData)
-    {
-        return isValidOffset(structure()->get(globalData, globalData.m_inheritorIDKey));
-    }
-        
     bool mayInterceptIndexedAccesses()
     {
         return structure()->mayInterceptIndexedAccesses();
@@ -718,8 +710,6 @@ protected:
     // To create derived types you likely want JSNonFinalObject, below.
     JSObject(JSGlobalData&, Structure*, Butterfly* = 0);
         
-    void resetInheritorID(JSGlobalData&);
-        
     void visitButterfly(SlotVisitor&, Butterfly*, size_t storageSize);
     void copyButterfly(CopyVisitor&, Butterfly*, size_t storageSize);
 
@@ -934,7 +924,6 @@ private:
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, PropertyOffset);
 
     const HashEntry* findPropertyHashEntry(ExecState*, PropertyName) const;
-    Structure* createInheritorID(JSGlobalData&);
         
     void putIndexedDescriptor(ExecState*, SparseArrayEntry*, PropertyDescriptor&, PropertyDescriptor& old);
         
@@ -1123,11 +1112,6 @@ inline ConstructType getConstructData(JSValue value, ConstructData& constructDat
     ConstructType result = value.isCell() ? value.asCell()->methodTable()->getConstructData(value.asCell(), constructData) : ConstructTypeNone;
     ASSERT(result == ConstructTypeNone || value.isValidCallee());
     return result;
-}
-
-inline Structure* createEmptyObjectStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
-{
-    return JSFinalObject::createStructure(globalData, globalObject, prototype);
 }
 
 inline JSObject* asObject(JSCell* cell)

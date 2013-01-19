@@ -269,6 +269,7 @@ set(JavaScriptCore_SOURCES
     runtime/PropertyDescriptor.cpp
     runtime/PropertyNameArray.cpp
     runtime/PropertySlot.cpp
+    runtime/PrototypeMap.cpp
     runtime/RegExp.cpp
     runtime/RegExpCache.cpp
     runtime/RegExpConstructor.cpp

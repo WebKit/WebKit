@@ -108,11 +108,12 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
 
 Structure* JSFunction::cacheInheritorID(ExecState* exec)
 {
-    JSValue prototype = get(exec, exec->globalData().propertyNames->prototype);
+    JSGlobalData& globalData = exec->globalData();
+    JSValue prototype = get(exec, globalData.propertyNames->prototype);
     if (prototype.isObject())
-        m_cachedInheritorID.set(exec->globalData(), this, asObject(prototype)->inheritorID(exec->globalData()));
+        m_cachedInheritorID.set(globalData, this, globalData.prototypeMap.emptyObjectStructureForPrototype(asObject(prototype)));
     else
-        m_cachedInheritorID.set(exec->globalData(), this, globalObject()->emptyObjectStructure());
+        m_cachedInheritorID.set(globalData, this, globalData.prototypeMap.emptyObjectStructureForPrototype(globalObject()->objectPrototype()));
     return m_cachedInheritorID.get();
 }
 
@@ -162,6 +163,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(&thisObject->m_scope);
     visitor.append(&thisObject->m_executable);
+    visitor.append(&thisObject->m_cachedInheritorID);
 }
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)

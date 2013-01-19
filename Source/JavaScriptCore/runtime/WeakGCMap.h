@@ -88,13 +88,13 @@ public:
         return const_cast<Self*>(this)->find(key);
     }
 
-    template<typename T, typename HashTranslator> bool contains(const T& key) const
+    bool contains(const KeyType& key) const
     {
         return find(key) != end();
     }
 
 private:
-    static const int minGCThreshold;
+    static const int minGCThreshold = 3;
 
     void gcMap()
     {
@@ -121,7 +121,7 @@ private:
 };
 
 template<typename KeyArg, typename RawMappedArg, typename HashArg, typename KeyTraitsArg>
-const int WeakGCMap<KeyArg, RawMappedArg, HashArg, KeyTraitsArg>::minGCThreshold = 3;
+const int WeakGCMap<KeyArg, RawMappedArg, HashArg, KeyTraitsArg>::minGCThreshold;
 
 } // namespace JSC
 

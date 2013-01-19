@@ -1,3 +1,80 @@
+2013-01-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Track inheritance structures in a side table, instead of using a private
+        name in each prototype
+        https://bugs.webkit.org/show_bug.cgi?id=107378
+
+        Reviewed by Sam Weinig and Phil Pizlo.
+
+        This is a step toward object size inference.
+
+        Using a side table frees us to use a more complex key (a pair of
+        prototype and expected inline capacity).
+
+        It also avoids ruining inline caches for prototypes. (Adding a new private
+        name for a new inline capacity would change the prototype's structure,
+        possibly firing watchpoints, making inline caches go polymorphic, and
+        generally causing us to have a bad time.)
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri: Buildage.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation): Updated to use new side table API.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::cacheInheritorID): Updated to use new side table API.
+
+        (JSC::JSFunction::visitChildren): Fixed a long-standing bug where JSFunction
+        forgot to visit one of its data members (m_cachedInheritorID). This
+        wasn't a user-visible problem before because JSFunction would always
+        visit its .prototype property, which visited its m_cachedInheritorID.
+        But now, function.prototype only weakly owns function.m_cachedInheritorID.
+
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Added the map, taking care to make sure that its
+        destructor would run after the heap destructor.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset): Updated to use new side table API.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::setPrototype):
+        * runtime/JSObject.h:
+        (JSObject): Updated to use new side table API, and removed lots of code
+        that used to manage the per-object private name.
+
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation): Updated to use new side table API.
+
+        * runtime/PrototypeMap.cpp: Added.
+        (JSC):
+        (JSC::PrototypeMap::addPrototype):
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h: Added.
+        (PrototypeMap):
+        (JSC::PrototypeMap::isPrototype):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype): New side table.
+        This is a simple weak map, mapping an object to the structure you should
+        use when inheriting from that object. (In future, inline capacity will
+        be a part of the mapping.)
+
+        I used two maps to preserve existing behavior that allowed us to speculate
+        about an object becoming a prototype, even if it wasn't one at the moment.
+        However, I suspect that behavior can be removed without harm.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::contains):
+        (WeakGCMap): I would rate myself a 6 / 10 in C++.
+
 2013-01-18  Dan Bernstein  <mitz@apple.com>
 
         Removed duplicate references to two headers in the project files.

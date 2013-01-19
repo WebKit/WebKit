@@ -695,6 +695,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertyOffset.h \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \
 	Source/JavaScriptCore/runtime/PropertySlot.h \
+	Source/JavaScriptCore/runtime/PrototypeMap.cpp \
+	Source/JavaScriptCore/runtime/PrototypeMap.h \
 	Source/JavaScriptCore/runtime/PropertyStorage.h \
 	Source/JavaScriptCore/runtime/Protect.h \
 	Source/JavaScriptCore/runtime/PutDirectIndexMode.h \
