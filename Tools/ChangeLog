@@ -1,3 +1,12 @@
+2013-01-19  Nico Weber  <thakis@chromium.org>
+
+        Make ninja the default build system for build-webkit --chromium on mac
+        https://bugs.webkit.org/show_bug.cgi?id=106737
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/update-webkit-chromium:
+
 2013-01-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] svg/dom/fuzz-path-parser.html is failing
