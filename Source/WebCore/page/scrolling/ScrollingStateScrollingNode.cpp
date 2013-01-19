@@ -42,6 +42,7 @@ PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(Scro
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
     : ScrollingStateNode(stateTree, nodeID)
     , m_changedProperties(0)
+    , m_counterScrollingLayer(0)
     , m_frameScaleFactor(1)
     , m_wheelEventHandlerCount(0)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
@@ -50,6 +51,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
     , m_hasEnabledHorizontalScrollbar(false)
     , m_hasEnabledVerticalScrollbar(false)
     , m_requestedScrollPositionRepresentsProgrammaticScroll(false)
+    , m_counterScrollingLayerDidChange(false)
     , m_horizontalScrollbarMode(ScrollbarAuto)
     , m_verticalScrollbarMode(ScrollbarAuto)
 {
@@ -69,11 +71,13 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_hasEnabledHorizontalScrollbar(stateNode.hasEnabledHorizontalScrollbar())
     , m_hasEnabledVerticalScrollbar(stateNode.hasEnabledVerticalScrollbar())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
+    , m_counterScrollingLayerDidChange(stateNode.counterScrollingLayerDidChange())
     , m_horizontalScrollbarMode(stateNode.horizontalScrollbarMode())
     , m_verticalScrollbarMode(stateNode.verticalScrollbarMode())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
 {
+    setCounterScrollingLayer(stateNode.counterScrollingLayer());
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()

@@ -60,6 +60,7 @@ public:
         VerticalScrollbarMode = 1 << 11,
         ScrollOrigin = 1 << 12,
         RequestedScrollPosition = 1 << 13,
+        CounterScrollingLayer = 1 << 14,
     };
 
     virtual bool isScrollingNode() OVERRIDE { return true; }
@@ -110,6 +111,13 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
 
+    // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
+    GraphicsLayer* counterScrollingLayer() const { return m_counterScrollingLayer; }
+    void setCounterScrollingLayer(GraphicsLayer*);
+    PlatformLayer* counterScrollingPlatformLayer() const;
+
+    bool counterScrollingLayerDidChange() const { return m_counterScrollingLayerDidChange; }
+
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
@@ -120,6 +128,11 @@ private:
 
     unsigned m_changedProperties;
 
+    GraphicsLayer* m_counterScrollingLayer;
+#if PLATFORM(MAC)
+    RetainPtr<PlatformLayer> m_counterScrollingPlatformLayer;
+#endif
+    
     IntRect m_viewportRect;
     IntSize m_contentsSize;
     
@@ -137,6 +150,7 @@ private:
     bool m_hasEnabledHorizontalScrollbar;
     bool m_hasEnabledVerticalScrollbar;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
+    bool m_counterScrollingLayerDidChange;
 
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;

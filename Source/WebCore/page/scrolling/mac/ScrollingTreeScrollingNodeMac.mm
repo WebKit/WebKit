@@ -70,6 +70,9 @@ void ScrollingTreeScrollingNodeMac::update(ScrollingStateNode* stateNode)
     if (state->scrollLayerDidChange())
         m_scrollLayer = state->platformScrollLayer();
 
+    if (state->counterScrollingLayerDidChange())
+        m_counterScrollingLayer = state->counterScrollingPlatformLayer();
+
     if (state->changedProperties() & ScrollingStateScrollingNode::RequestedScrollPosition)
         setScrollPosition(state->requestedScrollPosition());
 
@@ -276,10 +279,13 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 
+    IntSize scrollOffsetForFixedChildren = WebCore::scrollOffsetForFixedPosition(viewportRect(), contentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
+    if (m_counterScrollingLayer)
+        m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
+
     if (!m_children)
         return;
 
-    IntSize scrollOffsetForFixedChildren = WebCore::scrollOffsetForFixedPosition(viewportRect(), contentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
     IntRect viewportRect = this->viewportRect();
     viewportRect.setLocation(IntPoint(scrollOffsetForFixedChildren));
 

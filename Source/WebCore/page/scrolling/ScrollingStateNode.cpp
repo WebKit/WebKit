@@ -53,7 +53,8 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode)
     , m_parent(0)
     , m_scrollLayerDidChange(stateNode.scrollLayerDidChange())
 {
-    setScrollLayer(stateNode.platformScrollLayer());
+    // FIXME: why doesn't this set the GraphicsLayer?
+    setScrollPlatformLayer(stateNode.platformScrollLayer());
 }
 
 ScrollingStateNode::~ScrollingStateNode()

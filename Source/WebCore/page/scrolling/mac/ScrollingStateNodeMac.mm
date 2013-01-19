@@ -38,7 +38,7 @@ PlatformLayer* ScrollingStateNode::platformScrollLayer() const
     return m_platformScrollLayer.get();
 }
 
-void ScrollingStateNode::setScrollLayer(PlatformLayer* platformLayer)
+void ScrollingStateNode::setScrollPlatformLayer(PlatformLayer* platformLayer)
 {
     m_platformScrollLayer = platformLayer;
 }

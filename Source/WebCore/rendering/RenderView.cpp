@@ -847,6 +847,16 @@ IntRect RenderView::unscaledDocumentRect() const
     return pixelSnappedIntRect(overflowRect);
 }
 
+bool RenderView::rootBackgroundIsEntirelyFixed() const
+{
+    RenderObject* rootObject = document()->documentElement() ? document()->documentElement()->renderer() : 0;
+    if (!rootObject)
+        return false;
+
+    RenderObject* rootRenderer = rootObject->rendererForRootBackground();
+    return rootRenderer->hasEntirelyFixedBackground();
+}
+
 LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
 {
     if (!hasColumns())

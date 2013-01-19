@@ -1832,6 +1832,11 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     }
 }
 
+static inline bool rendererHasBackground(const RenderObject* renderer)
+{
+    return renderer && renderer->hasBackground();
+}
+
 void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (m_style) {
@@ -1905,6 +1910,19 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 
         bool newStyleSlowScroll = newStyle && !shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage();
         bool oldStyleSlowScroll = m_style && !shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage();
+
+#if USE(ACCELERATED_COMPOSITING)
+        bool drawsRootBackground = isRoot() || (isBody() && rendererHasBackground(document()->documentElement()->renderer()));
+        if (drawsRootBackground && !shouldBlitOnFixedBackgroundImage) {
+            if (view()->compositor()->supportsFixedRootBackgroundCompositing()) {
+                if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
+                    newStyleSlowScroll = false;
+
+                if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
+                    oldStyleSlowScroll = false;
+            }
+        }
+#endif
         if (oldStyleSlowScroll != newStyleSlowScroll) {
             if (oldStyleSlowScroll)
                 view()->frameView()->removeSlowRepaintObject();

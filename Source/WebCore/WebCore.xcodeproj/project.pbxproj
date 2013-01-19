@@ -275,6 +275,7 @@
 		0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */; };
 		0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */; };
 		0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */; };
+		0FA88EBD16A8D1BD00F99984 /* ScrollingStateScrollingNodeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FA88EBC16A8D1BD00F99984 /* ScrollingStateScrollingNodeMac.mm */; };
 		0FB8890A167D2FA10010CDA5 /* ScrollingTreeStickyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */; };
 		0FB8890B167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */; };
 		0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */; };
@@ -7484,6 +7485,7 @@
 		0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingConstraints.h; sourceTree = "<group>"; };
 		0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerUpdater.cpp; sourceTree = "<group>"; };
 		0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerUpdater.h; sourceTree = "<group>"; };
+		0FA88EBC16A8D1BD00F99984 /* ScrollingStateScrollingNodeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingStateScrollingNodeMac.mm; sourceTree = "<group>"; };
 		0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeStickyNode.h; sourceTree = "<group>"; };
 		0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeStickyNode.mm; sourceTree = "<group>"; };
 		0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateStickyNode.cpp; sourceTree = "<group>"; };
@@ -14969,6 +14971,7 @@
 				9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */,
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
 				931CBD12161A44F800E4C874 /* ScrollingStateNodeMac.mm */,
+				0FA88EBC16A8D1BD00F99984 /* ScrollingStateScrollingNodeMac.mm */,
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				93C38C01164473DD00091EB2 /* ScrollingTreeFixedNode.h */,
 				93C38C02164473DD00091EB2 /* ScrollingTreeFixedNode.mm */,
@@ -28827,6 +28830,7 @@
 				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,
 				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
 				931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */,
+				0FA88EBD16A8D1BD00F99984 /* ScrollingStateScrollingNodeMac.mm in Sources */,
 				0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */,
 				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,

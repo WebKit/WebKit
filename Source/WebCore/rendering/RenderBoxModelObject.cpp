@@ -1172,7 +1172,26 @@ IntPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
     return phase;
 }
 
-void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const LayoutRect& paintRect, 
+bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (!isRoot())
+        return false;
+
+    if (view()->frameView() && view()->frameView()->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+        return false;
+
+    RenderLayer* rootLayer = view()->layer();
+    if (!rootLayer || !rootLayer->isComposited())
+        return false;
+
+    return rootLayer->backing()->backgroundLayerPaintsFixedRootBackground();
+#else
+    return false;
+#endif
+}
+
+void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const LayoutRect& paintRect,
                                                             BackgroundImageGeometry& geometry)
 {
     LayoutUnit left = 0;
@@ -1224,8 +1243,11 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
             positioningAreaSize = pixelSnappedIntSize(paintRect.size() - LayoutSize(left + right, top + bottom), paintRect.location());
     } else {
         IntRect viewportRect = pixelSnappedIntRect(viewRect());
-        if (FrameView* frameView = view()->frameView())
+        if (fixedBackgroundPaintsInLocalCoordinates())
+            viewportRect.setLocation(IntPoint());
+        else if (FrameView* frameView = view()->frameView())
             viewportRect.setLocation(IntPoint(frameView->scrollOffsetForFixedPosition()));
+        
         geometry.setDestRect(pixelSnappedIntRect(viewportRect));
         positioningAreaSize = geometry.destRect().size();
     }

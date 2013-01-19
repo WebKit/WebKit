@@ -156,7 +156,9 @@ void ScrollingCoordinatorMac::frameViewRootLayerDidChange(FrameView* frameView)
 
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
-    setScrollLayerForNode(scrollLayerForFrameView(frameView), stateNodeForID(frameView->scrollLayerID()));
+    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(stateNodeForID(frameView->scrollLayerID()));
+    setScrollLayerForNode(scrollLayerForFrameView(frameView), node);
+    setCounterScrollingLayerForNode(counterScrollingLayerForFrameView(frameView), node);
 }
 
 void ScrollingCoordinatorMac::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
@@ -328,6 +330,12 @@ void ScrollingCoordinatorMac::setScrollLayerForNode(GraphicsLayer* scrollLayer, 
     scheduleTreeStateCommit();
 }
 
+void ScrollingCoordinatorMac::setCounterScrollingLayerForNode(GraphicsLayer* layer, ScrollingStateScrollingNode* node)
+{
+    node->setCounterScrollingLayer(layer);
+    scheduleTreeStateCommit();
+}
+
 void ScrollingCoordinatorMac::setNonFastScrollableRegionForNode(const Region& region, ScrollingStateScrollingNode* node)
 {
     node->setNonFastScrollableRegion(region);
@@ -395,6 +403,18 @@ void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
         ScrollingStateNode* child = children->at(i).get();
         child->syncLayerPositionForViewportRect(viewportRect);
     }
+}
+
+void ScrollingCoordinatorMac::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer)
+{
+    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(stateNodeForID(nodeID));
+    ASSERT(node);
+    if (!node)
+        return;
+
+    node->setScrollLayer(scrollLayer);
+    node->setCounterScrollingLayer(counterScrollingLayer);
+    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)

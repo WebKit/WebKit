@@ -5,8 +5,9 @@
       (bounds 795.00 1710.00)
       (children 2
         (GraphicsLayer
+          (position 0.00 200.00)
           (anchor 0.00 0.00)
-          (bounds 795.00 1710.00)
+          (bounds 785.00 585.00)
           (drawsContent 1)
           (backgroundColor #FFFFFF)
         )

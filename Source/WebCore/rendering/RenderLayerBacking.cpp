@@ -752,14 +752,19 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     if (m_backgroundLayer) {
+        FloatPoint backgroundPosition;
         FloatSize backgroundSize = contentsSize;
-        IntSize backgroundOffset = m_graphicsLayer->offsetFromRenderer();
-        m_backgroundLayer->setPosition(FloatPoint());
+        if (backgroundLayerPaintsFixedRootBackground()) {
+            FrameView* frameView = toRenderView(renderer())->frameView();
+            backgroundPosition = IntPoint(frameView->scrollOffsetForFixedPosition());
+            backgroundSize = frameView->visibleContentRect().size();
+        }
+        m_backgroundLayer->setPosition(backgroundPosition);
         if (backgroundSize != m_backgroundLayer->size()) {
             m_backgroundLayer->setSize(backgroundSize);
             m_backgroundLayer->setNeedsDisplay();
         }
-        m_backgroundLayer->setOffsetFromRenderer(backgroundOffset);
+        m_backgroundLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
     }
 
     if (m_owningLayer->reflectionLayer() && m_owningLayer->reflectionLayer()->isComposited()) {
@@ -1137,7 +1142,13 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
             m_graphicsLayer->setAppliesPageScale(true);
         }
     }
-
+    
+    if (layerChanged) {
+        // This assumes that the background layer is only used for fixed backgrounds, which is currently a correct assumption.
+        if (renderer()->view())
+            compositor()->fixedRootBackgroundLayerChanged();
+    }
+    
     return layerChanged;
 }
 
@@ -1886,9 +1897,9 @@ float RenderLayerBacking::deviceScaleFactor() const
     return compositor()->deviceScaleFactor();
 }
 
-void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer*) const
+void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer* layer) const
 {
-    compositor()->didFlushChangesForLayer(m_owningLayer);
+    compositor()->didFlushChangesForLayer(m_owningLayer, layer);
 }
 
 bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer, TransformationMatrix& transform) const

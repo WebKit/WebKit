@@ -123,6 +123,7 @@ public:
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
     virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) { }
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*counterScrollingLayer*/) { }
     virtual void syncChildPositions(const LayoutRect&) { }
     virtual String scrollingStateTreeAsText() const;
 
@@ -167,6 +168,7 @@ protected:
 
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
+    GraphicsLayer* counterScrollingLayerForFrameView(FrameView*);
 
     Page* m_page;
 

@@ -202,6 +202,9 @@ public:
 
     IntRect documentRect() const;
 
+    // Renderer that paints the root background has background-images which all have background-attachment: fixed.
+    bool rootBackgroundIsEntirelyFixed() const;
+    
     bool hasRenderNamedFlowThreads() const;
     FlowThreadController* flowThreadController();
 

@@ -67,7 +67,7 @@ public:
     GraphicsLayer* graphicsLayer() { return m_graphicsLayer; }
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(GraphicsLayer*);
-    void setScrollLayer(PlatformLayer*);
+    void setScrollPlatformLayer(PlatformLayer*);
 
     bool scrollLayerDidChange() const { return m_scrollLayerDidChange; }
     void setScrollLayerDidChange(bool scrollLayerDidChange) { m_scrollLayerDidChange = scrollLayerDidChange; }

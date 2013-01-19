@@ -303,6 +303,23 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameVie
 #endif
 }
 
+GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView* frameView)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    Frame* frame = frameView->frame();
+    if (!frame)
+        return 0;
+
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return 0;
+    return renderView->compositor()->fixedRootBackgroundLayer();
+#else
+    UNUSED_PARAM(frameView);
+    return 0;
+#endif
+}
+
 void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
 {
     ASSERT(isMainThread());
@@ -365,10 +382,16 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
-        if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition)
+        GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
+        if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
             scrollLayer->setPosition(-frameView->scrollPosition());
-        else {
+            if (counterScrollingLayer)
+                counterScrollingLayer->setPosition(IntPoint(frameView->scrollOffsetForFixedPosition()));
+        } else {
             scrollLayer->syncPosition(-frameView->scrollPosition());
+            if (counterScrollingLayer)
+                counterScrollingLayer->syncPosition(IntPoint(frameView->scrollOffsetForFixedPosition()));
+
             LayoutRect viewportRect = frameView->visibleContentRect();
             viewportRect.setLocation(IntPoint(frameView->scrollOffsetForFixedPosition()));
             syncChildPositions(viewportRect);
