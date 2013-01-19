@@ -72,7 +72,7 @@ class RenderTableCellDeathTest : public testing::Test {
 
     virtual void SetUp()
     {
-        m_cell = new (arena()) RenderTableCell(document());
+        m_cell = RenderTableCell::createAnonymous(document());
     }
 
     virtual void TearDown()

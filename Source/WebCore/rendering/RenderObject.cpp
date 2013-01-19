@@ -232,7 +232,6 @@ RenderObject::RenderObject(Node* node)
 #ifndef NDEBUG
     renderObjectCounter.increment();
 #endif
-    ASSERT(node);
 }
 
 RenderObject::~RenderObject()

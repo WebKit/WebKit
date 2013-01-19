@@ -123,8 +123,8 @@ struct RenderFlexibleBox::Violation {
 };
 
 
-RenderFlexibleBox::RenderFlexibleBox(ContainerNode* node)
-    : RenderBlock(node)
+RenderFlexibleBox::RenderFlexibleBox(Element* element)
+    : RenderBlock(element)
     , m_orderIterator(this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {

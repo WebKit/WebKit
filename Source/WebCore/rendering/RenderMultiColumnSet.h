@@ -43,8 +43,8 @@ namespace WebCore {
 // come before and after the span.
 class RenderMultiColumnSet : public RenderRegionSet {
 public:
-    RenderMultiColumnSet(ContainerNode*, RenderFlowThread*);
-    
+    static RenderMultiColumnSet* createAnonymous(RenderFlowThread*);
+
     virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
 
     unsigned computedColumnCount() const { return m_computedColumnCount; }
@@ -88,6 +88,8 @@ public:
     void setRequiresBalancing(bool balancing) { m_requiresBalancing = balancing; }
 
 private:
+    RenderMultiColumnSet(RenderFlowThread*);
+
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void updateLogicalHeight() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;

@@ -49,8 +49,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(ContainerNode* node)
-    : RenderBlock(node)
+RenderTable::RenderTable(Element* element)
+    : RenderBlock(element)
     , m_head(0)
     , m_foot(0)
     , m_firstBody(0)
@@ -1362,7 +1362,8 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
-    RenderTable* newTable = new (parent->renderArena()) RenderTable(parent->document() /* is anonymous */);
+    RenderTable* newTable = new (parent->renderArena()) RenderTable(0);
+    newTable->setDocumentForAnonymous(parent->document());
     newTable->setStyle(newStyle.release());
     return newTable;
 }

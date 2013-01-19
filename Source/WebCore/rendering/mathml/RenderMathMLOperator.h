@@ -36,7 +36,8 @@ namespace WebCore {
 class RenderMathMLOperator : public RenderMathMLBlock {
 public:
     RenderMathMLOperator(Element*);
-    RenderMathMLOperator(ContainerNode*, UChar operatorChar);
+    RenderMathMLOperator(Element*, UChar operatorChar);
+
     virtual bool isRenderMathMLOperator() const { return true; }
     
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;

@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-RenderSVGTextPath::RenderSVGTextPath(ContainerNode* node)
-    : RenderSVGInline(node)
+RenderSVGTextPath::RenderSVGTextPath(Element* element)
+    : RenderSVGInline(element)
 {
 }
 

@@ -47,8 +47,8 @@ RenderMathMLOperator::RenderMathMLOperator(Element* element)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(ContainerNode* node, UChar operatorChar)
-    : RenderMathMLBlock(node)
+RenderMathMLOperator::RenderMathMLOperator(Element* element, UChar operatorChar)
+    : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
     , m_operatorType(Default)
@@ -146,7 +146,7 @@ void RenderMathMLOperator::updateFromElement()
     bool stretchDisabled = false;
     
     // We may need the element later if we can't stretch.
-    if (node()->nodeType() == Node::ELEMENT_NODE) {
+    if (node()->isElementNode()) {
         if (Element* mo = static_cast<Element*>(node())) {
             AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
             stretchDisabled = equalIgnoringCase(stretchyAttr, "false");
@@ -202,7 +202,7 @@ void RenderMathMLOperator::updateFromElement()
     // Either stretch is disabled or we don't have a stretchable character over the minimum height
     if (stretchDisabled || !shouldStack) {
         m_isStacked = false;
-        RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
+        RenderBlock* container = new (renderArena()) RenderMathMLBlock(toElement(node()));
         // This container doesn't offer any useful information to accessibility.
         toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
         
@@ -227,7 +227,7 @@ void RenderMathMLOperator::updateFromElement()
         RenderText* text = 0;
         if (m_operator) 
             text = new (renderArena()) RenderText(node(), StringImpl::create(&m_operator, 1));
-        else if (node()->nodeType() == Node::ELEMENT_NODE)
+        else if (node()->isElementNode())
             if (Element* mo = static_cast<Element*>(node()))
                 text = new (renderArena()) RenderText(node(), mo->textContent().replace(hyphenMinus, minusSign).impl());
         // If we can't figure out the text, leave it blank.
@@ -296,7 +296,7 @@ PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int maxHeight
 
 RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative)
 {
-    RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
+    RenderBlock* container = new (renderArena()) RenderMathMLBlock(toElement(node()));
     toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
     container->setStyle(createStackableStyle(maxHeightForRenderer));
     addChild(container);

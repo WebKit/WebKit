@@ -37,7 +37,7 @@ enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
 class RenderTableCell : public RenderBlock {
 public:
-    explicit RenderTableCell(ContainerNode*);
+    explicit RenderTableCell(Element*);
     
     unsigned colSpan() const
     {
@@ -150,6 +150,7 @@ public:
     bool cellWidthChanged() const { return m_cellWidthChanged; }
     void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
+    static RenderTableCell* createAnonymous(Document*);
     static RenderTableCell* createAnonymousWithParentRenderer(const RenderObject*);
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
     {
