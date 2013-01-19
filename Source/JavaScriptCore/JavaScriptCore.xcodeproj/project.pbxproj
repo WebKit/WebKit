@@ -3269,8 +3269,6 @@
 				86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */,
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
-				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
-				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

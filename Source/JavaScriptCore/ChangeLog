@@ -1,3 +1,11 @@
+2013-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Removed duplicate references to two headers in the project files.
+
+        Rubber-stamped by Mark Rowe.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix for building JSC with DFG_ENABLE_DEBUG_PROPAGATION_VERBOSE enabled in DFGCommon.h.
