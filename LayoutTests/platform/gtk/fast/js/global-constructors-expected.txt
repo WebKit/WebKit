@@ -130,6 +130,17 @@ PASS HTMLUListElement.toString() is '[object HTMLUListElementConstructor]'
 PASS HTMLUnknownElement.toString() is '[object HTMLUnknownElementConstructor]'
 PASS HTMLVideoElement.toString() is '[object HTMLVideoElementConstructor]'
 PASS HashChangeEvent.toString() is '[object HashChangeEventConstructor]'
+PASS IDBCursor.toString() is '[object IDBCursorConstructor]'
+PASS IDBCursorWithValue.toString() is '[object IDBCursorWithValueConstructor]'
+PASS IDBDatabase.toString() is '[object IDBDatabaseConstructor]'
+PASS IDBFactory.toString() is '[object IDBFactoryConstructor]'
+PASS IDBIndex.toString() is '[object IDBIndexConstructor]'
+PASS IDBKeyRange.toString() is '[object IDBKeyRangeConstructor]'
+PASS IDBObjectStore.toString() is '[object IDBObjectStoreConstructor]'
+PASS IDBOpenDBRequest.toString() is '[object IDBOpenDBRequestConstructor]'
+PASS IDBRequest.toString() is '[object IDBRequestConstructor]'
+PASS IDBTransaction.toString() is '[object IDBTransactionConstructor]'
+PASS IDBVersionChangeEvent.toString() is '[object IDBVersionChangeEventConstructor]'
 PASS Image.toString() is '[object ImageConstructor]'
 PASS ImageData.toString() is '[object ImageDataConstructor]'
 PASS KeyboardEvent.toString() is '[object KeyboardEventConstructor]'
@@ -348,6 +359,14 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
+FAIL webkitIDBCursor.toString() should be [object webkitIDBCursorConstructor]. Was [object IDBCursorConstructor].
+FAIL webkitIDBDatabase.toString() should be [object webkitIDBDatabaseConstructor]. Was [object IDBDatabaseConstructor].
+FAIL webkitIDBFactory.toString() should be [object webkitIDBFactoryConstructor]. Was [object IDBFactoryConstructor].
+FAIL webkitIDBIndex.toString() should be [object webkitIDBIndexConstructor]. Was [object IDBIndexConstructor].
+FAIL webkitIDBKeyRange.toString() should be [object webkitIDBKeyRangeConstructor]. Was [object IDBKeyRangeConstructor].
+FAIL webkitIDBObjectStore.toString() should be [object webkitIDBObjectStoreConstructor]. Was [object IDBObjectStoreConstructor].
+FAIL webkitIDBRequest.toString() should be [object webkitIDBRequestConstructor]. Was [object IDBRequestConstructor].
+FAIL webkitIDBTransaction.toString() should be [object webkitIDBTransactionConstructor]. Was [object IDBTransactionConstructor].
 FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].
 PASS successfullyParsed is true
 

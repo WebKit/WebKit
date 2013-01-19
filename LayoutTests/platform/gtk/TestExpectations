@@ -1367,6 +1367,10 @@ webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-error.html [ Failure ]
 
+webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
+webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
