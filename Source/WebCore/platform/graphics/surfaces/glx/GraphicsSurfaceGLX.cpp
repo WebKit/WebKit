@@ -439,7 +439,8 @@ private:
             m_xPixmap = 0;
         }
 
-        if (m_surface) {
+        // Client doesn't own the window. Delete surface only on writing side.
+        if (!m_isReceiver && m_surface) {
             XDestroyWindow(m_display, m_surface);
             m_surface = 0;
         }
