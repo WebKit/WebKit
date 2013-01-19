@@ -1430,6 +1430,10 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t l
         return;
 
     WTF::String messageString = toWTFString(message);
+    unsigned nullCharPos = messageString.find(UChar(0));
+    if (nullCharPos != WTF::notFound)
+        messageString.truncate(nullCharPos);
+
     size_t fileProtocolStart = messageString.find("file://");
     if (fileProtocolStart != WTF::notFound)
         // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.

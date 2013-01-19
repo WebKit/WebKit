@@ -1,3 +1,23 @@
+2013-01-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] svg/dom/fuzz-path-parser.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=107133
+
+        Reviewed by Alexey Proskuryakov.
+
+        Console messages can contain null characters before the end of string.
+        Appending such message to the StringBuilder as a WTFString appends the
+        complete string, including the null character. This later cuts off everything
+        after the null character when the string is being printed out to the test
+        output.
+
+        To avoid this, truncate the string up to the first null character. This
+        preserves the newline character appended immediately after this and
+        stops giving incorrect output.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+
 2013-01-19  Eric Seidel  <eric@webkit.org>
 
         Update error regexps so that Parser/html-parser-srcdoc.html can "pass"
