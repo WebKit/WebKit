@@ -2,11 +2,11 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
-    RenderSVGText {text} at (105,35) size 240x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 240x19
+    RenderSVGText {text} at (105,36) size 240x17 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 240x17
         chunk 1 (middle anchor) text run 1 at (105.00,50.00) startOffset 0 endOffset 34 width 240.00: "patternUnits / patternContentUnits"
-    RenderSVGText {text} at (168,60) size 114x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 114x19
+    RenderSVGText {text} at (168,61) size 114x17 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 114x17
         chunk 1 (middle anchor) text run 1 at (168.00,75.00) startOffset 0 endOffset 15 width 114.00: "pattern viewBox"
     RenderSVGContainer {g} at (14,109) size 410x292
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -38,134 +38,134 @@ layer at (0,0) size 450x500
         RenderSVGResourcePattern {pattern} [id="pattern9"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
           RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=RADIAL-GRADIENT] [id="redToYellow"]}] [cx=20.00] [cy=20.00] [r=40.00]
       RenderSVGContainer {g} at (14,109) size 410x292 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,100.00)}]
-        RenderSVGContainer {g} at (14,109) size 135x43
+        RenderSVGContainer {g} at (14,109) size 135x42
           RenderSVGRect {rect} at (14,119) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern1"]}] [x=20.00] [y=20.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,109) size 134x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,20.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,109) size 134x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,20.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern1"
-            RenderSVGContainer {g} at (65,120) size 84x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 82x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 82x12
+            RenderSVGContainer {g} at (65,120) size 84x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 82x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 82x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 20 width 82.00: "patternUnits=default"
-              RenderSVGText {text} at (0,1) size 84x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x12
+              RenderSVGText {text} at (0,1) size 84x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 84x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 84.00: "contentUnits=default"
-              RenderSVGText {text} at (0,11) size 47x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 47x12
+              RenderSVGText {text} at (0,11) size 47x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 47x11
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 10 width 47.00: "no viewbox"
         RenderSVGContainer {g} at (14,159) size 187x42
           RenderSVGRect {rect} at (14,169) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern2"]}] [x=20.00] [y=70.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,159) size 186x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,70.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,159) size 186x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,70.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern2"
-            RenderSVGContainer {g} at (65,170) size 136x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 136x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 136x12
+            RenderSVGContainer {g} at (65,170) size 136x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 136x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 136x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 136.00: "patternUnits=objectBoundingBox"
-              RenderSVGText {text} at (0,1) size 84x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x12
+              RenderSVGText {text} at (0,1) size 84x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 84x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 84.00: "contentUnits=default"
-        RenderSVGContainer {g} at (14,209) size 172x43
+        RenderSVGContainer {g} at (14,209) size 172x42
           RenderSVGRect {rect} at (14,219) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern3"]}] [x=20.00] [y=120.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,209) size 171x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,209) size 171x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern3"
-            RenderSVGContainer {g} at (65,220) size 121x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 121x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 121x12
+            RenderSVGContainer {g} at (65,220) size 121x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 121x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 121x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 121.00: "patternUnits=userSpaceOnUse"
-              RenderSVGText {text} at (0,1) size 84x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x12
+              RenderSVGText {text} at (0,1) size 84x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 84x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 20 width 84.00: "contentUnits=default"
-              RenderSVGText {text} at (0,11) size 68x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 68x12
+              RenderSVGText {text} at (0,11) size 68x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 68x11
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 68.00: "overflow=visible"
-        RenderSVGContainer {g} at (14,259) size 189x43
+        RenderSVGContainer {g} at (14,259) size 189x42
           RenderSVGRect {rect} at (14,269) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern4"]}] [x=20.00] [y=170.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,259) size 188x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,170.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,259) size 188x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,170.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern4"
-            RenderSVGContainer {g} at (65,270) size 138x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 82x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 82x12
+            RenderSVGContainer {g} at (65,270) size 138x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 82x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 82x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 20 width 82.00: "patternUnits=default"
-              RenderSVGText {text} at (0,1) size 138x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 138x12
+              RenderSVGText {text} at (0,1) size 138x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 138x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 138.00: "contentUnits=objectBoundingBox"
-              RenderSVGText {text} at (0,11) size 68x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 68x12
+              RenderSVGText {text} at (0,11) size 68x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 68x11
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 16 width 68.00: "overflow=visible"
         RenderSVGContainer {g} at (14,309) size 189x42
           RenderSVGRect {rect} at (14,319) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern5"]}] [x=20.00] [y=220.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,309) size 188x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,220.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,309) size 188x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,220.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern5"
-            RenderSVGContainer {g} at (65,320) size 138x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 136x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 136x12
+            RenderSVGContainer {g} at (65,320) size 138x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 136x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 136x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 136.00: "patternUnits=objectBoundingBox"
-              RenderSVGText {text} at (0,1) size 138x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 138x12
+              RenderSVGText {text} at (0,1) size 138x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 138x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 138.00: "contentUnits=objectBoundingBox"
         RenderSVGContainer {g} at (14,359) size 189x42
           RenderSVGRect {rect} at (14,369) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern6"]}] [x=20.00] [y=270.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (15,359) size 188x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,270.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (15,359) size 188x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,270.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern6"
-            RenderSVGContainer {g} at (65,370) size 138x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 121x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 121x12
+            RenderSVGContainer {g} at (65,370) size 138x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 121x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 121x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 121.00: "patternUnits=userSpaceOnUse"
-              RenderSVGText {text} at (0,1) size 138x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 138x12
+              RenderSVGText {text} at (0,1) size 138x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 138x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 138.00: "contentUnits=objectBoundingBox"
-        RenderSVGContainer {g} at (219,109) size 196x43
+        RenderSVGContainer {g} at (219,109) size 196x42
           RenderSVGRect {rect} at (219,119) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern7"]}] [x=225.00] [y=20.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (220,109) size 195x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,20.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (220,109) size 195x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,20.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern7"
-            RenderSVGContainer {g} at (270,120) size 145x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 121x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 121x12
+            RenderSVGContainer {g} at (270,120) size 145x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 121x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 121x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 27 width 121.00: "patternUnits=userSpaceOnUse"
-              RenderSVGText {text} at (0,1) size 138x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 138x12
+              RenderSVGText {text} at (0,1) size 138x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 138x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 30 width 138.00: "contentUnits=objectBoundingBox"
-              RenderSVGText {text} at (0,11) size 145x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 145x12
+              RenderSVGText {text} at (0,11) size 145x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 145x11
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 32 width 145.00: "viewBox preserveAspectRatio=none"
         RenderSVGContainer {g} at (219,159) size 205x42
           RenderSVGRect {rect} at (219,169) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern8"]}] [x=225.00] [y=70.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (220,159) size 204x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,70.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (220,159) size 204x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,70.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern8"
-            RenderSVGContainer {g} at (270,170) size 154x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 92x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 92x12
+            RenderSVGContainer {g} at (270,170) size 154x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 92x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 92x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 22 width 92.00: "same as pattern#7 with"
-              RenderSVGText {text} at (0,1) size 154x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 154x12
+              RenderSVGText {text} at (0,1) size 154x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 154x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 33 width 154.00: "preserveAspectRatio=xMinYmin meet"
         RenderSVGContainer {g} at (219,209) size 204x42
           RenderSVGRect {rect} at (219,219) size 42x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern9"]}] [x=225.00] [y=120.00] [width=40.00] [height=30.00]
-          RenderSVGContainer {g} at (220,209) size 203x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,120.00)}]
-            RenderSVGText {text} at (0,-11) size 37x12 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 37x12
+          RenderSVGContainer {g} at (220,209) size 203x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,120.00)}]
+            RenderSVGText {text} at (0,-11) size 37x11 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 37x11
                 chunk 1 text run 1 at (0.00,-2.00) startOffset 0 endOffset 9 width 37.00: "#pattern9"
-            RenderSVGContainer {g} at (270,220) size 153x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
-              RenderSVGText {text} at (0,-9) size 153x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 153x12
+            RenderSVGContainer {g} at (270,220) size 153x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,9.00)}]
+              RenderSVGText {text} at (0,-9) size 153x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 153x11
                   chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 34 width 153.00: "preserveAspectRatio=xMinYmin slice"
-              RenderSVGText {text} at (0,1) size 68x12 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 68x12
+              RenderSVGText {text} at (0,1) size 68x11 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 68x11
                   chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 16 width 68.00: "overflow=visible"
     RenderSVGContainer {use} at (0,0) size 448x498
       RenderSVGContainer {g} at (0,0) size 448x498

@@ -2,47 +2,47 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (60,23) size 345x314
-      RenderSVGText {text} at (360,23) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+    RenderSVGContainer {g} at (60,23) size 345x313
+      RenderSVGText {text} at (360,23) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,50.00) startOffset 0 endOffset 3 width 45.00: "100"
-      RenderSVGText {text} at (360,58) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,58) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,85.00) startOffset 0 endOffset 3 width 45.00: "200"
-      RenderSVGText {text} at (360,93) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,93) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,120.00) startOffset 0 endOffset 3 width 45.00: "300"
-      RenderSVGText {text} at (360,128) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,128) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,155.00) startOffset 0 endOffset 3 width 45.00: "400"
-      RenderSVGText {text} at (360,163) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,163) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,190.00) startOffset 0 endOffset 3 width 45.00: "500"
-      RenderSVGText {text} at (360,198) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,198) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,225.00) startOffset 0 endOffset 3 width 45.00: "600"
-      RenderSVGText {text} at (360,233) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,233) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,260.00) startOffset 0 endOffset 3 width 45.00: "700"
-      RenderSVGText {text} at (360,268) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,268) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,295.00) startOffset 0 endOffset 3 width 45.00: "800"
-      RenderSVGText {text} at (360,303) size 45x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x34
+      RenderSVGText {text} at (360,303) size 45x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x33
           chunk 1 text run 1 at (360.00,330.00) startOffset 0 endOffset 3 width 45.00: "900"
-      RenderSVGText {text} at (60,53) size 150x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 150x34
+      RenderSVGText {text} at (60,53) size 150x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 150x33
           chunk 1 text run 1 at (60.00,80.00) startOffset 0 endOffset 12 width 150.00: "This is bold"
-      RenderSVGText {text} at (60,103) size 173x34 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 173x34
+      RenderSVGText {text} at (60,103) size 173x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 173x33
           chunk 1 text run 1 at (60.00,130.00) startOffset 0 endOffset 14 width 173.00: "This is normal"
-      RenderSVGContainer {g} at (60,153) size 177x34
-        RenderSVGText {text} at (60,153) size 177x34 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 177x34
+      RenderSVGContainer {g} at (60,153) size 177x33
+        RenderSVGText {text} at (60,153) size 177x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 177x33
             chunk 1 text run 1 at (60.00,180.00) startOffset 0 endOffset 14 width 177.00: "Blue is bolder"
-      RenderSVGContainer {g} at (60,203) size 169x34
-        RenderSVGText {text} at (60,203) size 169x34 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 169x34
+      RenderSVGContainer {g} at (60,203) size 169x33
+        RenderSVGText {text} at (60,203) size 169x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 169x33
             chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 169.00: "Blue is lighter"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45

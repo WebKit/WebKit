@@ -4,7 +4,7 @@ layer at (0,0) size 800x480
   RenderBlock {html} at (0,0) size 800x480
     RenderBody {body} at (8,16) size 784x456
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 764x19
+        RenderText {#text} at (0,0) size 764x17
           text run at (0,0) width 764: "The svg image contained in the div element (red box) should not change its appearance when width is resized to be larger"
       RenderBlock {div} at (0,34) size 602x422 [border: (1px solid #FF0000)]
         RenderImage {img} at (1,1) size 420x420

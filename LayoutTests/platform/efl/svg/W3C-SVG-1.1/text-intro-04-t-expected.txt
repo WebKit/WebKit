@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,5) size 449x240
-      RenderSVGText {text} at (10,5) size 138x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 138x19
+    RenderSVGContainer {g} at (10,6) size 449x239
+      RenderSVGText {text} at (10,6) size 138x17 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 138x17
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 138.00: "Test horizontal text."
       RenderSVGContainer {g} at (10,41) size 449x204
         RenderSVGText {text} at (10,41) size 307x23 contains 1 chunk(s)

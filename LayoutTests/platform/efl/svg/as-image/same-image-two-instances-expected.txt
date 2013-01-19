@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x119
-  RenderBlock {HTML} at (0,0) size 800x119
-    RenderBody {BODY} at (8,8) size 784x103
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,8) size 784x104
       RenderImage {IMG} at (0,50) size 200x50 [border: (2px dashed #800000)]
-      RenderText {#text} at (200,85) size 4x19
-        text run at (200,85) width 4: " "
+      RenderText {#text} at (200,86) size 4x17
+        text run at (200,86) width 4: " "
       RenderImage {IMG} at (204,0) size 100x100 [border: (2px dashed #800000)]
       RenderText {#text} at (0,0) size 0x0

@@ -53,11 +53,11 @@ layer at (0,0) size 800x600
               RenderSVGRect {rect} at (38,405) size 174x96 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=190.00] [width=220.00] [height=120.00]
               RenderSVGRect {rect} at (39,404) size 172x96 [fill={[type=SOLID] [color=#F0F8FF]}] [x=40.50] [y=188.00] [width=219.00] [height=121.50]
               RenderSVGRect {rect} at (31,404) size 188x10 [fill={[type=SOLID] [color=#F0F8FF]}] [x=30.00] [y=188.00] [width=240.00] [height=11.50]
-              RenderSVGText {text} at (10,43) size 192x30 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 192x15
+              RenderSVGText {text} at (10,44) size 192x28 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 192x13
                   chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 36 width 192.00: "This is oversize content that can be"
-                RenderSVGTSpan {tspan} at (0,0) size 114x15
-                  RenderSVGInlineText {#text} at (0,15) size 114x15
+                RenderSVGTSpan {tspan} at (0,0) size 114x13
+                  RenderSVGInlineText {#text} at (0,15) size 114x13
                     chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 20 width 113.92: "hidden on tab-change"
         RenderSVGContainer {g} at (7,257) size 236x158
           RenderSVGPath {path} at (7,257) size 236x158 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M 154 5 L 159 0 L 217 0 L 222 5 L 222 35 L 300 35 L 300 200 L 0 200 L 0 35 L 154 35 Z"]
@@ -91,15 +91,15 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 58x19
               RenderSVGInlineText {#text} at (1,16) size 58x18
                 chunk 1 (middle anchor) text run 1 at (-23.80,31.50) startOffset 0 endOffset 7 width 57.60: "Browser"
-          RenderSVGContainer {g} at (15,291) size 211x36
-            RenderSVGText {text} at (10,43) size 269x45 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 239x15
+          RenderSVGContainer {g} at (15,292) size 211x35
+            RenderSVGText {text} at (10,44) size 269x43 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 239x13
                 chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 46 width 238.08: "This is a tabgroup with triangular tab corners"
-              RenderSVGTSpan {tspan} at (0,0) size 269x15
-                RenderSVGInlineText {#text} at (0,15) size 269x15
+              RenderSVGTSpan {tspan} at (0,0) size 269x13
+                RenderSVGInlineText {#text} at (0,15) size 269x13
                   chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 53 width 268.80: "and a double line tab. (use \"\\n\" as a line separator)"
-              RenderSVGTSpan {tspan} at (0,0) size 256x16
-                RenderSVGInlineText {#text} at (0,29) size 256x15
+              RenderSVGTSpan {tspan} at (0,0) size 256x13
+                RenderSVGInlineText {#text} at (0,30) size 256x13
                   chunk 1 text run 1 at (10.00,85.00) startOffset 0 endOffset 47 width 256.00: "Click on the second tab to see oversize content"
     RenderSVGContainer {g} at (507,233) size 236x159
       RenderSVGContainer {g} at (507,233) size 236x159 [transform={m=((1.00,0.00)(0.00,1.00)) t=(650.00,300.00)}]
