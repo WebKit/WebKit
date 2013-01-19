@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 150x18
           RenderTableRow {TR} at (0,0) size 150x18
             RenderTableCell {TD} at (0,0) size 150x18 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (0,0) size 100x19
+              RenderText {#text} at (0,0) size 100x17
                 text run at (0,0) width 100: "Correct Display"
           RenderTableRow {TR} at (0,18) size 150x0
             RenderTableCell {TD} at (0,18) size 125x0 [r=1 c=0 rs=1 cs=1]
@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 150x18
           RenderTableRow {TR} at (0,0) size 150x18
             RenderTableCell {TD} at (0,0) size 150x18 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (0,0) size 109x19
+              RenderText {#text} at (0,0) size 109x17
                 text run at (0,0) width 109: "Incorrect Display"

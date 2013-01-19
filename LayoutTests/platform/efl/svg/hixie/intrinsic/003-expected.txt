@@ -11,5 +11,5 @@ layer at (0,0) size 800x266
             layer at (0,0) size 100x200
               RenderSVGRoot {svg} at (0,0) size 0x0
       RenderBlock {P} at (0,216) size 784x18
-        RenderText {#text} at (0,0) size 422x19
+        RenderText {#text} at (0,0) size 422x17
           text run at (0,0) width 422: "There should be a complete unbroken yin-yang symbol (\x{262F}) above."

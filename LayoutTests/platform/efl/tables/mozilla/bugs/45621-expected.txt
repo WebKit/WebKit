@@ -18,6 +18,6 @@ layer at (0,0) size 800x153
               RenderTextControl {INPUT} at (9,11) size 375x28 [bgcolor=#FFFFFF]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,114) size 784x18
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x17
 layer at (24,91) size 368x18
   RenderBlock {DIV} at (4,6) size 368x18

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,0) size 375x65
-    RenderSVGContainer {g} at (297,4) size 34x58
-      RenderSVGPath {svg:line} at (297,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=60.00] [y1=0.80] [x2=60.00] [y2=12.40]
-      RenderSVGPath {svg:line} at (325,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=65.60] [y1=0.80] [x2=65.60] [y2=12.40]
-      RenderSVGRect {svg:rect} at (300,4) size 28x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=60.00] [y=0.80] [width=5.60] [height=11.40]
-    RenderSVGText {text} at (10,0) size 75x12 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (50,5) size 375x60
+    RenderSVGContainer {g} at (297,5) size 34x56
+      RenderSVGPath {svg:line} at (297,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=60.00] [y1=1.00] [x2=60.00] [y2=12.20]
+      RenderSVGPath {svg:line} at (325,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=65.60] [y1=1.00] [x2=65.60] [y2=12.20]
+      RenderSVGRect {svg:rect} at (300,5) size 28x56 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=60.00] [y=1.00] [width=5.60] [height=11.20]
+    RenderSVGText {text} at (10,1) size 75x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 75x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
         chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 5.60: "h"

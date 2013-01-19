@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (109,9) size 582x582
     RenderSVGRect {rect} at (109,9) size 582x582 [stroke={[type=SOLID] [color=#000000]}] [x=-190.00] [y=-190.00] [width=580.00] [height=580.00]
-    RenderSVGText {text} at (-150,-159) size 92x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 92x12
+    RenderSVGText {text} at (-150,-159) size 92x11 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 92x11
         chunk 1 text run 1 at (-150.00,-150.00) startOffset 0 endOffset 21 width 92.00: "SVG Performance test."
-    RenderSVGText {text} at (200,341) size 61x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 61x12
+    RenderSVGText {text} at (200,341) size 61x11 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 61x11
         chunk 1 text run 1 at (200.00,350.00) startOffset 0 endOffset 14 width 61.00: "Test completed"
     RenderSVGContainer {g} at (116,55) size 495x512
       RenderSVGPath {path} at (139,239) size 39x48 [stroke={[type=SOLID] [color=#000000] [stroke width=0.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M -122.304 84.285 C -122.304 84.285 -122.203 86.179 -123.027 86.16 C -123.851 86.141 -140.305 38.066 -160.833 40.309 C -160.833 40.309 -143.05 32.956 -122.304 84.285 Z"]

@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (2,0) size 796x598
-    RenderSVGContainer {g} at (7,0) size 786x560
-      RenderSVGText {text} at (14,0) size 109x12 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (2,2) size 796x596
+    RenderSVGContainer {g} at (7,5) size 786x555
+      RenderSVGText {text} at (14,1) size 109x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 109x12
           chunk 1 text run 1 at (14.00,10.00) startOffset 0 endOffset 26 width 108.40: "Basic test of 'textLength'"
-      RenderSVGText {text} at (10,10) size 126x12 contains 1 chunk(s)
+      RenderSVGText {text} at (10,11) size 126x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 126x12
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 30 width 125.80: "and 'lengthAdjust' attributes."
       RenderSVGContainer {g} at (7,110) size 786x120
         RenderSVGContainer {g} at (15,110) size 775x50
-          RenderSVGText {text} at (3,22) size 52x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 52x10
+          RenderSVGText {text} at (3,22) size 52x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 52x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 51.20: "Line to Stretch"
-          RenderSVGText {text} at (75,22) size 83x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 83x10
+          RenderSVGText {text} at (75,22) size 83x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 83x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 82.60: "this is a line to squeeze"
         RenderSVGContainer {g} at (7,157) size 786x23
           RenderSVGPath {line} at (10,157) size 270x6 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=56.00] [y2=32.00]
@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.80: "lengthAdjust: default"
       RenderSVGContainer {g} at (7,220) size 701x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
         RenderSVGContainer {g} at (15,220) size 690x50
-          RenderSVGText {text} at (3,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+          RenderSVGText {text} at (3,22) size 65x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 65x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.40: "L"
               chunk 1 text run 2 at (8.32,30.00) startOffset 1 endOffset 2 width 1.80: "i"
               chunk 1 text run 3 at (11.04,30.00) startOffset 2 endOffset 3 width 4.40: "n"
@@ -56,8 +56,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 13 at (54.64,30.00) startOffset 12 endOffset 13 width 2.20: "t"
               chunk 1 text run 14 at (57.76,30.00) startOffset 13 endOffset 14 width 4.00: "c"
               chunk 1 text run 15 at (62.68,30.00) startOffset 14 endOffset 15 width 4.40: "h"
-          RenderSVGText {text} at (75,22) size 66x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 66x10
+          RenderSVGText {text} at (75,22) size 66x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.20: "t"
               chunk 1 text run 2 at (76.50,30.00) startOffset 1 endOffset 2 width 4.40: "h"
               chunk 1 text run 3 at (80.19,30.00) startOffset 2 endOffset 3 width 1.80: "i"
@@ -105,8 +105,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.80: "lengthAdjust: default"
       RenderSVGContainer {g} at (7,330) size 701x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
         RenderSVGContainer {g} at (15,330) size 690x50
-          RenderSVGText {text} at (3,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+          RenderSVGText {text} at (3,22) size 65x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 65x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.40: "L"
               chunk 1 text run 2 at (8.32,30.00) startOffset 1 endOffset 2 width 1.80: "i"
               chunk 1 text run 3 at (11.04,30.00) startOffset 2 endOffset 3 width 4.40: "n"
@@ -122,8 +122,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 13 at (54.64,30.00) startOffset 12 endOffset 13 width 2.20: "t"
               chunk 1 text run 14 at (57.76,30.00) startOffset 13 endOffset 14 width 4.00: "c"
               chunk 1 text run 15 at (62.68,30.00) startOffset 14 endOffset 15 width 4.40: "h"
-          RenderSVGText {text} at (75,22) size 66x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 66x10
+          RenderSVGText {text} at (75,22) size 66x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 66x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.20: "t"
               chunk 1 text run 2 at (76.50,30.00) startOffset 1 endOffset 2 width 4.40: "h"
               chunk 1 text run 3 at (80.19,30.00) startOffset 2 endOffset 3 width 1.80: "i"
@@ -171,11 +171,11 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 57.60: "lengthAdjust: spacing"
       RenderSVGContainer {g} at (7,440) size 701x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,66.00)}]
         RenderSVGContainer {g} at (15,440) size 685x50
-          RenderSVGText {text} at (3,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+          RenderSVGText {text} at (3,22) size 65x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 65x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 51.20: "Line to Stretch"
-          RenderSVGText {text} at (75,22) size 65x10 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 65x10
+          RenderSVGText {text} at (75,22) size 65x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 65x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 82.60: "this is a line to squeeze"
         RenderSVGContainer {g} at (7,487) size 701x23
           RenderSVGPath {line} at (10,487) size 335x6 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]

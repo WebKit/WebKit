@@ -1,25 +1,25 @@
 layer at (0,0) size 820x585
   RenderView at (0,0) size 800x585
-layer at (0,0) size 800x311
-  RenderBlock {html} at (0,0) size 800x311
-    RenderBody {body} at (48,8) size 772x295
-      RenderBlock {h1} at (10,40) size 691x30
+layer at (0,0) size 800x315
+  RenderBlock {html} at (0,0) size 800x315
+    RenderBody {body} at (48,8) size 772x299
+      RenderBlock {h1} at (10,40) size 692x31
         RenderText {#text} at (0,0) size 315x30
           text run at (0,0) width 315: "scalable CSS background"
-      RenderBlock {h4} at (10,70) size 752x16
+      RenderBlock {h4} at (10,70) size 752x17
         RenderText {#text} at (0,0) size 125x16
           text run at (0,0) width 125: "WICD Core 1.0 #11"
-      RenderBlock {p} at (10,105) size 711x36
-        RenderText {#text} at (10,10) size 468x17
+      RenderBlock {p} at (10,105) size 712x37
+        RenderText {#text} at (10,10) size 468x15
           text run at (10,10) width 468: "This text paragraph, as well as all following, must have a SVG background image."
-      RenderBlock {p} at (10,146) size 711x36
-        RenderText {#text} at (10,10) size 619x17
+      RenderBlock {p} at (10,147) size 712x37
+        RenderText {#text} at (10,10) size 619x15
           text run at (10,10) width 619: "This background image (grey color-gradient and rounded corners) must always exactly fit the text paragraph."
-      RenderBlock {p} at (10,187) size 711x52
-        RenderText {#text} at (10,10) size 629x33
+      RenderBlock {p} at (10,189) size 712x53
+        RenderText {#text} at (10,10) size 629x31
           text run at (10,10) width 629: "This test has failed, if you don't see any graphics on the background. (your user agent does not support SVG as"
           text run at (10,26) width 113: "background image)."
-      RenderBlock {p} at (10,244) size 711x36
-        RenderInline {a} at (0,0) size 28x17 [color=#000066]
-          RenderText {#text} at (10,10) size 28x17
+      RenderBlock {p} at (10,247) size 712x37
+        RenderInline {a} at (0,0) size 28x15 [color=#000066]
+          RenderText {#text} at (10,10) size 28x15
             text run at (10,10) width 28: "Back"

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 56x9
             chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 55.10: "letter-spacing:0"
         RenderSVGText {text} at (3,8) size 42x9 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 42x10
+          RenderSVGInlineText {#text} at (0,0) size 42x9
             chunk 1 text run 1 at (3.00,16.00) startOffset 0 endOffset 1 width 1.80: "l"
             chunk 1 text run 2 at (3.80,16.00) startOffset 1 endOffset 2 width 4.50: "e"
             chunk 1 text run 3 at (7.30,16.00) startOffset 2 endOffset 3 width 2.20: "t"
