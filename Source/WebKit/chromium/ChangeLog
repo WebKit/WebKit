@@ -1,3 +1,14 @@
+2013-01-18  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Switch to new createTransaction call
+        https://bugs.webkit.org/show_bug.cgi?id=107311
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBTransaction.h:
+
+        Remove an old method that nobody calls.
+
 2013-01-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Roll Chromium DEPS to 177676

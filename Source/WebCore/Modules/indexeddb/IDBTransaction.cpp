@@ -43,17 +43,17 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, PassRefPtr<IDBTransactionBackendInterface> backend, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db)
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db)
 {
     IDBOpenDBRequest* openDBRequest = 0;
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, backend, objectStoreNames, mode, db, openDBRequest, IDBDatabaseMetadata())));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, objectStoreNames, mode, db, openDBRequest, IDBDatabaseMetadata())));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, backend, Vector<String>(), VERSION_CHANGE, db, openDBRequest, previousMetadata)));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), VERSION_CHANGE, db, openDBRequest, previousMetadata)));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
@@ -89,9 +89,8 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
 }
 
 
-IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, PassRefPtr<IDBTransactionBackendInterface> backend, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
+IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
     : ActiveDOMObject(context, this)
-    , m_backend(backend)
     , m_id(id)
     , m_database(db)
     , m_objectStoreNames(objectStoreNames)
@@ -102,8 +101,6 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, Pass
     , m_contextStopped(false)
     , m_previousMetadata(previousMetadata)
 {
-    ASSERT(m_backend);
-
     if (mode == VERSION_CHANGE) {
         // Not active until the callback.
         m_state = Inactive;
@@ -210,7 +207,7 @@ void IDBTransaction::setActive(bool active)
     m_state = active ? Active : Inactive;
 
     if (!active && m_requestList.isEmpty())
-        m_backend->commit();
+        backendDB()->commit(m_id);
 }
 
 void IDBTransaction::abort(ExceptionCode& ec)
@@ -229,8 +226,7 @@ void IDBTransaction::abort(ExceptionCode& ec)
     }
 
     RefPtr<IDBTransaction> selfRef = this;
-    if (m_backend)
-        m_backend->abort();
+    backendDB()->abort(m_id);
 }
 
 IDBTransaction::OpenCursorNotifier::OpenCursorNotifier(PassRefPtr<IDBTransaction> transaction, IDBCursor* cursor)

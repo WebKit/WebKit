@@ -660,14 +660,16 @@ void DeleteIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 
 void IDBDatabaseBackendImpl::commit(int64_t transactionId)
 {
-    ASSERT(m_transactions.contains(transactionId));
-    m_transactions.get(transactionId)->commit();
+    // The frontend suggests that we commit, but we may have previously initiated an abort, and so have disposed of the transaction. onAbort has already been dispatched to the frontend, so it will find out about that asynchronously.
+    if (m_transactions.contains(transactionId))
+        m_transactions.get(transactionId)->commit();
 }
 
 void IDBDatabaseBackendImpl::abort(int64_t transactionId)
 {
-    ASSERT(m_transactions.contains(transactionId));
-    m_transactions.get(transactionId)->abort();
+    // If the transaction is unknown, then it has already been aborted by the backend before this call so it is safe to ignore it.
+    if (m_transactions.contains(transactionId))
+        m_transactions.get(transactionId)->abort();
 }
 
 void IDBDatabaseBackendImpl::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
@@ -1157,15 +1159,15 @@ void IDBDatabaseBackendImpl::processPendingCalls()
 // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode)
 {
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(transactionId, objectStoreIds, mode, this);
-    ASSERT(!m_transactions.contains(transactionId));
-    m_transactions.add(transactionId, transaction.get());
-    return transaction.release();
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
-    ASSERT_NOT_REACHED();
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(transactionId, callbacks, objectStoreIds, static_cast<IDBTransaction::Mode>(mode), this);
+    ASSERT(!m_transactions.contains(transactionId));
+    m_transactions.add(transactionId, transaction.get());
 }
 
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t version)
@@ -1255,8 +1257,8 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallba
     }
 
     Vector<int64_t> objectStoreIds;
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = createTransaction(transactionId, objectStoreIds, IDBTransaction::VERSION_CHANGE);
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
+    createTransaction(transactionId, databaseCallbacks, objectStoreIds, IDBTransaction::VERSION_CHANGE);
+    RefPtr<IDBTransactionBackendImpl> transaction = m_transactions.get(transactionId);
 
     if (!transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
         ASSERT_NOT_REACHED();

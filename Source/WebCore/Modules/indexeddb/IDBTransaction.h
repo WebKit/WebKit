@@ -46,7 +46,6 @@ class IDBCursor;
 class IDBDatabase;
 class IDBObjectStore;
 class IDBOpenDBRequest;
-class IDBTransactionBackendInterface;
 class IDBDatabaseBackendInterface;
 struct IDBObjectStoreMetadata;
 
@@ -58,8 +57,8 @@ public:
         VERSION_CHANGE = 2
     };
 
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata& previousMetadata);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata& previousMetadata);
     virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
@@ -128,7 +127,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata&);
+    IDBTransaction(ScriptExecutionContext*, int64_t, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata&);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -149,8 +148,6 @@ private:
         Finished, // No more events will fire and no new requests may be filed.
     };
 
-    // FIXME: Remove references to the backend when the backend is fully flattened: https://bugs.webkit.org/show_bug.cgi?id=99774
-    RefPtr<IDBTransactionBackendInterface> m_backend;
     int64_t m_id;
     RefPtr<IDBDatabase> m_database;
     const Vector<String> m_objectStoreNames;

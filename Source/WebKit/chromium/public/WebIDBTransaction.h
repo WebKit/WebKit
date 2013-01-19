@@ -47,7 +47,6 @@ public:
 
     virtual void commit() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void abort() { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void didCompleteTaskEvents() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setCallbacks(WebIDBTransactionCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // FIXME: this is never called from WebCore. Find a cleaner solution.

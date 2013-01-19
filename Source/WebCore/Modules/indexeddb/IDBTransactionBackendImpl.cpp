@@ -37,21 +37,22 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
         objectStoreHashSet.add(objectStoreIds[i]);
 
-    return adoptRef(new IDBTransactionBackendImpl(id, objectStoreHashSet, mode, database));
+    return adoptRef(new IDBTransactionBackendImpl(id, callbacks, objectStoreHashSet, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
     : m_id(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
     , m_state(Unused)
     , m_commitPending(false)
+    , m_callbacks(callbacks)
     , m_database(database)
     , m_transaction(database->backingStore().get())
     , m_taskTimer(this, &IDBTransactionBackendImpl::taskTimerFired)
@@ -133,7 +134,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     m_database->transactionFinished(this);
 
     if (m_callbacks)
-        m_callbacks->onAbort(error);
+        m_callbacks->onAbort(m_id, error);
 
     m_database->transactionFinishedAndAbortFired(this);
 
@@ -219,10 +220,10 @@ void IDBTransactionBackendImpl::commit()
     m_database->transactionFinished(this);
 
     if (committed) {
-        m_callbacks->onComplete();
+        m_callbacks->onComplete(m_id);
         m_database->transactionFinishedAndCompleteFired(this);
     } else {
-        m_callbacks->onAbort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error committing transaction."));
+        m_callbacks->onAbort(m_id, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error committing transaction."));
         m_database->transactionFinishedAndAbortFired(this);
     }
 
