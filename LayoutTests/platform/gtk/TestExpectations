@@ -483,6 +483,14 @@ webkit.org/b/107257 [ Debug ] fast/js/toString-stack-overflow.html [ Crash ]
 
 webkit.org/b/107261 [ Debug ] dom/xhtml/level2/html/HTMLInputElement20.xhtml [ Crash Pass ]
 
+webkit.org/b/107376 [ Release ] storage/indexeddb/cursor-advance.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/cursor-advance-workers.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/index-get-key-argument-required.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/keypath-basics.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/mozilla/remove-index.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -704,6 +712,11 @@ Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
+
+webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
+webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Timeout ]
+webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
+webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1347,7 +1360,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 webkit.org/b/107257 [ Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
 webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
 
-webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/index-unique.html [ Failure ]
@@ -1359,12 +1371,9 @@ webkit.org/b/107194 storage/indexeddb/lazy-index-population.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/open-twice-workers.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-error.html [ Failure ]
 
 webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
