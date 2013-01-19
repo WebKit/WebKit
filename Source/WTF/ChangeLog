@@ -1,3 +1,15 @@
+2013-01-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove PLATFORM(TORCHMOBILE) from Assertions.h
+        https://bugs.webkit.org/show_bug.cgi?id=107355
+
+        Reviewed by Eric Seidel.
+
+        This appears to be the only place where PLATFORM(TORCHMOBILE) is
+        used. I don't believe this ifdef is needed anymore.
+
+        * wtf/Assertions.h:
+
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
         Refactor isPowerOf2() and add getLSBSet()

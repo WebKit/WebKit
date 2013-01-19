@@ -213,7 +213,7 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
   Expressions inside them are evaluated in debug builds only.
 */
 
-#if OS(WINCE) && !PLATFORM(TORCHMOBILE)
+#if OS(WINCE)
 /* FIXME: We include this here only to avoid a conflict with the ASSERT macro. */
 #include <windows.h>
 #undef min
