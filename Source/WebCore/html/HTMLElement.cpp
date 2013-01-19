@@ -854,7 +854,8 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
-    if (HTMLTextFormControlElement* textElement = toTextFormControl(const_cast<HTMLElement*>(this))) {
+    if (isHTMLTextFormControlElement(this)) {
+        HTMLTextFormControlElement* textElement = toHTMLTextFormControlElement(const_cast<HTMLElement*>(this));
         bool hasStrongDirectionality;
         Unicode::Direction textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)

@@ -141,10 +141,15 @@ private:
     TextFieldSelectionDirection m_cachedSelectionDirection;
 };
 
-// This function returns 0 when node is an input element and not a text field.
-inline HTMLTextFormControlElement* toTextFormControl(Node* node)
+inline bool isHTMLTextFormControlElement(const Node* node)
 {
-    return (node && node->isElementNode() && static_cast<Element*>(node)->isTextFormControl()) ? static_cast<HTMLTextFormControlElement*>(node) : 0;
+    return node->isElementNode() && toElement(node)->isTextFormControl();
+}
+
+inline HTMLTextFormControlElement* toHTMLTextFormControlElement(Node* node)
+{
+    ASSERT(!node || isHTMLTextFormControlElement(node));
+    return static_cast<HTMLTextFormControlElement*>(node);
 }
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position&);

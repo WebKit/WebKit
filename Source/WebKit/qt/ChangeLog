@@ -1,3 +1,16 @@
+2013-01-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Introduce isHTMLTextFormControlElement and toHTMLTextFormControlElement instead of toTextFormControl
+        https://bugs.webkit.org/show_bug.cgi?id=107089
+
+        Reviewed by Kent Tamura.
+
+        Updated code to use isHTMLTextFormControlElement and toHTMLTextFormControlElement combination instead of
+        toTextFormControl.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::inputMethodEvent):
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient

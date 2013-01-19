@@ -110,7 +110,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
-    HTMLTextFormControlElement* textFromControlOfTarget = toTextFormControl(event->target()->toNode());
+    HTMLTextFormControlElement* textFromControlOfTarget = isHTMLTextFormControlElement(event->target()->toNode()) ? toHTMLTextFormControlElement(event->target()->toNode()) : 0;
     if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
         if (RefPtr<Range> range = textFromControlOfTarget->selection())
             return VisibleSelection(range.get(), DOWNSTREAM, selection.isDirectional());
@@ -1294,7 +1294,7 @@ void Editor::toggleUnderline()
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
     Node* focusedNode = frame()->document()->focusedNode();
-    if (toTextFormControl(focusedNode)) {
+    if (focusedNode && isHTMLTextFormControlElement(focusedNode)) {
         if (direction == NaturalWritingDirection)
             return;
         toHTMLElement(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");

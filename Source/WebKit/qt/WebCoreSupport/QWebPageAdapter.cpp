@@ -676,8 +676,8 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
             hasSelection = true;
             // A selection in the inputMethodEvent is always reflected in the visible text
             if (node) {
-                if (HTMLTextFormControlElement* textControl = toTextFormControl(node))
-                    textControl->setSelectionRange(qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
+                if (isHTMLTextFormControlElement(node))
+                    toHTMLTextFormControlElement(node)->setSelectionRange(qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
             }
 
             if (!ev->preeditString().isEmpty())
@@ -698,8 +698,8 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
     if (node && ev->replacementLength() > 0) {
         int cursorPos = frame->selection()->extent().offsetInContainerNode();
         int start = cursorPos + ev->replacementStart();
-        if (HTMLTextFormControlElement* textControl = toTextFormControl(node))
-            textControl->setSelectionRange(start, start + ev->replacementLength());
+        if (isHTMLTextFormControlElement(node))
+            toHTMLTextFormControlElement(node)->setSelectionRange(start, start + ev->replacementLength());
         // Commit regardless of whether commitString is empty, to get rid of selection.
         editor->confirmComposition(ev->commitString());
     } else if (!ev->commitString().isEmpty()) {

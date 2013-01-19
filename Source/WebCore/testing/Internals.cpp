@@ -685,9 +685,11 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
 
 String Internals::visiblePlaceholder(Element* element)
 {
-    HTMLTextFormControlElement* textControl = toTextFormControl(element);
-    if (textControl && textControl->placeholderShouldBeVisible())
-        return textControl->placeholderElement()->textContent();
+    if (element && isHTMLTextFormControlElement(element)) {
+        if (toHTMLTextFormControlElement(element)->placeholderShouldBeVisible())
+            return toHTMLTextFormControlElement(element)->placeholderElement()->textContent();
+    }
+
     return String();
 }
 
