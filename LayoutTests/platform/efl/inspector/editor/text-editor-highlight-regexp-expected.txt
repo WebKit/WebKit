@@ -1,3 +1,80 @@
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Dock to main window." not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "All Panels" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Go to the panel to the left/right" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Go back/forward in panel history" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Toggle console" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Search" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Search across all sources" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Go to source" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Go to line" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Console" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Elements Panel" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Elements" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Resources" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Network" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Sources" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Timeline" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Profiles" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Audits" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Navigate elements" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Expand/collapse" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Edit attribute" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "or" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Hide element" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Toggle edit as HTML" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Styles Pane" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Next/previous property" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Increment value" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Decrement value" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Increment by %f" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Decrement by %f" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Sources Panel" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Pause/Continue" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Step over" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Step into" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Step out" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Next/previous call frame" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Evaluate selection in console" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Go to member" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Toggle breakpoint" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Timeline Panel" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Start/stop recording" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Load timeline data" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Clear console log." not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "All" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Errors" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Warnings" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Logs" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Debug" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Clear console" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Autocomplete common prefix" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Accept suggestion" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Next/previous line" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Execute command" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Find" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Filter" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Search Previous" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Search Next" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Replace" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Previous" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Replace All" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Cancel" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Settings" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "DOM Breakpoints" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "No Breakpoints" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Subtree Modified" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Attribute Modified" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Node Removed" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Subtree Modifications" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Attributes Modifications" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Node Removal" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "a panel chosen automatically" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Show console." not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Select an element in the page to inspect it." not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Computed Style" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Show inherited" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/share/ewebkit-0/inspector/UIString.js:42: CONSOLEAPI WARN: Localized string "Styles" not found.
+file:///home/dilbert/dev/WebKitGit_EFL/WebKitBuild/Debug/sharContent-Type: text/plain
 Test editor highlight regexp API.
 
 
@@ -17,11 +94,11 @@ Add highlight for regexp /foo_./
 
 <div class="inner-container" tabindex="0">
 <div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -127px; width: 37px; height: 13px;"></span><span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px; height: 13px;"></span></div>
+<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -127px; width: 37px;">&nbsp;</span><span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px;">&nbsp;</span></div>
 <div class="webkit-line-content">foo_</div>
 <div class="webkit-line-content">global_foo</div>
 <div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px; height: 13px;"></span></div></div>
+<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="margin-left: -36px; width: 37px;">&nbsp;</span></div></div>
 
 Remove highlight for regexp /foo_./
 

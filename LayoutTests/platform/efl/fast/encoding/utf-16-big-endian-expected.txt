@@ -371,7 +371,7 @@ layer at (0,0) size 785x1062
           RenderText {#text} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 81x17
             RenderText {#text} at (0,0) size 0x0
-            RenderImage {IMG} at (0,7) size 4x4
+            RenderImage {IMG} at (0,8) size 4x4
             RenderText {#text} at (4,0) size 77x17
               text run at (4,0) width 4: " "
               text run at (8,0) width 73: "Remarks:"
@@ -411,7 +411,7 @@ layer at (0,0) size 785x1062
             RenderText {#text} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 261x17
               RenderText {#text} at (0,0) size 0x0
-              RenderImage {IMG} at (0,7) size 4x4
+              RenderImage {IMG} at (0,8) size 4x4
               RenderText {#text} at (4,0) size 257x17
                 text run at (4,0) width 4: " "
                 text run at (8,0) width 253: "Remarks and Service Information"
