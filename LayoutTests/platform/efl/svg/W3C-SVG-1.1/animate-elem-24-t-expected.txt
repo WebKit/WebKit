@@ -4,15 +4,15 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (43,39) size 288x239
-      RenderSVGContainer {g} at (70,92) size 149x133
-        RenderSVGText {text} at (70,92) size 149x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 149x23
+      RenderSVGContainer {g} at (70,92) size 149x132
+        RenderSVGText {text} at (70,92) size 149x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 149x22
             chunk 1 text run 1 at (70.00,110.00) startOffset 0 endOffset 18 width 149.00: "Text from 0s to 3s"
-        RenderSVGText {text} at (100,167) size 80x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 80x23
+        RenderSVGText {text} at (100,167) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x22
             chunk 1 text run 1 at (100.00,185.00) startOffset 0 endOffset 10 width 80.00: "Text at 6s"
-        RenderSVGText {text} at (100,202) size 80x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 80x23
+        RenderSVGText {text} at (100,202) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x22
             chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 10 width 80.00: "Text at 9s"
       RenderSVGContainer {g} at (43,39) size 288x239
         RenderSVGText {text} at (0,-14) size 77x17 contains 1 chunk(s)

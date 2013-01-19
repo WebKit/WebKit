@@ -6,32 +6,32 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (214,12) size 52x23 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 52x23
+    RenderSVGText {text} at (214,12) size 52x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 52x22
         chunk 1 (middle anchor) text run 1 at (214.00,30.00) startOffset 0 endOffset 7 width 52.00: "restart"
-    RenderSVGContainer {g} at (82,92) size 335x137 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
-      RenderSVGContainer {g} at (82,112) size 168x117 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
-        RenderSVGText {text} at (-168,-13) size 168x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 168x17
+    RenderSVGContainer {g} at (82,93) size 335x135 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
+      RenderSVGContainer {g} at (82,113) size 168x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+        RenderSVGText {text} at (-168,-12) size 168x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 168x15
             chunk 1 (end anchor) text run 1 at (-168.00,0.00) startOffset 0 endOffset 31 width 168.00: "no restart (defaults to always)"
-        RenderSVGText {text} at (-93,12) size 93x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 93x17
+        RenderSVGText {text} at (-93,13) size 93x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x15
             chunk 1 (end anchor) text run 1 at (-93.00,25.00) startOffset 0 endOffset 16 width 93.00: "restart=\"always\""
-        RenderSVGText {text} at (-143,37) size 143x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 143x17
+        RenderSVGText {text} at (-143,38) size 143x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 143x15
             chunk 1 (end anchor) text run 1 at (-143.00,50.00) startOffset 0 endOffset 23 width 143.00: "restart=\"whenNotActive\""
-        RenderSVGText {text} at (-86,62) size 86x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 86x17
+        RenderSVGText {text} at (-86,63) size 86x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 86x15
             chunk 1 (end anchor) text run 1 at (-86.00,75.00) startOffset 0 endOffset 15 width 86.00: "restart=\"never\""
-        RenderSVGText {text} at (-52,87) size 52x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 52x17
+        RenderSVGText {text} at (-52,88) size 52x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x15
             chunk 1 (end anchor) text run 1 at (-52.00,100.00) startOffset 0 endOffset 9 width 52.00: "reference"
-      RenderSVGContainer {g} at (298,92) size 107x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,25.00)}]
-        RenderSVGText {text} at (-12,-13) size 24x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 24x17
+      RenderSVGContainer {g} at (298,93) size 107x15 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,25.00)}]
+        RenderSVGText {text} at (-12,-12) size 24x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 24x15
             chunk 1 (middle anchor) text run 1 at (-12.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 5s"
-        RenderSVGText {text} at (65,-13) size 29x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 29x17
+        RenderSVGText {text} at (65,-12) size 29x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 29x15
             chunk 1 (middle anchor) text run 1 at (65.50,0.00) startOffset 0 endOffset 5 width 29.00: "0s-5s"
       RenderSVGContainer {g} at (303,113) size 114x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0

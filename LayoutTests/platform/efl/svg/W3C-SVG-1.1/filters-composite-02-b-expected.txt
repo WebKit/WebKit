@@ -58,17 +58,17 @@ layer at (0,0) size 480x360
             [feImage image-size="150x150"]
       RenderSVGContainer {g} at (20,10) size 440x290 [transform={m=((0.40,0.00)(0.00,0.40)) t=(5.00,70.00)}]
         RenderSVGRect {rect} at (20,10) size 440x290 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=1098.00] [height=723.00]
-        RenderSVGText {text} at (100,20) size 618x70 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 618x70
+        RenderSVGText {text} at (100,22) size 618x65 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 618x65
             chunk 1 text run 1 at (100.00,75.00) startOffset 0 endOffset 26 width 617.50: "on first Row : opacity 1.0"
-        RenderSVGText {text} at (100,125) size 635x70 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 635x70
+        RenderSVGText {text} at (100,127) size 635x65 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 635x65
             chunk 1 text run 1 at (100.00,180.00) startOffset 0 endOffset 25 width 635.00: "on second row opacity 0.5"
         RenderSVGContainer {g} at (26,102) size 60x166 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,230.00)}]
           RenderSVGRect {rect} at (26,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="over"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (10,345) size 108x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 108x70
+          RenderSVGText {text} at (10,347) size 108x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 108x65
               chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 4 width 107.50: "over"
         RenderSVGContainer {g} at (26,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,430.00)}]
           RenderSVGRect {rect} at (26,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
@@ -76,8 +76,8 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (98,102) size 60x166 [transform={m=((1.00,0.00)(0.00,1.00)) t=(195.00,230.00)}]
           RenderSVGRect {rect} at (98,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="in"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (10,345) size 48x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 48x70
+          RenderSVGText {text} at (10,347) size 48x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 48x65
               chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 2 width 47.50: "in"
         RenderSVGContainer {g} at (98,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(195.00,430.00)}]
           RenderSVGRect {rect} at (98,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
@@ -85,8 +85,8 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (170,102) size 60x166 [transform={m=((1.00,0.00)(0.00,1.00)) t=(375.00,230.00)}]
           RenderSVGRect {rect} at (170,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="out"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (10,345) size 78x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 78x70
+          RenderSVGText {text} at (10,347) size 78x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 78x65
               chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 3 width 77.50: "out"
         RenderSVGContainer {g} at (170,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(375.00,430.00)}]
           RenderSVGRect {rect} at (170,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
@@ -94,8 +94,8 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (242,102) size 60x166 [transform={m=((1.00,0.00)(0.00,1.00)) t=(555.00,230.00)}]
           RenderSVGRect {rect} at (242,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="atop"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (10,345) size 105x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 105x70
+          RenderSVGText {text} at (10,347) size 105x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 105x65
               chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 4 width 105.00: "atop"
         RenderSVGContainer {g} at (242,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(555.00,430.00)}]
           RenderSVGRect {rect} at (242,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
@@ -103,8 +103,8 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (314,102) size 60x166 [transform={m=((1.00,0.00)(0.00,1.00)) t=(735.00,230.00)}]
           RenderSVGRect {rect} at (314,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="xor"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (10,345) size 80x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 80x70
+          RenderSVGText {text} at (10,347) size 80x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 80x65
               chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 3 width 80.00: "xor"
         RenderSVGContainer {g} at (314,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(735.00,430.00)}]
           RenderSVGRect {rect} at (314,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
@@ -112,11 +112,11 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (376,102) size 70x194 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,230.00)}]
           RenderSVGRect {rect} at (386,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]
             [filter="arithmetic"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-          RenderSVGText {text} at (-25,345) size 133x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 133x70
+          RenderSVGText {text} at (-25,347) size 133x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 133x65
               chunk 1 text run 1 at (-25.00,400.00) startOffset 0 endOffset 6 width 132.50: "arith-"
-          RenderSVGText {text} at (-25,415) size 138x70 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 138x70
+          RenderSVGText {text} at (-25,417) size 138x65 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 138x65
               chunk 1 text run 1 at (-25.00,470.00) startOffset 0 endOffset 5 width 137.50: "metic"
         RenderSVGContainer {g} at (386,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,430.00)}]
           RenderSVGRect {rect} at (386,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=150.00] [height=150.00]

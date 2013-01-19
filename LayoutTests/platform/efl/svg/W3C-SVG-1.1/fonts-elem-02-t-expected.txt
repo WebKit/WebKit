@@ -2,14 +2,14 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (7,3) size 416x242
+    RenderSVGContainer {g} at (7,4) size 416x241
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (28,3) size 395x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 395x40
+      RenderSVGText {text} at (28,4) size 395x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 395x39
           chunk 1 text run 1 at (28.00,35.00) startOffset 0 endOffset 25 width 395.00: "SVG font element accuracy"
       RenderSVGRect {rect} at (165,80) size 220x165 [fill={[type=SOLID] [color=#000000]}] [x=165.00] [y=80.00] [width=220.00] [height=165.00]
-      RenderSVGText {text} at (7,113) size 130x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 130x21
+      RenderSVGText {text} at (7,114) size 130x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 130x20
           chunk 1 text run 1 at (7.00,130.00) startOffset 0 endOffset 15 width 130.00: "SVG over Glyphs"
       RenderSVGContainer {g} at (168,85) size 205x72 [transform={m=((1.00,0.00)(0.00,-1.00)) t=(165.00,140.00)}]
         RenderSVGContainer {g} at (168,85) size 205x72 [transform={m=((0.03,0.00)(0.00,0.03)) t=(0.00,0.00)}]
@@ -22,8 +22,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,-67) size 210x84 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 210x84
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 209.71: "Ay\x{D6}@\x{E7}"
-      RenderSVGText {text} at (7,193) size 130x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 130x21
+      RenderSVGText {text} at (7,194) size 130x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 130x20
           chunk 1 text run 1 at (7.00,210.00) startOffset 0 endOffset 15 width 130.00: "Glyphs over SVG"
       RenderSVGContainer {g} at (165,143) size 210x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,210.00)}]
         RenderSVGText {text} at (0,-67) size 210x84 contains 1 chunk(s)
