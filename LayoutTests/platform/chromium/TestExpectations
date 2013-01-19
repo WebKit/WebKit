@@ -4331,3 +4331,4 @@ webkit.org/b/107237 [ Debug ] fast/forms/associated-element-crash.html [ Crash ]
 webkit.org/b/107327 [ Debug ] html5lib/run-template.html [ Crash ]
 
 webkit.org/b/107328 http/tests/cache/cancel-multiple-post-xhrs.html [ Missing ]
+webkit.org/b/107341 [ Debug ] inspector/profiler/memory-instrumentation-cached-images.html [ Failure ]
