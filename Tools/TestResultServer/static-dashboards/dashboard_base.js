@@ -200,6 +200,7 @@ function handleValidHashParameterWrapper(key, value)
 }
 
 var g_defaultCrossDashboardStateValues = {
+    group: null,
     showAllRuns: false,
     testType: 'layout-tests',
     useTestData: false,

@@ -1,3 +1,15 @@
+2013-01-18  Julie Parent  <jparent@chromium.org>
+
+        Add back 'group' as a default cross dashboard parameter, but with null as its value.
+        https://bugs.webkit.org/show_bug.cgi?id=107336
+
+        We need to have 'group' listed as a parameter, else we never parse it,
+        as we only parse parameters with defaults.
+        
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+
 2013-01-18  Emil A Eklund  <eae@chromium.org>
 
         Update LayoutUnit rounding unit test
