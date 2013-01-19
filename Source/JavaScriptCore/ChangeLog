@@ -1,5 +1,13 @@
 2013-01-18  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix for building JSC with DFG_ENABLE_DEBUG_PROPAGATION_VERBOSE enabled in DFGCommon.h.
+        Fixes the case where the argument node in fixupNode is freed due to the Vector storage being reallocated.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2013-01-18  Michael Saboff  <msaboff@apple.com>
+
         Unreviewed build fix for release builds when DFG_ENABLE_DEBUG_PROPAGATION_VERBOSE is set to 1 in DFGCommon.h.
 
         * dfg/DFGCFAPhase.cpp: Added #include "Operations.h"

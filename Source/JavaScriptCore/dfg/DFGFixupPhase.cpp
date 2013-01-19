@@ -414,9 +414,10 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        if (!(node.flags() & NodeHasVarArgs)) {
+        Node* nodePtr = &m_graph[m_compileIndex];
+        if (!(nodePtr->flags() & NodeHasVarArgs)) {
             dataLogF("new children: ");
-            node.dumpChildren(WTF::dataFile());
+            nodePtr->dumpChildren(WTF::dataFile());
         }
         dataLogF("\n");
 #endif
