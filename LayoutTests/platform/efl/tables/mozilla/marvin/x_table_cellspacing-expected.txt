@@ -7,8 +7,8 @@ layer at (0,0) size 800x60
         RenderTableSection (anonymous) at (1,1) size 482x42
           RenderTableRow {tr} at (0,10) size 482x22
             RenderTableCell {td} at (10,10) size 226x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 222x19
+              RenderText {#text} at (2,2) size 222x17
                 text run at (2,2) width 222: "This cell should have 10px spacing"
             RenderTableCell {td} at (246,10) size 226x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 222x19
+              RenderText {#text} at (2,2) size 222x17
                 text run at (2,2) width 222: "This cell should have 10px spacing"

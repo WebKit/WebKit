@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 600x302
           RenderTableRow {TR} at (0,0) size 600x18
             RenderTableCell {TD} at (0,0) size 600x18 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=3]
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "1"
           RenderTableRow {TR} at (0,18) size 600x18
             RenderTableCell {TD} at (0,18) size 600x18 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=3]
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "2"
           RenderTableRow {TR} at (0,36) size 600x0
             RenderTableCell {TD} at (0,36) size 155x18 [bgcolor=#00FFFF] [r=2 c=0 rs=40 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "3"
           RenderTableRow {TR} at (0,36) size 600x50
             RenderTableCell {TD} at (155,36) size 445x50 [bgcolor=#FFA500] [r=3 c=1 rs=1 cs=1]
@@ -25,28 +25,28 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 217x46 [r=0 c=0 rs=1 cs=1]
                       RenderButton {INPUT} at (3,3) size 140x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                         RenderBlock (anonymous) at (17,10) size 106x18
-                          RenderText at (0,0) size 106x19
+                          RenderText at (0,0) size 106x17
                             text run at (0,0) width 106: "Submit Criteria"
                     RenderTableCell {TD} at (221,15) size 217x20 [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 8x19
+                      RenderText {#text} at (1,1) size 8x17
                         text run at (1,1) width 8: "4"
           RenderTableRow {TR} at (0,86) size 600x18
             RenderTableCell {TD} at (155,86) size 445x18 [bgcolor=#FF0000] [r=4 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "5"
           RenderTableRow {TR} at (0,104) size 600x36
             RenderTableCell {TD} at (155,104) size 445x36 [bgcolor=#FFFF00] [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 426x37
+              RenderText {#text} at (0,0) size 426x35
                 text run at (0,0) width 257: "If you have entered your feature criteria, "
                 text run at (257,0) width 169: "press the \"Submit Criteria\""
                 text run at (0,18) width 86: "button above."
           RenderTableRow {TR} at (0,140) size 600x18
             RenderTableCell {TD} at (155,140) size 445x18 [bgcolor=#D3D3D3] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x17
                 text run at (0,0) width 8: "6"
           RenderTableRow {TR} at (0,158) size 600x54
             RenderTableCell {TD} at (155,158) size 445x54 [r=7 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 438x55
+              RenderText {#text} at (0,0) size 438x53
                 text run at (0,0) width 262: "If you want to do a radius search instead, "
                 text run at (262,0) width 164: "press the \"Radius Search\""
                 text run at (0,18) width 48: "button. "
@@ -55,11 +55,11 @@ layer at (0,0) size 800x600
                 text run at (0,36) width 157: "with new feature criteria."
           RenderTableRow {TR} at (0,212) size 600x18
             RenderTableCell {TD} at (155,212) size 445x18 [r=8 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x19
+              RenderText {#text} at (0,0) size 4x17
                 text run at (0,0) width 4: " "
           RenderTableRow {TR} at (0,230) size 600x72
             RenderTableCell {TD} at (155,230) size 445x72 [r=9 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 436x73
+              RenderText {#text} at (0,0) size 436x71
                 text run at (0,0) width 436: "All information provided is deemed reliable but is not guaranteed and"
                 text run at (0,18) width 65: "should be "
                 text run at (65,18) width 370: "independently verified. The price shown may represent the"
