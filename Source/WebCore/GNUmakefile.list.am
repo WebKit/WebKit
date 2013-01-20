@@ -1140,9 +1140,10 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGStopElement.h \
 	DerivedSources/WebCore/JSSVGStringList.cpp \
 	DerivedSources/WebCore/JSSVGStringList.h \
-	DerivedSources/WebCore/JSSVGStylable.h \
 	DerivedSources/WebCore/JSSVGStyleElement.cpp \
 	DerivedSources/WebCore/JSSVGStyleElement.h \
+	DerivedSources/WebCore/JSSVGStyledElement.cpp \
+	DerivedSources/WebCore/JSSVGStyledElement.h \
 	DerivedSources/WebCore/JSSVGSVGElement.cpp \
 	DerivedSources/WebCore/JSSVGSVGElement.h \
 	DerivedSources/WebCore/JSSVGSwitchElement.cpp \
@@ -1726,6 +1727,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGStopElement.idl \
 	$(WebCore)/svg/SVGStringList.idl \
 	$(WebCore)/svg/SVGStyleElement.idl \
+	$(WebCore)/svg/SVGStyledElement.idl \
 	$(WebCore)/svg/SVGSwitchElement.idl \
 	$(WebCore)/svg/SVGSymbolElement.idl \
 	$(WebCore)/svg/SVGTRefElement.idl \
@@ -5186,16 +5188,14 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGStopElement.h \
 	Source/WebCore/svg/SVGStringList.cpp \
 	Source/WebCore/svg/SVGStringList.h \
-	Source/WebCore/svg/SVGStylable.cpp \
-	Source/WebCore/svg/SVGStylable.h \
+	Source/WebCore/svg/SVGStyleElement.cpp \
+	Source/WebCore/svg/SVGStyleElement.h \
 	Source/WebCore/svg/SVGStyledElement.cpp \
 	Source/WebCore/svg/SVGStyledElement.h \
 	Source/WebCore/svg/SVGStyledLocatableElement.cpp \
 	Source/WebCore/svg/SVGStyledLocatableElement.h \
 	Source/WebCore/svg/SVGStyledTransformableElement.cpp \
 	Source/WebCore/svg/SVGStyledTransformableElement.h \
-	Source/WebCore/svg/SVGStyleElement.cpp \
-	Source/WebCore/svg/SVGStyleElement.h \
 	Source/WebCore/svg/SVGSVGElement.cpp \
 	Source/WebCore/svg/SVGSVGElement.h \
 	Source/WebCore/svg/SVGSwitchElement.cpp \

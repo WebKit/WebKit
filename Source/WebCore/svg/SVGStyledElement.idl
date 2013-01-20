@@ -26,11 +26,8 @@
  */
 
 [
-    Conditional=SVG,
-    ObjCProtocol,
-    SuppressToJSObject,
-    OmitConstructor
-] interface SVGStylable {
+    Conditional=SVG
+] interface SVGStyledElement : SVGElement {
     readonly attribute SVGAnimatedString className;
     readonly attribute CSSStyleDeclaration style;
 

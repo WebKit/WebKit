@@ -2631,6 +2631,7 @@ __ZN7WebCore8Document19accessSVGExtensionsEv
 .objc_class_name_DOMSVGStopElement
 .objc_class_name_DOMSVGStringList
 .objc_class_name_DOMSVGStyleElement
+.objc_class_name_DOMSVGStyledElement
 .objc_class_name_DOMSVGSwitchElement
 .objc_class_name_DOMSVGSymbolElement
 .objc_class_name_DOMSVGTRefElement

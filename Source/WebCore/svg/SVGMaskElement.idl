@@ -25,11 +25,10 @@
 
 [
     Conditional=SVG
-] interface SVGMaskElement : SVGElement,
+] interface SVGMaskElement : SVGStyledElement,
                                              SVGTests,
                                              SVGLangSpace,
-                                             SVGExternalResourcesRequired,
-                                             SVGStylable {
+                                             SVGExternalResourcesRequired {
     readonly attribute SVGAnimatedEnumeration maskUnits;
     readonly attribute SVGAnimatedEnumeration maskContentUnits;
 

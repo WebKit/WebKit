@@ -25,12 +25,11 @@
 
 [
     Conditional=SVG
-] interface SVGPatternElement : SVGElement,
+] interface SVGPatternElement : SVGStyledElement,
                                                 SVGURIReference,
                                                 SVGTests,
                                                 SVGLangSpace,
                                                 SVGExternalResourcesRequired,
-                                                SVGStylable,
                                                 SVGFitToViewBox
                                              /* SVGUnitTypes */ {
     readonly attribute SVGAnimatedEnumeration   patternUnits;

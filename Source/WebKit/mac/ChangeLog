@@ -1,3 +1,15 @@
+2013-01-19  Philip Rogers  <pdr@google.com>
+
+        Merge SVGStylable into SVGStyledElement
+        https://bugs.webkit.org/show_bug.cgi?id=106877
+
+        SVG2 changes element inheritance so all SVGElements are stylable. As a first-step towards a
+        cleaner class hierarchy, this patch moves SVGStylable into SVGStyledElement.
+
+        Reviewed by Dirk Schulze.
+
+        * MigrateHeaders.make:
+
 2013-01-18  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add explicit keyword to constructors in platform-specific InspectorClient

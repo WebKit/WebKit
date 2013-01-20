@@ -632,7 +632,7 @@
     // Expose all implemented SVG 1.1 interfaces, excluding the SVG MI interfaces:
     // SVGAnimatedPathData, SVGAnimatedPoints, SVGExternalResourcesRequired,
     // SVGFilterPrimitiveStandardAttributes, SVGFitToViewBox, SVGLangSpace, SVGLocatable
-    // SVGStylable, SVGTests, SVGTransformable, SVGURIReference, SVGZoomAndPan
+    // SVGTests, SVGTransformable, SVGURIReference, SVGZoomAndPan
     attribute SVGAElementConstructor SVGAElement;
     attribute SVGAngleConstructor SVGAngle;
     attribute SVGAnimatedAngleConstructor SVGAnimatedAngle;

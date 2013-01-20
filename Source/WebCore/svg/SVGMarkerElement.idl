@@ -25,10 +25,9 @@
 
 [
     Conditional=SVG
-] interface SVGMarkerElement : SVGElement,
+] interface SVGMarkerElement : SVGStyledElement,
                                                SVGLangSpace,
                                                SVGExternalResourcesRequired,
-                                               SVGStylable,
                                                SVGFitToViewBox { 
     // Marker Unit Types
     const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;

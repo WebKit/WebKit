@@ -150,8 +150,8 @@
 #import <WebCore/DOMSVGSetElement.h>
 #import <WebCore/DOMSVGStopElement.h>
 #import <WebCore/DOMSVGStringList.h>
-#import <WebCore/DOMSVGStylable.h>
 #import <WebCore/DOMSVGStyleElement.h>
+#import <WebCore/DOMSVGStyledElement.h>
 #import <WebCore/DOMSVGSwitchElement.h>
 #import <WebCore/DOMSVGSymbolElement.h>
 #import <WebCore/DOMSVGTRefElement.h>

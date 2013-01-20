@@ -26,8 +26,8 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFEConvolveMatrixElement : SVGElement,
-                               SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEConvolveMatrixElement : SVGStyledElement,
+                           SVGFilterPrimitiveStandardAttributes {
     // Edge Mode Values
     const unsigned short SVG_EDGEMODE_UNKNOWN   = 0;
     const unsigned short SVG_EDGEMODE_DUPLICATE = 1;

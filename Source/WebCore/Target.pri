@@ -2766,11 +2766,10 @@ HEADERS += \
     svg/SVGSetElement.h \
     svg/SVGStopElement.h \
     svg/SVGStringList.h \
-    svg/SVGStylable.h \
+    svg/SVGStyleElement.h \
     svg/SVGStyledElement.h \
     svg/SVGStyledLocatableElement.h \
     svg/SVGStyledTransformableElement.h \
-    svg/SVGStyleElement.h \
     svg/SVGSVGElement.h \
     svg/SVGSwitchElement.h \
     svg/SVGSymbolElement.h \
@@ -3860,7 +3859,6 @@ enable?(SVG) {
         svg/SVGSetElement.cpp \
         svg/SVGStopElement.cpp \
         svg/SVGStringList.cpp \
-        svg/SVGStylable.cpp \
         svg/SVGStyleElement.cpp \
         svg/SVGStyledElement.cpp \
         svg/SVGStyledLocatableElement.cpp \

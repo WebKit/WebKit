@@ -351,7 +351,6 @@ def build(bld):
         excludes.append('JSSVGLocatable.cpp')
         excludes.append('JSSVGStyleTable.cpp')
         excludes.append('JSSVGTests.cpp')
-        excludes.append('JSSVGStylable.cpp')
         
         # These are files that expect methods not in the base C++ class, usually XYZAnimated methods.
         excludes.append('JSSVGFitToViewBox.cpp')

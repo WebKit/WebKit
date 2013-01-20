@@ -430,9 +430,10 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGStopElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGStringList.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGStringListInternal.h \
-    $(PRIVATE_HEADERS_DIR)/DOMSVGStylable.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGStyleElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGStyleElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGStyledElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGStyledElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGSwitchElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGSwitchElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGSymbolElement.h \

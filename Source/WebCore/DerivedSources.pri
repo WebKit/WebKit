@@ -609,6 +609,7 @@ enable?(SVG) {
     $$PWD/svg/SVGStopElement.idl \
     $$PWD/svg/SVGStringList.idl \
     $$PWD/svg/SVGStyleElement.idl \
+    $$PWD/svg/SVGStyledElement.idl \
     $$PWD/svg/SVGSVGElement.idl \
     $$PWD/svg/SVGSwitchElement.idl \
     $$PWD/svg/SVGSymbolElement.idl \

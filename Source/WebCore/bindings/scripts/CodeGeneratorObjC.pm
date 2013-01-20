@@ -55,7 +55,7 @@ my @depsContent = ();
 
 # Hashes
 my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1,
-                        "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGStylable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
+                        "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
                         "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
                         "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "ElementTimeControl" => 1);
 my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);

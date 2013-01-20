@@ -25,12 +25,11 @@
 
 [
     Conditional=SVG
-] interface SVGAElement : SVGElement,
+] interface SVGAElement : SVGStyledElement,
                                           SVGURIReference,
                                           SVGTests,
                                           SVGLangSpace,
                                           SVGExternalResourcesRequired,
-                                          SVGStylable,
                                           SVGTransformable {
     readonly attribute SVGAnimatedString target;
 };

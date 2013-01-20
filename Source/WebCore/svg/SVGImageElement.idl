@@ -25,12 +25,11 @@
 
 [
     Conditional=SVG
-] interface SVGImageElement : SVGElement,
+] interface SVGImageElement : SVGStyledElement,
                                               SVGURIReference,
                                               SVGTests,
                                               SVGLangSpace,
                                               SVGExternalResourcesRequired,
-                                              SVGStylable,
                                               SVGTransformable {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

@@ -25,11 +25,10 @@
 
 [
     Conditional=SVG
-] interface SVGTextContentElement : SVGElement,
+] interface SVGTextContentElement : SVGStyledElement,
                                                     SVGTests,
                                                     SVGLangSpace,
-                                                    SVGExternalResourcesRequired,
-                                                    SVGStylable {
+                                                    SVGExternalResourcesRequired {
     // lengthAdjust Types
     const unsigned short LENGTHADJUST_UNKNOWN          = 0;
     const unsigned short LENGTHADJUST_SPACING          = 1;

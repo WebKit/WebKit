@@ -25,6 +25,6 @@
 
 [
     Conditional=SVG&SVG_FONTS
-] interface SVGMissingGlyphElement : SVGElement {
+] interface SVGMissingGlyphElement : SVGStyledElement {
 };
 

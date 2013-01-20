@@ -25,8 +25,8 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFETileElement : SVGElement,
-                                               SVGFilterPrimitiveStandardAttributes {
+] interface SVGFETileElement : SVGStyledElement,
+                           SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedString in1;
 };
 

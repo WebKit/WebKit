@@ -172,10 +172,8 @@
       '../svg/SVGExternalResourcesRequired.idl',
       '../svg/SVGFilterPrimitiveStandardAttributes.idl',
       '../svg/SVGFitToViewBox.idl',
-
       '../svg/SVGLangSpace.idl',
       '../svg/SVGLocatable.idl',
-      '../svg/SVGStylable.idl',
       '../svg/SVGTests.idl',
       '../svg/SVGTransformable.idl',
 

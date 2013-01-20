@@ -751,6 +751,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGStopElement.idl
     svg/SVGStringList.idl
     svg/SVGStyleElement.idl
+    svg/SVGStyledElement.idl
     svg/SVGSwitchElement.idl
     svg/SVGSymbolElement.idl
     svg/SVGTRefElement.idl
@@ -2441,7 +2442,6 @@ set(WebCore_SOURCES
     svg/SVGSetElement.cpp
     svg/SVGStopElement.cpp
     svg/SVGStringList.cpp
-    svg/SVGStylable.cpp
     svg/SVGStyleElement.cpp
     svg/SVGStyledElement.cpp
     svg/SVGStyledLocatableElement.cpp

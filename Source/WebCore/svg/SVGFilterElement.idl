@@ -26,11 +26,10 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFilterElement : SVGElement,
+] interface SVGFilterElement : SVGStyledElement,
                                                SVGURIReference,
                                                SVGLangSpace,
-                                               SVGExternalResourcesRequired,
-                                               SVGStylable
+                                               SVGExternalResourcesRequired
                                             /* SVGUnitTypes */ {  
     readonly attribute SVGAnimatedEnumeration filterUnits;
     readonly attribute SVGAnimatedEnumeration primitiveUnits;
