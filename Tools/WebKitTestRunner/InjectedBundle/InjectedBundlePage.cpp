@@ -1430,7 +1430,7 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t l
         return;
 
     WTF::String messageString = toWTFString(message);
-    unsigned nullCharPos = messageString.find(UChar(0));
+    size_t nullCharPos = messageString.find(UChar(0));
     if (nullCharPos != WTF::notFound)
         messageString.truncate(nullCharPos);
 

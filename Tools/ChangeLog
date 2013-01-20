@@ -1,3 +1,13 @@
+2013-01-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for Qt WK2 after r140258.
+        Use the size_t type instead of unsigned for the variable
+        which holds the position of the first null character in the
+        console message.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+
 2013-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r140260.
