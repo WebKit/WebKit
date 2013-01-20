@@ -259,7 +259,7 @@ public:
         
         // Place CheckStructure's at SetLocal sites.
         
-        InsertionSet<NodeIndex> insertionSet;
+        InsertionSet insertionSet(m_graph);
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
             if (!block)
@@ -286,23 +286,16 @@ public:
                     if (!iter->value.m_structure)
                         break;
                     
-                    node.ref();
-
                     CodeOrigin codeOrigin = node.codeOrigin;
                     
-                    Node getLocal(GetLocal, codeOrigin, OpInfo(variable), nodeIndex);
-                    getLocal.predict(variable->prediction());
-                    getLocal.ref();
-                    NodeIndex getLocalIndex = m_graph.size();
-                    m_graph.append(getLocal);
-                    insertionSet.append(indexInBlock + 1, getLocalIndex);
-                    
-                    Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), getLocalIndex);
-                    checkStructure.ref();
-                    NodeIndex checkStructureIndex = m_graph.size();
-                    m_graph.append(checkStructure);
-                    insertionSet.append(indexInBlock + 1, checkStructureIndex);
-                    
+                    NodeIndex getLocalIndex = insertionSet.insertNode(
+                        indexInBlock + 1, DontRefChildren, DontRefNode, variable->prediction(),
+                        GetLocal, codeOrigin, OpInfo(variable), nodeIndex);
+                    insertionSet.insertNode(
+                        indexInBlock + 1, RefChildren, DontRefNode, SpecNone, CheckStructure,
+                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
+                        getLocalIndex);
+
                     if (block->variablesAtTail.operand(variable->local()) == nodeIndex)
                         block->variablesAtTail.operand(variable->local()) = getLocalIndex;
                     
@@ -327,18 +320,15 @@ public:
                     CodeOrigin codeOrigin = node.codeOrigin;
                     NodeIndex child1 = node.child1().index();
                     
-                    Node setLocal(SetLocal, codeOrigin, OpInfo(variable), child1);
-                    NodeIndex setLocalIndex = m_graph.size();
-                    m_graph.append(setLocal);
-                    insertionSet.append(indexInBlock, setLocalIndex);
-                    m_graph[child1].ref();
+                    insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, SetLocal, codeOrigin,
+                        OpInfo(variable), child1);
+
                     // Use a ForwardCheckStructure to indicate that we should exit to the
                     // next bytecode instruction rather than reexecuting the current one.
-                    Node checkStructure(ForwardCheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), child1);
-                    checkStructure.ref();
-                    NodeIndex checkStructureIndex = m_graph.size();
-                    m_graph.append(checkStructure);
-                    insertionSet.append(indexInBlock, checkStructureIndex);
+                    insertionSet.insertNode(
+                        indexInBlock, RefChildren, DontRefNode, SpecNone, ForwardCheckStructure,
+                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), child1);
                     changed = true;
                     break;
                 }
@@ -347,7 +337,7 @@ public:
                     break;
                 }
             }
-            insertionSet.execute(*block);
+            insertionSet.execute(block);
         }
         
         return changed;

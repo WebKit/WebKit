@@ -39,6 +39,7 @@ class FixupPhase : public Phase {
 public:
     FixupPhase(Graph& graph)
         : Phase(graph, "fixup")
+        , m_insertionSet(graph)
     {
     }
     
@@ -60,7 +61,7 @@ private:
             m_compileIndex = block->at(m_indexInBlock);
             fixupNode(m_graph[m_compileIndex]);
         }
-        m_insertionSet.execute(*block);
+        m_insertionSet.execute(block);
     }
     
     void fixupNode(Node& node)
@@ -96,12 +97,10 @@ private:
                     m_graph[node.child1()].prediction(),
                     m_graph[m_compileIndex].prediction());
                 if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure()) {
-                    m_graph.ref(nodePtr->child1());
-                    Node checkStructure(CheckStructure, nodePtr->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())), nodePtr->child1().index());
-                    checkStructure.ref();
-                    NodeIndex checkStructureIndex = m_graph.size();
-                    m_graph.append(checkStructure);
-                    m_insertionSet.append(m_indexInBlock, checkStructureIndex);
+                    m_insertionSet.insertNode(
+                        m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure,
+                        nodePtr->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())),
+                        nodePtr->child1().index());
                     nodePtr = &m_graph[m_compileIndex];
                 }
             } else {
@@ -322,19 +321,14 @@ private:
                     break;
                 injectInt32ToDoubleNode(0);
                 injectInt32ToDoubleNode(1);
+
+                // We don't need to do ref'ing on the children because we're stealing them from
+                // the original division.
+                NodeIndex newDivisionIndex = m_insertionSet.insertNode(
+                    m_indexInBlock, DontRefChildren, RefNode, SpecDouble, m_graph[m_compileIndex]);
                 
-                Node& oldDivision = m_graph[m_compileIndex];
-                
-                Node newDivision = oldDivision;
-                newDivision.setRefCount(2);
-                newDivision.predict(SpecDouble);
-                NodeIndex newDivisionIndex = m_graph.size();
-                
-                oldDivision.setOp(DoubleAsInt32);
-                oldDivision.children.initialize(Edge(newDivisionIndex, DoubleUse), Edge(), Edge());
-                
-                m_graph.append(newDivision);
-                m_insertionSet.append(m_indexInBlock, newDivisionIndex);
+                m_graph[m_compileIndex].setOp(DoubleAsInt32);
+                m_graph[m_compileIndex].children.initialize(Edge(newDivisionIndex, DoubleUse), Edge(), Edge());
                 
                 break;
             }
@@ -423,28 +417,13 @@ private:
 #endif
     }
     
-    NodeIndex addNode(const Node& node, bool shouldGenerate)
-    {
-        NodeIndex nodeIndex = m_graph.size();
-        m_graph.append(node);
-        m_insertionSet.append(m_indexInBlock, nodeIndex);
-        if (shouldGenerate)
-            m_graph[nodeIndex].ref();
-        return nodeIndex;
-    }
-    
     NodeIndex checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, NodeIndex array, NodeIndex index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage, bool shouldGenerate = true)
     {
         ASSERT(arrayMode.isSpecific());
         
-        m_graph.ref(array);
-
         Structure* structure = arrayMode.originalArrayStructure(m_graph, codeOrigin);
         
         if (arrayMode.doesConversion()) {
-            if (index != NoNode)
-                m_graph.ref(index);
-            
             if (structure) {
                 if (m_indexInBlock > 0) {
                     // If the previous node was a CheckStructure inserted because of stuff
@@ -456,44 +435,42 @@ private:
                         previousNode.setOpAndDefaultFlags(Phantom);
                 }
                 
-                Node arrayify(ArrayifyToStructure, codeOrigin, OpInfo(structure), OpInfo(arrayMode.asWord()), array, index);
-                arrayify.ref();
-                NodeIndex arrayifyIndex = m_graph.size();
-                m_graph.append(arrayify);
-                m_insertionSet.append(m_indexInBlock, arrayifyIndex);
+                m_insertionSet.insertNode(
+                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, ArrayifyToStructure, codeOrigin,
+                    OpInfo(structure), OpInfo(arrayMode.asWord()), array, index);
             } else {
-                Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode.asWord()), array, index);
-                arrayify.ref();
-                NodeIndex arrayifyIndex = m_graph.size();
-                m_graph.append(arrayify);
-                m_insertionSet.append(m_indexInBlock, arrayifyIndex);
+                m_insertionSet.insertNode(
+                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, Arrayify, codeOrigin,
+                    OpInfo(arrayMode.asWord()), array, index);
             }
         } else {
             if (structure) {
-                Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(structure)), array);
-                checkStructure.ref();
-                NodeIndex checkStructureIndex = m_graph.size();
-                m_graph.append(checkStructure);
-                m_insertionSet.append(m_indexInBlock, checkStructureIndex);
+                m_insertionSet.insertNode(
+                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure, codeOrigin,
+                    OpInfo(m_graph.addStructureSet(structure)), array);
             } else {
-                Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
-                checkArray.ref();
-                NodeIndex checkArrayIndex = m_graph.size();
-                m_graph.append(checkArray);
-                m_insertionSet.append(m_indexInBlock, checkArrayIndex);
+                m_insertionSet.insertNode(
+                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckArray, codeOrigin,
+                    OpInfo(arrayMode.asWord()), array);
             }
         }
         
         if (!storageCheck(arrayMode))
             return NoNode;
         
-        if (shouldGenerate)
-            m_graph.ref(array);
+        if (arrayMode.usesButterfly()) {
+            return m_insertionSet.insertNode(
+                m_indexInBlock,
+                shouldGenerate ? RefChildren : DontRefChildren,
+                shouldGenerate ? RefNode : DontRefNode,
+                SpecNone, GetButterfly, codeOrigin, array);
+        }
         
-        if (arrayMode.usesButterfly())
-            return addNode(Node(GetButterfly, codeOrigin, array), shouldGenerate);
-        
-        return addNode(Node(GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode.asWord()), array), shouldGenerate);
+        return m_insertionSet.insertNode(
+            m_indexInBlock,
+            shouldGenerate ? RefChildren : DontRefChildren,
+            shouldGenerate ? RefNode : DontRefNode,
+            SpecNone, GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode.asWord()), array);
     }
     
     void blessArrayOperation(Edge base, Edge index, unsigned storageChildIdx)
@@ -505,11 +482,9 @@ private:
         
         switch (nodePtr->arrayMode().type()) {
         case Array::ForceExit: {
-            Node forceExit(ForceOSRExit, nodePtr->codeOrigin);
-            forceExit.ref();
-            NodeIndex forceExitIndex = m_graph.size();
-            m_graph.append(forceExit);
-            m_insertionSet.append(m_indexInBlock, forceExitIndex);
+            m_insertionSet.insertNode(
+                m_indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit,
+                nodePtr->codeOrigin);
             return;
         }
             
@@ -564,33 +539,24 @@ private:
 
     void injectInt32ToDoubleNode(unsigned childIndex)
     {
-        Node& source = m_graph[m_compileIndex];
-        Edge& edge = m_graph.child(source, childIndex);
-        
-        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        NodeIndex resultIndex = m_insertionSet.insertNode(
+            m_indexInBlock, DontRefChildren, RefNode, SpecDouble, Int32ToDouble,
+            m_graph[m_compileIndex].codeOrigin,
+            m_graph.child(m_graph[m_compileIndex], childIndex).index());
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("(replacing @%u->@%u with @%u->@%u) ",
-                m_compileIndex, edge.index(), m_compileIndex, resultIndex);
+        dataLogF(
+            "(replacing @%u->@%u with @%u->@%u) ",
+            m_compileIndex, m_graph.child(m_graph[m_compileIndex], childIndex).index(), m_compileIndex, resultIndex);
 #endif
-        
-        // Fix the edge up here because it's a reference that will be clobbered by
-        // the append() below.
-        NodeIndex oldIndex = edge.index();
-        edge = Edge(resultIndex, DoubleUse);
 
-        m_graph.append(Node(Int32ToDouble, source.codeOrigin, oldIndex));
-        m_insertionSet.append(m_indexInBlock, resultIndex);
-        
-        Node& int32ToDouble = m_graph[resultIndex];
-        int32ToDouble.predict(SpecDouble);
-        int32ToDouble.ref();
+        m_graph.child(m_graph[m_compileIndex], childIndex) = Edge(resultIndex, DoubleUse);
     }
 
     BasicBlock* m_block;
     unsigned m_indexInBlock;
     NodeIndex m_compileIndex;
-    InsertionSet<NodeIndex> m_insertionSet;
+    InsertionSet m_insertionSet;
 };
     
 bool performFixup(Graph& graph)

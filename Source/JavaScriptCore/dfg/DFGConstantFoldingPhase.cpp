@@ -44,6 +44,7 @@ public:
     ConstantFoldingPhase(Graph& graph)
         : Phase(graph, "constant folding")
         , m_state(graph)
+        , m_insertionSet(graph)
     {
     }
     
@@ -179,12 +180,9 @@ private:
                 
                 if (needsWatchpoint) {
                     ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
-                    m_graph[child].ref();
-                    Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
-                    watchpoint.ref();
-                    NodeIndex watchpointIndex = m_graph.size();
-                    m_graph.append(watchpoint);
-                    m_insertionSet.append(indexInBlock, watchpointIndex);
+                    m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, DontRefNode, SpecNone,
+                        StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
                 }
                 
                 NodeIndex propertyStorageIndex;
@@ -193,11 +191,9 @@ private:
                 if (isInlineOffset(status.offset()))
                     propertyStorageIndex = child;
                 else {
-                    Node getButterfly(GetButterfly, codeOrigin, child);
-                    getButterfly.ref();
-                    propertyStorageIndex = m_graph.size();
-                    m_graph.append(getButterfly);
-                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                    propertyStorageIndex = m_insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, RefNode, SpecNone, GetButterfly, codeOrigin,
+                        child);
                 }
                 
                 m_graph[nodeIndex].convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorageIndex);
@@ -241,12 +237,9 @@ private:
                 
                 if (needsWatchpoint) {
                     ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
-                    m_graph[child].ref();
-                    Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
-                    watchpoint.ref();
-                    NodeIndex watchpointIndex = m_graph.size();
-                    m_graph.append(watchpoint);
-                    m_insertionSet.append(indexInBlock, watchpointIndex);
+                    m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, DontRefNode, SpecNone,
+                        StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
                 }
                 
                 StructureTransitionData* transitionData = 0;
@@ -274,51 +267,36 @@ private:
 
                 NodeIndex propertyStorageIndex;
                 
-                m_graph[child].ref();
-                if (isInlineOffset(status.offset()))
+                if (isInlineOffset(status.offset())) {
+                    m_graph[child].ref(); // The child will be used as the property index, so ref it to reflect the double use.
                     propertyStorageIndex = child;
-                else if (status.isSimpleReplace() || structure->outOfLineCapacity() == status.newStructure()->outOfLineCapacity()) {
-                    Node getButterfly(GetButterfly, codeOrigin, child);
-                    getButterfly.ref();
-                    propertyStorageIndex = m_graph.size();
-                    m_graph.append(getButterfly);
-                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                } else if (status.isSimpleReplace() || structure->outOfLineCapacity() == status.newStructure()->outOfLineCapacity()) {
+                    propertyStorageIndex = m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, RefNode, SpecNone, GetButterfly, codeOrigin, child);
                 } else if (!structure->outOfLineCapacity()) {
                     ASSERT(status.newStructure()->outOfLineCapacity());
                     ASSERT(!isInlineOffset(status.offset()));
-                    Node allocateStorage(AllocatePropertyStorage, codeOrigin, OpInfo(transitionData), child);
-                    allocateStorage.ref(); // Once for the use.
-                    allocateStorage.ref(); // Twice because it's must-generate.
-                    propertyStorageIndex = m_graph.size();
-                    m_graph.append(allocateStorage);
-                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                    propertyStorageIndex = m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, RefNode, SpecNone, AllocatePropertyStorage,
+                        codeOrigin, OpInfo(transitionData), child);
                 } else {
                     ASSERT(structure->outOfLineCapacity());
                     ASSERT(status.newStructure()->outOfLineCapacity() > structure->outOfLineCapacity());
                     ASSERT(!isInlineOffset(status.offset()));
                     
-                    Node getButterfly(GetButterfly, codeOrigin, child);
-                    getButterfly.ref();
-                    NodeIndex getButterflyIndex = m_graph.size();
-                    m_graph.append(getButterfly);
-                    m_insertionSet.append(indexInBlock, getButterflyIndex);
-                    
-                    m_graph[child].ref();
-                    Node reallocateStorage(ReallocatePropertyStorage, codeOrigin, OpInfo(transitionData), child, getButterflyIndex);
-                    reallocateStorage.ref(); // Once for the use.
-                    reallocateStorage.ref(); // Twice because it's must-generate.
-                    propertyStorageIndex = m_graph.size();
-                    m_graph.append(reallocateStorage);
-                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                    propertyStorageIndex = m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, RefNode, SpecNone, ReallocatePropertyStorage,
+                        codeOrigin, OpInfo(transitionData),
+                        child,
+                        m_insertionSet.insertNode(
+                            indexInBlock, DontRefChildren, DontRefNode, SpecNone, GetButterfly,
+                            codeOrigin, child));
                 }
                 
                 if (status.isSimpleTransition()) {
-                    m_graph[child].ref();
-                    Node putStructure(PutStructure, codeOrigin, OpInfo(transitionData), child);
-                    putStructure.ref();
-                    NodeIndex putStructureIndex = m_graph.size();
-                    m_graph.append(putStructure);
-                    m_insertionSet.append(indexInBlock, putStructureIndex);
+                    m_insertionSet.insertNode(
+                        indexInBlock, RefChildren, DontRefNode, SpecNone, PutStructure, codeOrigin,
+                        OpInfo(transitionData), child);
                 }
                 
                 m_graph[nodeIndex].convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorageIndex);
@@ -345,8 +323,6 @@ private:
             JSValue value = m_state.forNode(nodeIndex).value();
             if (!value)
                 continue;
-                
-            Node phantom(Phantom, node.codeOrigin);
                 
             if (node.op() == GetLocal) {
                 NodeIndex previousLocalAccess = NoNode;
@@ -402,46 +378,38 @@ private:
                         || node.variableAccessData()->isCaptured());
                 }
             }
-                
-            phantom.children = node.children;
-            phantom.ref();
             
+            CodeOrigin codeOrigin = node.codeOrigin;
+            AdjacencyList children = node.children;
+                
             m_graph.convertToConstant(nodeIndex, value);
-            NodeIndex phantomNodeIndex = m_graph.size();
-            m_graph.append(phantom);
-            m_insertionSet.append(indexInBlock, phantomNodeIndex);
+            m_insertionSet.insertNode(
+                indexInBlock, DontRefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, children);
                 
             changed = true;
         }
         m_state.reset();
-        m_insertionSet.execute(*block);
+        m_insertionSet.execute(block);
         
         return changed;
     }
     
     void addStructureTransitionCheck(CodeOrigin codeOrigin, unsigned indexInBlock, JSCell* cell)
     {
-        Node weakConstant(WeakJSConstant, codeOrigin, OpInfo(cell));
-        weakConstant.ref();
-        weakConstant.predict(speculationFromValue(cell));
-        NodeIndex weakConstantIndex = m_graph.size();
-        m_graph.append(weakConstant);
-        m_insertionSet.append(indexInBlock, weakConstantIndex);
+        NodeIndex weakConstantIndex = m_insertionSet.insertNode(
+            indexInBlock, DontRefChildren, DontRefNode, speculationFromValue(cell),
+            WeakJSConstant, codeOrigin, OpInfo(cell));
         
         if (cell->structure()->transitionWatchpointSetIsStillValid()) {
-            Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(cell->structure()), weakConstantIndex);
-            watchpoint.ref();
-            NodeIndex watchpointIndex = m_graph.size();
-            m_graph.append(watchpoint);
-            m_insertionSet.append(indexInBlock, watchpointIndex);
+            m_insertionSet.insertNode(
+                indexInBlock, RefChildren, DontRefNode, SpecNone, StructureTransitionWatchpoint,
+                codeOrigin, OpInfo(cell->structure()), weakConstantIndex);
             return;
         }
-        
-        Node check(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(cell->structure())), weakConstantIndex);
-        check.ref();
-        NodeIndex checkIndex = m_graph.size();
-        m_graph.append(check);
-        m_insertionSet.append(indexInBlock, checkIndex);
+
+        m_insertionSet.insertNode(
+            indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure, codeOrigin,
+            OpInfo(m_graph.addStructureSet(cell->structure())), weakConstantIndex);
     }
     
     // This is necessary because the CFA may reach conclusions about constants based on its
@@ -477,24 +445,22 @@ private:
                 break;
                 
             default:
-                Node forceOSRExit(ForceOSRExit, node.codeOrigin);
-                forceOSRExit.ref();
-                NodeIndex forceOSRExitIndex = m_graph.size();
-                m_graph.append(forceOSRExit);
-                m_insertionSet.append(indexInBlock, forceOSRExitIndex);
+                m_insertionSet.insertNode(
+                    indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit,
+                    node.codeOrigin);
                 changed = true;
                 break;
             }
             break;
         }
         m_state.reset();
-        m_insertionSet.execute(*block);
+        m_insertionSet.execute(block);
         
         return changed;
     }
 
     AbstractState m_state;
-    InsertionSet<NodeIndex> m_insertionSet;
+    InsertionSet m_insertionSet;
 };
 
 bool performConstantFolding(Graph& graph)

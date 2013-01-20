@@ -1,3 +1,83 @@
+2013-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Inserting a node into the DFG graph should not require five lines of code
+        https://bugs.webkit.org/show_bug.cgi?id=107381
+
+        Reviewed by Sam Weinig.
+        
+        This adds fairly comprehensive support for inserting a node into a DFG graph in one
+        method call. A common example of this is:
+        
+        m_insertionSet.insertNode(indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit, codeOrigin);
+        
+        The arguments to insert() specify what reference counting you need to have happen
+        (RefChildren => recursively refs all children, RefNode => non-recursively refs the node
+        that was created), the prediction to set (SpecNone is a common default), followed by
+        the arguments to the Node() constructor. InsertionSet::insertNode() and similar methods
+        (Graph::addNode() and BasicBlock::appendNode()) all use a common variadic template
+        function macro from DFGVariadicFunction.h. Also, all of these methods will automatically
+        non-recursively ref() the node being created if the flags say NodeMustGenerate.
+        
+        In all, this new mechanism retains the flexibility of the old approach (you get to
+        manage ref counts yourself, albeit in less code) while ensuring that most code that adds
+        nodes to the graph now needs less code to do it.
+        
+        In the future, we should revisit the reference counting methodology in the DFG: we could
+        do like most compilers and get rid of it entirely, or we could make it automatic. This
+        patch doesn't attempt to make any such major changes, and only seeks to simplify the
+        technique we were already using (manual ref counting).
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Operands.h:
+        (JSC::dumpOperands):
+        * dfg/DFGAdjacencyList.h:
+        (AdjacencyList):
+        (JSC::DFG::AdjacencyList::kind):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGBasicBlock.h:
+        (DFG):
+        (BasicBlock):
+        * dfg/DFGBasicBlockInlines.h: Added.
+        (DFG):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        (JSC::DFG::ConstantFoldingPhase::paintUnreachableCode):
+        (ConstantFoldingPhase):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::FixupPhase):
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::ref):
+        (Graph):
+        * dfg/DFGInsertionSet.h:
+        (DFG):
+        (JSC::DFG::Insertion::Insertion):
+        (JSC::DFG::Insertion::element):
+        (Insertion):
+        (JSC::DFG::InsertionSet::InsertionSet):
+        (JSC::DFG::InsertionSet::insert):
+        (InsertionSet):
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (Node):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * dfg/DFGVariadicFunction.h: Added.
+
 2013-01-19  Geoffrey Garen  <ggaren@apple.com>
 
         Track inheritance structures in a side table, instead of using a private

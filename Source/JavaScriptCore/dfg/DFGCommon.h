@@ -105,6 +105,23 @@ enum UseKind {
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
 
+// Use RefChildren if the child ref counts haven't already been adjusted using
+// other means and either of the following is true:
+// - The node you're creating is MustGenerate.
+// - The place where you're inserting a reference to the node you're creating
+//   will not also do RefChildren.
+enum RefChildrenMode {
+    RefChildren,
+    DontRefChildren
+};
+
+// Use RefNode if you know that the node will be used from another node, and you
+// will not already be ref'ing the node to account for that use.
+enum RefNodeMode {
+    RefNode,
+    DontRefNode
+};
+
 inline const char* useKindToString(UseKind useKind)
 {
     switch (useKind) {

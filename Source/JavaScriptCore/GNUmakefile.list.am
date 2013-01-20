@@ -176,6 +176,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
+	Source/JavaScriptCore/dfg/DFGBasicBlockInlines.h \
 	Source/JavaScriptCore/dfg/DFGBranchDirection.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
@@ -264,6 +265,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.cpp \
 	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.h \
+	Source/JavaScriptCore/dfg/DFGVariadicFunction.h \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.h \
 	Source/JavaScriptCore/disassembler/Disassembler.cpp \

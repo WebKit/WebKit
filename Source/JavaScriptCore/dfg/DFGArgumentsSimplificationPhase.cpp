@@ -407,7 +407,7 @@ public:
         }
 #endif
         
-        InsertionSet<NodeIndex> insertionSet;
+        InsertionSet insertionSet(m_graph);
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
@@ -532,11 +532,9 @@ public:
                     
                     // We know exactly what this will return. But only after we have checked
                     // that nobody has escaped our arguments.
-                    Node check(CheckArgumentsNotCreated, codeOrigin);
-                    check.ref();
-                    NodeIndex checkIndex = m_graph.size();
-                    m_graph.append(check);
-                    insertionSet.append(indexInBlock, checkIndex);
+                    insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, 
+                        CheckArgumentsNotCreated, codeOrigin);
                     
                     m_graph.convertToConstant(
                         nodeIndex, jsNumber(codeOrigin.inlineCallFrame->arguments.size() - 1));
@@ -576,24 +574,20 @@ public:
                     // has run - therefore it makes little sense to link the GetLocal operation
                     // into the VariableAccessData and Phi graphs.
 
-                    Node check(CheckArgumentsNotCreated, node.codeOrigin);
-                    check.ref();
-                    
-                    Node phantom(Phantom, node.codeOrigin);
-                    phantom.ref();
-                    phantom.children = node.children;
+                    CodeOrigin codeOrigin = node.codeOrigin;
+                    AdjacencyList children = node.children;
                     
                     node.convertToGetLocalUnlinked(
                         static_cast<VirtualRegister>(
                             node.codeOrigin.inlineCallFrame->stackOffset +
                             m_graph.baselineCodeBlockFor(node.codeOrigin)->argumentIndexAfterCapture(index)));
 
-                    NodeIndex checkNodeIndex = m_graph.size();
-                    m_graph.append(check);
-                    insertionSet.append(indexInBlock, checkNodeIndex);
-                    NodeIndex phantomNodeIndex = m_graph.size();
-                    m_graph.append(phantom);
-                    insertionSet.append(indexInBlock, phantomNodeIndex);
+                    insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, CheckArgumentsNotCreated,
+                        codeOrigin);
+                    insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, Phantom, codeOrigin,
+                        children);
                     
                     changed = true;
                     break;
@@ -614,7 +608,7 @@ public:
                     break;
                 }
             }
-            insertionSet.execute(*block);
+            insertionSet.execute(block);
         }
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
@@ -634,19 +628,16 @@ public:
                 if (m_createsArguments.contains(nodePtr->codeOrigin.inlineCallFrame))
                     continue;
                 if (nodePtr->shouldGenerate()) {
-                    Node phantom(Phantom, nodePtr->codeOrigin);
-                    phantom.children = nodePtr->children;
-                    phantom.ref();
-                    NodeIndex phantomNodeIndex = m_graph.size();
-                    m_graph.append(phantom);
-                    insertionSet.append(indexInBlock, phantomNodeIndex);
+                    insertionSet.insertNode(
+                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, Phantom,
+                        nodePtr->codeOrigin, nodePtr->children);
                     nodePtr = &m_graph[nodeIndex];
                 }
                 nodePtr->setOpAndDefaultFlags(PhantomArguments);
                 nodePtr->children.reset();
                 changed = true;
             }
-            insertionSet.execute(*block);
+            insertionSet.execute(block);
         }
         
         if (changed)

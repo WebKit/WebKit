@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 #include "DFGAbstractValue.h"
 #include "DFGBranchDirection.h"
 #include "DFGNode.h"
+#include "DFGVariadicFunction.h"
 #include "Operands.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
+
+class Graph;
 
 typedef Vector <BlockIndex, 2> PredecessorList;
 
@@ -97,7 +100,12 @@ struct BasicBlock : Vector<NodeIndex, 8> {
         }
         return false;
     }
-
+    
+#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
+    templatePre typeParams templatePost NodeIndex appendNode(Graph&, RefChildrenMode, RefNodeMode, SpeculatedType valueParamsComma valueParams);
+    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
+#undef DFG_DEFINE_APPEND_NODE
+    
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.
     unsigned bytecodeBegin;

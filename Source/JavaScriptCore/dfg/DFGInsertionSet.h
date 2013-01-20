@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,64 +30,75 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGGraph.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
-template<typename ElementType>
 class Insertion {
 public:
     Insertion() { }
     
-    Insertion(size_t index, const ElementType& element)
+    Insertion(size_t index, NodeIndex element)
         : m_index(index)
         , m_element(element)
     {
     }
     
     size_t index() const { return m_index; }
-    const ElementType& element() const { return m_element; }
+    NodeIndex element() const { return m_element; }
 private:
     size_t m_index;
-    ElementType m_element;
+    NodeIndex m_element;
 };
 
-template<typename ElementType>
 class InsertionSet {
 public:
-    InsertionSet() { }
+    InsertionSet(Graph& graph)
+        : m_graph(graph)
+    {
+    }
     
-    void append(const Insertion<ElementType>& insertion)
+    NodeIndex insert(const Insertion& insertion)
     {
         ASSERT(!m_insertions.size() || m_insertions.last().index() <= insertion.index());
         m_insertions.append(insertion);
+        return insertion.element();
     }
     
-    void append(size_t index, const ElementType& element)
+    NodeIndex insert(size_t index, NodeIndex element)
     {
-        append(Insertion<ElementType>(index, element));
+        return insert(Insertion(index, element));
     }
+
+#define DFG_DEFINE_INSERT_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
+    templatePre typeParams templatePost NodeIndex insertNode(size_t index, RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
+    { \
+        return insert(index, m_graph.addNode(refChildrenMode, refNodeMode, type valueParamsComma valueArgs)); \
+    }
+    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_INSERT_NODE)
+#undef DFG_DEFINE_INSERT_NODE
     
-    template<typename CollectionType>
-    void execute(CollectionType& collection)
+    void execute(BasicBlock* block)
     {
         if (!m_insertions.size())
             return;
-        collection.grow(collection.size() + m_insertions.size());
-        size_t lastIndex = collection.size();
+        block->grow(block->size() + m_insertions.size());
+        size_t lastIndex = block->size();
         for (size_t indexInInsertions = m_insertions.size(); indexInInsertions--;) {
-            Insertion<ElementType>& insertion = m_insertions[indexInInsertions];
+            Insertion& insertion = m_insertions[indexInInsertions];
             size_t firstIndex = insertion.index() + indexInInsertions;
             size_t indexOffset = indexInInsertions + 1;
             for (size_t i = lastIndex; --i > firstIndex;)
-                collection[i] = collection[i - indexOffset];
-            collection[firstIndex] = insertion.element();
+                block->at(i) = block->at(i - indexOffset);
+            block->at(firstIndex) = insertion.element();
             lastIndex = firstIndex;
         }
         m_insertions.resize(0);
     }
 private:
-    Vector<Insertion<ElementType>, 8> m_insertions;
+    Graph& m_graph;
+    Vector<Insertion, 8> m_insertions;
 };
 
 } } // namespace JSC::DFG

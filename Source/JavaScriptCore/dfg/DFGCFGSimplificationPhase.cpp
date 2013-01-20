@@ -29,7 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractState.h"
-#include "DFGBasicBlock.h"
+#include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
@@ -136,11 +136,9 @@ public:
                         
                             jettisonBlock(blockIndex, notTakenBlockIndex, boundaryCodeOrigin);
                         
-                            NodeIndex jumpNodeIndex = m_graph.size();
-                            Node jump(Jump, boundaryCodeOrigin, OpInfo(takenBlockIndex));
-                            jump.ref();
-                            m_graph.append(jump);
-                            block->append(jumpNodeIndex);
+                            block->appendNode(
+                                m_graph, DontRefChildren, DontRefNode, SpecNone, Jump,
+                                boundaryCodeOrigin, OpInfo(takenBlockIndex));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -169,11 +167,9 @@ public:
                             branch.setOpAndDefaultFlags(Phantom);
                             ASSERT(branch.refCount() == 1);
                             
-                            Node jump(Jump, branch.codeOrigin, OpInfo(targetBlockIndex));
-                            jump.ref();
-                            NodeIndex jumpNodeIndex = m_graph.size();
-                            m_graph.append(jump);
-                            block->append(jumpNodeIndex);
+                            block->appendNode(
+                                m_graph, DontRefChildren, DontRefNode, SpecNone, Jump,
+                                branch.codeOrigin, OpInfo(targetBlockIndex));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -275,11 +271,8 @@ private:
         if (!node.shouldGenerate())
             return;
         ASSERT(m_graph[nodeIndex].op() != SetLocal);
-        NodeIndex phantomNodeIndex = m_graph.size();
-        Node phantom(Phantom, codeOrigin, nodeIndex);
-        m_graph.append(phantom);
-        m_graph.ref(phantomNodeIndex);
-        block->append(phantomNodeIndex);
+        block->appendNode(
+            m_graph, RefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, nodeIndex);
     }
     
     void fixPossibleGetLocal(BasicBlock* block, Edge& edge, bool changeRef)

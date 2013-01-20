@@ -87,6 +87,17 @@ struct Node {
     
     Node() { }
     
+    Node(NodeType op, CodeOrigin codeOrigin, const AdjacencyList& children)
+        : codeOrigin(codeOrigin)
+        , children(children)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
+        , m_prediction(SpecNone)
+    {
+        setOpAndDefaultFlags(op);
+        ASSERT(!!(m_flags & NodeHasVarArgs) == (children.kind() == AdjacencyList::Variable));
+    }
+    
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : codeOrigin(codeOrigin)

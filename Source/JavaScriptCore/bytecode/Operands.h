@@ -193,7 +193,7 @@ template<typename T, typename Traits>
 void dumpOperands(const Operands<T, Traits>& operands, PrintStream& out)
 {
     for (size_t argument = operands.numberOfArguments(); argument--;) {
-        if (argument)
+        if (argument != operands.numberOfArguments() - 1)
             out.printf(" ");
         out.print("arg", argument, ":");
         Traits::dump(operands.argument(argument), out);

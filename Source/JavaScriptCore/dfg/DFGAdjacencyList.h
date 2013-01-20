@@ -162,6 +162,9 @@ public:
         m_words[1].m_encodedWord = numChildren;
     }
     
+#if !ASSERT_DISABLED
+    Kind kind() const { return m_kind; }
+#endif
 private:
     Edge m_words[Size];
 #if !ASSERT_DISABLED
