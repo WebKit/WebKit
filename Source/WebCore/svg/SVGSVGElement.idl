@@ -29,7 +29,7 @@
                                             SVGTests,
                                             SVGLangSpace,
                                             SVGExternalResourcesRequired,
-                                            SVGLocatable,
+                                            SVGTransformable,
                                             SVGFitToViewBox,
                                             SVGZoomAndPan {
     readonly attribute SVGAnimatedLength x;

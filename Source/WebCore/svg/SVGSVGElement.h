@@ -29,7 +29,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGStyledLocatableElement.h"
+#include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 #include "SVGZoomAndPan.h"
 
@@ -42,7 +42,7 @@ class SVGViewSpec;
 class SVGViewElement;
 class SMILTimeContainer;
 
-class SVGSVGElement : public SVGStyledLocatableElement,
+class SVGSVGElement : public SVGStyledTransformableElement,
                       public SVGTests,
                       public SVGLangSpace,
                       public SVGExternalResourcesRequired,
@@ -51,8 +51,8 @@ class SVGSVGElement : public SVGStyledLocatableElement,
 public:
     static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
-    using SVGStyledLocatableElement::ref;
-    using SVGStyledLocatableElement::deref;
+    using SVGStyledTransformableElement::ref;
+    using SVGStyledTransformableElement::deref;
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
