@@ -221,6 +221,10 @@ TestRunner::TestRunner()
     bindMethod("setGeolocationPermission", &TestRunner::setGeolocationPermission);
     bindMethod("setMockGeolocationPositionUnavailableError", &TestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &TestRunner::setMockGeolocationPosition);
+#if ENABLE(NOTIFICATIONS)
+    bindMethod("grantWebNotificationPermission", &TestRunner::grantWebNotificationPermission);
+    bindMethod("simulateLegacyWebNotificationClick", &TestRunner::simulateLegacyWebNotificationClick);
+#endif
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -1461,6 +1465,27 @@ void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentLis
         return;
     m_delegate->setMockGeolocationPositionUnavailableError(arguments[0].toString());
 }
+
+#if ENABLE(NOTIFICATIONS)
+void TestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isString()) {
+        result->set(false);
+        return;
+    }
+    m_delegate->grantWebNotificationPermission(arguments[0].toString());
+    result->set(true);
+}
+
+void TestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isString()) {
+        result->set(false);
+        return;
+    }
+    result->set(m_delegate->simulateLegacyWebNotificationClick(arguments[0].toString()));
+}
+#endif
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
 {

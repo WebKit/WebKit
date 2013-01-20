@@ -107,13 +107,6 @@ public:
     // Causes WillSendRequest to return an empty request.
     void setWillSendRequestReturnsNull(const CppArgumentList&, CppVariant*);
 
-#if ENABLE(NOTIFICATIONS)
-    // Grants permission for desktop notifications to an origin
-    void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
-    // Simulates a click on a desktop notification.
-    void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
-#endif
-
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
 

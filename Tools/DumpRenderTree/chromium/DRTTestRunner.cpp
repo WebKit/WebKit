@@ -48,7 +48,6 @@
 #include "WebIDBFactory.h"
 #include "WebInputElement.h"
 #include "WebKit.h"
-#include "WebNotificationPresenter.h"
 #include "WebPrintParams.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
@@ -102,9 +101,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #endif
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
-#if ENABLE(NOTIFICATIONS)
-    bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
-#endif
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
     bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
     bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
@@ -118,9 +114,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
-#if ENABLE(NOTIFICATIONS)
-    bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
-#endif
     bindMethod("waitForPolicyDelegate", &DRTTestRunner::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &DRTTestRunner::waitUntilDone);
     bindMethod("windowCount", &DRTTestRunner::windowCount);
@@ -449,35 +442,6 @@ void DRTTestRunner::setWillSendRequestReturnsNull(const CppArgumentList& argumen
         m_shell->webViewHost()->setRequestReturnNull(arguments[0].value.boolValue);
     result->setNull();
 }
-
-
-#if ENABLE(NOTIFICATIONS)
-void DRTTestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isString()) {
-        result->set(false);
-        return;
-    }
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_shell->notificationPresenter()->grantPermission(cppVariantToWebString(arguments[0]));
-#endif
-    result->set(true);
-}
-
-void DRTTestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isString()) {
-        result->set(false);
-        return;
-    }
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (m_shell->notificationPresenter()->simulateClick(cppVariantToWebString(arguments[0])))
-        result->set(true);
-    else
-#endif
-        result->set(false);
-}
-#endif
 
 void DRTTestRunner::display(const CppArgumentList& arguments, CppVariant* result)
 {

@@ -103,6 +103,10 @@ public:
     virtual void setGeolocationPermission(bool) { }
     virtual void setMockGeolocationPosition(double, double, double) { }
     virtual void setMockGeolocationPositionUnavailableError(const std::string&) { }
+#if ENABLE(NOTIFICATIONS)
+    virtual void grantWebNotificationPermission(const std::string&) { }
+    virtual bool simulateLegacyWebNotificationClick(const std::string&) { return false; }
+#endif
 };
 
 }

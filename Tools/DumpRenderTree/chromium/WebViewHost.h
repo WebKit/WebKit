@@ -164,6 +164,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setGeolocationPermission(bool) OVERRIDE;
     virtual void setMockGeolocationPosition(double, double, double) OVERRIDE;
     virtual void setMockGeolocationPositionUnavailableError(const std::string&) OVERRIDE;
+#if ENABLE(NOTIFICATIONS)
+    virtual void grantWebNotificationPermission(const std::string&) OVERRIDE;
+    virtual bool simulateLegacyWebNotificationClick(const std::string&) OVERRIDE;
+#endif
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

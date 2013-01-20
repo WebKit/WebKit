@@ -376,6 +376,13 @@ private:
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
     void setMockGeolocationPositionUnavailableError(const CppArgumentList&, CppVariant*);
 
+#if ENABLE(NOTIFICATIONS)
+    // Grants permission for desktop notifications to an origin
+    void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
+    // Simulates a click on a desktop notification.
+    void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
+#endif
+
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);

@@ -1171,6 +1171,18 @@ void WebViewHost::setMockGeolocationPositionUnavailableError(const std::string& 
         windowList[i]->geolocationClientMock()->setPositionUnavailableError(WebString::fromUTF8(message));
 }
 
+#if ENABLE(NOTIFICATIONS)
+void WebViewHost::grantWebNotificationPermission(const std::string& origin)
+{
+    m_shell->notificationPresenter()->grantPermission(WebString::fromUTF8(origin));
+}
+
+bool WebViewHost::simulateLegacyWebNotificationClick(const std::string& notificationIdentifier)
+{
+    return m_shell->notificationPresenter()->simulateClick(WebString::fromUTF8(notificationIdentifier));
+}
+#endif
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)
