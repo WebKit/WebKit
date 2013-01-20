@@ -207,7 +207,7 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
 
 #ifdef GST_API_VERSION_1
     g_rec_mutex_init(&priv->mutex);
-    priv->task = gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, reinterpret_cast<GDestroyNotify>(g_object_unref));
+    priv->task = gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src, 0);
 #else
     g_static_rec_mutex_init(&priv->mutex);
     priv->task = gst_task_create(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src);
