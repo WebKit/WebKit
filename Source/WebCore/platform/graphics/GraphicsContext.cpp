@@ -602,6 +602,11 @@ void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
     if (paintingDisabled())
         return;
 
+    if (!rect.isRounded()) {
+        clip(rect.rect());
+        return;
+    }
+
     Path path;
     path.addRoundedRect(rect);
     clip(path);
@@ -612,6 +617,11 @@ void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;
+
+    if (!rect.isRounded()) {
+        clipOut(rect.rect());
+        return;
+    }
 
     Path path;
     path.addRoundedRect(rect);
@@ -666,7 +676,10 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
 
 void GraphicsContext::fillRoundedRect(const RoundedRect& rect, const Color& color, ColorSpace colorSpace)
 {
-    fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
+    if (rect.isRounded())
+        fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
+    else
+        fillRect(rect.rect(), color, colorSpace);
 }
 
 #if !USE(CG)
