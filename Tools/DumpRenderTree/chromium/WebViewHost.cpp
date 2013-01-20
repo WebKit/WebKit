@@ -1183,6 +1183,35 @@ bool WebViewHost::simulateLegacyWebNotificationClick(const std::string& notifica
 }
 #endif
 
+#if ENABLE(INPUT_SPEECH)
+void WebViewHost::addMockSpeechInputResult(const std::string& result, double confidence, const std::string& language)
+{
+    m_speechInputControllerMock->addMockRecognitionResult(WebString::fromUTF8(result), confidence, WebString::fromUTF8(language));
+}
+
+void WebViewHost::setMockSpeechInputDumpRect(bool dumpRect)
+{
+    m_speechInputControllerMock->setDumpRect(dumpRect);
+}
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+void WebViewHost::addMockSpeechRecognitionResult(const std::string& transcript, double confidence)
+{
+    m_mockSpeechRecognizer->addMockResult(WebString::fromUTF8(transcript), confidence);
+}
+
+void WebViewHost::setMockSpeechRecognitionError(const std::string& error, const std::string& message)
+{
+    m_mockSpeechRecognizer->setError(WebString::fromUTF8(error), WebString::fromUTF8(message));
+}
+
+bool WebViewHost::wasMockSpeechRecognitionAborted()
+{
+    return m_mockSpeechRecognizer->wasAborted();
+}
+#endif
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

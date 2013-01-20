@@ -383,6 +383,17 @@ private:
     void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
 #endif
 
+    // Speech input related functions.
+#if ENABLE(INPUT_SPEECH)
+    void addMockSpeechInputResult(const CppArgumentList&, CppVariant*);
+    void setMockSpeechInputDumpRect(const CppArgumentList&, CppVariant*);
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    void addMockSpeechRecognitionResult(const CppArgumentList&, CppVariant*);
+    void setMockSpeechRecognitionError(const CppArgumentList&, CppVariant*);
+    void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
+#endif
+
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);

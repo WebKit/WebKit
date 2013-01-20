@@ -168,6 +168,15 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void grantWebNotificationPermission(const std::string&) OVERRIDE;
     virtual bool simulateLegacyWebNotificationClick(const std::string&) OVERRIDE;
 #endif
+#if ENABLE(INPUT_SPEECH)
+    virtual void addMockSpeechInputResult(const std::string&, double, const std::string&) OVERRIDE;
+    virtual void setMockSpeechInputDumpRect(bool) OVERRIDE;
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    virtual void addMockSpeechRecognitionResult(const std::string&, double) OVERRIDE;
+    virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) OVERRIDE;
+    virtual bool wasMockSpeechRecognitionAborted() OVERRIDE;
+#endif
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

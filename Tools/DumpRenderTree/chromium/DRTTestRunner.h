@@ -110,17 +110,6 @@ public:
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
 
-    // Speech input related functions.
-#if ENABLE(INPUT_SPEECH)
-    void addMockSpeechInputResult(const CppArgumentList&, CppVariant*);
-    void setMockSpeechInputDumpRect(const CppArgumentList&, CppVariant*);
-#endif
-#if ENABLE(SCRIPTED_SPEECH)
-    void addMockSpeechRecognitionResult(const CppArgumentList&, CppVariant*);
-    void setMockSpeechRecognitionError(const CppArgumentList&, CppVariant*);
-    void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
-#endif
-
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

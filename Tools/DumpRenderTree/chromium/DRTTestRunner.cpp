@@ -34,8 +34,6 @@
 #include "DRTTestRunner.h"
 
 #include "DRTDevToolsAgent.h"
-#include "MockWebSpeechInputController.h"
-#include "MockWebSpeechRecognizer.h"
 #include "Task.h"
 #include "TestShell.h"
 #include "WebAnimationController.h"
@@ -90,15 +88,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     // they will use when called by JavaScript. The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to DRTTestRunner).
-#if ENABLE(INPUT_SPEECH)
-    bindMethod("addMockSpeechInputResult", &DRTTestRunner::addMockSpeechInputResult);
-    bindMethod("setMockSpeechInputDumpRect", &DRTTestRunner::setMockSpeechInputDumpRect);
-#endif
-#if ENABLE(SCRIPTED_SPEECH)
-    bindMethod("addMockSpeechRecognitionResult", &DRTTestRunner::addMockSpeechRecognitionResult);
-    bindMethod("setMockSpeechRecognitionError", &DRTTestRunner::setMockSpeechRecognitionError);
-    bindMethod("wasMockSpeechRecognitionAborted", &DRTTestRunner::wasMockSpeechRecognitionAborted);
-#endif
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
@@ -461,54 +450,3 @@ void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, C
     host->displayRepaintMask();
     result->setNull();
 }
-
-#if ENABLE(INPUT_SPEECH)
-void DRTTestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
-        return;
-
-    if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
-        controller->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
-}
-
-void DRTTestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isBool())
-        return;
-
-    if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
-        controller->setDumpRect(arguments[0].value.boolValue);
-}
-#endif
-
-#if ENABLE(SCRIPTED_SPEECH)
-void DRTTestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isNumber())
-        return;
-
-    if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
-        recognizer->addMockResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble());
-}
-
-void DRTTestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() != 2 || !arguments[0].isString() || !arguments[1].isString())
-        return;
-
-    if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
-        recognizer->setError(cppVariantToWebString(arguments[0]), cppVariantToWebString(arguments[1]));
-}
-
-void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
-{
-    result->set(false);
-    if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
-        result->set(recognizer->wasAborted());
-}
-#endif

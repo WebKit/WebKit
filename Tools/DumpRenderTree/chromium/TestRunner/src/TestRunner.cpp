@@ -225,6 +225,15 @@ TestRunner::TestRunner()
     bindMethod("grantWebNotificationPermission", &TestRunner::grantWebNotificationPermission);
     bindMethod("simulateLegacyWebNotificationClick", &TestRunner::simulateLegacyWebNotificationClick);
 #endif
+#if ENABLE(INPUT_SPEECH)
+    bindMethod("addMockSpeechInputResult", &TestRunner::addMockSpeechInputResult);
+    bindMethod("setMockSpeechInputDumpRect", &TestRunner::setMockSpeechInputDumpRect);
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    bindMethod("addMockSpeechRecognitionResult", &TestRunner::addMockSpeechRecognitionResult);
+    bindMethod("setMockSpeechRecognitionError", &TestRunner::setMockSpeechRecognitionError);
+    bindMethod("wasMockSpeechRecognitionAborted", &TestRunner::wasMockSpeechRecognitionAborted);
+#endif
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -1484,6 +1493,51 @@ void TestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& argum
         return;
     }
     result->set(m_delegate->simulateLegacyWebNotificationClick(arguments[0].toString()));
+}
+#endif
+
+#if ENABLE(INPUT_SPEECH)
+void TestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
+        return;
+
+    m_delegate->addMockSpeechInputResult(arguments[0].toString(), arguments[1].toDouble(), arguments[2].toString());
+}
+
+void TestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isBool())
+        return;
+
+    m_delegate->setMockSpeechInputDumpRect(arguments[0].toBoolean());
+}
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+void TestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isNumber())
+        return;
+
+    m_delegate->addMockSpeechRecognitionResult(arguments[0].toString(), arguments[1].toDouble());
+}
+
+void TestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 2 || !arguments[0].isString() || !arguments[1].isString())
+        return;
+
+    m_delegate->setMockSpeechRecognitionError(arguments[0].toString(), arguments[1].toString());
+}
+
+void TestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
+{
+    result->set(m_delegate->wasMockSpeechRecognitionAborted());
 }
 #endif
 

@@ -1,5 +1,42 @@
 2013-01-20  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move speech related methods to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=107266
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        (WebTestRunner::WebTestDelegate::addMockSpeechInputResult):
+        (WebTestRunner::WebTestDelegate::setMockSpeechInputDumpRect):
+        (WebTestRunner::WebTestDelegate::addMockSpeechRecognitionResult):
+        (WebTestRunner::WebTestDelegate::setMockSpeechRecognitionError):
+        (WebTestRunner::WebTestDelegate::wasMockSpeechRecognitionAborted):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::addMockSpeechInputResult):
+        (WebTestRunner::TestRunner::setMockSpeechInputDumpRect):
+        (WebTestRunner::TestRunner::addMockSpeechRecognitionResult):
+        (WebTestRunner::TestRunner::setMockSpeechRecognitionError):
+        (WebTestRunner::TestRunner::wasMockSpeechRecognitionAborted):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::addMockSpeechInputResult):
+        (WebViewHost::setMockSpeechInputDumpRect):
+        (WebViewHost::addMockSpeechRecognitionResult):
+        (WebViewHost::setMockSpeechRecognitionError):
+        (WebViewHost::wasMockSpeechRecognitionAborted):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
+2013-01-20  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] move notification related methods to TestRunner
         https://bugs.webkit.org/show_bug.cgi?id=107269
 
