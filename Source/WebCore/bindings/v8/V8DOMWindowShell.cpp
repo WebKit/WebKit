@@ -317,7 +317,7 @@ bool V8DOMWindowShell::installDOMWindow()
 
     V8DOMWindow::installPerContextProperties(windowWrapper, window);
 
-    V8DOMWrapper::setNativeInfo(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
+    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), m_isolate);
 
     // Install the windowWrapper as the prototype of the innerGlobalObject.
     // The full structure of the global object is as follows:
@@ -333,7 +333,7 @@ bool V8DOMWindowShell::installDOMWindow()
     //       JavaScript object.
     //
     v8::Handle<v8::Object> innerGlobalObject = toInnerGlobalObject(m_context.get());
-    V8DOMWrapper::setNativeInfo(innerGlobalObject, &V8DOMWindow::info, window);
+    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, innerGlobalObject, m_isolate);
     innerGlobalObject->SetPrototype(windowWrapper);
     V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper, m_isolate);
     return true;
