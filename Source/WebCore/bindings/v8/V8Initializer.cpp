@@ -40,6 +40,7 @@
 #include "V8History.h"
 #include "V8Location.h"
 #include "V8PerContextData.h"
+#include <v8-debug.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -108,6 +109,8 @@ static void initializeV8Common()
     v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
     v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
     v8::V8::IgnoreOutOfMemoryException();
+
+    v8::Debug::SetLiveEditEnabled(false);
 }
 
 void V8Initializer::initializeMainThreadIfNeeded(v8::Isolate* isolate)
