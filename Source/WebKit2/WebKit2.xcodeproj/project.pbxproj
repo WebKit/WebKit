@@ -836,7 +836,6 @@
 		BC9BA50816991C3C00E44616 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC9BA50616991C3C00E44616 /* ChildProcessMain.mm */; };
 		BC9BA50916991C3C00E44616 /* ChildProcessMain.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BA50716991C3C00E44616 /* ChildProcessMain.h */; };
 		BC9FA520160D3B430054DF9A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BC9FA522160D4A0C0054DF9A /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */; };
 		BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */; };
 		BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */; };
@@ -1045,7 +1044,6 @@
 		E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */; };
 		E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */ = {isa = PBXBuildFile; fileRef = E19582D2153CBFD700B60875 /* PDFKitImports.h */; };
 		E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19582D4153CC05300B60875 /* PDFKitImports.mm */; };
-		E1967E36150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */; };
 		E1967E38150AB5E200C73169 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		E199875E142C045400BB2DE7 /* SimplePDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
@@ -2356,7 +2354,6 @@
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapeSandboxFunctions.h; sourceTree = "<group>"; };
 		E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapeSandboxFunctions.mm; sourceTree = "<group>"; };
-		E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.PluginProcess.sb.in; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShimProxy.cpp; sourceTree = "<group>"; };
 		E18E690A169B563F009B6670 /* SecItemShimProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimProxy.h; sourceTree = "<group>"; };
@@ -2370,7 +2367,6 @@
 		E18E6948169B77C8009B6670 /* SecItemShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShim.h; sourceTree = "<group>"; };
 		E19582D2153CBFD700B60875 /* PDFKitImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFKitImports.h; sourceTree = "<group>"; };
 		E19582D4153CC05300B60875 /* PDFKitImports.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitImports.mm; sourceTree = "<group>"; };
-		E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.PluginProcess.sb; sourceTree = "<group>"; };
 		E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebProcess.sb; sourceTree = "<group>"; };
 		E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimplePDFPlugin.h; path = PDF/SimplePDFPlugin.h; sourceTree = "<group>"; };
 		E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimplePDFPlugin.mm; path = PDF/SimplePDFPlugin.mm; sourceTree = "<group>"; };
@@ -2612,7 +2608,6 @@
 			isa = PBXGroup;
 			children = (
 				E14E99F914D879C9001D221F /* add-entitlements.sh */,
-				E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb.in */,
 				1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */,
 				E14E99F814D879B4001D221F /* PluginProcess.entitlements */,
 				1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */,
@@ -4295,7 +4290,6 @@
 			children = (
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
-				E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */,
 				2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */,
@@ -5301,7 +5295,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC9FA522160D4A0C0054DF9A /* com.apple.WebKit.PluginProcess.sb in Resources */,
 				BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */,
 				1CBC945E16515ED200D68AAE /* Dock.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
@@ -5328,7 +5321,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1967E36150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

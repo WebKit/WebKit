@@ -149,8 +149,7 @@ ifneq ($(SDKROOT),)
 endif
 
 SANDBOX_PROFILES = \
-	com.apple.WebProcess.sb \
-	com.apple.WebKit.PluginProcess.sb
+	com.apple.WebProcess.sb
 
 all: $(SANDBOX_PROFILES)
 

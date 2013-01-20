@@ -26,76 +26,26 @@
 #import "config.h"
 #import "NetscapeSandboxFunctions.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
+#if ENABLE(PLUGIN_PROCESS)
 
 #import "PluginProcess.h"
-#import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
-#import <WebCore/SoftLinking.h>
 #import <sys/stat.h>
 #import <sysexits.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
 
-SOFT_LINK_FRAMEWORK(CoreServices)
-SOFT_LINK_OPTIONAL(CoreServices, CFURLStopAccessingSecurityScopedResource, void, unused, (CFURLRef))
-
 using namespace WebKit;
 using namespace WebCore;
 
-WKNSandboxFunctions* netscapeSandboxFunctions()
-{
-    static WKNSandboxFunctions functions = {
-        sizeof(WKNSandboxFunctions),
-        WKNVSandboxFunctionsVersionCurrent,
-        WKN_EnterSandbox,
-        WKN_FileStopAccessing
-    };
-    return &functions;
-}
-
 static bool enteredSandbox;
 
-static CString readSandboxProfile()
-{
-    RetainPtr<CFURLRef> profileURL(AdoptCF, CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("com.apple.WebKit.PluginProcess"), CFSTR("sb"), 0));
-    char profilePath[PATH_MAX];
-    if (!CFURLGetFileSystemRepresentation(profileURL.get(), false, reinterpret_cast<UInt8*>(profilePath), sizeof(profilePath))) {
-        WTFLogAlways("Could not get file system representation of plug-in sandbox URL\n");
-        return CString();
-    }
-
-    FILE *file = fopen(profilePath, "r");
-    if (!file) {
-        WTFLogAlways("Could not open plug-in sandbox file '%s'\n", profilePath);
-        return CString();
-    }
-
-    struct stat fileInfo;
-    if (stat(profilePath, &fileInfo)) {
-        WTFLogAlways("Could not get plug-in sandbox file size '%s'\n", profilePath);
-        return CString();
-    }
-
-    char* characterBuffer;
-    CString result = CString::newUninitialized(fileInfo.st_size, characterBuffer);
-
-    if (1 != fread(characterBuffer, fileInfo.st_size, 1, file)) {
-        WTFLogAlways("Could not read plug-in sandbox file '%s'\n", profilePath);
-        return CString();
-    }
-
-    fclose(file);
-
-    return result;
-}
-
-NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], const char* readWritePaths[])
+bool enterSandbox(const char* sandboxProfile)
 {
     if (enteredSandbox)
-        return NPERR_GENERIC_ERROR;
+        return false;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
@@ -126,43 +76,34 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
     }
 #endif
 
-
-    Vector<const char*> extendedReadOnlyPaths;
-    if (readOnlyPaths) {
-        for (unsigned i = 0; readOnlyPaths[i]; ++i)
-            extendedReadOnlyPaths.append(readOnlyPaths[i]);
-    }
+    Vector<const char*> readOnlyPaths;
 
     CString pluginModulePath = fileSystemRepresentation(PluginProcess::shared().pluginPath());
-    extendedReadOnlyPaths.append(pluginModulePath.data());
+    readOnlyPaths.append(pluginModulePath.data());
 
     // On-disk WebKit framework locations, to account for debug installations.
     // Allowing the whole directory containing WebKit2.framework for the sake of APIs that implicitly load other WebKit frameworks.
     // We don't want to load them now, and thus don't have any better idea of where they are located on disk.
-    extendedReadOnlyPaths.append([[[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundleURL] URLByDeletingLastPathComponent] path] fileSystemRepresentation]);
+    readOnlyPaths.append([[[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundleURL] URLByDeletingLastPathComponent] path] fileSystemRepresentation]);
 
-    extendedReadOnlyPaths.append(static_cast<const char*>(0));
+    readOnlyPaths.append(static_cast<const char*>(0));
 
-    Vector<const char*> extendedReadWritePaths;
-    if (readWritePaths) {
-        for (unsigned i = 0; readWritePaths[i]; ++i)
-            extendedReadWritePaths.append(readWritePaths[i]);
-    }
+    Vector<const char*> readWritePaths;
 
     char darwinUserTempDirectory[PATH_MAX];
     if (confstr(_CS_DARWIN_USER_TEMP_DIR, darwinUserTempDirectory, PATH_MAX) > 0)
-        extendedReadWritePaths.append(darwinUserTempDirectory);
+        readWritePaths.append(darwinUserTempDirectory);
     else
         exit(EX_OSERR);
 
     char darwinUserCacheDirectory[PATH_MAX];
     if (confstr(_CS_DARWIN_USER_CACHE_DIR, darwinUserCacheDirectory, PATH_MAX) > 0)
-        extendedReadWritePaths.append(darwinUserCacheDirectory);
+        readWritePaths.append(darwinUserCacheDirectory);
 
     RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
-    extendedReadWritePaths.append([(NSString *)cachePath.get() fileSystemRepresentation]);
+    readWritePaths.append([(NSString *)cachePath.get() fileSystemRepresentation]);
 
-    extendedReadWritePaths.append(static_cast<const char*>(0));
+    readWritePaths.append(static_cast<const char*>(0));
 
     // WKEnterPluginSandbox canonicalizes path arrays, but not parameters (because it cannot know if one is a path).
     char* homeDirectory = realpath([NSHomeDirectory() fileSystemRepresentation], 0);
@@ -176,7 +117,7 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
         exit(EX_OSERR);
 
     const char* sandboxParameters[] = { "HOME_DIR", homeDirectory, "TEMP_DIR", tempDirectory, 0, 0 };
-    if (!WKEnterPluginSandbox(sandboxProfile, sandboxParameters, extendedReadOnlyPaths.data(), extendedReadWritePaths.data())) {
+    if (!WKEnterPluginSandbox(sandboxProfile, sandboxParameters, readOnlyPaths.data(), readWritePaths.data())) {
         WTFLogAlways("Couldn't initialize sandbox profile\n");
         exit(EX_NOPERM);
     }
@@ -193,34 +134,7 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
     RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults.get()];
 
-    return NPERR_NO_ERROR;
+    return true;
 }
 
-NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths[])
-{
-    CString profile = readSandboxProfile();
-    if (profile.isNull())
-        exit(EX_NOPERM);
-
-    return enterSandbox(profile.data(), readOnlyPaths, readWritePaths);
-}
-
-NPError WKN_FileStopAccessing(const char* path)
-{
-    if (!enteredSandbox)
-        return NPERR_GENERIC_ERROR;
-
-    if (!CFURLStopAccessingSecurityScopedResourcePtr())
-        return NPERR_NO_ERROR;
-
-    RetainPtr<CFStringRef> urlString(AdoptCF, CFStringCreateWithFileSystemRepresentation(0, path));
-    if (!urlString)
-        return NPERR_INVALID_PARAM;
-    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithFileSystemPath(0, urlString.get(), kCFURLPOSIXPathStyle, false));
-
-    CFURLStopAccessingSecurityScopedResourcePtr()(url.get());
-
-    return NPERR_NO_ERROR;
-}
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(PLUGIN_PROCESS)

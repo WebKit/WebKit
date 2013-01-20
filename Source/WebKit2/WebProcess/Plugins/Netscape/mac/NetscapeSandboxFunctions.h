@@ -26,40 +26,10 @@
 #ifndef NetscapeSandboxFunctions_h
 #define NetscapeSandboxFunctions_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
+#if ENABLE(PLUGIN_PROCESS)
 
-#include <WebCore/npapi.h>
+bool enterSandbox(const char* sandboxProfile);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    
-#define WKNVSandboxFunctions 74659
-#define WKNVSandboxFunctionsVersionCurrent 1
-
-typedef NPError (*WKN_EnterSandboxProcPtr)(const char *readOnlyPaths[], const char *readWritePaths[]);
-typedef NPError (*WKN_FileStopAccessingProcPtr)(const char* path);
-
-NPError WKN_EnterSandbox(const char *readOnlyPaths[], const char *readWritePaths[]);
-NPError WKN_FileStopAccessing(const char* path);
-
-typedef struct _WKNSandboxFunctions {
-    uint16_t size;
-    uint16_t version;
-    
-    WKN_EnterSandboxProcPtr enterSandbox;
-    WKN_FileStopAccessingProcPtr fileStopAccessing;
-} WKNSandboxFunctions;
-
-// FIXME: This header is mostly "API", except for the following two functions. We should
-// move the declarations to a seperate header.
-WKNSandboxFunctions* netscapeSandboxFunctions();
-NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], const char* readWritePaths[]);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(PLUGIN_PROCESS)
 
 #endif

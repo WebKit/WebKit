@@ -13688,7 +13688,6 @@
 		E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPageTransitionEvent.cpp; sourceTree = "<group>"; };
 		E1284BD31044A01E00EAEB52 /* DOMPageTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMPageTransitionEvent.mm; sourceTree = "<group>"; };
 		E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPageTransitionEvent.h; sourceTree = "<group>"; };
-		E129CBD21501702200A7C5FB /* npapi-sandbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "npapi-sandbox.h"; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E134F5AA12EE343F004EC58D /* IntRectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectHash.h; sourceTree = "<group>"; };
@@ -15873,7 +15872,6 @@
 				A9C6E4ED0D745E38006442E9 /* DOMPluginArray.cpp */,
 				A9C6E4EE0D745E38006442E9 /* DOMPluginArray.h */,
 				A9C6E6610D74671E006442E9 /* DOMPluginArray.idl */,
-				E129CBD21501702200A7C5FB /* npapi-sandbox.h */,
 				1A927FCF1416A15B003A83C8 /* npapi.h */,
 				1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */,
 				1A927FD01416A15B003A83C8 /* npruntime.h */,
