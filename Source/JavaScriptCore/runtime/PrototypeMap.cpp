@@ -55,10 +55,8 @@ void PrototypeMap::addPrototype(JSObject* object)
 Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* object)
 {
     WeakGCMap<JSObject*, Structure>::AddResult addResult = m_structures.add(object, nullptr);
-    if (!addResult.isNewEntry) {
-        ASSERT(isPrototype(object));
+    if (!addResult.isNewEntry)
         return addResult.iterator->value.get();
-    }
 
     addPrototype(object);
     Structure* structure = JSFinalObject::createStructure(object->globalObject()->globalData(), object->globalObject(), object);

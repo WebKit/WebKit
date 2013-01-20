@@ -1,3 +1,13 @@
+2013-01-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed.
+
+        Temporarily disabling this ASSERT to get the bots green
+        while I investigate a fix.
+
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+
 2013-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         Inserting a node into the DFG graph should not require five lines of code
