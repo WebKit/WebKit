@@ -177,6 +177,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) OVERRIDE;
     virtual bool wasMockSpeechRecognitionAborted() OVERRIDE;
 #endif
+    virtual void display() OVERRIDE;
+    virtual void displayInvalidatedRegion() OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

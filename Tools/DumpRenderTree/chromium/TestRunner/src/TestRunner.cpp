@@ -234,6 +234,8 @@ TestRunner::TestRunner()
     bindMethod("setMockSpeechRecognitionError", &TestRunner::setMockSpeechRecognitionError);
     bindMethod("wasMockSpeechRecognitionAborted", &TestRunner::wasMockSpeechRecognitionAborted);
 #endif
+    bindMethod("display", &TestRunner::display);
+    bindMethod("displayInvalidatedRegion", &TestRunner::displayInvalidatedRegion);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -1540,6 +1542,18 @@ void TestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVari
     result->set(m_delegate->wasMockSpeechRecognitionAborted());
 }
 #endif
+
+void TestRunner::display(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_delegate->display();
+    result->setNull();
+}
+
+void TestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_delegate->displayInvalidatedRegion();
+    result->setNull();
+}
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
 {

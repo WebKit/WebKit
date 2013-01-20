@@ -88,8 +88,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     // they will use when called by JavaScript. The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to DRTTestRunner).
-    bindMethod("display", &DRTTestRunner::display);
-    bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
     bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
     bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
@@ -429,24 +427,5 @@ void DRTTestRunner::setWillSendRequestReturnsNull(const CppArgumentList& argumen
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setRequestReturnNull(arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::display(const CppArgumentList& arguments, CppVariant* result)
-{
-    WebViewHost* host = m_shell->webViewHost();
-    const WebKit::WebSize& size = m_shell->webView()->size();
-    WebRect rect(0, 0, size.width, size.height);
-    host->proxy()->setPaintRect(rect);
-    host->paintInvalidatedRegion();
-    host->displayRepaintMask();
-    result->setNull();
-}
-
-void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
-{
-    WebViewHost* host = m_shell->webViewHost();
-    host->paintInvalidatedRegion();
-    host->displayRepaintMask();
     result->setNull();
 }

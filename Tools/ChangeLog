@@ -1,5 +1,32 @@
 2013-01-20  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move frame generation related methods to TestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=107268
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::setWillSendRequestReturnsNull):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::display):
+        (WebTestRunner::WebTestDelegate::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::display):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::display):
+        (WebViewHost::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
+2013-01-20  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] move speech related methods to TestRunner library
         https://bugs.webkit.org/show_bug.cgi?id=107266
 

@@ -394,6 +394,9 @@ private:
     void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
 #endif
 
+    void display(const CppArgumentList&, CppVariant*);
+    void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);

@@ -1212,6 +1212,21 @@ bool WebViewHost::wasMockSpeechRecognitionAborted()
 }
 #endif
 
+void WebViewHost::display()
+{
+    const WebKit::WebSize& size = webView()->size();
+    WebRect rect(0, 0, size.width, size.height);
+    proxy()->setPaintRect(rect);
+    paintInvalidatedRegion();
+    displayRepaintMask();
+}
+
+void WebViewHost::displayInvalidatedRegion()
+{
+    paintInvalidatedRegion();
+    displayRepaintMask();
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

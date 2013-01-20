@@ -107,9 +107,6 @@ public:
     // Causes WillSendRequest to return an empty request.
     void setWillSendRequestReturnsNull(const CppArgumentList&, CppVariant*);
 
-    void display(const CppArgumentList&, CppVariant*);
-    void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
-
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
