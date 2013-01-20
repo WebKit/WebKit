@@ -82,38 +82,20 @@ static bool hasMousePressListener(Element* element)
 bool FatFingers::isElementClickable(Element* element) const
 {
     ASSERT(element);
-    ASSERT(m_matchingApproach != Done);
     ASSERT(m_targetType == ClickableElement);
 
-    switch (m_matchingApproach) {
-    case ClickableByDefault: {
-        ExceptionCode ec = 0;
-        return element->webkitMatchesSelector("a[href],*:link,*:visited,*[role=button],button,input,select,label[for],area[href],textarea,embed,object", ec)
-            || element->isMediaControlElement()
-            || element->isContentEditable();
+    ExceptionCode ec = 0;
 
-    }
-    case MadeClickableByTheWebpage:
+    if (element->webkitMatchesSelector("a[href],*:link,*:visited,*[role=button],button,input,select,label[for],area[href],textarea,embed,object", ec)
+        || element->isMediaControlElement()
+        || element->isContentEditable())
+        return true;
 
-        // Elements within a shadow DOM can not be 'made clickable by the webpage', since
-        // they are not accessible.
-        if (element->isInShadowTree())
-            return false;
+    if (element->isInShadowTree())
+        return false;
 
-        // FIXME: We fall back to checking for the presence of CSS style "cursor: pointer" to indicate whether the element A
-        // can be clicked when A neither registers mouse events handlers nor is a hyperlink or form control. This workaround
-        // ensures that we don't break various Google web apps, including <http://maps.google.com>. Ideally, we should walk
-        // up the DOM hierarchy to determine the first parent element that accepts mouse events.
-        // Consider the HTML snippet: <div id="A" onclick="..."><div id="B">Example</div></div>
-        // Notice, B is not a hyperlink, or form control, and does not register any mouse event handler. Then B cannot
-        // be clicked. Suppose B specified the CSS property "cursor: pointer". Then, B will be considered as clickable.
-        return hasMousePressListener(element)
-            || CSSComputedStyleDeclaration::create(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    return false;
+    return hasMousePressListener(element)
+        || CSSComputedStyleDeclaration::create(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
 }
 
 // FIXME: Handle content editable nodes here too.
@@ -150,7 +132,6 @@ FatFingers::FatFingers(WebPagePrivate* webPage, const WebCore::IntPoint& content
     : m_webPage(webPage)
     , m_contentPos(contentPos)
     , m_targetType(targetType)
-    , m_matchingApproach(Done)
 {
     ASSERT(webPage);
 
@@ -173,7 +154,6 @@ const FatFingersResult FatFingers::findBestPoint()
     m_cachedRectHitTestResults.clear();
 
     FatFingersResult result(m_contentPos);
-    m_matchingApproach = ClickableByDefault;
 
     // Lets set nodeUnderFatFinger to the result of a point based hit test here. If something
     // targable is actually found by ::findIntersectingRegions, then we might replace what we just set below later on.
@@ -208,13 +188,7 @@ const FatFingersResult FatFingers::findBestPoint()
     IntRectRegion remainingFingerRegion = IntRectRegion(fingerRectForPoint(m_contentPos));
 
     bool foundOne = findIntersectingRegions(m_webPage->m_mainFrame->document(), intersectingRegions, remainingFingerRegion);
-    if (!foundOne) {
-        m_matchingApproach = MadeClickableByTheWebpage;
-        remainingFingerRegion = IntRectRegion(fingerRectForPoint(m_contentPos));
-        foundOne = findIntersectingRegions(m_webPage->m_mainFrame->document(), intersectingRegions, remainingFingerRegion);
-    }
 
-    m_matchingApproach = Done;
     m_cachedRectHitTestResults.clear();
 
     if (!foundOne)
@@ -464,32 +438,8 @@ void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, u
     left = leftPadding / currentScale;
 }
 
-FatFingers::CachedResultsStrategy FatFingers::cachingStrategy() const
-{
-    switch (m_matchingApproach) {
-    case ClickableByDefault:
-        return GetFromRenderTree;
-    case MadeClickableByTheWebpage:
-        return GetFromCache;
-    case Done:
-    default:
-        ASSERT_NOT_REACHED();
-        return GetFromRenderTree;
-    }
-}
-
 void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<Node> >& intersectedNodes)
 {
-    FatFingers::CachedResultsStrategy cacheResolvingStrategy = cachingStrategy();
-
-    if (cacheResolvingStrategy == GetFromCache) {
-        ASSERT(m_cachedRectHitTestResults.contains(document));
-        intersectedNodes = m_cachedRectHitTestResults.get(document);
-        return;
-    }
-
-    ASSERT(cacheResolvingStrategy == GetFromRenderTree);
-
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
     getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
 
