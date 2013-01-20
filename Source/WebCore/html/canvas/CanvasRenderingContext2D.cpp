@@ -2296,11 +2296,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
         IntRect maskRect = enclosingIntRect(textRect);
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), 1, ColorSpaceDeviceRGB, Accelerated);
-#else
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), 1);
-#endif
+        OwnPtr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
 
         GraphicsContext* maskImageContext = maskImage->context();
 
