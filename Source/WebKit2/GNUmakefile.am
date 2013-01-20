@@ -586,7 +586,7 @@ Programs_WebKitPluginProcess_LDADD = \
 
 #if ENABLE_SVG
 Programs_WebKitPluginProcess_LDADD += \
-    libWebCoreSVG.la
+	libWebCoreSVG.la
 #endif
 
 Programs_WebKitPluginProcess_LDADD += \

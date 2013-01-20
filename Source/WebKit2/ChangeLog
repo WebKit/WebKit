@@ -1,3 +1,9 @@
+2013-01-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Simple indentation fix.
+
+        * GNUmakefile.am:
+
 2013-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Remove obsolete plug-in sandboxing code.
