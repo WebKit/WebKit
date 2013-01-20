@@ -99,6 +99,10 @@ public:
     virtual void didLosePointerLock() { }
     virtual void setPointerLockWillRespondAsynchronously() { }
     virtual void setPointerLockWillFailSynchronously() { }
+    virtual int numberOfPendingGeolocationPermissionRequests() { return 0; }
+    virtual void setGeolocationPermission(bool) { }
+    virtual void setMockGeolocationPosition(double, double, double) { }
+    virtual void setMockGeolocationPositionUnavailableError(const std::string&) { }
 };
 
 }

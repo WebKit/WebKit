@@ -1,3 +1,35 @@
+2013-01-20  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move geolocation related methods to TestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=107267
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::numberOfPendingGeolocationPermissionRequests):
+        (WebTestRunner::WebTestDelegate::setGeolocationPermission):
+        (WebTestRunner::WebTestDelegate::setMockGeolocationPosition):
+        (WebTestRunner::WebTestDelegate::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setGeolocationPermission):
+        (WebTestRunner::TestRunner::setMockGeolocationPosition):
+        (WebTestRunner::TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::numberOfPendingGeolocationPermissionRequests):
+        (WebViewHost::setGeolocationPermission):
+        (WebViewHost::setMockGeolocationPosition):
+        (WebViewHost::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2013-01-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for Qt WK2 after r140258.

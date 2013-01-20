@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Pawel Hajdan (phajdan.jr@chromium.org)
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -216,6 +217,10 @@ TestRunner::TestRunner()
     bindMethod("pathToLocalResource", &TestRunner::pathToLocalResource);
     bindMethod("setBackingScaleFactor", &TestRunner::setBackingScaleFactor);
     bindMethod("setPOSIXLocale", &TestRunner::setPOSIXLocale);
+    bindMethod("numberOfPendingGeolocationPermissionRequests", &TestRunner:: numberOfPendingGeolocationPermissionRequests);
+    bindMethod("setGeolocationPermission", &TestRunner::setGeolocationPermission);
+    bindMethod("setMockGeolocationPositionUnavailableError", &TestRunner::setMockGeolocationPositionUnavailableError);
+    bindMethod("setMockGeolocationPosition", &TestRunner::setMockGeolocationPosition);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -1424,6 +1429,37 @@ void TestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* re
     result->setNull();
     if (arguments.size() == 1 && arguments[0].isString())
         m_delegate->setLocale(arguments[0].toString());
+}
+
+void TestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->set(m_delegate->numberOfPendingGeolocationPermissionRequests());
+}
+
+// FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.
+// https://bugs.webkit.org/show_bug.cgi?id=52368
+void TestRunner::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isBool())
+        return;
+    m_delegate->setGeolocationPermission(arguments[0].toBoolean());
+}
+
+void TestRunner::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
+        return;
+    m_delegate->setMockGeolocationPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
+}
+
+void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 1 || !arguments[0].isString())
+        return;
+    m_delegate->setMockGeolocationPositionUnavailableError(arguments[0].toString());
 }
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)

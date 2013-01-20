@@ -1140,6 +1140,37 @@ void WebViewHost::setDeviceOrientation(WebKit::WebDeviceOrientation& orientation
     deviceOrientationClientMock()->setOrientation(orientation);
 }
 
+int WebViewHost::numberOfPendingGeolocationPermissionRequests()
+{
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    int numberOfRequests = 0;
+    for (size_t i = 0; i < windowList.size(); i++)
+        numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
+    return numberOfRequests;
+}
+
+void WebViewHost::setGeolocationPermission(bool allowed)
+{
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setPermission(allowed);
+}
+
+void WebViewHost::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+{
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setPosition(latitude, longitude, accuracy);
+}
+
+void WebViewHost::setMockGeolocationPositionUnavailableError(const std::string& message)
+{
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    // FIXME: Benjamin
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setPositionUnavailableError(WebString::fromUTF8(message));
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

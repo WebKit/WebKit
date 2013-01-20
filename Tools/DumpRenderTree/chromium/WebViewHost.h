@@ -160,6 +160,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setPointerLockWillRespondAsynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
     virtual void setPointerLockWillFailSynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillFailSync; }
 #endif
+    virtual int numberOfPendingGeolocationPermissionRequests() OVERRIDE;
+    virtual void setGeolocationPermission(bool) OVERRIDE;
+    virtual void setMockGeolocationPosition(double, double, double) OVERRIDE;
+    virtual void setMockGeolocationPositionUnavailableError(const std::string&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

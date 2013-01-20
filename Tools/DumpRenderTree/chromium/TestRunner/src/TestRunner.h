@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Pawel Hajdan (phajdan.jr@chromium.org)
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -366,6 +367,14 @@ private:
     // Calls setlocale(LC_ALL, ...) for a specified locale.
     // Resets between tests.
     void setPOSIXLocale(const CppArgumentList&, CppVariant*);
+
+    // Gets the number of geolocation permissions requests pending.
+    void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
+
+    // Geolocation related functions.
+    void setGeolocationPermission(const CppArgumentList&, CppVariant*);
+    void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
+    void setMockGeolocationPositionUnavailableError(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
     // Properties

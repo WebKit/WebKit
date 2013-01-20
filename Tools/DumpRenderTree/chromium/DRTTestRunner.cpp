@@ -45,7 +45,6 @@
 #include "WebElement.h"
 #include "WebFindOptions.h"
 #include "WebFrame.h"
-#include "WebGeolocationClientMock.h"
 #include "WebIDBFactory.h"
 #include "WebInputElement.h"
 #include "WebKit.h"
@@ -107,7 +106,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
 #endif
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
-    bindMethod("numberOfPendingGeolocationPermissionRequests", &DRTTestRunner:: numberOfPendingGeolocationPermissionRequests);
     bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
     bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
     bindMethod("queueLoadingScript", &DRTTestRunner::queueLoadingScript);
@@ -117,9 +115,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueReload", &DRTTestRunner::queueReload);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
-    bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
-    bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
-    bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
@@ -501,49 +496,6 @@ void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, C
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
     result->setNull();
-}
-
-void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    int numberOfRequests = 0;
-    for (size_t i = 0; i < windowList.size(); i++)
-        numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
-    result->set(numberOfRequests);
-}
-
-// FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.
-// https://bugs.webkit.org/show_bug.cgi?id=52368
-void DRTTestRunner::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isBool())
-        return;
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPermission(arguments[0].toBoolean());
-}
-
-void DRTTestRunner::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
-        return;
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
-}
-
-void DRTTestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() != 1 || !arguments[0].isString())
-        return;
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    // FIXME: Benjamin
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPositionUnavailableError(cppVariantToWebString(arguments[0]));
 }
 
 #if ENABLE(INPUT_SPEECH)

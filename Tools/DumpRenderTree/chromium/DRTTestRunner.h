@@ -50,10 +50,6 @@
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 
-namespace WebKit {
-class WebGeolocationClientMock;
-}
-
 namespace webkit_support {
 class ScopedTempDirectory;
 }
@@ -120,14 +116,6 @@ public:
 
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
-
-    // Gets the number of geolocation permissions requests pending.
-    void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
-
-    // Geolocation related functions.
-    void setGeolocationPermission(const CppArgumentList&, CppVariant*);
-    void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
-    void setMockGeolocationPositionUnavailableError(const CppArgumentList&, CppVariant*);
 
     // Speech input related functions.
 #if ENABLE(INPUT_SPEECH)
