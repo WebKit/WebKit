@@ -174,25 +174,34 @@ static void updateTiledDrawingForCurrentTest(const char* pathOrURL)
 #endif
 }
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
 static bool shouldUseFixedLayout(const char* pathOrURL)
 {
-    return strstr(pathOrURL, "device-adapt/") || strstr(pathOrURL, "device-adapt\\");
-}
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (strstr(pathOrURL, "device-adapt/") || strstr(pathOrURL, "device-adapt\\"))
+        return true;
 #endif
+
+#if USE(TILED_BACKING_STORE) && PLATFORM(EFL)
+    if (strstr(pathOrURL, "sticky/") || strstr(pathOrURL, "sticky\\"))
+        return true;
+#endif
+    return false;
+
+    UNUSED_PARAM(pathOrURL);
+}
 
 static void updateLayoutType(const char* pathOrURL)
 {
-#if ENABLE(CSS_DEVICE_ADAPTATION)
+    bool useFixedLayout = shouldUseFixedLayout(pathOrURL);
+    if (!useFixedLayout)
+        return;
+
     WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
     WKRetainPtr<WKStringRef> useFixedLayoutKey = adoptWK(WKStringCreateWithUTF8CString("UseFixedLayout"));
-    WKRetainPtr<WKBooleanRef> useFixedLayoutValue = adoptWK(WKBooleanCreate(shouldUseFixedLayout(pathOrURL)));
+    WKRetainPtr<WKBooleanRef> useFixedLayoutValue = adoptWK(WKBooleanCreate(useFixedLayout));
     WKDictionaryAddItem(viewOptions.get(), useFixedLayoutKey.get(), useFixedLayoutValue.get());
 
     TestController::shared().ensureViewSupportsOptions(viewOptions.get());
-#else
-    UNUSED_PARAM(pathOrURL);
-#endif
 }
 
 void TestInvocation::invoke()

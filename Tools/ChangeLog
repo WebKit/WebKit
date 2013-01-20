@@ -1,3 +1,17 @@
+2013-01-19  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Delegated scrolling: Assertion on attempt to show a CSS sticky element
+        https://bugs.webkit.org/show_bug.cgi?id=106890
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enabled fixed layout mode in WTR for 'fast/css/sticky' tests.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldUseFixedLayout):
+        (WTR):
+        (WTR::updateLayoutType):
+
 2013-01-19  Nico Weber  <thakis@chromium.org>
 
         Make ninja the default build system for build-webkit --chromium on mac

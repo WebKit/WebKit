@@ -1799,6 +1799,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     IntSize offset = scrollOffset();
     ScrollView::setFixedVisibleContentRect(visibleContentRect);
     if (offset != scrollOffset()) {
+        repaintFixedElementsAfterScrolling();
         if (m_frame->page()->settings()->acceleratedCompositingForFixedPositionEnabled())
             updateFixedElementsAfterScrolling();
         scrollAnimator()->setCurrentPosition(scrollPosition());
