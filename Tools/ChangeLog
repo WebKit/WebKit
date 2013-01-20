@@ -1,3 +1,14 @@
+2013-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140260.
+        http://trac.webkit.org/changeset/140260
+        https://bugs.webkit.org/show_bug.cgi?id=107387
+
+        breaks fast/text/hyphens.html, fast/text/hyphenate-* (but
+        nothing else) (Requested by thakis__ on #webkit).
+
+        * Scripts/update-webkit-chromium:
+
 2013-01-19  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Delegated scrolling: Assertion on attempt to show a CSS sticky element
