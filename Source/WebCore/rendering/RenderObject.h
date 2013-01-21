@@ -155,7 +155,7 @@ class RenderObject : public CachedImageClient {
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
-    RenderObject(Node*);
+    explicit RenderObject(Node*);
     virtual ~RenderObject();
 
     RenderTheme* theme() const;

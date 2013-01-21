@@ -30,7 +30,7 @@ class HTMLAppletElement;
 
 class RenderApplet : public RenderEmbeddedObject {
 public:
-    RenderApplet(HTMLAppletElement*);
+    explicit RenderApplet(HTMLAppletElement*);
     virtual ~RenderApplet();
 
 private:

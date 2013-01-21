@@ -31,7 +31,7 @@ class RenderTable;
 class TableLayout {
     WTF_MAKE_NONCOPYABLE(TableLayout); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TableLayout(RenderTable* table)
+    explicit TableLayout(RenderTable* table)
         : m_table(table)
     {
     }

@@ -31,7 +31,7 @@ class RenderLayer;
 
 class RenderLayerModelObject : public RenderObject {
 public:
-    RenderLayerModelObject(ContainerNode*);
+    explicit RenderLayerModelObject(ContainerNode*);
     virtual ~RenderLayerModelObject();
 
     // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed

@@ -46,7 +46,7 @@ static const size_t gMaxRecycledSize = 1024;
 class RenderArena {
     WTF_MAKE_NONCOPYABLE(RenderArena); WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderArena(unsigned arenaSize = 8192);
+    explicit RenderArena(unsigned arenaSize = 8192);
     ~RenderArena();
 
     // Memory management functions

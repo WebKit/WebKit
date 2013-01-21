@@ -40,7 +40,7 @@ class HTMLSelectElement;
 
 class RenderListBox : public RenderBlock, private ScrollableArea {
 public:
-    RenderListBox(Element*);
+    explicit RenderListBox(Element*);
     virtual ~RenderListBox();
 
     void selectionChanged();

@@ -57,7 +57,7 @@ enum CompositingLayerType {
 class RenderLayerBacking : public GraphicsLayerClient {
     WTF_MAKE_NONCOPYABLE(RenderLayerBacking); WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderLayerBacking(RenderLayer*);
+    explicit RenderLayerBacking(RenderLayer*);
     ~RenderLayerBacking();
 
     RenderLayer* owningLayer() const { return m_owningLayer; }

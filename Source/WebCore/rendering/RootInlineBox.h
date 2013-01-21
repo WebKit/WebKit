@@ -35,7 +35,7 @@ struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {
 public:
-    RootInlineBox(RenderBlock* block);
+    explicit RootInlineBox(RenderBlock*);
 
     virtual void destroy(RenderArena*);
 

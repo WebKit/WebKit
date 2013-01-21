@@ -33,7 +33,7 @@ class Position;
 
 class RenderBR : public RenderText {
 public:
-    RenderBR(Node*);
+    explicit RenderBR(Node*);
     virtual ~RenderBR();
 
     virtual const char* renderName() const { return "RenderBR"; }

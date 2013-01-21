@@ -30,7 +30,7 @@ namespace WebCore {
 // Renderer for frames via RenderFrameBase, and plug-ins via RenderEmbeddedObject.
 class RenderPart : public RenderWidget {
 public:
-    RenderPart(Element*);
+    explicit RenderPart(Element*);
     virtual ~RenderPart();
 
     virtual void setWidget(PassRefPtr<Widget>);

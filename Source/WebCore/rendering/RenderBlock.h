@@ -88,7 +88,7 @@ public:
     template <class> friend struct ValueToString;
 #endif
 
-    RenderBlock(ContainerNode*);
+    explicit RenderBlock(ContainerNode*);
     virtual ~RenderBlock();
 
     static RenderBlock* createAnonymous(Document*);

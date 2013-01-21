@@ -64,7 +64,7 @@ enum CompositingUpdateType {
 class RenderLayerCompositor : public GraphicsLayerClient, public GraphicsLayerUpdaterClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderLayerCompositor(RenderView*);
+    explicit RenderLayerCompositor(RenderView*);
     ~RenderLayerCompositor();
 
     // Return true if this RenderView is in "compositing mode" (i.e. has one or more
