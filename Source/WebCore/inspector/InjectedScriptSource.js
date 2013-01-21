@@ -111,7 +111,7 @@ InjectedScript.prototype = {
      * @param {string} groupName
      * @param {boolean} canAccessInspectedWindow
      * @param {boolean} generatePreview
-     * @return {Object}
+     * @return {!RuntimeAgent.RemoteObject}
      */
     wrapObject: function(object, groupName, canAccessInspectedWindow, generatePreview)
     {
@@ -169,7 +169,8 @@ InjectedScript.prototype = {
      * @param {string=} objectGroupName
      * @param {boolean=} forceValueType
      * @param {boolean=} generatePreview
-     * @return {InjectedScript.RemoteObject}
+     * @return {!RuntimeAgent.RemoteObject}
+     * @suppress {checkTypes}
      */
     _wrapObject: function(object, objectGroupName, forceValueType, generatePreview)
     {
@@ -248,7 +249,7 @@ InjectedScript.prototype = {
     /**
      * @param {string} objectId
      * @param {boolean} ownProperties
-     * @return {Array.<Object>|boolean}
+     * @return {Array.<RuntimeAgent.PropertyDescriptor>|boolean}
      */
     getProperties: function(objectId, ownProperties)
     {
@@ -305,7 +306,7 @@ InjectedScript.prototype = {
 
     /**
      * @param {string} functionId
-     * @return {Object|string}
+     * @return {!DebuggerAgent.FunctionDetails|string}
      */
     getFunctionDetails: function(functionId)
     {
@@ -675,7 +676,6 @@ InjectedScript.prototype = {
         if (obj === null)
             return "null";
 
-        var type = typeof obj;
         if (this.isPrimitiveValue(obj))
             return null;
 
@@ -940,7 +940,7 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 InjectedScript.CallFrameProxy.prototype = {
     /**
      * @param {Object} callFrame
-     * @return {Array.<Object>}
+     * @return {!Array.<DebuggerAgent.Scope>}
      */
     _wrapScopeChain: function(callFrame)
     {
@@ -958,7 +958,7 @@ InjectedScript.CallFrameProxy.prototype = {
  * @param {number} scopeTypeCode
  * @param {*} scopeObject
  * @param {string} groupId
- * @return {Object}
+ * @return {!DebuggerAgent.Scope}
  */
 InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId) {
     const GLOBAL_SCOPE = 0;
@@ -967,6 +967,7 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
     const CLOSURE_SCOPE = 3;
     const CATCH_SCOPE = 4;
 
+    /** @type {!Object.<number, string>} */
     var scopeTypeNames = {};
     scopeTypeNames[GLOBAL_SCOPE] = "global";
     scopeTypeNames[LOCAL_SCOPE] = "local";

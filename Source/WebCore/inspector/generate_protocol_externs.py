@@ -91,15 +91,17 @@ Protocol.Error;
         if "types" in domain:
             for type in domain["types"]:
                 if type["type"] == "object":
-                    output_file.write("\n/** @constructor */\n")
-                    output_file.write("%sAgent.%s = function()\n{\n" % (domain_name, type["id"]))
+                    typedef_args = []
                     if "properties" in type:
                         for property in type["properties"]:
                             suffix = ""
                             if ("optional" in property):
                                 suffix = "|undefined"
-                            output_file.write("/** @type {%s%s} */ this.%s;\n" % (param_type(domain_name, property), suffix, property["name"]))
-                    output_file.write("}\n")
+                            typedef_args.append("%s:(%s%s)" % (property["name"], param_type(domain_name, property), suffix))
+                    if (typedef_args):
+                        output_file.write("\n/** @typedef {{%s}|null} */\n%sAgent.%s;\n" % (", ".join(typedef_args), domain_name, type["id"]))
+                    else:
+                        output_file.write("\n/** @typedef {Object} */\n%sAgent.%s;\n" % (domain_name, type["id"]))
                 elif type["type"] == "array":
                     suffix = ""
                     if ("optional" in property):

@@ -63,7 +63,6 @@ WebInspector.DebuggerModel.PauseOnExceptionsState = {
 /**
  * @constructor
  * @implements {WebInspector.RawLocation}
- * @extends {DebuggerAgent.Location}
  * @param {string} scriptId
  * @param {number} lineNumber
  * @param {number} columnNumber

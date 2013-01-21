@@ -2856,7 +2856,7 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @return {string}
+     * @return {CanvasAgent.TraceLogId}
      */
     captureFrame: function()
     {
@@ -2864,7 +2864,7 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @return {string}
+     * @return {CanvasAgent.TraceLogId}
      */
     startCapturing: function()
     {
@@ -2873,7 +2873,7 @@ InjectedCanvasModule.prototype = {
 
     /**
      * @param {function(this:ResourceTrackingManager)} func
-     * @return {string}
+     * @return {CanvasAgent.TraceLogId}
      */
     _callStartCapturingFunction: function(func)
     {
@@ -2892,7 +2892,7 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} id
+     * @param {CanvasAgent.TraceLogId} id
      */
     stopCapturing: function(id)
     {
@@ -2902,7 +2902,7 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} id
+     * @param {CanvasAgent.TraceLogId} id
      */
     dropTraceLog: function(id)
     {
@@ -2912,9 +2912,9 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} id
+     * @param {CanvasAgent.TraceLogId} id
      * @param {number=} startOffset
-     * @return {!Object|string}
+     * @return {!CanvasAgent.TraceLog|string}
      */
     traceLog: function(id, startOffset)
     {
@@ -2925,6 +2925,7 @@ InjectedCanvasModule.prototype = {
         var alive = this._manager.capturing() && this._manager.lastTraceLog() === traceLog;
         var result = {
             id: id,
+            /** @type {Array.<CanvasAgent.Call>} */
             calls: [],
             alive: alive,
             startOffset: startOffset
@@ -2943,12 +2944,12 @@ InjectedCanvasModule.prototype = {
             };
             if (call.functionName()) {
                 traceLogItem.functionName = call.functionName();
-                traceLogItem.arguments = call.args().map(this._createRemoteObject.bind(this));
+                traceLogItem.arguments = call.args().map(this._makeCallArgument.bind(this));
                 if (call.result() !== undefined)
-                    traceLogItem.result = this._createRemoteObject(call.result());
+                    traceLogItem.result = this._makeCallArgument(call.result());
             } else {
                 traceLogItem.property = call.args()[0];
-                traceLogItem.value = this._createRemoteObject(call.args()[1]);
+                traceLogItem.value = this._makeCallArgument(call.args()[1]);
             }
             result.calls.push(traceLogItem);
         }
@@ -2957,9 +2958,9 @@ InjectedCanvasModule.prototype = {
 
     /**
      * @param {*} obj
-     * @return {Object}
+     * @return {!CanvasAgent.CallArgument}
      */
-    _createRemoteObject: function(obj)
+    _makeCallArgument: function(obj)
     {
         if (obj instanceof ReplayableResource)
             var description = obj.description();
@@ -2969,9 +2970,9 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} traceLogId
+     * @param {CanvasAgent.TraceLogId} traceLogId
      * @param {number} stepNo
-     * @return {!Object|string}
+     * @return {!CanvasAgent.ResourceState|string}
      */
     replayTraceLog: function(traceLogId, stepNo)
     {
@@ -2990,8 +2991,8 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} stringResourceId
-     * @return {!Object|string}
+     * @param {CanvasAgent.ResourceId} stringResourceId
+     * @return {!CanvasAgent.ResourceInfo|string}
      */
     resourceInfo: function(stringResourceId)
     {
@@ -3012,9 +3013,9 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} traceLogId
-     * @param {string} stringResourceId
-     * @return {!Object|string}
+     * @param {CanvasAgent.TraceLogId} traceLogId
+     * @param {CanvasAgent.ResourceId} stringResourceId
+     * @return {!CanvasAgent.ResourceState|string}
      */
     resourceState: function(traceLogId, stringResourceId)
     {
@@ -3043,7 +3044,7 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @return {string}
+     * @return {CanvasAgent.TraceLogId}
      */
     _makeTraceLogId: function()
     {
@@ -3052,7 +3053,7 @@ InjectedCanvasModule.prototype = {
 
     /**
      * @param {number} resourceId
-     * @return {string}
+     * @return {CanvasAgent.ResourceId}
      */
     _makeStringResourceId: function(resourceId)
     {
@@ -3060,9 +3061,9 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} stringResourceId
+     * @param {CanvasAgent.ResourceId} stringResourceId
      * @param {string} description
-     * @return {!Object}
+     * @return {!CanvasAgent.ResourceInfo}
      */
     _makeResourceInfo: function(stringResourceId, description)
     {
@@ -3073,10 +3074,10 @@ InjectedCanvasModule.prototype = {
     },
 
     /**
-     * @param {string} stringResourceId
-     * @param {string} traceLogId
+     * @param {CanvasAgent.ResourceId} stringResourceId
+     * @param {CanvasAgent.TraceLogId} traceLogId
      * @param {string} imageURL
-     * @return {!Object}
+     * @return {!CanvasAgent.ResourceState}
      */
     _makeResourceState: function(stringResourceId, traceLogId, imageURL)
     {
