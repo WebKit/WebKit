@@ -513,7 +513,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     GOwnPtr<GError> error;
-    gssize bytesSkipped = g_input_stream_skip_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
+    gssize bytesSkipped = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
         client->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
@@ -521,7 +521,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     if (bytesSkipped > 0) {
-        g_input_stream_skip_async(d->m_inputStream.get(), G_MAXSSIZE, G_PRIORITY_DEFAULT,
+        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, G_MAXSSIZE, G_PRIORITY_DEFAULT,
             d->m_cancellable.get(), redirectSkipCallback, handle.get());
         return;
     }
@@ -668,10 +668,15 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
+    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
+
     if (soupMessage) {
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
             d->m_inputStream = inputStream;
-            g_input_stream_skip_async(d->m_inputStream.get(), G_MAXSSIZE, G_PRIORITY_DEFAULT,
+            // We use read_async() rather than skip_async() to work around
+            // https://bugzilla.gnome.org/show_bug.cgi?id=691489 until we can
+            // depend on glib > 2.35.4
+            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, G_MAXSSIZE, G_PRIORITY_DEFAULT,
                 d->m_cancellable.get(), redirectSkipCallback, handle.get());
             return;
         }
@@ -701,8 +706,6 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         cleanupSoupRequestOperation(handle.get());
         return;
     }
-
-    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
     if (soupMessage && d->m_response.isMultipart()) {
         d->m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(soupMessage, inputStream.get()));
