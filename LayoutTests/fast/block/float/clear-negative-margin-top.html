@@ -1,0 +1,16 @@
+<style>
+    div.negativemargintop { clear:both; margin-top:-10px; font: 14px/0 Ahem; color: green;}
+    h2 { float:left; background-color: green;}
+    img { height: 20px; width: 40px; }
+    #visible { background-color: blue; }
+    #transparent { background-color: white; }
+</style>
+The green box should be below the blue box.<br>
+https://bugs.webkit.org/show_bug.cgi?id=14664<br>
+<div style="position:relative; line-height: 20px;">
+    <img id="visible" align="left">
+    <img id="transparent">
+    <div class="negativemargintop">
+        <h2>xx</h2>
+    </div>			
+</div>			

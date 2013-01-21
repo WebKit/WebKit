@@ -2057,12 +2057,15 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     // If we have collapsed into a previous sibling and so reduced the height of the parent, ensure any floats that now
     // overhang from the previous sibling are added to our parent. If the child's previous sibling itself is a float the child will avoid
     // or clear it anyway, so don't worry about any floating children it may contain.
+    LayoutUnit oldLogicalHeight = logicalHeight();
+    setLogicalHeight(logicalTop);
     RenderObject* prev = child->previousSibling();
     if (prev && prev->isBlockFlow() && !prev->isFloatingOrOutOfFlowPositioned()) {
         RenderBlock* block = toRenderBlock(prev);
         if (block->containsFloats() && !block->avoidsFloats() && (block->logicalTop() + block->lowestFloatLogicalBottom()) > logicalTop) 
             addOverhangingFloats(block, false);
     }
+    setLogicalHeight(oldLogicalHeight);
 
     return logicalTop;
 }
@@ -2098,7 +2101,8 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         // Move the top of the child box to the bottom of the float ignoring the child's top margin.
         LayoutUnit collapsedMargin = collapsedMarginBeforeForChild(child);
         setLogicalHeight(child->logicalTop() - collapsedMargin);
-        heightIncrease -= collapsedMargin;
+        // A negative collapsed margin-top value cancels itself out as it has already been factored into |yPos| above.
+        heightIncrease -= max(LayoutUnit(), collapsedMargin);
     } else
         // Increase our height by the amount we had to clear.
         setLogicalHeight(logicalHeight() + heightIncrease);
