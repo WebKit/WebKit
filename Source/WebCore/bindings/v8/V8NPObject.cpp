@@ -449,7 +449,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     _NPN_RegisterObject(object, root);
 
     staticNPObjectMap().set(object, wrapperHandle);
-    ASSERT(maybeDOMWrapper(wrapperHandle));
+    ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapperHandle));
     return value;
 }
 
