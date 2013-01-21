@@ -9,6 +9,7 @@
 var div = document.getElementById("touchtarget");
 var lastEvent = null;
 var touchEventsReceived = 0;
+var mouseMoveEventsReceived = 0;
 var EXPECTED_TOUCH_EVENTS_TOTAL = 3;
 
 function touchEventCallback() {
@@ -22,9 +23,15 @@ function touchEventCallback() {
         finishJSTest();
 }
 
+function mouseMoveCallback(e) {
+    if (++mouseMoveEventsReceived === 2)
+        debug("Unexpected mousemove event received before touchstart");
+}
+
 div.addEventListener("touchstart", touchEventCallback, false);
 div.addEventListener("touchmove", touchEventCallback, false);
 div.addEventListener("touchend", touchEventCallback, false);
+div.addEventListener("mousemove", mouseMoveCallback, false);
 
 function verifyTouchEvent(type, totalTouchCount, changedTouchCount, targetTouchCount)
 {
