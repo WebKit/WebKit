@@ -293,6 +293,12 @@ touchadjustment/touch-links-active.html
 
 # Don't have gestureTapDown event type
 fast/events/touch/gesture/gesture-scrollbar.html
+fast/events/touch/gesture/long-press-on-draggable-element-in-iframe-triggers-drag.html
+fast/events/touch/gesture/long-press-on-draggable-element-in-nested-iframes-triggers-drag.html
+fast/events/touch/gesture/touch-gesture-scroll-div-propagated.html
+fast/events/touch/gesture/touch-gesture-scroll-div-twice-propagated.html
+fast/events/touch/gesture/touch-gesture-scroll-iframe-editable.html
+fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html
 
 # Don't have width/height on GestureLongPress necessary to enable adjustment
 touchadjustment/touch-links-longpress.html
@@ -631,6 +637,10 @@ http/tests/workers/terminate-during-sync-operation.html
 
 # Needs custom policy delegate enhancement to log downloads
 http/tests/download
+
+# [Qt] New http/tests/cache/cancel-multiple-post-xhrs.html introduced in 140174.
+# https://bugs.webkit.org/show_bug.cgi?id=107434
+http/tests/cache/cancel-multiple-post-xhrs.html
 
 # We cannot implement FrameLoaderClient::canHandleRequest() since QNAM doesn't know
 # whether or not a given scheme is supported prior to createRequest().

@@ -6,7 +6,7 @@ layer at (0,0) size 800x56
       RenderBlock {DIV} at (0,0) size 784x19
         RenderText {#text} at (0,0) size 784x19
           text run at (0,0) width 784: "When the caret reaches the edge of the input box or content editable div, on the next input if must jump to the center of the control."
-layer at (8,27) size 82x21 clip at (9,28) size 80x19 scrollX 41 scrollWidth 337
+layer at (8,27) size 82x21 clip at (9,28) size 80x19 scrollX 42 scrollWidth 337
   RenderBlock {DIV} at (0,19) size 82x21 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 336x19
       text run at (1,1) width 336: "012345678901012345678901234567890123456789"
