@@ -178,7 +178,6 @@ if (ENABLE_JAVASCRIPT_DEBUGGER)
         bindings/v8/ScriptProfiler.cpp
 
         bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp
-        bindings/v8/custom/V8ScriptProfileCustom.cpp
     )
 endif ()
 
