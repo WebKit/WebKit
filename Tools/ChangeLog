@@ -1,3 +1,18 @@
+2013-01-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WKTR] platformRunUntil() should keep the main loop running
+        https://bugs.webkit.org/show_bug.cgi?id=107442
+
+        Reviewed by Noam Rosenthal.
+
+        EFL's implementation of platformRunUntil() should keep the main loop
+        running and avoid calling sleep() between calls to
+        ecore_main_loop_iterate(). This call to sleep seems to be a source
+        of deadlocks (see Bug 106884).
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformRunUntil):
+
 2013-01-21  Vivek Galatage  <vivek.vg@samsung.com>
 
         QtTestBrowser should provide way to clear selected elements
