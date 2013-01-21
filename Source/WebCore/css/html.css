@@ -81,7 +81,7 @@ layer {
     display: block
 }
 
-article, aside, footer, header, hgroup, nav, section {
+article, aside, footer, header, hgroup, main, nav, section {
     display: block
 }
 

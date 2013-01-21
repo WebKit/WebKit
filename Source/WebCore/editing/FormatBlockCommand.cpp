@@ -136,6 +136,7 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
         blockTags.add(h6Tag);
         blockTags.add(headerTag);
         blockTags.add(hgroupTag);
+        blockTags.add(mainTag);
         blockTags.add(navTag);
         blockTags.add(pTag);
         blockTags.add(preTag);

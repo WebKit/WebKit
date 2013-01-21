@@ -341,6 +341,9 @@ FAIL tagJSWrapperConstructorClass('link') should be HTMLLinkElementConstructor. 
 PASS tagJSWrapperClass('listing') is 'HTMLPreElement'
 FAIL tagJSWrapperPrototypeClass('listing') should be HTMLPreElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('listing') should be HTMLPreElementConstructor. Was Function.
+PASS tagJSWrapperClass('main') is 'HTMLElement'
+FAIL tagJSWrapperPrototypeClass('main') should be HTMLElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('main') should be HTMLElementConstructor. Was Function.
 PASS tagJSWrapperClass('map') is 'HTMLMapElement'
 FAIL tagJSWrapperPrototypeClass('map') should be HTMLMapElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('map') should be HTMLMapElementConstructor. Was Function.

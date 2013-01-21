@@ -80,6 +80,7 @@ legend
 li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser
 listing interfaceName=HTMLPreElement
+main interfaceName=HTMLElement
 map
 mark interfaceName=HTMLElement
 marquee

@@ -69,6 +69,7 @@ PASS queryCommand('formatBlock') returned "h5" selecting first position of "<h5>
 PASS queryCommand('formatBlock') returned "h6" selecting first position of "<h6>hello</h6>"
 PASS queryCommand('formatBlock') returned "header" selecting first position of "<header>hello</header>"
 PASS queryCommand('formatBlock') returned "hgroup" selecting first position of "<hgroup>hello</hgroup>"
+PASS queryCommand('formatBlock') returned "main" selecting first position of "<main>hello</main>"
 PASS queryCommand('formatBlock') returned "nav" selecting first position of "<nav>hello</nav>"
 PASS queryCommand('formatBlock') returned "p" selecting first position of "<p>hello</p>"
 PASS queryCommand('formatBlock') returned "pre" selecting first position of "<pre>hello</pre>"

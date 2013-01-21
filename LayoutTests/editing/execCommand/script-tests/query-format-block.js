@@ -101,6 +101,7 @@ queryFormatBlock(selectFirstPosition, '<h5>hello</h5>', 'h5');
 queryFormatBlock(selectFirstPosition, '<h6>hello</h6>', 'h6');
 queryFormatBlock(selectFirstPosition, '<header>hello</header>', 'header');
 queryFormatBlock(selectFirstPosition, '<hgroup>hello</hgroup>', 'hgroup');
+queryFormatBlock(selectFirstPosition, '<main>hello</main>', 'main');
 queryFormatBlock(selectFirstPosition, '<nav>hello</nav>', 'nav');
 queryFormatBlock(selectFirstPosition, '<p>hello</p>', 'p');
 queryFormatBlock(selectFirstPosition, '<pre>hello</pre>', 'pre');

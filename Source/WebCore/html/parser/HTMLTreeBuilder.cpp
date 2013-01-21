@@ -691,6 +691,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         || token->name() == footerTag
         || token->name() == headerTag
         || token->name() == hgroupTag
+        || token->name() == mainTag
         || token->name() == menuTag
         || token->name() == navTag
         || token->name() == olTag
@@ -1816,6 +1817,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
         || token->name() == headerTag
         || token->name() == hgroupTag
         || token->name() == listingTag
+        || token->name() == mainTag
         || token->name() == menuTag
         || token->name() == navTag
         || token->name() == olTag

@@ -338,6 +338,11 @@ PASS testElement.accessKey is defined.
 PASS testElement.accessKey ='k'; testElement.accessKey == 'k' is true
 PASS pressKey(testElement.accessKey);[clicked, focused] is [true, false]
 
+Check for MAIN tag
+PASS testElement.accessKey is defined.
+PASS testElement.accessKey ='k'; testElement.accessKey == 'k' is true
+PASS pressKey(testElement.accessKey);[clicked, focused] is [true, false]
+
 Check for MAP tag
 PASS testElement.accessKey is defined.
 PASS testElement.accessKey ='k'; testElement.accessKey == 'k' is true

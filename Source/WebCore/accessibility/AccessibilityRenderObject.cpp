@@ -2537,6 +2537,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(articleTag))
         return DocumentArticleRole;
 
+    if (node && node->hasTagName(mainTag))
+        return LandmarkMainRole;
+
     if (node && node->hasTagName(navTag))
         return LandmarkNavigationRole;
 

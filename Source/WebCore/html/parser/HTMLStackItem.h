@@ -168,6 +168,7 @@ public:
             || tagName == HTMLNames::liTag
             || tagName == HTMLNames::linkTag
             || tagName == HTMLNames::listingTag
+            || tagName == HTMLNames::mainTag
             || tagName == HTMLNames::marqueeTag
             || tagName == HTMLNames::menuTag
             || tagName == HTMLNames::metaTag

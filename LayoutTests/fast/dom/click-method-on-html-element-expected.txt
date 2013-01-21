@@ -71,6 +71,7 @@ Pass: Click event handler called for: legend
 Pass: Click event handler called for: li
 Pass: Click event handler called for: link
 Pass: Click event handler called for: listing
+Pass: Click event handler called for: main
 Pass: Click event handler called for: map
 Pass: Click event handler called for: mark
 Pass: Click event handler called for: marquee
