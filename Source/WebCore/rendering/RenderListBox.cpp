@@ -557,7 +557,7 @@ int RenderListBox::scrollToward(const IntPoint& destination)
     return listIndexAtOffset(positionOffset);
 }
 
-void RenderListBox::autoscroll()
+void RenderListBox::autoscroll(const IntPoint&)
 {
     IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler()->lastKnownMousePosition());
 

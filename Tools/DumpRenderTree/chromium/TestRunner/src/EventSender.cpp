@@ -468,10 +468,17 @@ void EventSender::doMouseUp(const WebMouseEvent& e)
     // If we're in a drag operation, complete it.
     if (currentDragData.isNull())
         return;
+
     WebPoint clientPoint(e.x, e.y);
     WebPoint screenPoint(e.globalX, e.globalY);
+    finishDragAndDrop(e, webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed, 0));
+}
 
-    currentDragEffect = webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed, 0);
+void EventSender::finishDragAndDrop(const WebMouseEvent& e, WebKit::WebDragOperation dragEffect)
+{
+    WebPoint clientPoint(e.x, e.y);
+    WebPoint screenPoint(e.globalX, e.globalY);
+    currentDragEffect = dragEffect;
     if (currentDragEffect)
         webview()->dragTargetDrop(clientPoint, screenPoint, 0);
     else
@@ -647,6 +654,12 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
         m_delegate->setEditCommand(editCommand, "");
 
     webview()->handleInputEvent(eventDown);
+
+    if (code == VKEY_ESCAPE && !currentDragData.isNull()) {
+        WebMouseEvent event;
+        initMouseEvent(WebInputEvent::MouseDown, pressedButton, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
+        finishDragAndDrop(event, WebKit::WebDragOperationNone);
+    }
 
     m_delegate->clearEditCommand();
 

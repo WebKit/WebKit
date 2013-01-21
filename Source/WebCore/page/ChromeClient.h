@@ -375,6 +375,9 @@ public:
 
     virtual PassRefPtr<Image> plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize) const { return 0; }
 
+    // FIXME: Port should return true using heuristic based on scrollable(RenderBox).
+    virtual bool shouldAutoscrollForDragAndDrop(RenderBox*) const { return false; }
+
 protected:
     virtual ~ChromeClient() { }
 };

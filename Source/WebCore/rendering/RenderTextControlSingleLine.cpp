@@ -381,11 +381,11 @@ bool RenderTextControlSingleLine::textShouldBeTruncated() const
         && style()->textOverflow() == TextOverflowEllipsis;
 }
 
-void RenderTextControlSingleLine::autoscroll()
+void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
 {
     RenderLayer* layer = innerTextElement()->renderBox()->layer();
     if (layer)
-        layer->autoscroll();
+        layer->autoscroll(position);
 }
 
 int RenderTextControlSingleLine::scrollWidth() const

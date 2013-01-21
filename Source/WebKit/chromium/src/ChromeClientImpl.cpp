@@ -1131,6 +1131,12 @@ void ChromeClientImpl::numWheelEventHandlersChanged(unsigned numberOfWheelHandle
     m_webView->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
 }
 
+bool ChromeClientImpl::shouldAutoscrollForDragAndDrop(WebCore::RenderBox*) const
+{
+    return true;
+}
+
+
 #if ENABLE(TOUCH_EVENTS)
 void ChromeClientImpl::needTouchEvents(bool needsTouchEvents)
 {

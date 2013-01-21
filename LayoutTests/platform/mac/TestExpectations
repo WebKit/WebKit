@@ -1273,6 +1273,9 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
+# Enable when support drag-and-drop autoscrolling
+webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
+
 # Transient. Needs rebaseline.
 webkit.org/b/103955 fast/repaint/4774354.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/4776765.html [ ImageOnlyFailure ]

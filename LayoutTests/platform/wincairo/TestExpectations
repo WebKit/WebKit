@@ -2959,6 +2959,9 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 # https://bugs.webkit.org/show_bug.cgi?id=100117
 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
+# Enable when support drag-and-drop autoscrolling
+webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
+
 # CSS3_TEXT is disabled on Windows
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html

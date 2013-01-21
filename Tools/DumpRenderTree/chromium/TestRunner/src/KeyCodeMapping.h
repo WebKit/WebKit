@@ -36,6 +36,7 @@ namespace WebTestRunner {
 // The keycodes match the values of the virtual keycodes found here http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 enum {
     VKEY_RETURN   = 0x0D,
+    VKEY_ESCAPE   = 0x1B,
     VKEY_PRIOR    = 0x21,
     VKEY_NEXT     = 0x22,
     VKEY_END      = 0x23,

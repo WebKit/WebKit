@@ -1340,6 +1340,9 @@ webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.htm
 
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 
+# Enable when support drag-and-drop autoscrolling
+webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
+
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 

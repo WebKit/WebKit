@@ -158,6 +158,7 @@ private:
     // modifier to be passed into the generated event.
     bool needsShiftModifier(int);
 
+    void finishDragAndDrop(const WebKit::WebMouseEvent&, WebKit::WebDragOperation);
     void updateClickCountForButton(WebKit::WebMouseEvent::Button);
 
     // Compose a touch event from the current touch points and send it.

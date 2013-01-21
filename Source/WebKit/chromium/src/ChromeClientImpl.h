@@ -225,6 +225,8 @@ public:
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     virtual void numWheelEventHandlersChanged(unsigned);
 
+    virtual bool shouldAutoscrollForDragAndDrop(WebCore::RenderBox* scrollable) const OVERRIDE;
+
 #if ENABLE(POINTER_LOCK)
     virtual bool requestPointerLock();
     virtual void requestPointerUnlock();

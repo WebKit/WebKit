@@ -1,3 +1,22 @@
+2013-01-20  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Dragging over an element with scrollbars should scroll the element when dragging near edges
+        https://bugs.webkit.org/show_bug.cgi?id=39725
+
+        Reviewed by Hajime Morita.
+
+        This patch introduces canceling drag-and-drop by escape key for testing
+        behavior after cancellation drag-and-drop.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::doMouseUp):
+        (WebTestRunner::EventSender::finishDragAndDrop):
+        (WebTestRunner::EventSender::keyDown):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/KeyCodeMapping.h: Added VKEY_ESCAPE.
+
 2013-01-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move frame generation related methods to TestRunner

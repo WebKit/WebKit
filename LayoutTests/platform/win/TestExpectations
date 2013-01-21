@@ -2506,6 +2506,9 @@ media/video-controls-captions-trackmenu-sorted.html
 media/video-controls-captions-trackmenu.html
 media/video-controls-visible-exiting-fullscreen.html
 
+# Enable when support drag-and-drop autoscrolling
+webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
+
 # Device Proximity is not enabled/implemented
 proximity/add-listener-from-callback.html
 proximity/basic-operation.html
