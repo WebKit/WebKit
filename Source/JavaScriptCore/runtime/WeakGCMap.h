@@ -66,8 +66,8 @@ public:
     AddResult add(const KeyType& key, MappedPassInType value)
     {
         gcMapIfNeeded();
-        AddResult addResult = Base::add(key, value);
-        if (!addResult.isNewEntry && !addResult.iterator->value) { // Found a zombie value.
+        AddResult addResult = Base::add(key, nullptr);
+        if (!addResult.iterator->value) { // New value or found a zombie value.
             addResult.isNewEntry = true;
             addResult.iterator->value = value;
         }

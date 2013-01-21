@@ -1,5 +1,23 @@
 2013-01-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Weak GC maps should be easier to use
+        https://bugs.webkit.org/show_bug.cgi?id=107312
+
+        Reviewed by Sam Weinig.
+
+        Follow-up fix.
+
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype): Restored this
+        ASSERT, which was disabled because of a bug in WeakGCMap.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::add): We can't pass our passed-in value to add() because
+        a PassWeak() clears itself when passed to another function. So, we pass
+        nullptr instead, and fix things up afterwards.
+
+2013-01-20  Geoffrey Garen  <ggaren@apple.com>
+
         Unreviewed.
 
         Temporarily disabling this ASSERT to get the bots green
