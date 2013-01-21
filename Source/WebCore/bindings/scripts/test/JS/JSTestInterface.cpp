@@ -148,11 +148,13 @@ bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, Exec
     return getStaticPropertyDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, descriptor);
 }
 
+#if ENABLE(TEST_INTERFACE)
 ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSTestInterface;
     return ConstructTypeHost;
 }
+#endif // ENABLE(TEST_INTERFACE)
 
 /* Hash table for prototype */
 

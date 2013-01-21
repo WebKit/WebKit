@@ -648,6 +648,19 @@ sub GenerateConditionalString
     }
 }
 
+sub GenerateConstructorConditionalString
+{
+    my $generator = shift;
+    my $node = shift;
+
+    my $conditional = $node->extendedAttributes->{"ConstructorConditional"};
+    if ($conditional) {
+        return $generator->GenerateConditionalStringFromAttributeValue($conditional);
+    } else {
+        return "";
+    }
+}
+
 sub GenerateConditionalStringFromAttributeValue
 {
     my $generator = shift;

@@ -3682,7 +3682,10 @@ sub GenerateConstructorDeclaration
             }
         }
 
+        my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
+        push(@$outputArray, "#if $conditionalString\n") if $conditionalString;
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
+        push(@$outputArray, "#endif // $conditionalString\n") if $conditionalString;
     }
     push(@$outputArray, "};\n\n");
 
@@ -4050,11 +4053,15 @@ sub GenerateConstructorHelperMethods
 
     if (IsConstructable($interface)) {
         if (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {
+            my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
+            push(@$outputArray, "#if $conditionalString\n") if $conditionalString;
             push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    constructData.native.function = construct${className};\n");
             push(@$outputArray, "    return ConstructTypeHost;\n");
-            push(@$outputArray, "}\n\n");
+            push(@$outputArray, "}\n");
+            push(@$outputArray, "#endif // $conditionalString\n") if $conditionalString;
+            push(@$outputArray, "\n");
         }
     }
 }

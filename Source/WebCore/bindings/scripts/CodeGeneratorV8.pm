@@ -405,8 +405,10 @@ END
     }
 
     if (IsConstructable($interface)) {
-        push(@headerContent, <<END);
-    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
+        my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
+        push(@headerContent, "#if $conditionalString\n") if $conditionalString;
+        push(@headerContent, "    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);\n");
+        push(@headerContent, "#endif // $conditionalString\n") if $conditionalString;
 END
     }
     if (HasCustomConstructor($interface)) {
@@ -2948,9 +2950,10 @@ END
 END
 
     if (IsConstructable($interface)) {
-        push(@implContent, <<END);
-    desc->SetCallHandler(${v8InterfaceName}::constructorCallback);
-END
+        my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
+        push(@implContent, "#if $conditionalString\n") if $conditionalString;
+        push(@implContent, "    desc->SetCallHandler(${v8InterfaceName}::constructorCallback);\n");
+        push(@implContent, "#endif // $conditionalString\n") if $conditionalString;
     }
 
     if ($access_check or @enabledAtRuntimeAttributes or @normalFunctions or $has_constants) {
