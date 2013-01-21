@@ -1,3 +1,16 @@
+2013-01-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Crash in gmail on enabling desktop notifications
+        https://bugs.webkit.org/show_bug.cgi?id=106699
+
+        Patch by David Rosca.
+        Reviewed by Jocelyn Turcotte.
+
+        Protect against callback that may be null. This also matches WebKit2 behaviour.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::allowNotificationForFrame):
+
 2013-01-18  Shinya Kawanaka  <shinyak@chromium.org>
 
         Introduce isHTMLTextFormControlElement and toHTMLTextFormControlElement instead of toTextFormControl

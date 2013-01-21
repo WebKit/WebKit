@@ -367,8 +367,10 @@ void NotificationPresenterClientQt::allowNotificationForFrame(Frame* frame)
         return;
 
     QList<RefPtr<VoidCallback> >& callbacks = iter.value().m_callbacks;
-    for (int i = 0; i < callbacks.size(); i++)
-        callbacks.at(i)->handleEvent();
+    Q_FOREACH(const RefPtr<VoidCallback>& callback, callbacks) {
+        if (callback)
+            callback->handleEvent();
+    }
     m_pendingPermissionRequests.remove(iter.key());
 }
 
@@ -378,7 +380,6 @@ void NotificationPresenterClientQt::sendDisplayEvent(NotificationWrapper* wrappe
     if (notification)
         sendEvent(notification, "show");
 }
-
 
 void NotificationPresenterClientQt::sendEvent(Notification* notification, const AtomicString& eventName)
 {
