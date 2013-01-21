@@ -1,3 +1,15 @@
+2013-01-21  Oleg Smirnov  <oleg.smirnov@lge.com>
+
+        [Gtk] Dispatching event list into input element.
+        https://bugs.webkit.org/show_bug.cgi?id=107259
+
+        Reviewed by Martin Robinson.
+
+        Clear pending command list after dispatching events.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeyboardEvent):
+
 2013-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add property for IndexedDB database path to WebKitGTK+

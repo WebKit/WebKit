@@ -464,6 +464,7 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
             event->setDefaultHandled();
             return;
         }
+        m_pendingEditorCommands.clear();
     }
 
     // Don't allow text insertion for nodes that cannot edit.
