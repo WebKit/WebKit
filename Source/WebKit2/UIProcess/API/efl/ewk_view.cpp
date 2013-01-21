@@ -32,7 +32,6 @@
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
-#include "ResourceLoadClientEfl.h"
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
 #include "WKFindOptions.h"

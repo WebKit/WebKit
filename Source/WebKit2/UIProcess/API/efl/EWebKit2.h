@@ -50,7 +50,6 @@
 #include "ewk_object.h"
 #include "ewk_popup_menu.h"
 #include "ewk_popup_menu_item.h"
-#include "ewk_resource.h"
 #include "ewk_security_origin.h"
 #include "ewk_settings.h"
 #include "ewk_storage_manager.h"

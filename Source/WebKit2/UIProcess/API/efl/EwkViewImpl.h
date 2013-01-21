@@ -58,7 +58,6 @@ class PageClientBase;
 class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
-class ResourceLoadClientEfl;
 class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 class WebPageGroup;
@@ -255,7 +254,6 @@ private:
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
     OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
     OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;
-    OwnPtr<WebKit::ResourceLoadClientEfl> m_resourceLoadClient;
     OwnPtr<WebKit::ContextMenuClientEfl> m_contextMenuClient;
     OwnPtr<WebKit::FindClientEfl> m_findClient;
     OwnPtr<WebKit::FormClientEfl> m_formClient;

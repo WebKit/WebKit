@@ -1,3 +1,31 @@
+2013-01-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        REGRESSION (r140285): EFL uses WKPageResourceLoadClient which was removed
+        https://bugs.webkit.org/show_bug.cgi?id=107417
+
+        Reviewed by Gyuyoung Kim.
+
+        We had no choice but remove the ResourceLoadClientEfl after r140285
+        and thus our public API signals depending on it. The test_ewk2_auth_request
+        unit test was skipped because it depends these signals and will be fixed in a
+        different patch.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_resource.cpp: Removed.
+        * UIProcess/API/efl/ewk_resource.h: Removed.
+        * UIProcess/API/efl/ewk_resource_private.h: Removed.
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/efl/ResourceLoadClientEfl.cpp: Removed.
+        * UIProcess/efl/ResourceLoadClientEfl.h: Removed.
+
 2013-01-20  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         Remove support getting per-resource callbacks in the UIProcess

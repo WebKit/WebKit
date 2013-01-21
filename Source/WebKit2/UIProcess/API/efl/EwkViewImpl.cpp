@@ -34,7 +34,6 @@
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
-#include "ResourceLoadClientEfl.h"
 #include "SnapshotImageGL.h"
 #include "WKDictionary.h"
 #include "WKGeometry.h"
@@ -122,7 +121,6 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
-    , m_resourceLoadClient(ResourceLoadClientEfl::create(this))
     , m_contextMenuClient(ContextMenuClientEfl::create(this))
     , m_findClient(FindClientEfl::create(this))
     , m_formClient(FormClientEfl::create(this))

@@ -65,7 +65,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_object.cpp
     UIProcess/API/efl/ewk_popup_menu.cpp
     UIProcess/API/efl/ewk_popup_menu_item.cpp
-    UIProcess/API/efl/ewk_resource.cpp
     UIProcess/API/efl/ewk_security_origin.cpp
     UIProcess/API/efl/ewk_settings.cpp
     UIProcess/API/efl/ewk_storage_manager.cpp
@@ -94,7 +93,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/PageUIClientEfl.cpp
     UIProcess/efl/PageViewportControllerClientEfl.cpp
     UIProcess/efl/RequestManagerClientEfl.cpp
-    UIProcess/efl/ResourceLoadClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
@@ -283,7 +281,6 @@ set(EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_object.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_resource.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_security_origin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_settings.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_storage_manager.h"
@@ -366,7 +363,6 @@ target_link_libraries(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 # The "ewk" on the test name needs to be suffixed with "2", otherwise it
 # will clash with tests from the WebKit 1 test suite.
 set(EWK2UnitTests_BINARIES
-    test_ewk2_auth_request
     test_ewk2_back_forward_list
     test_ewk2_color_picker
     test_ewk2_context
@@ -388,6 +384,11 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_view
     test_ewk2_window_features
 )
+
+# Skipped unit tests list:
+#
+# webkit.org/b/107422: test_ewk2_auth_request
+#
 
 if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})
