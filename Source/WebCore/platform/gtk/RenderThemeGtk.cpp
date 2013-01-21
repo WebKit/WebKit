@@ -513,6 +513,11 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
     return false;
 }
 
+bool RenderThemeGtk::hasOwnDisabledStateHandlingFor(ControlPart part) const
+{
+    return (part != MediaMuteButtonPart);
+}
+
 bool RenderThemeGtk::paintMediaFullscreenButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return paintMediaButton(renderObject, paintInfo.context, rect, GTK_STOCK_FULLSCREEN);

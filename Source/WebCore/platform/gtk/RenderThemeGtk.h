@@ -162,7 +162,7 @@ protected:
     void initMediaColors();
     void initMediaButtons();
     void adjustMediaSliderThumbSize(RenderStyle*) const;
-    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
+    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
