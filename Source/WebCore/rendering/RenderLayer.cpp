@@ -93,6 +93,7 @@
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SourceGraphic.h"
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
@@ -2697,10 +2698,22 @@ void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
         m_resizer->repaintRectangle(rect);
 }
 
+static inline RenderObject* rendererForScrollbar(RenderObject* renderer)
+{
+    if (Node* node = renderer->node()) {
+        if (ShadowRoot* shadowRoot = node->containingShadowRoot()) {
+            if (shadowRoot->type() == ShadowRoot::UserAgentShadowRoot)
+                return shadowRoot->host()->renderer();
+        }
+    }
+
+    return renderer;
+}
+
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
-    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RenderObject* actualRenderer = rendererForScrollbar(renderer());
     bool hasCustomScrollbarStyle = actualRenderer->isBox() && actualRenderer->style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(this, orientation, actualRenderer->node());
@@ -5563,7 +5576,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 
 void RenderLayer::updateScrollCornerStyle()
 {
-    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RenderObject* actualRenderer = rendererForScrollbar(renderer());
     RefPtr<RenderStyle> corner = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(SCROLLBAR_CORNER, actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (corner) {
         if (!m_scrollCorner) {
@@ -5579,7 +5592,7 @@ void RenderLayer::updateScrollCornerStyle()
 
 void RenderLayer::updateResizerStyle()
 {
-    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RenderObject* actualRenderer = rendererForScrollbar(renderer());
     RefPtr<RenderStyle> resizer = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RESIZER, actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (resizer) {
         if (!m_resizer) {
