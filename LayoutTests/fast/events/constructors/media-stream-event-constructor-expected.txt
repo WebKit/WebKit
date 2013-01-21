@@ -5,11 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS new MediaStreamEvent('eventType').bubbles is false
 PASS new MediaStreamEvent('eventType').cancelable is false
-FAIL new MediaStreamEvent('eventType').data should be null (of type object). Was undefined (of type undefined).
-FAIL new MediaStreamEvent('eventType').origin should be  (of type string). Was undefined (of type undefined).
-FAIL new MediaStreamEvent('eventType').lastEventId should be  (of type string). Was undefined (of type undefined).
 PASS new MediaStreamEvent('eventType').stream is null
-FAIL new MediaStreamEvent('eventType').ports should be  (of type object). Was undefined (of type undefined).
 PASS new MediaStreamEvent('eventType', { bubbles: false }).bubbles is false
 PASS new MediaStreamEvent('eventType', { bubbles: true }).bubbles is true
 PASS new MediaStreamEvent('eventType', { cancelable: false }).cancelable is false
@@ -26,7 +22,7 @@ PASS new MediaStreamEvent('eventType', { stream: 'chocolate' }).stream is null
 PASS new MediaStreamEvent('eventType', { stream: 12345 }).stream is null
 PASS new MediaStreamEvent('eventType', { stream: 18446744073709551615 }).stream is null
 PASS new MediaStreamEvent('eventType', { stream: NaN }).stream is null
-PASS new MediaStreamEvent('eventType', { stream: {valueOf: function () { return window; } } }).stream == window is false
+PASS new MediaStreamEvent('eventType', { stream: {valueOf: function () { return mediaStream; } } }).stream == mediaStream is false
 PASS new MediaStreamEvent('eventType', { get stream() { return 123; } }).stream is null
 PASS new MediaStreamEvent('eventType', { get stream() { throw 'MediaStreamEvent Error'; } }) threw exception MediaStreamEvent Error.
 PASS new MediaStreamEvent('eventType', { bubbles: true, cancelable: true, stream: mediaStream }).bubbles is true

@@ -14,11 +14,7 @@ var mediaStream = new webkitMediaStream();
 // No initializer is passed.
 shouldBe("new MediaStreamEvent('eventType').bubbles", "false");
 shouldBe("new MediaStreamEvent('eventType').cancelable", "false");
-shouldBe("new MediaStreamEvent('eventType').data", "null");
-shouldBeEqualToString("new MediaStreamEvent('eventType').origin", "");
-shouldBeEqualToString("new MediaStreamEvent('eventType').lastEventId", "");
 shouldBe("new MediaStreamEvent('eventType').stream", "null");
-shouldBe("new MediaStreamEvent('eventType').ports", "[]");
 
 // bubbles is passed.
 shouldBe("new MediaStreamEvent('eventType', { bubbles: false }).bubbles", "false");
@@ -45,7 +41,7 @@ shouldBe("new MediaStreamEvent('eventType', { stream: 12345 }).stream", "null");
 shouldBe("new MediaStreamEvent('eventType', { stream: 18446744073709551615 }).stream", "null");
 shouldBe("new MediaStreamEvent('eventType', { stream: NaN }).stream", "null");
 // Note that valueOf() is not called, when the left hand side is evaluated.
-shouldBeFalse("new MediaStreamEvent('eventType', { stream: {valueOf: function () { return window; } } }).stream == window");
+shouldBeFalse("new MediaStreamEvent('eventType', { stream: {valueOf: function () { return mediaStream; } } }).stream == mediaStream");
 shouldBe("new MediaStreamEvent('eventType', { get stream() { return 123; } }).stream", "null");
 shouldThrow("new MediaStreamEvent('eventType', { get stream() { throw 'MediaStreamEvent Error'; } })");
 
