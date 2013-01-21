@@ -64,6 +64,8 @@ namespace WebCore {
         static inline v8::Persistent<v8::Object> associateObjectWithWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate*);
         static inline void setNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*, void*);
         static inline void clearNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*);
+        static inline void setWrapperClass(void*, v8::Persistent<v8::Object>);
+        static inline void setWrapperClass(Node*, v8::Persistent<v8::Object>);
 
         // FIXME: This function should probably move to V8EventListenerList.h
         static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value>, bool isAttribute, ListenerLookupType);
@@ -72,11 +74,17 @@ namespace WebCore {
 
         // FIXME: Why is this function in V8DOMWrapper?
         static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
-
-    private:
-        static void setWrapperClass(void*, v8::Persistent<v8::Object> wrapper) { wrapper.SetWrapperClassId(v8DOMObjectClassId); }
-        static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper) { wrapper.SetWrapperClassId(v8DOMNodeClassId); }
     };
+
+    inline void V8DOMWrapper::setWrapperClass(void*, v8::Persistent<v8::Object> wrapper)
+    {
+        wrapper.SetWrapperClassId(v8DOMObjectClassId);
+    }
+
+    inline void V8DOMWrapper::setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper)
+    {
+        wrapper.SetWrapperClassId(v8DOMNodeClassId);
+    }
 
     inline void V8DOMWrapper::setNativeInfo(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)
     {
