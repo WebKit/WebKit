@@ -33,9 +33,7 @@ namespace WebCore {
 static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget widget, const IntSize& size)
 {
 #if PLATFORM(GTK)
-    return gdk_window_create_similar_surface(gtk_widget_get_window(widget),
-                                             CAIRO_CONTENT_COLOR_ALPHA,
-                                             size.width(), size.height());
+    return adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(widget), CAIRO_CONTENT_COLOR_ALPHA, size.width(), size.height()));
 #else
     UNUSED_PARAM(widget);
     return adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
