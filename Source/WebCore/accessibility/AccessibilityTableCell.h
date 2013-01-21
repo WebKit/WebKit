@@ -42,7 +42,6 @@ public:
     virtual ~AccessibilityTableCell();
     
     virtual bool isTableCell() const;
-    virtual AccessibilityRole roleValue() const;
     
     virtual bool accessibilityIsIgnored() const;
 
@@ -54,6 +53,7 @@ public:
 protected:
     virtual AccessibilityObject* parentTable() const;
     int m_rowIndex;
+    virtual AccessibilityRole determineAccessibilityRole();
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
