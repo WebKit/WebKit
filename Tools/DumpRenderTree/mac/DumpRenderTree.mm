@@ -149,7 +149,7 @@ PolicyDelegate *policyDelegate;
 StorageTrackerDelegate *storageDelegate;
 
 static int dumpPixelsForAllTests = NO;
-static bool dumpPixelsForCurrentTest;
+static bool dumpPixelsForCurrentTest = false;
 static int threaded;
 static int dumpTree = YES;
 static int useTimeoutWatchdog = YES;
@@ -746,28 +746,6 @@ static void testThreadIdentifierMap()
     createThread(runThread, 0, "DumpRenderTree: test");
 }
 
-static void crashHandler(int sig)
-{
-    char *signalName = strsignal(sig);
-    write(STDERR_FILENO, signalName, strlen(signalName));
-    write(STDERR_FILENO, "\n", 1);
-    exit(128 + sig);
-}
-
-static void installSignalHandlers()
-{
-    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
-    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
-    signal(SIGEMT, crashHandler);    /* 7:   EMT instruction */
-    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
-    signal(SIGBUS, crashHandler);    /* 10:  bus error */
-    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
-    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
-    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
-    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
-    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
-}
-
 static void allocateGlobalControllers()
 {
     // FIXME: We should remove these and move to the ObjC standard [Foo sharedInstance] model
@@ -872,8 +850,6 @@ void dumpRenderTree(int argc, const char *argv[])
     initializeGlobalsFromCommandLineOptions(argc, argv);
     prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
-    if (dumpPixelsForCurrentTest)
-        installSignalHandlers();
 
     if (forceComplexText)
         [WebView _setAlwaysUsesComplexTextCodePath:YES];
@@ -899,7 +875,7 @@ void dumpRenderTree(int argc, const char *argv[])
         printSeparators = YES;
         runTestingServerLoop();
     } else {
-        printSeparators = (optind < argc - 1 || (dumpPixelsForCurrentTest && dumpTree));
+        printSeparators = optind < argc - 1;
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }

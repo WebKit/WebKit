@@ -1,3 +1,30 @@
+2013-01-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        Mac DumpRenderTree's installSignalHandlers() is unreachable code
+        https://bugs.webkit.org/show_bug.cgi?id=107383
+
+        Reviewed by Sam Weinig.
+
+        The CrashHandler of DumpRenderTree were originally used for restoring
+        the color profile of the main display even if DRT crashes.
+
+        That feature was later limited to pixel tests only in r29999.
+
+        In r104351, the DRT was changed to use device color space. Making the crash
+        handlers useless, but they were left in the code since the error reporting
+        code was still reachable.
+
+        Later, r124581 refactored the code and dumpPixelsForCurrentTest
+        is being used before being assigned its value.
+        This did cause any regression because the code had become useless with the previous change.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        Remove crashHandler() and installSignalHandlers() as they have become useless and
+        have been unreachable code for 6 months.
+        (dumpRenderTree):
+        Remove the code that was unreachable due to dumpPixelsForCurrentTest being always false
+        at those points.
+
 2013-01-21  Nico Weber  <thakis@chromium.org>
 
         Make ninja the default build system for build-webkit --chromium on mac
