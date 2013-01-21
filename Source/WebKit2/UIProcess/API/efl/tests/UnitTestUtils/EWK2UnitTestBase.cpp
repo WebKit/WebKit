@@ -62,6 +62,9 @@ void EWK2UnitTestBase::SetUp()
 
     Ewk_Context* newContext = ewk_context_new();
     m_webView = ewk_view_smart_add(evas, smart, newContext);
+    // Clear HTTP cache files before running the unit tests, which prevents 
+    // performance degradation due to so many cache files.
+    ewk_context_resource_cache_clear(newContext);
     ewk_object_unref(newContext);
 
     ewk_view_theme_set(m_webView, environment->defaultTheme());

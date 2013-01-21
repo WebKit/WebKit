@@ -1,3 +1,16 @@
+2013-01-21  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] API unit tests are running extremely slow on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=104665
+
+        Reviewed by Gyuyoung Kim.
+
+        Clear HTTP cache files before running the unit tests, which prevents 
+        performance degradation due to so many cache files.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+
 2013-01-21  Gustavo Noronha Silva  <gns@gnome.org>
 
         REGRESSION (r140285): GTK uses WKPageResourceLoadClient which was removed
