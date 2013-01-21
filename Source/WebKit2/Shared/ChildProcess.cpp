@@ -142,7 +142,6 @@ void ChildProcess::terminationTimerFired()
 void ChildProcess::terminate()
 {
     m_connection->invalidate();
-    m_connection = nullptr;
 
     RunLoop::main()->stop();
 }

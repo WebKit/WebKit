@@ -1,3 +1,18 @@
+2013-01-21  Anders Carlsson  <andersca@apple.com>
+
+        Don't null out the IPC connection in ChildProcess:terminate
+        https://bugs.webkit.org/show_bug.cgi?id=107469
+        <rdar://problem/13015294>
+
+        Reviewed by Dan Bernstein.
+
+        We already invalidate the connection, and Connection::sendMessage checks if a connection
+        is valid and bails if it isn't, so the only thing that nulling out the connection here does
+        is that it would force us to add random connection null checks everywhere.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::terminate):
+
 2013-01-21  Joone Hur  <joone.hur@intel.com>
 
         [EFL] API unit tests are running extremely slow on the bots
