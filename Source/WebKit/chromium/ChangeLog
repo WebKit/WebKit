@@ -1,3 +1,14 @@
+2013-01-20  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Make SpeechSynthesis compile in the Chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=107382
+
+        Reviewed by Adam Barth.
+
+        Add ENABLE_SPEECH_SYNTHESIS to features.gypi, off by default.
+
+        * features.gypi:
+
 2013-01-20  Yoshifumi Inoue  <yosin@chromium.org>
 
         Dragging over an element with scrollbars should scroll the element when dragging near edges
