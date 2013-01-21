@@ -31,50 +31,100 @@
  * @extends {WebInspector.View}
  * @param {boolean} isVertical
  * @param {string=} sidebarSizeSettingName
- * @param {number=} defaultSidebarSize
+ * @param {number=} defaultSidebarWidth
+ * @param {number=} defaultSidebarHeight
  */
-WebInspector.SplitView = function(isVertical, sidebarSizeSettingName, defaultSidebarSize)
+WebInspector.SplitView = function(isVertical, sidebarSizeSettingName, defaultSidebarWidth, defaultSidebarHeight)
 {
     WebInspector.View.call(this);
-    this._isVertical = isVertical;
 
     this.registerRequiredCSS("splitView.css");
 
     this.element.className = "split-view";
 
-    this._firstElement = document.createElement("div");
-    this._firstElement.className = "split-view-contents split-view-contents-" + (isVertical ? "vertical" : "horizontal");
-    if (isVertical)
-        this._firstElement.style.left = 0;
-    else
-        this._firstElement.style.top = 0;
-    this.element.appendChild(this._firstElement);
+    this._firstElement = this.element.createChild("div", "split-view-contents");
 
-    this._secondElement = document.createElement("div");
-    this._secondElement.className = "split-view-contents split-view-contents-" + (isVertical ? "vertical" : "horizontal");
-    if (isVertical)
-        this._secondElement.style.right = 0;
-    else
-        this._secondElement.style.bottom = 0;
-    this.element.appendChild(this._secondElement);
+    this._secondElement = this.element.createChild("div", "split-view-contents");
 
-    this._resizerElement = document.createElement("div");
-    this._resizerElement.className = "split-view-resizer split-view-resizer-" + (isVertical ? "vertical" : "horizontal");
+    this._resizerElement = this.element.createChild("div", "split-view-resizer");
     this.installResizer(this._resizerElement);
     this._resizable = true;
-    this.element.appendChild(this._resizerElement);
 
-    defaultSidebarSize = defaultSidebarSize || 200;
-    this._savedSidebarSize = defaultSidebarSize;
+    this._savedSidebarWidth = defaultSidebarWidth || 200;
+    this._savedSidebarHeight = defaultSidebarHeight || this._savedSidebarWidth;
 
     this._sidebarSizeSettingName = sidebarSizeSettingName;
-    if (this._sidebarSizeSettingName)
-        WebInspector.settings[this._sidebarSizeSettingName] = WebInspector.settings.createSetting(this._sidebarSizeSettingName, undefined);
 
     this._secondIsSidebar = true;
+
+    this._innerSetVertical(isVertical);
 }
 
 WebInspector.SplitView.prototype = {
+    /**
+     * @return {boolean}
+     */
+    isVertical: function()
+    {
+        return this._isVertical;
+    },
+
+    /**
+     * @param {boolean} isVertical
+     */
+    setVertical: function(isVertical)
+    {
+        if (this._isVertical === isVertical)
+            return;
+
+        this._innerSetVertical(isVertical);
+
+        if (this.isShowing())
+            this._updateLayout();
+    },
+
+    /**
+     * @param {boolean} isVertical
+     */
+    _innerSetVertical: function(isVertical)
+    {
+        this._isVertical = isVertical;
+
+        this._removeAllLayoutProperties();
+
+        if (isVertical) {
+            this._firstElement.style.left = 0;
+            this._secondElement.style.right = 0;
+            this._firstElement.style.removeProperty("top");
+            this._secondElement.style.removeProperty("bottom");
+        } else {
+            this._firstElement.style.top = 0;
+            this._secondElement.style.bottom = 0;
+            this._firstElement.style.removeProperty("left");
+            this._secondElement.style.removeProperty("right");
+        }
+
+        var oldDirection = (isVertical ? "horizontal" : "vertical");
+        var newDirection = (isVertical ? "vertical" : "horizontal");
+
+        this._firstElement.removeStyleClass("split-view-contents-" + oldDirection);
+        this._firstElement.addStyleClass("split-view-contents-" + newDirection);
+
+        this._secondElement.removeStyleClass("split-view-contents-" + oldDirection);
+        this._secondElement.addStyleClass("split-view-contents-" + newDirection);
+
+        this._resizerElement.removeStyleClass("split-view-resizer-" + oldDirection);
+        this._resizerElement.addStyleClass("split-view-resizer-" + newDirection);
+    },
+  
+    _updateLayout: function()
+    {
+        this._updateTotalSize();
+
+        delete this._sidebarSize;  // Force update.
+        this.setSidebarSize(this._lastSidebarSize());
+    },
+
     /**
      * @return {Element}
      */
@@ -89,6 +139,14 @@ WebInspector.SplitView.prototype = {
     secondElement: function()
     {
         return this._secondElement;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isSidebarSecond: function()
+    {
+        return this._secondIsSidebar;
     },
 
     /**
@@ -155,6 +213,11 @@ WebInspector.SplitView.prototype = {
         this._secondElement.style.removeProperty("top");
         this._secondElement.style.removeProperty("width");
         this._secondElement.style.removeProperty("height");
+
+        this._resizerElement.style.removeProperty("left");
+        this._resizerElement.style.removeProperty("right");
+        this._resizerElement.style.removeProperty("top");
+        this._resizerElement.style.removeProperty("bottom");
     },
 
     showBoth: function()
@@ -165,9 +228,7 @@ WebInspector.SplitView.prototype = {
         this._secondElement.removeStyleClass("hidden");
         this._secondElement.removeStyleClass("maximized");
 
-        // Force update
-        delete this._sidebarSize;
-        this.setSidebarSize(this._lastSidebarSize());
+        this._updateLayout();
 
         this.setResizable(true);
         this.doResize();
@@ -216,6 +277,11 @@ WebInspector.SplitView.prototype = {
         return this._totalSize;
     },
 
+    _updateTotalSize: function()
+    {
+        this._totalSize = this._isVertical ? this.element.offsetWidth : this.element.offsetHeight;
+    },
+  
     /**
      * @param {number} size
      */
@@ -233,20 +299,20 @@ WebInspector.SplitView.prototype = {
                 this._secondElement.style.width = size + "px";
                 this._resizerElement.style.right = size - resizerWidth / 2 + "px";
             } else {
-                this._firstElement.style.width = size + "px";;
-                this._secondElement.style.left = size + "px";;
+                this._firstElement.style.width = size + "px";
+                this._secondElement.style.left = size + "px";
                 this._resizerElement.style.left = size - resizerWidth / 2 + "px";
             }
         } else {
             var resizerHeight = this._resizerElement.offsetHeight;
            
             if (this._secondIsSidebar) {
-                this._firstElement.style.bottom = size + "px";;
-                this._secondElement.style.height = size + "px";;
+                this._firstElement.style.bottom = size + "px";
+                this._secondElement.style.height = size + "px";
                 this._resizerElement.style.bottom = size - resizerHeight / 2 + "px";
             } else {
-                this._firstElement.style.height = size + "px";;
-                this._secondElement.style.top = size + "px";;
+                this._firstElement.style.height = size + "px";
+                this._secondElement.style.top = size + "px";
                 this._resizerElement.style.top = size - resizerHeight / 2 + "px";
             }
         }
@@ -270,14 +336,12 @@ WebInspector.SplitView.prototype = {
 
     wasShown: function()
     {
-        this._totalSize = this._isVertical ? this.element.offsetWidth : this.element.offsetHeight;
-        this.setSidebarSize(this._lastSidebarSize());
+        this._updateLayout();
     },
 
     onResize: function()
     {
-        var oldTotalSize = this._totalSize;
-        this._totalSize = this._isVertical ? this.element.offsetWidth : this.element.offsetHeight;
+        this._updateTotalSize();
     },
 
     /**
@@ -317,7 +381,31 @@ WebInspector.SplitView.prototype = {
      */
     installResizer: function(resizerElement)
     {
-        WebInspector.installDragHandle(resizerElement, this._startResizerDragging.bind(this), this._resizerDragging.bind(this), this._endResizerDragging.bind(this), this._isVertical ? "ew-resize" : "ns-resize");
+        resizerElement.addEventListener("mousedown", this._onDragStart.bind(this), false);
+    },
+
+    /**
+     *
+     * @param {Event} event
+     */
+    _onDragStart: function(event)
+    {
+        WebInspector._elementDragStart(this._startResizerDragging.bind(this), this._resizerDragging.bind(this), this._endResizerDragging.bind(this), this._isVertical ? "ew-resize" : "ns-resize", event);
+    },
+
+    /**
+     * @return {WebInspector.Setting}
+     */
+    _sizeSetting: function()
+    {
+        if (!this._sidebarSizeSettingName)
+            return null;
+
+        var settingName = this._sidebarSizeSettingName + (this._isVertical ? "" : "H");
+        if (!WebInspector.settings[settingName])
+            WebInspector.settings[settingName] = WebInspector.settings.createSetting(settingName, undefined);
+
+        return WebInspector.settings[settingName];
     },
 
     /**
@@ -325,7 +413,9 @@ WebInspector.SplitView.prototype = {
      */
     _lastSidebarSize: function()
     {
-        return this._sidebarSizeSettingName ? WebInspector.settings[this._sidebarSizeSettingName].get() || this._savedSidebarSize : this._savedSidebarSize;
+        var sizeSetting = this._sizeSetting();
+        var size = sizeSetting ? sizeSetting.get() : 0;
+        return size || (this._isVertical ? this._savedSidebarWidth : this._savedSidebarHeight);
     },
 
     /**
@@ -333,11 +423,14 @@ WebInspector.SplitView.prototype = {
      */
     _saveSidebarSize: function(size)
     {
-        this._savedSidebarSize = size;
-        if (!this._sidebarSizeSettingName)
-            return;
+        if (this._isVertical)
+            this._savedSidebarWidth = size;
+        else
+            this._savedSidebarHeight = size;
 
-        WebInspector.settings[this._sidebarSizeSettingName].set(this._savedSidebarSize);
+        var sizeSetting = this._sizeSetting();
+        if (sizeSetting)
+            sizeSetting.set(size);
     },
 
     __proto__: WebInspector.View.prototype
