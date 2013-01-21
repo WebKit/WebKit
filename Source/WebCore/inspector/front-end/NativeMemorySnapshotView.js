@@ -41,50 +41,11 @@ WebInspector.NativeMemorySnapshotView = function(profile)
     this.element.addStyleClass("native-snapshot-view");
     this._containmentDataGrid = new WebInspector.NativeSnapshotDataGrid(profile);
     this._containmentDataGrid.show(this.element);
-
-    this._heapGraphDataGrid = new WebInspector.NativeHeapGraphDataGrid(profile._graph);
-
-    this._viewSelectElement = document.createElement("select");
-    this._viewSelectElement.className = "status-bar-item";
-    this._viewSelectElement.addEventListener("change", this._onSelectedViewChanged.bind(this), false);
-
-    this._views = [{title: "Aggregated", view: this._containmentDataGrid},
-                  {title: "Graph", view: this._heapGraphDataGrid}];
-    this._currentViewIndex = 0;
-    for (var i = 0; i < this._views.length; ++i) {
-        var view = this._views[i];
-        var option = document.createElement("option");
-        option.label = WebInspector.UIString(view.title);
-        this._viewSelectElement.appendChild(option);
-    }
 }
 
 WebInspector.NativeMemorySnapshotView.prototype = {
-    _onSelectedViewChanged: function(event)
-    {
-        var index = event.target.selectedIndex;
-        if (index === this._currentViewIndex)
-            return;
-
-        var currentView = this._views[this._currentViewIndex].view;
-        currentView.detach();
-
-        this._currentViewIndex = index;
-        var selectedView = this._views[index].view;
-        selectedView.show(this.element);
-    },
-
-    get statusBarItems()
-    {
-        var span = document.createElement("span");
-        span.className = "status-bar-select-container";
-        span.appendChild(this._viewSelectElement);
-        return [span];
-    },
-
     __proto__: WebInspector.View.prototype
 }
-
 
 
 /**
@@ -263,142 +224,9 @@ WebInspector.NativeSnapshotNode.prototype = {
 
         for (var node in this._nodeData.children) {
             var nodeData = this._nodeData.children[node];
-            this._addChildrenFromGraph(nodeData);
             if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get() || nodeData.name !== "Other")
                 this.appendChild(new WebInspector.NativeSnapshotNode(nodeData, this._rootMemoryBlock));
         }
-    },
-
-    /**
-     * @param {MemoryAgent.MemoryBlock} memoryBlock
-     */
-    _addChildrenFromGraph: function(memoryBlock)
-    {
-        if (memoryBlock.children)
-            return;
-        if (memoryBlock.name !== "Image" || this._nodeData.name !== "MemoryCache")
-            return;
-
-        // Collect objects on the path MemoryCache -> CachedImage -m_image-> BitmapImage -m_frames-> FrameData -m_frame-> SkBitmap -> SkPixelRef
-        var graph = this.dataGrid._profile._graph;
-        var roots = graph.root().referencedNodes();
-        var memoryCache;
-        for (var i = 0; i < roots.length; i++) {
-            var root = roots[i];
-            if (root.className() === "MemoryCache") {
-                memoryCache = root;
-                break;
-            }
-        }
-        var edges = memoryCache.outgoingEdges();
-        var cachedImages = [];
-        for (var i = 0; i < edges.length; i++) {
-            var target = edges[i].target();
-            if (target.className() === "CachedImage") {
-                var cachedImage = {
-                    name: target.name(),
-                    size: target.size(),
-                    children: []
-                };
-                cachedImages.push(cachedImage);
-                var image = target.targetOfEdge("m_image");
-                if (image.className() === "BitmapImage") {
-                    var frames = image.targetsOfAllEdges("m_frame");
-                    for (var j = 0; j < frames.length; j++) {
-                        var pixels = frames[j].targetOfEdge("pixels");
-                        if (pixels) {
-                            cachedImage.size += pixels.size();
-                            cachedImage.children.push({
-                                name: "Bitmap pixels",
-                                size: pixels.size()
-                            });
-                        }
-                    }
-                }
-            }
-        }
-        memoryBlock.children = cachedImages;
-    },
-
-    __proto__: WebInspector.DataGridNode.prototype
-}
-
-
-/**
- * @constructor
- * @extends {WebInspector.DataGrid}
- * @param {WebInspector.NativeHeapGraph} nativeHeapGraph
- */
-WebInspector.NativeHeapGraphDataGrid = function(nativeHeapGraph)
-{
-    var columns = {
-        id: { title: WebInspector.UIString("id"), width: "80px", disclosure: true, sortable: true },
-        type: { title: WebInspector.UIString("Type"), width: "200px", sortable: true },
-        className: { title: WebInspector.UIString("Class name"), width: "200px", sortable: true },
-        name: { title: WebInspector.UIString("Name"), width: "200px", sortable: true },
-        size: { title: WebInspector.UIString("Size"), sortable: true, sort: "descending" },
-    };
-    WebInspector.DataGrid.call(this, columns);
-    this._nativeHeapGraph = nativeHeapGraph;
-    this._root = new WebInspector.NativeHeapGraphDataGridRoot(this._nativeHeapGraph);
-    this.setRootNode(this._root);
-    this._root._populate();
-}
-
-WebInspector.NativeHeapGraphDataGrid.prototype = {
-    __proto__: WebInspector.DataGrid.prototype
-}
-
-
-/**
- * @constructor
- * @extends {WebInspector.DataGridNode}
- * @param {WebInspector.NativeHeapGraph} graph
- */
-WebInspector.NativeHeapGraphDataGridRoot = function(graph)
-{
-    WebInspector.DataGridNode.call(this, { id: "root" }, true);
-    this._graph = graph;
-    this.addEventListener("populate", this._populate, this);
-}
-
-WebInspector.NativeHeapGraphDataGridRoot.prototype = {
-    _populate: function() {
-        this.removeEventListener("populate", this._populate, this);
-        var roots = this._graph.root().referencedNodes();
-        for (var i = 0; i < roots.length; i++)
-            this.appendChild(new WebInspector.NativeHeapGraphDataGridNode(roots[i]));
-    },
-
-    __proto__: WebInspector.DataGridNode.prototype
-}
-
-
-/**
- * @constructor
- * @extends {WebInspector.DataGridNode}
- * @param {WebInspector.NativeHeapGraph.Node} node
- */
-WebInspector.NativeHeapGraphDataGridNode = function(node)
-{
-    var data = {
-        id: node.id(),
-        size: node.size(),
-        type: node.type(),
-        className: node.className(),
-        name: node.name(),
-    };
-    WebInspector.DataGridNode.call(this, data, node.hasReferencedNodes());
-    this._node = node;
-    this.addEventListener("populate", this._populate, this);
-}
-
-WebInspector.NativeHeapGraphDataGridNode.prototype = {
-    _populate: function() {
-        this.removeEventListener("populate", this._populate, this);
-        var children = this._node.referencedNodes();
-        for (var i = 0; i < children.length; i++)
-            this.appendChild(new WebInspector.NativeHeapGraphDataGridNode(children[i]));
     },
 
     __proto__: WebInspector.DataGridNode.prototype
@@ -458,11 +286,10 @@ WebInspector.NativeMemoryProfileType.prototype = {
                 }
             }
             profileHeader._memoryBlock = memoryBlock;
-            profileHeader._graph = new WebInspector.NativeHeapGraph(graph);
             profileHeader.isTemporary = false;
             profileHeader.sidebarElement.subtitle = Number.bytesToString(/** @type{number} */(memoryBlock.size));
         }
-        MemoryAgent.getProcessMemoryDistribution(true, didReceiveMemorySnapshot.bind(this));
+        MemoryAgent.getProcessMemoryDistribution(false, didReceiveMemorySnapshot.bind(this));
         return false;
     },
 
