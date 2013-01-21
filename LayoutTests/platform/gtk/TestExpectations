@@ -102,7 +102,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 # Accessibility tests that should never be run for GTK due to be
 # written in a platform-specific way. They should either be moved to
 # the right platform or re-written in a more platform-agnostic way.
-webkit.org/b/98348 accessibility/aria-list-and-listitem.html [ WontFix ]
 webkit.org/b/98348 accessibility/aria-option-role.html [ WontFix ]
 webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix ]
 webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix ]
