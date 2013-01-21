@@ -1209,4 +1209,8 @@
 #endif
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#define WTF_USE_CONTENT_FILTERING 1
+#endif
+
 #endif /* WTF_Platform_h */

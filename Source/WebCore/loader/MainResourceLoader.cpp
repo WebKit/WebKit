@@ -61,7 +61,7 @@
 #include "PluginDatabase.h"
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
 #include "WebCoreSystemInterface.h"
 #endif
 
@@ -74,7 +74,7 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
     , m_substituteDataLoadIdentifier(0)
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     , m_filter(0)
 #endif
 {
@@ -83,7 +83,7 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
 MainResourceLoader::~MainResourceLoader()
 {
     clearResource();
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     ASSERT(!m_filter);
 #endif
 }
@@ -136,7 +136,7 @@ void MainResourceLoader::cancel(const ResourceError& error)
     clearResource();
     receivedError(resourceError);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (m_filter) {
         wkFilterRelease(m_filter);
         m_filter = 0;
@@ -453,7 +453,7 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
     }
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (r.url().protocolIs("https") && wkFilterIsManagedSession())
         m_filter = wkFilterCreateInstance(r.nsURLResponse());
 #endif
@@ -483,7 +483,7 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
     ASSERT(!defersLoading());
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (m_filter) {
         ASSERT(!wkFilterWasBlocked(m_filter));
         const char* blockedData = wkFilterAddData(m_filter, data, &length);
@@ -511,7 +511,7 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
 
     documentLoader()->receivedData(data, length);
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (WebFilterEvaluator *filter = m_filter) {
         // If we got here, it means we know if we were blocked or not. If we were blocked, we're
         // done loading the page altogether. Either way, we don't need the filter anymore.
@@ -543,7 +543,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
         m_substituteDataLoadIdentifier = 0;
     }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (m_filter) {
         int length;
         const char* data = wkFilterDataComplete(m_filter, &length);
@@ -579,7 +579,7 @@ void MainResourceLoader::notifyFinished(CachedResource* resource)
         return;
     }
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     if (m_filter) {
         wkFilterRelease(m_filter);
         m_filter = 0;

@@ -2150,14 +2150,17 @@ _wkExecutableWasLinkedOnOrBeforeSnowLeopard
 _wkRecommendedScrollerStyle
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-_wkExecutableWasLinkedOnOrBeforeLion
+#if USE(CONTENT_FILTERING)
 _wkFilterAddData
 _wkFilterCreateInstance
 _wkFilterDataComplete
 _wkFilterIsManagedSession
 _wkFilterRelease
 _wkFilterWasBlocked
+#endif
+
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+_wkExecutableWasLinkedOnOrBeforeLion
 _wkNSElasticDeltaForReboundDelta
 _wkNSElasticDeltaForTimeDelta
 _wkNSReboundDeltaForElasticDelta

@@ -36,7 +36,7 @@
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
@@ -130,7 +130,7 @@ private:
     double m_timeOfLastDataReceived;
     unsigned long m_substituteDataLoadIdentifier;
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(CONTENT_FILTERING)
     WebFilterEvaluator *m_filter;
 #endif
 };

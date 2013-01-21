@@ -208,14 +208,16 @@ void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* m
 void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#if USE(CONTENT_FILTERING)
 BOOL (*wkFilterIsManagedSession)(void);
 WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
 void (*wkFilterRelease)(WebFilterEvaluator *);
 BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
 const char* (*wkFilterAddData)(WebFilterEvaluator *, const char* data, int* length);
 const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
+#endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
