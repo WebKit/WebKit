@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    if (window.internals)
+      window.internals.settings.setCSSExclusionsEnabled(true);
+  </script>
+  <style>
+    .container {
+      font: 10px/1 Ahem, sans-serif;
+      background-color: blue;
+      width: 40px;
+      height: 40px;
+      margin: 50px;
+    }
+    .child {
+      background-color: green;
+      width: 40px;
+      height: 40px;
+    }
+    .exclusion-negative-x {
+      -webkit-shape-outside: rectangle(-20px, 0, 40px, 40px);
+    }
+    .exclusion-positive-x {
+      -webkit-shape-outside: rectangle(20px, 0, 40px, 40px);
+    }
+    .exclusion-negative-y {
+      -webkit-shape-outside: rectangle(0, -20px, 40px, 40px);
+    }
+    .exclusion-positive-y {
+      -webkit-shape-outside: rectangle(0, 20px, 40px, 40px);
+    }
+  </style>
+</head>
+<body>
+  <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=100399">Bug 100399</a>: [CSS Exclusions] shape-outside on floats for rectangle shapes positioning</h1>
+  <h2>The following tests should have a small blue rectangle to the left or to the right of a green square</h2>
+  <div class="container">
+    <div style="float: left" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <h2>The following tests should have a small blue rectangle above or below of a green square</h2>
+  <div class="container">
+    <div style="float: left" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <h2>The following tests should have a small blue rectangle above or below of a green square</h2>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-rl;" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-rl;" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-rl;" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-rl;" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <h2>The following tests should have a small blue rectangle to the left or to the right of a green square</h2>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-rl;" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-rl;" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-rl;" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-rl;" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <h2>The following tests should have a small blue rectangle above or below of a green square</h2>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-lr;" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-lr;" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-lr;" class="child exclusion-negative-x">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-lr;" class="child exclusion-positive-x">
+    </div>
+  </div>
+  <h2>The following tests should have a small blue rectangle to the left or to the right of a green square</h2>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-lr;" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: left; -webkit-writing-mode: vertical-lr;" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-lr;" class="child exclusion-negative-y">
+    </div>
+  </div>
+  <div class="container">
+    <div style="float: right; -webkit-writing-mode: vertical-lr;" class="child exclusion-positive-y">
+    </div>
+  </div>
+  <h2>The following test ensures that things render correctly using the accelerated painting flow. It should have a small blue rectangle to the right of a green square</h2>
+  <div class="container">
+    <div style="float: left; -webkit-transform: translateZ(1px);" class="child exclusion-negative-x">
+    </div>
+  </div>
+</body>
