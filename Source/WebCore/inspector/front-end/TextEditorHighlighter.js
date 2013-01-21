@@ -192,7 +192,7 @@ WebInspector.TextEditorHighlighter.prototype = {
                 this._tokenizer.condition = JSON.parse(postConditionStringified);
 
                 // Highlight line.
-                state.ranges = [];
+                state.ranges = state.ranges || [];
                 do {
                     var newColumn = this._tokenizer.nextToken(lastHighlightedColumn);
                     var tokenType = this._tokenizer.tokenType;
