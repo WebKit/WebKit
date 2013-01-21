@@ -69,6 +69,7 @@ public:
 
     virtual void setDrawsContent(bool);
     virtual void setAnchorPoint(const FloatPoint3D&);
+    virtual void setOpacity(float);
     virtual void setPosition(const FloatPoint&);
     virtual void setSize(const FloatSize&);
 
@@ -86,6 +87,8 @@ private:
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
     void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase);
     void commitLayerChangesAfterSublayers();
+
+    void updateOpacityOnLayer();
 
     virtual void platformClutterLayerAnimationStarted(double beginTime);
     virtual void platformClutterLayerPaintContents(GraphicsContext&, const IntRect& clip);

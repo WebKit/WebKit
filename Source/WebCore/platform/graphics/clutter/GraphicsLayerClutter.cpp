@@ -152,6 +152,16 @@ void GraphicsLayerClutter::setAnchorPoint(const FloatPoint3D& point)
     noteLayerPropertyChanged(GeometryChanged);
 }
 
+void GraphicsLayerClutter::setOpacity(float opacity)
+{
+    float clampedOpacity = std::max(0.0f, std::min(opacity, 1.0f));
+    if (clampedOpacity == m_opacity)
+        return;
+
+    GraphicsLayer::setOpacity(clampedOpacity);
+    noteLayerPropertyChanged(OpacityChanged);
+}
+
 void GraphicsLayerClutter::setPosition(const FloatPoint& point)
 {
     if (point == m_position)
@@ -265,6 +275,11 @@ void GraphicsLayerClutter::repaintLayerDirtyRects()
     m_dirtyRects.clear();
 }
 
+void GraphicsLayerClutter::updateOpacityOnLayer()
+{
+    clutter_actor_set_opacity(CLUTTER_ACTOR(primaryLayer()), static_cast<guint8>(roundf(m_opacity * 255)));
+}
+
 FloatPoint GraphicsLayerClutter::computePositionRelativeToBase(float& pageScale) const
 {
     pageScale = 1;
@@ -368,6 +383,9 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
 
     if (m_uncommittedChanges & DirtyRectsChanged)
         repaintLayerDirtyRects();
+
+    if (m_uncommittedChanges & OpacityChanged)
+        updateOpacityOnLayer();
 }
 
 void GraphicsLayerClutter::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
