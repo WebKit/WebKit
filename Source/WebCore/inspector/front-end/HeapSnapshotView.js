@@ -873,7 +873,7 @@ WebInspector.HeapProfileHeader.prototype = {
         }
         var worker = new WebInspector.HeapSnapshotWorker();
         worker.addEventListener("wait", setProfileWait, this);
-        var loaderProxy = worker.createObject("WebInspector.HeapSnapshotLoader");
+        var loaderProxy = worker.createLoader("JSHeapSnapshot");
         loaderProxy.addConsumer(this._snapshotReceived.bind(this));
         this._receiver = loaderProxy;
     },

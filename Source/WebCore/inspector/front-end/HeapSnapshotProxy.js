@@ -188,12 +188,11 @@ WebInspector.HeapSnapshotWorker = function()
 }
 
 WebInspector.HeapSnapshotWorker.prototype = {
-    createObject: function(constructorName)
+    createLoader: function(snapshotConstructorName)
     {
-        var proxyConstructorFunction = this._findFunction(constructorName + "Proxy");
         var objectId = this._nextObjectId++;
-        var proxy = new proxyConstructorFunction(this, objectId);
-        this._postMessage({callId: this._nextCallId++, disposition: "create", objectId: objectId, methodName: constructorName});
+        var proxy = new WebInspector.HeapSnapshotLoaderProxy(this, objectId, snapshotConstructorName);
+        this._postMessage({callId: this._nextCallId++, disposition: "create", objectId: objectId, methodName: "WebInspector.HeapSnapshotLoader"});
         return proxy;
     },
 
@@ -360,9 +359,10 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
  * @extends {WebInspector.HeapSnapshotProxyObject}
  * @implements {WebInspector.OutputStream}
  */
-WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId)
+WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId, snapshotConstructorName)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
+    this._snapshotConstructorName = snapshotConstructorName;
     this._pendingSnapshotConsumers = [];
 }
 
@@ -388,7 +388,7 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
     {
         function buildSnapshot()
         {
-            this.callFactoryMethod(updateStaticData.bind(this), "buildSnapshot", "WebInspector.HeapSnapshotProxy");
+            this.callFactoryMethod(updateStaticData.bind(this), "buildSnapshot", "WebInspector.HeapSnapshotProxy", this._snapshotConstructorName);
         }
         function updateStaticData(snapshotProxy)
         {

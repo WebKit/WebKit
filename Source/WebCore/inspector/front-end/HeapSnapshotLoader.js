@@ -56,9 +56,10 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._parseStringsArray();
     },
 
-    buildSnapshot: function()
+    buildSnapshot: function(constructorName)
     {
-        var result = new WebInspector.JSHeapSnapshot(this._snapshot);
+        var constructor = WebInspector[constructorName];
+        var result = new constructor(this._snapshot);
         this._reset();
         return result;
     },
