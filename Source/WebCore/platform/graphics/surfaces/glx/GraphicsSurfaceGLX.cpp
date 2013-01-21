@@ -144,37 +144,50 @@ public:
         return m_window;
     }
 
-    Display* display()
-    {
-        if (!m_display)
+private:
+    struct DisplayConnection {
+        DisplayConnection()
+        {
             m_display = XOpenDisplay(0);
-        return m_display;
+        }
+
+        ~DisplayConnection()
+        {
+            XCloseDisplay(m_display);
+        }
+
+        Display* display() { return m_display; }
+    private:
+        Display* m_display;
+    };
+
+public:
+    static Display* display()
+    {
+        // Display connection will only be broken at program shutdown.
+        static DisplayConnection displayConnection;
+        return displayConnection.display();
     }
 
     ~OffScreenRootWindow()
     {
-        if (--m_refCount || !m_display)
+        if (--m_refCount)
             return;
 
         if (m_window) {
-            XUnmapWindow(m_display, m_window);
-            XDestroyWindow(m_display, m_window);
+            XUnmapWindow(display(), m_window);
+            XDestroyWindow(display(), m_window);
             m_window = 0;
         }
-
-        XCloseDisplay(m_display);
-        m_display = 0;
     }
 
 private:
     static int m_refCount;
     static Window m_window;
-    static Display* m_display;
 };
 
 int OffScreenRootWindow::m_refCount = 0;
 Window OffScreenRootWindow::m_window = 0;
-Display* OffScreenRootWindow::m_display = 0;
 
 static const int glxSpec[] = {
     // The specification is a set key value pairs stored in a simple array.
@@ -195,7 +208,7 @@ static const int glxAttributes[] = {
 
 struct GraphicsSurfacePrivate {
     GraphicsSurfacePrivate(const PlatformGraphicsContext3D shareContext = 0)
-        : m_display(m_offScreenWindow.display())
+        : m_offScreenWindow(adoptPtr(new OffScreenRootWindow()))
         , m_xPixmap(0)
         , m_glxPixmap(0)
         , m_surface(0)
@@ -222,7 +235,7 @@ struct GraphicsSurfacePrivate {
 #endif
 
         int numReturned;
-        GLXFBConfig* fbConfigs = glXChooseFBConfig(m_display, DefaultScreen(m_display), attributes, &numReturned);
+        GLXFBConfig* fbConfigs = glXChooseFBConfig(display(), DefaultScreen(display()), attributes, &numReturned);
 
         // Make sure that we choose a configuration that supports an alpha mask.
         m_fbConfig = findFBConfigWithAlpha(fbConfigs, numReturned);
@@ -230,12 +243,11 @@ struct GraphicsSurfacePrivate {
         XFree(fbConfigs);
 
         // Create a GLX context for OpenGL rendering
-        m_glContext = glXCreateNewContext(m_display, m_fbConfig, GLX_RGBA_TYPE, shareContextObject, true);
+        m_glContext = glXCreateNewContext(display(), m_fbConfig, GLX_RGBA_TYPE, shareContextObject, true);
     }
 
     GraphicsSurfacePrivate(uint32_t winId)
-        : m_display(m_offScreenWindow.display())
-        , m_xPixmap(0)
+        : m_xPixmap(0)
         , m_glxPixmap(0)
         , m_surface(winId)
         , m_glxSurface(0)
@@ -255,63 +267,63 @@ struct GraphicsSurfacePrivate {
 
     uint32_t createSurface(const IntSize& size)
     {
-        XVisualInfo* visualInfo = glXGetVisualFromFBConfig(m_display, m_fbConfig);
+        XVisualInfo* visualInfo = glXGetVisualFromFBConfig(display(), m_fbConfig);
         if (!visualInfo)
             return 0;
 
-        Colormap cmap = XCreateColormap(m_display, m_offScreenWindow.getXWindow(), visualInfo->visual, AllocNone);
+        Colormap cmap = XCreateColormap(display(), m_offScreenWindow->getXWindow(), visualInfo->visual, AllocNone);
 
         XSetWindowAttributes a;
-        a.background_pixel = WhitePixel(m_display, 0);
-        a.border_pixel = BlackPixel(m_display, 0);
+        a.background_pixel = WhitePixel(display(), 0);
+        a.border_pixel = BlackPixel(display(), 0);
         a.colormap = cmap;
-        m_surface = XCreateWindow(m_display, m_offScreenWindow.getXWindow(), 0, 0, size.width(), size.height(),
+        m_surface = XCreateWindow(display(), m_offScreenWindow->getXWindow(), 0, 0, size.width(), size.height(),
             0, visualInfo->depth, InputOutput, visualInfo->visual,
             CWBackPixel | CWBorderPixel | CWColormap, &a);
-        XSetWindowBackgroundPixmap(m_display, m_surface, 0);
-        XCompositeRedirectWindow(m_display, m_surface, CompositeRedirectManual);
-        m_glxSurface = glXCreateWindow(m_display, m_fbConfig, m_surface, 0);
+        XSetWindowBackgroundPixmap(display(), m_surface, 0);
+        XCompositeRedirectWindow(display(), m_surface, CompositeRedirectManual);
+        m_glxSurface = glXCreateWindow(display(), m_fbConfig, m_surface, 0);
         XFree(visualInfo);
 
         // Make sure the XRender Extension is available.
         int eventBasep, errorBasep;
-        if (!XRenderQueryExtension(m_display, &eventBasep, &errorBasep))
+        if (!XRenderQueryExtension(display(), &eventBasep, &errorBasep))
             return 0;
 
-        XMapWindow(m_display, m_surface);
+        XMapWindow(display(), m_surface);
         return m_surface;
     }
 
     void createPixmap(uint32_t winId)
     {
         XWindowAttributes attr;
-        if (!XGetWindowAttributes(m_display, winId, &attr))
+        if (!XGetWindowAttributes(display(), winId, &attr))
             return;
 
         // Ensure that the window is mapped.
         if (attr.map_state == IsUnmapped || attr.map_state == IsUnviewable)
             return;
 
-        ScopedXPixmapCreationErrorHandler handler(m_display);
+        ScopedXPixmapCreationErrorHandler handler(display());
         m_size = IntSize(attr.width, attr.height);
 
-        XRenderPictFormat* format = XRenderFindVisualFormat(m_display, attr.visual);
+        XRenderPictFormat* format = XRenderFindVisualFormat(display(), attr.visual);
         m_hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
 
         int numberOfConfigs;
-        GLXFBConfig* configs = glXChooseFBConfig(m_display, XDefaultScreen(m_display), glxSpec, &numberOfConfigs);
+        GLXFBConfig* configs = glXChooseFBConfig(display(), XDefaultScreen(display()), glxSpec, &numberOfConfigs);
 
         // If origin window has alpha then find config with alpha.
         GLXFBConfig& config = m_hasAlpha ? findFBConfigWithAlpha(configs, numberOfConfigs) : configs[0];
 
-        m_xPixmap = XCompositeNameWindowPixmap(m_display, winId);
-        m_glxPixmap = glXCreatePixmap(m_display, config, m_xPixmap, glxAttributes);
+        m_xPixmap = XCompositeNameWindowPixmap(display(), winId);
+        m_glxPixmap = glXCreatePixmap(display(), config, m_xPixmap, glxAttributes);
 
         if (!handler.isValidOperation())
             clear();
         else {
             uint inverted = 0;
-            glXQueryDrawable(m_display, m_glxPixmap, GLX_Y_INVERTED_EXT, &inverted);
+            glXQueryDrawable(display(), m_glxPixmap, GLX_Y_INVERTED_EXT, &inverted);
             m_textureIsYInverted = !!inverted;
         }
 
@@ -328,13 +340,13 @@ struct GraphicsSurfacePrivate {
         m_detachedContext = glXGetCurrentContext();
         m_detachedSurface = glXGetCurrentDrawable();
         if (m_surface && m_glContext)
-            glXMakeCurrent(m_display, m_surface, m_glContext);
+            glXMakeCurrent(display(), m_surface, m_glContext);
     }
 
     void doneCurrent()
     {
         if (m_detachedContext)
-            glXMakeCurrent(m_display, m_detachedSurface, m_detachedContext);
+            glXMakeCurrent(display(), m_detachedSurface, m_detachedContext);
         m_detachedContext = 0;
     }
 
@@ -351,7 +363,7 @@ struct GraphicsSurfacePrivate {
             GLint oldFBO;
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
             pGlBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glXSwapBuffers(m_display, m_surface);
+            glXSwapBuffers(display(), m_surface);
             pGlBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
         }
     }
@@ -388,7 +400,7 @@ struct GraphicsSurfacePrivate {
         doneCurrent();
     }
 
-    Display* display() const { return m_display; }
+    Display* display() const { return OffScreenRootWindow::display(); }
 
     GLXPixmap glxPixmap() const
     {
@@ -401,7 +413,7 @@ struct GraphicsSurfacePrivate {
     {
         if (m_size.isEmpty()) {
             XWindowAttributes attr;
-            if (XGetWindowAttributes(m_display, m_surface, &attr))
+            if (XGetWindowAttributes(display(), m_surface, &attr))
                 const_cast<GraphicsSurfacePrivate*>(this)->m_size = IntSize(attr.width, attr.height);
         }
         return m_size;
@@ -412,11 +424,11 @@ private:
     GLXFBConfig& findFBConfigWithAlpha(GLXFBConfig* fbConfigs, int numberOfConfigs)
     {
         for (int i = 0; i < numberOfConfigs; ++i) {
-            XVisualInfo* visualInfo = glXGetVisualFromFBConfig(m_display, fbConfigs[i]);
+            XVisualInfo* visualInfo = glXGetVisualFromFBConfig(display(), fbConfigs[i]);
             if (!visualInfo)
                 continue;
 
-            XRenderPictFormat* format = XRenderFindVisualFormat(m_display, visualInfo->visual);
+            XRenderPictFormat* format = XRenderFindVisualFormat(display(), visualInfo->visual);
             XFree(visualInfo);
 
             if (format && format->direct.alphaMask > 0)
@@ -430,30 +442,29 @@ private:
     void clear()
     {
         if (m_glxPixmap) {
-            glXDestroyPixmap(m_display, m_glxPixmap);
+            glXDestroyPixmap(display(), m_glxPixmap);
             m_glxPixmap = 0;
         }
 
         if (m_xPixmap) {
-            XFreePixmap(m_display, m_xPixmap);
+            XFreePixmap(display(), m_xPixmap);
             m_xPixmap = 0;
         }
 
         // Client doesn't own the window. Delete surface only on writing side.
         if (!m_isReceiver && m_surface) {
-            XDestroyWindow(m_display, m_surface);
+            XDestroyWindow(display(), m_surface);
             m_surface = 0;
         }
 
         if (m_glContext) {
-            glXDestroyContext(m_display, m_glContext);
+            glXDestroyContext(display(), m_glContext);
             m_glContext = 0;
         }
     }
 
-    OffScreenRootWindow m_offScreenWindow;
+    OwnPtr<OffScreenRootWindow> m_offScreenWindow;
     IntSize m_size;
-    Display* m_display;
     Pixmap m_xPixmap;
     GLXPixmap m_glxPixmap;
     Window m_surface;
