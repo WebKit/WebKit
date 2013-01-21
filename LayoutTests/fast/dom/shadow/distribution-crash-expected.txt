@@ -1,0 +1,8 @@
+When modifying InsertionPoint's child, distribution should not cause crash.
+
+PASS unless crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

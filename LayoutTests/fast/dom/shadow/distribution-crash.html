@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><body>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<p>When modifying InsertionPoint's child, distribution should not cause crash.</p>
+<p>PASS unless crash.</p>
+
+<div id="host"></div>
+<pre id="console"></pre>
+
+<script>
+jsTestIsAsync = true;
+
+function createElementLikeDetails()
+{
+    var details = document.createElement('div');
+    var shadowRoot = details.webkitCreateShadowRoot();
+
+    shadowRoot.innerHTML = '<content select="div.summary"></content><content></content>';
+
+    var defaultSummary = document.createElement('div');
+    defaultSummary.webkitCreateShadowRoot().innerHTML = 'Default Summary';
+    shadowRoot.firstChild.appendChild(defaultSummary);
+
+    return details;    
+}
+
+var shadowRoot1 = host.webkitCreateShadowRoot();
+shadowRoot1.innerHTML = 'something 1';
+
+var shadowRoot2 = host.webkitCreateShadowRoot();
+var details = createElementLikeDetails();
+details.innerHTML = '<shadow id="shadow">something 2</shadow>';
+shadowRoot2.appendChild(details);
+
+var shadow = details.firstChild;
+setTimeout(function() {
+    shadow.firstChild.remove();
+    finishJSTest();
+}, 0);
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body></html>

@@ -58,12 +58,13 @@ HTMLShadowElement::~HTMLShadowElement()
 
 ShadowRoot* HTMLShadowElement::olderShadowRoot()
 {
-    if (!treeScope()->rootNode()->isShadowRoot())
+    ShadowRoot* containingRoot = containingShadowRoot();
+    if (!containingRoot)
         return 0;
 
-    ContentDistributor::ensureDistributionFromDocument(this);
+    ContentDistributor::ensureDistribution(containingRoot);
 
-    ShadowRoot* older = toShadowRoot(treeScope()->rootNode())->olderShadowRoot();
+    ShadowRoot* older = containingRoot->olderShadowRoot();
     if (!older || older->type() != ShadowRoot::AuthorShadowRoot || ScopeContentDistribution::assignedTo(older) != this)
         return 0;
 

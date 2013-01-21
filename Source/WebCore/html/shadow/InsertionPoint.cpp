@@ -53,8 +53,8 @@ InsertionPoint::~InsertionPoint()
 
 void InsertionPoint::attach()
 {
-    if (ShadowRoot* root = containingShadowRoot())
-        root->owner()->ensureDistribution();
+    if (ShadowRoot* shadowRoot = containingShadowRoot())
+        ContentDistributor::ensureDistribution(shadowRoot);
     for (size_t i = 0; i < m_distribution.size(); ++i) {
         if (!m_distribution.at(i)->attached())
             m_distribution.at(i)->attach();
@@ -65,8 +65,9 @@ void InsertionPoint::attach()
 
 void InsertionPoint::detach()
 {
-    if (ShadowRoot* root = containingShadowRoot())
-        root->owner()->ensureDistribution();
+    if (ShadowRoot* shadowRoot = containingShadowRoot())
+        ContentDistributor::ensureDistribution(shadowRoot);
+
     for (size_t i = 0; i < m_distribution.size(); ++i)
         m_distribution.at(i)->detach();
 
@@ -99,7 +100,8 @@ bool InsertionPoint::isActive() const
 
 PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
 {
-    ContentDistributor::ensureDistributionFromDocument(const_cast<InsertionPoint*>(this));
+    if (ShadowRoot* shadowRoot = containingShadowRoot())
+        ContentDistributor::ensureDistribution(shadowRoot);
 
     Vector<RefPtr<Node> > nodes;
 
@@ -204,7 +206,8 @@ InsertionPoint* resolveReprojection(const Node* projectedNode)
 
     while (current) {
         if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
-            shadow->ensureDistribution();
+            if (ShadowRoot* root = current->containingShadowRoot())
+                ContentDistributor::ensureDistribution(root);
             if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
                 current = insertedTo;
                 insertionPoint = insertedTo;

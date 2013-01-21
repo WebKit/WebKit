@@ -64,7 +64,6 @@ public:
     void recalcStyle(Node::StyleChange);
 
     void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }
-    void ensureDistribution() { m_distributor.ensureDistribution(host()); }
     void didAffectSelector(AffectedSelectorMask mask) { m_distributor.didAffectSelector(host(), mask); }
     void willAffectSelector() { m_distributor.willAffectSelector(host()); }
 

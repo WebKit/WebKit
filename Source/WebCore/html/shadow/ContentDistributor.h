@@ -128,13 +128,12 @@ public:
     void distributeSelectionsTo(InsertionPoint*, const ContentDistribution& pool, Vector<bool>& distributed);
     void distributeNodeChildrenTo(InsertionPoint*, ContainerNode*);
 
-    void ensureDistribution(Element* host);
     void invalidateDistribution(Element* host);
     void didShadowBoundaryChange(Element* host);
     void didAffectSelector(Element* host, AffectedSelectorMask);
     void willAffectSelector(Element* host);
 
-    static void ensureDistributionFromDocument(Element* source);
+    static void ensureDistribution(ShadowRoot*);
 
 private:
     void distribute(Element* host);
@@ -146,6 +145,7 @@ private:
     void setNeedsSelectFeatureSet() { m_needsSelectFeatureSet = true; }
 
     void setValidity(Validity validity) { m_validity = validity; }
+    bool isValid() const { return m_validity == Valid; }
     bool needsDistribution() const;
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
