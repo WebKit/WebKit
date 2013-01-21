@@ -26,13 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import cStringIO as StringIO
+import unittest2 as unittest
 import diff_parser
 import re
 
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 
 class DiffParserTest(unittest.TestCase):
+    maxDiff = None
+
     def test_diff_parser(self, parser = None):
         if not parser:
             parser = diff_parser.DiffParser(DIFF_TEST_DATA.splitlines())
@@ -89,3 +92,48 @@ class DiffParserTest(unittest.TestCase):
         for prefix in prefixes:
             patch = p.sub(lambda x: " %s/" % prefix[x.group(1)], DIFF_TEST_DATA)
             self.test_diff_parser(diff_parser.DiffParser(patch.splitlines()))
+
+    def test_git_diff_to_svn_diff(self):
+        output = """\
+Index: Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+===================================================================
+--- Tools/Scripts/webkitpy/common/checkout/diff_parser.py
++++ Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+@@ -59,6 +59,7 @@ def git_diff_to_svn_diff(line):
+ A
+ B
+ C
++D
+ E
+ F
+"""
+
+        inputfmt = StringIO.StringIO("""\
+diff --git a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+index 2ed552c4555db72df16b212547f2c125ae301a04..72870482000c0dba64ce4300ed782c03ee79b74f 100644
+--- a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
++++ b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+@@ -59,6 +59,7 @@ def git_diff_to_svn_diff(line):
+ A
+ B
+ C
++D
+ E
+ F
+""")
+        shortfmt = StringIO.StringIO("""\
+diff --git a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+index b48b162..f300960 100644
+--- a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
++++ b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
+@@ -59,6 +59,7 @@ def git_diff_to_svn_diff(line):
+ A
+ B
+ C
++D
+ E
+ F
+""")
+
+        self.assertMultiLineEqual(output, ''.join(diff_parser.git_diff_to_svn_diff(x) for x in shortfmt.readlines()))
+        self.assertMultiLineEqual(output, ''.join(diff_parser.git_diff_to_svn_diff(x) for x in inputfmt.readlines()))
