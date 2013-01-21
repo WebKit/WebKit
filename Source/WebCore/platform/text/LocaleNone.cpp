@@ -91,7 +91,7 @@ const Vector<String>& LocaleNone::monthLabels()
 
 String LocaleNone::dateFormat()
 {
-    return ASCIILiteral("dd/MM/yyyyy");
+    return ASCIILiteral("yyyy-MM-dd");
 }
 
 String LocaleNone::monthFormat()
@@ -111,12 +111,12 @@ String LocaleNone::shortTimeFormat()
 
 String LocaleNone::dateTimeFormatWithSeconds()
 {
-    return ASCIILiteral("dd/MM/yyyyy HH:mm:ss");
+    return ASCIILiteral("yyyy-MM-dd'T'HH:mm:ss");
 }
 
 String LocaleNone::dateTimeFormatWithoutSeconds()
 {
-    return ASCIILiteral("dd/MM/yyyyy HH:mm");
+    return ASCIILiteral("yyyy-MM-dd'T'HH:mm");
 }
 
 const Vector<String>& LocaleNone::shortMonthLabels()
