@@ -1,3 +1,20 @@
+2013-01-21  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Skip spell checking on single character strings
+        https://bugs.webkit.org/show_bug.cgi?id=107463
+
+        Reviewed by Yong Li.
+
+        Check for a minimum string length when firing off spellcheck since we don't
+        want to mark single letter words.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::createSpellCheckRequest):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+
 2013-01-20  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] some websites only takes half of the screen after rotating from landscape to portrait mode.

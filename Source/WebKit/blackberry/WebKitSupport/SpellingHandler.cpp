@@ -79,10 +79,8 @@ void SpellingHandler::spellCheckTextBlock(WebCore::VisibleSelection& visibleSele
 void SpellingHandler::createSpellCheckRequest(PassRefPtr<WebCore::Range> rangeForSpellCheckingPtr, WebCore::TextCheckingProcessType textCheckingProcessType)
 {
     RefPtr<WebCore::Range> rangeForSpellChecking = rangeForSpellCheckingPtr;
-    if (isSpellCheckActive()) {
+    if (isSpellCheckActive() && rangeForSpellChecking->text().length() >= MinSpellCheckingStringLength)
         m_inputHandler->callRequestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling, textCheckingProcessType, rangeForSpellChecking, rangeForSpellChecking));
-        m_timer.startOneShot(s_timeout);
-    }
 }
 
 void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>*)
@@ -121,6 +119,8 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
 
     // Call spellcheck with substring.
     createSpellCheckRequest(rangeForSpellChecking, m_textCheckingProcessType);
+    if (isSpellCheckActive())
+        m_timer.startOneShot(s_timeout);
 }
 
 PassRefPtr<Range> SpellingHandler::getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition)
