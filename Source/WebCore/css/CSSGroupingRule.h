@@ -48,11 +48,11 @@ public:
     CSSRule* item(unsigned index) const;
 
 protected:
-    CSSGroupingRule(StyleRuleBlock* groupRule, CSSStyleSheet* parent);
+    CSSGroupingRule(StyleRuleGroup* groupRule, CSSStyleSheet* parent);
     
     void appendCssTextForItems(StringBuilder&) const;
 
-    RefPtr<StyleRuleBlock> m_groupRule;
+    RefPtr<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
