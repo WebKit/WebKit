@@ -722,15 +722,10 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
     }
 
     // Now transfer the set of matched rules over to our list of declarations.
-    // FIXME: This sucks, the inspector should get the style from the visited style itself.
-    bool swapVisitedUnvisited = InspectorInstrumentation::forcePseudoState(m_element, CSSSelector::PseudoVisited);
     for (unsigned i = 0; i < m_matchedRules.size(); i++) {
         if (m_style && m_matchedRules[i]->containsUncommonAttributeSelector())
             m_style->setUnique();
-        unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
-        if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
-            linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-        addMatchedProperties(result, m_matchedRules[i]->rule()->properties(), m_matchedRules[i]->rule(), linkMatchType, m_matchedRules[i]->propertyWhitelistType());
+        addMatchedProperties(result, m_matchedRules[i]->rule()->properties(), m_matchedRules[i]->rule(), m_matchedRules[i]->linkMatchType(), m_matchedRules[i]->propertyWhitelistType());
     }
 }
 
@@ -1588,7 +1583,14 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
 
     if (element->isLink()) {
         m_style->setIsLink(true);
-        m_style->setInsideLink(m_elementLinkState);
+        EInsideLink linkState = m_elementLinkState;
+        if (m_elementLinkState != NotInsideLink) {
+            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoVisited);
+            if (forceVisited)
+                linkState = InsideVisitedLink;
+        }
+
+        m_style->setInsideLink(linkState);
     }
 
     ensureDefaultStyleSheetsForElement(element);
