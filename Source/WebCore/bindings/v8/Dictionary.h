@@ -85,6 +85,9 @@ public:
     bool get(const String&, RefPtr<SpeechRecognitionResult>&) const;
     bool get(const String&, RefPtr<SpeechRecognitionResultList>&) const;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    bool get(const String&, RefPtr<MediaStream>&) const;
+#endif
     bool get(const String&, HashSet<AtomicString>&) const;
     bool get(const String&, Dictionary&) const;
     bool get(const String&, Vector<String>&) const;

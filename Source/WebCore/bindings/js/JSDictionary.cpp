@@ -45,6 +45,10 @@
 #include "JSMediaKeyError.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "JSMediaStream.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -212,6 +216,13 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
 {
     result = toMediaKeyError(value);
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStream>& result)
+{
+    result = toMediaStream(value);
 }
 #endif
 

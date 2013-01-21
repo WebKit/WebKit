@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+MediaStreamEventInit::MediaStreamEventInit()
+    : stream(0)
+{
+}
+
 PassRefPtr<MediaStreamEvent> MediaStreamEvent::create()
 {
     return adoptRef(new MediaStreamEvent);
@@ -42,6 +47,10 @@ PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, 
     return adoptRef(new MediaStreamEvent(type, canBubble, cancelable, stream));
 }
 
+PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, const MediaStreamEventInit& initializer)
+{
+    return adoptRef(new MediaStreamEvent(type, initializer));
+}
 
 MediaStreamEvent::MediaStreamEvent()
 {
@@ -50,6 +59,12 @@ MediaStreamEvent::MediaStreamEvent()
 MediaStreamEvent::MediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
     : Event(type, canBubble, cancelable)
     , m_stream(stream)
+{
+}
+
+MediaStreamEvent::MediaStreamEvent(const AtomicString& type, const MediaStreamEventInit& initializer)
+    : Event(type, initializer)
+    , m_stream(initializer.stream)
 {
 }
 

@@ -22,11 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// According to the WHATWG specification:
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/video-conferencing-and-peer-to-peer-communication.html#mediastreamevent
 [
     Conditional=MEDIA_STREAM,
+    ConstructorTemplate=Event
 ] interface MediaStreamEvent : Event {
-   readonly attribute MediaStream stream;
+   [InitializedByEventConstructor] readonly attribute MediaStream stream;
 };
 

@@ -360,6 +360,7 @@ webkit.org/b/94792 fast/sub-pixel [ Skip ]
 
 # Mediastream implementation is not complete yet.
 webkit.org/b/79203 fast/mediastream [ Skip ]
+webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 
 # CSS Variables are not yet enabled.
 webkit.org/b/99057 fast/css/variables [ Skip ]

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests the constructor for the MediaStreamEvent DOM class.");
+
+var testObject = {nyannyan: 123};
+var mediaStream = new webkitMediaStream();
+
+// No initializer is passed.
+shouldBe("new MediaStreamEvent('eventType').bubbles", "false");
+shouldBe("new MediaStreamEvent('eventType').cancelable", "false");
+shouldBe("new MediaStreamEvent('eventType').data", "null");
+shouldBeEqualToString("new MediaStreamEvent('eventType').origin", "");
+shouldBeEqualToString("new MediaStreamEvent('eventType').lastEventId", "");
+shouldBe("new MediaStreamEvent('eventType').stream", "null");
+shouldBe("new MediaStreamEvent('eventType').ports", "[]");
+
+// bubbles is passed.
+shouldBe("new MediaStreamEvent('eventType', { bubbles: false }).bubbles", "false");
+shouldBe("new MediaStreamEvent('eventType', { bubbles: true }).bubbles", "true");
+
+// cancelable is passed.
+shouldBe("new MediaStreamEvent('eventType', { cancelable: false }).cancelable", "false");
+shouldBe("new MediaStreamEvent('eventType', { cancelable: true }).cancelable", "true");
+
+// stream is passed.
+// Valid object.
+shouldBe("new MediaStreamEvent('eventType', { stream: mediaStream }).stream", "mediaStream");
+
+// Invalid objects.
+shouldBe("new MediaStreamEvent('eventType', { stream: testObject }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: document }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: undefined }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: null }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: false }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: true }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: '' }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: 'chocolate' }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: 12345 }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: 18446744073709551615 }).stream", "null");
+shouldBe("new MediaStreamEvent('eventType', { stream: NaN }).stream", "null");
+// Note that valueOf() is not called, when the left hand side is evaluated.
+shouldBeFalse("new MediaStreamEvent('eventType', { stream: {valueOf: function () { return window; } } }).stream == window");
+shouldBe("new MediaStreamEvent('eventType', { get stream() { return 123; } }).stream", "null");
+shouldThrow("new MediaStreamEvent('eventType', { get stream() { throw 'MediaStreamEvent Error'; } })");
+
+// All initializers are passed.
+shouldBe("new MediaStreamEvent('eventType', { bubbles: true, cancelable: true, stream: mediaStream }).bubbles", "true");
+shouldBe("new MediaStreamEvent('eventType', { bubbles: true, cancelable: true, stream: mediaStream }).cancelable", "true");
+shouldBe("new MediaStreamEvent('eventType', { bubbles: true, cancelable: true, stream: mediaStream }).stream", "mediaStream");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

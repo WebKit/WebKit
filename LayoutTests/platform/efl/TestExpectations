@@ -1231,6 +1231,7 @@ webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
 
 # Requires MEDIA_STREAM support.
 webkit.org/b/87662 fast/mediastream [ Skip ]
+webkit.org/b/87662 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 
 # The EFL port has no support for x-webkit-speech
 webkit.org/b/95302 fast/speech [ Skip ]

@@ -44,6 +44,7 @@ crbug.com/145338 fast/forms/color
 crbug.com/145338 fast/forms/datalist
 crbug.com/145338 fast/forms/date
 crbug.com/145338 fast/mediastream
+crbug.com/145338 fast/events/constructors/media-stream-event-constructor.html
 crbug.com/145338 fast/notifications
 crbug.com/145338 fast/speech
 crbug.com/145338 http/tests/notifications

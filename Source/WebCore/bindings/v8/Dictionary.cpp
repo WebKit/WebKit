@@ -58,6 +58,11 @@
 #include "V8SpeechRecognitionResultList.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStream.h"
+#include "V8MediaStream.h"
+#endif
+
 namespace WebCore {
 
 Dictionary::Dictionary()
@@ -432,6 +437,25 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResultList>& val
     return true;
 }
 
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+bool Dictionary::get(const String& key, RefPtr<MediaStream>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    MediaStream* stream = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> error = wrapper->FindInstanceInPrototypeChain(V8MediaStream::GetTemplate());
+        if (!error.IsEmpty())
+            stream = V8MediaStream::toNative(error);
+    }
+    value = stream;
+    return true;
+}
 #endif
 
 bool Dictionary::get(const String& key, Dictionary& value) const
