@@ -98,15 +98,6 @@ public:
     // Delays completion of the test until the policy delegate runs.
     void waitForPolicyDelegate(const CppArgumentList&, CppVariant*);
 
-    // Causes WillSendRequest to clear certain headers.
-    void setWillSendRequestClearHeader(const CppArgumentList&, CppVariant*);
-
-    // Causes WillSendRequest to block redirects.
-    void setWillSendRequestReturnsNullOnRedirect(const CppArgumentList&, CppVariant*);
-
-    // Causes WillSendRequest to return an empty request.
-    void setWillSendRequestReturnsNull(const CppArgumentList&, CppVariant*);
-
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

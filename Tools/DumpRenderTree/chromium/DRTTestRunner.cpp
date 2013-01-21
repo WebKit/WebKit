@@ -98,9 +98,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueReload", &DRTTestRunner::queueReload);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
-    bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
-    bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
-    bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
     bindMethod("waitForPolicyDelegate", &DRTTestRunner::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &DRTTestRunner::waitUntilDone);
     bindMethod("windowCount", &DRTTestRunner::windowCount);
@@ -403,29 +400,5 @@ void DRTTestRunner::waitForPolicyDelegate(const CppArgumentList&, CppVariant* re
 {
     m_shell->webViewHost()->waitForPolicyDelegate();
     m_waitUntilDone = true;
-    result->setNull();
-}
-
-void DRTTestRunner::setWillSendRequestClearHeader(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isString()) {
-        string header = arguments[0].toString();
-        if (!header.empty())
-            m_shell->webViewHost()->addClearHeader(String::fromUTF8(header.c_str()));
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setWillSendRequestReturnsNullOnRedirect(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webViewHost()->setBlockRedirects(arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::setWillSendRequestReturnsNull(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webViewHost()->setRequestReturnNull(arguments[0].value.boolValue);
     result->setNull();
 }

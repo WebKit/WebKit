@@ -201,6 +201,9 @@ TestRunner::TestRunner()
     bindMethod("repaintSweepHorizontally", &TestRunner::repaintSweepHorizontally);
     bindMethod("setPrinting", &TestRunner::setPrinting);
     bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
+    bindMethod("setWillSendRequestClearHeader", &TestRunner::setWillSendRequestClearHeader);
+    bindMethod("setWillSendRequestReturnsNull", &TestRunner::setWillSendRequestReturnsNull);
+    bindMethod("setWillSendRequestReturnsNullOnRedirect", &TestRunner::setWillSendRequestReturnsNullOnRedirect);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -333,6 +336,10 @@ void TestRunner::reset()
     m_sweepHorizontally = false;
     m_isPrinting = false;
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
+    m_shouldBlockRedirects = false;
+    m_willSendRequestShouldReturnNull = false;
+
+    m_httpHeadersToClear.clear();
 
     m_globalFlag.set(false);
     m_titleTextDirection.set("ltr");
@@ -500,6 +507,21 @@ void TestRunner::setTitleTextDirection(WebKit::WebTextDirection dir)
     m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
 }
 
+const std::set<std::string>* TestRunner::httpHeadersToClear() const
+{
+    return &m_httpHeadersToClear;
+}
+
+bool TestRunner::shouldBlockRedirects() const
+{
+    return m_shouldBlockRedirects;
+}
+
+bool TestRunner::willSendRequestShouldReturnNull() const
+{
+    return m_willSendRequestShouldReturnNull;
+}
+
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_webPermissions->setDumpCallbacks(true);
@@ -603,6 +625,30 @@ void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentL
     if (arguments.size() == 1 && arguments[0].isBool())
         m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
 
+    result->setNull();
+}
+
+void TestRunner::setWillSendRequestClearHeader(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        string header = arguments[0].toString();
+        if (!header.empty())
+            m_httpHeadersToClear.insert(header);
+    }
+    result->setNull();
+}
+
+void TestRunner::setWillSendRequestReturnsNullOnRedirect(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shouldBlockRedirects = arguments[0].toBoolean();
+    result->setNull();
+}
+
+void TestRunner::setWillSendRequestReturnsNull(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_willSendRequestShouldReturnNull = arguments[0].toBoolean();
     result->setNull();
 }
 

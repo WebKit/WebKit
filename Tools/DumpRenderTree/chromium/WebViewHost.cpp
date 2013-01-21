@@ -894,6 +894,9 @@ static bool hostIsUsedBySomeTestsToGenerateError(const string& host)
 
 void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
 {
+    if (request.url().isEmpty())
+        return;
+
     // Need to use GURL for host() and SchemeIs()
     GURL url = request.url();
     string requestURL = url.possibly_invalid_spec();
@@ -901,17 +904,6 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
     GURL mainDocumentURL = request.firstPartyForCookies();
 
     request.setExtraData(webkit_support::CreateWebURLRequestExtraData(frame->document().referrerPolicy()));
-
-    if (!redirectResponse.isNull() && m_blocksRedirects) {
-        fputs("Returning null for this redirect\n", stdout);
-        blockRequest(request);
-        return;
-    }
-
-    if (m_requestReturnNull) {
-        blockRequest(request);
-        return;
-    }
 
     string host = url.host();
     if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))) {
@@ -923,10 +915,6 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
             return;
         }
     }
-
-    HashSet<String>::const_iterator end = m_clearHeaders.end();
-    for (HashSet<String>::const_iterator header = m_clearHeaders.begin(); header != end; ++header)
-        request.clearHTTPHeaderField(WebString(header->characters(), header->length()));
 
     // Set the new substituted URL.
     request.setURL(webkit_support::RewriteLayoutTestsURL(request.url().spec()));
@@ -1309,8 +1297,6 @@ void WebViewHost::reset()
 #else
     m_selectTrailingWhitespaceEnabled = false;
 #endif
-    m_blocksRedirects = false;
-    m_requestReturnNull = false;
     m_isPainting = false;
     m_canvas.clear();
 #if ENABLE(POINTER_LOCK)
@@ -1321,7 +1307,6 @@ void WebViewHost::reset()
     m_navigationController = adoptPtr(new TestNavigationController(this));
 
     m_pendingExtraData.clear();
-    m_clearHeaders.clear();
     m_editCommandName.clear();
     m_editCommandValue.clear();
 

@@ -95,6 +95,9 @@ public:
     virtual bool isPrinting() const OVERRIDE;
     virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const OVERRIDE;
     virtual void setTitleTextDirection(WebKit::WebTextDirection) OVERRIDE;
+    virtual const std::set<std::string>* httpHeadersToClear() const OVERRIDE;
+    virtual bool shouldBlockRedirects() const OVERRIDE;
+    virtual bool willSendRequestShouldReturnNull() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -327,6 +330,15 @@ private:
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
 
+    // Causes WillSendRequest to clear certain headers.
+    void setWillSendRequestClearHeader(const CppArgumentList&, CppVariant*);
+
+    // Causes WillSendRequest to block redirects.
+    void setWillSendRequestReturnsNullOnRedirect(const CppArgumentList&, CppVariant*);
+
+    // Causes WillSendRequest to return an empty request.
+    void setWillSendRequestReturnsNull(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -522,6 +534,12 @@ private:
     bool m_isPrinting;
 
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
+
+    bool m_shouldBlockRedirects;
+
+    bool m_willSendRequestShouldReturnNull;
+
+    std::set<std::string> m_httpHeadersToClear;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

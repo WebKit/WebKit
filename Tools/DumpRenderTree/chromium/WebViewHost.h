@@ -93,8 +93,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void waitForPolicyDelegate();
     void setCustomPolicyDelegate(bool, bool);
     WebKit::WebFrame* topLoadingFrame() { return m_topLoadingFrame; }
-    void setBlockRedirects(bool block) { m_blocksRedirects = block; }
-    void setRequestReturnNull(bool returnNull) { m_requestReturnNull = returnNull; }
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
     void paintRect(const WebKit::WebRect&);
@@ -106,8 +104,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void loadURLForFrame(const WebKit::WebURL&, const WebKit::WebString& frameName);
     TestNavigationController* navigationController() { return m_navigationController.get(); }
 
-    void addClearHeader(const WTF::String& header) { m_clearHeaders.add(header); }
-    const HashSet<WTF::String>& clearHeaders() const { return m_clearHeaders; }
     void closeWidget();
 
 #if ENABLE(INPUT_SPEECH)
@@ -401,15 +397,6 @@ private:
 
     // true if whatever is sent to the console should be logged to stdout.
     bool m_logConsoleOutput;
-
-    // Set of headers to clear in willSendRequest.
-    HashSet<WTF::String> m_clearHeaders;
-
-    // true if we should block any redirects
-    bool m_blocksRedirects;
-
-    // true if we should block (set an empty request for) any requests
-    bool m_requestReturnNull;
 
     // Edit command associated to the current keyboard event.
     std::string m_editCommandName;

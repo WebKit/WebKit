@@ -32,6 +32,8 @@
 #define WebTestRunner_h
 
 #include "WebKit/chromium/public/WebTextDirection.h"
+#include <set>
+#include <string>
 
 namespace WebKit {
 class WebArrayBufferView;
@@ -73,8 +75,11 @@ public:
     virtual bool testRepaint() const { return false; }
     virtual bool sweepHorizontally() const { return false; }
     virtual bool isPrinting() const { return false; }
-    virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const { return false; } 
+    virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const { return false; }
     virtual void setTitleTextDirection(WebKit::WebTextDirection) { }
+    virtual const std::set<std::string>* httpHeadersToClear() const { return 0; }
+    virtual bool shouldBlockRedirects() const { return false; }
+    virtual bool willSendRequestShouldReturnNull() const { return false; }
 };
 
 }

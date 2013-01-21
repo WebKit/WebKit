@@ -180,6 +180,11 @@ string URLDescription(const GURL& url)
     return url.possibly_invalid_spec();
 }
 
+void blockRequest(WebURLRequest& request)
+{
+    request.setURL(WebURL());
+}
+
 }
 
 WebTestProxyBase::WebTestProxyBase()
@@ -709,6 +714,23 @@ void WebTestProxyBase::willSendRequest(WebFrame*, unsigned identifier, WebKit::W
         m_delegate->printMessage("> redirectResponse ");
         printResponseDescription(m_delegate, redirectResponse);
         m_delegate->printMessage("\n");
+    }
+
+    if (!redirectResponse.isNull() && m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldBlockRedirects()) {
+        m_delegate->printMessage("Returning null for this redirect\n");
+        blockRequest(request);
+        return;
+    }
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->willSendRequestShouldReturnNull()) {
+        blockRequest(request);
+        return;
+    }
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->httpHeadersToClear()) {
+        const set<string> *clearHeaders = m_testInterfaces->testRunner()->httpHeadersToClear();
+        for (set<string>::const_iterator header = clearHeaders->begin(); header != clearHeaders->end(); ++header)
+            request.clearHTTPHeaderField(WebString::fromUTF8(*header));
     }
 }
 
