@@ -1,3 +1,22 @@
+2013-01-21  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update the RTCPeerConnection states to match the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=107120
+
+        Reviewed by Adam Barth.
+
+        Updating the chromium WebKit API for the new states.
+
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+        (WebKit::WebRTCPeerConnectionHandlerClient::~WebRTCPeerConnectionHandlerClient):
+        (WebRTCPeerConnectionHandlerClient):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didChangeSignalingState):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didChangeICEGatheringState):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didChangeICEConnectionState):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didChangeReadyState):
+        (WebKit::WebRTCPeerConnectionHandlerClient::didChangeICEState):
+
 2013-01-18  Ali Juma  <ajuma@chromium.org>
 
         [chromium] Convert WebTransformOperations into pure virtual

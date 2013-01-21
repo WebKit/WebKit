@@ -1,3 +1,17 @@
+2013-01-21  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update the RTCPeerConnection states to match the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=107120
+
+        Reviewed by Adam Barth.
+
+        Updating mock to use the new states.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCPeerConnectionStateTask::RTCPeerConnectionStateTask):
+        (MockWebRTCPeerConnectionHandler::initialize):
+        (MockWebRTCPeerConnectionHandler::updateICE):
+
 2013-01-20  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Extend diff_parser to support the --full-index output.

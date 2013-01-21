@@ -72,11 +72,13 @@ function pc_ondatachannel(e) {
     testPassed("pc_ondatachannel was called");
 }
 
-function pc_onopen() {
-    testPassed("pc_onopen was called");
-    shouldNotThrow('dc = pc.createDataChannel("label");');
-    shouldBe("dc.readyState", "'connecting'");
-    dc.onopen = dc_onopen;
+function pc_onicechange() {
+    if (pc.iceConnectionState === "completed") {
+        testPassed("pc is connected");
+        shouldNotThrow('dc = pc.createDataChannel("label");');
+        shouldBe("dc.readyState", "'connecting'");
+        dc.onopen = dc_onopen;
+    }
 }
 
 pc = new webkitRTCPeerConnection(null, null);
@@ -90,7 +92,7 @@ shouldNotThrow('dc = pc.createDataChannel("label3", {reliable:false});');
 shouldBe("dc.reliable", "false");
 
 pc = new webkitRTCPeerConnection(null, null);
-pc.onopen = pc_onopen;
+pc.onicechange = pc_onicechange;
 pc.ondatachannel = pc_ondatachannel;
 
 window.jsTestIsAsync = true;

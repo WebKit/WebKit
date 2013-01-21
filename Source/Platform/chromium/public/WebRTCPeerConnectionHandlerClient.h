@@ -38,33 +38,23 @@ class WebRTCICECandidate;
 
 class WebRTCPeerConnectionHandlerClient {
 public:
-    enum ReadyState {
-        ReadyStateNew = 1,
-        ReadyStateHaveLocalOffer = 2,
-        ReadyStateHaveRemoteOffer = 3,
-        ReadyStateHaveLocalPrAnswer = 4,
-        ReadyStateHaveRemotePrAnswer = 5,
-        ReadyStateActive = 6,
-        ReadyStateClosed = 7,
-
-        // DEPRECATED
-        ReadyStateClosing = 8,
-        ReadyStateOpening = 9
+    enum SignalingState {
+        SignalingStateStable = 1,
+        SignalingStateHaveLocalOffer = 2,
+        SignalingStateHaveRemoteOffer = 3,
+        SignalingStateHaveLocalPrAnswer = 4,
+        SignalingStateHaveRemotePrAnswer = 5,
+        SignalingStateClosed = 6,
     };
 
-    enum ICEState {
-        ICEStateStarting = 1,
-        ICEStateChecking = 2,
-        ICEStateConnected = 3,
-        ICEStateCompleted = 4,
-        ICEStateFailed = 5,
-        ICEStateDisconnected = 6,
-        ICEStateClosed = 7,
-
-        // DEPRECATED
-        ICEStateNew = 8,
-        ICEStateGathering = 9,
-        ICEStateWaiting = 10
+    enum ICEConnectionState {
+        ICEConnectionStateStarting = 1,
+        ICEConnectionStateChecking = 2,
+        ICEConnectionStateConnected = 3,
+        ICEConnectionStateCompleted = 4,
+        ICEConnectionStateFailed = 5,
+        ICEConnectionStateDisconnected = 6,
+        ICEConnectionStateClosed = 7,
     };
 
     enum ICEGatheringState {
@@ -77,12 +67,44 @@ public:
 
     virtual void negotiationNeeded() = 0;
     virtual void didGenerateICECandidate(const WebRTCICECandidate&) = 0;
-    virtual void didChangeReadyState(ReadyState) = 0;
+    virtual void didChangeSignalingState(SignalingState) { }
     virtual void didChangeICEGatheringState(ICEGatheringState) { }
-    virtual void didChangeICEState(ICEState) = 0;
+    virtual void didChangeICEConnectionState(ICEConnectionState) { }
     virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didAddRemoteDataChannel(WebRTCDataChannelHandler*) { }
+
+    // DEPRECATED
+    enum ReadyState {
+        ReadyStateStable = 1,
+        ReadyStateHaveLocalOffer = 2,
+        ReadyStateHaveRemoteOffer = 3,
+        ReadyStateHaveLocalPrAnswer = 4,
+        ReadyStateHaveRemotePrAnswer = 5,
+        ReadyStateClosed = 6,
+        ReadyStateNew = 7,
+        ReadyStateActive = 8,
+        ReadyStateClosing = 9,
+        ReadyStateOpening = 10
+    };
+
+    // DEPRECATED
+    enum ICEState {
+        ICEStateStarting = 1,
+        ICEStateChecking = 2,
+        ICEStateConnected = 3,
+        ICEStateCompleted = 4,
+        ICEStateFailed = 5,
+        ICEStateDisconnected = 6,
+        ICEStateClosed = 7,
+        ICEStateNew = 8,
+        ICEStateGathering = 9,
+        ICEStateWaiting = 10
+    };
+
+    // DEPRECATED
+    virtual void didChangeReadyState(ReadyState) { }
+    virtual void didChangeICEState(ICEState) { }
 };
 
 } // namespace WebKit

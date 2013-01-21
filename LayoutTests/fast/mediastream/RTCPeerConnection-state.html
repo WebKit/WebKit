@@ -17,7 +17,7 @@ function stateChanged()
 }
 
 shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
-shouldBe('pc.readyState', '"new"');
+shouldBe('pc.readyState', '"stable"');
 pc.onstatechange = stateChanged;
 pc.close();
 

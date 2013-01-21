@@ -131,9 +131,9 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
-    , m_readyState(ReadyStateNew)
+    , m_signalingState(SignalingStateStable)
     , m_iceGatheringState(IceGatheringStateNew)
-    , m_iceState(IceStateStarting)
+    , m_iceConnectionState(IceConnectionStateStarting)
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
     , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
@@ -167,7 +167,7 @@ RTCPeerConnection::~RTCPeerConnection()
 
 void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -187,7 +187,7 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
 
 void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -207,7 +207,7 @@ void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> s
 
 void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -224,7 +224,7 @@ void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> pr
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -239,7 +239,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionC
 
 void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -256,7 +256,7 @@ void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> p
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -271,7 +271,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(Exception
 
 void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -291,7 +291,7 @@ void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dict
 
 void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -308,27 +308,24 @@ void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, Exception
 
 String RTCPeerConnection::readyState() const
 {
-    switch (m_readyState) {
-    case ReadyStateNew:
-        return ASCIILiteral("new");
-    case ReadyStateHaveLocalOffer:
-        return ASCIILiteral("have-local-offer");
-    case ReadyStateHaveRemoteOffer:
-        return ASCIILiteral("have-remote-offer");
-    case ReadyStateHaveLocalPrAnswer:
-        return ASCIILiteral("have-local-pranswer");
-    case ReadyStateHaveRemotePrAnswer:
-        return ASCIILiteral("have-remote-pranswer");
-    case ReadyStateActive:
-        return ASCIILiteral("active");
-    case ReadyStateClosed:
-        return ASCIILiteral("closed");
+    return signalingState();
+}
 
-    // DEPRECATED
-    case ReadyStateOpening:
-        return ASCIILiteral("opening");
-    case ReadyStateClosing:
-        return ASCIILiteral("closing");
+String RTCPeerConnection::signalingState() const
+{
+    switch (m_signalingState) {
+    case SignalingStateStable:
+        return ASCIILiteral("stable");
+    case SignalingStateHaveLocalOffer:
+        return ASCIILiteral("have-local-offer");
+    case SignalingStateHaveRemoteOffer:
+        return ASCIILiteral("have-remote-offer");
+    case SignalingStateHaveLocalPrAnswer:
+        return ASCIILiteral("have-local-pranswer");
+    case SignalingStateHaveRemotePrAnswer:
+        return ASCIILiteral("have-remote-pranswer");
+    case SignalingStateClosed:
+        return ASCIILiteral("closed");
     }
 
     ASSERT_NOT_REACHED();
@@ -350,40 +347,32 @@ String RTCPeerConnection::iceGatheringState() const
     return String();
 }
 
-String RTCPeerConnection::iceState() const
+String RTCPeerConnection::iceConnectionState() const
 {
-    switch (m_iceState) {
-    case IceStateStarting:
+    switch (m_iceConnectionState) {
+    case IceConnectionStateStarting:
         return ASCIILiteral("starting");
-    case IceStateChecking:
+    case IceConnectionStateChecking:
         return ASCIILiteral("checking");
-    case IceStateConnected:
+    case IceConnectionStateConnected:
         return ASCIILiteral("connected");
-    case IceStateCompleted:
+    case IceConnectionStateCompleted:
         return ASCIILiteral("completed");
-    case IceStateFailed:
+    case IceConnectionStateFailed:
         return ASCIILiteral("failed");
-    case IceStateDisconnected:
+    case IceConnectionStateDisconnected:
         return ASCIILiteral("disconnected");
-    case IceStateClosed:
+    case IceConnectionStateClosed:
         return ASCIILiteral("closed");
-
-    // DEPRECATED
-    case IceStateNew:
-        return ASCIILiteral("new");
-    case IceStateGathering:
-        return ASCIILiteral("gathering");
-    case IceStateWaiting:
-        return ASCIILiteral("waiting");
     }
 
     ASSERT_NOT_REACHED();
-    return ASCIILiteral("");
+    return String();
 }
 
 void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -410,7 +399,7 @@ void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dicti
 
 void RTCPeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -447,7 +436,7 @@ void RTCPeerConnection::getStats(PassRefPtr<RTCStatsCallback> successCallback, P
 
 PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, const Dictionary& options, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -463,15 +452,16 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
 
 void RTCPeerConnection::close(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosed) {
+    if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
     m_peerHandler->stop();
 
-    changeIceState(IceStateClosed);
-    changeReadyState(ReadyStateClosed);
+    changeIceConnectionState(IceConnectionStateClosed);
+    changeIceGatheringState(IceGatheringStateComplete);
+    changeSignalingState(SignalingStateClosed);
 }
 
 void RTCPeerConnection::negotiationNeeded()
@@ -490,33 +480,29 @@ void RTCPeerConnection::didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescri
     }
 }
 
-void RTCPeerConnection::didChangeReadyState(ReadyState newState)
+void RTCPeerConnection::didChangeSignalingState(SignalingState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    changeReadyState(newState);
+    changeSignalingState(newState);
 }
 
 void RTCPeerConnection::didChangeIceGatheringState(IceGatheringState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    if (newState == m_iceGatheringState || m_readyState == ReadyStateClosed)
-        return;
-
-    m_iceGatheringState = newState;
-    scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
+    changeIceGatheringState(newState);
 }
 
-void RTCPeerConnection::didChangeIceState(IceState newState)
+void RTCPeerConnection::didChangeIceConnectionState(IceConnectionState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    changeIceState(newState);
+    changeIceConnectionState(newState);
 }
 
 void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
 
-    if (m_readyState == ReadyStateClosed)
+    if (m_signalingState == SignalingStateClosed)
         return;
 
     RefPtr<MediaStream> stream = MediaStream::create(scriptExecutionContext(), streamDescriptor);
@@ -533,7 +519,7 @@ void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescr
     RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->client());
     stream->streamEnded();
 
-    if (m_readyState == ReadyStateClosed)
+    if (m_signalingState == SignalingStateClosed)
         return;
 
     ASSERT(m_remoteStreams->contains(stream.get()));
@@ -546,7 +532,7 @@ void RTCPeerConnection::didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler
 {
     ASSERT(scriptExecutionContext()->isContextThread());
 
-    if (m_readyState == ReadyStateClosed)
+    if (m_signalingState == SignalingStateClosed)
         return;
 
     RefPtr<RTCDataChannel> channel = RTCDataChannel::create(scriptExecutionContext(), handler);
@@ -568,8 +554,8 @@ ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
 void RTCPeerConnection::stop()
 {
     m_stopped = true;
-    m_iceState = IceStateClosed;
-    m_readyState = ReadyStateClosed;
+    m_iceConnectionState = IceConnectionStateClosed;
+    m_signalingState = SignalingStateClosed;
 
     Vector<RefPtr<RTCDataChannel> >::iterator i = m_dataChannels.begin();
     for (; i != m_dataChannels.end(); ++i)
@@ -586,30 +572,22 @@ EventTargetData* RTCPeerConnection::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
-void RTCPeerConnection::changeReadyState(ReadyState readyState)
+void RTCPeerConnection::changeSignalingState(SignalingState signalingState)
 {
-    if (readyState == ReadyStateNew) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (readyState == m_readyState || m_readyState == ReadyStateClosed)
-        return;
-
-    m_readyState = readyState;
-
-    if (m_readyState == ReadyStateActive)
-        scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
-
+    ASSERT(m_signalingState != SignalingStateClosed);
+    m_signalingState = signalingState;
     scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
-void RTCPeerConnection::changeIceState(IceState iceState)
+void RTCPeerConnection::changeIceGatheringState(IceGatheringState iceGatheringState)
 {
-    if (iceState == m_iceState || m_readyState == ReadyStateClosed)
-        return;
+    m_iceGatheringState = iceGatheringState;
+    scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
+}
 
-    m_iceState = iceState;
+void RTCPeerConnection::changeIceConnectionState(IceConnectionState iceConnectionState)
+{
+    m_iceConnectionState = iceConnectionState;
     scheduleDispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
 }
 

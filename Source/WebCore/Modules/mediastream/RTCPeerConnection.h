@@ -72,7 +72,10 @@ public:
     void setRemoteDescription(PassRefPtr<RTCSessionDescription>, PassRefPtr<VoidCallback>, PassRefPtr<RTCErrorCallback>, ExceptionCode&);
     PassRefPtr<RTCSessionDescription> remoteDescription(ExceptionCode&);
 
+    // DEPRECATED
     String readyState() const;
+
+    String signalingState() const;
 
     void updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
 
@@ -80,7 +83,7 @@ public:
 
     String iceGatheringState() const;
 
-    String iceState() const;
+    String iceConnectionState() const;
 
     MediaStreamList* localStreams() const;
 
@@ -98,7 +101,6 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(negotiationneeded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(icecandidate);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
@@ -109,9 +111,9 @@ public:
     // RTCPeerConnectionHandlerClient
     virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
-    virtual void didChangeReadyState(ReadyState) OVERRIDE;
+    virtual void didChangeSignalingState(SignalingState) OVERRIDE;
     virtual void didChangeIceGatheringState(IceGatheringState) OVERRIDE;
-    virtual void didChangeIceState(IceState) OVERRIDE;
+    virtual void didChangeIceConnectionState(IceConnectionState) OVERRIDE;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) OVERRIDE;
     virtual void didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler>) OVERRIDE;
@@ -140,12 +142,13 @@ private:
     virtual void derefEventTarget() { deref(); }
     EventTargetData m_eventTargetData;
 
-    void changeReadyState(ReadyState);
-    void changeIceState(IceState);
+    void changeSignalingState(SignalingState);
+    void changeIceGatheringState(IceGatheringState);
+    void changeIceConnectionState(IceConnectionState);
 
-    ReadyState m_readyState;
+    SignalingState m_signalingState;
     IceGatheringState m_iceGatheringState;
-    IceState m_iceState;
+    IceConnectionState m_iceConnectionState;
 
     RefPtr<MediaStreamList> m_localStreams;
     RefPtr<MediaStreamList> m_remoteStreams;

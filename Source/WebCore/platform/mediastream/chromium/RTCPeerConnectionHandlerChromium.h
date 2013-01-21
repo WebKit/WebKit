@@ -75,9 +75,9 @@ public:
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
     virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
-    virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
+    virtual void didChangeSignalingState(WebKit::WebRTCPeerConnectionHandlerClient::SignalingState) OVERRIDE;
     virtual void didChangeICEGatheringState(WebKit::WebRTCPeerConnectionHandlerClient::ICEGatheringState) OVERRIDE;
-    virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;
+    virtual void didChangeICEConnectionState(WebKit::WebRTCPeerConnectionHandlerClient::ICEConnectionState) OVERRIDE;
     virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didAddRemoteDataChannel(WebKit::WebRTCDataChannelHandler*) OVERRIDE;
