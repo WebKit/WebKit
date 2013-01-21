@@ -142,6 +142,7 @@ class GtkPort(DeprecatedPort):
         command = super(GtkPort, self).build_webkit_command(build_style=build_style)
         command.append("--gtk")
         command.append("--update-gtk")
+        command.append("--no-webkit2")
         command.append(super(GtkPort, self).makeArgs())
         return command
 

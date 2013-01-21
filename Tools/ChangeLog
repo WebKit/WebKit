@@ -1,3 +1,18 @@
+2013-01-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Stop building WebKit2 on GTK EWSs
+        https://bugs.webkit.org/show_bug.cgi?id=107435
+
+        Reviewed by Philippe Normand.
+
+        The WebKit2 build of the GTK is at the moment not efficiently maintainable,
+        so stop building it on GTK EWSs.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (GtkPort.build_webkit_command):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_gtk_port):
+
 2013-01-21  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update the RTCPeerConnection states to match the latest specification
