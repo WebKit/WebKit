@@ -1,3 +1,13 @@
+2013-01-21  Gustavo Noronha Silva  <gns@gnome.org>
+
+        REGRESSION (r140285): GTK uses WKPageResourceLoadClient which was removed
+        https://bugs.webkit.org/show_bug.cgi?id=107421
+
+        Unreviewed build fix.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): skip Resource tests.
+
 2013-01-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WKTR] platformRunUntil() should keep the main loop running

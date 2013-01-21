@@ -723,8 +723,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitRequestManagerClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitRequestManagerClient.h \
-	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.cpp \
-	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h \

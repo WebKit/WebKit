@@ -1,3 +1,16 @@
+2013-01-21  Gustavo Noronha Silva  <gns@gnome.org>
+
+        REGRESSION (r140285): GTK uses WKPageResourceLoadClient which was removed
+        https://bugs.webkit.org/show_bug.cgi?id=107421
+
+        Unreviewed buildfix.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitResourceLoadClient.cpp: Removed.
+        * UIProcess/API/gtk/WebKitResourceLoadClient.h: Removed.
+        * UIProcess/API/gtk/WebKitWebView.cpp: No longer attach unexisting ResourceLoadClient.
+        (webkitWebViewConstructed):
+
 2013-01-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r139781.
