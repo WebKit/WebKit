@@ -18,13 +18,21 @@ function touchEventCallback() {
     } else
         debug(event.type);
 
-    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL)
+    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
+        window.internals.settings.setTouchEventEmulationEnabled(false);
         finishJSTest();
+    }
+}
+
+function mouseMoveCallback(e) {
+    if (!lastEvent)
+        debug("Unexpected mousemove event received before touchstart");
 }
 
 div.addEventListener("touchstart", touchEventCallback, false);
 div.addEventListener("touchmove", touchEventCallback, false);
 div.addEventListener("touchend", touchEventCallback, false);
+div.addEventListener("mousemove", mouseMoveCallback, false);
 
 function verifyTouchEvent(type, totalTouchCount, changedTouchCount, targetTouchCount)
 {

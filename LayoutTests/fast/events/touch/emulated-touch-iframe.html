@@ -21,6 +21,7 @@ function testComplete()
     }
 
     debug("touchend (test will time out if broken)");
+    window.internals.settings.setTouchEventEmulationEnabled(false);
     window.testRunner.notifyDone();
 }
 

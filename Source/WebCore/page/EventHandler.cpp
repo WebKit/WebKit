@@ -3981,7 +3981,7 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
         return false;
 
     if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
-        return false;
+        return true;
 
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, event);
