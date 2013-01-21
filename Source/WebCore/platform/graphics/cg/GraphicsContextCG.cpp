@@ -1331,7 +1331,7 @@ void GraphicsContext::clip(const Path& path, WindRule fillRule)
     else {
         CGContextBeginPath(context);
         CGContextAddPath(context, path.platformPath());
-        if (fillRule == RULE_EVENODD)
+        if (fillRule == RULE_NONZERO)
             CGContextClip(context);
         else
             CGContextEOClip(context);

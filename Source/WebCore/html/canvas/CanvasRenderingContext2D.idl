@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: we should use CanvasWindingRule once support for WebIDL is completed. (bug #106553)
+enum CanvasWindingRule { "nonzero", "evenodd" };
+
 interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     void save();
@@ -124,11 +127,12 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
              in [Optional=DefaultIsUndefined] float endAngle,
              in [Optional=DefaultIsUndefined] boolean anticlockwise)
         raises (DOMException);
-    void fill();
+    void fill(in [Optional] DOMString winding);
     void stroke();
-    void clip();
+    void clip(in [Optional] DOMString winding);
     boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
-                          in [Optional=DefaultIsUndefined] float y);
+                          in [Optional=DefaultIsUndefined] float y,
+                          in [Optional] DOMString winding);
 
     // text
     attribute DOMString font;

@@ -145,11 +145,11 @@ public:
     void arc(float x, float y, float r, float sa, float ea, bool clockwise, ExceptionCode&);
     void rect(float x, float y, float width, float height);
 
-    void fill();
+    void fill(const String& winding = "nonzero");
     void stroke();
-    void clip();
+    void clip(const String& winding = "nonzero");
 
-    bool isPointInPath(const float x, const float y);
+    bool isPointInPath(const float x, const float y, const String& winding = "nonzero");
 
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);

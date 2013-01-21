@@ -1024,7 +1024,19 @@ static bool isFullCanvasCompositeMode(CompositeOperator op)
     return op == CompositeSourceIn || op == CompositeSourceOut || op == CompositeDestinationIn || op == CompositeDestinationAtop;
 }
 
-void CanvasRenderingContext2D::fill()
+static bool parseWinding(const String& windingRuleString, WindRule& windRule)
+{
+    if (windingRuleString == "nonzero")
+        windRule = RULE_NONZERO;
+    else if (windingRuleString == "evenodd")
+        windRule = RULE_EVENODD;
+    else
+        return false;
+    
+    return true;
+}
+
+void CanvasRenderingContext2D::fill(const String& windingRuleString)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1033,6 +1045,12 @@ void CanvasRenderingContext2D::fill()
         return;
 
     if (!m_path.isEmpty()) {
+        WindRule windRule = c->fillRule();
+        WindRule newWindRule = RULE_NONZERO;
+        if (!parseWinding(windingRuleString, newWindRule))
+            return;
+        c->setFillRule(newWindRule);
+
         if (isFullCanvasCompositeMode(state().m_globalComposite)) {
             fullCanvasCompositedFill(m_path);
             didDrawEntireCanvas();
@@ -1044,6 +1062,8 @@ void CanvasRenderingContext2D::fill()
             c->fillPath(m_path);
             didDraw(m_path.fastBoundingRect());
         }
+        
+        c->setFillRule(windRule);
     }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1072,21 +1092,27 @@ void CanvasRenderingContext2D::stroke()
 #endif
 }
 
-void CanvasRenderingContext2D::clip()
+void CanvasRenderingContext2D::clip(const String& windingRuleString)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
     if (!state().m_invertibleCTM)
         return;
+
+    WindRule newWindRule = RULE_NONZERO;
+    if (!parseWinding(windingRuleString, newWindRule))
+        return;
+
     realizeSaves();
-    c->canvasClip(m_path);
+    c->canvasClip(m_path, newWindRule);
+    
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
 #endif
 }
 
-bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
+bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const String& windingRuleString)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1099,7 +1125,12 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
     if (!isfinite(transformedPoint.x()) || !isfinite(transformedPoint.y()))
         return false;
-    return m_path.contains(transformedPoint);
+
+    WindRule windRule = RULE_NONZERO;
+    if (!parseWinding(windingRuleString, windRule))
+        return false;
+    
+    return m_path.contains(transformedPoint, windRule);
 }
 
 void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height)
