@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "InbandTextTrackPrivateAVF.h"
 
+#include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
 #include "MediaPlayerPrivateAVFoundation.h"
 #include "SoftLinking.h"
@@ -36,6 +37,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
@@ -52,6 +54,9 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_OrthogonalLinePosit
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_VerticalLayout, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_LeftToRight, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
 
 #define kCMTextMarkupAttribute_Alignment getkCMTextMarkupAttribute_Alignment()
 #define kCMTextMarkupAlignmentType_Start getkCMTextMarkupAlignmentType_Start()
@@ -66,6 +71,9 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStrin
 #define kCMTextMarkupAttribute_VerticalLayout getkCMTextMarkupAttribute_VerticalLayout()
 #define kCMTextVerticalLayout_LeftToRight getkCMTextVerticalLayout_LeftToRight()
 #define kCMTextVerticalLayout_RightToLeft getkCMTextVerticalLayout_RightToLeft()
+#define kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight getkCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight()
+#define kCMTextMarkupAttribute_RelativeFontSize getkCMTextMarkupAttribute_RelativeFontSize()
+#define kCMTextMarkupAttribute_FontFamilyName getkCMTextMarkupAttribute_FontFamilyName()
 
 using namespace std;
 
@@ -84,7 +92,7 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
     disconnect();
 }
 
-void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, StringBuilder& content, StringBuilder& settings)
+void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, GenericCueData* cueData)
 {
     // Some of the attributes we translate into per-cue WebVTT settings are are repeated on each part of an attributed string so only
     // process the first instance of each.
@@ -93,10 +101,12 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
         Position = 1 << 1,
         Size = 1 << 2,
         Vertical = 1 << 3,
-        Align = 1 << 4
+        Align = 1 << 4,
+        FontName = 1 << 5
     };
     unsigned processed = 0;
 
+    StringBuilder content;
     String attributedStringValue = CFAttributedStringGetString(attributedString);
     CFIndex length = attributedStringValue.length();
     if (!length)
@@ -110,6 +120,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
             continue;
 
         StringBuilder tagStart;
+        CFStringRef valueString;
         String tagEnd;
         CFIndex attributeCount = CFDictionaryGetCount(attributes);
         Vector<const void*> keys(attributeCount);
@@ -123,7 +134,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 continue;
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_Alignment, 0) == kCFCompareEqualTo) {
-                CFStringRef valueString = static_cast<CFStringRef>(value);
+                valueString = static_cast<CFStringRef>(value);
                 if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
                     continue;
                 if (processed & Align)
@@ -131,11 +142,11 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 processed |= Align;
 
                 if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_Start, 0) == kCFCompareEqualTo)
-                    settings.append("align:start ");
+                    cueData->setAlign(GenericCueData::Start);
                 else if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_Middle, 0) == kCFCompareEqualTo)
-                    settings.append("align:middle ");
+                    cueData->setAlign(GenericCueData::Middle);
                 else if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_End, 0) == kCFCompareEqualTo)
-                    settings.append("align:end ");
+                    cueData->setAlign(GenericCueData::End);
                 else
                     ASSERT_NOT_REACHED();
 
@@ -170,9 +181,6 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection, 0) == kCFCompareEqualTo) {
-                // Ignore the line position if the attributes also specify "size" so we keep WebVTT's default line logic
-                if (CFDictionaryGetValue(attributes, kCMTextMarkupAttribute_WritingDirectionSizePercentage))
-                    continue;
                 if (CFGetTypeID(value) != CFNumberGetTypeID())
                     continue;
                 if (processed & Line)
@@ -180,9 +188,9 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 processed |= Line;
 
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
-                double position;
-                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &position);
-                settings.append(String::format("line:%ld%% ", lrint(position)));
+                double line;
+                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &line);
+                cueData->setLine(line);
                 continue;
             }
 
@@ -196,7 +204,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double position;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &position);
-                settings.append(String::format("position:%ld%% ", lrint(position)));
+                cueData->setPosition(position);
                 continue;
             }
 
@@ -208,16 +216,66 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 processed |= Size;
 
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
-                double position;
-                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &position);
-                settings.append(String::format("size:%ld%% ", lrint(position)));
+                double size;
+                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &size);
+                cueData->setSize(size);
+                continue;
+            }
+
+            if (CFStringCompare(key, kCMTextMarkupAttribute_VerticalLayout, 0) == kCFCompareEqualTo) {
+                valueString = static_cast<CFStringRef>(value);
+                if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
+                    continue;
+                
+                if (CFStringCompare(valueString, kCMTextVerticalLayout_LeftToRight, 0) == kCFCompareEqualTo)
+                    tagStart.append(leftToRightMark);
+                else if (CFStringCompare(valueString, kCMTextVerticalLayout_RightToLeft, 0) == kCFCompareEqualTo)
+                    tagStart.append(rightToLeftMark);
+                continue;
+            }
+            
+            if (CFStringCompare(key, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, 0) == kCFCompareEqualTo) {
+                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                    continue;
+                
+                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
+                double baseFontSize;
+                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &baseFontSize);
+                cueData->setBaseFontSize(baseFontSize);
+                continue;
+            }
+            
+            if (CFStringCompare(key, kCMTextMarkupAttribute_RelativeFontSize, 0) == kCFCompareEqualTo) {
+                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                    continue;
+                
+                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
+                double relativeFontSize;
+                CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &relativeFontSize);
+                cueData->setRelativeFontSize(relativeFontSize);
+                continue;
+            }
+
+            if (CFStringCompare(key, kCMTextMarkupAttribute_FontFamilyName, 0) == kCFCompareEqualTo) {
+                valueString = static_cast<CFStringRef>(value);
+                if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
+                    continue;
+                if (processed & FontName)
+                    continue;
+                processed |= FontName;
+                
+                cueData->setFontName(valueString);
                 continue;
             }
         }
+
         content.append(tagStart);
         content.append(attributedStringValue.substring(effectiveRange.location, effectiveRange.length));
         content.append(tagEnd);
     }
+
+    if (content.length())
+        cueData->setContent(content.toString());
 }
 
 void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double time)
@@ -228,21 +286,46 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
     if (m_havePartialCue) {
         // Cues do not have an explicit duration, they are displayed until the next "cue" (which might be empty) is emitted.
         m_currentCueEndTime = time;
-        LOG(Media, "InbandTextTrackPrivateAVF::processCue flushing cue: start=%.2f, end=%.2f, settings=\"%s\", content=\"%s\" \n",
-            m_currentCueStartTime, m_currentCueEndTime,
-            m_currentCueSettings.toString().utf8().data(), m_currentCueContent.toString().utf8().data());
-        m_player->flushCurrentCue(this);
+
+        if (m_currentCueEndTime >= m_currentCueStartTime) {
+            for (size_t i = 0; i < m_cues.size(); i++) {
+
+                GenericCueData* cueData = m_cues[i].get();
+
+                LOG(Media, "InbandTextTrackPrivateAVF::processCue flushing cue: start=%.2f, end=%.2f, content=\"%s\" \n",
+                    m_currentCueStartTime, m_currentCueEndTime, cueData->content().utf8().data());
+                
+                if (!cueData->content().length())
+                    continue;
+                
+                cueData->setStartTime(m_currentCueStartTime);
+                cueData->setEndTime(m_currentCueEndTime);
+                
+                // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
+                // set CSS "left".
+                if (cueData->position() >= 0 && cueData->size() > 0)
+                    cueData->setPosition(cueData->position() - cueData->size() / 2);
+                
+                m_player->addGenericCue(this, cueData);
+            }
+        } else
+            LOG(Media, "InbandTextTrackPrivateAVF::processCue negative length cue(s) ignored: start=%.2f, end=%.2f\n", m_currentCueStartTime, m_currentCueEndTime);
+
         resetCueValues();
     }
 
     CFIndex count = CFArrayGetCount(attributedStrings);
+    if (!count)
+        return;
+
     for (CFIndex i = 0; i < count; i++) {
         CFAttributedStringRef attributedString = static_cast<CFAttributedStringRef>(CFArrayGetValueAtIndex(attributedStrings, i));
 
         if (!attributedString || !CFAttributedStringGetLength(attributedString))
             continue;
 
-        processCueAttributes(attributedString, m_currentCueContent, m_currentCueSettings);
+        m_cues.append(adoptPtr(new GenericCueData));
+        processCueAttributes(attributedString, m_cues[i].get());
         m_currentCueStartTime = time;
         m_havePartialCue = true;
     }
@@ -256,17 +339,13 @@ void InbandTextTrackPrivateAVF::disconnect()
 
 void InbandTextTrackPrivateAVF::resetCueValues()
 {
-    if (m_havePartialCue && !m_currentCueEndTime) {
-        LOG(Media, "InbandTextTrackPrivateAVF::resetCueValues flushing data for cue: start=%.2f, end=%.2f, settings=\"%s\", content=\"%s\" \n",
-            m_currentCueStartTime, m_currentCueEndTime, m_currentCueSettings.toString().utf8().data(), m_currentCueContent.toString().utf8().data());
-    }
+    if (m_havePartialCue && !m_currentCueEndTime)
+        LOG(Media, "InbandTextTrackPrivateAVF::resetCueValues flushing data for cues: start=%.2f\n", m_currentCueStartTime);
 
+    m_cues.resize(0);
     m_havePartialCue = false;
-    m_currentCueId = String();
     m_currentCueStartTime = 0;
     m_currentCueEndTime = 0;
-    m_currentCueSettings.clear();
-    m_currentCueContent.clear();
 }
 
 void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)

@@ -3457,6 +3457,8 @@
             'html/track/TextTrack.h',
             'html/track/TextTrackCue.cpp',
             'html/track/TextTrackCue.h',
+            'html/track/TextTrackCueGeneric.cpp',
+            'html/track/TextTrackCueGeneric.h',
             'html/track/TextTrackCueList.cpp',
             'html/track/TextTrackCueList.h',
             'html/track/TextTrackList.cpp',

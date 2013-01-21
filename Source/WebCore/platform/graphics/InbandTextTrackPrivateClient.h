@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef InbandTextTrackPrivateClient_h
 #define InbandTextTrackPrivateClient_h
 
+#include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -34,12 +35,81 @@ namespace WebCore {
 
 class InbandTextTrackPrivate;
 
+class GenericCueData {
+    WTF_MAKE_NONCOPYABLE(GenericCueData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    GenericCueData()
+        : m_startTime(0)
+        , m_endTime(0)
+        , m_line(-1)
+        , m_position(-1)
+        , m_size(-1)
+        , m_align(None)
+        , m_baseFontSize(0)
+        , m_relativeFontSize(0)
+    {
+    }
+    virtual ~GenericCueData() { }
+
+    double startTime() const { return m_startTime; }
+    void setStartTime(double startTime) { m_startTime = startTime; }
+
+    double endTime() const { return m_endTime; }
+    void setEndTime(double endTime) { m_endTime = endTime; }
+
+    String id() const { return m_id; }
+    void setId(String id) { m_id = id; }
+
+    String content() const { return m_content; }
+    void setContent(String content) { m_content = content; }
+
+    double line() const { return m_line; }
+    void setLine(double line) { m_line = line; }
+
+    double position() const { return m_position; }
+    void setPosition(double position) { m_position = position; }
+
+    double size() const { return m_size; }
+    void setSize(double size) { m_size = size; }
+
+    enum Alignment {
+        None,
+        Start,
+        Middle,
+        End
+    };
+    Alignment align() const { return m_align; }
+    void setAlign(Alignment align) { m_align = align; }
+
+    String fontName() const { return m_fontName; }
+    void setFontName(String fontName) { m_fontName = fontName; }
+
+    double baseFontSize() const { return m_baseFontSize; }
+    void setBaseFontSize(double baseFontSize) { m_baseFontSize = baseFontSize; }
+
+    double relativeFontSize() const { return m_relativeFontSize; }
+    void setRelativeFontSize(double relativeFontSize) { m_relativeFontSize = relativeFontSize; }
+    
+private:
+    double m_startTime;
+    double m_endTime;
+    String m_id;
+    String m_content;
+    double m_line;
+    double m_position;
+    double m_size;
+    Alignment m_align;
+    String m_fontName;
+    double m_baseFontSize;
+    double m_relativeFontSize;
+};
+
 class InbandTextTrackPrivateClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
     
-    virtual void addCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
-    virtual bool hasCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
+    virtual void addWebVTTCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
+    virtual void addGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
 };
 
 } // namespace WebCore

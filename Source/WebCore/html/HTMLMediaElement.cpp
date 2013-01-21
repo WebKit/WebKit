@@ -3819,6 +3819,11 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
 
     m_pendingLoadFlags &= ~flags;
     m_loadState = WaitingForSource;
+
+#if ENABLE(VIDEO_TRACK)
+    if (m_textTracks)
+        configureTextTrackDisplay();
+#endif
 }
 
 bool HTMLMediaElement::canSuspend() const

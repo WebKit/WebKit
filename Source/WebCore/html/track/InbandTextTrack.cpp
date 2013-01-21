@@ -32,9 +32,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "InbandTextTrackPrivate.h"
+#include "Logging.h"
 #include "MediaPlayer.h"
+#include "TextTrackCueGeneric.h"
 #include "TextTrackCueList.h"
-
+#include <math.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -98,7 +100,43 @@ size_t InbandTextTrack::inbandTrackIndex()
     return m_private->textTrackIndex();
 }
 
-void InbandTextTrack::addCue(InbandTextTrackPrivate* trackPrivate, double start, double end, const String& id, const String& content, const String& settings)
+void InbandTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate, GenericCueData* cueData)
+{
+    UNUSED_PARAM(trackPrivate);
+    ASSERT(trackPrivate == m_private);
+
+    RefPtr<TextTrackCueGeneric> cue = TextTrackCueGeneric::create(scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
+
+    cue->setId(cueData->id());
+    cue->setBaseFontSizeRelativeToVideoHeight(cueData->baseFontSize());
+    cue->setFontSizeMultiplier(cueData->relativeFontSize());
+    cue->setFontName(cueData->fontName());
+
+    ExceptionCode ec;
+    if (cueData->position() > 0)
+        cue->setPosition(lround(cueData->position()), ec);
+    if (cueData->line() > 0)
+        cue->setLine(lround(cueData->line()), ec);
+    if (cueData->size() > 0)
+        cue->setSize(lround(cueData->size()), ec);
+    if (cueData->align() == GenericCueData::Start)
+        cue->setAlign(ASCIILiteral("start"), ec);
+    else if (cueData->align() == GenericCueData::Middle)
+        cue->setAlign(ASCIILiteral("middle"), ec);
+    else if (cueData->align() == GenericCueData::End)
+        cue->setAlign(ASCIILiteral("end"), ec);
+    cue->setSnapToLines(false);
+
+    if (hasCue(cue.get())) {
+        LOG(Media, "InbandTextTrack::addGenericCue ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n",
+            cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
+        return;
+    }
+
+    addCue(cue);
+}
+
+void InbandTextTrack::addWebVTTCue(InbandTextTrackPrivate* trackPrivate, double start, double end, const String& id, const String& content, const String& settings)
 {
     UNUSED_PARAM(trackPrivate);
     ASSERT(trackPrivate == m_private);
@@ -106,66 +144,11 @@ void InbandTextTrack::addCue(InbandTextTrackPrivate* trackPrivate, double start,
     RefPtr<TextTrackCue> cue = TextTrackCue::create(scriptExecutionContext(), start, end, content);
     cue->setId(id);
     cue->setCueSettings(settings);
-    cue->setTrack(this);
-
-    if (!m_cues)
-        m_cues = TextTrackCueList::create();
-    m_cues->add(cue);
     
-    if (client())
-        client()->textTrackAddCues(this, m_cues.get());
-}
+    if (hasCue(cue.get()))
+        return;
 
-bool InbandTextTrack::hasCue(InbandTextTrackPrivate*, double startTime, double endTime, const String& id, const String& content, const String& settings)
-{
-
-    if (startTime < 0 || endTime < 0)
-        return false;
-
-    if (!cues()->length())
-        return false;
-
-    size_t searchStart = 0;
-    size_t searchEnd = cues()->length();
-
-    while (1) {
-        ASSERT(searchStart <= cues()->length());
-        ASSERT(searchEnd <= cues()->length());
-        
-        TextTrackCue* cue;
-        
-        // Cues in the TextTrackCueList are maintained in start time order.
-        if (searchStart == searchEnd) {
-            if (!searchStart)
-                return false;
-            
-            cue = cues()->item(searchStart - 1);
-            if (!cue)
-                return false;
-            if (cue->startTime() != startTime)
-                return false;
-            if (cue->endTime() != endTime)
-                return false;
-            if (cue->text() != content)
-                return false;
-            if (cue->cueSettings() != settings)
-                return false;
-            if (cue->id() != id)
-                return false;
-            
-            return true;
-        }
-        
-        size_t index = (searchStart + searchEnd) / 2;
-        cue = cues()->item(index);
-        if (startTime < cue->startTime() || (startTime == cue->startTime() && endTime > cue->endTime()))
-            searchEnd = index;
-        else
-            searchStart = index + 1;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return false;
+    addCue(cue);
 }
 
 } // namespace WebCore

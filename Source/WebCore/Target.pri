@@ -1915,6 +1915,7 @@ HEADERS += \
     html/track/LoadableTextTrack.h \
     html/track/TextTrack.h \
     html/track/TextTrackCue.h \
+    html/track/TextTrackCueGeneric.h \
     html/track/TextTrackCueList.h \
     html/track/TextTrackList.h \
     html/track/TrackBase.h \

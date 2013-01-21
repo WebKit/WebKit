@@ -106,6 +106,7 @@ SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeSubtitle, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly, NSString *)
 
 #define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
 #define AVMediaSelectionGroup getAVMediaSelectionGroupClass()
@@ -113,6 +114,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
 #define AVMediaTypeSubtitle getAVMediaTypeSubtitle()
 #define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
+#define AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly getAVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly()
 #endif
 
 #define kCMTimeZero getkCMTimeZero()
@@ -391,7 +393,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:YES];
 #endif
-    
 
     if (m_avPlayerItem)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
@@ -410,7 +411,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     // Create the player item so we can load media data. 
     m_avPlayerItem.adoptNS([[AVPlayerItem alloc] initWithAsset:m_avAsset.get()]);
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
 
     for (NSString *keyName in itemKVOProperties())
@@ -897,6 +898,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
         [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
         [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:NSTimeIntervalSince1970];
+        [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
         [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
     }
 #endif
@@ -1212,7 +1214,7 @@ void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processTextTracks(%p) - nil mediaSelectionGroup", this);
         return;
     }
-
+    
     Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
     NSArray *legibleOptions = [AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]];
     for (AVMediaSelectionOptionType *option in legibleOptions) {
@@ -1228,13 +1230,8 @@ void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
         if (!newTrack)
             continue;
 
-        if ([[option mediaType] isEqualToString:AVMediaTypeSubtitle]) {
-            if (![option hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles]) {
-                AVMediaSelectionOptionType *forcedOnlyOption = [option associatedMediaSelectionOptionInMediaSelectionGroup:legibleGroup];
-                if (forcedOnlyOption)
-                    continue;
-            }
-        }
+        if ([[option mediaType] isEqualToString:AVMediaTypeSubtitle] && [option hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
+            continue;
 
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
     }
@@ -1275,6 +1272,9 @@ void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, 
 void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateAVF *track)
 {
     InbandTextTrackPrivateAVFObjC* trackPrivate = static_cast<InbandTextTrackPrivateAVFObjC*>(track);
+    if (m_currentTrack == trackPrivate)
+        return;
+
     AVMediaSelectionOptionType *mediaSelectionOption = trackPrivate ? trackPrivate->mediaSelectionOption() : 0;
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting media option %p", this, mediaSelectionOption);
@@ -1424,6 +1424,8 @@ NSArray* itemKVOProperties()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_callback)
+            return;
         m_callback->processCue(strings, CMTimeGetSeconds(itemTime));
     });
 }

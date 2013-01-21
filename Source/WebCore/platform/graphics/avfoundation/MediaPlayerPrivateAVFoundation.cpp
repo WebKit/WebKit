@@ -582,6 +582,11 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    if (currentTrack())
+        currentTrack()->resetCueValues();
+#endif
+
     m_seekTo = MediaPlayer::invalidTime();
     updateStates();
     m_player->timeChanged();
@@ -811,19 +816,13 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 }
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-void MediaPlayerPrivateAVFoundation::flushCurrentCue(InbandTextTrackPrivateAVF* track)
+void MediaPlayerPrivateAVFoundation::addGenericCue(InbandTextTrackPrivateAVF* track, GenericCueData* cueData)
 {
     if (!track->client())
         return;
 
-    // AVFoundation returns a cue every time the data is buffered, only add it once.
-    if (track->client()->hasCue(track, track->start(), track->end(), track->id(), track->content(), track->settings())) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::flushCurrentCue(%p) - already have cue for time %.2f", this, track->start());
-        return;
-    }
-
-    LOG(Media, "MediaPlayerPrivateAVFoundation::flushCurrentCue(%p) - adding cue for time %.2f", this, track->start());
-    track->client()->addCue(track, track->start(), track->end(), track->id(), track->content(), track->settings());
+    LOG(Media, "MediaPlayerPrivateAVFoundation::addGenericCue(%p) - adding cue for time %.2f", this, cueData->startTime());
+    track->client()->addGenericCue(track, cueData);
 }
 
 void MediaPlayerPrivateAVFoundation::configureInbandTracks()

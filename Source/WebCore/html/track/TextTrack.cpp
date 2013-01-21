@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -337,6 +337,64 @@ int TextTrack::trackIndexRelativeToRenderedTracks()
         m_renderedTrackIndex = m_mediaElement->textTracks()->getTrackIndexRelativeToRenderedTracks(this);
     
     return m_renderedTrackIndex;
+}
+
+bool TextTrack::hasCue(TextTrackCue* cue)
+{
+    if (cue->startTime() < 0 || cue->endTime() < 0)
+        return false;
+    
+    if (!m_cues || !m_cues->length())
+        return false;
+    
+    size_t searchStart = 0;
+    size_t searchEnd = m_cues->length();
+    
+    while (1) {
+        ASSERT(searchStart <= m_cues->length());
+        ASSERT(searchEnd <= m_cues->length());
+        
+        TextTrackCue* existingCue;
+        
+        // Cues in the TextTrackCueList are maintained in start time order.
+        if (searchStart == searchEnd) {
+            if (!searchStart)
+                return false;
+
+            // If there is more than one cue with the same start time, back up to first one so we
+            // consider all of them.
+            while (searchStart >= 2 && cue->startTime() == m_cues->item(searchStart - 2)->startTime())
+                --searchStart;
+            
+            bool firstCompare = true;
+            while (1) {
+                if (!firstCompare)
+                    ++searchStart;
+                firstCompare = false;
+                if (searchStart > m_cues->length())
+                    return false;
+
+                existingCue = m_cues->item(searchStart - 1);
+                if (!existingCue || cue->startTime() > existingCue->startTime())
+                    return false;
+
+                if (*existingCue != *cue)
+                    continue;
+                
+                return true;
+            }
+        }
+        
+        size_t index = (searchStart + searchEnd) / 2;
+        existingCue = m_cues->item(index);
+        if (cue->startTime() < existingCue->startTime() || (cue->startTime() == existingCue->startTime() && cue->endTime() > existingCue->endTime()))
+            searchEnd = index;
+        else
+            searchStart = index + 1;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore

@@ -65265,6 +65265,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\track\TextTrackCueGeneric.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackCueGeneric.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\track\TextTrackCueList.cpp"
 					>
 				</File>

@@ -3672,6 +3672,8 @@ webcore_sources += \
 	Source/WebCore/html/track/TextTrack.h \
 	Source/WebCore/html/track/TextTrackCue.cpp \
 	Source/WebCore/html/track/TextTrackCue.h \
+	Source/WebCore/html/track/TextTrackCueGeneric.cpp \
+	Source/WebCore/html/track/TextTrackCueGeneric.h \
 	Source/WebCore/html/track/TextTrackCueList.cpp \
 	Source/WebCore/html/track/TextTrackCueList.h \
 	Source/WebCore/html/track/TextTrackList.cpp \

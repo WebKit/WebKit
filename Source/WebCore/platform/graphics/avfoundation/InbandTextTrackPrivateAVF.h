@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,20 +35,12 @@
 namespace WebCore {
 
 class MediaPlayerPrivateAVFoundation;
+class GenericCueData;
 
 class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
+
     ~InbandTextTrackPrivateAVF();
-
-    String id() const { return m_currentCueId; }
-    double start() const { return m_currentCueStartTime; }
-    double end() const { return m_currentCueEndTime; }
-    String settings() { return m_currentCueSettings.toString(); }
-    String content() { return m_currentCueContent.toString(); }
-
-    void processCue(CFArrayRef, double);
-
-    void resetCueValues();
 
     virtual void setMode(InbandTextTrackPrivate::Mode) OVERRIDE;
 
@@ -60,16 +52,18 @@ public:
     bool hasBeenReported() const { return m_hasBeenReported; }
     void setHasBeenReported(bool reported) { m_hasBeenReported = reported; }
 
+    void processCue(CFArrayRef, double);
+    void resetCueValues();
+
 protected:
     InbandTextTrackPrivateAVF(MediaPlayerPrivateAVFoundation*);
 
-    void processCueAttributes(CFAttributedStringRef, StringBuilder& content, StringBuilder& settings);
+    void processCueAttributes(CFAttributedStringRef, GenericCueData*);
 
-    String m_currentCueId;
     double m_currentCueStartTime;
     double m_currentCueEndTime;
-    StringBuilder m_currentCueSettings;
-    StringBuilder m_currentCueContent;
+
+    Vector<OwnPtr<GenericCueData> > m_cues;
 
     MediaPlayerPrivateAVFoundation* m_player;
     int m_index;

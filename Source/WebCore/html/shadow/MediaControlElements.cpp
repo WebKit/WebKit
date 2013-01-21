@@ -1304,8 +1304,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         if (!cue->track() || !cue->track()->isRendered())
             continue;
 
-        RefPtr<TextTrackCueBox> displayBox = cue->getDisplayTree();
-
+        RefPtr<TextTrackCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size());
         if (displayBox->hasChildNodes() && !contains(static_cast<Node*>(displayBox.get())))
             // Note: the display tree of a cue is removed when the active flag of the cue is unset.
             m_cueContainer->appendChild(displayBox, ASSERT_NO_EXCEPTION, false);

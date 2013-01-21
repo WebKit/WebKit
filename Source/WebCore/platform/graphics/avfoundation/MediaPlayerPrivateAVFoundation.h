@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class InbandTextTrackPrivateAVF;
+class GenericCueData;
 
 class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface {
 public:
@@ -118,7 +119,7 @@ public:
     void clearMainThreadPendingFlag();
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    void flushCurrentCue(InbandTextTrackPrivateAVF*);
+    void addGenericCue(InbandTextTrackPrivateAVF*, GenericCueData*);
     void trackModeChanged();
 #endif
 

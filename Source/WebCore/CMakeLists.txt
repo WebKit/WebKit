@@ -1581,6 +1581,7 @@ set(WebCore_SOURCES
     html/track/LoadableTextTrack.cpp
     html/track/TextTrack.cpp
     html/track/TextTrackCue.cpp
+    html/track/TextTrackCueGeneric.cpp
     html/track/TextTrackCueList.cpp
     html/track/TextTrackList.cpp
     html/track/TrackBase.cpp
