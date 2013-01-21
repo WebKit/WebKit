@@ -29,24 +29,24 @@
 </style>
 <div id="test">
     <table><tr><td class="width-test" style="width: 100px;">control width:100px</td></tr></table>
-    <table><tr><td class="width-test" style="width: -webkit-calc(100px);">simple 100px</td></tr></table>
-    <table><tr><td class="width-test" style="width: -webkit-calc(25px * 4);">25px * 4</td></tr></table>
+    <table><tr><td class="width-test" style="width: calc(100px);">simple 100px</td></tr></table>
+    <table><tr><td class="width-test" style="width: calc(25px * 4);">25px * 4</td></tr></table>
     <table><tr><td class="height-test" style="height: 100px;">control height:100px</td></tr></table>
-    <table><tr><td class="height-test" style="height: -webkit-calc(100px);">simple 100px</td></tr></table>
-    <table><tr><td class="height-test" style="height: -webkit-calc(25px * 4);">25px * 4</td></tr></table>
+    <table><tr><td class="height-test" style="height: calc(100px);">simple 100px</td></tr></table>
+    <table><tr><td class="height-test" style="height: calc(25px * 4);">25px * 4</td></tr></table>
     <div style="width:400px;">
       <table><tr><td class="width-percent-test" style="width: 25%;">control width:25%</td><td class="dummy"/></tr></table>
-      <table><tr><td class="width-percent-test" style="width: -webkit-calc(25%);">-webkit-calc(25%)</td><td class="dummy"/></tr></table>
-      <table><tr><td class="width-percent-test" style="width: -webkit-calc(10% * 2 + 5%);">-webkit-calc(10% * 2 + 5%)</td><td class="dummy"/></tr></table>
+      <table><tr><td class="width-percent-test" style="width: calc(25%);">simple calc(25%)</td><td class="dummy"/></tr></table>
+      <table><tr><td class="width-percent-test" style="width: calc(10% * 2 + 5%);">calc(10% * 2 + 5%)</td><td class="dummy"/></tr></table>
     </div>
     <div style="height: 400px">
       <table style="height: 25%"><tr><td class="height-percent-test">control height:25%</td></tr></table>
     </div>
     <div style="height: 400px">
-      <table style="height: -webkit-calc(25%);"><tr><td class="height-percent-test">simple 25%</td></tr></table>
+      <table style="height: calc(25%);"><tr><td class="height-percent-test">simple calc(25%)</td></tr></table>
     </div>
     <div style="height: 400px">
-      <table style="height: -webkit-calc(10% * 2 + 5%);"><tr><td class="height-percent-test">10% * 2 + 5%</td></tr></table>
+      <table style="height: calc(10% * 2 + 5%);"><tr><td class="height-percent-test">calc(10% * 2 + 5%)</td></tr></table>
     </div>
 </div>
 <script>

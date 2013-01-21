@@ -1,11 +1,11 @@
 Test calling getPropertyValue on computed styles for -webkit-border-image property.
 
--webkit-box-reflect: right -webkit-calc(50%);
+-webkit-box-reflect: right calc(50%);
   -webkit-box-reflect
     getPropertyValue:    right 50% none
     getPropertyCSSValue: [object CSSValue]
 
--webkit-box-reflect: below -webkit-calc(5px) -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 stretch stretch;
+-webkit-box-reflect: below calc(5px) -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 stretch stretch;
   -webkit-box-reflect
     getPropertyValue:    below 5px -webkit-gradient(linear, 0 0, 0 0) 25 fill / auto / 0px stretch
     getPropertyCSSValue: [object CSSValue]

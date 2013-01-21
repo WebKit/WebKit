@@ -5850,7 +5850,8 @@ inline double CSSParser::parsedDouble(CSSParserValue *v, ReleaseParsedCalcValueC
 bool CSSParser::isCalculation(CSSParserValue* value) 
 {
     return (value->unit == CSSParserValue::Function) 
-        && (equalIgnoringCase(value->function->name, "-webkit-calc(")
+        && (equalIgnoringCase(value->function->name, "calc(")
+            || equalIgnoringCase(value->function->name, "-webkit-calc(")
             || equalIgnoringCase(value->function->name, "-webkit-min(")
             || equalIgnoringCase(value->function->name, "-webkit-max("));
 }
@@ -9707,6 +9708,13 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             return true;
         }
 #endif
+        return false;
+
+    case 4:
+        if (isEqualToCSSIdentifier(name, "calc")) {
+            m_token = CALCFUNCTION;
+            return true;
+        }
         return false;
 
     case 9:

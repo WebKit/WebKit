@@ -80,7 +80,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
 static String buildCssText(const String& expression)
 {
     StringBuilder result;
-    result.append("-webkit-calc");
+    result.append("calc");
     bool expressionHasSingleTerm = expression[0] != '(';
     if (expressionHasSingleTerm)
         result.append('(');
@@ -530,7 +530,7 @@ PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserVal
     CSSCalcExpressionNodeParser parser;    
     RefPtr<CSSCalcExpressionNode> expression;
     
-    if (equalIgnoringCase(name, "-webkit-calc("))
+    if (equalIgnoringCase(name, "calc(") || equalIgnoringCase(name, "-webkit-calc("))
         expression = parser.parseCalc(parserValueList);    
     // FIXME calc (http://webkit.org/b/16662) Add parsing for min and max here
 

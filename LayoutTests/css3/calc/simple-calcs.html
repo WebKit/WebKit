@@ -19,68 +19,68 @@
 
 <div id="test">
 <div style="width:100px; height:100px;">control</div>
-<div class="width-test" style="width: -webkit-calc(50px + 50px);">50px + 50px</div>
-<div class="width-test" style="width: -webkit-calc(150px - 50px);">150px - 50px</div>
-<div class="width-test" style="width: -webkit-calc(50px  +  50px);">50px  +  50px (2 spaces around operator)</div>
-<div class="width-test" style="width: -webkit-calc(150px  -  50px);">150px  - 50px (2 spaces around operator)</div>
-<div class="width-test" style="width: -webkit-calc(50px*2);">50px*2</div>
-<div class="width-test" style="width: -webkit-calc(50px *2);">50px *2</div>
-<div class="width-test" style="width: -webkit-calc(50px* 2);">50px* 2</div>
-<div class="width-test" style="width: -webkit-calc(200px/2);">200px/2</div>
-<div class="width-test" style="width: -webkit-calc(200px /2);">200px /2</div>
-<div class="width-test" style="width: -webkit-calc(200px/ 2);">200px/ 2</div>
-<div class="width-test" style="width: -webkit-calc(50px*(2));">50px*(2)</div>
-<div class="width-test" style="width: -webkit-calc(50px *(2));">50px *(2)</div>
-<div class="width-test" style="width: -webkit-calc(50px* (2));">50px* (2)</div>
-<div class="width-test" style="width: -webkit-calc(50px*(1 + 1));">50px*(1 + 1)</div>
-<div class="width-test" style="width: -webkit-calc(50px*(12 - 10));">50px*(12 - 10)</div>
-<div class="width-test" style="width: -webkit-calc(50px*(10 / 5));">50px*(10 / 5)</div>
-<div class="width-test" style="width: -webkit-calc(10px* (5 * 2));">10px* (5 * 2)</div>
-<div class="width-test" style="width: -webkit-calc(50px + 10px * 5);">50px + 10px * 5 (operation order)</div>
+<div class="width-test" style="width: calc(50px + 50px);">50px + 50px</div>
+<div class="width-test" style="width: calc(150px - 50px);">150px - 50px</div>
+<div class="width-test" style="width: calc(50px  +  50px);">50px  +  50px (2 spaces around operator)</div>
+<div class="width-test" style="width: calc(150px  -  50px);">150px  - 50px (2 spaces around operator)</div>
+<div class="width-test" style="width: calc(50px*2);">50px*2</div>
+<div class="width-test" style="width: calc(50px *2);">50px *2</div>
+<div class="width-test" style="width: calc(50px* 2);">50px* 2</div>
+<div class="width-test" style="width: calc(200px/2);">200px/2</div>
+<div class="width-test" style="width: calc(200px /2);">200px /2</div>
+<div class="width-test" style="width: calc(200px/ 2);">200px/ 2</div>
+<div class="width-test" style="width: calc(50px*(2));">50px*(2)</div>
+<div class="width-test" style="width: calc(50px *(2));">50px *(2)</div>
+<div class="width-test" style="width: calc(50px* (2));">50px* (2)</div>
+<div class="width-test" style="width: calc(50px*(1 + 1));">50px*(1 + 1)</div>
+<div class="width-test" style="width: calc(50px*(12 - 10));">50px*(12 - 10)</div>
+<div class="width-test" style="width: calc(50px*(10 / 5));">50px*(10 / 5)</div>
+<div class="width-test" style="width: calc(10px* (5 * 2));">10px* (5 * 2)</div>
+<div class="width-test" style="width: calc(50px + 10px * 5);">50px + 10px * 5 (operation order)</div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(100%/2);">100%/2 (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(100%/2);">100%/2 (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(100% + -100px);">100% + -100px (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(100% + -100px);">100% + -100px (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(80% - 60px);">80% - 60px (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(80% - 60px);">80% - 60px (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(300px - 100%);">300px - 100% (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(300px - 100%);">300px - 100% (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(-100px + 100%);">-100px + 100% (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(-100px + 100%);">-100px + 100% (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(20% + 30%);">20% + 30% (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(20% + 30%);">20% + 30% (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(80% - 30%);">80% - 30% (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(80% - 30%);">80% - 30% (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(10% * 5);">10% * 5 (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(10% * 5);">10% * 5 (where 100% is 200px)</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-    <div class="width-test" style="width: -webkit-calc(5 * 10%);">5 * 10% (where 100% is 200px)</div>
+    <div class="width-test" style="width: calc(5 * 10%);">5 * 10% (where 100% is 200px)</div>
 </div>
-<div class="width-test" style="width: -webkit-calc((100px));">(100px)</div>
-<div class="width-test" style="width: -webkit-calc((50px + 50px));">(50px + 50px)</div>
-<div class="width-test" style="width: -webkit-calc((50px) + 50px);">(50px) + 50px</div>
-<div class="width-test" style="width: -webkit-calc(50px + (50px));">50px + (50px)</div>
-<div class="width-test" style="width: -webkit-calc( 50px +  50px );"> 50px +  50px </div>
-<div class="width-test" style="width: -webkit-calc( 50px + 25px * 2 );"> 50px + 25px * 2 </div>
-<div class="width-test" style="width: -webkit-calc( (25px + 25px) * 2 );"> (25px + 25px) * 2 </div>
-<div class="width-test" style="width: -webkit-calc(2 * 50px);">2 * 50px</div>
-<div class="width-test" style="width: -webkit-calc(2 * 100px / 2);">2 * 100px / 2</div>
-<div class="width-test" style="width: -webkit-calc((1em - 1em) + 100px);">(1em - 1em) + 100px</div>
-<div class="width-test" style="width: -webkit-calc(50px +  +50px);">50px +  +50px</div>
-<div class="width-test" style="width: -webkit-calc(-50px + 150px);">-50px + 150px</div>
-<div class="width-test" style="width: -webkit-calc(-50px - -150px);">-50px - -150px</div>
-<div class="width-test" style="width: -webkit-calc((((((((100px))))))));">(((((((100px)))))))</div>
-<div class="height-test" style="height: -webkit-calc(100px);">100px</div>
+<div class="width-test" style="width: calc((100px));">(100px)</div>
+<div class="width-test" style="width: calc((50px + 50px));">(50px + 50px)</div>
+<div class="width-test" style="width: calc((50px) + 50px);">(50px) + 50px</div>
+<div class="width-test" style="width: calc(50px + (50px));">50px + (50px)</div>
+<div class="width-test" style="width: calc( 50px +  50px );"> 50px +  50px </div>
+<div class="width-test" style="width: calc( 50px + 25px * 2 );"> 50px + 25px * 2 </div>
+<div class="width-test" style="width: calc( (25px + 25px) * 2 );"> (25px + 25px) * 2 </div>
+<div class="width-test" style="width: calc(2 * 50px);">2 * 50px</div>
+<div class="width-test" style="width: calc(2 * 100px / 2);">2 * 100px / 2</div>
+<div class="width-test" style="width: calc((1em - 1em) + 100px);">(1em - 1em) + 100px</div>
+<div class="width-test" style="width: calc(50px +  +50px);">50px +  +50px</div>
+<div class="width-test" style="width: calc(-50px + 150px);">-50px + 150px</div>
+<div class="width-test" style="width: calc(-50px - -150px);">-50px - -150px</div>
+<div class="width-test" style="width: calc((((((((100px))))))));">(((((((100px)))))))</div>
+<div class="height-test" style="height: calc(100px);">100px</div>
 <div style="height: 50px; background-color: white;" class="wrapper">
-  <div class="height-test" style="height: -webkit-calc(100% * 2);">100% * 2</div>
+  <div class="height-test" style="height: calc(100% * 2);">100% * 2</div>
 </div>
 </div>
 

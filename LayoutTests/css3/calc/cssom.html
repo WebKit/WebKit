@@ -23,7 +23,7 @@ var dummy = document.getElementById("dummy");
 for (var i = 0; i < tests.length; ++i) {
     var expression = tests[i];
     dummy.style.width = 'calc(' + expression + ')';
-    dummy.style.width = '-webkit-calc(' + expression + ')';
+    dummy.style.width = 'calc(' + expression + ')';
     dummy.style.width = '-moz-calc(' + expression + ')';
     results.innerHTML += expression + " => " + dummy.style.width + "<br>";
 }

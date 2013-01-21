@@ -2,18 +2,18 @@
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <style>
     #controlsimple { color: rgb(10,180,30); }
-    #simple        { color: rgb(-webkit-calc(10),-webkit-calc(18 * 10),-webkit-calc(30)); }
+    #simple        { color: rgb(calc(10),calc(18 * 10),calc(30)); }
     #controlpercentsimple { color: rgb(10%,95%,30%); }
-    #percentsimple        { color: rgb(-webkit-calc(2% + 8%),-webkit-calc(95%),-webkit-calc(3% * 10)); }
+    #percentsimple        { color: rgb(calc(2% + 8%),calc(95%),calc(3% * 10)); }
     #controlpercentnumber { color: rgb(26,240,80); }
-    #percentnumber        { color: rgb(-webkit-calc(2% + 8% + 1),-webkit-calc(95% - 3),-webkit-calc(3% * 10 + 4)); }
+    #percentnumber        { color: rgb(calc(2% + 8% + 1),calc(95% - 3),calc(3% * 10 + 4)); }
 
     #controlalpha { color: rgba(10,180,30,0.7); }
-    #alpha        { color: rgba(-webkit-calc(10),-webkit-calc(180),-webkit-calc(30), -webkit-calc(0.35 * 2)); }
+    #alpha        { color: rgba(calc(10),calc(180),calc(30), calc(0.35 * 2)); }
     #controlpercentalpha { color: rgba(10%,95%,30%,0.7); }
-    #percentalpha        { color: rgba(-webkit-calc(2 * 5%),-webkit-calc(100% - 5%),-webkit-calc(30%),-webkit-calc(0.2 * 3 + 0.1)); }
+    #percentalpha        { color: rgba(calc(2 * 5%),calc(100% - 5%),calc(30%),calc(0.2 * 3 + 0.1)); }
     #controlpercentnumberalpha { color: rgba(26,240,80, 0.5); }
-    #percentnumberalpha        { color: rgba(-webkit-calc(2% + 8% + 1),-webkit-calc(95% - 3),-webkit-calc(3% * 10 + 4), -webkit-calc(1.0 / 2)); }
+    #percentnumberalpha        { color: rgba(calc(2% + 8% + 1),calc(95% - 3),calc(3% * 10 + 4), calc(1.0 / 2)); }
 </style>
 <div id="test-container">
     <hr/>
