@@ -1,3 +1,10 @@
+2013-01-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r177953.  Requested by
+        thakis_ via sheriffbot.
+
+        * DEPS:
+
 2013-01-21  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update the RTCPeerConnection states to match the latest specification
