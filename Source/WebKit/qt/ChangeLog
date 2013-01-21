@@ -1,3 +1,22 @@
+2013-01-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Permission request callbacks for non-legacy notifications
+        https://bugs.webkit.org/show_bug.cgi?id=107438
+
+        Reviewed by Jocelyn Turcotte.
+
+        Tracks the new callbacks the same way legacy callbacks are tracked.
+
+        No test affected yet as we are still lacking support for testing
+        feature permission callbacks.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::allowNotificationForFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (NotificationPresenterClientQt):
+        (CallbacksInfo):
+
 2013-01-21  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Update the documentation about the storage of inspector settings
