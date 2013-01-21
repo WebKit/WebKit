@@ -152,8 +152,9 @@ WebInspector.Panel.prototype = {
      * @param {Element=} parentElement
      * @param {string=} position
      * @param {number=} defaultWidth
+     * @param {number=} defaultHeight
      */
-    createSidebarView: function(parentElement, position, defaultWidth)
+    createSidebarView: function(parentElement, position, defaultWidth, defaultHeight)
     {
         if (this.splitView)
             return;
@@ -161,7 +162,7 @@ WebInspector.Panel.prototype = {
         if (!parentElement)
             parentElement = this.element;
 
-        this.splitView = new WebInspector.SidebarView(position || WebInspector.SidebarView.SidebarPosition.Left, this._sidebarWidthSettingName(), defaultWidth);
+        this.splitView = new WebInspector.SidebarView(position || WebInspector.SidebarView.SidebarPosition.Left, this._sidebarWidthSettingName(), defaultWidth, defaultHeight);
         this.splitView.show(parentElement);
         this.splitView.addEventListener(WebInspector.SidebarView.EventTypes.Resized, this.sidebarResized.bind(this));
 

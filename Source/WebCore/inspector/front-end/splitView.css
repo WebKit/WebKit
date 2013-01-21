@@ -67,6 +67,22 @@
     border-right: none;
 }
 
+.split-view-sidebar-top {
+    border-bottom: 1px solid rgb(64%, 64%, 64%);
+}
+
+.split-view-sidebar-top.maximized {
+    border-bottom: none;
+}
+
+.split-view-sidebar-bottom {
+    border-top: 1px solid rgb(64%, 64%, 64%);
+}
+
+.split-view-sidebar-bottom.maximized {
+    border-top: none;
+}
+
 .split-view-resizer.split-view-resizer-vertical {
     position: absolute;
     top: 0;

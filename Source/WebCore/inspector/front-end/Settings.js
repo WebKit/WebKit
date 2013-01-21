@@ -33,7 +33,9 @@ var Preferences = {
     maxInlineTextChildLength: 80,
     minConsoleHeight: 75,
     minSidebarWidth: 100,
+    minSidebarHeight: 75,
     minElementsSidebarWidth: 200,
+    minElementsSidebarHeight: 200,
     minScriptsSidebarWidth: 200,
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
@@ -210,6 +212,7 @@ WebInspector.ExperimentsSettings = function()
     this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
     this.showOverridesInDrawer = this._createExperiment("showOverridesInDrawer", "Show Overrides in drawer");
     this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");
+    this.elementsPanelSingleColumn = this._createExperiment("elementsPanelSingleColumn", "Single-column elements panel layout when docked to right");
 
     this._cleanUpSetting();
 }

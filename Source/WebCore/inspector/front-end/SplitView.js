@@ -43,7 +43,6 @@ WebInspector.SplitView = function(isVertical, sidebarSizeSettingName, defaultSid
     this.element.className = "split-view";
 
     this._firstElement = this.element.createChild("div", "split-view-contents");
-
     this._secondElement = this.element.createChild("div", "split-view-contents");
 
     this._resizerElement = this.element.createChild("div", "split-view-resizer");
