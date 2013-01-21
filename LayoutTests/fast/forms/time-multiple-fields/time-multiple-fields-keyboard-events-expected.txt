@@ -13,7 +13,11 @@ Tab - Move focus field
 Backspace - Make value empty
   
 == Digit keys ==
+PASS eventsCounter.input is undefined.
+PASS eventsCounter.change is undefined.
 PASS input.value is "07:56"
+PASS eventsCounter.input is 1
+PASS eventsCounter.change is 1
 == Digit keys starting with zero ==
 PASS input.value is "14:03"
 == Digit keys and backspace key ==
@@ -25,7 +29,11 @@ PASS document.activeElement.id is "input"
 PASS input.value is "05:56"
 PASS input.value is "03:56"
 == Up/Down keys on empty value ==
+PASS eventsCounter.input is undefined.
+PASS eventsCounter.change is undefined.
 PASS input.value is "14:58"
+PASS eventsCounter.input is 1
+PASS eventsCounter.change is 1
 == Tab key ==
 PASS input.value is "03:05"
 PASS input.value is "07:05"

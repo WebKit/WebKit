@@ -73,10 +73,17 @@ void BaseMultipleFieldsDateAndTimeInputType::didFocusOnControl()
 void BaseMultipleFieldsDateAndTimeInputType::editControlValueChanged()
 {
     RefPtr<HTMLInputElement> input(element());
-    input->setValueInternal(sanitizeValue(m_dateTimeEditElement->value()), DispatchNoEvent);
-    input->setNeedsStyleRecalc();
-    input->dispatchFormControlInputEvent();
-    input->dispatchFormControlChangeEvent();
+    String oldValue = input->value();
+    String newValue = sanitizeValue(m_dateTimeEditElement->value());
+    // Even if oldValue is null and newValue is "", we should assume they are same.
+    if ((oldValue.isEmpty() && newValue.isEmpty()) || oldValue == newValue)
+        input->setNeedsValidityCheck();
+    else {
+        input->setValueInternal(newValue, DispatchNoEvent);
+        input->setNeedsStyleRecalc();
+        input->dispatchFormControlInputEvent();
+        input->dispatchFormControlChangeEvent();
+    }
     input->notifyFormStateChanged();
 }
 

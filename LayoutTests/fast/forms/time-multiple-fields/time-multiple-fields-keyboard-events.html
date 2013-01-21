@@ -41,12 +41,26 @@ function beginTest(title, value)
     input.focus();
 }
 
+var eventsCounter = {};
+function countEvents(event)
+{
+    if (eventsCounter[event.type] === undefined)
+        eventsCounter[event.type] = 0;
+    eventsCounter[event.type]++;
+}
+input.addEventListener('input', countEvents, false);
+input.addEventListener('change', countEvents, false);
+
 beginTest('Digit keys');
-keyDown('7');
-keyDown('5');
-keyDown('6');
-keyDown('A');
+keyDown('7'); // -> 07:[--] --
+keyDown('5'); // -> 07:[05] --
+keyDown('6'); // -> 07:56 [--]
+shouldBeUndefined('eventsCounter.input');
+shouldBeUndefined('eventsCounter.change');
+keyDown('A'); // -> 07:56 [AM]
 shouldBeEqualToString('input.value', '07:56');
+shouldBe('eventsCounter.input', '1');
+shouldBe('eventsCounter.change', '1');
 
 beginTest('Digit keys starting with zero');
 keyDown('0'); // -> [00]:-- --
@@ -97,14 +111,19 @@ keyDown('downArrow');
 shouldBeEqualToString('input.value', '03:56');
 
 beginTest('Up/Down keys on empty value', '');
-keyDown('upArrow');
-keyDown('upArrow');
-keyDown('rightArrow');
-keyDown('downArrow');
-keyDown('downArrow');
-keyDown('rightArrow');
-keyDown('downArrow');
+eventsCounter = {};
+keyDown('upArrow');    // -> [01]:-- --
+keyDown('upArrow');    // -> [02]:-- --
+keyDown('rightArrow'); // -> 02:[--] --
+keyDown('downArrow');  // -> 02:[59] --
+keyDown('downArrow');  // -> 02:[58] --
+keyDown('rightArrow'); // -> 02:58 [--]
+shouldBeUndefined('eventsCounter.input');
+shouldBeUndefined('eventsCounter.change');
+keyDown('downArrow');  // -> 02:58 [PM]
 shouldBeEqualToString('input.value', '14:58');
+shouldBe('eventsCounter.input', '1');
+shouldBe('eventsCounter.change', '1');
 
 beginTest('Tab key', '03:00');
 keyDown('\t');
