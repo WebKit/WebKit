@@ -60,6 +60,8 @@ class QPropertyAnimation;
 class QLineEdit;
 QT_END_NAMESPACE
 
+struct HighlightedElement;
+
 class WindowOptions {
 public:
     WindowOptions()
@@ -181,6 +183,7 @@ protected Q_SLOTS:
     void animatedFlip();
     void animatedYFlip();
     void selectElements();
+    void clearSelection();
     void showFPS(bool enable);
     void showUserAgentDialog();
 
@@ -225,6 +228,7 @@ private:
     QNetworkReply* m_reply;
 #endif
     QList<QTouchEvent::TouchPoint> m_touchPoints;
+    QList<HighlightedElement> m_highlightedElements;
     bool m_touchMocking;
 
     QString m_inputUrl;

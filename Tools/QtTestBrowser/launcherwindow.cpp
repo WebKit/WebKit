@@ -73,6 +73,11 @@
 #include <QtNetwork/QNetworkDiskCache>
 #endif
 
+struct HighlightedElement {
+    QWebElement m_element;
+    QString m_previousStyle;
+};
+
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
 
@@ -361,6 +366,8 @@ void LauncherWindow::createChrome()
     userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
 
     toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
+
+    toolsMenu->addAction("Clear selection", this, SLOT(clearSelection()));
 
     QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
     showInspectorAction->setCheckable(true);
@@ -812,12 +819,23 @@ void LauncherWindow::selectElements()
                                         QLineEdit::Normal, "a", &ok);
 
     if (ok && !str.isEmpty()) {
+        clearSelection();
         QWebElementCollection result =  page()->mainFrame()->findAllElements(str);
-        foreach (QWebElement e, result)
+        foreach (QWebElement e, result) {
+            HighlightedElement el = { e, e.styleProperty("background-color", QWebElement::InlineStyle) };
+            m_highlightedElements.append(el);
             e.setStyleProperty("background-color", "yellow");
+        }
         statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);
     }
 #endif
+}
+
+void LauncherWindow::clearSelection()
+{
+    for (int i = 0; i < m_highlightedElements.size(); ++i)
+        m_highlightedElements[i].m_element.setStyleProperty("background-color", m_highlightedElements[i].m_previousStyle);
+    m_highlightedElements.clear();
 }
 
 void LauncherWindow::setDiskCache(bool enable)

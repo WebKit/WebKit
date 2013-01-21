@@ -1,3 +1,21 @@
+2013-01-21  Vivek Galatage  <vivek.vg@samsung.com>
+
+        QtTestBrowser should provide way to clear selected elements
+        https://bugs.webkit.org/show_bug.cgi?id=107437
+
+        Reviewed by Simon Hausmann.
+
+        Provide a way to "Clear selection" in the "Develop" menu to clear the previous search highlight.
+        Invoke the clearSelection prior to highlighting new elements.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (ElementHighlight):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::selectElements):
+        (LauncherWindow::clearSelection):
+        * QtTestBrowser/launcherwindow.h:
+        (LauncherWindow):
+
 2013-01-21  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move methods interacting with willSendRequest to TestRunner
