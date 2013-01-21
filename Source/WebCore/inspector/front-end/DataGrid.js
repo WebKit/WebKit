@@ -684,7 +684,10 @@ WebInspector.DataGrid.prototype = {
 
             if (!this._columnsArray[i].hidden) {
                 resizer.style.removeProperty("display");
-                resizer.style.left = left + "px";
+                if (resizer._position !== left) {
+                    resizer._position = left;
+                    resizer.style.left = left + "px";
+                }
                 resizer.leftNeighboringColumnIndex = i;
                 if (previousResizer)
                     previousResizer.rightNeighboringColumnIndex = i;
@@ -974,6 +977,8 @@ WebInspector.DataGrid.prototype = {
         if (!resizer)
             return;
 
+        var tableWidth = this._dataTable.offsetWidth; // Cache it early, before we invalidate layout.
+
         // Constrain the dragpoint to be within the containing div of the
         // datagrid.
         var dragPoint = event.clientX - this.element.totalOffsetLeft();
@@ -1004,11 +1009,11 @@ WebInspector.DataGrid.prototype = {
 
         resizer.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
 
-        var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / this._dataTable.offsetWidth) * 100) + "%";
+        var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / tableWidth) * 100) + "%";
         this._headerTableColumnGroup.children[leftCellIndex].style.width = percentLeftColumn;
         this._dataTableColumnGroup.children[leftCellIndex].style.width = percentLeftColumn;
 
-        var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTable.offsetWidth) * 100) + "%";
+        var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / tableWidth) * 100) + "%";
         this._headerTableColumnGroup.children[rightCellIndex].style.width =  percentRightColumn;
         this._dataTableColumnGroup.children[rightCellIndex].style.width = percentRightColumn;
 
