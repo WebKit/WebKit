@@ -347,11 +347,6 @@ void WebPageProxy::initializeFormClient(const WKPageFormClient* formClient)
     m_formClient.initialize(formClient);
 }
 
-void WebPageProxy::initializeResourceLoadClient(const WKPageResourceLoadClient* client)
-{
-    m_resourceLoadClient.initialize(client);
-}
-
 void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
 {
     if (!isValid())
@@ -2517,59 +2512,6 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
     RefPtr<WebFormSubmissionListenerProxy> listener = frame->setUpFormSubmissionListenerProxy(listenerID);
     if (!m_formClient.willSubmitForm(this, frame, sourceFrame, textFieldValues.stringPairVector(), userData.get(), listener.get()))
         listener->continueSubmission();
-}
-
-// ResourceLoad Client
-
-void WebPageProxy::didInitiateLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, const ResourceRequest& request, bool pageIsProvisionallyLoading)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK_URL(request.url());
-
-    m_resourceLoadClient.didInitiateLoadForResource(this, frame, resourceIdentifier, request, pageIsProvisionallyLoading);
-}
-
-void WebPageProxy::didSendRequestForResource(uint64_t frameID, uint64_t resourceIdentifier, const ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK_URL(request.url());
-
-    m_resourceLoadClient.didSendRequestForResource(this, frame, resourceIdentifier, request, redirectResponse);
-}
-
-void WebPageProxy::didReceiveResponseForResource(uint64_t frameID, uint64_t resourceIdentifier, const ResourceResponse& response)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK_URL(response.url());
-
-    m_resourceLoadClient.didReceiveResponseForResource(this, frame, resourceIdentifier, response);
-}
-
-void WebPageProxy::didReceiveContentLengthForResource(uint64_t frameID, uint64_t resourceIdentifier, uint64_t contentLength)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-
-    m_resourceLoadClient.didReceiveContentLengthForResource(this, frame, resourceIdentifier, contentLength);
-}
-
-void WebPageProxy::didFinishLoadForResource(uint64_t frameID, uint64_t resourceIdentifier)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-
-    m_resourceLoadClient.didFinishLoadForResource(this, frame, resourceIdentifier);
-}
-
-void WebPageProxy::didFailLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, const ResourceError& error)
-{
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-
-    m_resourceLoadClient.didFailLoadForResource(this, frame, resourceIdentifier, error);
 }
 
 // UIClient

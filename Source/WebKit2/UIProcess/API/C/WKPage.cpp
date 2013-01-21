@@ -555,11 +555,6 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkCl
     toImpl(pageRef)->initializePolicyClient(wkClient);
 }
 
-void WKPageSetPageResourceLoadClient(WKPageRef pageRef, const WKPageResourceLoadClient* wkClient)
-{
-    toImpl(pageRef)->initializeResourceLoadClient(wkClient);
-}
-
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
     toImpl(pageRef)->initializeUIClient(wkClient);

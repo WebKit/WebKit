@@ -806,8 +806,6 @@
 		BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */; };
 		BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */; };
-		BC858A2012C0357B00EDEB2E /* WebResourceLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC858A1E12C0357B00EDEB2E /* WebResourceLoadClient.h */; };
-		BC858A2112C0357B00EDEB2E /* WebResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC858A1F12C0357B00EDEB2E /* WebResourceLoadClient.cpp */; };
 		BC8699B5116AADAA002A925B /* WKView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B2116AADAA002A925B /* WKView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC8699B6116AADAA002A925B /* WKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8699B3116AADAA002A925B /* WKView.mm */; };
 		BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B4116AADAA002A925B /* WKViewInternal.h */; };
@@ -2096,8 +2094,6 @@
 		BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelParameters.cpp; sourceTree = "<group>"; };
 		BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParameters.h; sourceTree = "<group>"; };
 		BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOpenPanelParameters.cpp; sourceTree = "<group>"; };
-		BC858A1E12C0357B00EDEB2E /* WebResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadClient.h; sourceTree = "<group>"; };
-		BC858A1F12C0357B00EDEB2E /* WebResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadClient.cpp; sourceTree = "<group>"; };
 		BC8699B2116AADAA002A925B /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKView.h; sourceTree = "<group>"; };
 		BC8699B3116AADAA002A925B /* WKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKView.mm; sourceTree = "<group>"; };
 		BC8699B4116AADAA002A925B /* WKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewInternal.h; sourceTree = "<group>"; };
@@ -3641,8 +3637,6 @@
 				33367632130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp */,
 				33367633130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h */,
 				33367634130C99B2006C9DE2 /* WebResourceCacheManagerProxy.messages.in */,
-				BC858A1F12C0357B00EDEB2E /* WebResourceLoadClient.cpp */,
-				BC858A1E12C0357B00EDEB2E /* WebResourceLoadClient.h */,
 				1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */,
 				1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */,
 			);
@@ -4904,7 +4898,6 @@
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
 				33367636130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
-				BC858A2012C0357B00EDEB2E /* WebResourceLoadClient.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
@@ -5915,7 +5908,6 @@
 				33367655130C9ECA006C9DE2 /* WebResourceCacheManagerMessageReceiver.cpp in Sources */,
 				33367635130C99B2006C9DE2 /* WebResourceCacheManagerProxy.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
-				BC858A2112C0357B00EDEB2E /* WebResourceLoadClient.cpp in Sources */,
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebResourceLoadScheduler.cpp in Sources */,
