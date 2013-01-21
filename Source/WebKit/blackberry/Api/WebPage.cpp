@@ -1608,6 +1608,12 @@ void WebPagePrivate::layoutFinished()
                 setScrollPosition(newScrollPosition);
                 notifyTransformedScrollChanged();
             }
+
+            // If the content size is too small, zoom it to fit the viewport.
+            if ((loadState() == Finished || loadState() == Committed)
+                && (transformedContentsSize().width() < transformedActualVisibleSize().width() || transformedContentsSize().height() < transformedActualVisibleSize().height()))
+                    zoomAboutPoint(initialScale(), newScrollPosition);
+
         }
     }
 }

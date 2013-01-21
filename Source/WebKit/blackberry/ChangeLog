@@ -1,3 +1,17 @@
+2013-01-20  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] some websites only takes half of the screen after rotating from landscape to portrait mode.
+        https://bugs.webkit.org/show_bug.cgi?id=107103
+
+        Reviewed by George Staikos.
+        Internally reviewed by Jacky Jiang.
+
+        When the document size changes (by some javascript) which makes it too small to fit the viewport, we should
+        automatically zoom it to fit the viewport.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::layoutFinished):
+
 2013-01-20  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Improve Fatfinger phase.
