@@ -1,3 +1,18 @@
+2013-01-21  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Update the documentation about the storage of inspector settings
+        https://bugs.webkit.org/show_bug.cgi?id=106777
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Since r76770, QSettings isn't queried anymore to persist inspector
+        settings like whether or not the debugger is enabled by default.
+        It still seems to be used for the default attach height.
+
+        Update the documentation accordingly.
+
+        * WidgetApi/qwebinspector.cpp:
+
 2013-01-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Crash in gmail on enabling desktop notifications

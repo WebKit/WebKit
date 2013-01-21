@@ -66,11 +66,13 @@
 
     The inspector allows the user to configure some options through its
     user interface (e.g. the resource tracking "Always enable" option).
-    These settings will be persisted automatically by QtWebKit only if
-    your application previously called QCoreApplication::setOrganizationName()
-    and QCoreApplication::setApplicationName().
-    See QSettings's default constructor documentation for an explanation
-    of why this is necessary.
+    The inspector UI is itself a web page and is using HTML local storage
+    to persist those settings.
+    Since the internal QWebPage used by the inspector isn't exposed in the API,
+    the only way to enable those settings to be persisted is currently to enable
+    local storage globally through QWebSettings::globalSettings().
+
+    \sa QWebSettings::localStoragePath(), QWebSettings::LocalStorageEnabled
 */
 
 /*!
