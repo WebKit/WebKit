@@ -950,8 +950,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebProcessProxy.h \
 	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.h \
 	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.cpp \
-	Source/WebKit2/UIProcess/WebResourceLoadClient.cpp \
-	Source/WebKit2/UIProcess/WebResourceLoadClient.h \
 	Source/WebKit2/UIProcess/WebTextChecker.cpp \
 	Source/WebKit2/UIProcess/WebTextChecker.h \
 	Source/WebKit2/UIProcess/WebTextCheckerClient.cpp \

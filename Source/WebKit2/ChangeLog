@@ -1,3 +1,17 @@
+2013-01-20  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        Remove support getting per-resource callbacks in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=107405
+
+        Reviewed by Sam Weinig.
+
+        EFL, GTK and Qt WebKit2 build fixes after r140285.
+        Remove from build WebResourceLoadClient.{cpp,h} deleted by r140285.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+
 2013-01-20  Sam Weinig  <sam@webkit.org>
 
         Remove support getting per-resource callbacks in the UIProcess

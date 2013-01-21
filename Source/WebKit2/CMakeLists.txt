@@ -297,7 +297,6 @@ set(WebKit2_SOURCES
     UIProcess/WebPreferences.cpp
     UIProcess/WebProcessProxy.cpp
     UIProcess/WebResourceCacheManagerProxy.cpp
-    UIProcess/WebResourceLoadClient.cpp
     UIProcess/WebTextChecker.cpp
     UIProcess/WebTextCheckerClient.cpp
     UIProcess/WebUIClient.cpp
