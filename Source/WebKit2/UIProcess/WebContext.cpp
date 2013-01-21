@@ -142,7 +142,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_usesNetworkProcess(false)
 #endif
 #if PLATFORM(MAC)
-    , m_processSuppressionEnabled(false)
+    , m_processSuppressionEnabled(true)
 #endif
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)

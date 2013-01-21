@@ -228,8 +228,8 @@ void WebContext::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
-    ASSERT(!m_processSuppressionEnabled);
-    disableProcessSuppressionForGlobalChildProcesses();
+    ASSERT(m_processSuppressionEnabled);
+    enableOcclusionNotifications();
 }
 
 String WebContext::applicationCacheDirectory()
