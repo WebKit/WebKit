@@ -305,12 +305,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_EXCLUSIONS)
     updateExclusionShapeOutsideInfoAfterStyleChange(style()->shapeOutside(), oldStyle ? oldStyle->shapeOutside() : 0);
 #endif
-
-    if (oldStyle && (newStyle->boxSizing() == BORDER_BOX || oldStyle->boxSizing() == BORDER_BOX)
-        && (newStyle->paddingBox() != oldStyle->paddingBox() || newStyle->border() != oldStyle->border())) {
-        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox())
-            child->setChildNeedsLayout(true, MarkOnlyThis);
-    }
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
