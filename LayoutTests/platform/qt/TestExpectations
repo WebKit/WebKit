@@ -2538,5 +2538,5 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 inspector/editor/text-editor-formatter.html
 
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=14664
-fast/block/float/024.html
-fast/block/margin-collapse/empty-clear-blocks.html
+webkit.org/b/107476 fast/block/float/024.html [ Failure ]
+webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]

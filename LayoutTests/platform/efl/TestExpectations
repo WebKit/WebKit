@@ -1827,3 +1827,7 @@ webkit.org/b/107001 compositing/layer-creation/overlap-animation-container.html 
 webkit.org/b/107013 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure ]
 
 webkit.org/b/107375 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=14664
+webkit.org/b/107476 fast/block/float/024.html [ Failure ]
+webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]
