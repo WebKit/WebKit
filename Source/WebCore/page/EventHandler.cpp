@@ -2546,6 +2546,11 @@ bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEve
         HitTestRequest request(HitTestRequest::ReadOnly);
         MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseDragEvent);
         m_didStartDrag = false;
+        RefPtr<Frame> subframe = subframeForHitTestResult(mev);
+        if (subframe && !m_mouseDownMayStartDrag) {
+            if (subframe->eventHandler()->handleGestureLongPress(gestureEvent))
+                return true;
+        }
         handleDrag(mev, DontCheckDragHysteresis);
         if (m_didStartDrag)
             return true;

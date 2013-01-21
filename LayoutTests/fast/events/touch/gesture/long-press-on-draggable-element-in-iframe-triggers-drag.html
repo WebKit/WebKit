@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe src="resources/drag-inside-iframe2.html"></iframe>
+<p>This test checks that a long press gesture on a draggable element in an iframe starts a drag/drop session.</p>
+<div id="text">Testing</div>
+<div id="result">FAIL</div>
+<script>
+function onDragStart() {
+    document.getElementById("result").innerHTML = "PASS";
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (testRunner.setTouchDragDropEnabled)
+        testRunner.setTouchDragDropEnabled(true);
+
+    if (!window.eventSender)
+        return;
+    if (eventSender.gestureLongPress) {
+        eventSender.gestureLongPress(50, 50);
+        eventSender.mouseUp();
+    } else {
+        debug("gestureLongPress not implemented by this platform");
+        return;
+    }
+}
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+</script>
+</body>
+</html>

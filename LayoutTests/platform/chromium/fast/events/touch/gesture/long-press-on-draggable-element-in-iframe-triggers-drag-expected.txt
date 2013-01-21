@@ -1,0 +1,5 @@
+
+This test checks that a long press gesture on a draggable element in an iframe starts a drag/drop session.
+
+Testing
+PASS
