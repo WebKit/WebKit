@@ -61,13 +61,13 @@ WebInspector.TextEditor.prototype = {
     defaultFocusedElement: function() { },
 
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @param {string} cssClass
      */
     highlightRegex: function(regex, cssClass) { },
 
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @return {boolean}
      */
     removeRegexHighlight: function(regex) { },

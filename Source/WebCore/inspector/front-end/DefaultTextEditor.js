@@ -110,7 +110,7 @@ WebInspector.DefaultTextEditor.EditInfo = function(range, text)
 
 WebInspector.DefaultTextEditor.prototype = {
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @param {string} cssClass
      */
     highlightRegex: function(regex, cssClass)
@@ -119,7 +119,7 @@ WebInspector.DefaultTextEditor.prototype = {
     },
 
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @return {boolean}
      */
     removeRegexHighlight: function(regex)
@@ -1364,20 +1364,20 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 
 WebInspector.TextEditorMainPanel.prototype = {
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @param {string} cssClass
      */
     highlightRegex: function(regex, cssClass)
     {
         this._highlightRegexs[regex] = {
-            regex: new RegExp(regex.source, "g" + (regex.ignoreCase ? "i" : "")),
+            regex: new RegExp(regex, "g"),
             cssClass: cssClass
         };
         this._repaintVisibleChunks();
     },
 
     /**
-     * @param {RegExp} regex
+     * @param {string} regex
      * @return {boolean}
      */
     removeRegexHighlight: function(regex)

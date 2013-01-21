@@ -21,11 +21,11 @@ function test()
             textEditor.setText(text.join("\n"));
             InspectorTest.addResult("\nBefore highlight");
             InspectorTest.dumpEditorHTML(textEditor, true);
-            textEditor.highlightRegex(/foo_./, "some-css-class");
+            textEditor.highlightRegex("foo_.", "some-css-class");
             InspectorTest.addResult("\nAdd highlight for regexp /foo_./");
             InspectorTest.dumpEditorHTML(textEditor, true);
             InspectorTest.addResult("\nRemove highlight for regexp /foo_./");
-            textEditor.removeRegexHighlight(/foo_./);
+            textEditor.removeRegexHighlight("foo_.");
             InspectorTest.dumpEditorHTML(textEditor, true);
             next();
         },
