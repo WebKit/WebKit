@@ -1159,6 +1159,14 @@ AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
 # Farstream feature conditional
 AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 
+#######################################################################################
+#                                     ATTENTION                                       #
+# Please refer to the following guidelines if you're about to add an Automake         #
+# conditional that reflects any configuration option you've probably also added.      #
+# Chances are neither of these changes are required.                                  #
+# http://trac.webkit.org/wiki/AddingFeatures#ActivatingafeatureforAutotoolsbasedports #
+#######################################################################################
+
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])

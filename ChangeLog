@@ -1,3 +1,13 @@
+2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Place a warning in configure.ac about adding new configuration options
+        https://bugs.webkit.org/show_bug.cgi?id=107559
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Add an eye-catching section explaining that changes in this file might
+        not be necessary at all and a link pointing to the guidelines on the Trac wiki.
+
 2013-01-21  Dirk Schulze  <dschulze@adobe.com>
 
         Add build flag for Canvas's Path object (disabled by default)
