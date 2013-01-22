@@ -331,27 +331,27 @@ String contextMenuItemTagInspectElement()
 
 String contextMenuItemTagRightToLeft()
 {
-    return String();
+    return String::fromUTF8("Right to Left");
 }
 
 String contextMenuItemTagLeftToRight()
 {
-    return String();
+    return String::fromUTF8("Left to Right");
 }
 
 String contextMenuItemTagWritingDirectionMenu()
 {
-    return String();
+    return String::fromUTF8("Writing Direction");
 }
 
 String contextMenuItemTagTextDirectionMenu()
 {
-    return String();
+    return String::fromUTF8("Text Direction");
 }
 
 String contextMenuItemTagDefaultDirection()
 {
-    return String();
+    return String::fromUTF8("Default");
 }
 
 String searchMenuNoRecentSearchesText()
