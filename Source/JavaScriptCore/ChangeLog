@@ -1,3 +1,15 @@
+2013-01-22  Tobias Netzel  <tobias.netzel@googlemail.com>
+
+        Yarr JIT isn't big endian compatible
+        https://bugs.webkit.org/show_bug.cgi?id=102897
+
+        Reviewed by Oliver Hunt.
+
+        This patch was tested in the current mozilla codebase only and has passed the regexp tests there.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+
 2013-01-22  David Kilzer  <ddkilzer@apple.com>
 
         Fix DateMath.cpp to compile with -Wshorten-64-to-32
