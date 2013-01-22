@@ -275,6 +275,11 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 #endif
 
     if (m_playBin) {
+        GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_playBin.get()));
+        ASSERT(bus);
+        g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateMessageCallback), this);
+        gst_bus_remove_signal_watch(bus.get());
+
         gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
         m_playBin = 0;
     }
@@ -1801,10 +1806,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     m_gstGWorld = GStreamerGWorld::createGWorld(m_playBin.get());
 #endif
 
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin.get()));
-    gst_bus_add_signal_watch(bus);
-    g_signal_connect(bus, "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
-    gst_object_unref(bus);
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_playBin.get()));
+    gst_bus_add_signal_watch(bus.get());
+    g_signal_connect(bus.get(), "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
 
     g_object_set(m_playBin.get(), "mute", m_player->muted(), NULL);
 

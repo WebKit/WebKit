@@ -22,6 +22,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
 #include "GRefPtrGStreamer.h"
+#include "GStreamerVersioning.h"
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 #include <gst/pbutils/pbutils.h>
@@ -59,10 +60,9 @@ GStreamerGWorld::GStreamerGWorld(GstElement* pipeline)
     : m_pipeline(pipeline)
 {
     // XOverlay messages need to be handled synchronously.
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
-    gst_bus_set_sync_handler(bus, gst_bus_sync_signal_handler, this);
-    g_signal_connect(bus, "sync-message::element", G_CALLBACK(gstGWorldSyncMessageCallback), this);
-    gst_object_unref(bus);
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
+    gst_bus_set_sync_handler(bus.get(), gst_bus_sync_signal_handler, this);
+    g_signal_connect(bus.get(), "sync-message::element", G_CALLBACK(gstGWorldSyncMessageCallback), this);
 }
 
 GStreamerGWorld::~GStreamerGWorld()

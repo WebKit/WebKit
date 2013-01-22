@@ -181,10 +181,11 @@ AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
 AudioFileReader::~AudioFileReader()
 {
     if (m_pipeline) {
-        GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+        GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
         ASSERT(bus);
-        g_signal_handlers_disconnect_by_func(bus, reinterpret_cast<gpointer>(messageCallback), this);
-        gst_object_unref(bus);
+        g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
+        gst_bus_remove_signal_watch(bus.get());
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         gst_object_unref(GST_OBJECT(m_pipeline));
     }
@@ -413,11 +414,10 @@ void AudioFileReader::decodeAudioForBusCreation()
     // A deinterleave element is added once a src pad becomes available in decodebin.
     m_pipeline = gst_pipeline_new(0);
 
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
     ASSERT(bus);
-    gst_bus_add_signal_watch(bus);
-    g_signal_connect(bus, "message", G_CALLBACK(messageCallback), this);
-    gst_object_unref(bus);
+    gst_bus_add_signal_watch(bus.get());
+    g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
     GstElement* source;
     if (m_data) {

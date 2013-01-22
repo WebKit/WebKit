@@ -70,6 +70,17 @@ GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad* pad)
 #endif
 }
 
+GRefPtr<GstBus> webkitGstPipelineGetBus(GstPipeline* pipeline)
+{
+#ifdef GST_API_VERSION_1
+    return adoptGRef(gst_pipeline_get_bus(pipeline));
+#else
+    // gst_pipeline_get_bus returns a floating reference in
+    // gstreamer 0.10 so we should not adopt.
+    return gst_pipeline_get_bus(pipeline);
+#endif
+}
+
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVideoFormat& format, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride)
 {

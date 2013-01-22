@@ -26,6 +26,7 @@
 #include "AudioSourceProvider.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
+#include "GStreamerVersioning.h"
 #include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/gst.h>
@@ -74,11 +75,10 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     , m_isPlaying(false)
 {
     m_pipeline = gst_pipeline_new("play");
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
     ASSERT(bus);
-    gst_bus_add_signal_watch(bus);
-    g_signal_connect(bus, "message", G_CALLBACK(messageCallback), this);
-    gst_object_unref(bus);
+    gst_bus_add_signal_watch(bus.get());
+    g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
                                                                             "rate", sampleRate,
@@ -107,10 +107,11 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
-    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
     ASSERT(bus);
-    g_signal_handlers_disconnect_by_func(bus, reinterpret_cast<gpointer>(messageCallback), this);
-    gst_object_unref(bus);
+    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
+    gst_bus_remove_signal_watch(bus.get());
+
     gst_element_set_state(m_pipeline, GST_STATE_NULL);
     gst_object_unref(m_pipeline);
 }
