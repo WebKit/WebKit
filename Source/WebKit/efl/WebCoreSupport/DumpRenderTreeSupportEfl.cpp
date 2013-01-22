@@ -72,6 +72,12 @@
 #include <wtf/CurrentTime.h>
 #endif
 
+#if HAVE(ACCESSIBILITY)
+#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
+#include "WebKitAccessibleWrapperAtk.h"
+#endif
+
 #define DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, ...) \
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);  \
     if (!frame)                                               \
@@ -888,3 +894,31 @@ int DumpRenderTreeSupportEfl::numberOfPendingGeolocationPermissionRequests(const
     return 0;
 #endif
 }
+
+#if HAVE(ACCESSIBILITY)
+AtkObject* DumpRenderTreeSupportEfl::rootAccessibleElement(const Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
+
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
+    if (!frame->document())
+        return 0;
+
+    AtkObject* wrapper = frame->document()->axObjectCache()->rootObject()->wrapper();
+    if (!wrapper)
+        return 0;
+
+    return wrapper;
+}
+
+AtkObject* DumpRenderTreeSupportEfl::focusedAccessibleElement(const Evas_Object* ewkFrame)
+{
+    AtkObject* wrapper = rootAccessibleElement(ewkFrame);
+    if (!wrapper)
+        return 0;
+
+    return webkitAccessibleGetFocusedElement(WEBKIT_ACCESSIBLE(wrapper));
+}
+#endif

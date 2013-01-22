@@ -1,3 +1,12 @@
+2013-01-22  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Adds Accessibility support to wk1
+        https://bugs.webkit.org/show_bug.cgi?id=107440
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Adds ATK headers and libraries.
+
 2013-01-17  Poul Sysolyatin  <psytonx@gmail.com>
 
         32-bit build for Qt5 on Mac OS fails.

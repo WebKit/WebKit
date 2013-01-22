@@ -30,6 +30,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(ACCESSIBILITY)
+#include <atk/atk.h>
+#endif
+
 typedef struct _Ewk_History_Item Ewk_History_Item;
 typedef struct _Ewk_Intent Ewk_Intent;
 typedef struct _Ewk_Intent_Request Ewk_Intent_Request;
@@ -138,6 +142,11 @@ public:
     static void setMockGeolocationPosition(const Evas_Object*, double latitude, double longitude, double accuracy, bool canProvideAltitude, double altitude, bool canProvideAltitudeAccuracy, double altitudeAccuracy, bool canProvideHeading, double heading, bool canProvideSpeed, double speed);
     static void setMockGeolocationPositionUnavailableError(const Evas_Object*, const char* errorMessage);
     static int numberOfPendingGeolocationPermissionRequests(const Evas_Object*);
+
+#if HAVE(ACCESSIBILITY)
+    static AtkObject* focusedAccessibleElement(const Evas_Object*);
+    static AtkObject* rootAccessibleElement(const Evas_Object*);
+#endif
 
 private:
     static bool s_drtRun;

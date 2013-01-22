@@ -89,6 +89,17 @@ if (ENABLE_GEOLOCATION)
     )
 endif ()
 
+if (ENABLE_ACCESSIBILITY)
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/accessibility"
+        "${WEBCORE_DIR}/accessibility/atk"
+        ${ATK_INCLUDE_DIRS}
+    )
+    list(APPEND WebKit_LIBRARIES
+        ${ATK_LIBRARIES}
+    )
+endif ()
+
 list(APPEND WebKit_SOURCES
     efl/WebCoreSupport/AcceleratedCompositingContextEfl.cpp
     efl/WebCoreSupport/AssertMatchingEnums.cpp

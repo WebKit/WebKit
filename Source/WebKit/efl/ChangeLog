@@ -1,3 +1,17 @@
+2013-01-22  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Adds Accessibility support to wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=107440
+
+        Reviewed by Gyuyoung Kim.
+
+        Adds possibility of focusing and retrieving accessible object.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::rootAccessibleElement):
+        (DumpRenderTreeSupportEfl::focusedAccessibleElement):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2013-01-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break by r139796.

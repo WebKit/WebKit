@@ -111,6 +111,15 @@ set(DumpRenderTree_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
+if (ENABLE_ACCESSIBILITY)
+    list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
+        ${ATK_INCLUDE_DIRS}
+    )
+    list(APPEND DumpRenderTree_LIBRARIES
+        ${ATK_LIBRARIES}
+    )
+endif ()
+
 # FIXME: DOWNLOADED_FONTS_DIR should not hardcode the directory
 # structure. See <https://bugs.webkit.org/show_bug.cgi?id=81475>.
 add_definitions(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
