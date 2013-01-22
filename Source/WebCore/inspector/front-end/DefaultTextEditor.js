@@ -1768,9 +1768,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._highlighter.highlight(lastVisibleLine);
         delete this._muteHighlightListener;
 
-        this._restorePaintLinesOperationsCredit();
         WebInspector.TextEditorChunkedPanel.prototype.expandChunks.call(this, fromIndex, toIndex);
-        this._adjustPaintLinesOperationsRefreshValue();
 
         this._restoreSelection(selection);
     },
@@ -1783,84 +1781,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         if (this._muteHighlightListener)
             return;
-        this._restorePaintLinesOperationsCredit();
         this._paintLines(fromLine, toLine, true /*restoreSelection*/);
-    },
-
-    /**
-     * @param {number} startLine
-     * @param {number} endLine
-     */
-    _schedulePaintLines: function(startLine, endLine)
-    {
-        if (startLine >= endLine)
-            return;
-
-        if (!this._scheduledPaintLines) {
-            this._scheduledPaintLines = [{ startLine: startLine, endLine: endLine }];
-            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 0);
-        } else {
-            for (var i = 0; i < this._scheduledPaintLines.length; ++i) {
-                var chunk = this._scheduledPaintLines[i];
-                if (chunk.startLine <= endLine && chunk.endLine >= startLine) {
-                    chunk.startLine = Math.min(chunk.startLine, startLine);
-                    chunk.endLine = Math.max(chunk.endLine, endLine);
-                    return;
-                }
-                if (chunk.startLine > endLine) {
-                    this._scheduledPaintLines.splice(i, 0, { startLine: startLine, endLine: endLine });
-                    return;
-                }
-            }
-            this._scheduledPaintLines.push({ startLine: startLine, endLine: endLine });
-        }
-    },
-
-    /**
-     * @param {boolean} skipRestoreSelection
-     */
-    _paintScheduledLines: function(skipRestoreSelection)
-    {
-        if (this._paintScheduledLinesTimer)
-            clearTimeout(this._paintScheduledLinesTimer);
-        delete this._paintScheduledLinesTimer;
-
-        if (!this._scheduledPaintLines)
-            return;
-
-        // Reschedule the timer if we can not paint the lines yet, or the user is scrolling.
-        if (this._repaintAllTimer) {
-            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 50);
-            return;
-        }
-
-        var scheduledPaintLines = this._scheduledPaintLines;
-        delete this._scheduledPaintLines;
-
-        this._restorePaintLinesOperationsCredit();
-        this._paintLineChunks(scheduledPaintLines, !skipRestoreSelection);
-        this._adjustPaintLinesOperationsRefreshValue();
-    },
-
-    _restorePaintLinesOperationsCredit: function()
-    {
-        if (!this._paintLinesOperationsRefreshValue)
-            this._paintLinesOperationsRefreshValue = 250;
-        this._paintLinesOperationsCredit = this._paintLinesOperationsRefreshValue;
-        this._paintLinesOperationsLastRefresh = Date.now();
-    },
-
-    _adjustPaintLinesOperationsRefreshValue: function()
-    {
-        var operationsDone = this._paintLinesOperationsRefreshValue - this._paintLinesOperationsCredit;
-        if (operationsDone <= 0)
-            return;
-        var timePast = Date.now() - this._paintLinesOperationsLastRefresh;
-        if (timePast <= 0)
-            return;
-        // Make the synchronous CPU chunk for painting the lines 50 msec.
-        var value = Math.floor(operationsDone / timePast * 50);
-        this._paintLinesOperationsRefreshValue = Number.constrain(value, 150, 1500);
     },
 
     /**
@@ -1870,14 +1791,6 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _paintLines: function(fromLine, toLine, restoreSelection)
     {
-        this._paintLineChunks([{ startLine: fromLine, endLine: toLine }], restoreSelection);
-    },
-
-    /**
-     * @param {boolean=} restoreSelection
-     */
-    _paintLineChunks: function(lineChunks, restoreSelection)
-    {
         // First, paint visible lines, so that in case of long lines we should start highlighting
         // the visible area immediately, instead of waiting for the lines above the visible area.
         var visibleFrom = this.scrollTop();
@@ -1886,30 +1799,19 @@ WebInspector.TextEditorMainPanel.prototype = {
         var chunk;
         var selection;
         var invisibleLineRows = [];
-        for (var i = 0; i < lineChunks.length; ++i) {
-            var lineChunk = lineChunks[i];
-            if (this._scheduledPaintLines) {
-                this._schedulePaintLines(lineChunk.startLine, lineChunk.endLine);
+        for (var lineNumber = fromLine; lineNumber < toLine; ++lineNumber) {
+            if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
+                chunk = this.chunkForLine(lineNumber);
+            var lineRow = chunk.expandedLineRow(lineNumber);
+            if (!lineRow)
+                continue;
+            if (lineNumber < firstVisibleLineNumber) {
+                invisibleLineRows.push(lineRow);
                 continue;
             }
-            for (var lineNumber = lineChunk.startLine; lineNumber < lineChunk.endLine; ++lineNumber) {
-                if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
-                    chunk = this.chunkForLine(lineNumber);
-                var lineRow = chunk.expandedLineRow(lineNumber);
-                if (!lineRow)
-                    continue;
-                if (lineNumber < firstVisibleLineNumber) {
-                    invisibleLineRows.push(lineRow);
-                    continue;
-                }
-                if (restoreSelection && !selection)
-                    selection = this.selection();
-                this._paintLine(lineRow);
-                if (this._paintLinesOperationsCredit < 0) {
-                    this._schedulePaintLines(lineNumber + 1, lineChunk.endLine);
-                    break;
-                }
-            }
+            if (restoreSelection && !selection)
+                selection = this.selection();
+            this._paintLine(lineRow);
         }
 
         for (var i = 0; i < invisibleLineRows.length; ++i) {
@@ -2017,15 +1919,12 @@ WebInspector.TextEditorMainPanel.prototype = {
 
             if (plainTextStart < rangeStart) {
                 this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
-                --this._paintLinesOperationsCredit;
             }
             this._insertSpanBefore(lineRow, decorationsElement, line.substring(rangeStart, rangeEnd + 1), cssClass);
-            --this._paintLinesOperationsCredit;
             plainTextStart = rangeEnd + 1;
         }
         if (plainTextStart < line.length) {
             this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
-            --this._paintLinesOperationsCredit;
         }
     },
 
@@ -2038,11 +1937,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         this.beginDomUpdates();
         try {
-            if (this._scheduledPaintLines || this._paintLinesOperationsCredit < 0) {
-                this._schedulePaintLines(lineNumber, lineNumber + 1);
-                return;
-            }
-
             var highlight = this._textModel.getAttribute(lineNumber, "highlight");
             if (!highlight)
                 return;
@@ -2447,7 +2341,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
 
         this._textModel.editRange(editInfo.range, editInfo.text);
-        this._paintScheduledLines(true);
         this._restoreSelection(selection);
     },
 
