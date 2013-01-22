@@ -1793,12 +1793,11 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 {
     ASSERT(!m_playBin);
 
-#ifdef GST_API_VERSION_1
-    // In gstreamer 1.0, gst_element_factory_make returns a floating
-    // reference so we should not adopt.
+    // gst_element_factory_make() returns a floating reference so
+    // we should not adopt.
     m_playBin = gst_element_factory_make(gPlaybinName, "play");
-#else
-    m_playBin = adoptGRef(gst_element_factory_make(gPlaybinName, "play"));
+
+#ifndef GST_API_VERSION_1
     m_gstGWorld = GStreamerGWorld::createGWorld(m_playBin.get());
 #endif
 
