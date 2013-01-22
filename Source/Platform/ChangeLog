@@ -1,3 +1,12 @@
+2013-01-21  Justin Schuh  <jschuh@chromium.org>
+
+        [CHROMIUM] Suppress c4267 build warnings for Win64 targets
+        https://bugs.webkit.org/show_bug.cgi?id=107499
+
+        Reviewed by Abhishek Arya.
+
+        * Platform.gyp/Platform.gyp:
+
 2013-01-21  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update the RTCPeerConnection states to match the latest specification

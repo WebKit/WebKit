@@ -1364,7 +1364,8 @@
             'include_dirs+++': ['../dom'],
           },
           # In generated bindings code: 'switch contains default but no case'.
-          'msvs_disabled_warnings': [ 4065 ],
+          # Disable c4267 warnings until we fix size_t to int truncations.
+          'msvs_disabled_warnings': [ 4065, 4267 ],
         }],
         ['OS in ("linux", "android") and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
           'cflags': [

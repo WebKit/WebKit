@@ -89,6 +89,12 @@
       'export_dependent_settings': [
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
       ],
+      'conditions': [
+        ['OS=="win"', {
+          # Disable c4267 warnings until we fix size_t to int truncations.
+          'msvs_disabled_warnings': [4267, ],
+        }],
+      ],
     },
   ], # targets
 }
