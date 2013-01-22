@@ -37,12 +37,14 @@ struct SameSizeAsCompactHTMLToken  {
     unsigned bitfields;
     String name;
     Vector<CompactAttribute> vector;
+    TextPosition textPosition;
 };
 
 COMPILE_ASSERT(sizeof(CompactHTMLToken) == sizeof(SameSizeAsCompactHTMLToken), CompactHTMLToken_should_stay_small);
 
-CompactHTMLToken::CompactHTMLToken(const HTMLToken& token)
+CompactHTMLToken::CompactHTMLToken(const HTMLToken& token, const TextPosition& textPosition)
     : m_type(token.type())
+    , m_textPosition(textPosition)
 {
     switch (m_type) {
     case HTMLTokenTypes::Uninitialized:

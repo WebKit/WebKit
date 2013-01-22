@@ -37,6 +37,7 @@
 #include "SVGNames.h"
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -170,7 +171,7 @@ void BackgroundHTMLParser::pumpTokenizer()
         return;
 
     while (m_tokenizer->nextToken(m_input, m_token)) {
-        m_pendingTokens.append(CompactHTMLToken(m_token));
+        m_pendingTokens.append(CompactHTMLToken(m_token, TextPosition(m_input.currentLine(), m_input.currentColumn())));
         m_token.clear();
 
         simulateTreeBuilder(m_pendingTokens.last());

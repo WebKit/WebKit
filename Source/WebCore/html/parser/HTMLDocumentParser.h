@@ -38,6 +38,7 @@
 #include "Timer.h"
 #include "XSSAuditor.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -163,6 +164,7 @@ private:
     OwnPtr<HTMLPreloadScanner> m_insertionPreloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
     HTMLSourceTracker m_sourceTracker;
+    TextPosition m_textPosition;
     XSSAuditor m_xssAuditor;
 
     bool m_endWasDelayed;

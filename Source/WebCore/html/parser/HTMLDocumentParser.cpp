@@ -276,6 +276,7 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         ASSERT(!isWaitingForScripts());
 
         // FIXME: Call m_xssAuditor.filterToken(*it).
+        m_textPosition = it->textPosition();
         constructTreeFromCompactHTMLToken(*it);
 
         if (isStopped())
@@ -613,11 +614,21 @@ String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
 
 OrdinalNumber HTMLDocumentParser::lineNumber() const
 {
+#if ENABLE(THREADED_HTML_PARSER)
+    if (shouldUseThreading())
+        return m_textPosition.m_line;
+#endif
+
     return m_input.current().currentLine();
 }
 
 TextPosition HTMLDocumentParser::textPosition() const
 {
+#if ENABLE(THREADED_HTML_PARSER)
+    if (shouldUseThreading())
+        return m_textPosition;
+#endif
+
     const SegmentedString& currentString = m_input.current();
     OrdinalNumber line = currentString.currentLine();
     OrdinalNumber column = currentString.currentColumn();

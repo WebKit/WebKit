@@ -32,6 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -56,7 +57,7 @@ private:
 
 class CompactHTMLToken {
 public:
-    explicit CompactHTMLToken(const HTMLToken&);
+    explicit CompactHTMLToken(const HTMLToken&, const TextPosition&);
 
     bool isSafeToSendToAnotherThread() const;
 
@@ -64,6 +65,7 @@ public:
     const String& data() const { return m_data; }
     bool selfClosing() const { return m_selfClosing; }
     const Vector<CompactAttribute>& attributes() const { return m_attributes; }
+    const TextPosition& textPosition() const { return m_textPosition; }
 
     // There is only 1 DOCTYPE token per document, so to avoid increasing the
     // size of CompactHTMLToken, we just use the m_attributes vector.
@@ -76,6 +78,7 @@ private:
 
     String m_data; // "name", "characters", or "data" depending on m_type
     Vector<CompactAttribute> m_attributes;
+    TextPosition m_textPosition;
 };
 
 }
