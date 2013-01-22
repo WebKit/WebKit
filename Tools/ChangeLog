@@ -1,3 +1,67 @@
+2013-01-22  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move spell checking mocks to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=107455
+
+        Reviewed by Kent Tamura.
+
+        The content module doesn't provide its own WebSpellCheckClient.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::fillSpellingSuggestionList):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner):
+        (WebTestProxyBase):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::makeMenuItemStringsFor):
+        * DumpRenderTree/chromium/TestRunner/src/MockGrammarCheck.cpp: Renamed from Tools/DumpRenderTree/chromium/MockGrammarCheck.cpp.
+        (MockGrammarCheck::checkGrammarOfString):
+        * DumpRenderTree/chromium/TestRunner/src/MockGrammarCheck.h: Renamed from Tools/DumpRenderTree/chromium/MockGrammarCheck.h.
+        (WebKit):
+        (MockGrammarCheck):
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.cpp: Renamed from Tools/DumpRenderTree/chromium/MockSpellCheck.cpp.
+        (MockSpellCheck::MockSpellCheck):
+        (MockSpellCheck::~MockSpellCheck):
+        (isNotASCIIAlpha):
+        (MockSpellCheck::spellCheckWord):
+        (MockSpellCheck::fillSuggestionList):
+        (MockSpellCheck::initializeIfNeeded):
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.h: Renamed from Tools/DumpRenderTree/chromium/MockSpellCheck.h.
+        (MockSpellCheck):
+        * DumpRenderTree/chromium/TestRunner/src/SpellCheckClient.cpp: Added.
+        (WebTestRunner::SpellCheckClient::SpellCheckClient):
+        (WebTestRunner):
+        (WebTestRunner::SpellCheckClient::~SpellCheckClient):
+        (WebTestRunner::SpellCheckClient::setDelegate):
+        (WebTestRunner::SpellCheckClient::spellCheck):
+        (WebTestRunner::SpellCheckClient::checkTextOfParagraph):
+        (WebTestRunner::SpellCheckClient::requestCheckingOfText):
+        (WebTestRunner::SpellCheckClient::finishLastTextCheck):
+        (WebTestRunner::SpellCheckClient::autoCorrectWord):
+        * DumpRenderTree/chromium/TestRunner/src/SpellCheckClient.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebTestRunner):
+        (SpellCheckClient):
+        (WebTestRunner::SpellCheckClient::taskList):
+        (WebTestRunner::SpellCheckClient::mockSpellCheck):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::~WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::setDelegate):
+        (WebTestRunner::WebTestProxyBase::spellCheckClient):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost):
+        (WebViewHost::setWebWidget):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-22  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Adds Accessibility support to wk1

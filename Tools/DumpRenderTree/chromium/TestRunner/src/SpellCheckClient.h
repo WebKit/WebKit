@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,36 +28,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
+#ifndef SpellCheckClient_h
+#define SpellCheckClient_h
 
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
-}
+#include "MockSpellCheck.h"
+#include "WebSpellCheckClient.h"
+#include "WebTask.h"
 
 namespace WebTestRunner {
 
-class WebTask;
+class WebTestDelegate;
 
-class TestDelegate {
+class SpellCheckClient : public WebKit::WebSpellCheckClient {
 public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-    virtual void printMessage(const std::string& message) = 0;
-    virtual void postTask(WebTask*) = 0;
-    virtual void postDelayedTask(WebTask*, long long ms) = 0;
-    virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
-    virtual long long getCurrentTimeInMillisecond() = 0;
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) = 0;
+    SpellCheckClient();
+    virtual ~SpellCheckClient();
+
+    void setDelegate(WebTestDelegate*);
+
+    WebTaskList* taskList() { return &m_taskList; }
+    MockSpellCheck* mockSpellCheck() { return &m_spellcheck; }
+
+    // WebKit::WebSpellCheckClient implementation.
+    virtual void spellCheck(const WebKit::WebString&, int& offset, int& length, WebKit::WebVector<WebKit::WebString>* optionalSuggestions);
+    virtual void checkTextOfParagraph(const WebKit::WebString&, WebKit::WebTextCheckingTypeMask, WebKit::WebVector<WebKit::WebTextCheckingResult>*);
+    virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion*);
+    virtual WebKit::WebString autoCorrectWord(const WebKit::WebString&);
+
+private:
+    void finishLastTextCheck();
+
+    // The mock spellchecker used in spellCheck().
+    MockSpellCheck m_spellcheck;
+
+    WebKit::WebString m_lastRequestedTextCheckString;
+    WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
+
+    WebTaskList m_taskList;
+
+    WebTestDelegate* m_delegate;
 };
 
 }
 
-#endif // TestDelegate_h
+#endif // SpellCheckClient_h

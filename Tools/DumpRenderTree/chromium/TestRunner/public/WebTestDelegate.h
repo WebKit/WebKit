@@ -54,7 +54,7 @@ class WebTestDelegate {
 public:
     virtual void clearContextMenuData() = 0;
     virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
+    virtual void fillSpellingSuggestionList(const WebKit::WebString&, WebKit::WebVector<WebKit::WebString>*) { }
     virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
     virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
     virtual void setGamepadData(const WebKit::WebGamepads&) = 0;

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebTestProxy.h"
 
+#include "SpellCheckClient.h"
 #include "WebAccessibilityController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
@@ -190,11 +191,13 @@ void blockRequest(WebURLRequest& request)
 WebTestProxyBase::WebTestProxyBase()
     : m_testInterfaces(0)
     , m_delegate(0)
+    , m_spellcheck(new SpellCheckClient)
 {
 }
 
 WebTestProxyBase::~WebTestProxyBase()
 {
+    delete m_spellcheck;
 }
 
 void WebTestProxyBase::setInterfaces(WebTestInterfaces* interfaces)
@@ -205,12 +208,18 @@ void WebTestProxyBase::setInterfaces(WebTestInterfaces* interfaces)
 void WebTestProxyBase::setDelegate(WebTestDelegate* delegate)
 {
     m_delegate = delegate;
+    m_spellcheck->setDelegate(delegate);
 }
 
 void WebTestProxyBase::reset()
 {
     m_paintRect = WebRect();
     m_resourceIdentifierMap.clear();
+}
+
+WebSpellCheckClient* WebTestProxyBase::spellCheckClient() const
+{
+    return m_spellcheck;
 }
 
 void WebTestProxyBase::setPaintRect(const WebRect& rect)

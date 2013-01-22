@@ -45,6 +45,8 @@
 // for any other usages.
 class MockSpellCheck {
 public:
+    static void fillSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions);
+
     MockSpellCheck();
     ~MockSpellCheck();
 
@@ -56,11 +58,7 @@ public:
     // the first invalid word to misspelledLength, respectively.
     // For example, when the given text is "   zz zz", this function sets 3 to
     // misspelledOffset and 2 to misspelledLength, respectively.
-    bool spellCheckWord(const WebKit::WebString& text,
-                        int* misspelledOffset,
-                        int* misspelledLength);
-
-    void fillSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions);
+    bool spellCheckWord(const WebKit::WebString& text, int* misspelledOffset, int* misspelledLength);
 
 private:
     // Initialize the internal resources if we need to initialize it.

@@ -65,7 +65,6 @@ public:
     // TestDelegate implementation.
     virtual void clearContextMenuData();
     virtual void clearEditCommand();
-    virtual void fillSpellingSuggestionList(const WebString& word, WebVector<WebString>* suggestions);
     virtual void setEditCommand(const std::string& name, const std::string& value);
     virtual WebContextMenuData* lastContextMenuData() const;
     virtual void setGamepadData(const WebGamepads&);
@@ -131,11 +130,6 @@ void WebTestInterfaces::Internal::clearContextMenuData()
 void WebTestInterfaces::Internal::clearEditCommand()
 {
     m_delegate->clearEditCommand();
-}
-
-void WebTestInterfaces::Internal::fillSpellingSuggestionList(const WebString& word, WebVector<WebString>* suggestions)
-{
-    m_delegate->fillSpellingSuggestionList(word, suggestions);
 }
 
 void WebTestInterfaces::Internal::setEditCommand(const std::string& name, const std::string& value)

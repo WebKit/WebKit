@@ -44,6 +44,7 @@
 #include "EventSender.h"
 
 #include "KeyCodeMapping.h"
+#include "MockSpellCheck.h"
 #include "TestDelegate.h"
 #include "WebContextMenuData.h"
 #include "WebDragOperation.h"
@@ -827,7 +828,7 @@ static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu,
         for (const char** item = editableMenuStrings; *item; ++item) 
             strings.append(WebString::fromUTF8(*item));
         WebVector<WebString> suggestions;
-        delegate->fillSpellingSuggestionList(contextMenu->misspelledWord, &suggestions);
+        MockSpellCheck::fillSuggestionList(contextMenu->misspelledWord, &suggestions);
         for (size_t i = 0; i < suggestions.size(); ++i) 
             strings.append(suggestions[i]);
     } else {

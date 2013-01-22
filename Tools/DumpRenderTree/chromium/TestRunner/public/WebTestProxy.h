@@ -53,6 +53,7 @@ class WebNode;
 class WebRange;
 class WebSecurityOrigin;
 class WebSerializedScriptValue;
+class WebSpellCheckClient;
 class WebString;
 class WebURL;
 class WebURLRequest;
@@ -66,6 +67,7 @@ struct WebWindowFeatures;
 
 namespace WebTestRunner {
 
+class SpellCheckClient;
 class WebTestDelegate;
 class WebTestInterfaces;
 class WebTestRunner;
@@ -76,6 +78,8 @@ public:
     void setDelegate(WebTestDelegate*);
 
     void reset();
+
+    WebKit::WebSpellCheckClient *spellCheckClient() const;
 
     void setPaintRect(const WebKit::WebRect&);
     WebKit::WebRect paintRect() const;
@@ -135,6 +139,8 @@ protected:
 private:
     WebTestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
+
+    SpellCheckClient* m_spellcheck;
 
     WebKit::WebRect m_paintRect;
     std::map<unsigned, std::string> m_resourceIdentifierMap;

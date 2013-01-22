@@ -33,7 +33,6 @@
 
 #include "DRTDevToolsAgent.h"
 #include "DRTTestRunner.h"
-#include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
 #include "MockWebSpeechRecognizer.h"
 #include "Task.h"
@@ -61,8 +60,6 @@
 #include "WebScreenInfo.h"
 #include "WebStorageNamespace.h"
 #include "WebTestPlugin.h"
-#include "WebTextCheckingCompletion.h"
-#include "WebTextCheckingResult.h"
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
@@ -318,86 +315,6 @@ void WebViewHost::willAddPrerender(WebKit::WebPrerender*)
 }
 
 
-// WebKit::WebSpellCheckClient
-
-void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& misspelledLength, WebVector<WebString>* optionalSuggestions)
-{
-    // Check the spelling of the given text.
-    m_spellcheck.spellCheckWord(text, &misspelledOffset, &misspelledLength);
-}
-
-void WebViewHost::checkTextOfParagraph(const WebString& text, WebTextCheckingTypeMask mask, WebVector<WebTextCheckingResult>* webResults)
-{
-    Vector<WebTextCheckingResult> results;
-    if (mask & WebTextCheckingTypeSpelling) {
-        size_t offset = 0;
-        size_t length = text.length();
-        const WebUChar* data = text.data();
-        while (offset < length) {
-            int misspelledPosition = 0;
-            int misspelledLength = 0;
-            m_spellcheck.spellCheckWord(WebString(&data[offset], length - offset), &misspelledPosition, &misspelledLength);
-            if (!misspelledLength)
-                break;
-            WebTextCheckingResult result;
-            result.type = WebTextCheckingTypeSpelling;
-            result.location = offset + misspelledPosition;
-            result.length = misspelledLength;
-            results.append(result);
-            offset += misspelledPosition + misspelledLength;
-        }
-    }
-    if (mask & WebTextCheckingTypeGrammar)
-        MockGrammarCheck::checkGrammarOfString(text, &results);
-    webResults->assign(results);
-}
-
-void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCompletion* completion)
-{
-    if (text.isEmpty()) {
-        if (completion)
-            completion->didCancelCheckingText();
-        return;
-    }
-
-    m_lastRequestedTextCheckingCompletion = completion;
-    m_lastRequestedTextCheckString = text;
-    postDelayedTask(new HostMethodTask(this, &WebViewHost::finishLastTextCheck), 0);
-}
-
-void WebViewHost::finishLastTextCheck()
-{
-    Vector<WebTextCheckingResult> results;
-    int offset = 0;
-    String text(m_lastRequestedTextCheckString.data(), m_lastRequestedTextCheckString.length());
-    while (text.length()) {
-        int misspelledPosition = 0;
-        int misspelledLength = 0;
-        m_spellcheck.spellCheckWord(WebString(text.characters(), text.length()), &misspelledPosition, &misspelledLength);
-        if (!misspelledLength)
-            break;
-        WebVector<WebString> suggestions;
-        m_spellcheck.fillSuggestionList(WebString(text.characters() + misspelledPosition, misspelledLength), &suggestions);
-        results.append(WebTextCheckingResult(WebTextCheckingTypeSpelling, offset + misspelledPosition, misspelledLength,
-                                             suggestions.isEmpty() ? WebString() : suggestions[0]));
-        text = text.substring(misspelledPosition + misspelledLength);
-        offset += misspelledPosition + misspelledLength;
-    }
-    MockGrammarCheck::checkGrammarOfString(m_lastRequestedTextCheckString, &results);
-    m_lastRequestedTextCheckingCompletion->didFinishCheckingText(results);
-    m_lastRequestedTextCheckingCompletion = 0;
-}
-
-
-WebString WebViewHost::autoCorrectWord(const WebString&)
-{
-    // Returns an empty string as Mac WebKit ('WebKitSupport/WebEditorClient.mm')
-    // does. (If this function returns a non-empty string, WebKit replaces the
-    // given misspelled string with the result one. This process executes some
-    // editor commands and causes layout-test failures.)
-    return WebString();
-}
-
 void WebViewHost::runModalAlertDialog(WebFrame*, const WebString& message)
 {
     printf("ALERT: %s\n", message.utf8().data());
@@ -503,11 +420,6 @@ WebDeviceOrientationClientMock* WebViewHost::deviceOrientationClientMock()
     if (!m_deviceOrientationClientMock.get())
         m_deviceOrientationClientMock = adoptPtr(WebDeviceOrientationClientMock::create());
     return m_deviceOrientationClientMock.get();
-}
-
-MockSpellCheck* WebViewHost::mockSpellCheck()
-{
-    return &m_spellcheck;
 }
 
 WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
@@ -964,11 +876,6 @@ void WebViewHost::clearEditCommand()
     m_editCommandValue.clear();
 }
 
-void WebViewHost::fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions)
-{
-    mockSpellCheck()->fillSuggestionList(word, suggestions);
-}
-
 void WebViewHost::setGamepadData(const WebGamepads& pads)
 {
     webkit_support::SetGamepadData(pads);
@@ -1221,7 +1128,6 @@ WebViewHost::WebViewHost(TestShell* shell)
     : m_shell(shell)
     , m_proxy(0)
     , m_webWidget(0)
-    , m_lastRequestedTextCheckingCompletion(0)
 {
     reset();
 }
@@ -1249,7 +1155,7 @@ WebViewHost::~WebViewHost()
 void WebViewHost::setWebWidget(WebKit::WebWidget* widget)
 {
     m_webWidget = widget;
-    webView()->setSpellCheckClient(this);
+    webView()->setSpellCheckClient(proxy()->spellCheckClient());
     webView()->setPrerendererClient(this);
     webView()->setCompositorSurfaceReady();
 }
