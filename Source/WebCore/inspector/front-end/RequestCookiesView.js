@@ -75,8 +75,10 @@ WebInspector.RequestCookiesView.prototype = {
         this.detachChildViews();
 
         this._cookiesTable = new WebInspector.CookiesTable(true);
-        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._request.requestCookies);
-        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._request.responseCookies);
+        this._cookiesTable.setCookieFolders([
+            {folderName: WebInspector.UIString("Request Cookies"), cookies: this._request.requestCookies},
+            {folderName: WebInspector.UIString("Response Cookies"), cookies: this._request.responseCookies}
+        ]);
         this._cookiesTable.show(this.element);
     },
 

@@ -40,36 +40,36 @@ WebInspector.CookiesTable = function(expandable, deleteCallback, refreshCallback
     WebInspector.View.call(this);
     this.element.className = "fill";
 
-    var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
-    columns[0].title = WebInspector.UIString("Name");
-    columns[0].sortable = true;
-    columns[0].disclosure = expandable;
-    columns[0].width = "24%";
-    columns[0].sort = "ascending";
-    columns[1].title = WebInspector.UIString("Value");
-    columns[1].sortable = true;
-    columns[1].width = "34%";
-    columns[2].title = WebInspector.UIString("Domain");
-    columns[2].sortable = true;
-    columns[2].width = "7%";
-    columns[3].title = WebInspector.UIString("Path");
-    columns[3].sortable = true;
-    columns[3].width = "7%";
-    columns[4].title = WebInspector.UIString("Expires / Max-Age");
-    columns[4].sortable = true;
-    columns[4].width = "7%";
-    columns[5].title = WebInspector.UIString("Size");
-    columns[5].aligned = "right";
-    columns[5].sortable = true;
-    columns[5].width = "7%";
-    columns[6].title = WebInspector.UIString("HTTP");
-    columns[6].aligned = "centered";
-    columns[6].sortable = true;
-    columns[6].width = "7%";
-    columns[7].title = WebInspector.UIString("Secure");
-    columns[7].aligned = "centered";
-    columns[7].sortable = true;
-    columns[7].width = "7%";
+    var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, httpOnly: {}, secure: {}};
+    columns.name.title = WebInspector.UIString("Name");
+    columns.name.sortable = true;
+    columns.name.disclosure = expandable;
+    columns.name.width = "24%";
+    columns.name.sort = "ascending";
+    columns.value.title = WebInspector.UIString("Value");
+    columns.value.sortable = true;
+    columns.value.width = "34%";
+    columns.domain.title = WebInspector.UIString("Domain");
+    columns.domain.sortable = true;
+    columns.domain.width = "7%";
+    columns.path.title = WebInspector.UIString("Path");
+    columns.path.sortable = true;
+    columns.path.width = "7%";
+    columns.expires.title = WebInspector.UIString("Expires / Max-Age");
+    columns.expires.sortable = true;
+    columns.expires.width = "7%";
+    columns.size.title = WebInspector.UIString("Size");
+    columns.size.aligned = "right";
+    columns.size.sortable = true;
+    columns.size.width = "7%";
+    columns.httpOnly.title = WebInspector.UIString("HTTP");
+    columns.httpOnly.aligned = "centered";
+    columns.httpOnly.sortable = true;
+    columns.httpOnly.width = "7%";
+    columns.secure.title = WebInspector.UIString("Secure");
+    columns.secure.aligned = "centered";
+    columns.secure.sortable = true;
+    columns.secure.width = "7%";
 
     this._dataGrid = new WebInspector.DataGrid(columns, undefined, deleteCallback ? this._onDeleteFromGrid.bind(this, deleteCallback) : undefined);
     this._dataGrid.addEventListener("sorting changed", this._rebuildTable, this);
@@ -88,19 +88,20 @@ WebInspector.CookiesTable.prototype = {
             this._dataGrid.updateWidths();
     },
 
+    /*
+     * @param {!Array.<!WebInspector.Cookie>} cookies
+     */
     setCookies: function(cookies)
     {
-        this._data = [{cookies: cookies}];
-        this._rebuildTable();
+        this.setCookieFolders([{cookies: cookies}]);
     },
 
     /**
-     * @param {string} folderName
-     * @param {Array.<WebInspector.Cookie>} cookies
+     * @param {!Array.<!{folderName: ?string, cookies: !Array.<!WebInspector.Cookie>}>} cookieFolders
      */
-    addCookiesFolder: function(folderName, cookies)
+    setCookieFolders: function(cookieFolders)
     {
-        this._data.push({cookies: cookies, folderName: folderName});
+        this._data = cookieFolders;
         this._rebuildTable();
     },
 
@@ -121,7 +122,7 @@ WebInspector.CookiesTable.prototype = {
         for (var i = 0; i < this._data.length; ++i) {
             var item = this._data[i];
             if (item.folderName) {
-                var groupData = [ item.folderName, "", "", "", "", this._totalSize(item.cookies), "", "" ];
+                var groupData = {name: item.folderName, value: "", domain: "", path: "", expires: "", size: this._totalSize(item.cookies), httpOnly: "", secure: ""};
                 var groupNode = new WebInspector.DataGridNode(groupData);
                 groupNode.selectable = true;
                 this._dataGrid.rootNode().appendChild(groupNode);
@@ -195,15 +196,15 @@ WebInspector.CookiesTable.prototype = {
         }
 
         var comparator;
-        switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
-            case 0: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.name); break;
-            case 1: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.value); break;
-            case 2: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.domain); break;
-            case 3: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.path); break;
-            case 4: comparator = expiresCompare; break;
-            case 5: comparator = numberCompare.bind(null, WebInspector.Cookie.prototype.size); break;
-            case 6: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.httpOnly); break;
-            case 7: comparator = compareTo.bind(null, WebInspector.Cookie.prototype.secure); break;
+        switch (this._dataGrid.sortColumnIdentifier) {
+            case "name": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.name); break;
+            case "value": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.value); break;
+            case "domain": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.domain); break;
+            case "path": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.path); break;
+            case "expires": comparator = expiresCompare; break;
+            case "size": comparator = numberCompare.bind(null, WebInspector.Cookie.prototype.size); break;
+            case "httpOnly": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.httpOnly); break;
+            case "secure": comparator = compareTo.bind(null, WebInspector.Cookie.prototype.secure); break;
             default: compareTo.bind(null, WebInspector.Cookie.prototype.name);
         }
 
@@ -217,22 +218,22 @@ WebInspector.CookiesTable.prototype = {
     _createGridNode: function(cookie)
     {
         var data = {};
-        data[0] = cookie.name();
-        data[1] = cookie.value();
-        data[2] = cookie.domain() || "";
-        data[3] = cookie.path() || "";
+        data.name = cookie.name();
+        data.value = cookie.value();
+        data.domain = cookie.domain() || "";
+        data.path = cookie.path() || "";
         if (cookie.type() === WebInspector.Cookie.Type.Request)
-            data[4] = "";
+            data.expires = "";
         else if (cookie.maxAge())
-            data[4] = Number.secondsToString(parseInt(cookie.maxAge(), 10));
+            data.expires = Number.secondsToString(parseInt(cookie.maxAge(), 10));
         else if (cookie.expires())
-            data[4] = new Date(cookie.expires()).toGMTString();
+            data.expires = new Date(cookie.expires()).toGMTString();
         else
-            data[4] = WebInspector.UIString("Session");
-        data[5] = cookie.size();
+            data.expires = WebInspector.UIString("Session");
+        data.size = cookie.size();
         const checkmark = "\u2713";
-        data[6] = (cookie.httpOnly() ? checkmark : "");
-        data[7] = (cookie.secure() ? checkmark : "");
+        data.httpOnly = (cookie.httpOnly() ? checkmark : "");
+        data.secure = (cookie.secure() ? checkmark : "");
 
         var node = new WebInspector.DataGridNode(data);
         node.cookie = cookie;
