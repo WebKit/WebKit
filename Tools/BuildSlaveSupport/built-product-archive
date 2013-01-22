@@ -166,7 +166,8 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         ignorePatterns = ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb',
-                          'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate']
+                          'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate',
+                          '*.h', '*.c', '*.cc', '*.cpp', '*.stamp', '*.ninja']
 
         if fullPlatform and fullPlatform == 'chromium-android':
             ignorePatterns.extend(['*.so', '*-unaligned.apk', '*-unsigned.apk'])

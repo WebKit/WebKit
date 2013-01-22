@@ -1,3 +1,17 @@
+2013-01-21  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Don't archive generated source files.
+        https://bugs.webkit.org/show_bug.cgi?id=106736
+
+        Reviewed by Eric Seidel.
+
+        They shouldn't be needed to run tests. They don't need a lot of space,
+        but add many lines to the "extracting" stdout. This attempts to reduce
+        that noise a bit.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2013-01-21  Benjamin Poulain  <benjamin@webkit.org>
 
         Mac DumpRenderTree's installSignalHandlers() is unreachable code
