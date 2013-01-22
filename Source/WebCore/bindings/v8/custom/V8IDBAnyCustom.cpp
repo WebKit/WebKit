@@ -39,7 +39,6 @@
 #include "V8IDBDatabase.h"
 #include "V8IDBFactory.h"
 #include "V8IDBIndex.h"
-#include "V8IDBKey.h"
 #include "V8IDBObjectStore.h"
 #include "V8IDBTransaction.h"
 
@@ -67,8 +66,6 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Handle<v8::Object> creationContext,
         return toV8(impl->idbFactory(), creationContext, isolate);
     case IDBAny::IDBIndexType:
         return toV8(impl->idbIndex(), creationContext, isolate);
-    case IDBAny::IDBKeyType:
-        return toV8(impl->idbKey(), creationContext, isolate);
     case IDBAny::IDBObjectStoreType:
         return toV8(impl->idbObjectStore(), creationContext, isolate);
     case IDBAny::IDBTransactionType:

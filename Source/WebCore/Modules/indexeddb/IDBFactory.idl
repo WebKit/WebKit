@@ -35,7 +35,7 @@
     [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
         raises (DOMException);
 
-    short cmp(in IDBKey first, in IDBKey second)
+    [CallWith=ScriptExecutionContext] short cmp(in any first, in any second)
         raises (DOMException);
 };
 

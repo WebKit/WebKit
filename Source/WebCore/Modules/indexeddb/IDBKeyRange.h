@@ -53,36 +53,29 @@ public:
     {
         return adoptRef(new IDBKeyRange(lower, upper, lowerType, upperType));
     }
+    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> prpKey);
     ~IDBKeyRange() { }
 
     PassRefPtr<IDBKey> lower() const { return m_lower; }
     PassRefPtr<IDBKey> upper() const { return m_upper; }
+
+    ScriptValue lowerValue(ScriptExecutionContext*) const;
+    ScriptValue upperValue(ScriptExecutionContext*) const;
     bool lowerOpen() const { return m_lowerType == LowerBoundOpen; }
     bool upperOpen() const { return m_upperType == UpperBoundOpen; }
 
     static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value, ExceptionCode&);
+    static PassRefPtr<IDBKeyRange> only(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
 
-    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, ExceptionCode& ec)
-    {
-      return lowerBound(bound, false, ec);
-    }
-    static PassRefPtr<IDBKeyRange> lowerBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode&);
+    static PassRefPtr<IDBKeyRange> lowerBound(ScriptExecutionContext* context, const ScriptValue& bound, ExceptionCode& ec) { return lowerBound(context, bound, false, ec); }
+    static PassRefPtr<IDBKeyRange> lowerBound(ScriptExecutionContext*, const ScriptValue& bound, bool open, ExceptionCode&);
 
-    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, ExceptionCode& ec)
-    {
-      return upperBound(bound, false, ec);
-    }
-    static PassRefPtr<IDBKeyRange> upperBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode&);
+    static PassRefPtr<IDBKeyRange> upperBound(ScriptExecutionContext* context, const ScriptValue& bound, ExceptionCode& ec) { return upperBound(context, bound, false, ec); }
+    static PassRefPtr<IDBKeyRange> upperBound(ScriptExecutionContext*, const ScriptValue& bound, bool open, ExceptionCode&);
 
-    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, ExceptionCode& ec)
-    {
-      return bound(lower, upper, false, false, ec);
-    }
-    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, ExceptionCode& ec)
-    {
-      return bound(lower, upper, lowerOpen, false, ec);
-    }
-    static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
+    static PassRefPtr<IDBKeyRange> bound(ScriptExecutionContext* context, const ScriptValue& lower, const ScriptValue& upper, ExceptionCode& ec) { return bound(context, lower, upper, false, false, ec); }
+    static PassRefPtr<IDBKeyRange> bound(ScriptExecutionContext* context, const ScriptValue& lower, const ScriptValue& upper, bool lowerOpen, ExceptionCode& ec) { return bound(context, lower, upper, lowerOpen, false, ec); }
+    static PassRefPtr<IDBKeyRange> bound(ScriptExecutionContext*, const ScriptValue& lower, const ScriptValue& upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
     bool isOnlyKey()
     {

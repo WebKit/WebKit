@@ -47,6 +47,7 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(DOMRequestState*, const
 bool canInjectIDBKeyIntoScriptValue(DOMRequestState*, const ScriptValue&, const IDBKeyPath&);
 ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<SerializedScriptValue>);
 ScriptValue idbKeyToScriptValue(DOMRequestState*, PassRefPtr<IDBKey>);
+PassRefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState*, const ScriptValue&);
 
 }
 

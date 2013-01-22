@@ -78,10 +78,10 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openCursor");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
     return openCursor(context, keyRange.release(), direction, ec);
@@ -103,10 +103,10 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::count");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
     return count(context, keyRange.release(), ec);
@@ -133,19 +133,19 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openKeyCursor");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
     return openKeyCursor(context, keyRange.release(), direction, ec);
 }
 
-PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::get");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
     return get(context, keyRange.release(), ec);
@@ -172,10 +172,10 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::getKey");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
 

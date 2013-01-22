@@ -43,7 +43,6 @@ class IDBCursorWithValue;
 class IDBDatabase;
 class IDBFactory;
 class IDBIndex;
-class IDBKey;
 class IDBKeyPath;
 class IDBObjectStore;
 class IDBTransaction;
@@ -91,7 +90,6 @@ public:
         IDBDatabaseType,
         IDBFactoryType,
         IDBIndexType,
-        IDBKeyType,
         IDBObjectStoreType,
         IDBTransactionType,
         ScriptValueType,
@@ -107,7 +105,6 @@ public:
     PassRefPtr<IDBDatabase> idbDatabase();
     PassRefPtr<IDBFactory> idbFactory();
     PassRefPtr<IDBIndex> idbIndex();
-    PassRefPtr<IDBKey> idbKey();
     PassRefPtr<IDBObjectStore> idbObjectStore();
     PassRefPtr<IDBTransaction> idbTransaction();
     ScriptValue scriptValue();
@@ -122,7 +119,6 @@ public:
     void set(PassRefPtr<IDBDatabase>);
     void set(PassRefPtr<IDBFactory>);
     void set(PassRefPtr<IDBIndex>);
-    void set(PassRefPtr<IDBKey>);
     void set(PassRefPtr<IDBObjectStore>);
     void set(PassRefPtr<IDBTransaction>);
     void set(const IDBKeyPath&);
@@ -142,7 +138,6 @@ private:
     RefPtr<IDBDatabase> m_idbDatabase;
     RefPtr<IDBFactory> m_idbFactory;
     RefPtr<IDBIndex> m_idbIndex;
-    RefPtr<IDBKey> m_idbKey;
     RefPtr<IDBObjectStore> m_idbObjectStore;
     RefPtr<IDBTransaction> m_idbTransaction;
     ScriptValue m_scriptValue;

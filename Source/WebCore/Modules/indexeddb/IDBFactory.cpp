@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "GroupSettings.h"
+#include "IDBBindingUtilities.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseException.h"
@@ -152,8 +153,12 @@ PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionCo
     return request;
 }
 
-short IDBFactory::cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, ExceptionCode& ec)
+short IDBFactory::cmp(ScriptExecutionContext* context, const ScriptValue& firstValue, const ScriptValue& secondValue, ExceptionCode& ec)
 {
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> first = scriptValueToIDBKey(&requestState, firstValue);
+    RefPtr<IDBKey> second = scriptValueToIDBKey(&requestState, secondValue);
+
     ASSERT(first);
     ASSERT(second);
 

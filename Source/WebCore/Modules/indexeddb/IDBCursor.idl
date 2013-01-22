@@ -38,7 +38,7 @@
     // FIXME: Make this [EnforceRange] unsigned long once webkit.org/b/96798 lands.
     void advance(in long long count)
         raises (DOMException);
-    [ImplementedAs=continueFunction] void continue(in [Optional] IDBKey key)
+    [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction] void continue(in [Optional] any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete()
         raises (DOMException);

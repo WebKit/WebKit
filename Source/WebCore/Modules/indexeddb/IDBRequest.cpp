@@ -313,9 +313,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
     if (!shouldEnqueueEvent())
         return;
 
-    if (idbKey && idbKey->isValid())
-        m_result = IDBAny::create(idbKey);
-    else
+    if (idbKey && idbKey->isValid()) {
+        DOMRequestState::Scope scope(m_requestState);
+        m_result = IDBAny::create(idbKeyToScriptValue(requestState(), idbKey));
+    } else
         m_result = IDBAny::createInvalid();
     enqueueEvent(createSuccessEvent());
 }

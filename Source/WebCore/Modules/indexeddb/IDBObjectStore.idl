@@ -33,23 +33,23 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [CallWith=ScriptState] IDBRequest put(in any value, in [Optional] IDBKey key)
+    [CallWith=ScriptState] IDBRequest put(in any value, in [Optional] any key)
         raises (DOMException);
-    [CallWith=ScriptState] IDBRequest add(in any value, in [Optional] IDBKey key)
+    [CallWith=ScriptState] IDBRequest add(in any value, in [Optional] any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKeyRange? keyRange)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKey key)
+    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest clear()
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange? key)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
+    [CallWith=ScriptExecutionContext] IDBRequest get(in any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in any key, in [Optional] DOMString direction)
         raises (DOMException);
 
     [CallWith=ScriptExecutionContext, JSCustom] IDBIndex createIndex(in DOMString name, in sequence<DOMString> keyPath, in [Optional] Dictionary options)
@@ -62,6 +62,6 @@
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest count(in IDBKey key)
+    [CallWith=ScriptExecutionContext] IDBRequest count(in any key)
         raises (DOMException);
 };

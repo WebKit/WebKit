@@ -35,25 +35,25 @@
 
     [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in any key, in [Optional] DOMString direction)
         raises (DOMException);
-    
+
     [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString  direction)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in IDBKey key, in [Optional] DOMString direction)
+    [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in any key, in [Optional] DOMString direction)
         raises (DOMException);
 
     [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange? key)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
+    [CallWith=ScriptExecutionContext] IDBRequest get(in any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKeyRange? key)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKey key)
+    [CallWith=ScriptExecutionContext] IDBRequest getKey(in any key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest count(in IDBKey key)
+    [CallWith=ScriptExecutionContext] IDBRequest count(in any key)
         raises (DOMException);
 };
 

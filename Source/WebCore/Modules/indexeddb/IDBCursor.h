@@ -67,9 +67,6 @@ public:
     static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
-    // FIXME: Try to modify the code generator so this is unneeded.
-    void continueFunction(ExceptionCode& ec) { continueFunction(0, ec); }
-
     // Implement the IDL
     const String& direction() const;
     const ScriptValue& key() const;
@@ -80,9 +77,12 @@ public:
     PassRefPtr<IDBRequest> update(ScriptState*, ScriptValue&, ExceptionCode&);
     // FIXME: Make this unsigned long once webkit.org/b/96798 lands.
     void advance(long long, ExceptionCode&);
-    void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
+    // FIXME: Try to modify the code generator so this overload is unneeded.
+    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(0), ec); }
+    void continueFunction(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
+    void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     void postSuccessHandlerCallback();
     void close();
     void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);

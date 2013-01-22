@@ -271,6 +271,12 @@ ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey
     return ScriptValue(exec->globalData(), toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
 }
 
+PassRefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState* requestState, const ScriptValue& scriptValue)
+{
+    ExecState* exec = requestState->exec();
+    return createIDBKeyFromValue(exec, scriptValue.jsValue());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -161,11 +161,7 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
 {
     IDB_TRACE("IDBCursorBackendImpl::delete");
     ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
-
-    ExceptionCode ec = 0;
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(m_cursor->primaryKey(), ec);
-    ASSERT(!ec);
-
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
     m_database->deleteRange(m_transaction->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
 }
 

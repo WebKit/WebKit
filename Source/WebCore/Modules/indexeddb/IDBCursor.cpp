@@ -180,6 +180,13 @@ void IDBCursor::advance(long long count, ExceptionCode& ec)
     ASSERT(!ec);
 }
 
+void IDBCursor::continueFunction(ScriptExecutionContext* context, const ScriptValue& keyValue, ExceptionCode& ec)
+{
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
+    continueFunction(key.release(), ec);
+}
+
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::continue");

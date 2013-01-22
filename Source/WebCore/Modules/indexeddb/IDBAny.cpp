@@ -102,12 +102,6 @@ PassRefPtr<IDBIndex> IDBAny::idbIndex()
     return m_idbIndex;
 }
 
-PassRefPtr<IDBKey> IDBAny::idbKey()
-{
-    ASSERT(m_type == IDBKeyType);
-    return m_idbKey;
-}
-
 PassRefPtr<IDBObjectStore> IDBAny::idbObjectStore()
 {
     ASSERT(m_type == IDBObjectStoreType);
@@ -184,13 +178,6 @@ void IDBAny::set(PassRefPtr<IDBIndex> value)
     ASSERT(m_type == UndefinedType);
     m_type = IDBIndexType;
     m_idbIndex = value;
-}
-
-void IDBAny::set(PassRefPtr<IDBKey> value)
-{
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBKeyType;
-    m_idbKey = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBTransaction> value)

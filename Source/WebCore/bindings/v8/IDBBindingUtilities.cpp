@@ -272,6 +272,14 @@ ScriptValue idbKeyToScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key)
     return ScriptValue(v8Value);
 }
 
+PassRefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState*, const ScriptValue& scriptValue)
+{
+    ASSERT(v8::Context::InContext());
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Value> v8Value(scriptValue.v8Value());
+    return createIDBKeyFromValue(v8Value);
+}
+
 } // namespace WebCore
 
 #endif

@@ -62,7 +62,7 @@ public:
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, int64_t version, ExceptionCode&);
     PassRefPtr<IDBVersionChangeRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
 
-    short cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, ExceptionCode&);
+    short cmp(ScriptExecutionContext*, const ScriptValue& first, const ScriptValue& second, ExceptionCode&);
 
 private:
     IDBFactory(IDBFactoryBackendInterface*);
