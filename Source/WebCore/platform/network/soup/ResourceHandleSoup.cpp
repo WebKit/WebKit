@@ -565,8 +565,8 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     }
 
     if (d->m_buffer) {
+        g_slice_free1(READ_BUFFER_SIZE, d->m_buffer);
         d->m_buffer = 0;
-        d->m_bufferSize = 0;
     }
 
     if (d->m_timeoutSource) {
@@ -633,17 +633,12 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
 
     client->didReceiveResponse(handle.get(), d->m_response);
 
-    // didReceiveResponse may cause the client to be changed.
-    client = d->client();
-
     if (d->m_cancelled || !client) {
         cleanupSoupRequestOperation(handle.get());
         return;
     }
 
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
         G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -673,9 +668,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
-    ASSERT(!d->m_buffer);
-
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
     if (soupMessage) {
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
@@ -709,10 +702,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
 
     client->didReceiveResponse(handle.get(), d->m_response);
 
-    // didReceiveResponse may cause the client to be changed.
-    client = d->client();
-
-    if (d->m_cancelled || !client) {
+    if (d->m_cancelled) {
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -725,8 +715,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
     d->m_inputStream = inputStream;
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -1379,14 +1368,12 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     client->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
 
     // didReceiveData may cancel the load, which may release the last reference.
-    if (d->m_cancelled || !handle->client()) {
+    if (d->m_cancelled || !client) {
         cleanupSoupRequestOperation(handle.get());
         return;
     }
 
-    d->m_buffer = client->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
-
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
                               d->m_cancellable.get(), readCallback, handle.get());
 }
 

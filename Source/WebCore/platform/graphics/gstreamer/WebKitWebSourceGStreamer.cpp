@@ -1,6 +1,5 @@
 /*
  *  Copyright (C) 2009, 2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
- *  Copyright (C) 2013 Collabora Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -33,9 +32,10 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+ 
 #include <gst/app/gstappsrc.h>
-#include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
+
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -51,9 +51,6 @@ class StreamingClient : public ResourceHandleClient {
 
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-
-        virtual char* getBuffer(int, int*);
-
         virtual void didReceiveData(ResourceHandle*, const char*, int, int);
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
         virtual void didFail(ResourceHandle*, const ResourceError&);
@@ -87,8 +84,6 @@ struct _WebKitWebSrcPrivate {
     guint enoughDataID;
     guint seekID;
 
-    GRefPtr<GstBuffer> buffer;
-
     // icecast stuff
     gboolean iradioMode;
     gchar* iradioName;
@@ -120,7 +115,6 @@ GST_DEBUG_CATEGORY_STATIC(webkit_web_src_debug);
 
 static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer ifaceData);
 
-static void webKitWebSrcDispose(GObject*);
 static void webKitWebSrcFinalize(GObject*);
 static void webKitWebSrcSetProperty(GObject*, guint propertyID, const GValue*, GParamSpec*);
 static void webKitWebSrcGetProperty(GObject*, guint propertyID, GValue*, GParamSpec*);
@@ -156,7 +150,6 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
     GObjectClass* oklass = G_OBJECT_CLASS(klass);
     GstElementClass* eklass = GST_ELEMENT_CLASS(klass);
 
-    oklass->dispose = webKitWebSrcDispose;
     oklass->finalize = webKitWebSrcFinalize;
     oklass->set_property = webKitWebSrcSetProperty;
     oklass->get_property = webKitWebSrcGetProperty;
@@ -281,21 +274,6 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     webKitWebSrcStop(src, false);
 }
 
-static void webKitWebSrcDispose(GObject* object)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(object);
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    if (priv->buffer) {
-#ifdef GST_API_VERSION_1
-        unmapGstBuffer(priv->buffer.get());
-#endif
-        priv->buffer.clear();
-    }
-
-    GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
-}
-
 static void webKitWebSrcFinalize(GObject* object)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(object);
@@ -305,7 +283,7 @@ static void webKitWebSrcFinalize(GObject* object)
 
     g_free(priv->uri);
 
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
+    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, ((GObject* )(src)));
 }
 
 static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* pspec)
@@ -375,13 +353,6 @@ static void webKitWebSrcStop(WebKitWebSrc* src, bool seeking)
         priv->frame.clear();
 
     priv->player = 0;
-
-    if (priv->buffer) {
-#ifdef GST_API_VERSION_1
-        unmapGstBuffer(priv->buffer.get());
-#endif
-        priv->buffer.clear();
-    }
 
     GST_OBJECT_LOCK(src);
     if (priv->needDataID)
@@ -885,57 +856,31 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 
-    GST_LOG_OBJECT(m_src, "Have %d bytes of data", priv->buffer ? getGstBufferSize(priv->buffer.get()) : length);
-
-#ifdef GST_API_VERSION_1
-    if (priv->buffer)
-        unmapGstBuffer(priv->buffer.get());
-#endif
+    GST_LOG_OBJECT(m_src, "Have %d bytes of data", length);
 
     if (priv->seekID || handle != priv->resourceHandle) {
         GST_DEBUG_OBJECT(m_src, "Seek in progress, ignoring data");
-        priv->buffer.clear();
         return;
     }
 
-    ASSERT(!priv->buffer || data == getGstBufferDataPointer(priv->buffer.get()));
+    GstBuffer* buffer = gst_buffer_new_and_alloc(length);
 
-    // Ports using the GStreamer backend but not the soup implementation of ResourceHandle
-    // won't be using buffers provided by this client, the buffer is created here in that case.
-    if (!priv->buffer)
-        priv->buffer = adoptGRef(createGstBufferForData(data, length));
-    else
-        setGstBufferSize(priv->buffer.get(), length);
-
-    GST_BUFFER_OFFSET(priv->buffer.get()) = priv->offset;
+#ifdef GST_API_VERSION_1
+    gst_buffer_fill(buffer, 0, data, length);
+#else
+    memcpy(GST_BUFFER_DATA(buffer), data, length);
+#endif
+    GST_BUFFER_OFFSET(buffer) = priv->offset;
     priv->offset += length;
-    GST_BUFFER_OFFSET_END(priv->buffer.get()) = priv->offset;
+    GST_BUFFER_OFFSET_END(buffer) = priv->offset;
 
-    GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, priv->buffer.leakRef());
+    GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, buffer);
 #ifdef GST_API_VERSION_1
     if (ret != GST_FLOW_OK && ret != GST_FLOW_EOS)
 #else
     if (ret != GST_FLOW_OK && ret != GST_FLOW_UNEXPECTED)
 #endif
         GST_ELEMENT_ERROR(m_src, CORE, FAILED, (0), (0));
-}
-
-char* StreamingClient::getBuffer(int requestedSize, int* actualSize)
-{
-    WebKitWebSrcPrivate* priv = m_src->priv;
-
-    ASSERT(!priv->buffer);
-
-    GstBuffer* buffer = gst_buffer_new_and_alloc(requestedSize);
-
-#ifdef GST_API_VERSION_1
-    mapGstBuffer(buffer);
-#endif
-
-    priv->buffer = adoptGRef(buffer);
-
-    *actualSize = getGstBufferSize(buffer);
-    return getGstBufferDataPointer(buffer);
 }
 
 void StreamingClient::didFinishLoading(ResourceHandle*, double)
