@@ -201,9 +201,7 @@ namespace WebCore {
         CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         const QualifiedName& tagQName() const;
-        // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
-        // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
-        const AtomicString& value() const { return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value); }
+        const AtomicString& value() const;
         const QualifiedName& attribute() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
@@ -424,6 +422,15 @@ inline const QualifiedName& CSSSelector::tagQName() const
     ASSERT(m_match == Tag);
     return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
 }
+
+inline const AtomicString& CSSSelector::value() const
+{
+    ASSERT(m_match != Tag);
+    // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
+    // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
+    return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value);
+}
+
 
 } // namespace WebCore
 
