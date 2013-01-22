@@ -1138,6 +1138,12 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
+    if (Element* before = pseudoElement(BEFORE))
+        before->insertedInto(insertionPoint);
+
+    if (Element* after = pseudoElement(AFTER))
+        after->insertedInto(insertionPoint);
+
     if (!insertionPoint->isInTreeScope())
         return InsertionDone;
 
@@ -1169,6 +1175,12 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 #if ENABLE(SVG)
     bool wasInDocument = insertionPoint->document();
 #endif
+
+    if (Element* before = pseudoElement(BEFORE))
+        before->removedFrom(insertionPoint);
+
+    if (Element* after = pseudoElement(AFTER))
+        after->removedFrom(insertionPoint);
 
 #if ENABLE(DIALOG_ELEMENT)
     if (isInTopLayer())
