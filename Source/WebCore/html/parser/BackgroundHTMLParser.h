@@ -29,7 +29,6 @@
 #if ENABLE(THREADED_HTML_PARSER)
 
 #include "CompactHTMLToken.h"
-#include "HTMLInputStream.h"
 #include "HTMLParserOptions.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
@@ -60,12 +59,13 @@ public:
 private:
     explicit BackgroundHTMLParser(const HTMLParserOptions&, ParserIdentifier);
 
+    void markEndOfFile();
     void pumpTokenizer();
     void simulateTreeBuilder(const CompactHTMLToken&);
 
     void sendTokensToMainThread();
 
-    HTMLInputStream m_input;
+    SegmentedString m_input;
     HTMLToken m_token;
     bool m_isPausedWaitingForScripts;
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.

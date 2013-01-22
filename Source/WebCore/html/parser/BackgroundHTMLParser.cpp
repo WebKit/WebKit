@@ -101,7 +101,7 @@ BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, Par
 
 void BackgroundHTMLParser::append(const String& input)
 {
-    m_input.appendToEnd(input);
+    m_input.append(SegmentedString(input));
     pumpTokenizer();
 }
 
@@ -113,9 +113,19 @@ void BackgroundHTMLParser::continueParsing()
 
 void BackgroundHTMLParser::finish()
 {
-    ASSERT(!m_input.haveSeenEndOfFile());
-    m_input.markEndOfFile();
+    markEndOfFile();
     pumpTokenizer();
+}
+
+void BackgroundHTMLParser::markEndOfFile()
+{
+    // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
+    // once InputStreamPreprocessor is split off into its own header.
+    const LChar endOfFileMarker = 0;
+
+    ASSERT(!m_input.isClosed());
+    m_input.append(SegmentedString(String(&endOfFileMarker, 1)));
+    m_input.close();
 }
 
 void BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
@@ -159,7 +169,7 @@ void BackgroundHTMLParser::pumpTokenizer()
     if (m_isPausedWaitingForScripts)
         return;
 
-    while (m_tokenizer->nextToken(m_input.current(), m_token)) {
+    while (m_tokenizer->nextToken(m_input, m_token)) {
         m_pendingTokens.append(CompactHTMLToken(m_token));
         m_token.clear();
 
