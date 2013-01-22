@@ -1,3 +1,17 @@
+2013-01-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Prettify the output of the override-feature-defines script
+        https://bugs.webkit.org/show_bug.cgi?id=106542
+
+        Reviewed by Martin Robinson.
+
+        The output now clearly lists the feature defines being overridden
+        along with the default and overriding values for each feature define.
+
+        * gtk/override-feature-defines:
+        (adjust_feature_defines_makefile):
+        (adjust_feature_defines_makefile.override_feature_define):
+
 2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove uses of deprecated unittest.TestCase aliases

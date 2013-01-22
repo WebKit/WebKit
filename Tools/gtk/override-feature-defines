@@ -15,22 +15,26 @@ def adjust_feature_defines_makefile(build_dir, feature_defines_overriding):
     with open(feature_defines_makefile_file) as f:
         feature_defines_makefile = f.read()
 
-    overriden_feature_defines = []
+    overridden_feature_defines = {}
     def override_feature_define(match):
-        matched_feature_define = match.group('feature')
-        if matched_feature_define not in feature_defines_overriding:
+        feature_define = match.group('feature')
+        if feature_define not in feature_defines_overriding:
             return match.string[match.start():match.end()]
 
-        if int(match.group('default_value')) is not feature_defines_overriding[matched_feature_define]:
-            overriden_feature_defines.append(matched_feature_define)
-        return "%s=%d" % (matched_feature_define, feature_defines_overriding[matched_feature_define])
+        default_value = int(match.group('default_value'))
+        overriding_value = feature_defines_overriding[feature_define]
+        if default_value is not overriding_value:
+            overridden_feature_defines[feature_define] = default_value, overriding_value
+        return "%s=%d" % (feature_define, overriding_value)
 
     feature_defines_makefile = re.sub(r"(?P<feature>(?:ENABLE_)\w+)=(?P<default_value>0|1)", override_feature_define, feature_defines_makefile)
     with open(feature_defines_makefile_file, 'w') as f:
         f.write(feature_defines_makefile)
 
-    if overriden_feature_defines:
-        print("The following feature defines were overriden:\n{0}".format(', '.join(overriden_feature_defines)))
+    if overridden_feature_defines:
+        print("The following feature defines were overriden:")
+        for feature, values in iter(overridden_feature_defines.items()):
+            print("\t{0}: {1} => {2}".format(feature, *values))
 
 def override_feature_defines(build_dir):
     copy_feature_defines_makefile()
