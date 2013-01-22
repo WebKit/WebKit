@@ -62,11 +62,7 @@ static PassRefPtr<SharedBuffer> readFile(const char* fileName)
     return SharedBuffer::adoptVector(buffer);
 }
 
-#if OS(LINUX)
 TEST(WebImageTest, PNGImage)
-#else
-TEST(WebImageTest, DISABLED_PNGImage)
-#endif
 {
     RefPtr<SharedBuffer> data = readFile("white-1x1.png");
     ASSERT_TRUE(data.get());
@@ -77,11 +73,7 @@ TEST(WebImageTest, DISABLED_PNGImage)
     EXPECT_EQ(SkColorSetARGB(255, 255, 255, 255), image.getSkBitmap().getColor(0, 0));
 }
 
-#if OS(LINUX)
 TEST(WebImageTest, ICOImage)
-#else
-TEST(WebImageTest, DISABLED_ICOImage)
-#endif
 {
     RefPtr<SharedBuffer> data = readFile("black-and-white.ico");
     ASSERT_TRUE(data.get());
