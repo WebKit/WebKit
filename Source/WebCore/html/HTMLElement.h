@@ -120,6 +120,7 @@ protected:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
+    unsigned parseBorderWidthAttribute(const QualifiedName&, const AtomicString& value) const;
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     void calculateAndAdjustDirectionality();

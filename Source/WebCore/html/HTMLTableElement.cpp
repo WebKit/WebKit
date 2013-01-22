@@ -310,10 +310,9 @@ void HTMLTableElement::collectStyleForPresentationAttribute(const Attribute& att
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
     else if (attribute.name() == heightAttr)
         addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
-    else if (attribute.name() == borderAttr) {
-        int borderWidth = attribute.isEmpty() ? 1 : attribute.value().toInt();
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, borderWidth, CSSPrimitiveValue::CSS_PX);
-    } else if (attribute.name() == bordercolorAttr) {
+    else if (attribute.name() == borderAttr) 
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute.name(), attribute.value()), CSSPrimitiveValue::CSS_PX);
+    else if (attribute.name() == bordercolorAttr) {
         if (!attribute.isEmpty())
             addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
     } else if (attribute.name() == bgcolorAttr)
@@ -376,11 +375,7 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
     if (name == borderAttr)  {
         // FIXME: This attribute is a mess.
-        m_borderAttr = true;
-        if (!value.isNull()) {
-            int border = value.isEmpty() ? 1 : value.toInt();
-            m_borderAttr = border;
-        }
+        m_borderAttr = parseBorderWidthAttribute(name, value);
     } else if (name == bordercolorAttr) {
         m_borderColorAttr = !value.isEmpty();
     } else if (name == frameAttr) {

@@ -133,18 +133,18 @@ static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
     return CSSValueWebkitIsolate;
 }
 
-static unsigned parseBorderWidthAttribute(const Attribute& attribute)
+unsigned HTMLElement::parseBorderWidthAttribute(const QualifiedName& name, const AtomicString& value) const
 {
-    ASSERT(attribute.name() == borderAttr);
+    ASSERT_UNUSED(name, name == borderAttr);
     unsigned borderWidth = 0;
-    if (!attribute.isEmpty())
-        parseHTMLNonNegativeInteger(attribute.value(), borderWidth);
+    if (value.isEmpty() || !parseHTMLNonNegativeInteger(value, borderWidth))
+        return hasLocalName(tableTag) ? 1 : borderWidth;
     return borderWidth;
 }
 
 void HTMLElement::applyBorderAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
 {
-    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute), CSSPrimitiveValue::CSS_PX);
+    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute.name(), attribute.value()), CSSPrimitiveValue::CSS_PX);
     addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
