@@ -1,3 +1,21 @@
+2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove uses of deprecated unittest.TestCase aliases
+        https://bugs.webkit.org/show_bug.cgi?id=102252
+
+        Reviewed by Adam Barth.
+
+        Replace the deprecated assertEquals method of the TestCase interface
+        used in some webkitpy unittests with the assertEqual method.
+
+        * Scripts/webkitpy/common/system/profiler_unittest.py:
+        (ProfilerFactoryTest._assert_default_profiler_name):
+        (ProfilerFactoryTest.test_default_profiler_output):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_win32_start_and_stop):
+
 2013-01-22  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r140344): Repeated crashes in WKTR PlatformWebView::viewSupportsOptions().
