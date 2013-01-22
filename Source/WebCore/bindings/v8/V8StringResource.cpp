@@ -37,7 +37,7 @@ WebCoreStringResourceBase* WebCoreStringResourceBase::toWebCoreStringResourceBas
     v8::String::ExternalStringResourceBase* resource = string->GetExternalStringResourceBase(&encoding);
     if (!resource)
         return 0;
-    if (encoding == v8::String::ASCII_ENCODING)
+    if (encoding == v8::String::ONE_BYTE_ENCODING)
         return static_cast<WebCoreStringResource8*>(resource);
     return static_cast<WebCoreStringResource16*>(resource);
 }
@@ -52,7 +52,7 @@ void WebCoreStringResourceBase::visitStrings(ExternalStringVisitor* visitor)
 template<class StringClass> struct StringTraits {
     static const StringClass& fromStringResource(WebCoreStringResourceBase*);
     static bool is16BitAtomicString(StringClass&);
-    template<bool ascii>
+    template<bool oneByte>
     static StringClass fromV8String(v8::Handle<v8::String>, int);
 };
 
@@ -66,7 +66,7 @@ struct StringTraits<String> {
     {
         return false;
     }
-    template<bool ascii>
+    template<bool oneByte>
     static String fromV8String(v8::Handle<v8::String>, int);
 };
 
@@ -80,7 +80,7 @@ struct StringTraits<AtomicString> {
     {
         return !string.string().is8Bit();
     }
-    template<bool ascii>
+    template<bool oneByte>
     static AtomicString fromV8String(v8::Handle<v8::String>, int);
 };
 
@@ -116,7 +116,7 @@ String StringTraits<String>::fromV8String<true>(v8::Handle<v8::String> v8String,
     ASSERT(v8String->Length() == length);
     LChar* buffer;
     String result = String::createUninitialized(length, buffer);
-    v8String->WriteAscii(reinterpret_cast<char*>(buffer), 0, length, v8::String::PRESERVE_ASCII_NULL);
+    v8String->WriteOneByte(buffer, 0, length);
     return result;
 }
 
@@ -127,12 +127,12 @@ AtomicString StringTraits<AtomicString>::fromV8String<true>(v8::Handle<v8::Strin
     static const int inlineBufferSize = 32;
     if (length <= inlineBufferSize) {
         LChar inlineBuffer[inlineBufferSize];
-        v8String->WriteAscii(reinterpret_cast<char*>(inlineBuffer), 0, length, v8::String::PRESERVE_ASCII_NULL);
+        v8String->WriteOneByte(inlineBuffer, 0, length);
         return AtomicString(inlineBuffer, length);
     }
     LChar* buffer;
     String string = String::createUninitialized(length, buffer);
-    v8String->WriteAscii(reinterpret_cast<char*>(buffer), 0, length, v8::String::PRESERVE_ASCII_NULL);
+    v8String->WriteOneByte(buffer, 0, length);
     return AtomicString(string);
 }
 
@@ -146,7 +146,7 @@ StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode
         v8::String::ExternalStringResourceBase* resource = v8String->GetExternalStringResourceBase(&encoding);
         if (LIKELY(!!resource)) {
             WebCoreStringResourceBase* base;
-            if (encoding == v8::String::ASCII_ENCODING)
+            if (encoding == v8::String::ONE_BYTE_ENCODING)
                 base = static_cast<WebCoreStringResource8*>(resource);
             else
                 base = static_cast<WebCoreStringResource16*>(resource);
@@ -158,13 +158,13 @@ StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode
     if (UNLIKELY(!length))
         return String("");
 
-    bool nonAscii = v8String->MayContainNonAscii();
-    StringType result(nonAscii ? StringTraits<StringType>::template fromV8String<false>(v8String, length) : StringTraits<StringType>::template fromV8String<true>(v8String, length));
+    bool oneByte = v8String->IsOneByte();
+    StringType result(oneByte ? StringTraits<StringType>::template fromV8String<true>(v8String, length) : StringTraits<StringType>::template fromV8String<false>(v8String, length));
 
     if (external != Externalize || !v8String->CanMakeExternal())
         return result;
 
-    if (!nonAscii && !StringTraits<StringType>::is16BitAtomicString(result)) {
+    if (oneByte && !StringTraits<StringType>::is16BitAtomicString(result)) {
         WebCoreStringResource8* stringResource = new WebCoreStringResource8(result);
         if (UNLIKELY(!v8String->MakeExternal(stringResource)))
             delete stringResource;

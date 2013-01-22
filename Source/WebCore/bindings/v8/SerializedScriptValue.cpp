@@ -313,7 +313,7 @@ public:
         doWriteString(data, length);
     }
 
-    void writeAsciiString(v8::Handle<v8::String>& string)
+    void writeOneByteString(v8::Handle<v8::String>& string)
     {
         int length = string->Length();
         ASSERT(length >= 0);
@@ -322,8 +322,7 @@ public:
         doWriteUint32(static_cast<uint32_t>(length));
         ensureSpace(length);
 
-        char* buffer = reinterpret_cast<char*>(byteAt(m_position));
-        string->WriteAscii(buffer, 0, length, v8StringWriteOptions());
+        string->WriteOneByte(byteAt(m_position), 0, length, v8StringWriteOptions());
         m_position += length;
     }
 
@@ -666,7 +665,7 @@ private:
 
     int v8StringWriteOptions()
     {
-        return v8::String::NO_NULL_TERMINATION | v8::String::PRESERVE_ASCII_NULL;
+        return v8::String::NO_NULL_TERMINATION;
     }
 
     Vector<BufferValueType> m_buffer;
@@ -1048,8 +1047,8 @@ private:
     void writeString(v8::Handle<v8::Value> value)
     {
         v8::Handle<v8::String> string = value.As<v8::String>();
-        if (!string->Length() || !string->MayContainNonAscii())
-            m_writer.writeAsciiString(string);
+        if (!string->Length() || string->IsOneByte())
+            m_writer.writeOneByteString(string);
         else
             m_writer.writeUCharString(string);
     }
