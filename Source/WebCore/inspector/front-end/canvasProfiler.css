@@ -85,3 +85,10 @@
 .canvas-replay-last-step img {
     content: url(Images/debuggerContinue.png);
 }
+.canvas-replay-prev-draw img{
+    content: url(Images/debuggerStepOver.png);
+    -webkit-transform: scaleX(-1);
+}
+.canvas-replay-next-draw img{
+    content: url(Images/debuggerStepOver.png);
+}

@@ -55,6 +55,8 @@ WebInspector.CanvasProfileView = function(profile)
     this._createControlButton(controlsContainer, "canvas-replay-first-step", WebInspector.UIString("First call."), this._onReplayFirstStepClick.bind(this));
     this._createControlButton(controlsContainer, "canvas-replay-prev-step", WebInspector.UIString("Previous call."), this._onReplayStepClick.bind(this, false));
     this._createControlButton(controlsContainer, "canvas-replay-next-step", WebInspector.UIString("Next call."), this._onReplayStepClick.bind(this, true));
+    this._createControlButton(controlsContainer, "canvas-replay-prev-draw", WebInspector.UIString("Previous drawing call."), this._onReplayDrawingCallClick.bind(this, false));
+    this._createControlButton(controlsContainer, "canvas-replay-next-draw", WebInspector.UIString("Next drawing call."), this._onReplayDrawingCallClick.bind(this, true));
     this._createControlButton(controlsContainer, "canvas-replay-last-step", WebInspector.UIString("Last call."), this._onReplayLastStepClick.bind(this));
 
     this._replayContextSelector = new WebInspector.StatusBarComboBox(this._onReplayContextChanged.bind(this));
@@ -82,6 +84,9 @@ WebInspector.CanvasProfileView = function(profile)
     this._logGrid.show(logGridContainer);
     this._logGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._replayTraceLog.bind(this));
 
+    /** @type {!Array.<WebInspector.DataGridNode>} */
+    this._logGridNodes = [];
+
     this._splitView.show(this.element);
 
     this._enableWaitIcon(true);
@@ -91,6 +96,7 @@ WebInspector.CanvasProfileView = function(profile)
 WebInspector.CanvasProfileView.prototype = {
     dispose: function()
     {
+        this._logGridNodes = [];
         this._linkifier.reset();
         CanvasAgent.dropTraceLog(this._traceLogId);
     },
@@ -132,7 +138,7 @@ WebInspector.CanvasProfileView.prototype = {
     _onReplayContextChanged: function()
     {
         /**
-         * @param {string?} error
+         * @param {?Protocol.Error} error
          * @param {CanvasAgent.ResourceState} resourceState
          */
         function didReceiveResourceState(error, resourceState)
@@ -172,6 +178,26 @@ WebInspector.CanvasProfileView.prototype = {
             nextNode.revealAndSelect();
         else
             selectedNode.reveal();
+    },
+
+    /**
+     * @param {boolean} forward
+     */
+    _onReplayDrawingCallClick: function(forward)
+    {
+        var callNode = this._logGrid.selectedNode;
+        if (!callNode)
+            return;
+        var index = callNode.index;
+        do {
+            var nextIndex = forward ? index + 1 : index - 1;
+            var nextCallNode = this._logGridNodes[nextIndex];
+            if (!nextCallNode)
+                break;
+            index = nextIndex;
+            callNode = nextCallNode;
+        } while (!callNode.call.isDrawingCall);
+        callNode.revealAndSelect();
     },
 
     _onReplayFirstStepClick: function()
@@ -220,7 +246,7 @@ WebInspector.CanvasProfileView.prototype = {
             return;
         var time = Date.now();
         /**
-         * @param {string?} error
+         * @param {?Protocol.Error} error
          * @param {CanvasAgent.ResourceState} resourceState
          */
         function didReplayTraceLog(error, resourceState)
@@ -243,6 +269,10 @@ WebInspector.CanvasProfileView.prototype = {
         CanvasAgent.replayTraceLog(this._traceLogId, callNode.index, didReplayTraceLog.bind(this));
     },
 
+    /**
+     * @param {?Protocol.Error} error
+     * @param {CanvasAgent.TraceLog} traceLog
+     */
     _didReceiveTraceLog: function(error, traceLog)
     {
         this._enableWaitIcon(false);
@@ -270,7 +300,7 @@ WebInspector.CanvasProfileView.prototype = {
             return;
         this._replayContexts[contextId] = true;
         /**
-         * @param {string?} error
+         * @param {?Protocol.Error} error
          * @param {CanvasAgent.ResourceInfo} resourceInfo
          */
         function didReceiveResourceInfo(error, resourceInfo)
@@ -286,7 +316,7 @@ WebInspector.CanvasProfileView.prototype = {
 
     /**
      * @param {number} index
-     * @param {Object} call
+     * @param {CanvasAgent.Call} call
      * @return {!WebInspector.DataGridNode}
      */
     _createCallNode: function(index, call)
@@ -316,6 +346,8 @@ WebInspector.CanvasProfileView.prototype = {
         var node = new WebInspector.DataGridNode(data);
         node.index = index;
         node.selectable = true;
+        node.call = call;
+        this._logGridNodes[index] = node;
         return node;
     },
 

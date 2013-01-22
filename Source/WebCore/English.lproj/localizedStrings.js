@@ -783,6 +783,8 @@ localizedStrings["There is an uninstrumented canvas on the page. Reload the page
 localizedStrings["First call."] = "First call.";
 localizedStrings["Previous call."] = "Previous call.";
 localizedStrings["Next call."] = "Next call.";
+localizedStrings["Previous drawing call."] = "Previous drawing call.";
+localizedStrings["Next drawing call."] = "Next drawing call.";
 localizedStrings["Last call."] = "Last call.";
 localizedStrings["Show screenshot of the last replayed resource."] = "Show screenshot of the last replayed resource.";
 localizedStrings["Show screenshot of this context's canvas."] = "Show screenshot of this context's canvas.";

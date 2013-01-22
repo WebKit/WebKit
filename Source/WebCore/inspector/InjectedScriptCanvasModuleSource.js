@@ -51,6 +51,12 @@ var TypeUtils = {
     })(["Int8Array", "Uint8Array", "Uint8ClampedArray", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array"]),
 
     /**
+     * @const
+     * @type {!Array.<string>}
+     */
+    _supportedPropertyPrefixes: ["webkit"],
+
+    /**
      * @param {*} array
      * @return {function(new:ArrayBufferView, ArrayBufferView)|null}
      */
@@ -142,6 +148,22 @@ var TypeUtils = {
         var result = {};
         for (var key in obj)
             result[key] = obj[key];
+        return result;
+    },
+
+    /**
+     * @param {!Array.<string>} names
+     * @return {!Object.<string, boolean>}
+     */
+    createPrefixedPropertyNamesSet: function(names)
+    {
+        var result = Object.create(null);
+        for (var i = 0, name; name = names[i]; ++i) {
+            result[name] = true;
+            var suffix = name.substr(0, 1).toUpperCase() + name.substr(1);
+            for (var j = 0, prefix; prefix = TypeUtils._supportedPropertyPrefixes[j]; ++j)
+                result[prefix + suffix] = true;
+        }
         return result;
     },
 
@@ -1076,6 +1098,14 @@ ReplayableResource.prototype = {
     /**
      * @return {string}
      */
+    name: function()
+    {
+        return this._data.name;
+    },
+
+    /**
+     * @return {string}
+     */
     description: function()
     {
         return this._data.name + "@" + this._data.kindId;
@@ -1702,6 +1732,16 @@ WebGLRenderingContextResource.StateParameters = [
 ];
 
 /**
+ * @const
+ * @type {!Object.<string, boolean>}
+ */
+WebGLRenderingContextResource.DrawingMethods = TypeUtils.createPrefixedPropertyNamesSet([
+    "clear",
+    "drawArrays",
+    "drawElements"
+]);
+
+/**
  * @param {*} obj
  * @return {WebGLRenderingContextResource}
  */
@@ -2270,6 +2310,26 @@ CanvasRenderingContext2DResource.TransformationMatrixMethods = [
     "setTransform"
 ];
 
+/**
+ * @const
+ * @type {!Object.<string, boolean>}
+ */
+CanvasRenderingContext2DResource.DrawingMethods = TypeUtils.createPrefixedPropertyNamesSet([
+    "clearRect",
+    "drawImage",
+    "drawImageFromRect",
+    "drawCustomFocusRing",
+    "drawSystemFocusRing",
+    "fill",
+    "fillRect",
+    "fillText",
+    "putImageData",
+    "putImageDataHD",
+    "stroke",
+    "strokeRect",
+    "strokeText"
+]);
+
 CanvasRenderingContext2DResource.prototype = {
     /**
      * @override (overrides @return type)
@@ -2576,6 +2636,85 @@ CanvasRenderingContext2DResource.prototype = {
 
     __proto__: ContextResource.prototype
 }
+
+/**
+ * @constructor
+ * @param {!Object.<string, boolean>=} drawingMethodNames
+ */
+function CallFormatter(drawingMethodNames)
+{
+    this._drawingMethodNames = drawingMethodNames || Object.create(null);
+}
+
+CallFormatter.prototype = {
+    /**
+     * @param {!ReplayableCall} replayableCall
+     * @return {!Object}
+     */
+    formatCall: function(replayableCall)
+    {
+        var result = {};
+        var functionName = replayableCall.functionName();
+        if (functionName) {
+            result.functionName = functionName;
+            result.arguments = replayableCall.args().map(this.formatValue.bind(this));
+            if (replayableCall.result() !== undefined)
+                result.result = this.formatValue(replayableCall.result());
+            if (this._drawingMethodNames[functionName])
+                result.isDrawingCall = true;
+        } else {
+            result.property = replayableCall.args()[0];
+            result.value = this.formatValue(replayableCall.args()[1]);
+        }
+        return result;
+    },
+
+    /**
+     * @param {*} value
+     * @return {!Object}
+     */
+    formatValue: function(value)
+    {
+        if (value instanceof ReplayableResource)
+            var description = value.description();
+        else
+            var description = "" + value;
+        return { description: description };
+    }
+}
+
+/**
+ * @const
+ * @type {!Object.<string, !CallFormatter>}
+ */
+CallFormatter._formatters = {};
+
+/**
+ * @param {string} resourceName
+ * @param {!CallFormatter} callFormatter
+ */
+CallFormatter.register = function(resourceName, callFormatter)
+{
+    CallFormatter._formatters[resourceName] = callFormatter;
+}
+
+/**
+ * @param {!ReplayableCall} replayableCall
+ * @return {!Object}
+ */
+CallFormatter.formatCall = function(replayableCall)
+{
+    var resource = replayableCall.replayableResource();
+    var formatter = CallFormatter._formatters[resource.name()];
+    if (!formatter) {
+        var contextResource = resource.replayableContextResource();
+        formatter = CallFormatter._formatters[contextResource.name()] || new CallFormatter();
+    }
+    return formatter.formatCall(replayableCall);
+}
+
+CallFormatter.register("CanvasRenderingContext2D", new CallFormatter(CanvasRenderingContext2DResource.DrawingMethods));
+CallFormatter.register("WebGLRenderingContext", new CallFormatter(WebGLRenderingContextResource.DrawingMethods));
 
 /**
  * @constructor
@@ -2936,22 +3075,12 @@ InjectedCanvasModule.prototype = {
             var contextResource = call.replayableResource().replayableContextResource();
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
-            var traceLogItem = {
-                contextId: this._makeStringResourceId(contextResource.id()),
-                sourceURL: callFrame.sourceURL,
-                lineNumber: callFrame.lineNumber,
-                columnNumber: callFrame.columnNumber
-            };
-            if (call.functionName()) {
-                traceLogItem.functionName = call.functionName();
-                traceLogItem.arguments = call.args().map(this._makeCallArgument.bind(this));
-                if (call.result() !== undefined)
-                    traceLogItem.result = this._makeCallArgument(call.result());
-            } else {
-                traceLogItem.property = call.args()[0];
-                traceLogItem.value = this._makeCallArgument(call.args()[1]);
-            }
-            result.calls.push(traceLogItem);
+            var item = CallFormatter.formatCall(call);
+            item.contextId = this._makeStringResourceId(contextResource.id());
+            item.sourceURL = callFrame.sourceURL;
+            item.lineNumber = callFrame.lineNumber;
+            item.columnNumber = callFrame.columnNumber;
+            result.calls.push(item);
         }
         return result;
     },
