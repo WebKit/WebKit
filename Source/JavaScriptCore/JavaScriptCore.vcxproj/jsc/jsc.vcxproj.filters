@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\jsc.cpp" />
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\AtomicString.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringBuilder.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringImpl.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\WTFString.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="jscPostBuild.cmd" />
+    <None Include="jscPreLink.cmd" />
+    <None Include="jscPreBuild.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="wtf/text">
+      <UniqueIdentifier>{a8dbc12e-b03c-45f9-93d3-c74162c2c288}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

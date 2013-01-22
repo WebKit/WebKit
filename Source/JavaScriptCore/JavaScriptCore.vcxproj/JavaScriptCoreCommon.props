@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\;..\tools\;..\runtime\;..\llint\;..\jit\;..\disassembler\;..\heap\;..\debugger\;..\assembler\;..\profiler\;..\yarr\;..\interpreter\;..\bytecode\;..\dfg\;..\bytecompiler\;..\parser\;..\API\;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\include\private\;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include\pthreads;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STATICALLY_LINKED_WITH_WTF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;libicuin$(LibraryConfigSuffix).lib;libicuuc$(LibraryConfigSuffix).lib;pthreadVC2$(LibraryConfigSuffix).lib;WTF$(WebKitConfigSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>JavaScriptCoreExports.def</ModuleDefinitionFile>
+      <ImportLibrary>$(ConfigurationBuildDir)\lib\$(TargetName).lib</ImportLibrary>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

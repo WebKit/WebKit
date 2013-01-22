@@ -1,3 +1,62 @@
+2013-01-22  Roger Fong  <roger_fong@apple.com>
+
+        JavaScriptCore property sheets, project files and modified build scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=106987
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.resources: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.resources/Info.plist: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCF.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebug.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreExports.def: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.make: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj.filters: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedCommon.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedDebug.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedRelease.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCorePostBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCorePreBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCorePreLink.cmd: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreRelease.props: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.make: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.vcxproj: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/build-LLIntAssembly.sh: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.make: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props: Added.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props: Added.
+        * JavaScriptCore.vcxproj/build-generated-files.sh: Added.
+        * JavaScriptCore.vcxproj/copy-files.cmd: Added.
+        * JavaScriptCore.vcxproj/jsc: Added.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Added.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj.filters: Added.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props: Added.
+        * JavaScriptCore.vcxproj/jsc/jscDebug.props: Added.
+        * JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/jsc/jscPreBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/jsc/jscPreLink.cmd: Added.
+        * JavaScriptCore.vcxproj/jsc/jscRelease.props: Added.
+        * config.h:
+
 2013-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Enable Page Visibility (PAGE_VISIBILITY_API)
