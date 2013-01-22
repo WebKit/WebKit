@@ -140,6 +140,7 @@
 #include "TouchEvent.cpp"
 #include "TouchList.cpp"
 #include "TransformSourceLibxslt.cpp"
+#include "TransitionEvent.cpp"
 #include "Traversal.cpp"
 #include "TreeScope.cpp"
 #include "TreeScopeAdopter.cpp"

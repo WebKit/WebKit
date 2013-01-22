@@ -4201,6 +4201,7 @@ webkit.org/b/104616 [ Win Mac ] fast/gradients/css3-linear-angle-gradients.html 
 # Unprefixed transitions are disabled while they're being implemented.
 # See also http://wkb.ug/105647
 webkit.org/b/93136 transitions/transitions-parsing.html [ Failure ]
+webkit.org/b/93136 fast/events/constructors/transition-event-constructor.html [ Failure ]
 
 # Flaky
 webkit.org/b/104283 [ Win Release ] fonts/monospace.html [ Failure Pass ]

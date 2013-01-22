@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderView.h"
+#include "TransitionEvent.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/CurrentTime.h>
@@ -180,7 +181,11 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
         if (it->eventType == eventNames().transitionendEvent)
+#if ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)
+            it->element->dispatchEvent(TransitionEvent::create(it->eventType, it->name, it->elapsedTime));
+#else
             it->element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime));
+#endif
         else
             it->element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }

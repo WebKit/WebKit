@@ -402,6 +402,7 @@ set(WebCore_IDL_FILES
     dom/TouchEvent.idl
     dom/Touch.idl
     dom/TouchList.idl
+    dom/TransitionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
@@ -1245,6 +1246,7 @@ set(WebCore_SOURCES
     dom/TouchEvent.cpp
     dom/TouchList.cpp
     dom/TransformSourceLibxslt.cpp
+    dom/TransitionEvent.cpp
     dom/Traversal.cpp
     dom/TreeScope.cpp
     dom/TreeScopeAdopter.cpp

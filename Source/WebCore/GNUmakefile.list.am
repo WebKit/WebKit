@@ -751,6 +751,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTouchList.h \
 	DerivedSources/WebCore/JSTrackEvent.cpp \
 	DerivedSources/WebCore/JSTrackEvent.h \
+	DerivedSources/WebCore/JSTransitionEvent.cpp \
+	DerivedSources/WebCore/JSTransitionEvent.h \
 	DerivedSources/WebCore/JSTreeWalker.cpp \
 	DerivedSources/WebCore/JSTreeWalker.h \
 	DerivedSources/WebCore/JSUIEvent.cpp \
@@ -1416,6 +1418,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/Touch.idl \
 	$(WebCore)/dom/TouchEvent.idl \
 	$(WebCore)/dom/TouchList.idl \
+	$(WebCore)/dom/TransitionEvent.idl \
 	$(WebCore)/dom/TreeWalker.idl \
 	$(WebCore)/dom/UIEvent.idl \
 	$(WebCore)/dom/WebKitAnimationEvent.idl \
@@ -2994,6 +2997,8 @@ webcore_sources += \
 	Source/WebCore/dom/TouchList.h \
 	Source/WebCore/dom/TransformSource.h \
 	Source/WebCore/dom/TransformSourceLibxslt.cpp \
+	Source/WebCore/dom/TransitionEvent.cpp \
+	Source/WebCore/dom/TransitionEvent.h \
 	Source/WebCore/dom/Traversal.cpp \
 	Source/WebCore/dom/Traversal.h \
 	Source/WebCore/dom/TreeDepthLimit.h \
