@@ -33,6 +33,14 @@
 
 namespace WebCore {
 
+struct SameSizeAsCompactHTMLToken  {
+    unsigned bitfields;
+    String name;
+    Vector<CompactAttribute> vector;
+};
+
+COMPILE_ASSERT(sizeof(CompactHTMLToken) == sizeof(SameSizeAsCompactHTMLToken), CompactHTMLToken_should_stay_small);
+
 CompactHTMLToken::CompactHTMLToken(const HTMLToken& token)
     : m_type(token.type())
 {
@@ -40,11 +48,15 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken& token)
     case HTMLTokenTypes::Uninitialized:
         ASSERT_NOT_REACHED();
         break;
-    case HTMLTokenTypes::DOCTYPE:
+    case HTMLTokenTypes::DOCTYPE: {
         m_data = String(token.name().data(), token.name().size());
-        m_publicIdentifier = String(token.publicIdentifier().data(), token.publicIdentifier().size());
-        m_systemIdentifier = String(token.systemIdentifier().data(), token.systemIdentifier().size());
+        // There is only 1 DOCTYPE token per document, so to avoid increasing the
+        // size of CompactHTMLToken, we just use the m_attributes vector.
+        String publicIdentifier(token.publicIdentifier().data(), token.publicIdentifier().size());
+        String systemIdentifier(token.systemIdentifier().data(), token.systemIdentifier().size());
+        m_attributes.append(CompactAttribute(publicIdentifier, systemIdentifier));
         break;
+    }
     case HTMLTokenTypes::EndOfFile:
         break;
     case HTMLTokenTypes::StartTag:
@@ -88,10 +100,7 @@ bool CompactHTMLToken::isSafeToSendToAnotherThread() const
         if (!isStringSafeToSendToAnotherThread(it->value()))
             return false;
     }
-
-    return isStringSafeToSendToAnotherThread(m_data)
-        && isStringSafeToSendToAnotherThread(m_publicIdentifier)
-        && isStringSafeToSendToAnotherThread(m_systemIdentifier);
+    return isStringSafeToSendToAnotherThread(m_data);
 }
 
 }

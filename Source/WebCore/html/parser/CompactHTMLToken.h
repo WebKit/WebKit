@@ -60,23 +60,22 @@ public:
 
     bool isSafeToSendToAnotherThread() const;
 
-    HTMLTokenTypes::Type type() const { return m_type; }
+    HTMLTokenTypes::Type type() const { return static_cast<HTMLTokenTypes::Type>(m_type); }
     const String& data() const { return m_data; }
     bool selfClosing() const { return m_selfClosing; }
     const Vector<CompactAttribute>& attributes() const { return m_attributes; }
 
-    const String& publicIdentifier() const { return m_publicIdentifier; }
-    const String& systemIdentifier() const { return m_systemIdentifier; }
+    // There is only 1 DOCTYPE token per document, so to avoid increasing the
+    // size of CompactHTMLToken, we just use the m_attributes vector.
+    const String& publicIdentifier() const { return m_attributes[0].name(); }
+    const String& systemIdentifier() const { return m_attributes[0].value(); }
 
 private:
-    HTMLTokenTypes::Type m_type;
-    String m_data; // "name", "characters", or "data" depending on m_type
-    bool m_selfClosing;
-    Vector<CompactAttribute> m_attributes;
+    unsigned m_type : 4;
+    bool m_selfClosing : 1;
 
-    // For doctype only.
-    String m_publicIdentifier;
-    String m_systemIdentifier;
+    String m_data; // "name", "characters", or "data" depending on m_type
+    Vector<CompactAttribute> m_attributes;
 };
 
 }
