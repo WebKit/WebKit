@@ -1001,6 +1001,7 @@ WebInspector.NetworkLogView.prototype = {
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy request headers" : "Copy Request Headers"), this._copyRequestHeaders.bind(this, request));
             if (request.responseHeadersText)
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy response headers" : "Copy Response Headers"), this._copyResponseHeaders.bind(this, request));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy as curl" : "Copy as Curl"), this._copyCurlCommand.bind(this, request));
         }
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy all as HAR" : "Copy All as HAR"), this._copyAll.bind(this));
 
@@ -1052,6 +1053,14 @@ WebInspector.NetworkLogView.prototype = {
     _copyResponseHeaders: function(request)
     {
         InspectorFrontendHost.copyText(request.responseHeadersText);
+    },
+
+    /**
+     * @param {WebInspector.NetworkRequest} request
+     */
+    _copyCurlCommand: function(request)
+    {
+        InspectorFrontendHost.copyText(this._generateCurlCommand(request));
     },
 
     _exportAll: function()
@@ -1321,6 +1330,56 @@ WebInspector.NetworkLogView.prototype = {
         node.element.addStyleClass("highlighted-row");
         this._highlightedNode = node;
     },
+
+   /**
+     * @param {WebInspector.NetworkRequest} request
+     * @return {string}
+     */
+    _generateCurlCommand: function(request)
+    {
+        var command = ["curl"];
+        var ignoredHeaders = {};
+
+        function escape(str)
+        {
+            return "\"" + str.replace(/\\/g, "\\\\")
+                             .replace(/\"/g, "\\\"")
+                             .replace(/\$/g, "\\$")
+                             .replace(/\n/g, "\\\n")
+                             .replace(/\`/g, "\\\`") + "\"";
+        }
+        command.push(escape(request.url));
+
+        var inferredMethod = "GET";
+        var data = [];
+        var requestContentType = request.requestContentType();
+        if (requestContentType && requestContentType.startsWith("application/x-www-form-urlencoded") && request.requestFormData) {
+           data.push("--data");
+           data.push(escape(request.requestFormData));
+           ignoredHeaders["Content-Length"] = true;
+           inferredMethod = "POST";
+        } else if (request.requestFormData) {
+           data.push("--data-binary");
+           data.push(escape(request.requestFormData));
+           ignoredHeaders["Content-Length"] = true;
+           inferredMethod = "POST";
+        }
+
+        if (request.requestMethod !== inferredMethod) {
+            command.push("-X");
+            command.push(request.requestMethod);
+        }
+
+        for (var i = 0; i < request.requestHeaders.length; i++) {
+            var header = request.requestHeaders[i];
+            if (header.name in ignoredHeaders)
+                continue;
+            command.push("-H");
+            command.push(escape(header.name + ": " + header.value));
+        }
+        command = command.concat(data);
+        return command.join(" ");
+    }, 
 
     __proto__: WebInspector.View.prototype
 }
