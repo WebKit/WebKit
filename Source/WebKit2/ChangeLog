@@ -1,3 +1,19 @@
+2013-01-21  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Implement WebInspector::localizedStringsURL() on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=107363
+
+        Reviewed by Benjamin Poulain.
+
+        Implement WebInspector::localizedStringsURL() method to return the
+        file URL of the localizedStrings.js.
+
+        This prevents printing warnings about "Localized string not found" in
+        the console and fixes Web inspector related failing tests on the bots.
+
+        * WebProcess/WebPage/efl/WebInspectorEfl.cpp:
+        (WebKit::WebInspector::localizedStringsURL):
+
 2013-01-21  Kiran Muppala  <cmuppala@apple.com>
 
         Enable process suppression by default on Mac
