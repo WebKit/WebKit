@@ -288,7 +288,7 @@ String contextMenuItemTagCheckSpelling()
 
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
-    return String::fromUTF8("Check Spelling While _Typing");
+    return String::fromUTF8("Check Spelling While Typing");
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling()
