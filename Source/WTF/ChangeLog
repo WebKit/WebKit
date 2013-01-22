@@ -1,3 +1,15 @@
+2013-01-22  Joshua Bell  <jsbell@chromium.org>
+
+        Prevent race condition during Worker shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=107577
+
+        Reviewed by Dmitry Titov.
+
+        Add MessageQueue::appendAndKill() which wraps those two steps with a mutex so other
+        threads can't sneak a message in between.
+
+        * wtf/MessageQueue.h: Added appendAndKill() method.
+
 2013-01-22  Roger Fong  <roger_fong@apple.com>
 
         WTF project files and property sheets for getting WebKit to compile in VS2010.

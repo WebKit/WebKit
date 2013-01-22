@@ -61,6 +61,7 @@ namespace WebCore {
         bool terminated() const { return m_messageQueue.killed(); }
 
         void postTask(PassOwnPtr<ScriptExecutionContext::Task>);
+        void postTaskAndTerminate(PassOwnPtr<ScriptExecutionContext::Task>);
         void postTaskForMode(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
 
         unsigned long createUniqueId() { return ++m_uniqueId; }

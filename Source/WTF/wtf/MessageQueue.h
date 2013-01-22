@@ -55,6 +55,7 @@ namespace WTF {
         ~MessageQueue();
 
         void append(PassOwnPtr<DataType>);
+        void appendAndKill(PassOwnPtr<DataType>);
         bool appendAndCheckEmpty(PassOwnPtr<DataType>);
         void prepend(PassOwnPtr<DataType>);
 
@@ -96,6 +97,15 @@ namespace WTF {
         MutexLocker lock(m_mutex);
         m_queue.append(message.leakPtr());
         m_condition.signal();
+    }
+
+    template<typename DataType>
+    inline void MessageQueue<DataType>::appendAndKill(PassOwnPtr<DataType> message)
+    {
+        MutexLocker lock(m_mutex);
+        m_queue.append(message.leakPtr());
+        m_killed = true;
+        m_condition.broadcast();
     }
 
     // Returns true if the queue was empty before the item was added.

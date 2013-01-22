@@ -271,7 +271,8 @@ void WorkerThread::stop()
 #if ENABLE(SQL_DATABASE)
         DatabaseManager::manager().interruptAllDatabasesForContext(m_workerContext.get());
 #endif
-        m_runLoop.postTask(WorkerThreadShutdownStartTask::create());
+        m_runLoop.postTaskAndTerminate(WorkerThreadShutdownStartTask::create());
+        return;
     }
     m_runLoop.terminate();
 }
