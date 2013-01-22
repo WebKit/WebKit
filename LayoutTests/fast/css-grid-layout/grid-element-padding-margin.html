@@ -4,10 +4,9 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    display: -webkit-grid;
-    background-color: grey;
     -webkit-grid-columns: 100px;
     -webkit-grid-rows: 50px;
     /* Force the grid element to be shrink-to-fit. */
@@ -22,10 +21,6 @@ if (window.testRunner)
     border-style: solid;
     border-color: green;
     border-width: 10px 20px 30px 40px;
-}
-
-.verticalRL {
-    -webkit-writing-mode: vertical-rl;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

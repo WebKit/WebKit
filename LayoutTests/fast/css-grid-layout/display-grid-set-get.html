@@ -5,15 +5,12 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
-<style>
-.grid { display: -webkit-grid; }
-.inlineGrid { display: -webkit-inline-grid; }
-</style>
+<link href="resources/grid.css" rel="stylesheet">
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <div class="grid" id="gridElement"></div>
-<div class="inlineGrid" id="inlineGridElement"></div>
+<div class="inline-grid" id="inlineGridElement"></div>
 <script src="resources/display-grid-set-get.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

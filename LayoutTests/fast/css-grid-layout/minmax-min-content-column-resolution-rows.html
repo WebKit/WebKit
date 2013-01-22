@@ -4,17 +4,14 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridMinMinContent {
-    display: -webkit-grid;
-    background-color: grey;
     -webkit-grid-columns: 30px;
     -webkit-grid-rows: minmax(-webkit-min-content, 40px);
 }
 
 .gridMaxMinContent {
-    display: -webkit-grid;
-    background-color: grey;
     -webkit-grid-columns: 30px;
     -webkit-grid-rows: minmax(30px, -webkit-min-content);
 }
@@ -25,10 +22,7 @@ if (window.testRunner)
     height: 10px;
 }
 
-#a {
-    background-color: blue;
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
+.firstRowFirstColumn {
     font: 10px/1 Ahem;
     /* Make us fit our grid area. */
     width: 100%;
@@ -41,61 +35,61 @@ if (window.testRunner)
 <p>Test that resolving minmax function with min-content on grid items works properly.</p>
 
 <div class="constrainedContainer">
-    <div class="gridMinMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="20">XXX XXX</div>
+    <div class="grid gridMinMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="20">XXX XXX</div>
     </div>
 </div>
 
 <div class="constrainedContainer">
-    <div class="gridMinMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="40">XXX XXX XXX XXX</div>
+    <div class="grid gridMinMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="40">XXX XXX XXX XXX</div>
     </div>
 </div>
 
 <div class="constrainedContainer">
-    <div class="gridMinMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
+    <div class="grid gridMinMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
     </div>
 </div>
 
 <!-- Allow the extra logical space distribution to occur. -->
 <div style="width: 30px; height: 100px">
-    <div class="gridMinMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="40">XXX XXX</div>
+    <div class="grid gridMinMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="40">XXX XXX</div>
     </div>
 </div>
 
 <div style="width: 30px; height: 100px">
-    <div class="gridMinMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
+    <div class="grid gridMinMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
     </div>
 </div>
 
 <div class="constrainedContainer">
-    <div class="gridMaxMinContent">
+    <div class="grid gridMaxMinContent">
         <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
-        <div id="a" data-expected-width="30" data-expected-height="30">XXX XXX</div>
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="30">XXX XXX</div>
     </div>
 </div>
 
 <div class="constrainedContainer">
-    <div class="gridMaxMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="30">XXX XXX XXX</div>
+    <div class="grid gridMaxMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="30">XXX XXX XXX</div>
     </div>
 </div>
 
 <!-- Allow the extra logical space distribution to occur. -->
 
 <div style="width: 30px; height: 100px">
-    <div class="gridMaxMinContent">
-        <div id="a" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
+    <div class="grid gridMaxMinContent">
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="60">XX XX XX XX XX XX</div>
     </div>
 </div>
 
 <div style="width: 30px; height: 100px">
-    <div class="gridMaxMinContent">
+    <div class="grid gridMaxMinContent">
         <!-- The 'max' logical width ends up being smaller than the 'min' so per the spec we ignore the 'max'. -->
-        <div id="a" data-expected-width="30" data-expected-height="30">XXX XXX</div>
+        <div class="firstRowFirstColumn" data-expected-width="30" data-expected-height="30">XXX XXX</div>
     </div>
 </div>
 

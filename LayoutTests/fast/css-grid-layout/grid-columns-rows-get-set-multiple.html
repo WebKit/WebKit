@@ -5,68 +5,57 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridWithFixed {
-    display: -webkit-grid;
     -webkit-grid-columns: 7px 11px;
     -webkit-grid-rows: 17px 2px;
 }
 
 .gridWithPercent {
-    display: -webkit-grid;
     -webkit-grid-columns: 53% 99%;
     -webkit-grid-rows: 27% 52%;
 }
 .gridWithAuto {
-    display: -webkit-grid;
     -webkit-grid-columns: auto auto;
     -webkit-grid-rows: auto auto;
 }
 .gridWithEM {
-    display: -webkit-grid;
     -webkit-grid-columns: 10em 12em;
     -webkit-grid-rows: 15em 17em;
     font: 10px Ahem;
 }
 .gridWithNoneAndAuto {
-    display: -webkit-grid;
     -webkit-grid-columns: none auto;
     -webkit-grid-rows: none auto;
 }
 .gridNoneWithAndFixed {
-    display: -webkit-grid;
     -webkit-grid-columns: none 15px;
     -webkit-grid-rows: none 22px;
 }
 .gridWithThreeItems {
-    display: -webkit-grid;
     -webkit-grid-columns: 15px auto 10em;
     -webkit-grid-rows: 12em 18px auto;
     font: 10px Ahem;
 }
 .gridWithPercentAndViewportPercent {
-    display: -webkit-grid;
     -webkit-grid-columns: 50% 15vw;
     -webkit-grid-rows: 35% 28vh;
 }
 .gridWithFitContentAndFitAvailable {
-    display: -webkit-grid;
     -webkit-grid-columns: -webkit-content-available;
     -webkit-grid-rows: -webkit-fitcontent -webkit-fit-available;
 }
 .gridWithMinMaxContent {
-    display: -webkit-grid;
     -webkit-grid-columns: -webkit-min-content -webkit-max-content;
     -webkit-grid-rows: -webkit-max-content -webkit-min-content;
 }
 .gridWithMinMaxAndFixed {
-    display: -webkit-grid;
     -webkit-grid-columns: minmax(45px, 30%) 15px;
     -webkit-grid-rows: 12em minmax(35%, 10px);
     font: 10px Ahem;
 }
 .gridWithMinMaxAndMinMaxContent {
-    display: -webkit-grid;
     -webkit-grid-columns: minmax(-webkit-min-content, 30%) 15px;
     -webkit-grid-rows: 12em minmax(35%, -webkit-max-content);
     font: 10px Ahem;
@@ -75,18 +64,18 @@ if (window.testRunner)
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<div class="gridWithFixed" id="gridWithFixedElement"></div>
-<div class="gridWithPercent" id="gridWithPercentElement"></div>
-<div class="gridWithAuto" id="gridWithAutoElement"></div>
-<div class="gridWithEM" id="gridWithEMElement"></div>
-<div class="gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
-<div class="gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
-<div class="gridWithThreeItems" id="gridWithThreeItems"></div>
-<div class="gridWithPercentAndViewportPercent" id="gridWithPercentAndViewportPercent"></div>
-<div class="gridWithFitContentAndFitAvailable" id="gridWithFitContentAndFitAvailable"></div>
-<div class="gridWithMinMaxContent" id="gridWithMinMaxContent"></div>
-<div class="gridWithMinMaxAndFixed" id="gridWithMinMaxAndFixed"></div>
-<div class="gridWithMinMaxAndMinMaxContent" id="gridWithMinMaxAndMinMaxContent"></div>
+<div class="grid gridWithFixed" id="gridWithFixedElement"></div>
+<div class="grid gridWithPercent" id="gridWithPercentElement"></div>
+<div class="grid gridWithAuto" id="gridWithAutoElement"></div>
+<div class="grid gridWithEM" id="gridWithEMElement"></div>
+<div class="grid gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
+<div class="grid gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
+<div class="grid gridWithThreeItems" id="gridWithThreeItems"></div>
+<div class="grid gridWithPercentAndViewportPercent" id="gridWithPercentAndViewportPercent"></div>
+<div class="grid gridWithFitContentAndFitAvailable" id="gridWithFitContentAndFitAvailable"></div>
+<div class="grid gridWithMinMaxContent" id="gridWithMinMaxContent"></div>
+<div class="grid gridWithMinMaxAndFixed" id="gridWithMinMaxAndFixed"></div>
+<div class="grid gridWithMinMaxAndMinMaxContent" id="gridWithMinMaxAndMinMaxContent"></div>
 <script src="resources/grid-columns-rows-get-set-multiple.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

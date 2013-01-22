@@ -4,10 +4,9 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    display: -webkit-grid;
-    background-color: grey;
     width: 100px;
     height: 200px;
 }
@@ -49,22 +48,15 @@ if (window.testRunner)
     -webkit-writing-mode: horizontal-bt;
 }
 
-#a {
-    background-color: blue;
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
+.firstRowFirstColumn {
     width: 100%;
     height: 100%;
 }
 
-#b {
-    background-color: green;
-    -webkit-grid-column: 2;
-    -webkit-grid-row: 1;
+.firstRowSecondColumn {
     width: 100%;
     height: 100%;
 }
-
 </style>
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid')">
@@ -73,33 +65,33 @@ if (window.testRunner)
 <p>Checks that a grid element with fixed minmax properly compute the logical width in several writing-mode.</p>
 
 <div class="grid" id="grid1" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="30" data-expected-width="40"></div>
-    <div id="b" data-expected-height="30" data-expected-width="60"></div>
+    <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="40"></div>
+    <div class="firstRowSecondColumn" data-expected-height="30" data-expected-width="60"></div>
 </div>
 
 <div class="grid" id="grid2" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="30" data-expected-width="60"></div>
-    <div id="b" data-expected-height="30" data-expected-width="40"></div>
+    <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="60"></div>
+    <div class="firstRowSecondColumn" data-expected-height="30" data-expected-width="40"></div>
 </div>
 
 <div class="grid" id="grid3" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="30" data-expected-width="50"></div>
-    <div id="b" data-expected-height="30" data-expected-width="50"></div>
+    <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="50"></div>
+    <div class="firstRowSecondColumn" data-expected-height="30" data-expected-width="50"></div>
 </div>
 
 <div class="grid" id="grid4" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="40" data-expected-width="30"></div>
-    <div id="b" data-expected-height="160" data-expected-width="30"></div>
+    <div class="firstRowFirstColumn" data-expected-height="40" data-expected-width="30"></div>
+    <div class="firstRowSecondColumn" data-expected-height="160" data-expected-width="30"></div>
 </div>
 
 <div class="grid" id="grid5" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="100" data-expected-width="30"></div>
-    <div id="b" data-expected-height="100" data-expected-width="30"></div>
+    <div class="firstRowFirstColumn" data-expected-height="100" data-expected-width="30"></div>
+    <div class="firstRowSecondColumn" data-expected-height="100" data-expected-width="30"></div>
 </div>
 
 <div class="grid" id="grid6" data-expected-width="100" data-expected-height="200">
-    <div id="a" data-expected-height="30" data-expected-width="40"></div>
-    <div id="b" data-expected-height="30" data-expected-width="60"></div>
+    <div class="firstRowFirstColumn" data-expected-height="30" data-expected-width="40"></div>
+    <div class="firstRowSecondColumn" data-expected-height="30" data-expected-width="60"></div>
 </div>
 
 </body>

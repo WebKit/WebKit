@@ -4,40 +4,30 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    display: -webkit-grid;
     -webkit-grid-columns: 50px 60px;
     -webkit-grid-rows: 20px 30px;
-    background-color: grey;
     max-width: 110px;
 }
 
-#a {
-    background-color: blue;
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 1;
+.firstRowFirstColumn {
     width: 10px;
     height: 15px;
 }
-#b {
-    background-color: green;
-    -webkit-grid-column: 2;
-    -webkit-grid-row: 1;
+
+.firstRowSecondColumn {
     width: 10px;
     height: 15px;
 }
-#c {
-    background-color: red;
-    -webkit-grid-column: 1;
-    -webkit-grid-row: 2;
+
+.secondRowFirstColumn {
     width: 10px;
     height: 15px;
 }
-#d {
-    background-color: orange;
-    -webkit-grid-column: 2;
-    -webkit-grid-row: 2;
+
+.secondRowSecondColumn {
     width: 10px;
     height: 15px;
 }
@@ -51,37 +41,37 @@ if (window.testRunner)
      them once we properly implement stretching / alignment. -->
 <div style="position: relative">
 <div class="grid" data-expected-width="110" data-expected-height="50">
-    <div id="a" data-offset-x="0" data-offset-y="0"></div>
-    <div id="b" data-offset-x="50" data-offset-y="0"></div>
-    <div id="c" data-offset-x="0" data-offset-y="20"></div>
-    <div id="d" data-offset-x="50" data-offset-y="20"></div>
+    <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+    <div class="firstRowSecondColumn" data-offset-x="50" data-offset-y="0"></div>
+    <div class="secondRowFirstColumn" data-offset-x="0" data-offset-y="20"></div>
+    <div class="secondRowSecondColumn" data-offset-x="50" data-offset-y="20"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" style="-webkit-writing-mode: horizontal-bt" data-expected-width="110" data-expected-height="50">
-    <div id="a" data-offset-x="0" data-offset-y="35"></div>
-    <div id="b" data-offset-x="50" data-offset-y="35"></div>
-    <div id="c" data-offset-x="0" data-offset-y="15"></div>
-    <div id="d" data-offset-x="50" data-offset-y="15"></div>
+    <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="35"></div>
+    <div class="firstRowSecondColumn" data-offset-x="50" data-offset-y="35"></div>
+    <div class="secondRowFirstColumn" data-offset-x="0" data-offset-y="15"></div>
+    <div class="secondRowSecondColumn" data-offset-x="50" data-offset-y="15"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" style="-webkit-writing-mode: vertical-rl; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
-    <div id="a" data-offset-x="40" data-offset-y="0"></div>
-    <div id="b" data-offset-x="40" data-offset-y="50"></div>
-    <div id="c" data-offset-x="20" data-offset-y="0"></div>
-    <div id="d" data-offset-x="20" data-offset-y="50"></div>
+    <div class="firstRowFirstColumn" data-offset-x="40" data-offset-y="0"></div>
+    <div class="firstRowSecondColumn" data-offset-x="40" data-offset-y="50"></div>
+    <div class="secondRowFirstColumn" data-offset-x="20" data-offset-y="0"></div>
+    <div class="secondRowSecondColumn" data-offset-x="20" data-offset-y="50"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" style="-webkit-writing-mode: vertical-lr; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
-    <div id="a" data-offset-x="0" data-offset-y="0"></div>
-    <div id="b" data-offset-x="0" data-offset-y="50"></div>
-    <div id="c" data-offset-x="20" data-offset-y="0"></div>
-    <div id="d" data-offset-x="20" data-offset-y="50"></div>
+    <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
+    <div class="firstRowSecondColumn" data-offset-x="0" data-offset-y="50"></div>
+    <div class="secondRowFirstColumn" data-offset-x="20" data-offset-y="0"></div>
+    <div class="secondRowSecondColumn" data-offset-x="20" data-offset-y="50"></div>
 </div>
 </div>
 
