@@ -1,0 +1,5 @@
+This test validates that touch hit tests rects are created in the coordinates of the outermost view, not their containing view. This test only works in DumpRenderTree.
+[0]: (10, 46, 285, 135)
+[1]: (60, 110, 50, 50)
+[2]: (420, 170, 50, 50)
+
