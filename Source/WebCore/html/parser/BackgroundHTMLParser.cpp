@@ -118,6 +118,42 @@ void BackgroundHTMLParser::finish()
     pumpTokenizer();
 }
 
+void BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
+{
+    if (token.type() == HTMLTokenTypes::StartTag) {
+        const String& tagName = token.data();
+        if (threadSafeMatch(tagName, SVGNames::svgTag)
+            || threadSafeMatch(tagName, MathMLNames::mathTag))
+            m_inForeignContent = true;
+
+        // FIXME: This is just a copy of Tokenizer::updateStateFor which uses threadSafeMatches.
+        if (threadSafeMatch(tagName, textareaTag) || threadSafeMatch(tagName, titleTag))
+            m_tokenizer->setState(HTMLTokenizerState::RCDATAState);
+        else if (threadSafeMatch(tagName, plaintextTag))
+            m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
+        else if (threadSafeMatch(tagName, scriptTag))
+            m_tokenizer->setState(HTMLTokenizerState::ScriptDataState);
+        else if (threadSafeMatch(tagName, styleTag)
+            || threadSafeMatch(tagName, iframeTag)
+            || threadSafeMatch(tagName, xmpTag)
+            || (threadSafeMatch(tagName, noembedTag) && m_options.pluginsEnabled)
+            || threadSafeMatch(tagName, noframesTag)
+            || (threadSafeMatch(tagName, noscriptTag) && m_options.scriptEnabled))
+            m_tokenizer->setState(HTMLTokenizerState::RAWTEXTState);
+    }
+
+    if (token.type() == HTMLTokenTypes::EndTag) {
+        const String& tagName = token.data();
+        if (threadSafeMatch(tagName, SVGNames::svgTag) || threadSafeMatch(tagName, MathMLNames::mathTag))
+            m_inForeignContent = false;
+        if (threadSafeMatch(tagName, scriptTag))
+            m_isPausedWaitingForScripts = true;
+    }
+
+    // FIXME: Need to set setForceNullCharacterReplacement based on m_inForeignContent as well.
+    m_tokenizer->setShouldAllowCDATA(m_inForeignContent);
+}
+
 void BackgroundHTMLParser::pumpTokenizer()
 {
     if (m_isPausedWaitingForScripts)
@@ -125,43 +161,12 @@ void BackgroundHTMLParser::pumpTokenizer()
 
     while (m_tokenizer->nextToken(m_input.current(), m_token)) {
         m_pendingTokens.append(CompactHTMLToken(m_token));
-
-        const CompactHTMLToken& token = m_pendingTokens.last();
-
-        if (token.type() == HTMLTokenTypes::StartTag) {
-            const String& tagName = token.data();
-            if (threadSafeMatch(tagName, SVGNames::svgTag)
-                || threadSafeMatch(tagName, MathMLNames::mathTag))
-                m_inForeignContent = true;
-
-            // FIXME: This is just a copy of Tokenizer::updateStateFor which doesn't use HTMLNames.
-            if (threadSafeMatch(tagName, textareaTag) || threadSafeMatch(tagName, titleTag))
-                m_tokenizer->setState(HTMLTokenizerState::RCDATAState);
-            else if (threadSafeMatch(tagName, plaintextTag))
-                m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
-            else if (threadSafeMatch(tagName, scriptTag))
-                m_tokenizer->setState(HTMLTokenizerState::ScriptDataState);
-            else if (threadSafeMatch(tagName, styleTag)
-                || threadSafeMatch(tagName, iframeTag)
-                || threadSafeMatch(tagName, xmpTag)
-                || (threadSafeMatch(tagName, noembedTag) && m_options.pluginsEnabled)
-                || threadSafeMatch(tagName, noframesTag)
-                || (threadSafeMatch(tagName, noscriptTag) && m_options.scriptEnabled))
-                m_tokenizer->setState(HTMLTokenizerState::RAWTEXTState);
-        }
-        if (token.type() == HTMLTokenTypes::EndTag) {
-            const String& tagName = token.data();
-            if (threadSafeMatch(tagName, SVGNames::svgTag) || threadSafeMatch(tagName, MathMLNames::mathTag))
-                m_inForeignContent = false;
-            if (threadSafeMatch(tagName, scriptTag)) {
-                m_isPausedWaitingForScripts = true;
-                m_token.clear();
-                break;
-            }
-        }
-        // FIXME: Need to set setForceNullCharacterReplacement based on m_inForeignContent as well.
-        m_tokenizer->setShouldAllowCDATA(m_inForeignContent);
         m_token.clear();
+
+        simulateTreeBuilder(m_pendingTokens.last());
+
+        if (m_isPausedWaitingForScripts)
+            break;
 
         if (m_pendingTokens.size() >= pendingTokenLimit)
             sendTokensToMainThread();

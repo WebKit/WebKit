@@ -61,6 +61,7 @@ private:
     explicit BackgroundHTMLParser(const HTMLParserOptions&, ParserIdentifier);
 
     void pumpTokenizer();
+    void simulateTreeBuilder(const CompactHTMLToken&);
 
     void sendTokensToMainThread();
 
