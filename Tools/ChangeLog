@@ -1,3 +1,11 @@
+2013-01-22  Lucas Forschler  <lforschler@apple.com>
+
+        Create a MAC EWS startup shell script.
+
+        Reviewed by Ryosuke Niwa.
+
+        * EWSTools/start-queue-mac.sh: Added.
+
 2013-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Enable Page Visibility (PAGE_VISIBILITY_API)
