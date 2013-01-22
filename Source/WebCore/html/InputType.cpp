@@ -674,8 +674,19 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 {
     element()->setValueInternal(sanitizedValue, eventBehavior);
     element()->setNeedsStyleRecalc();
-    if (valueChanged && eventBehavior != DispatchNoEvent)
+    if (!valueChanged)
+        return;
+    switch (eventBehavior) {
+    case DispatchChangeEvent:
         element()->dispatchFormControlChangeEvent();
+        break;
+    case DispatchInputAndChangeEvent:
+        element()->dispatchFormControlInputEvent();
+        element()->dispatchFormControlChangeEvent();
+        break;
+    case DispatchNoEvent:
+        break;
+    }
 }
 
 bool InputType::canSetValue(const String&)

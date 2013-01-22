@@ -140,7 +140,7 @@ bool BaseMultipleFieldsDateAndTimeInputType::isPickerIndicatorOwnerDisabledOrRea
 void BaseMultipleFieldsDateAndTimeInputType::pickerIndicatorChooseValue(const String& value)
 {
     if (element()->isValidValue(value)) {
-        element()->setValue(value, DispatchChangeEvent);
+        element()->setValue(value, DispatchInputAndChangeEvent);
         return;
     }
 

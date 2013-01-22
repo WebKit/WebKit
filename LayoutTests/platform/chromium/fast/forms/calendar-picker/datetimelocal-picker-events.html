@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type="datetime-local" id="datetimelocal1" value="">
+
+<script>
+description('Tests if value selection by calendar picker dispatches correct events.');
+
+var eventsCounter = {};
+function recordEvent(event) {
+    if (eventsCounter[event.type] === undefined)
+        eventsCounter[event.type] = 0;
+    eventsCounter[event.type]++;
+    debug('==> "' + event.type + '" event was dispatched.');
+}
+
+var datetimelocal1 = document.getElementById('datetimelocal1');
+datetimelocal1.addEventListener('input', recordEvent, false);
+datetimelocal1.addEventListener('change', recordEvent, false);
+
+openPicker(datetimelocal1, test1);
+
+function test1() {
+    debug('Choosing a new date value from the calendar picker. No events should be dispatched because the hour field and the minutes field are empty.');
+    eventSender.keyDown('\n');
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    shouldBeEqualToString('datetimelocal1.value', '');
+    shouldBeUndefined('eventsCounter.input');
+    shouldBeUndefined('eventsCounter.change');
+
+    datetimelocal1.value = "2013-01-21T17:49";
+    openPicker(datetimelocal1, test2);
+}
+
+function test2() {
+    debug('Choosing a new value from the calendar picker. "Input" and "change" events should be dispatched in this order.');
+    eventSender.keyDown('rightArrow');
+    eventSender.keyDown('\n');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
+    shouldBeEqualToString('datetimelocal1.value', '2013-01-22T17:49');
+    shouldBe('eventsCounter.input', '1');
+    shouldBe('eventsCounter.change', '1');
+
+    finishJSTest();
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
