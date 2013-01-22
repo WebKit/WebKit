@@ -682,6 +682,11 @@ public:
     void incrementConnectedSubframeCount(unsigned amount = 1);
     void decrementConnectedSubframeCount(unsigned amount = 1);
 
+#if ENABLE(DIALOG_ELEMENT)
+    bool isInTopLayer() const { return getFlag(IsInTopLayer); }
+    void setIsInTopLayer(bool);
+#endif
+
 private:
     enum NodeFlags {
         IsTextFlag = 1,
@@ -719,11 +724,14 @@ private:
         V8CollectableDuringMinorGCFlag = 1 << 24,
         NeedsShadowTreeWalkerFlag = 1 << 25,
         IsInShadowTreeFlag = 1 << 26,
+#if ENABLE(DIALOG_ELEMENT)
+        IsInTopLayer = 1 << 27,
+#endif
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
-    // 5 bits remaining
+    // 4 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 

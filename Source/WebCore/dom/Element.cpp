@@ -1171,7 +1171,8 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 #endif
 
 #if ENABLE(DIALOG_ELEMENT)
-    document()->removeFromTopLayer(this);
+    if (isInTopLayer())
+        document()->removeFromTopLayer(this);
 #endif
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
@@ -2380,22 +2381,6 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
         element->setContainsFullScreenElement(flag);
 }
 #endif    
-
-#if ENABLE(DIALOG_ELEMENT)
-bool Element::isInTopLayer() const
-{
-    return hasRareData() && elementRareData()->isInTopLayer();
-}
-
-void Element::setIsInTopLayer(bool inTopLayer)
-{
-    ensureElementRareData()->setIsInTopLayer(inTopLayer);
-
-    // We must ensure a reattach occurs so the renderer is inserted in the correct sibling order under RenderView according to its
-    // top layer position, or in its usual place if not in the top layer.
-    reattachIfAttached();
-}
-#endif
 
 #if ENABLE(POINTER_LOCK)
 void Element::webkitRequestPointerLock()

@@ -464,11 +464,6 @@ public:
     void webkitRequestFullscreen();
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-    bool isInTopLayer() const;
-    void setIsInTopLayer(bool);
-#endif
-
 #if ENABLE(POINTER_LOCK)
     void webkitRequestPointerLock();
 #endif

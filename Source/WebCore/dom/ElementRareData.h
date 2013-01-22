@@ -65,11 +65,6 @@ public:
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-    bool isInTopLayer() const { return m_isInTopLayer; }
-    void setIsInTopLayer(bool value) { m_isInTopLayer = value; }
-#endif
-
     bool childrenAffectedByHover() const { return m_childrenAffectedByHover; }
     void setChildrenAffectedByHover(bool value) { m_childrenAffectedByHover = value; }
     bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
@@ -135,9 +130,6 @@ private:
 #if ENABLE(FULLSCREEN_API)
     unsigned m_containsFullScreenElement : 1;
 #endif
-#if ENABLE(DIALOG_ELEMENT)
-    unsigned m_isInTopLayer : 1;
-#endif
 #if ENABLE(SVG)
     unsigned m_hasPendingResources : 1;
 #endif
@@ -184,9 +176,6 @@ inline ElementRareData::ElementRareData(RenderObject* renderer)
     , m_isInCanvasSubtree(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-    , m_isInTopLayer(false)
 #endif
 #if ENABLE(SVG)
     , m_hasPendingResources(false)
