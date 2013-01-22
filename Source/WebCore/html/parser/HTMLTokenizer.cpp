@@ -49,20 +49,17 @@ using namespace HTMLNames;
 
 // This has to go in a .cpp file, as the linker doesn't like it being included more than once.
 // We don't have an HTMLToken.cpp though, so this is the next best place.
-template<>
-QualifiedName AtomicMarkupTokenBase<HTMLToken>::nameForAttribute(const AttributeBase& attribute) const
+QualifiedName AtomicHTMLToken::nameForAttribute(const AttributeBase& attribute) const
 {
     return QualifiedName(nullAtom, AtomicString(attribute.m_name.data(), attribute.m_name.size()), nullAtom);
 }
 
-template<>
-bool AtomicMarkupTokenBase<HTMLToken>::usesName() const
+bool AtomicHTMLToken::usesName() const
 {
     return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE;
 }
 
-template<>
-bool AtomicMarkupTokenBase<HTMLToken>::usesAttributes() const
+bool AtomicHTMLToken::usesAttributes() const
 {
     return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag;
 }
