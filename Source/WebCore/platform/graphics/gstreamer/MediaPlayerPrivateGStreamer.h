@@ -158,7 +158,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
         private:
             MediaPlayer* m_player;
-            GstElement* m_playBin;
+            GRefPtr<GstElement> m_playBin;
             GstElement* m_webkitVideoSink;
             GstElement* m_videoSinkBin;
             GstElement* m_fpsSink;
