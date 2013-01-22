@@ -48,6 +48,9 @@
 
 - (void)dealloc
 {
+    [_webView setFrameLoadDelegate:nil];
+    [_webView setUIDelegate:nil];
+    [_webView setResourceLoadDelegate:nil];
     [_webView release];
 
     [super dealloc];
