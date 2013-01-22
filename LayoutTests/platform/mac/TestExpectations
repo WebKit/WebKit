@@ -829,9 +829,6 @@ compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
 # https://bugs.webkit.org/show_bug.cgi?id=90725
 media/media-blocked-by-beforeload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=90742
-sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A7.2.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=90833
 fast/js/global-constructors.html
 
