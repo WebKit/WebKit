@@ -305,6 +305,9 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
         newObj = AccessibilityScrollView::create(static_cast<ScrollView*>(widget));
     else if (widget->isScrollbar())
         newObj = AccessibilityScrollbar::create(static_cast<Scrollbar*>(widget));
+
+    // Will crash later if we have two objects for the same widget.
+    ASSERT(!get(widget));
         
     getAXID(newObj.get());
     
@@ -337,6 +340,9 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 
     RefPtr<AccessibilityObject> newObj = createFromNode(node);
 
+    // Will crash later if we have two objects for the same node.
+    ASSERT(!get(node));
+
     getAXID(newObj.get());
 
     m_nodeObjectMapping.set(node, newObj->axObjectID());
@@ -357,6 +363,9 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
         return obj;
 
     RefPtr<AccessibilityObject> newObj = createFromRenderer(renderer);
+
+    // Will crash later if we have two objects for the same renderer.
+    ASSERT(!get(renderer));
 
     getAXID(newObj.get());
 
