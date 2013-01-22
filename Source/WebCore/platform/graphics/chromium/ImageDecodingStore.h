@@ -163,6 +163,8 @@ private:
     //   m_cachedSizeMap
     //   m_cacheLimitInBytes
     //   m_memoryUsageInBytes
+    // This mutex also protects calls to underlying skBitmap's
+    // lockPixels()/unlockPixels() as they are not threadsafe.
     Mutex m_mutex;
 };
 

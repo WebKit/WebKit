@@ -96,23 +96,23 @@ bool ImageDecodingStore::lockCache(const ImageFrameGenerator* generator, const S
 
         // Increment use count such that it doesn't get evicted.
         cacheEntry->incrementUseCount();
+
+        // Complete cache entry doesn't have a decoder.
+        ASSERT(!cacheEntry->cachedImage()->isComplete() || !cacheEntry->cachedDecoder());
+
+        if (decoder)
+            *decoder = cacheEntry->cachedDecoder();
+        *cachedImage = cacheEntry->cachedImage();
+        (*cachedImage)->bitmap().lockPixels();
     }
 
-    // Complete cache entry doesn't have a decoder.
-    ASSERT(!cacheEntry->cachedImage()->isComplete() || !cacheEntry->cachedDecoder());
-
-    if (decoder)
-        *decoder = cacheEntry->cachedDecoder();
-    *cachedImage = cacheEntry->cachedImage();
-    (*cachedImage)->bitmap().lockPixels();
     return true;
 }
 
 void ImageDecodingStore::unlockCache(const ImageFrameGenerator* generator, const ScaledImageFragment* cachedImage)
 {
-    cachedImage->bitmap().unlockPixels();
-
     MutexLocker lock(m_mutex);
+    cachedImage->bitmap().unlockPixels();
     CacheMap::iterator iter = m_cacheMap.find(std::make_pair(generator, cachedImage->scaledSize()));
     ASSERT(iter != m_cacheMap.end());
 
@@ -129,9 +129,6 @@ const ScaledImageFragment* ImageDecodingStore::insertAndLockCache(const ImageFra
     // Prune old cache entries to give space for the new one.
     prune();
 
-    // Lock the underlying SkBitmap to prevent it from being purged.
-    image->bitmap().lockPixels();
-
     ScaledImageFragment* cachedImage = image.get();
     OwnPtr<CacheEntry> newCacheEntry;
 
@@ -142,6 +139,8 @@ const ScaledImageFragment* ImageDecodingStore::insertAndLockCache(const ImageFra
         newCacheEntry = CacheEntry::createAndUse(generator, image, decoder);
 
     MutexLocker lock(m_mutex);
+    // Lock the underlying SkBitmap to prevent it from being purged.
+    cachedImage->bitmap().lockPixels();
     ASSERT(!m_cacheMap.contains(newCacheEntry->cacheKey()));
     insertCacheInternal(newCacheEntry.release());
     return cachedImage;
@@ -149,12 +148,11 @@ const ScaledImageFragment* ImageDecodingStore::insertAndLockCache(const ImageFra
 
 const ScaledImageFragment* ImageDecodingStore::overwriteAndLockCache(const ImageFrameGenerator* generator, const ScaledImageFragment* cachedImage, PassOwnPtr<ScaledImageFragment> newImage)
 {
-    cachedImage->bitmap().unlockPixels();
-
     OwnPtr<ImageDecoder> trash;
     const ScaledImageFragment* newCachedImage = 0;
     {
         MutexLocker lock(m_mutex);
+        cachedImage->bitmap().unlockPixels();
         CacheMap::iterator iter = m_cacheMap.find(std::make_pair(generator, cachedImage->scaledSize()));
         ASSERT(iter != m_cacheMap.end());
 
@@ -164,10 +162,10 @@ const ScaledImageFragment* ImageDecodingStore::overwriteAndLockCache(const Image
 
         trash = cacheEntry->overwriteCachedImage(newImage);
         newCachedImage = cacheEntry->cachedImage();
+        // Lock the underlying SkBitmap to prevent it from being purged.
+        newCachedImage->bitmap().lockPixels();
     }
 
-    // Lock the underlying SkBitmap to prevent it from being purged.
-    newCachedImage->bitmap().lockPixels();
     return newCachedImage;
 }
 
