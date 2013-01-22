@@ -117,7 +117,12 @@ public:
     ~WebCoreSynchronousLoader()
     {
         adjustMaxConnections(-1);
-        g_main_context_pop_thread_default(g_main_context_get_thread_default());
+
+        GMainContext* context = g_main_context_get_thread_default();
+        while (g_main_context_pending(context))
+            g_main_context_iteration(context, FALSE);
+
+        g_main_context_pop_thread_default(context);
         loadingSynchronousRequest = false;
     }
 
