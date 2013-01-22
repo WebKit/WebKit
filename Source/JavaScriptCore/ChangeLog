@@ -1,3 +1,14 @@
+2013-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Fix DateMath.cpp to compile with -Wshorten-64-to-32
+        <http://webkit.org/b/107503>
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDateFromNullTerminatedCharacters): Remove unneeded
+        static_cast<int>().
+
 2013-01-22  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Build PDFPlugin everywhere, enable at runtime

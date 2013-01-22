@@ -1,3 +1,67 @@
+2013-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Fix DateMath.cpp to compile with -Wshorten-64-to-32
+        <http://webkit.org/b/107503>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following build errors with -Wshorten-64-to-32:
+
+            DateMath.cpp:742:47: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                if (month == 2 && day > 28 && !isLeapYear(year))
+                                               ~~~~~~~~~~ ^~~~
+            DateMath.cpp:757:48: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                double dateSeconds = ymdhmsToSeconds(year, month, day, hours, minutes, seconds) - timeZoneSeconds;
+                                     ~~~~~~~~~~~~~~~       ^~~~~
+            DateMath.cpp:757:55: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                double dateSeconds = ymdhmsToSeconds(year, month, day, hours, minutes, seconds) - timeZoneSeconds;
+                                     ~~~~~~~~~~~~~~~              ^~~
+            DateMath.cpp:757:60: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                double dateSeconds = ymdhmsToSeconds(year, month, day, hours, minutes, seconds) - timeZoneSeconds;
+                                     ~~~~~~~~~~~~~~~                   ^~~~~
+            DateMath.cpp:757:67: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                double dateSeconds = ymdhmsToSeconds(year, month, day, hours, minutes, seconds) - timeZoneSeconds;
+                                     ~~~~~~~~~~~~~~~                          ^~~~~~~
+            DateMath.cpp:996:59: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                                offset = ((o / 100) * 60 + (o % 100)) * sgn;
+                                       ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+            DateMath.cpp:998:37: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                                offset = o * 60 * sgn;
+                                       ~ ~~~~~~~^~~~~
+            DateMath.cpp:1005:40: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                            offset = (o * 60 + o2) * sgn;
+                                   ~ ~~~~~~~~~~~~~~^~~~~
+            DateMath.cpp:1041:40: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+                       ~~~~~~~~~~~~~~~       ~~~~~~^~~
+            DateMath.cpp:1041:45: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+                       ~~~~~~~~~~~~~~~                  ^~~
+            DateMath.cpp:1041:50: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+                       ~~~~~~~~~~~~~~~                       ^~~~
+            DateMath.cpp:1041:56: error: implicit conversion loses integer precision: 'long' to 'int' [-Werror,-Wshorten-64-to-32]
+                return ymdhmsToSeconds(year, month + 1, day, hour, minute, second) * msPerSecond;
+                       ~~~~~~~~~~~~~~~                             ^~~~~~
+            12 errors generated.
+
+        * wtf/DateMath.cpp:
+        (WTF::ymdhmsToSeconds): Change year argument from long to int.
+        Change mon, day, hour, minute arguments from int to long.
+        (WTF::parseInt): Add.  Identical to parseLong but bounds checks
+        for type int.
+        (WTF::parseLong): Switch to std::numeric_limits<long> instead of
+        macros.
+        (WTF::parseES5DatePortion): Change year argument from long to
+        int.
+        (WTF::parseES5DateFromNullTerminatedCharacters): Change year
+        local variable from long to int.
+        (WTF::parseDateFromNullTerminatedCharacters): Change year and
+        offset local variables from long to int.  Switch from using
+        parseLong() to parseInt() as needed.  Ditto for labs() to abs().
+        Add overflow check when switching from "MM/DD/YYYY" to
+        "YYYY/MM/DD" parsing.
+
 2013-01-17  Andy Estes  <aestes@apple.com>
 
         Add a USE() macro for content filtering code
