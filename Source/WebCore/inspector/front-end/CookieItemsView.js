@@ -143,7 +143,7 @@ WebInspector.CookieItemsView.prototype = {
      */
     _deleteCookie: function(cookie)
     {
-        PageAgent.deleteCookie(cookie.name(), "http://" + cookie.domain() + cookie.path());
+        PageAgent.deleteCookie(cookie.name(), (cookie.secure() ? "https://" : "http://") + cookie.domain() + cookie.path());
         this._update();
     },
 
