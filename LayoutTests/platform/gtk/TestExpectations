@@ -1086,9 +1086,6 @@ Bug(GTK) editing/spelling/grammar.html [ Failure ]
 Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
-# testRunner::setTextDirection() is not implemented.
-Bug(GTK) fast/html/set-text-direction.html [ Failure ]
-
 # testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 webkit.org/b/57160 fast/harness/override-preferences-2.html [ Failure ]
 

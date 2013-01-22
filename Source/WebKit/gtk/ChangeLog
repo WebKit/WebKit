@@ -1,3 +1,15 @@
+2013-01-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Add listener for direction-changed signal in WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=107131
+
+        Reviewed by Philippe Normand.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Add listener for direction-changed signal.
+        (webkitWebViewDirectionChanged): Implement listener using
+        Editor::setBaseWritingDirection().
+
 2013-01-21  Oleg Smirnov  <oleg.smirnov@lge.com>
 
         [Gtk] Dispatching event list into input element.

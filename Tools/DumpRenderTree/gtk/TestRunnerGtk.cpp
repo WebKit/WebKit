@@ -939,7 +939,19 @@ void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
 
 void TestRunner::setTextDirection(JSStringRef direction)
 {
-    // FIXME: Implement.
+    GOwnPtr<gchar> writingDirection(JSStringCopyUTF8CString(direction));
+
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    if (g_str_equal(writingDirection.get(), "auto"))
+        gtk_widget_set_direction(GTK_WIDGET(view), GTK_TEXT_DIR_NONE);
+    else if (g_str_equal(writingDirection.get(), "ltr"))
+        gtk_widget_set_direction(GTK_WIDGET(view), GTK_TEXT_DIR_LTR);
+    else if (g_str_equal(writingDirection.get(), "rtl"))
+        gtk_widget_set_direction(GTK_WIDGET(view), GTK_TEXT_DIR_RTL);
+    else
+        fprintf(stderr, "TestRunner::setTextDirection called with unknown direction: '%s'.\n", writingDirection.get());
 }
 
 void TestRunner::addChromeInputField()

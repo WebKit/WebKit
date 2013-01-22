@@ -527,6 +527,8 @@ static void resetDefaultsToConsistentValues()
         gTestRunner->setAuthenticationUsername("");
         gTestRunner->setHandlesAuthenticationChallenges(false);
     }
+
+    gtk_widget_set_direction(GTK_WIDGET(webView), GTK_TEXT_DIR_NONE);
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])
