@@ -145,6 +145,34 @@ void RenderView::checkLayoutState(const LayoutState& state)
 }
 #endif
 
+// The algorithm to layout the flow thread content in auto height regions has to make sure
+// that when a two-pass layout is needed, the auto height regions always start the first
+// pass without a computed override logical content height (from previous layouts).
+// This way, the layout algorithm gives the same result in all situations.
+// If the flow thread content does not need layout, the decision of whether we need a full
+// two pass layout cannot be made up-front. Therefore, we do a first layout, and if an auto
+// height region needs layout or a non-auto height region changes its box dimensions,
+// we need to perform a full two pass layout.
+void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& state)
+{
+    ASSERT(!flowThreadController()->needsTwoPassLayoutForAutoHeightRegions());
+
+    if (!flowThreadController()->hasRenderNamedFlowThreadsNeedingLayout()) {
+        layoutContent(state);
+        if (!flowThreadController()->needsTwoPassLayoutForAutoHeightRegions())
+            return;
+    }
+
+    // Start a full two phase layout for regions with auto logical height.
+    flowThreadController()->resetRegionsOverrideLogicalContentHeight();
+    layoutContent(state);
+
+    m_layoutPhase = ConstrainedFlowThreadsLayoutInAutoLogicalHeightRegions;
+    flowThreadController()->markAutoLogicalHeightRegionsForLayout();
+    layoutContent(state);
+    flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(false);
+}
+
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -181,20 +209,10 @@ void RenderView::layout()
     m_layoutState = &state;
 
     m_layoutPhase = RenderViewNormalLayout;
-    bool needsTwoPassLayoutForAutoLogicalHeightRegions = hasRenderNamedFlowThreads()
-        && flowThreadController()->hasAutoLogicalHeightRegions()
-        && flowThreadController()->hasRenderNamedFlowThreadsNeedingLayout();
-
-    if (needsTwoPassLayoutForAutoLogicalHeightRegions)
-        flowThreadController()->resetRegionsOverrideLogicalContentHeight();
-
-    layoutContent(state);
-
-    if (needsTwoPassLayoutForAutoLogicalHeightRegions) {
-        m_layoutPhase = ConstrainedFlowThreadsLayoutInAutoLogicalHeightRegions;
-        flowThreadController()->markAutoLogicalHeightRegionsForLayout();
+    if (checkTwoPassLayoutForAutoHeightRegions())
+        layoutContentInAutoLogicalHeightRegions(state);
+    else
         layoutContent(state);
-    }
 
 #ifndef NDEBUG
     checkLayoutState(state);
@@ -1025,6 +1043,11 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 bool RenderView::hasRenderNamedFlowThreads() const
 {
     return m_flowThreadController && m_flowThreadController->hasRenderNamedFlowThreads();
+}
+
+bool RenderView::checkTwoPassLayoutForAutoHeightRegions() const
+{
+    return hasRenderNamedFlowThreads() && m_flowThreadController->hasAutoLogicalHeightRegions();
 }
 
 FlowThreadController* RenderView::flowThreadController()

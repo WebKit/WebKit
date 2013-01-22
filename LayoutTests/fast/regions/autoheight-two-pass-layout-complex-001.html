@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #content { -webkit-flow-into: flow; font: 16px/1.25 monospace; }
+            #regionsContainer { position: absolute; width: 250px; top: 200px; }
+            .region { -webkit-flow-from: flow; }
+            #region1 { width: 200px; height: auto; background-color: orange; }
+            #region2 { width: 200px; position: absolute; height: 100%; left: 250px; top: 0px; background-color: green; }
+            #region3 { width: 200px; height: auto; position: absolute; left: 500px; top: 200px; background-color: blue; }
+            p { margin: 0; }
+        </style>
+    </head>
+    <script src="../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#region3')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103738">WebKit Bug 103738</a> [CSS Regions] min-max height will not trigger a relayout when set on a region with auto-height</p>
+        <p>The test flows content in 3 regions, orange region and blue region have auto height, green region's height depends on orange region's height.</p>
+        <p>The test passes if all regions have the same height.</p>
+        <div id="content">
+            <p style="-webkit-region-break-after: always; color: orange;">
+                Content in region1.
+                Content in region1.
+                Content in region1.
+                Content in region1.
+                Content in region1
+            </p>
+            <p style="color:green;">
+                Content in region2.
+                Content in region2.
+                Content in region2.
+                Content in region2.
+                Content in region2.
+            </p>
+        </div>
+        <div id="regionsContainer">
+            <!-- Orange region, first region in chain, has auto height -->
+            <div id="region1" class="region"></div>
+            <!-- Green region, second region in chain, its height depends on orange region's height -->
+            <div id="region2" class="region"></div>
+        </div>
+        <!-- Blue region, third region in chain, has auto height -->
+        <div id="region3" class="region" data-expected-height=100></div>
+        <script type="text/javascript">
+            document.body.offsetTop;
+            // Max height change determines layout for blue region.
+            // The value is big enough to accomodate the second p.
+            document.getElementById("region3").style.maxHeight = "200px";
+        </script>
+    </body>
+</html>
+

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #content { -webkit-flow-into: flow; font: 16px/1.25 monospace; }
+            #regionsContainer { position: absolute; width: 250px; top: 250px; left: 250px; }
+            .region { -webkit-flow-from: flow; }
+            #region1 { width: 200px; height: 100px; top: 250px; position: absolute; background-color: orange; }
+            #region2 { width: 200px; height: auto; left: 0px; top: 0px; background-color: green; }
+            #region3 { width: 200px; height: 100%; position: absolute; left: 250px; top: 0px; background-color: blue; }
+            p { margin: 0; }
+        </style>
+    </head>
+    <script src="../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#region3')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103738">WebKit Bug 103738</a> [CSS Regions] min-max height will not trigger a relayout when set on a region with auto-height</p>
+        <p>The test flows content in 3 regions, green region has auto height, blue region's height depends on green region's height.</p>
+        <p>The test passes if the height of blue region equals the height of green region.</p>
+        <div id="content">
+            <p style="-webkit-region-break-after: always;">
+                <span style="color: orange;">Content in region.</span>
+                <span style="color: orange;">Content in region.</span>
+                <span style="color: green;">Content in region.</span>
+                <span style="color: green;">Content in region.</span>
+                <span style="color: green;">Content in region.</span>
+                <span style="color: green;">Content in region.</span>
+                <span style="color: green;">Content in region.</span>
+            </p>
+        </div>
+        <!-- Orange region, first region in chain -->
+        <div id="region1" class="region"></div>
+        <div id="regionsContainer" class="container">
+            <!-- Green region, second region in chain, auto height -->
+            <div id="region2" class="region"></div>
+            <!-- Blue region, third region in chain, its height depends on green region's height -->
+            <div id="region3" class="region" data-expected-height=100></div>
+        </div>
+        <script type="text/javascript">
+            document.body.offsetTop;
+            document.getElementById("region1").style.height = "50px";
+        </script>
+    </body>
+</html>
+

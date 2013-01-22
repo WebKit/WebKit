@@ -228,8 +228,15 @@ void RenderRegion::layout()
         LayoutRect oldRegionRect(flowThreadPortionRect());
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
-        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight())
+
+        if (view()->checkTwoPassLayoutForAutoHeightRegions() && hasAutoLogicalHeight())
+            view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);
+
+        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) {
             m_flowThread->invalidateRegions();
+            if (view()->checkTwoPassLayoutForAutoHeightRegions())
+                view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);
+        }
     }
 
     // FIXME: We need to find a way to set up overflow properly. Our flow thread hasn't gotten a layout

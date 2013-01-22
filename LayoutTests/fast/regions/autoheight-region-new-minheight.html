@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #content { -webkit-flow-into: flow; font: 50px/1 Ahem; }
+            #region { -webkit-flow-from: flow; width: 100px; position: absolute; top: 200px; }
+            .regionMinHeight { min-height: 200px; }
+        </style>
+    </head>
+    <script src="../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#region')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103738"> [CSS Regions] min-max height will not trigger a relayout when set on a region with auto-height</a>.</p>
+        <p>On success you should see PASS below.</p>
+        <div id="content">
+            <span>a a</span>
+        </div>
+        <div id="region" data-expected-height=200></div>
+        <script>
+            document.body.offsetTop; // force layout
+            document.getElementById("region").className = "regionMinHeight";
+        </script>
+    </body>
+</html>

@@ -49,6 +49,7 @@ FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
+    , m_needsTwoPassLayoutForAutoHeightRegions(false)
     , m_autoLogicalHeightRegionsCount(0)
 {
 }

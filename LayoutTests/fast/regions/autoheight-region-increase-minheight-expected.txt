@@ -1,0 +1,6 @@
+Test for [CSS Regions] min-max height will not trigger a relayout when set on a region with auto-height.
+
+On success you should see PASS below.
+
+a a
+PASS

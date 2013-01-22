@@ -80,6 +80,9 @@ public:
     void resetRegionsOverrideLogicalContentHeight();
     void markAutoLogicalHeightRegionsForLayout();
 
+    bool needsTwoPassLayoutForAutoHeightRegions() const { return m_needsTwoPassLayoutForAutoHeightRegions; }
+    void setNeedsTwoPassLayoutForAutoHeightRegions(bool needsTwoPassLayout) { m_needsTwoPassLayoutForAutoHeightRegions = needsTwoPassLayout; }
+
 protected:
     FlowThreadController(RenderView*);
 
@@ -87,6 +90,7 @@ private:
     RenderView* m_view;
     RenderFlowThread* m_currentRenderFlowThread;
     bool m_isRenderNamedFlowThreadOrderDirty;
+    bool m_needsTwoPassLayoutForAutoHeightRegions;
     unsigned m_autoLogicalHeightRegionsCount;
     OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
     // maps a content node to its render flow thread.

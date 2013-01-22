@@ -758,11 +758,6 @@ void RenderFlowThread::resetRegionsOverrideLogicalContentHeight()
     ASSERT(view()->layoutState());
     ASSERT(view()->normalLayoutPhase());
 
-    // We need to reset the override logical content height for regions with auto logical height
-    // only if the flow thread content needs layout.
-    if (!needsLayout())
-        return;
-
     // FIXME: optimize this to iterate the region chain only if the flow thread has auto logical height
     // region.
 
@@ -778,7 +773,7 @@ void RenderFlowThread::resetRegionsOverrideLogicalContentHeight()
     }
     // Make sure we don't skip any region breaks when we do the layout again.
     // Using m_regionsInvalidated to force all the RenderFlowThread children do the layout again.
-    m_regionsInvalidated = true;
+    invalidateRegions();
 }
 
 // During the normal layout phase of the named flow the regions are initialized with a height equal to their max-height.
@@ -813,8 +808,7 @@ void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
         region->setNeedsLayout(true);
     }
 
-    m_regionsInvalidated = true;
-    setNeedsLayout(true);
+    invalidateRegions();
 }
 
 void RenderFlowThread::updateRegionsFlowThreadPortionRect()

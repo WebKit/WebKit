@@ -1,0 +1,5 @@
+Test for WebKit Bug 103738 [CSS Regions] min-max height will not trigger a relayout when set on a region with auto-height
+The test flows content in 3 regions, green region has auto height, blue region's height depends on green region's height.
+The test passes if the height of blue region equals the height of green region.
+Content in region. Content in region. Content in region. Content in region. Content in region. Content in region. Content in region.
+PASS
