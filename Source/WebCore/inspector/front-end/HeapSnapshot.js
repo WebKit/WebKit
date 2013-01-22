@@ -493,6 +493,10 @@ WebInspector.HeapSnapshot = function(profile)
     this._metaNode = profile.snapshot.meta;
     this._strings = profile.strings;
 
+    this._rootNodeIndex = 0;
+    if (profile.snapshot.root_index)
+        this._rootNodeIndex = profile.snapshot.root_index;
+
     this._snapshotDiffs = {};
     this._aggregatesForDiff = null;
 
@@ -532,7 +536,6 @@ WebInspector.HeapSnapshot.prototype = {
     _init: function()
     {
         var meta = this._metaNode;
-        this._rootNodeIndex = 0;
 
         this._nodeTypeOffset = meta.node_fields.indexOf("type");
         this._nodeNameOffset = meta.node_fields.indexOf("name");

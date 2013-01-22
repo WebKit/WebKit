@@ -1,0 +1,269 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshot}
+ */
+WebInspector.NativeHeapSnapshot = function(profile)
+{
+    WebInspector.HeapSnapshot.call(this, profile);
+}
+
+WebInspector.NativeHeapSnapshot.prototype = {
+    createNode: function(nodeIndex)
+    {
+        return new WebInspector.NativeHeapSnapshotNode(this, nodeIndex);
+    },
+
+    createEdge: function(edges, edgeIndex)
+    {
+        return new WebInspector.NativeHeapSnapshotEdge(this, edges, edgeIndex);
+    },
+
+    createRetainingEdge: function(retainedNodeIndex, retainerIndex)
+    {
+        return new WebInspector.NativeHeapSnapshotRetainerEdge(this, retainedNodeIndex, retainerIndex);
+    },
+
+    _markInvisibleEdges: function()
+    {
+    },
+
+    _calculateFlags: function()
+    {
+    },
+
+    canHaveDistanceOne: function(node)
+    {
+        return true;
+    },
+
+    userObjectsMapAndFlag: function()
+    {
+        return null;
+    },
+
+    __proto__: WebInspector.HeapSnapshot.prototype
+};
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotNode}
+ * @param {WebInspector.NativeHeapSnapshot} snapshot
+ * @param {number=} nodeIndex
+ */
+WebInspector.NativeHeapSnapshotNode = function(snapshot, nodeIndex)
+{
+    WebInspector.HeapSnapshotNode.call(this, snapshot, nodeIndex)
+}
+
+WebInspector.NativeHeapSnapshotNode.prototype = {
+    canBeQueried: function()
+    {
+        return false;
+    },
+
+    isUserObject: function()
+    {
+        return true;
+    },
+
+    className: function()
+    {
+        return this._snapshot._strings[this.classIndex()];
+    },
+
+    classIndex: function()
+    {
+        var snapshot = this._snapshot;
+        return snapshot._nodes[this.nodeIndex + snapshot._nodeNameOffset];
+    },
+
+    id: function()
+    {
+        return this.nodeIndex;
+    },
+
+    name: function()
+    {
+        var name = this._snapshot._strings[this._snapshot._nodes[this.nodeIndex + 2]];
+        return this.className() + ": " + name;
+    },
+
+    isHidden: function()
+    {
+        return false;
+    },
+
+    isSynthetic: function()
+    {
+        return false;
+    },
+
+    isWindow: function()
+    {
+        return false;
+    },
+
+    isDetachedDOMTreesRoot: function()
+    {
+        return false;
+    },
+
+    isDetachedDOMTree: function()
+    {
+        return false;
+    },
+
+    __proto__: WebInspector.HeapSnapshotNode.prototype
+};
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotEdge}
+ * @param {WebInspector.NativeHeapSnapshot} snapshot
+ * @param {Array.<number>} edges
+ * @param {number=} edgeIndex
+ */
+WebInspector.NativeHeapSnapshotEdge = function(snapshot, edges, edgeIndex)
+{
+    WebInspector.HeapSnapshotEdge.call(this, snapshot, edges, edgeIndex);
+}
+
+WebInspector.NativeHeapSnapshotEdge.prototype = {
+    clone: function()
+    {
+        return new WebInspector.NativeHeapSnapshotEdge(this._snapshot, this._edges, this.edgeIndex);
+    },
+
+    hasStringName: function()
+    {
+        return true;
+    },
+
+    isElement: function()
+    {
+        return false;
+    },
+
+    isHidden: function()
+    {
+        return false;
+    },
+
+    isWeak: function()
+    {
+        return false;
+    },
+
+    isInternal: function()
+    {
+        return false;
+    },
+
+    isInvisible: function()
+    {
+        return false;
+    },
+
+    isShortcut: function()
+    {
+        return false;
+    },
+
+    name: function()
+    {
+        return this._snapshot._strings[this._nameOrIndex()];
+    },
+
+    toString: function()
+    {
+        return  "NativeHeapSnapshotEdge: " + this.name();
+    },
+
+    _nameOrIndex: function()
+    {
+        return this._edges.item(this.edgeIndex + this._snapshot._edgeNameOffset);
+    },
+
+    __proto__: WebInspector.HeapSnapshotEdge.prototype
+};
+
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotRetainerEdge}
+ * @param {WebInspector.NativeHeapSnapshot} snapshot
+ */
+WebInspector.NativeHeapSnapshotRetainerEdge = function(snapshot, retainedNodeIndex, retainerIndex)
+{
+    WebInspector.HeapSnapshotRetainerEdge.call(this, snapshot, retainedNodeIndex, retainerIndex);
+}
+
+WebInspector.NativeHeapSnapshotRetainerEdge.prototype = {
+    clone: function()
+    {
+        return new WebInspector.NativeHeapSnapshotRetainerEdge(this._snapshot, this._retainedNodeIndex, this.retainerIndex());
+    },
+
+    isElement: function()
+    {
+        return this._edge().isElement();
+    },
+
+    isHidden: function()
+    {
+        return this._edge().isHidden();
+    },
+
+    isInternal: function()
+    {
+        return this._edge().isInternal();
+    },
+
+    isInvisible: function()
+    {
+        return this._edge().isInvisible();
+    },
+
+    isShortcut: function()
+    {
+        return this._edge().isShortcut();
+    },
+
+    isWeak: function()
+    {
+        return this._edge().isWeak();
+    },
+
+    __proto__: WebInspector.HeapSnapshotRetainerEdge.prototype
+}
+

@@ -261,8 +261,10 @@ WebInspector.ProfilesPanel = function()
         this._registerProfileType(new WebInspector.CSSSelectorProfileType());
     if (Capabilities.heapProfilerPresent)
         this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
-    if (WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled())
+    if (WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled()) {
         this._registerProfileType(new WebInspector.NativeMemoryProfileType());
+        this._registerProfileType(new WebInspector.NativeSnapshotProfileType());
+    }
     if (WebInspector.experimentsSettings.canvasInspection.isEnabled())
         this._registerProfileType(new WebInspector.CanvasProfileType());
 
@@ -1382,6 +1384,7 @@ importScript("HeapSnapshotView.js");
 importScript("HeapSnapshotWorkerDispatcher.js");
 importScript("JSHeapSnapshot.js");
 importScript("NativeHeapGraph.js");
+importScript("NativeHeapSnapshot.js");
 importScript("NativeMemorySnapshotView.js");
 importScript("ProfileLauncherView.js");
 importScript("TopDownProfileDataGridTree.js");

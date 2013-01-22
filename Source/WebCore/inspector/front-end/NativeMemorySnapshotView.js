@@ -233,22 +233,236 @@ WebInspector.NativeSnapshotNode.prototype = {
 }
 
 
+
+
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileType}
+ */
+WebInspector.NativeSnapshotProfileType = function()
+{
+    WebInspector.ProfileType.call(this, WebInspector.NativeSnapshotProfileType.TypeId, WebInspector.UIString("Take Native Heap Snapshot"));
+    this._nextProfileUid = 1;
+}
+
+WebInspector.NativeSnapshotProfileType.TypeId = "NATIVE_SNAPSHOT";
+
+WebInspector.NativeSnapshotProfileType.prototype = {
+    get buttonTooltip()
+    {
+        return WebInspector.UIString("Capture native heap graph.");
+    },
+
+    /**
+     * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
+     * @return {boolean}
+     */
+    buttonClicked: function(profilesPanel)
+    {
+        var profileHeader = new WebInspector.NativeSnapshotProfileHeader(this, WebInspector.UIString("Snapshot %d", this._nextProfileUid), this._nextProfileUid);
+        ++this._nextProfileUid;
+        profileHeader.isTemporary = true;
+        profilesPanel.addProfileHeader(profileHeader);
+        /**
+         * @param {?string} error
+         * @param {?MemoryAgent.MemoryBlock} memoryBlock
+         * @param {?Object=} graph
+         */
+        function didReceiveMemorySnapshot(error, memoryBlock, graph)
+        {
+            profileHeader._graph = new WebInspector.NativeHeapGraph(graph);
+            profileHeader.isTemporary = false;
+            profileHeader.sidebarElement.subtitle = Number.bytesToString(/** @type{number} */(memoryBlock.size));
+        }
+        MemoryAgent.getProcessMemoryDistribution(true, didReceiveMemorySnapshot.bind(this));
+        return false;
+    },
+
+    get treeItemTitle()
+    {
+        return WebInspector.UIString("NATIVE SNAPSHOT");
+    },
+
+    get description()
+    {
+        return WebInspector.UIString("Native memory snapshot profiles show native heap graph.");
+    },
+
+    /**
+     * @override
+     * @param {string=} title
+     * @return {WebInspector.ProfileHeader}
+     */
+    createTemporaryProfile: function(title)
+    {
+        title = title || WebInspector.UIString("Snapshotting\u2026");
+        return new WebInspector.NativeSnapshotProfileHeader(this, title);
+    },
+
+    /**
+     * @override
+     * @param {ProfilerAgent.ProfileHeader} profile
+     * @return {WebInspector.ProfileHeader}
+     */
+    createProfile: function(profile)
+    {
+        return new WebInspector.NativeSnapshotProfileHeader(this, profile.title, -1);
+    },
+
+    __proto__: WebInspector.ProfileType.prototype
+}
+
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapProfileHeader}
+ * @param {!WebInspector.NativeSnapshotProfileType} type
+ * @param {string} title
+ * @param {number=} uid
+ */
+WebInspector.NativeSnapshotProfileHeader = function(type, title, uid)
+{
+    WebInspector.HeapProfileHeader.call(this, type, title, uid, 0);
+}
+
+WebInspector.NativeSnapshotProfileHeader.prototype = {
+    /**
+     * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
+     */
+    createView: function(profilesPanel)
+    {
+        return new WebInspector.NativeHeapSnapshotView(profilesPanel, this);
+    },
+
+    startSnapshotTransfer: function()
+    {
+        setTimeout(this._takeNativeSnapshot.bind(this), 0);
+    },
+
+    snapshotConstructorName: function()
+    {
+        return "NativeHeapSnapshot";
+    },
+
+    _takeNativeSnapshot: function()
+    {
+        /**
+         * @param {?string} error
+         * @param {?MemoryAgent.MemoryBlock} memoryBlock
+         * @param {?Object=} graph
+         */
+        function didReceiveMemorySnapshot(error, memoryBlock, graph)
+        {
+            var meta = {
+              "node_fields": [
+                "type",
+                "name",
+                "id",
+                "self_size",
+                "edge_count"
+              ],
+              "node_types": [
+                [
+                  "hidden",
+                  "array",
+                  "string",
+                  "object",
+                  "code",
+                  "closure",
+                  "regexp",
+                  "number",
+                  "native",
+                  "synthetic"
+                ],
+                "string",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number"
+              ],
+              "edge_fields": [
+                "type",
+                "name_or_index",
+                "to_node"
+              ],
+              "edge_types": [
+                [
+                  "context",
+                  "element",
+                  "property",
+                  "internal",
+                  "hidden",
+                  "shortcut",
+                  "weak"
+                ],
+                "string_or_number",
+                "node"
+              ]
+            };
+            var heapSnapshot = {
+                "snapshot": {
+                    "meta": meta,
+                    node_count: graph.nodes.length / 5,
+                    edge_count: graph.edges.length / 3,
+                    root_index: graph.nodes.length - 5
+                },
+                nodes: graph.nodes,
+                edges: graph.edges,
+                strings: graph.strings
+            };
+
+            var chunk = JSON.stringify(heapSnapshot);
+            this.transferChunk(chunk);
+            this.finishHeapSnapshot();
+        }
+        MemoryAgent.getProcessMemoryDistribution(true, didReceiveMemorySnapshot.bind(this));
+
+    },
+
+    __proto__: WebInspector.HeapProfileHeader.prototype
+}
+
+
+/**
+ * @constructor
+ * @extends {WebInspector.HeapSnapshotView}
+ */
+WebInspector.NativeHeapSnapshotView = function(parent, profile)
+{
+    this._profile = profile;
+    WebInspector.HeapSnapshotView.call(this, parent, profile);
+}
+
+
+WebInspector.NativeHeapSnapshotView.prototype = {
+    get profile()
+    {
+        return this._profile;
+    },
+
+    __proto__: WebInspector.HeapSnapshotView.prototype
+};
+
+
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
  */
 WebInspector.NativeMemoryProfileType = function()
 {
-    WebInspector.ProfileType.call(this, WebInspector.NativeMemoryProfileType.TypeId, WebInspector.UIString("Take Native Memory Snapshot"));
+    WebInspector.ProfileType.call(this, WebInspector.NativeMemoryProfileType.TypeId, WebInspector.UIString("Capture Native Memory Distribution"));
     this._nextProfileUid = 1;
 }
 
-WebInspector.NativeMemoryProfileType.TypeId = "NATIVE_MEMORY";
+WebInspector.NativeMemoryProfileType.TypeId = "NATIVE_MEMORY_DISTRIBUTION";
 
 WebInspector.NativeMemoryProfileType.prototype = {
     get buttonTooltip()
     {
-        return WebInspector.UIString("Take native memory snapshot.");
+        return WebInspector.UIString("Capture native memory distribution.");
     },
 
     /**
