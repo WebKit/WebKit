@@ -74,11 +74,11 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     md->setHtml(markup);
 #endif
 
+    if (canSmartCopyOrDelete)
+        md->setData(QLatin1String("application/vnd.qtwebkit.smartpaste"), QByteArray());
 #ifndef QT_NO_CLIPBOARD
     QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
-    if (canSmartCopyOrDelete)
-        md->setData(QLatin1String("application/vnd.qtwebkit.smartpaste"), QByteArray());
 }
 
 bool Pasteboard::canSmartReplace()
@@ -134,9 +134,9 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
     QString qtext = text;
     qtext.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(qtext);
-    QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
     if (smartReplaceOption == CanSmartReplace)
         md->setData(QLatin1String("application/vnd.qtwebkit.smartpaste"), QByteArray());
+    QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 
