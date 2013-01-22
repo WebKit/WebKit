@@ -37,6 +37,7 @@
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "XSSAuditor.h"
+#include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/TextPosition.h>
 
@@ -80,7 +81,7 @@ public:
     virtual void resumeScheduledTasks();
 
 #if ENABLE(THREADED_HTML_PARSER)
-    void didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>&, bool threadIsWaitingForScripts);
+    void didReceiveTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream>);
 #endif
 
 protected:
@@ -122,6 +123,7 @@ private:
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();
     void stopBackgroundParser();
+    void processTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream>);
 #endif
 
     enum SynchronousMode {
@@ -166,6 +168,10 @@ private:
     HTMLSourceTracker m_sourceTracker;
     TextPosition m_textPosition;
     XSSAuditor m_xssAuditor;
+
+#if ENABLE(THREADED_HTML_PARSER)
+    Deque<OwnPtr<CompactHTMLTokenStream> > m_pendingTokens;
+#endif
 
     bool m_endWasDelayed;
     bool m_haveBackgroundParser;

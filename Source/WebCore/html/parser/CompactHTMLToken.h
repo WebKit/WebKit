@@ -81,6 +81,8 @@ private:
     TextPosition m_textPosition;
 };
 
+typedef Vector<CompactHTMLToken> CompactHTMLTokenStream;
+
 }
 
 #endif // ENABLE(THREADED_HTML_PARSER)

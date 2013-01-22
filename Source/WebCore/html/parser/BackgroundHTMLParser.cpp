@@ -45,10 +45,10 @@ using namespace HTMLNames;
 
 #ifndef NDEBUG
 
-static void checkThatTokensAreSafeToSendToAnotherThread(const Vector<CompactHTMLToken>& tokens)
+static void checkThatTokensAreSafeToSendToAnotherThread(const CompactHTMLTokenStream* tokens)
 {
-    for (size_t i = 0; i < tokens.size(); ++i)
-        ASSERT(tokens[i].isSafeToSendToAnotherThread());
+    for (size_t i = 0; i < tokens->size(); ++i)
+        ASSERT(tokens->at(i).isSafeToSendToAnotherThread());
 }
 
 #endif
@@ -92,23 +92,17 @@ ParserMap::MainThreadParserMap& ParserMap::mainThreadParsers()
 }
 
 BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, ParserIdentifier identifier)
-    : m_isPausedWaitingForScripts(false)
-    , m_inForeignContent(false)
+    : m_inForeignContent(false)
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
     , m_parserIdentifer(identifier)
+    , m_pendingTokens(adoptPtr(new CompactHTMLTokenStream))
 {
 }
 
 void BackgroundHTMLParser::append(const String& input)
 {
     m_input.append(SegmentedString(input));
-    pumpTokenizer();
-}
-
-void BackgroundHTMLParser::continueParsing()
-{
-    m_isPausedWaitingForScripts = false;
     pumpTokenizer();
 }
 
@@ -129,7 +123,7 @@ void BackgroundHTMLParser::markEndOfFile()
     m_input.close();
 }
 
-void BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
+bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 {
     if (token.type() == HTMLTokenTypes::StartTag) {
         const String& tagName = token.data();
@@ -158,28 +152,21 @@ void BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
         if (threadSafeMatch(tagName, SVGNames::svgTag) || threadSafeMatch(tagName, MathMLNames::mathTag))
             m_inForeignContent = false;
         if (threadSafeMatch(tagName, scriptTag))
-            m_isPausedWaitingForScripts = true;
+            return false;
     }
 
     // FIXME: Need to set setForceNullCharacterReplacement based on m_inForeignContent as well.
     m_tokenizer->setShouldAllowCDATA(m_inForeignContent);
+    return true;
 }
 
 void BackgroundHTMLParser::pumpTokenizer()
 {
-    if (m_isPausedWaitingForScripts)
-        return;
-
     while (m_tokenizer->nextToken(m_input, m_token)) {
-        m_pendingTokens.append(CompactHTMLToken(m_token, TextPosition(m_input.currentLine(), m_input.currentColumn())));
+        m_pendingTokens->append(CompactHTMLToken(m_token, TextPosition(m_input.currentLine(), m_input.currentColumn())));
         m_token.clear();
 
-        simulateTreeBuilder(m_pendingTokens.last());
-
-        if (m_isPausedWaitingForScripts)
-            break;
-
-        if (m_pendingTokens.size() >= pendingTokenLimit)
+        if (!simulateTreeBuilder(m_pendingTokens->last()) || m_pendingTokens->size() >= pendingTokenLimit)
             sendTokensToMainThread();
     }
 
@@ -191,25 +178,17 @@ class TokenDelivery {
 public:
     TokenDelivery()
         : identifier(0)
-        , isPausedWaitingForScripts(false)
     {
     }
 
     ParserIdentifier identifier;
-    Vector<CompactHTMLToken> tokens;
-    // FIXME: This bool will be replaced by a CheckPoint object once
-    // we implement speculative parsing. Then the main thread will decide
-    // to either accept the speculative tokens we've already given it
-    // (or ask for them, depending on who ends up owning them), or send
-    // us a "reset to checkpoint message".
-    bool isPausedWaitingForScripts;
-
+    OwnPtr<CompactHTMLTokenStream> tokens;
     static void execute(void* context)
     {
         TokenDelivery* delivery = static_cast<TokenDelivery*>(context);
         HTMLDocumentParser* parser = parserMap().mainThreadParsers().get(delivery->identifier);
         if (parser)
-            parser->didReceiveTokensFromBackgroundParser(delivery->tokens, delivery->isPausedWaitingForScripts);
+            parser->didReceiveTokensFromBackgroundParser(delivery->tokens.release());
         // FIXME: Ideally we wouldn't need to call delete manually. Instead
         // we would like an API where the message queue owns the tasks and
         // takes care of deleting them.
@@ -219,20 +198,19 @@ public:
 
 void BackgroundHTMLParser::sendTokensToMainThread()
 {
-    if (m_pendingTokens.isEmpty()) {
-        ASSERT(!m_isPausedWaitingForScripts);
+    if (m_pendingTokens->isEmpty())
         return;
-    }
 
 #ifndef NDEBUG
-    checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens);
+    checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens.get());
 #endif
 
     TokenDelivery* delivery = new TokenDelivery;
     delivery->identifier = m_parserIdentifer;
-    delivery->tokens.swap(m_pendingTokens);
-    delivery->isPausedWaitingForScripts = m_isPausedWaitingForScripts;
+    delivery->tokens = m_pendingTokens.release();
     callOnMainThread(TokenDelivery::execute, delivery);
+
+    m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);
 }
 
 void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, HTMLParserOptions options)
@@ -251,12 +229,6 @@ void BackgroundHTMLParser::appendPartial(ParserIdentifier identifier, const Stri
     ASSERT(!input.impl() || input.impl()->hasOneRef() || input.isEmpty());
     if (BackgroundHTMLParser* parser = parserMap().backgroundParsers().get(identifier))
         parser->append(input);
-}
-
-void BackgroundHTMLParser::continuePartial(ParserIdentifier identifier)
-{
-    if (BackgroundHTMLParser* parser = parserMap().backgroundParsers().get(identifier))
-        parser->continueParsing();
 }
 
 void BackgroundHTMLParser::finishPartial(ParserIdentifier identifier)

@@ -42,7 +42,6 @@ class BackgroundHTMLParser {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void append(const String&);
-    void continueParsing();
     void finish();
 
     static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, ParserIdentifier identifier)
@@ -53,7 +52,6 @@ public:
     static void createPartial(ParserIdentifier, HTMLParserOptions);
     static void stopPartial(ParserIdentifier);
     static void appendPartial(ParserIdentifier, const String& input);
-    static void continuePartial(ParserIdentifier);
     static void finishPartial(ParserIdentifier);
 
 private:
@@ -61,18 +59,17 @@ private:
 
     void markEndOfFile();
     void pumpTokenizer();
-    void simulateTreeBuilder(const CompactHTMLToken&);
+    bool simulateTreeBuilder(const CompactHTMLToken&);
 
     void sendTokensToMainThread();
 
     SegmentedString m_input;
     HTMLToken m_token;
-    bool m_isPausedWaitingForScripts;
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;
     ParserIdentifier m_parserIdentifer;
-    Vector<CompactHTMLToken> m_pendingTokens;
+    OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
 };
 
 class ParserMap {

@@ -262,7 +262,17 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
 #if ENABLE(THREADED_HTML_PARSER)
 
-void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<CompactHTMLToken>& tokens, bool threadIsWaitingForScripts)
+void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream> tokens)
+{
+    if (isWaitingForScripts()) {
+        m_pendingTokens.append(tokens);
+        return;
+    }
+    ASSERT(m_pendingTokens.isEmpty());
+    processTokensFromBackgroundParser(tokens);
+}
+
+void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream> tokens)
 {
     ASSERT(shouldUseThreading());
 
@@ -272,7 +282,7 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
 
     // FIXME: Add support for InspectorInstrumentation.
 
-    for (Vector<CompactHTMLToken>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
+    for (Vector<CompactHTMLToken>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
         ASSERT(!isWaitingForScripts());
 
         // FIXME: Call m_xssAuditor.filterToken(*it).
@@ -286,13 +296,8 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         // as we do in canTakeNextToken;
 
         if (isWaitingForScripts()) {
-            ASSERT(threadIsWaitingForScripts); // We expect that the thread is waiting for us.
+            ASSERT(it + 1 == tokens->end()); // The </script> is assumed to be the last token of this bunch.
             runScriptsForPausedTreeBuilder();
-            if (!isWaitingForScripts()) {
-                ParserIdentifier identifier = ParserMap::identifierForParser(this);
-                HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::continuePartial, identifier));
-            }
-            ASSERT(it + 1 == tokens.end()); // The </script> is assumed to be the last token of this bunch.
             return;
         }
 
@@ -301,17 +306,10 @@ void HTMLDocumentParser::didReceiveTokensFromBackgroundParser(const Vector<Compa
         // attemptToRunDeferredScriptsAndEnd(), prepareToStopParsing(), or
         // attemptToEnd() instead.
         if (it->type() == HTMLTokenTypes::EndOfFile) {
-            ASSERT(it + 1 == tokens.end()); // The EOF is assumed to be the last token of this bunch.
+            ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
             prepareToStopParsing();
             return;
         }
-    }
-
-    // If we got here and the parser thread is still waiting for scripts, then it paused unnecessarily
-    // (as can happen with a stray </script> tag), and we need to tell it to continue.
-    if (threadIsWaitingForScripts) {
-        ParserIdentifier identifier = ParserMap::identifierForParser(this);
-        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::continuePartial, identifier));
     }
 }
 
@@ -659,8 +657,11 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 
 #if ENABLE(THREADED_HTML_PARSER)
     if (shouldUseThreading()) {
-        ParserIdentifier identifier = ParserMap::identifierForParser(this);
-        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::continuePartial, identifier));
+        while (!m_pendingTokens.isEmpty()) {
+            processTokensFromBackgroundParser(m_pendingTokens.takeFirst());
+            if (isWaitingForScripts())
+                return;
+        }
         return;
     }
 #endif
