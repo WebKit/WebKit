@@ -144,6 +144,15 @@ webcoregtk_cppflags += \
 endif # END TARGET_WIN32
 
 # ----
+# Canvas Path
+# ----
+if ENABLE_CANVAS_PATH
+feature_defines_overrides += ENABLE_CANVAS_PATH=1
+else
+feature_defines_overrides += ENABLE_CANVAS_PATH=0
+endif # END ENABLE_CANVAS_PATH
+
+# ----
 # Gamepad support
 # ---
 if ENABLE_GAMEPAD

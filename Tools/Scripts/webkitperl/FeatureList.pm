@@ -46,6 +46,7 @@ my (
     $accelerated2DCanvasSupport,
     $batteryStatusSupport,
     $blobSupport,
+    $canvasPathSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
     $cspNextSupport,
@@ -165,6 +166,9 @@ my @features = (
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$blobSupport },
+
+    { option => "canvas-path", desc => "Toggle Canvas Path support",
+      define => "ENABLE_CANVAS_PATH", default => 0, value => \$canvasPathSupport },
 
     { option => "canvas-proxy", desc => "Toggle CanvasProxy support",
       define => "ENABLE_CANVAS_PROXY", default => 0, value => \$canvasProxySupport },

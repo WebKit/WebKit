@@ -645,6 +645,14 @@ AC_ARG_ENABLE(accelerated_compositing,
             ])
 AC_MSG_RESULT([$enable_accelerated_compositing])
 
+# check whether to enable Canvas Path support
+AC_MSG_CHECKING([whether to enable Canvas Path support])
+AC_ARG_ENABLE(canvas-path,
+              AC_HELP_STRING([--enable-canvas-path],
+                             [enable Canvas Path support [default=no]]),
+              [],[enable_canvas_path="no"])
+AC_MSG_RESULT([$enable_canvas_path])
+
 # check whether to enable Gamepad support
 AC_MSG_CHECKING([whether to enable Gamepad support])
 AC_ARG_ENABLE(gamepad,
@@ -1155,6 +1163,7 @@ AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
+AM_CONDITIONAL([ENABLE_CANVAS_PATH],[test "$enable_canvas_path" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
@@ -1170,6 +1179,7 @@ AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
+AM_CONDITIONAL([ENABLE_CANVAS_PATH],[test "$enable_canvas_path" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1234,6 +1244,7 @@ Features:
  WebKit1 support                                          : $enable_webkit1
  WebKit2 support                                          : $enable_webkit2
  Accelerated Compositing                                  : $enable_accelerated_compositing
+ Canvas Path                                              : $enable_canvas_path
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
  HTML5 video element support                              : $enable_video

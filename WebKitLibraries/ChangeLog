@@ -1,3 +1,15 @@
+2013-01-21  Dirk Schulze  <dschulze@adobe.com>
+
+        Add build flag for Canvas's Path object (disabled by default)
+        https://bugs.webkit.org/show_bug.cgi?id=107473
+
+        Reviewed by Dean Jackson.
+
+        Add CANVAS_PATH build flag to build systems.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2013-01-10  Roger Fong  <roger_fong@apple.com>
 
         Update WebkitSystemInterface lib for Windows port.
