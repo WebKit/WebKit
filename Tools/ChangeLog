@@ -1,5 +1,16 @@
 2013-01-22  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable the <template> element support in development builds
+        https://bugs.webkit.org/show_bug.cgi?id=106575
+
+        Reviewed by Martin Robinson.
+
+        Enable the <template> element support in the development builds of the GTK port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2013-01-22  Zan Dobersek  <zandobersek@gmail.com>
+
         Prettify the output of the override-feature-defines script
         https://bugs.webkit.org/show_bug.cgi?id=106542
 

@@ -91,10 +91,6 @@ http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ WontFix ]
 
-# ENABLE(TEMPLATE_ELEMENT) is disabled.
-webkit.org/b/10357 fast/dom/HTMLTemplateElement [ Skip ]
-webkit.org/b/10357 html5lib/run-template.html [ Skip ]
-
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix ]
 fast/css/apple-prefix.html [ WontFix ]
@@ -612,6 +608,8 @@ webkit.org/b/107194 storage/indexeddb/factory-basics-workers.html [ Failure Pass
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Slow tests
