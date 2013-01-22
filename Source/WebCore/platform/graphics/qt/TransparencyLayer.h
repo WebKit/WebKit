@@ -61,8 +61,6 @@ public:
         painter.setTransform(p->transform(), true);
         painter.setFont(p->font());
         painter.setOpacity(1);
-        // Set a default clip, so IntersectClip will work correctly later.
-        painter.setClipRect(0, 0, rect.width(), rect.height());
     }
 
     TransparencyLayer()
