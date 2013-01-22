@@ -803,7 +803,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {!WebInspector.HeapSnapshotProfileType} type
+ * @param {!WebInspector.ProfileType} type
  * @param {string} title
  * @param {number=} uid
  * @param {number=} maxJSObjectId
