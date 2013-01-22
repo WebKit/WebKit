@@ -171,6 +171,8 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
     RenderSVGTextPath* textPath = toRenderSVGTextPath(object);
 
     m_textPath = textPath->layoutPath();
+    if (m_textPath.isEmpty())
+        return;
     m_textPathStartOffset = textPath->startOffset();
     m_textPathLength = m_textPath.length();
     if (m_textPathStartOffset > 0 && m_textPathStartOffset <= 1)
@@ -423,6 +425,9 @@ void SVGTextLayoutEngine::advanceToNextVisualCharacter(const SVGTextMetrics& vis
 
 void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, RenderSVGInlineText* text, const RenderStyle* style)
 {
+    if (m_inPathLayout && m_textPath.isEmpty())
+        return;
+
     SVGElement* lengthContext = static_cast<SVGElement*>(text->parent()->node());
     
     RenderObject* textParent = text->parent();
