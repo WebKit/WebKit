@@ -1302,11 +1302,7 @@ SOURCES += \
     xml/XPathUtil.cpp \
     xml/XPathValue.cpp \
     xml/XPathVariableReference.cpp \
-    xml/parser/NewXMLDocumentParser.cpp \
-    xml/parser/XMLCharacterReferenceParser.cpp \
     xml/parser/XMLDocumentParser.cpp \
-    xml/parser/XMLTokenizer.cpp \
-    xml/parser/XMLTreeBuilder.cpp
 
 HEADERS += \
     accessibility/AccessibilityARIAGridCell.h \

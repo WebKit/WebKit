@@ -49069,10 +49069,6 @@
 				Name="parser"
 				>
 				<File
-					RelativePath="..\xml\parser\CharacterReferenceInlines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\xml\parser\MarkupTokenBase.h"
 					>
 				</File>
@@ -49082,14 +49078,6 @@
 				</File>
 				<File
 					RelativePath="..\xml\parser\MarkupTokenizerInlines.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\NewXMLDocumentParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\NewXMLDocumentParser.h"
 					>
 				</File>
 				<File
@@ -49206,22 +49194,6 @@
 				</File>
 				<File
 					RelativePath="..\xml\parser\XMLDocumentParserScope.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\XMLToken.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\XMLTokenizer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\XMLTreeBuilder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\XMLTreeBuilder.h"
 					>
 				</File>
 			</Filter>

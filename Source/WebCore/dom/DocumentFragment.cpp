@@ -25,7 +25,6 @@
 
 #include "Document.h"
 #include "HTMLDocumentParser.h"
-#include "NewXMLDocumentParser.h"
 #include "Page.h"
 #include "Settings.h"
 #include "XMLDocumentParser.h"
@@ -83,11 +82,7 @@ void DocumentFragment::parseHTML(const String& source, Element* contextElement, 
 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, FragmentScriptingPermission scriptingPermission)
 {
-#if ENABLE(NEW_XML)
-    return NewXMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);
-#else
     return XMLDocumentParser::parseDocumentFragment(source, this, contextElement, scriptingPermission);
-#endif
 }
 
 }
