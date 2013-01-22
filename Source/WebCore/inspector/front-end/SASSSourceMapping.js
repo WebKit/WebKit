@@ -127,7 +127,7 @@ WebInspector.SASSSourceMapping.prototype = {
                 if (match) {
                     var url = match[1].replace(/\\(.)/g, "$1");
                     var line = parseInt(decodeURI("%" + match[2]) + match[3], 10);
-                    this._bindUISourceCode(url, line, resource.url, lineNumber);
+                    this._addURLMapping(url, line, resource.url, lineNumber);
                     continue;
                 }
                 match = lineNumbersRegex.exec(lines[lineNumber]);
@@ -139,7 +139,7 @@ WebInspector.SASSSourceMapping.prototype = {
                         url = url.substring(0, url.length - resource.parsedURL.lastPathComponent.length) + fileName;
                     else
                         url = fileName;
-                    this._bindUISourceCode(url, line, resource.url, lineNumber);
+                    this._addURLMapping(url, line, resource.url, lineNumber);
                     continue;
                 }
             }
