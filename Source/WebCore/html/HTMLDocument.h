@@ -77,6 +77,8 @@ public:
     void removeExtraNamedItem(const AtomicString& name);
     bool hasExtraNamedItem(AtomicStringImpl* name);
 
+    static bool isCaseSensitiveAttribute(const QualifiedName&);
+
 protected:
     HTMLDocument(Frame*, const KURL&);
 
