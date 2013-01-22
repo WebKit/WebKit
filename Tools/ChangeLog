@@ -1,3 +1,9 @@
+2013-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        One is not allowed to use commit-queue to make oneself a committer.
+
+        * Scripts/webkitpy/common/config/committers.py: Removing eustas@chromium.org.
+
 2013-01-22  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Add myself to commiters.py
