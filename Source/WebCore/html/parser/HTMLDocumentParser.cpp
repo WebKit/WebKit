@@ -146,11 +146,13 @@ void HTMLDocumentParser::prepareToStopParsing()
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
+#if ENABLE(THREADED_HTML_PARSER)
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
     if (!shouldUseThreading())
+#endif
         pumpTokenizerIfPossible(ForceSynchronous);
-    
+
     if (isStopped())
         return;
 
@@ -454,6 +456,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
 
 void HTMLDocumentParser::startBackgroundParser()
 {
+    ASSERT(shouldUseThreading());
     ASSERT(!m_haveBackgroundParser);
     m_haveBackgroundParser = true;
 
@@ -465,6 +468,7 @@ void HTMLDocumentParser::startBackgroundParser()
 
 void HTMLDocumentParser::stopBackgroundParser()
 {
+    ASSERT(shouldUseThreading());
     ASSERT(m_haveBackgroundParser);
     m_haveBackgroundParser = false;
 

@@ -117,7 +117,7 @@
       'ENABLE_SVG_FONTS=<(enable_svg)',
       'ENABLE_TEMPLATE_ELEMENT=1',
       'ENABLE_TEXT_AUTOSIZING=1',
-      'ENABLE_THREADED_HTML_PARSER=0',
+      'ENABLE_THREADED_HTML_PARSER=1',
       'ENABLE_TOUCH_ADJUSTMENT=1',
       'ENABLE_TOUCH_EVENTS=<(enable_touch_events)',
       'ENABLE_TOUCH_EVENT_TRACKING=<(enable_touch_events)',
