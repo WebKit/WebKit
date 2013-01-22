@@ -49,7 +49,10 @@ void Widget::paint(GraphicsContext*, IntRect const&)
 
 void Widget::setCursor(Cursor const& cursor)
 {
-    PlatformPageClient pageClient = root()->hostWindow()->platformPageClient();
+    ScrollView* theRoot = root();
+    if (!theRoot)
+        return;
+    PlatformPageClient pageClient = theRoot->hostWindow()->platformPageClient();
 
     if (pageClient)
         pageClient->setCursor(cursor.impl());
