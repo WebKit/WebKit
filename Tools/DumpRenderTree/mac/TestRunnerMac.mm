@@ -1157,7 +1157,7 @@ void TestRunner::resetPageVisibility()
 {
     WebView *webView = [mainFrame webView];
     if ([webView respondsToSelector:@selector(_setVisibilityState:isInitialState:)]) {
-        [webView _setVisibilityState:WebCore::PageVisibilityStateVisible isInitialState:NO];
+        [webView _setVisibilityState:WebCore::PageVisibilityStateVisible isInitialState:YES];
     }
 }
 

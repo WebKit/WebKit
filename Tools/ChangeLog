@@ -1,3 +1,16 @@
+2013-01-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Enable Page Visibility (PAGE_VISIBILITY_API)
+        https://bugs.webkit.org/show_bug.cgi?id=107230
+
+        Reviewed by David Kilzer.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::resetPageVisibility):
+        Fix a typo in the original implementation. resetPageVisibility should
+        pass initialState YES so an event is not dispatched, which causes
+        issues in multiple tests. This now matches other ports.
+
 2013-01-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Enable CSS Image Orientation feature
