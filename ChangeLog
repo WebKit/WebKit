@@ -1,5 +1,16 @@
 2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Autotools] Remove the Canvas Path configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=107537
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Remove the configuration option for the Canvas Path
+        feature as this is not in line with the new guidelines about feature
+        enablement in the autotools build system.
+
+2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [Autotools] Place a warning in configure.ac about adding new configuration options
         https://bugs.webkit.org/show_bug.cgi?id=107559
 
