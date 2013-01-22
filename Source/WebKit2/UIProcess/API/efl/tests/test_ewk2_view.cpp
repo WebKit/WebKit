@@ -945,3 +945,24 @@ TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
     while (!isObtainedPageContents)
         ecore_main_loop_iterate();
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_source_mode)
+{
+    const char indexHTML[] = "<html><body>Test Web View Mode<script>document.title=window.document.body.innerText;</script></body></html>";
+    const char contents[] = "Test Web View Mode";
+
+    // Default source mode is false.
+    EXPECT_FALSE(ewk_view_source_mode_get(webView()));
+
+    // Load web contents of the web page.
+    ewk_view_html_string_load(webView(), indexHTML, 0, 0);
+    EXPECT_TRUE(waitUntilTitleChangedTo(contents));
+
+    EXPECT_TRUE(ewk_view_source_mode_set(webView(), true));
+    EXPECT_TRUE(ewk_view_source_mode_get(webView()));
+
+    // TODO: Add a test case when the source mode is true.
+    //       But it needs a way to retrieve the body contents to compare the loaded contents
+    //       such as excuting the JavaScript, 'window.document.body.innerText'.
+    //       https://bugs.webkit.org/show_bug.cgi?id=101904.
+}

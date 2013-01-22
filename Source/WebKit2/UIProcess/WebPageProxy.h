@@ -754,6 +754,7 @@ public:
     double minimumLayoutWidth() const { return m_minimumLayoutWidth; }
     void setMinimumLayoutWidth(double);
 
+    bool mainFrameInViewSourceMode() const { return m_mainFrameInViewSourceMode; }
     void setMainFrameInViewSourceMode(bool);
 
 private:
@@ -1213,6 +1214,8 @@ private:
     bool m_mainFrameIsPinnedToRightSide;
     bool m_mainFrameIsPinnedToTopSide;
     bool m_mainFrameIsPinnedToBottomSide;
+
+    bool m_mainFrameInViewSourceMode;
 
     unsigned m_pageCount;
 

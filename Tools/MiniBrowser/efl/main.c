@@ -141,7 +141,7 @@ static const Ecore_Getopt options = {
     }
 };
 
-static Browser_Window *window_create(Evas_Object* opener, const char *url, int width, int height);
+static Browser_Window *window_create(Evas_Object* opener, const char *url, int width, int height, Eina_Bool view_mode);
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
 {
@@ -290,16 +290,20 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "F6")) {
         info("Stop (F6) was pressed, stop loading.\n");
         ewk_view_stop(ewk_view);
-    } else if  (!strcmp(ev->key, "F7")) {
+    } else if (!strcmp(ev->key, "F7")) {
         Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
         mode = (++mode) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
         if (ewk_view_pagination_mode_set(ewk_view, mode))
             info("Change Pagination Mode (F7) was pressed, changed to: %d\n", mode);
         else
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
+    } else if (!strcmp(ev->key, "F8")) {
+        info("Create souce code window (F8) was pressed.\n");
+        Browser_Window *window = window_create(ewk_view, ewk_view_url_get(ewk_view), 0, 0, EINA_TRUE);
+        windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
-        Browser_Window *window = window_create(0, DEFAULT_URL, 0, 0);
+        Browser_Window *window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);
         // 0 equals default width and height.
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
@@ -879,7 +883,7 @@ on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Wind
     if (!height)
         height = window_height;
 
-    Browser_Window *window = window_create(smartData->self, url, width, height);
+    Browser_Window *window = window_create(smartData->self, url, width, height, EINA_FALSE);
     Evas_Object *new_view = window->ewk_view;
 
     windows = eina_list_append(windows, window);
@@ -1074,7 +1078,7 @@ create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
     return button;
 }
 
-static Browser_Window *window_create(Evas_Object *opener, const char *url, int width, int height)
+static Browser_Window *window_create(Evas_Object *opener, const char *url, int width, int height, Eina_Bool view_mode)
 {
     Browser_Window *window = malloc(sizeof(Browser_Window));
     if (!window) {
@@ -1187,6 +1191,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
+    ewk_view_source_mode_set(window->ewk_view, view_mode);
 
     /* Set the zoom level to default */
     window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
@@ -1317,10 +1322,10 @@ elm_main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        window = window_create(0, url, 0, 0);
+        window = window_create(NULL, url, 0, 0, EINA_FALSE);
         free(url);
     } else
-        window = window_create(0, DEFAULT_URL, 0, 0);
+        window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);
 
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");

@@ -231,6 +231,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameIsPinnedToRightSide(false)
     , m_mainFrameIsPinnedToTopSide(false)
     , m_mainFrameIsPinnedToBottomSide(false)
+    , m_mainFrameInViewSourceMode(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
@@ -4255,9 +4256,15 @@ void WebPageProxy::cancelComposition()
 }
 #endif // PLATFORM(QT) || PLATFORM(GTK)
 
-void WebPageProxy::setMainFrameInViewSourceMode(bool inViewSourceMode)
+void WebPageProxy::setMainFrameInViewSourceMode(bool mainFrameInViewSourceMode)
 {
-    m_process->send(Messages::WebPage::SetMainFrameInViewSourceMode(inViewSourceMode), m_pageID);
+    if (m_mainFrameInViewSourceMode == mainFrameInViewSourceMode)
+        return;
+
+    m_mainFrameInViewSourceMode = mainFrameInViewSourceMode;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetMainFrameInViewSourceMode(mainFrameInViewSourceMode), m_pageID);
 }
 
 } // namespace WebKit

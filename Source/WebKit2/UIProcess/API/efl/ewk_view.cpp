@@ -982,3 +982,19 @@ Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Conten
 
     return true;
 }
+
+Eina_Bool ewk_view_source_mode_set(Evas_Object* ewkView, Eina_Bool enabled)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    impl->page()->setMainFrameInViewSourceMode(enabled);
+
+    return true;
+}
+
+Eina_Bool ewk_view_source_mode_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    return impl->page()->mainFrameInViewSourceMode();
+}
