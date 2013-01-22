@@ -46,7 +46,7 @@ void injectInternalsObject(v8::Local<v8::Context> context)
 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     if (scriptContext->isDocument())
-        context->Global()->Set(v8::String::New(Internals::internalsId), toV8(Internals::create(static_cast<Document*>(scriptContext)), v8::Handle<v8::Object>()));
+        context->Global()->Set(v8::String::New(Internals::internalsId), toV8(Internals::create(static_cast<Document*>(scriptContext)), v8::Handle<v8::Object>(), context->GetIsolate()));
 }
 
 void resetInternalsObject(v8::Local<v8::Context> context)

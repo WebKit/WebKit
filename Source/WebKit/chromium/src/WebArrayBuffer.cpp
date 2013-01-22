@@ -74,7 +74,7 @@ v8::Handle<v8::Value> WebArrayBuffer::toV8Value()
 {
     if (!m_private.get())
         return v8::Handle<v8::Value>();
-    return toV8(m_private.get(), v8::Handle<v8::Object>());
+    return toV8(m_private.get(), v8::Handle<v8::Object>(), v8::Isolate::GetCurrent());
 }
 
 WebArrayBuffer* WebArrayBuffer::createFromV8Value(v8::Handle<v8::Value> value)
