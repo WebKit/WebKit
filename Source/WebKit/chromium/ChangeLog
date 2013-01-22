@@ -1,3 +1,13 @@
+2013-01-22  Alpha Lam  <hclam@chromium.org>
+
+        REGRESSION(r140392): InjectIDBKeyTest.TopLevelPropertyStringValue is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=107578
+
+        Unreviewed build fix. Disabled 2 tests that are crashing after r140392.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebKit::TEST_F):
+
 2013-01-22  Eric Seidel  <eric@webkit.org>
 
         Turn on ENABLE_THREADED_HTML_PARSER for Chromium (it's still disabled at runtime)

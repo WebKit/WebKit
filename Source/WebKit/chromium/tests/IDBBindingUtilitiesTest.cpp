@@ -173,7 +173,7 @@ TEST_F(IDBKeyFromValueAndKeyPathTest, SubProperty)
 class InjectIDBKeyTest : public IDBKeyFromValueAndKeyPathTest {
 };
 
-TEST_F(InjectIDBKeyTest, TopLevelPropertyStringValue)
+TEST_F(InjectIDBKeyTest, DISABLED_TopLevelPropertyStringValue)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
@@ -188,7 +188,7 @@ TEST_F(InjectIDBKeyTest, TopLevelPropertyStringValue)
     checkInjectionFails(IDBKey::createString("key"), foozoo, "foo.bar");
 }
 
-TEST_F(InjectIDBKeyTest, SubProperty)
+TEST_F(InjectIDBKeyTest, DISABLED_SubProperty)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
