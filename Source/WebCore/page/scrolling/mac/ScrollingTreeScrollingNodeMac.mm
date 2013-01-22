@@ -53,6 +53,7 @@ PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(Scroll
 ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree)
     : ScrollingTreeScrollingNode(scrollingTree)
     , m_scrollElasticityController(this)
+    , m_lastScrollHadUnfilledPixels(false)
 {
 }
 
@@ -356,8 +357,10 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
     IntPoint scrollPosition = this->scrollPosition();
     unsigned unfilledArea = TileCache::blankPixelCountForTiles(tiles, viewportRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
 
-    if (unfilledArea)
+    if (unfilledArea || m_lastScrollHadUnfilledPixels)
         WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);
+
+    m_lastScrollHadUnfilledPixels = unfilledArea;
 }
 
 static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons)

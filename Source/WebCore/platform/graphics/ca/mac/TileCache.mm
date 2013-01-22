@@ -488,7 +488,7 @@ unsigned TileCache::blankPixelCount() const
     return blankPixelCountForTiles(tiles, m_visibleRect, IntPoint(0,0));
 }
 
-unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, IntRect visibleRect, IntPoint tileTranslation)
+unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, const IntRect& visibleRect, const IntPoint& tileTranslation)
 {
     Region paintedVisibleTiles;
 
@@ -498,7 +498,7 @@ unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, IntRe
         IntRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
         visiblePart.intersect(visibleRect);
 
-        if (!visiblePart.isEmpty() && [tileLayer paintCount])
+        if (!visiblePart.isEmpty())
             paintedVisibleTiles.unite(visiblePart);
     }
 

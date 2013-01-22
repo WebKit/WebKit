@@ -79,7 +79,7 @@ public:
     virtual IntRect visibleRect() const OVERRIDE { return m_visibleRect; }
 
     unsigned blankPixelCount() const;
-    static unsigned blankPixelCountForTiles(const WebTileLayerList&, IntRect, IntPoint);
+    static unsigned blankPixelCountForTiles(const WebTileLayerList&, const IntRect&, const IntPoint&);
 
     // Only public for the WebTileCacheMapLayer.
     void drawTileMapContents(CGContextRef, CGRect);
