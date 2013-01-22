@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -2272,7 +2272,8 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
         if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element->isHTMLElement()) {
             if (!ruleData.hasMultipartSelector())
                 return true;
-        } else if (!SelectorChecker::tagMatches(m_element, ruleData.selector()))
+        }
+        if (ruleData.selector()->m_match == CSSSelector::Tag && !SelectorChecker::tagMatches(m_element, ruleData.selector()->tagQName()))
             return false;
         if (!SelectorChecker::fastCheckRightmostAttributeSelector(m_element, ruleData.selector()))
             return false;
@@ -2285,7 +2286,7 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
     context.pseudoStyle = m_pseudoStyle;
-    SelectorChecker::Match match = m_selectorChecker.match(context, m_dynamicPseudo);
+    SelectorChecker::Match match = m_selectorChecker.match(context, m_dynamicPseudo, DOMSiblingTraversalStrategy());
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != m_dynamicPseudo)
@@ -2601,18 +2602,32 @@ void StyleResolver::matchPageRules(MatchResult& result, RuleSet* rules, bool isL
         addMatchedProperties(result, matchedPageRules[i]->properties());
 }
 
-void StyleResolver::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
-    unsigned size = rules.size();
-    for (unsigned i = 0; i < size; ++i) {
-        StyleRulePage* rule = rules[i];
-        const AtomicString& selectorLocalName = rule->selector()->tag().localName();
-        if (selectorLocalName != starAtom && selectorLocalName != pageName)
-            continue;
-        CSSSelector::PseudoType pseudoType = rule->selector()->pseudoType();
+    for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
+        if (component->m_match == CSSSelector::Tag) {
+            const AtomicString& localName = component->tagQName().localName();
+            if (localName != starAtom && localName != pageName)
+                return false;
+        }
+
+        CSSSelector::PseudoType pseudoType = component->pseudoType();
         if ((pseudoType == CSSSelector::PseudoLeftPage && !isLeftPage)
             || (pseudoType == CSSSelector::PseudoRightPage && isLeftPage)
             || (pseudoType == CSSSelector::PseudoFirstPage && !isFirstPage))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void StyleResolver::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+{
+    for (unsigned i = 0; i < rules.size(); ++i) {
+        StyleRulePage* rule = rules[i];
+
+        if (!checkPageSelectorComponents(rule->selector(), isLeftPage, isFirstPage, pageName))
             continue;
 
         // If the rule has no properties to apply, then ignore it.

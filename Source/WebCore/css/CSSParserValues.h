@@ -172,11 +172,11 @@ class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSParserSelector();
+    explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
 
     PassOwnPtr<CSSSelector> releaseSelector() { return m_selector.release(); }
 
-    void setTag(const QualifiedName& value) { m_selector->setTag(value); }
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
     void setAttribute(const QualifiedName& value) { m_selector->setAttribute(value); }
     void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
@@ -189,13 +189,14 @@ public:
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 
-    bool isSimple() const { return !m_tagHistory && m_selector->isSimple(); }
+    bool isSimple() const;
     bool hasShadowDescendant() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(PassOwnPtr<CSSParserSelector> selector) { m_tagHistory = selector; }
     void insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector>, CSSSelector::Relation after);
     void appendTagHistory(CSSSelector::Relation, PassOwnPtr<CSSParserSelector>);
+    void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
 private:
     OwnPtr<CSSSelector> m_selector;

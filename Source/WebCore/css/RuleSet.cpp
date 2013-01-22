@@ -55,13 +55,15 @@ using namespace HTMLNames;
 
 static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* selector)
 {
-    const AtomicString& selectorNamespace = selector->tag().namespaceURI();
-    if (selectorNamespace != starAtom && selectorNamespace != xhtmlNamespaceURI)
-        return false;
-    if (selector->m_match == CSSSelector::None)
+    ASSERT(selector);
+    if (selector->m_match == CSSSelector::Tag) {
+        const AtomicString& selectorNamespace = selector->tagQName().namespaceURI();
+        if (selectorNamespace != starAtom && selectorNamespace != xhtmlNamespaceURI)
+            return false;
+        if (selector->relation() == CSSSelector::SubSelector)
+            return isSelectorMatchingHTMLBasedOnRuleHash(selector->tagHistory());
         return true;
-    if (selector->tag() != starAtom)
-        return false;
+    }
     if (SelectorChecker::isCommonPseudoClassSelector(selector))
         return true;
     return selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
@@ -72,9 +74,11 @@ static inline bool selectorListContainsUncommonAttributeSelector(const CSSSelect
     CSSSelectorList* selectorList = selector->selectorList();
     if (!selectorList)
         return false;
-    for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-        if (subSelector->isAttributeSelector())
-            return true;
+    for (CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
+        for (CSSSelector* component = selector; component; component = component->tagHistory()) {
+            if (component->isAttributeSelector())
+                return true;
+        }
     }
     return false;
 }
@@ -113,8 +117,10 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
     if (addRuleFlags & RuleIsInRegionRule)
         return PropertyWhitelistRegion;
 #if ENABLE(VIDEO_TRACK)
-    if (selector->pseudoType() == CSSSelector::PseudoCue)
-        return PropertyWhitelistCue;
+    for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
+        if (component->pseudoType() == CSSSelector::PseudoCue)
+            return PropertyWhitelistCue;
+    }
 #endif
     return PropertyWhitelistNone;
 }
@@ -206,53 +212,66 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
+bool RuleSet::findBestRuleSetAndAdd(const CSSSelector* component, RuleData& ruleData)
 {
-    RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
-
-    collectFeaturesFromRuleData(m_features, ruleData);
-
-    CSSSelector* selector = ruleData.selector();
-
-    if (selector->m_match == CSSSelector::Id) {
-        addToRuleSet(selector->value().impl(), m_idRules, ruleData);
-        return;
+    if (component->m_match == CSSSelector::Id) {
+        addToRuleSet(component->value().impl(), m_idRules, ruleData);
+        return true;
     }
-    if (selector->m_match == CSSSelector::Class) {
-        addToRuleSet(selector->value().impl(), m_classRules, ruleData);
-        return;
+    if (component->m_match == CSSSelector::Class) {
+        addToRuleSet(component->value().impl(), m_classRules, ruleData);
+        return true;
     }
-    if (selector->isCustomPseudoElement()) {
-        addToRuleSet(selector->value().impl(), m_shadowPseudoElementRules, ruleData);
-        return;
+    if (component->isCustomPseudoElement()) {
+        addToRuleSet(component->value().impl(), m_shadowPseudoElementRules, ruleData);
+        return true;
     }
 #if ENABLE(VIDEO_TRACK)
-    if (selector->pseudoType() == CSSSelector::PseudoCue) {
+    if (component->pseudoType() == CSSSelector::PseudoCue) {
         m_cuePseudoRules.append(ruleData);
-        return;
+        return true;
     }
 #endif
-    if (SelectorChecker::isCommonPseudoClassSelector(selector)) {
-        switch (selector->pseudoType()) {
+    if (SelectorChecker::isCommonPseudoClassSelector(component)) {
+        switch (component->pseudoType()) {
         case CSSSelector::PseudoLink:
         case CSSSelector::PseudoVisited:
         case CSSSelector::PseudoAnyLink:
             m_linkPseudoClassRules.append(ruleData);
-            return;
+            return true;
         case CSSSelector::PseudoFocus:
             m_focusPseudoClassRules.append(ruleData);
-            return;
+            return true;
         default:
             ASSERT_NOT_REACHED();
+            return true;
         }
-        return;
     }
-    const AtomicString& localName = selector->tag().localName();
-    if (localName != starAtom) {
-        addToRuleSet(localName.impl(), m_tagRules, ruleData);
-        return;
+
+    if (component->m_match == CSSSelector::Tag) {
+        if (component->tagQName().localName() != starAtom) {
+            // If this is part of a subselector chain, recurse ahead to find a narrower set (ID/class.)
+            if (component->relation() == CSSSelector::SubSelector
+                && (component->tagHistory()->m_match == CSSSelector::Class || component->tagHistory()->m_match == CSSSelector::Id || SelectorChecker::isCommonPseudoClassSelector(component->tagHistory()))
+                && findBestRuleSetAndAdd(component->tagHistory(), ruleData))
+                return true;
+
+            addToRuleSet(component->tagQName().localName().impl(), m_tagRules, ruleData);
+            return true;
+        }
     }
-    m_universalRules.append(ruleData);
+    return false;
+}
+
+void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
+{
+    RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
+    collectFeaturesFromRuleData(m_features, ruleData);
+
+    if (!findBestRuleSetAndAdd(ruleData.selector(), ruleData)) {
+        // If we didn't find a specialized map to stick it in, file under universal rules.
+        m_universalRules.append(ruleData);
+    }
 }
 
 void RuleSet::addPageRule(StyleRulePage* rule)

@@ -840,14 +840,13 @@ page:
 
 page_selector:
     IDENT {
-        $$ = parser->createFloatingSelector();
-        $$->setTag(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
+        $$ = parser->createFloatingSelectorWithTagName(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
         $$->setForPage();
     }
     | IDENT pseudo_page {
         $$ = $2;
         if ($$) {
-            $$->setTag(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
+            $$->prependTagSelector(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
             $$->setForPage();
         }
     }
@@ -1147,8 +1146,7 @@ namespace_selector:
     
 simple_selector:
     element_name {
-        $$ = parser->createFloatingSelector();
-        $$->setTag(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
+        $$ = parser->createFloatingSelectorWithTagName(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
     }
     | element_name specifier_list {
         $$ = $2;
@@ -1158,11 +1156,10 @@ simple_selector:
     | specifier_list {
         $$ = $1;
         if ($$)
-            parser->updateSpecifiersWithElementName(nullAtom, starAtom, $$);
+            parser->updateSpecifiersWithNamespaceIfNeeded($$);
     }
     | namespace_selector element_name {
-        $$ = parser->createFloatingSelector();
-        $$->setTag(parser->determineNameInNamespace($1, $2));
+        $$ = parser->createFloatingSelectorWithTagName(parser->determineNameInNamespace($1, $2));
     }
     | namespace_selector element_name specifier_list {
         $$ = $3;

@@ -102,10 +102,12 @@ void QualifiedName::deref()
         return;
 #endif
     ASSERT(!isHashTableDeletedValue());
-
-    if (m_impl->hasOneRef())
-        gNameCache->remove(m_impl);
     m_impl->deref();
+}
+
+QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()
+{
+    gNameCache->remove(this);
 }
 
 String QualifiedName::toString() const

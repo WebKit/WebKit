@@ -138,6 +138,7 @@ public:
 
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase> >&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
+    bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);
 
 public:
     RuleSet();

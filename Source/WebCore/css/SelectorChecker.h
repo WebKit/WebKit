@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -78,7 +78,8 @@ public:
     };
 
     bool matches(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    Match match(const SelectorCheckingContext&, PseudoId&) const;
+    template<typename SiblingTraversalStrategy>
+    Match match(const SelectorCheckingContext&, PseudoId&, const SiblingTraversalStrategy&) const;
     template<typename SiblingTraversalStrategy>
     bool checkOne(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 
@@ -90,7 +91,7 @@ public:
     Mode mode() const { return m_mode; }
     void setMode(Mode mode) { m_mode = mode; }
 
-    static bool tagMatches(const Element*, const CSSSelector*);
+    static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     bool matchesFocusPseudoClass(const Element*) const;
     static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
@@ -129,14 +130,14 @@ inline bool SelectorChecker::matchesFocusPseudoClass(const Element* element) con
     return element->focused() && isFrameFocused(element);
 }
 
-inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelector* selector)
+inline bool SelectorChecker::tagMatches(const Element* element, const QualifiedName& tagQName)
 {
-    if (!selector->hasTag())
+    if (tagQName == anyQName())
         return true;
-    const AtomicString& localName = selector->tag().localName();
+    const AtomicString& localName = tagQName.localName();
     if (localName != starAtom && localName != element->localName())
         return false;
-    const AtomicString& namespaceURI = selector->tag().namespaceURI();
+    const AtomicString& namespaceURI = tagQName.namespaceURI();
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
 

@@ -41,6 +41,7 @@ using namespace HTMLNames;
 
 void CSSSelector::createRareData()
 {
+    ASSERT(m_match != Tag);
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.
@@ -55,11 +56,14 @@ unsigned CSSSelector::specificity() const
     static const unsigned idMask = 0xff0000;
     static const unsigned classMask = 0xff00;
     static const unsigned elementMask = 0xff;
+
+    if (isForPage())
+        return specificityForPage() & maxValueMask;
+
     unsigned total = 0;
     unsigned temp = 0;
+
     for (const CSSSelector* selector = this; selector; selector = selector->tagHistory()) {
-        if (selector->m_isForPage)
-            return (total + selector->specificityForPage()) & maxValueMask;
         temp = total + selector->specificityForOneSelector();
         // Clamp each component to its max in the case of overflow.
         if ((temp & idMask) < (total & idMask))
@@ -78,11 +82,9 @@ inline unsigned CSSSelector::specificityForOneSelector() const
 {
     // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
     // isn't quite correct.
-    unsigned s = (m_tag.localName() == starAtom ? 0 : 1);
     switch (m_match) {
     case Id:
-        s += 0x10000;
-        break;
+        return 0x10000;
     case Exact:
     case Class:
     case Set:
@@ -96,32 +98,45 @@ inline unsigned CSSSelector::specificityForOneSelector() const
         // FIXME: PsuedoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
         if (pseudoType() == PseudoNot && selectorList())
-            s += selectorList()->first()->specificityForOneSelector();
-        else
-            s += 0x100;
-    case None:
-        break;
+            return selectorList()->first()->specificityForOneSelector();
+        return 0x100;
+    case Tag:
+        return (tagQName().localName() != starAtom) ? 1 : 0;
+    case Unknown:
+        return 0;
     }
-    return s;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 unsigned CSSSelector::specificityForPage() const
 {
     // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
-    unsigned s = (m_tag.localName() == starAtom ? 0 : 4);
+    unsigned s = 0;
 
-    switch (pseudoType()) {
-    case PseudoFirstPage:
-        s += 2;
-        break;
-    case PseudoLeftPage:
-    case PseudoRightPage:
-        s += 1;
-        break;
-    case PseudoNotParsed:
-        break;
-    default:
-        ASSERT_NOT_REACHED();
+    for (const CSSSelector* component = this; component; component = component->tagHistory()) {
+        switch (component->m_match) {
+        case Tag:
+            s += tagQName().localName() == starAtom ? 0 : 4;
+            break;
+        case PseudoClass:
+            switch (component->pseudoType()) {
+            case PseudoFirstPage:
+                s += 2;
+                break;
+            case PseudoLeftPage:
+            case PseudoRightPage:
+                s += 1;
+                break;
+            case PseudoNotParsed:
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        default:
+            break;
+        }
     }
     return s;
 }
@@ -551,12 +566,18 @@ bool CSSSelector::operator==(const CSSSelector& other)
     const CSSSelector* sel2 = &other;
 
     while (sel1 && sel2) {
-        if (sel1->m_tag != sel2->m_tag || sel1->attribute() != sel2->attribute() ||
-             sel1->relation() != sel2->relation() || sel1->m_match != sel2->m_match ||
-             sel1->value() != sel2->value() ||
-             sel1->pseudoType() != sel2->pseudoType() ||
-             sel1->argument() != sel2->argument())
+        if (sel1->attribute() != sel2->attribute()
+            || sel1->relation() != sel2->relation()
+            || sel1->m_match != sel2->m_match
+            || sel1->value() != sel2->value()
+            || sel1->pseudoType() != sel2->pseudoType()
+            || sel1->argument() != sel2->argument()) {
             return false;
+        }
+        if (sel1->m_match == Tag) {
+            if (sel1->tagQName() != sel2->tagQName())
+                return false;
+        }
         sel1 = sel1->tagHistory();
         sel2 = sel2->tagHistory();
     }
@@ -571,15 +592,13 @@ String CSSSelector::selectorText() const
 {
     StringBuilder str;
 
-    const AtomicString& prefix = m_tag.prefix();
-    const AtomicString& localName = m_tag.localName();
-    if (m_match == CSSSelector::None || !prefix.isNull() || localName != starAtom) {
-        if (prefix.isNull())
-            str.append(localName);
+    if (m_match == CSSSelector::Tag && !m_tagIsForNamespaceRule) {
+        if (tagQName().prefix().isNull())
+            str.append(tagQName().localName());
         else {
-            str.append(prefix.string());
+            str.append(tagQName().prefix().string());
             str.append('|');
-            str.append(localName);
+            str.append(tagQName().localName());
         }
     }
 
@@ -722,31 +741,6 @@ bool CSSSelector::matchNth(int count)
 {
     ASSERT(m_hasRareData);
     return m_data.m_rareData->matchNth(count);
-}
-
-bool CSSSelector::isSimple() const
-{
-    if (selectorList() || tagHistory() || matchesPseudoElement())
-        return false;
-
-    int numConditions = 0;
-
-    // hasTag() cannot be be used here because namespace may not be nullAtom.
-    // Example:
-    //     @namespace "http://www.w3.org/2000/svg";
-    //     svg:not(:root) { ...
-    if (m_tag != starAtom)
-        numConditions++;
-
-    if (m_match == Id || m_match == Class || m_match == PseudoClass)
-        numConditions++;
-
-    if (m_hasRareData && m_data.m_rareData->m_attribute != anyQName())
-        numConditions++;
-
-    // numConditions is 0 for a universal selector.
-    // numConditions is 1 for other simple selectors.
-    return numConditions <= 1;
 }
 
 CSSSelector::RareData::RareData(PassRefPtr<AtomicStringImpl> value)

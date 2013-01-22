@@ -109,7 +109,7 @@ void SelectorFilter::pushParent(Element* parent)
     pushParentStackFrame(parent);
 }
 
-static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash, const unsigned* end)
+static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash)
 {
     switch (selector->m_match) {
     case CSSSelector::Id:
@@ -120,14 +120,13 @@ static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* 
         if (!selector->value().isEmpty())
             (*hash++) = selector->value().impl()->existingHash() * ClassAttributeSalt;
         break;
+    case CSSSelector::Tag:
+        if (selector->tagQName().localName() != starAtom)
+            (*hash++) = selector->tagQName().localName().impl()->existingHash() * TagNameSalt;
+        break;
     default:
         break;
     }
-    if (hash == end)
-        return;
-    const AtomicString& localName = selector->tag().localName();
-    if (localName != starAtom)
-        (*hash++) = localName.impl()->existingHash() * TagNameSalt;
 }
 
 void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsigned* identifierHashes, unsigned maximumIdentifierCount)
@@ -143,7 +142,7 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         switch (relation) {
         case CSSSelector::SubSelector:
             if (!skipOverSubselectors)
-                collectDescendantSelectorIdentifierHashes(selector, hash, end);
+                collectDescendantSelectorIdentifierHashes(selector, hash);
             break;
         case CSSSelector::DirectAdjacent:
         case CSSSelector::IndirectAdjacent:
@@ -153,7 +152,7 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         case CSSSelector::Descendant:
         case CSSSelector::Child:
             skipOverSubselectors = false;
-            collectDescendantSelectorIdentifierHashes(selector, hash, end);
+            collectDescendantSelectorIdentifierHashes(selector, hash);
             break;
         }
         if (hash == end)

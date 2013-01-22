@@ -120,7 +120,7 @@ void HTMLContentElement::parseAttribute(const QualifiedName& name, const AtomicS
 static bool validateSubSelector(CSSSelector* selector)
 {
     switch (selector->m_match) {
-    case CSSSelector::None:
+    case CSSSelector::Tag:
     case CSSSelector::Id:
     case CSSSelector::Class:
     case CSSSelector::Exact:

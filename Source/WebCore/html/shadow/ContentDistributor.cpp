@@ -406,10 +406,12 @@ void ContentDistributor::collectSelectFeatureSetFrom(ShadowRoot* root)
 
     if (ScopeContentDistribution::hasContentElement(root)) {
         for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
-            if (isHTMLContentElement(element)) {
-                const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();
-                for (CSSSelector* selector = list.first(); selector; selector = list.next(selector))
-                    m_selectFeatures.collectFeaturesFromSelector(selector);
+            if (!isHTMLContentElement(element))
+                continue;
+            const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();
+            for (CSSSelector* selector = list.first(); selector; selector = CSSSelectorList::next(selector)) {
+                for (CSSSelector* component = selector; component; component = component->tagHistory())
+                    m_selectFeatures.collectFeaturesFromSelector(component);
             }
         }
     }

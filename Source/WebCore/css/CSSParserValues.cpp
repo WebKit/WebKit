@@ -149,6 +149,11 @@ CSSParserSelector::CSSParserSelector()
 {
 }
 
+CSSParserSelector::CSSParserSelector(const QualifiedName& tagQName)
+    : m_selector(adoptPtr(new CSSSelector(tagQName)))
+{
+}
+
 CSSParserSelector::~CSSParserSelector()
 {
     if (!m_tagHistory)
@@ -171,6 +176,26 @@ void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& 
     m_selector->setSelectorList(adoptPtr(selectorList));
 }
 
+bool CSSParserSelector::isSimple() const
+{
+    if (m_selector->selectorList() || m_selector->matchesPseudoElement())
+        return false;
+
+    if (!m_tagHistory)
+        return true;
+
+    if (m_selector->m_match == CSSSelector::Tag) {
+        // We can't check against anyQName() here because namespace may not be nullAtom.
+        // Example:
+        //     @namespace "http://www.w3.org/2000/svg";
+        //     svg:not(:root) { ...
+        if (m_selector->tagQName().localName() == starAtom)
+            return m_tagHistory->isSimple();
+    }
+
+    return false;
+}
+
 void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, PassOwnPtr<CSSParserSelector> selector, CSSSelector::Relation after)
 {
     if (m_tagHistory)
@@ -187,6 +212,17 @@ void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, PassOwn
         end = end->tagHistory();
     end->setRelation(relation);
     end->setTagHistory(selector);
+}
+
+void CSSParserSelector::prependTagSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
+{
+    OwnPtr<CSSParserSelector> second = adoptPtr(new CSSParserSelector);
+    second->m_selector = m_selector.release();
+    second->m_tagHistory = m_tagHistory.release();
+    m_tagHistory = second.release();
+
+    m_selector = adoptPtr(new CSSSelector(tagQName, tagIsForNamespaceRule));
+    m_selector->m_relation = CSSSelector::SubSelector;
 }
 
 }

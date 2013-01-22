@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +37,7 @@ namespace WebCore {
     public:
         CSSSelector();
         CSSSelector(const CSSSelector&);
+        explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
         ~CSSSelector();
 
@@ -54,7 +55,8 @@ namespace WebCore {
 
         /* how the attribute value has to match.... Default is Exact */
         enum Match {
-            None = 0,
+            Unknown = 0,
+            Tag,
             Id,
             Class,
             Exact,
@@ -198,9 +200,7 @@ namespace WebCore {
         // the next item in the array.
         CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
-        bool hasTag() const { return m_tag != anyQName(); }
-
-        const QualifiedName& tag() const { return m_tag; }
+        const QualifiedName& tagQName() const;
         // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
         // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
         const AtomicString& value() const { return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value); }
@@ -208,7 +208,6 @@ namespace WebCore {
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
 
-        void setTag(const QualifiedName& value) { m_tag = value; }
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&);
         void setArgument(const AtomicString&);
@@ -245,6 +244,7 @@ namespace WebCore {
         bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;
         bool m_isForPage              : 1;
+        bool m_tagIsForNamespaceRule  : 1;
 
         unsigned specificityForOneSelector() const;
         unsigned specificityForPage() const;
@@ -275,10 +275,9 @@ namespace WebCore {
         union DataUnion {
             DataUnion() : m_value(0) { }
             AtomicStringImpl* m_value;
+            QualifiedName::QualifiedNameImpl* m_tagQName;
             RareData* m_rareData;
         } m_data;
-
-        QualifiedName m_tag;
     };
 
 inline const QualifiedName& CSSSelector::attribute() const
@@ -336,6 +335,7 @@ inline bool CSSSelector::isAttributeSelector() const
 
 inline void CSSSelector::setValue(const AtomicString& value)
 {
+    ASSERT(m_match != Tag);
     // Need to do ref counting manually for the union.
     if (m_hasRareData) {
         if (m_data.m_rareData->m_value)
@@ -360,15 +360,30 @@ inline void move(PassOwnPtr<CSSSelector> from, CSSSelector* to)
 
 inline CSSSelector::CSSSelector()
     : m_relation(Descendant)
-    , m_match(None)
+    , m_match(Unknown)
     , m_pseudoType(PseudoNotParsed)
     , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
     , m_hasRareData(false)
     , m_isForPage(false)
-    , m_tag(anyQName())
+    , m_tagIsForNamespaceRule(false)
 {
+}
+
+inline CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
+    : m_relation(Descendant)
+    , m_match(Tag)
+    , m_pseudoType(PseudoNotParsed)
+    , m_parsedNth(false)
+    , m_isLastInSelectorList(false)
+    , m_isLastInTagHistory(true)
+    , m_hasRareData(false)
+    , m_isForPage(false)
+    , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
+{
+    m_data.m_tagQName = tagQName.impl();
+    m_data.m_tagQName->ref();
 }
 
 inline CSSSelector::CSSSelector(const CSSSelector& o)
@@ -380,9 +395,12 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_isLastInTagHistory(o.m_isLastInTagHistory)
     , m_hasRareData(o.m_hasRareData)
     , m_isForPage(o.m_isForPage)
-    , m_tag(o.m_tag)
+    , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
 {
-    if (o.m_hasRareData) {
+    if (o.m_match == Tag) {
+        m_data.m_tagQName = o.m_data.m_tagQName;
+        m_data.m_tagQName->ref();
+    } else if (o.m_hasRareData) {
         m_data.m_rareData = o.m_data.m_rareData;
         m_data.m_rareData->ref();
     } else if (o.m_data.m_value) {
@@ -393,10 +411,18 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
 
 inline CSSSelector::~CSSSelector()
 {
-    if (m_hasRareData)
+    if (m_match == Tag)
+        m_data.m_tagQName->deref();
+    else if (m_hasRareData)
         m_data.m_rareData->deref();
     else if (m_data.m_value)
         m_data.m_value->deref();
+}
+
+inline const QualifiedName& CSSSelector::tagQName() const
+{
+    ASSERT(m_match == Tag);
+    return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
 }
 
 } // namespace WebCore

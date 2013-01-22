@@ -44,6 +44,8 @@ public:
             return adoptRef(new QualifiedNameImpl(prefix, localName, namespaceURI));
         }
 
+        ~QualifiedNameImpl();
+
         unsigned computeHash() const;
 
         mutable unsigned m_existingHash;
