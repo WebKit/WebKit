@@ -385,7 +385,7 @@ ScriptValue ScriptDebugServer::currentCallFrame()
 
     RefPtr<JavaScriptCallFrame> currentCallFrame = JavaScriptCallFrame::create(v8::Debug::GetDebugContext(), v8::Handle<v8::Object>::Cast(currentCallFrameV8));
     v8::Context::Scope contextScope(m_pausedContext);
-    return ScriptValue(toV8(currentCallFrame.release(), v8::Handle<v8::Object>()));
+    return ScriptValue(toV8(currentCallFrame.release(), v8::Handle<v8::Object>(), m_pausedContext->GetIsolate()));
 }
 
 void ScriptDebugServer::interruptAndRun(PassOwnPtr<Task> task, v8::Isolate* isolate)

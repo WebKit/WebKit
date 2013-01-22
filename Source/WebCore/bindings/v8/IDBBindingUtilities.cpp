@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMRequestState.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBTracing.h"
@@ -221,7 +222,7 @@ ScriptValue deserializeIDBValue(DOMRequestState* state, PassRefPtr<SerializedScr
     return ScriptValue(v8::Null());
 }
 
-bool injectIDBKeyIntoScriptValue(DOMRequestState*, PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)
+bool injectIDBKeyIntoScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)
 {
     IDB_TRACE("injectIDBKeyIntoScriptValue");
     ASSERT(v8::Context::InContext());
@@ -241,7 +242,7 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState*, PassRefPtr<IDBKey> key, Scrip
     if (parent.IsEmpty())
         return false;
 
-    if (!set(parent, keyPathElements.last(), toV8(key.get(), v8::Handle<v8::Object>())))
+    if (!set(parent, keyPathElements.last(), toV8(key.get(), v8::Handle<v8::Object>(), state->context()->GetIsolate())))
         return false;
 
     return true;
@@ -267,7 +268,7 @@ ScriptValue idbKeyToScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key)
 {
     ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
-    v8::Handle<v8::Value> v8Value(toV8(key.get(), v8::Handle<v8::Object>()));
+    v8::Handle<v8::Value> v8Value(toV8(key.get(), v8::Handle<v8::Object>(), state->context()->GetIsolate()));
     return ScriptValue(v8Value);
 }
 

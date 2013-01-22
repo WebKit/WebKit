@@ -70,10 +70,10 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
         callback = v8::Handle<v8::Function>::Cast(value);
     }
 
-    v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
     OwnArrayPtr<v8::Handle<v8::Value> > args = adoptArrayPtr(new v8::Handle<v8::Value>[1]);
-    args[0] = toV8(node, v8::Handle<v8::Object>());
+    args[0] = toV8(node, v8::Handle<v8::Object>(), state->isolate());
 
+    v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
     v8::Handle<v8::Value> result = ScriptController::callFunctionWithInstrumentation(0, callback, object, 1, args.get());
 
     if (exceptionCatcher.HasCaught()) {
