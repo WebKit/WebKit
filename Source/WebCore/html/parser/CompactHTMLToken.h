@@ -74,7 +74,7 @@ public:
 
 private:
     unsigned m_type : 4;
-    bool m_selfClosing : 1;
+    unsigned m_selfClosing : 1;
 
     String m_data; // "name", "characters", or "data" depending on m_type
     Vector<CompactAttribute> m_attributes;
