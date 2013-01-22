@@ -54,7 +54,7 @@ public:
     // IDBTransactionBackendInterface
     virtual void abort();
     void commit();
-    virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { ASSERT_NOT_REACHED(); }
+    virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { }
 
     class Operation {
     public:
