@@ -188,8 +188,7 @@ static void accumulateRendererTouchEventTargetRects(Vector<IntRect>& rects, cons
         if (!r.isEmpty()) {
             // Convert to the top-level view's coordinates.
             ASSERT(renderer->document()->view());
-            for (ScrollView* view = renderer->document()->view(); view && view->parent(); view = view->parent())
-                r = view->convertToContainingView(r);
+            r = renderer->document()->view()->convertToRootView(r);
 
             if (!parentRect.contains(r)) {
                 rects.append(r);
@@ -216,9 +215,17 @@ static void accumulateDocumentEventTargetRects(Vector<IntRect>& rects, const Doc
 
         if (touchTarget == document) {
             if (RenderView* view = document->renderView()) {
-                IntRect r = enclosingIntRect(view->clippedOverflowRectForRepaint(0));
-                if (!r.isEmpty())
+                IntRect r;
+                if (touchTarget == document->topDocument())
+                    r = view->documentRect();
+                else
+                    r = enclosingIntRect(view->clippedOverflowRectForRepaint(0));
+
+                if (!r.isEmpty()) {
+                    ASSERT(view->document()->view());
+                    r = view->document()->view()->convertToRootView(r);
                     rects.append(r);
+                }
             }
             return;
         }

@@ -3907,6 +3907,9 @@ webkit.org/b/98192 fast/js/post-message-numeric-property.html [ Failure Pass ]
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 
+# Needs rebaselining on after webkit.org/b/107339
+webkit.org/b/107339 [ Mac Android Win ] platform/chromium/fast/events/touch/compositor-touch-hit-rects.html [ Pass Failure ]
+
 # Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
 webkit.org/b/11645 [ Mac Android ] fast/table/025.html [ Failure ]
 

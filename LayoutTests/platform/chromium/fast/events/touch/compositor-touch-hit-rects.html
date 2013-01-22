@@ -23,6 +23,9 @@
 #tests {
 	font: 10px Ahem;
 }
+body {
+	height: 1000px;
+}
 </style>
 </head>
 <body>
@@ -76,17 +79,23 @@ function sortRects(a, b) {
 	return a.top - b.top;
 }
 
-function logRects(id) {
+function testElementWithId(id)
+{
 	element = document.getElementById(id);
 	element.addEventListener('touchstart', listener, false);
+	logRects(id);
+	element.removeEventListener('touchstart', listener, false);
+}
+
+function logRects(testName) {
+
 	rects = window.internals.touchEventTargetClientRects(document);
 	var sortedRects = new Array();
 	for (var i = 0; i < rects.length; ++i)
 		sortedRects[i] = rects[i];
 	sortedRects.sort(sortRects);
 	for (var i = 0; i < rects.length; ++i)
-		log(id + "[" + i + "]: (" + sortedRects[i].left + ", " + sortedRects[i].top + ", " + sortedRects[i].width + ", " + sortedRects[i].height + ")");
-	element.removeEventListener('touchstart', listener, false);
+		log(testName + "[" + i + "]: (" + sortedRects[i].left + ", " + sortedRects[i].top + ", " + sortedRects[i].width + ", " + sortedRects[i].height + ")");
 }
 
 function runTest() {
@@ -94,13 +103,16 @@ function runTest() {
 		return;
 
 	window.testRunner.dumpAsText();
-	logRects("normalFlow");
-	logRects("absoluteChildContainer");
-	logRects("relativeChildContainer");
-	logRects("overhangingContainer");
-	logRects("transformedChildContainer");
-	logRects("continuation");
-	logRects("inlineAbsoluteChildContainer");
+	testElementWithId("normalFlow");
+	testElementWithId("absoluteChildContainer");
+	testElementWithId("relativeChildContainer");
+	testElementWithId("overhangingContainer");
+	testElementWithId("transformedChildContainer");
+	testElementWithId("continuation");
+	testElementWithId("inlineAbsoluteChildContainer");
+
+	document.addEventListener('touchstart', listener, false);
+	logRects("document");
 
 	var testContainer = document.getElementById("tests");
 	testContainer.parentNode.removeChild(testContainer);
