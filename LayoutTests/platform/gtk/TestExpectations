@@ -277,9 +277,7 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source [ Skip ]
 
 # Encrypted Media Extensions are not enabled.
-webkit.org/b/99024 media/encrypted-media [ Failure ]
-webkit.org/b/99024 media/encrypted-media/encrypted-media-events.html [ Timeout ]
-webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Timeout ]
+webkit.org/b/99024 media/encrypted-media [ Failure Timeout ]
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Pass ]
@@ -721,6 +719,9 @@ webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeout ]
+
+webkit.org/b/107534 fast/js/regress/object-closure-call.html [ Timeout ]
+webkit.org/b/107534 fast/js/regress/cell-argument.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
