@@ -1,3 +1,33 @@
+2013-01-22  Roger Fong  <roger_fong@apple.com>
+
+        WTF project files and property sheets for getting WebKit to compile in VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=106986
+
+        Reviewed by Timothy Horton and Brent Fulgham.
+
+        * WTF.vcproj/WTF.sln:
+        * WTF.vcxproj: Added.
+        * WTF.vcxproj/WTF.vcxproj: Added.
+        * WTF.vcxproj/WTF.vcxproj.filters: Added.
+        * WTF.vcxproj/WTF.vcxproj.user: Added.
+        * WTF.vcxproj/WTFCommon.props: Added.
+        * WTF.vcxproj/WTFDebug.props: Added.
+        * WTF.vcxproj/WTFGenerated.make: Added.
+        * WTF.vcxproj/WTFGenerated.vcxproj: Added.
+        * WTF.vcxproj/WTFGenerated.vcxproj.filters: Added.
+        * WTF.vcxproj/WTFGenerated.vcxproj.user: Added.
+        * WTF.vcxproj/WTFGeneratedCommon.props: Added.
+        * WTF.vcxproj/WTFGeneratedDebug.props: Added.
+        * WTF.vcxproj/WTFGeneratedRelease.props: Added.
+        * WTF.vcxproj/WTFPostBuild.cmd: Added.
+        * WTF.vcxproj/WTFPreBuild.cmd: Added.
+        * WTF.vcxproj/WTFPreLink.cmd: Added.
+        * WTF.vcxproj/WTFRelease.props: Added.
+        * WTF.vcxproj/build-generated-files.sh: Added.
+        * WTF.vcxproj/copy-files.cmd: Added.
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py: Added.
+        * config.h:
+
 2013-01-22  David Kilzer  <ddkilzer@apple.com>
 
         Fix DateMath.cpp to compile with -Wshorten-64-to-32

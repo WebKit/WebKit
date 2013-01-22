@@ -1,0 +1,738 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win">
+      <UniqueIdentifier>{b7d787cb-2b2b-4898-8d03-b94115e596d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dtoa">
+      <UniqueIdentifier>{eaa36939-1976-495f-b9ed-90074ee4f2be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads">
+      <UniqueIdentifier>{c59a3c5d-6352-441c-acf9-9bbe1957a0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threads\win">
+      <UniqueIdentifier>{5c8eb2f2-873f-4915-869c-d4713c7adca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="text">
+      <UniqueIdentifier>{978a0e93-7937-4a85-9fd1-76319fbd9d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wtf">
+      <UniqueIdentifier>{d9afa800-d0b4-4284-a99d-334a5ce3d252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wtf\unicode">
+      <UniqueIdentifier>{805e00d3-198a-44a5-8c0c-849ce6ca3252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wtf\unicode\icu">
+      <UniqueIdentifier>{da29baba-10a2-4a74-ab87-2fea5e1382da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\wtf\dtoa\bignum-dtoa.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\bignum.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\cached-powers.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\diy-fp.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\double-conversion.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa.cpp">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\fast-dtoa.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\fixed-dtoa.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\dtoa\strtod.cc">
+      <Filter>dtoa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\StringStatics.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\AtomicString.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\Base64.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\CString.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\StringBuilder.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\StringImpl.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\WTFString.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\win\MainThreadWin.cpp">
+      <Filter>win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\win\OwnPtrWin.cpp">
+      <Filter>win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp">
+      <Filter>threads\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\threads\BinarySemaphore.cpp">
+      <Filter>threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\threadspecificWin.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\unicode\icu\CollatorICU.cpp">
+      <Filter>wtf\unicode\icu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\unicode\UTF8.cpp">
+      <Filter>wtf\unicode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\ArrayBuffer.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\ArrayBufferView.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\Assertions.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\BitVector.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\CryptographicallyRandomNumber.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\CurrentTime.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\DataLog.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\DateMath.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\DecimalNumber.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\DynamicAnnotations.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\FastMalloc.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\FilePrintStream.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\GregorianDateTime.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\HashTable.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\MainThread.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\MD5.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\MediaTime.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\MemoryInstrumentation.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\MetaAllocator.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\NullPtr.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\NumberOfCores.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\OSAllocatorWin.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\OSRandomSource.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\PageAllocationAligned.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\PageBlock.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\ParallelJobsGeneric.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\PrintStream.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\RAMSize.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\RandomNumber.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\RefCountedLeakCounter.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\SHA1.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\SizeLimits.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\StackBounds.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\StringExtras.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\StringPrintStream.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\TCSystemAlloc.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\Threading.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\ThreadingWin.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\TypeTraits.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\WTFThreadData.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\wtf\dtoa\utils.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\bignum-dtoa.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\bignum.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\cached-powers.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\diy-fp.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\double-conversion.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\double.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\fast-dtoa.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\fixed-dtoa.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\dtoa\strtod.h">
+      <Filter>dtoa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\ASCIIFastPath.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\AtomicString.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\AtomicStringHash.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\AtomicStringImpl.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\Base64.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\CString.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\IntegerToStringConversion.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringBuffer.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringBuilder.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringConcatenate.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringHash.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringImpl.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\StringOperators.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\WTFString.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\threads\BinarySemaphore.h">
+      <Filter>threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\threadsafeRefCounted.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\threadspecific.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h">
+      <Filter>wtf\unicode\icu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\CharacterNames.h">
+      <Filter>wtf\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\Collator.h">
+      <Filter>wtf\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\Unicode.h">
+      <Filter>wtf\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\UnicodeMacrosFromICU.h">
+      <Filter>wtf\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\unicode\UTF8.h">
+      <Filter>wtf\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Alignment.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\WTFThreadData.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\AlwaysInline.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ArrayBuffer.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ArrayBufferView.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ASCIICType.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Assertions.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Atomics.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\AVLTree.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BitArray.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Bitmap.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BitVector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BlockStack.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BloomFilter.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BoundsCheckedPointer.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\BumpPointerAllocator.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\CheckedArithmetic.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\CheckedBoolean.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Compiler.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Complex.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\CryptographicallyRandomNumber.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\CurrentTime.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DataLog.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DateMath.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DecimalNumber.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Decoder.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Deque.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DisallowCType.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DoublyLinkedList.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DynamicAnnotations.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Encoder.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FastAllocBase.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FastBitVector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FastMalloc.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FilePrintStream.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FixedArray.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Float32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Float64Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Forward.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Functional.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\GetPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\GregorianDateTime.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashCountedSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashFunctions.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashIterators.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashMap.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashTable.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HashTraits.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\HexNumber.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Int16Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Int32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Int8Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ListHashSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ListRefPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Locker.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MainThread.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MallocZoneSupport.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MathExtras.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MD5.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MediaTime.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentation.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationArrayBufferView.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashCountedSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashMap.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationListHashSet.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationParsedURL.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationSequence.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationString.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryInstrumentationVector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MemoryObjectInfo.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MessageQueue.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MetaAllocator.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\MetaAllocatorHandle.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Noncopyable.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\NonCopyingSort.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\NotFound.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\NullPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\NumberOfCores.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\OSRandomSource.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\OwnArrayPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\OwnPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\OwnPtrCommon.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PackedIntVector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PageAllocation.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PageAllocationAligned.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PageBlock.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PageReservation.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ParallelJobs.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ParallelJobsGeneric.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ParallelJobsOpenMP.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PassOwnArrayPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PassOwnPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PassRefPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PassTraits.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Platform.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PossiblyNull.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\PrintStream.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RAMSize.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RandomNumber.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RandomNumberSeed.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RedBlackTree.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RefCounted.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RefCountedLeakCounter.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RefPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RefPtrHashMap.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\RetainPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\SaturatedArithmetic.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\SegmentedVector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\SentinelLinkedList.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\SHA1.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\SinglyLinkedList.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StackBounds.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StaticConstructors.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StdLibExtras.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StringExtras.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StringHasher.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\StringPrintStream.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TCPackedCache.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TCPageMap.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TCSpinLock.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TCSystemAlloc.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TemporaryChange.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Threading.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ThreadingPrimitives.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ThreadRestrictionVerifier.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\TypeTraits.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Uint16Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Uint32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Uint8Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\UnusedParam.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\ValueCheck.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Vector.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\VMTags.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\WTF\config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WTFPostBuild.cmd" />
+    <None Include="WTFPreBuild.cmd" />
+    <None Include="WTFPreLink.cmd" />
+  </ItemGroup>
+</Project>

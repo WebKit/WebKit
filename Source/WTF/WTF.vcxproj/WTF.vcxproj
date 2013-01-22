@@ -1,0 +1,343 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\wtf\ArrayBuffer.cpp" />
+    <ClCompile Include="..\wtf\ArrayBufferView.cpp" />
+    <ClCompile Include="..\wtf\Assertions.cpp" />
+    <ClCompile Include="..\wtf\BitVector.cpp" />
+    <ClCompile Include="..\wtf\CryptographicallyRandomNumber.cpp" />
+    <ClCompile Include="..\wtf\CurrentTime.cpp" />
+    <ClCompile Include="..\wtf\DataLog.cpp" />
+    <ClCompile Include="..\wtf\DateMath.cpp" />
+    <ClCompile Include="..\wtf\DecimalNumber.cpp" />
+    <ClCompile Include="..\wtf\dtoa.cpp" />
+    <ClCompile Include="..\wtf\dtoa\bignum-dtoa.cc" />
+    <ClCompile Include="..\wtf\dtoa\bignum.cc" />
+    <ClCompile Include="..\wtf\dtoa\cached-powers.cc" />
+    <ClCompile Include="..\wtf\dtoa\diy-fp.cc" />
+    <ClCompile Include="..\wtf\dtoa\double-conversion.cc" />
+    <ClCompile Include="..\wtf\dtoa\fast-dtoa.cc" />
+    <ClCompile Include="..\wtf\dtoa\fixed-dtoa.cc" />
+    <ClCompile Include="..\wtf\dtoa\strtod.cc" />
+    <ClCompile Include="..\wtf\DynamicAnnotations.cpp" />
+    <ClCompile Include="..\wtf\FastMalloc.cpp" />
+    <ClCompile Include="..\wtf\FilePrintStream.cpp" />
+    <ClCompile Include="..\wtf\GregorianDateTime.cpp" />
+    <ClCompile Include="..\wtf\HashTable.cpp" />
+    <ClCompile Include="..\wtf\MainThread.cpp" />
+    <ClCompile Include="..\wtf\MD5.cpp" />
+    <ClCompile Include="..\wtf\MediaTime.cpp" />
+    <ClCompile Include="..\wtf\MemoryInstrumentation.cpp" />
+    <ClCompile Include="..\wtf\MetaAllocator.cpp" />
+    <ClCompile Include="..\wtf\NullPtr.cpp" />
+    <ClCompile Include="..\wtf\NumberOfCores.cpp" />
+    <ClCompile Include="..\wtf\OSAllocatorWin.cpp" />
+    <ClCompile Include="..\wtf\OSRandomSource.cpp" />
+    <ClCompile Include="..\wtf\PageAllocationAligned.cpp" />
+    <ClCompile Include="..\wtf\PageBlock.cpp" />
+    <ClCompile Include="..\wtf\ParallelJobsGeneric.cpp" />
+    <ClCompile Include="..\wtf\PrintStream.cpp" />
+    <ClCompile Include="..\wtf\RAMSize.cpp" />
+    <ClCompile Include="..\wtf\RandomNumber.cpp" />
+    <ClCompile Include="..\wtf\RefCountedLeakCounter.cpp" />
+    <ClCompile Include="..\wtf\SHA1.cpp" />
+    <ClCompile Include="..\wtf\SizeLimits.cpp" />
+    <ClCompile Include="..\wtf\StackBounds.cpp" />
+    <ClCompile Include="..\wtf\StringExtras.cpp" />
+    <ClCompile Include="..\wtf\StringPrintStream.cpp" />
+    <ClCompile Include="..\wtf\TCSystemAlloc.cpp" />
+    <ClCompile Include="..\wtf\text\AtomicString.cpp" />
+    <ClCompile Include="..\wtf\text\Base64.cpp" />
+    <ClCompile Include="..\wtf\text\CString.cpp" />
+    <ClCompile Include="..\wtf\text\StringBuilder.cpp" />
+    <ClCompile Include="..\wtf\text\StringImpl.cpp" />
+    <ClCompile Include="..\wtf\text\StringStatics.cpp" />
+    <ClCompile Include="..\wtf\text\WTFString.cpp" />
+    <ClCompile Include="..\wtf\Threading.cpp" />
+    <ClCompile Include="..\wtf\ThreadingWin.cpp" />
+    <ClCompile Include="..\wtf\threadspecificWin.cpp" />
+    <ClCompile Include="..\wtf\threads\BinarySemaphore.cpp" />
+    <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp" />
+    <ClCompile Include="..\wtf\TypeTraits.cpp" />
+    <ClCompile Include="..\wtf\unicode\icu\CollatorICU.cpp" />
+    <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
+    <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
+    <ClCompile Include="..\wtf\win\OwnPtrWin.cpp" />
+    <ClCompile Include="..\wtf\WTFThreadData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\WTF\config.h" />
+    <ClInclude Include="..\wtf\Alignment.h" />
+    <ClInclude Include="..\wtf\AlwaysInline.h" />
+    <ClInclude Include="..\wtf\ArrayBuffer.h" />
+    <ClInclude Include="..\wtf\ArrayBufferView.h" />
+    <ClInclude Include="..\wtf\ASCIICType.h" />
+    <ClInclude Include="..\wtf\Assertions.h" />
+    <ClInclude Include="..\wtf\Atomics.h" />
+    <ClInclude Include="..\wtf\AVLTree.h" />
+    <ClInclude Include="..\wtf\BitArray.h" />
+    <ClInclude Include="..\wtf\Bitmap.h" />
+    <ClInclude Include="..\wtf\BitVector.h" />
+    <ClInclude Include="..\wtf\BlockStack.h" />
+    <ClInclude Include="..\wtf\BloomFilter.h" />
+    <ClInclude Include="..\wtf\BoundsCheckedPointer.h" />
+    <ClInclude Include="..\wtf\BumpPointerAllocator.h" />
+    <ClInclude Include="..\wtf\CheckedArithmetic.h" />
+    <ClInclude Include="..\wtf\CheckedBoolean.h" />
+    <ClInclude Include="..\wtf\Compiler.h" />
+    <ClInclude Include="..\wtf\Complex.h" />
+    <ClInclude Include="..\wtf\CryptographicallyRandomNumber.h" />
+    <ClInclude Include="..\wtf\CurrentTime.h" />
+    <ClInclude Include="..\wtf\DataLog.h" />
+    <ClInclude Include="..\wtf\DateMath.h" />
+    <ClInclude Include="..\wtf\DecimalNumber.h" />
+    <ClInclude Include="..\wtf\Decoder.h" />
+    <ClInclude Include="..\wtf\Deque.h" />
+    <ClInclude Include="..\wtf\DisallowCType.h" />
+    <ClInclude Include="..\wtf\DoublyLinkedList.h" />
+    <ClInclude Include="..\wtf\dtoa.h" />
+    <ClInclude Include="..\wtf\dtoa\bignum-dtoa.h" />
+    <ClInclude Include="..\wtf\dtoa\bignum.h" />
+    <ClInclude Include="..\wtf\dtoa\cached-powers.h" />
+    <ClInclude Include="..\wtf\dtoa\diy-fp.h" />
+    <ClInclude Include="..\wtf\dtoa\double-conversion.h" />
+    <ClInclude Include="..\wtf\dtoa\double.h" />
+    <ClInclude Include="..\wtf\dtoa\fast-dtoa.h" />
+    <ClInclude Include="..\wtf\dtoa\fixed-dtoa.h" />
+    <ClInclude Include="..\wtf\dtoa\strtod.h" />
+    <ClInclude Include="..\wtf\dtoa\utils.h" />
+    <ClInclude Include="..\wtf\DynamicAnnotations.h" />
+    <ClInclude Include="..\wtf\Encoder.h" />
+    <ClInclude Include="..\wtf\FastAllocBase.h" />
+    <ClInclude Include="..\wtf\FastBitVector.h" />
+    <ClInclude Include="..\wtf\FastMalloc.h" />
+    <ClInclude Include="..\wtf\FilePrintStream.h" />
+    <ClInclude Include="..\wtf\FixedArray.h" />
+    <ClInclude Include="..\wtf\Float32Array.h" />
+    <ClInclude Include="..\wtf\Float64Array.h" />
+    <ClInclude Include="..\wtf\Forward.h" />
+    <ClInclude Include="..\wtf\Functional.h" />
+    <ClInclude Include="..\wtf\GetPtr.h" />
+    <ClInclude Include="..\wtf\GregorianDateTime.h" />
+    <ClInclude Include="..\wtf\HashCountedSet.h" />
+    <ClInclude Include="..\wtf\HashFunctions.h" />
+    <ClInclude Include="..\wtf\HashIterators.h" />
+    <ClInclude Include="..\wtf\HashMap.h" />
+    <ClInclude Include="..\wtf\HashSet.h" />
+    <ClInclude Include="..\wtf\HashTable.h" />
+    <ClInclude Include="..\wtf\HashTraits.h" />
+    <ClInclude Include="..\wtf\HexNumber.h" />
+    <ClInclude Include="..\wtf\Int16Array.h" />
+    <ClInclude Include="..\wtf\Int32Array.h" />
+    <ClInclude Include="..\wtf\Int8Array.h" />
+    <ClInclude Include="..\wtf\ListHashSet.h" />
+    <ClInclude Include="..\wtf\ListRefPtr.h" />
+    <ClInclude Include="..\wtf\Locker.h" />
+    <ClInclude Include="..\wtf\MainThread.h" />
+    <ClInclude Include="..\wtf\MallocZoneSupport.h" />
+    <ClInclude Include="..\wtf\MathExtras.h" />
+    <ClInclude Include="..\wtf\MD5.h" />
+    <ClInclude Include="..\wtf\MediaTime.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentation.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationArrayBufferView.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashCountedSet.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashMap.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationHashSet.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationListHashSet.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationParsedURL.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationSequence.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationString.h" />
+    <ClInclude Include="..\wtf\MemoryInstrumentationVector.h" />
+    <ClInclude Include="..\wtf\MemoryObjectInfo.h" />
+    <ClInclude Include="..\wtf\MessageQueue.h" />
+    <ClInclude Include="..\wtf\MetaAllocator.h" />
+    <ClInclude Include="..\wtf\MetaAllocatorHandle.h" />
+    <ClInclude Include="..\wtf\Noncopyable.h" />
+    <ClInclude Include="..\wtf\NonCopyingSort.h" />
+    <ClInclude Include="..\wtf\NotFound.h" />
+    <ClInclude Include="..\wtf\NullPtr.h" />
+    <ClInclude Include="..\wtf\NumberOfCores.h" />
+    <ClInclude Include="..\wtf\OSRandomSource.h" />
+    <ClInclude Include="..\wtf\OwnArrayPtr.h" />
+    <ClInclude Include="..\wtf\OwnPtr.h" />
+    <ClInclude Include="..\wtf\OwnPtrCommon.h" />
+    <ClInclude Include="..\wtf\PackedIntVector.h" />
+    <ClInclude Include="..\wtf\PageAllocation.h" />
+    <ClInclude Include="..\wtf\PageAllocationAligned.h" />
+    <ClInclude Include="..\wtf\PageBlock.h" />
+    <ClInclude Include="..\wtf\PageReservation.h" />
+    <ClInclude Include="..\wtf\ParallelJobs.h" />
+    <ClInclude Include="..\wtf\ParallelJobsGeneric.h" />
+    <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h" />
+    <ClInclude Include="..\wtf\ParallelJobsOpenMP.h" />
+    <ClInclude Include="..\wtf\PassOwnArrayPtr.h" />
+    <ClInclude Include="..\wtf\PassOwnPtr.h" />
+    <ClInclude Include="..\wtf\PassRefPtr.h" />
+    <ClInclude Include="..\wtf\PassTraits.h" />
+    <ClInclude Include="..\wtf\Platform.h" />
+    <ClInclude Include="..\wtf\PossiblyNull.h" />
+    <ClInclude Include="..\wtf\PrintStream.h" />
+    <ClInclude Include="..\wtf\RAMSize.h" />
+    <ClInclude Include="..\wtf\RandomNumber.h" />
+    <ClInclude Include="..\wtf\RandomNumberSeed.h" />
+    <ClInclude Include="..\wtf\RedBlackTree.h" />
+    <ClInclude Include="..\wtf\RefCounted.h" />
+    <ClInclude Include="..\wtf\RefCountedLeakCounter.h" />
+    <ClInclude Include="..\wtf\RefPtr.h" />
+    <ClInclude Include="..\wtf\RefPtrHashMap.h" />
+    <ClInclude Include="..\wtf\RetainPtr.h" />
+    <ClInclude Include="..\wtf\SaturatedArithmetic.h" />
+    <ClInclude Include="..\wtf\SegmentedVector.h" />
+    <ClInclude Include="..\wtf\SentinelLinkedList.h" />
+    <ClInclude Include="..\wtf\SHA1.h" />
+    <ClInclude Include="..\wtf\SinglyLinkedList.h" />
+    <ClInclude Include="..\wtf\StackBounds.h" />
+    <ClInclude Include="..\wtf\StaticConstructors.h" />
+    <ClInclude Include="..\wtf\StdLibExtras.h" />
+    <ClInclude Include="..\wtf\StringExtras.h" />
+    <ClInclude Include="..\wtf\StringHasher.h" />
+    <ClInclude Include="..\wtf\StringPrintStream.h" />
+    <ClInclude Include="..\wtf\TCPackedCache.h" />
+    <ClInclude Include="..\wtf\TCPageMap.h" />
+    <ClInclude Include="..\wtf\TCSpinLock.h" />
+    <ClInclude Include="..\wtf\TCSystemAlloc.h" />
+    <ClInclude Include="..\wtf\TemporaryChange.h" />
+    <ClInclude Include="..\wtf\text\ASCIIFastPath.h" />
+    <ClInclude Include="..\wtf\text\AtomicString.h" />
+    <ClInclude Include="..\wtf\text\AtomicStringHash.h" />
+    <ClInclude Include="..\wtf\text\AtomicStringImpl.h" />
+    <ClInclude Include="..\wtf\text\Base64.h" />
+    <ClInclude Include="..\wtf\text\CString.h" />
+    <ClInclude Include="..\wtf\text\IntegerToStringConversion.h" />
+    <ClInclude Include="..\wtf\text\StringBuffer.h" />
+    <ClInclude Include="..\wtf\text\StringBuilder.h" />
+    <ClInclude Include="..\wtf\text\StringConcatenate.h" />
+    <ClInclude Include="..\wtf\text\StringHash.h" />
+    <ClInclude Include="..\wtf\text\StringImpl.h" />
+    <ClInclude Include="..\wtf\text\StringOperators.h" />
+    <ClInclude Include="..\wtf\text\WTFString.h" />
+    <ClInclude Include="..\wtf\Threading.h" />
+    <ClInclude Include="..\wtf\ThreadingPrimitives.h" />
+    <ClInclude Include="..\wtf\ThreadRestrictionVerifier.h" />
+    <ClInclude Include="..\wtf\threadsafeRefCounted.h" />
+    <ClInclude Include="..\wtf\threadspecific.h" />
+    <ClInclude Include="..\wtf\threads\BinarySemaphore.h" />
+    <ClInclude Include="..\wtf\TypeTraits.h" />
+    <ClInclude Include="..\wtf\Uint16Array.h" />
+    <ClInclude Include="..\wtf\Uint32Array.h" />
+    <ClInclude Include="..\wtf\Uint8Array.h" />
+    <ClInclude Include="..\wtf\unicode\CharacterNames.h" />
+    <ClInclude Include="..\wtf\unicode\Collator.h" />
+    <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h" />
+    <ClInclude Include="..\wtf\unicode\Unicode.h" />
+    <ClInclude Include="..\wtf\unicode\UnicodeMacrosFromICU.h" />
+    <ClInclude Include="..\wtf\unicode\UTF8.h" />
+    <ClInclude Include="..\wtf\UnusedParam.h" />
+    <ClInclude Include="..\wtf\ValueCheck.h" />
+    <ClInclude Include="..\wtf\Vector.h" />
+    <ClInclude Include="..\wtf\VMTags.h" />
+    <ClInclude Include="..\wtf\WTFThreadData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WTFPostBuild.cmd" />
+    <None Include="WTFPreBuild.cmd" />
+    <None Include="WTFPreLink.cmd" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8EF73779-BED3-45BB-816D-9FF58399AFA5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>WTFvcproj</RootNamespace>
+    <ProjectName>WTF</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="WTFDebug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="WTFRelease.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <BrowseInformationFile>
+      </BrowseInformationFile>
+      <StringPooling>
+      </StringPooling>
+      <PreprocessorDefinitions>WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <BuildLog />
+    <Lib>
+      <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
+    </Lib>
+    <Lib />
+    <Lib>
+      <UseUnicodeResponseFiles>
+      </UseUnicodeResponseFiles>
+      <Verbose>
+      </Verbose>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <SubSystem>
+      </SubSystem>
+    </Lib>
+    <PreBuildEvent />
+    <PreLinkEvent />
+    <PostBuildEvent />
+    <Xdcmake />
+    <Bscmake>
+      <OutputFile>$(OutDir)\$(TargetName).bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>
+      </AssemblerListingLocation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

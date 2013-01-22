@@ -1,12 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTFGenerated", "WTFGenerated.vcproj", "{5AE5F5E4-782D-4F63-B4D7-3977B52B9950}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTFGenerated", "WTFGenerated.vcxproj", "{5AE5F5E4-782D-4F63-B4D7-3977B52B9950}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5AE5F5E4-782D-4F63-B4D7-3977B52B9950} = {5AE5F5E4-782D-4F63-B4D7-3977B52B9950}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "WTF.vcxproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
