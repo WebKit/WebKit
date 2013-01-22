@@ -63,11 +63,11 @@ V8LazyEventListener::V8LazyEventListener(const AtomicString& functionName, const
 }
 
 template<typename T>
-v8::Handle<v8::Object> toObjectWrapper(T* domObject)
+v8::Handle<v8::Object> toObjectWrapper(T* domObject, v8::Isolate* isolate)
 {
     if (!domObject)
         return v8::Object::New();
-    v8::Handle<v8::Value> value = toV8(domObject, v8::Handle<v8::Object>());
+    v8::Handle<v8::Value> value = toV8(domObject, v8::Handle<v8::Object>(), isolate);
     if (value.IsEmpty())
         return v8::Object::New();
     return value.As<v8::Object>();
@@ -80,7 +80,7 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionCo
         return v8::Local<v8::Value>();
 
     v8::Local<v8::Function> handlerFunction = listenerObject.As<v8::Function>();
-    v8::Local<v8::Object> receiver = getReceiverObject(event);
+    v8::Local<v8::Object> receiver = getReceiverObject(context, event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
@@ -178,9 +178,9 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (m_node && m_node->isHTMLElement())
         formElement = static_cast<HTMLElement*>(m_node)->form();
 
-    v8::Handle<v8::Object> nodeWrapper = toObjectWrapper<Node>(m_node);
-    v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(formElement);
-    v8::Handle<v8::Object> documentWrapper = toObjectWrapper<Document>(m_node ? m_node->ownerDocument() : 0);
+    v8::Handle<v8::Object> nodeWrapper = toObjectWrapper<Node>(m_node, v8Context->GetIsolate());
+    v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(formElement, v8Context->GetIsolate());
+    v8::Handle<v8::Object> documentWrapper = toObjectWrapper<Document>(m_node ? m_node->ownerDocument() : 0, v8Context->GetIsolate());
 
     v8::Local<v8::Object> thisObject = v8::Object::New();
     if (thisObject.IsEmpty())

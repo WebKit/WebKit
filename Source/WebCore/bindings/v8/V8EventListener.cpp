@@ -72,7 +72,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
 {
 
     v8::Local<v8::Function> handlerFunction = getListenerFunction(context);
-    v8::Local<v8::Object> receiver = getReceiverObject(event);
+    v8::Local<v8::Object> receiver = getReceiverObject(context, event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 

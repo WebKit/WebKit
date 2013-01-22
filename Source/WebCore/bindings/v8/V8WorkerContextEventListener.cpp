@@ -118,7 +118,7 @@ v8::Local<v8::Object> V8WorkerContextEventListener::getReceiverObject(ScriptExec
         return listener;
 
     EventTarget* target = event->currentTarget();
-    v8::Handle<v8::Value> value = toV8(target, v8::Handle<v8::Object>());
+    v8::Handle<v8::Value> value = toV8(target, v8::Handle<v8::Object>(), toV8Context(context, worldContext())->GetIsolate());
     if (value.IsEmpty())
         return v8::Local<v8::Object>();
     return v8::Local<v8::Object>::New(v8::Handle<v8::Object>::Cast(value));
