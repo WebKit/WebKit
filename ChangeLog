@@ -1,3 +1,13 @@
+2013-01-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Debug build failure on x86-64
+        https://bugs.webkit.org/show_bug.cgi?id=107400
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac: use thin archives for convenience libraries, if AR_FLAGS was not
+        overriden through the environment variable.
+
 2013-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [Autotools] Remove the Canvas Path configuration option

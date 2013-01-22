@@ -126,6 +126,10 @@ AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_SYS_LARGEFILE
 
+if test -z "$AR_FLAGS"; then
+   AR_FLAGS="cruT"
+fi
+
 # Check whether a C++ was found (AC_PROG_CXX sets $CXX to "g++" even when it
 # doesn't exist)
 AC_LANG_PUSH([C++])
