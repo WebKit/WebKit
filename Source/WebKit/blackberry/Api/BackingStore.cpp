@@ -324,6 +324,8 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
         setTileMatrixNeedsUpdate();
 
     atomic_sub(&m_suspendBackingStoreUpdates, 1);
+
+    dispatchRenderJob();
 }
 
 void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperation op)

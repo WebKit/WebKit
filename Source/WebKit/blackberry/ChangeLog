@@ -1,3 +1,18 @@
+2013-01-22  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] GIF & RAF animations sometimes don't resume after zoom
+        https://bugs.webkit.org/show_bug.cgi?id=107590
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        Internal PR 276907.
+        Dispatch render jobs when resuming backing store updates to perform jobs
+        queued when updates were suspended.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+
 2013-01-21  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Skip spell checking on single character strings
