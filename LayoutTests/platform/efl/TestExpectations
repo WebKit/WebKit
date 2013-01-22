@@ -574,9 +574,6 @@ webkit.org/b/84186 fast/text-autosizing
 # Dialog element is not yet enabled.
 webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
-# Subpixel layout is not enabled.
-webkit.org/b/85532 fast/sub-pixel [ Skip ]
-
 # HIGH_DPI_CANVAS is not enabled.
 webkit.org/b/101809 fast/canvas/canvas-resize-reset-pixelRatio.html [ Skip ]
 
