@@ -38,6 +38,7 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
     this._damageCallback = damageCallback;
     this._highlightChunkLimit = 1000;
+    this._highlightLineLimit = 500;
 }
 
 WebInspector.TextEditorHighlighter._MaxLineCount = 10000;
@@ -56,20 +57,11 @@ WebInspector.TextEditorHighlighter.prototype = {
     },
 
     /**
-     * @param {number} lineNumber
-     * @return {Array.<{startColumn: number, endColumn: number, token: string}>}
+     * @param {number} highlightLineLimit
      */
-    orderedRangesPerLine: function(lineNumber)
+    setHighlightLineLimit: function(highlightLineLimit)
     {
-        var syntaxTokenHighligh = this._textModel.getAttribute(lineNumber, "highlight");
-        if (!syntaxTokenHighligh)
-            return [];
-
-        syntaxTokenHighligh.ranges.sort(function(a, b) {
-            return a.startColumn - b.startColumn;
-        });
-
-        return syntaxTokenHighligh.ranges;
+        this._highlightLineLimit = highlightLineLimit;
     },
 
     /**
@@ -196,7 +188,7 @@ WebInspector.TextEditorHighlighter.prototype = {
                 do {
                     var newColumn = this._tokenizer.nextToken(lastHighlightedColumn);
                     var tokenType = this._tokenizer.tokenType;
-                    if (tokenType)
+                    if (tokenType && lastHighlightedColumn < this._highlightLineLimit)
                         state.ranges.push({
                             startColumn: lastHighlightedColumn,
                             endColumn: newColumn - 1,

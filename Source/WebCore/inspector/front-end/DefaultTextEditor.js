@@ -2057,7 +2057,7 @@ WebInspector.TextEditorMainPanel.prototype = {
                 cssClasses.push(value.cssClass);
             }
 
-            var ranges = this._highlighter.orderedRangesPerLine(lineNumber);
+            var ranges = highlight.ranges;
             this._renderRanges(lineRow, line, ranges);
 
             for(var i = 0; i < metrics.length; ++i)

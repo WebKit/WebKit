@@ -11,6 +11,7 @@ function test()
     var highlighter = new WebInspector.TextEditorHighlighter(textModel, function() {});
     highlighter.mimeType = "text/javascript";
     highlighter.highlightChunkLimit = Number.MAX_VALUE; // Synchronous.
+    highlighter.setHighlightLineLimit(Number.MAX_VALUE);
 
     var src = "/* asdf */ ";
     var comments = 1;
