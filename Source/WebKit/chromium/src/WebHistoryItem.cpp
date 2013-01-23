@@ -36,7 +36,7 @@
 #include "HistoryItem.h"
 #include "KURL.h"
 #include "SerializedScriptValue.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 #include <public/WebHTTPBody.h>
 #include <public/WebPoint.h>
 #include <public/WebString.h>

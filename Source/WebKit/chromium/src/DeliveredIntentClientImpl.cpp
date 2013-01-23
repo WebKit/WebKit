@@ -32,7 +32,7 @@
 #include "DeliveredIntentClientImpl.h"
 
 #include "WebDeliveredIntentClient.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 
 namespace WebKit {
 

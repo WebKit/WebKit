@@ -39,7 +39,7 @@
 #include "SerializedScriptValue.h"
 #include "WebFrame.h"
 #include "WebFrameImpl.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 #include <public/WebString.h>
 
 using namespace WebCore;

@@ -178,12 +178,12 @@
 #include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSecurityOrigin.h"
+#include "WebSerializedScriptValue.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "painting/GraphicsContextBuilder.h"
-#include "platform/WebSerializedScriptValue.h"
 #include <algorithm>
 #include <public/Platform.h>
 #include <public/WebFileSystem.h>

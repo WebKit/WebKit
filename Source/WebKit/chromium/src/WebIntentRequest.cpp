@@ -35,7 +35,7 @@
 #include "IntentRequest.h"
 #include "SerializedScriptValue.h"
 #include "WebIntent.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 
 namespace WebKit {
 

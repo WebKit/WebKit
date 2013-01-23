@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 
 #include "SerializedScriptValue.h"
 #include <public/WebString.h>

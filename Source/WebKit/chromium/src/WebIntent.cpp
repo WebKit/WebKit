@@ -35,7 +35,7 @@
 #include "MessagePort.h"
 #include "PlatformMessagePortChannel.h"
 #include "SerializedScriptValue.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {
