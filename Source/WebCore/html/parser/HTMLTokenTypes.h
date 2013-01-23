@@ -42,17 +42,6 @@ public:
         Character,
         EndOfFile,
     };
-
-    class DoctypeData : public DoctypeDataBase {
-        WTF_MAKE_NONCOPYABLE(DoctypeData);
-    public:
-        DoctypeData()
-            : m_forceQuirks(false)
-        {
-        }
-
-        bool m_forceQuirks;
-    };
 };
 
 }

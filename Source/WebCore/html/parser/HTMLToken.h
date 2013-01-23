@@ -34,18 +34,36 @@
 
 namespace WebCore {
 
-class HTMLToken : public MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData> {
+class DoctypeData {
+    WTF_MAKE_NONCOPYABLE(DoctypeData);
+public:
+    DoctypeData()
+        : m_hasPublicIdentifier(false)
+        , m_hasSystemIdentifier(false)
+        , m_forceQuirks(false)
+    {
+    }
+
+    // FIXME: This should use String instead of Vector<UChar>.
+    bool m_hasPublicIdentifier;
+    bool m_hasSystemIdentifier;
+    WTF::Vector<UChar> m_publicIdentifier;
+    WTF::Vector<UChar> m_systemIdentifier;
+    bool m_forceQuirks;
+};
+
+class HTMLToken : public MarkupTokenBase<HTMLTokenTypes> {
 public:
     void appendToName(UChar character)
     {
         ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
-        MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData>::appendToName(character);
+        MarkupTokenBase<HTMLTokenTypes>::appendToName(character);
     }
 
     const DataVector& name() const
     {
         ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
-        return MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData>::name();
+        return MarkupTokenBase<HTMLTokenTypes>::name();
     }
 
     bool forceQuirks() const
@@ -59,6 +77,74 @@ public:
         ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
         m_doctypeData->m_forceQuirks = true;
     }
+
+    void beginDOCTYPE()
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::DOCTYPE;
+        m_doctypeData = adoptPtr(new DoctypeData);
+    }
+
+    void beginDOCTYPE(UChar character)
+    {
+        ASSERT(character);
+        beginDOCTYPE();
+        m_data.append(character);
+        m_orAllData |= character;
+    }
+
+    // FIXME: Distinguish between a missing public identifer and an empty one.
+    const WTF::Vector<UChar>& publicIdentifier() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        return m_doctypeData->m_publicIdentifier;
+    }
+
+    // FIXME: Distinguish between a missing system identifer and an empty one.
+    const WTF::Vector<UChar>& systemIdentifier() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        return m_doctypeData->m_systemIdentifier;
+    }
+
+    void setPublicIdentifierToEmptyString()
+    {
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        m_doctypeData->m_hasPublicIdentifier = true;
+        m_doctypeData->m_publicIdentifier.clear();
+    }
+
+    void setSystemIdentifierToEmptyString()
+    {
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        m_doctypeData->m_hasSystemIdentifier = true;
+        m_doctypeData->m_systemIdentifier.clear();
+    }
+
+    void appendToPublicIdentifier(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        ASSERT(m_doctypeData->m_hasPublicIdentifier);
+        m_doctypeData->m_publicIdentifier.append(character);
+    }
+
+    void appendToSystemIdentifier(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::DOCTYPE);
+        ASSERT(m_doctypeData->m_hasSystemIdentifier);
+        m_doctypeData->m_systemIdentifier.append(character);
+    }
+
+    PassOwnPtr<DoctypeData> releaseDoctypeData()
+    {
+        return m_doctypeData.release();
+    }
+
+private:
+    // For DOCTYPE
+    OwnPtr<DoctypeData> m_doctypeData;
 };
 
 class AtomicHTMLToken : public RefCounted<AtomicHTMLToken> {
@@ -219,7 +305,7 @@ private:
             break;
         case HTMLTokenTypes::DOCTYPE:
             m_name = token.data();
-            m_doctypeData = adoptPtr(new HTMLToken::DoctypeData());
+            m_doctypeData = adoptPtr(new DoctypeData());
             m_doctypeData->m_hasPublicIdentifier = true;
             m_doctypeData->m_publicIdentifier.append(token.publicIdentifier().characters(), token.publicIdentifier().length());
             m_doctypeData->m_hasSystemIdentifier = true;
@@ -300,7 +386,7 @@ private:
     bool m_isAll8BitData;
 
     // For DOCTYPE
-    OwnPtr<HTMLTokenTypes::DoctypeData> m_doctypeData;
+    OwnPtr<DoctypeData> m_doctypeData;
 
     // For StartTag and EndTag
     bool m_selfClosing;

@@ -45,21 +45,6 @@ static inline Attribute* findAttributeInVector(Vector<Attribute>& attributes, co
     return 0;
 }
 
-class DoctypeDataBase {
-    WTF_MAKE_NONCOPYABLE(DoctypeDataBase); WTF_MAKE_FAST_ALLOCATED;
-public:
-    DoctypeDataBase()
-        : m_hasPublicIdentifier(false)
-        , m_hasSystemIdentifier(false)
-    {
-    }
-
-    bool m_hasPublicIdentifier;
-    bool m_hasSystemIdentifier;
-    WTF::Vector<UChar> m_publicIdentifier;
-    WTF::Vector<UChar> m_systemIdentifier;
-};
-
 class AttributeBase {
 public:
     class Range {
@@ -74,14 +59,13 @@ public:
     WTF::Vector<UChar, 32> m_value;
 };
 
-template<typename TypeSet, typename DoctypeDataType = DoctypeDataBase, typename AttributeType = AttributeBase>
+template<typename TypeSet, typename AttributeType = AttributeBase>
 class MarkupTokenBase {
     WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef TypeSet Type;
     typedef AttributeType Attribute;
-    typedef DoctypeDataType DoctypeData;
 
     typedef WTF::Vector<Attribute, 10> AttributeList;
     typedef WTF::Vector<UChar, 1024> DataVector;
@@ -167,21 +151,6 @@ public:
     {
         ASSERT(m_type == TypeSet::Uninitialized);
         m_type = TypeSet::Comment;
-    }
-
-    void beginDOCTYPE()
-    {
-        ASSERT(m_type == TypeSet::Uninitialized);
-        m_type = TypeSet::DOCTYPE;
-        m_doctypeData = adoptPtr(new DoctypeData);
-    }
-
-    void beginDOCTYPE(UChar character)
-    {
-        ASSERT(character);
-        beginDOCTYPE();
-        m_data.append(character);
-        m_orAllData |= character;
     }
 
     void appendToCharacter(char character)
@@ -331,50 +300,6 @@ public:
         return (m_orAllData <= 0xff);
     }
 
-    // FIXME: Distinguish between a missing public identifer and an empty one.
-    const WTF::Vector<UChar>& publicIdentifier() const
-    {
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        return m_doctypeData->m_publicIdentifier;
-    }
-
-    // FIXME: Distinguish between a missing system identifer and an empty one.
-    const WTF::Vector<UChar>& systemIdentifier() const
-    {
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        return m_doctypeData->m_systemIdentifier;
-    }
-
-    void setPublicIdentifierToEmptyString()
-    {
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        m_doctypeData->m_hasPublicIdentifier = true;
-        m_doctypeData->m_publicIdentifier.clear();
-    }
-
-    void setSystemIdentifierToEmptyString()
-    {
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        m_doctypeData->m_hasSystemIdentifier = true;
-        m_doctypeData->m_systemIdentifier.clear();
-    }
-
-    void appendToPublicIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        ASSERT(m_doctypeData->m_hasPublicIdentifier);
-        m_doctypeData->m_publicIdentifier.append(character);
-    }
-
-    void appendToSystemIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == TypeSet::DOCTYPE);
-        ASSERT(m_doctypeData->m_hasSystemIdentifier);
-        m_doctypeData->m_systemIdentifier.append(character);
-    }
-
     const DataVector& name() const
     {
         return m_data;
@@ -387,11 +312,6 @@ public:
         if (isAll8BitData())
             return String::make8BitFrom16BitSource(m_data.data(), m_data.size());
         return String(m_data.data(), m_data.size());
-    }
-
-    PassOwnPtr<DoctypeData> releaseDoctypeData()
-    {
-        return m_doctypeData.release();
     }
 
 protected:
@@ -417,9 +337,6 @@ protected:
     int m_baseOffset;
     DataVector m_data;
     UChar m_orAllData;
-
-    // For DOCTYPE
-    OwnPtr<DoctypeData> m_doctypeData;
 
     // For StartTag and EndTag
     bool m_selfClosing;
