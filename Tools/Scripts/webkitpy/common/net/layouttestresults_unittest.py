@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -38,10 +38,10 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 class LayoutTestResultsTest(unittest.TestCase):
     def test_set_failure_limit_count(self):
         results = LayoutTestResults([])
-        self.assertEqual(results.failure_limit_count(), None)
+        self.assertIsNone(results.failure_limit_count())
         results.set_failure_limit_count(10)
         self.assertEqual(results.failure_limit_count(), 10)
 
     def test_results_from_string(self):
-        self.assertEqual(LayoutTestResults.results_from_string(None), None)
-        self.assertEqual(LayoutTestResults.results_from_string(""), None)
+        self.assertIsNone(LayoutTestResults.results_from_string(None))
+        self.assertIsNone(LayoutTestResults.results_from_string(""))

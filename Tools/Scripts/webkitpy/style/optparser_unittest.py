@@ -22,7 +22,7 @@
 
 """Unit tests for parser.py."""
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.style.optparser import ArgumentParser
@@ -145,9 +145,9 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertEqual(files, [])
 
         self.assertEqual(options.filter_rules, [])
-        self.assertEqual(options.git_commit, None)
-        self.assertEqual(options.diff_files, False)
-        self.assertEqual(options.is_verbose, False)
+        self.assertIsNone(options.git_commit)
+        self.assertFalse(options.diff_files)
+        self.assertFalse(options.is_verbose)
         self.assertEqual(options.min_confidence, 3)
         self.assertEqual(options.output_format, 'vs7')
 
@@ -166,9 +166,9 @@ class ArgumentParserTest(LoggingTestCase):
         (files, options) = parse(['--git-diff=commit'])
         self.assertEqual(options.git_commit, 'commit')
         (files, options) = parse(['--verbose'])
-        self.assertEqual(options.is_verbose, True)
+        self.assertTrue(options.is_verbose)
         (files, options) = parse(['--diff-files', 'file.txt'])
-        self.assertEqual(options.diff_files, True)
+        self.assertTrue(options.diff_files)
 
         # Pass user_rules.
         (files, options) = parse(['--filter=+build,-whitespace'])
@@ -200,8 +200,8 @@ class CommandOptionValuesTest(unittest.TestCase):
         # Check default parameters.
         options = ProcessorOptions()
         self.assertEqual(options.filter_rules, [])
-        self.assertEqual(options.git_commit, None)
-        self.assertEqual(options.is_verbose, False)
+        self.assertIsNone(options.git_commit)
+        self.assertFalse(options.is_verbose)
         self.assertEqual(options.min_confidence, 1)
         self.assertEqual(options.output_format, "emacs")
 
@@ -222,7 +222,7 @@ class CommandOptionValuesTest(unittest.TestCase):
                                    output_format="vs7")
         self.assertEqual(options.filter_rules, ["+"])
         self.assertEqual(options.git_commit, "commit")
-        self.assertEqual(options.is_verbose, True)
+        self.assertTrue(options.is_verbose)
         self.assertEqual(options.min_confidence, 3)
         self.assertEqual(options.output_format, "vs7")
 

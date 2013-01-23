@@ -25,7 +25,7 @@
 
 from http_lock import HttpLock
 import os  # Used for os.getpid()
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive

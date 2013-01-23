@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -69,4 +69,4 @@ MOCK output of child process
             def __init__(self, path):
                 self.filename = path
         archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_logs=expected_logs)
-        self.assertEqual(archive, None)
+        self.assertIsNone(archive)

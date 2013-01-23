@@ -23,7 +23,7 @@
 
 """Unit test for png.py."""
 
-import unittest
+import unittest2 as unittest
 from png import PNGChecker
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost

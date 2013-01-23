@@ -32,7 +32,7 @@ import optparse
 import StringIO
 import sys
 import time
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 
@@ -54,7 +54,7 @@ def get_options(args):
 class TestUtilityFunctions(unittest.TestCase):
     def test_print_options(self):
         options, args = get_options([])
-        self.assertTrue(options is not None)
+        self.assertIsNotNone(options)
 
 
 class  Testprinter(unittest.TestCase):
@@ -108,19 +108,19 @@ class  Testprinter(unittest.TestCase):
         printer._options.time_out_ms = 6000
         printer._options.slow_time_out_ms = 12000
         printer.print_config('/tmp')
-        self.assertTrue("Using port 'test-mac-leopard'" in err.getvalue())
-        self.assertTrue('Test configuration: <leopard, x86, release>' in err.getvalue())
-        self.assertTrue('Placing test results in /tmp' in err.getvalue())
-        self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
-        self.assertTrue('Using Release build' in err.getvalue())
-        self.assertTrue('Pixel tests enabled' in err.getvalue())
-        self.assertTrue('Command line:' in err.getvalue())
-        self.assertTrue('Regular timeout: ' in err.getvalue())
+        self.assertIn("Using port 'test-mac-leopard'", err.getvalue())
+        self.assertIn('Test configuration: <leopard, x86, release>', err.getvalue())
+        self.assertIn('Placing test results in /tmp', err.getvalue())
+        self.assertIn('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic', err.getvalue())
+        self.assertIn('Using Release build', err.getvalue())
+        self.assertIn('Pixel tests enabled', err.getvalue())
+        self.assertIn('Command line:', err.getvalue())
+        self.assertIn('Regular timeout: ', err.getvalue())
 
         self.reset(err)
         printer._options.quiet = True
         printer.print_config('/tmp')
-        self.assertFalse('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
+        self.assertNotIn('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic', err.getvalue())
 
     def test_print_one_line_summary(self):
         printer, err = self.get_printer()

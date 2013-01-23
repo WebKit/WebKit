@@ -28,7 +28,7 @@
 
 import os
 import tempfile
-import unittest
+import unittest2 as unittest
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -92,7 +92,7 @@ password: "SECRETSAUCE"
             def _is_mac_os_x(self):
                 return False
         credentials = FakeCredentials("bugs.webkit.org")
-        self.assertEqual(credentials._is_mac_os_x(), False)
+        self.assertFalse(credentials._is_mac_os_x())
         self.assertEqual(credentials._credentials_from_keychain("foo"), ["foo", None])
 
     def test_security_output_parse(self):
@@ -109,7 +109,7 @@ password: "SECRETSAUCE"
         # by the test case CredentialsTest._assert_security_call (below).
         outputCapture = OutputCapture()
         outputCapture.capture_output()
-        self.assertEqual(credentials._run_security_tool(), None)
+        self.assertIsNone(credentials._run_security_tool())
         outputCapture.restore_output()
 
     def _assert_security_call(self, username=None):

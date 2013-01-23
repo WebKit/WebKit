@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from datetime import datetime
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock

@@ -32,7 +32,7 @@ see the TestLogStream class, and perhaps also the LogTesting class.
 """
 
 import logging
-import unittest
+import unittest2 as unittest
 
 
 class TestLogStream(object):

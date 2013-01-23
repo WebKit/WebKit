@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.models import test_expectations
@@ -97,22 +97,22 @@ class InterpretTestFailuresTest(unittest.TestCase):
         self.assertEqual(test_dict['image_diff_percent'], 0.42)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
-        self.assertTrue('image_diff_percent' in test_dict)
+        self.assertIn('image_diff_percent', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
         self.assertEqual(len(test_dict), 0)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureMissingAudio()])
-        self.assertTrue('is_missing_audio' in test_dict)
+        self.assertIn('is_missing_audio', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureMissingResult()])
-        self.assertTrue('is_missing_text' in test_dict)
+        self.assertIn('is_missing_text', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureMissingImage()])
-        self.assertTrue('is_missing_image' in test_dict)
+        self.assertIn('is_missing_image', test_dict)
 
         test_dict = test_run_results._interpret_test_failures([test_failures.FailureMissingImageHash()])
-        self.assertTrue('is_missing_image' in test_dict)
+        self.assertIn('is_missing_image', test_dict)
 
 
 class SummarizedResultsTest(unittest.TestCase):
@@ -122,7 +122,7 @@ class SummarizedResultsTest(unittest.TestCase):
 
     def test_no_svn_revision(self):
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-        self.assertTrue('revision' not in summary)
+        self.assertNotIn('revision', summary)
 
     def test_svn_revision(self):
         self.port._options.builder_name = 'dummy builder'

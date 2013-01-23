@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.layout_tests.reftests import extract_reference_link
 
@@ -55,10 +55,10 @@ CONTENT OF TEST
 </html>
 """
         matches, mismatches = extract_reference_link.get_reference_link(html_1)
-        self.assertEqual(matches,
-                         ["green-box-ref.xht", "blue-box-ref.xht"])
-        self.assertEqual(mismatches,
-                         ["red-box-notref.xht", "red-box-notref.xht"])
+        self.assertItemsEqual(matches,
+                              ["green-box-ref.xht", "blue-box-ref.xht"])
+        self.assertItemsEqual(mismatches,
+                              ["red-box-notref.xht", "red-box-notref.xht"])
 
         html_2 = ""
         empty_tuple_1 = extract_reference_link.get_reference_link(html_2)

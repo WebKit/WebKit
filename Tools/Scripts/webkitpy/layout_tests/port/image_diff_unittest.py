@@ -28,7 +28,7 @@
 
 """Unit testing base class for Port implementations."""
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.port.image_diff import ImageDiffer

@@ -34,7 +34,7 @@ import os
 import socket
 import sys
 import time
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem

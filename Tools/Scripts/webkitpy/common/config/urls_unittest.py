@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from .urls import parse_bug_id, parse_attachment_id
 
@@ -42,12 +42,12 @@ class URLsTest(unittest.TestCase):
         self.assertEqual(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345excludefield=attachmentdata&ctype=xml"))
 
         # Our url parser is super-fragile, but at least we're testing it.
-        self.assertEqual(None, parse_bug_id("http://www.webkit.org/b/12345"))
-        self.assertEqual(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
-        self.assertEqual(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345&excludefield=attachmentdata"))
-        self.assertEqual(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&excludefield=attachmentdata&id=12345"))
-        self.assertEqual(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&ctype=xml&id=12345"))
-        self.assertEqual(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&id=12345&ctype=xml"))
+        self.assertIsNone(parse_bug_id("http://www.webkit.org/b/12345"))
+        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
+        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345&excludefield=attachmentdata"))
+        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&excludefield=attachmentdata&id=12345"))
+        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&ctype=xml&id=12345"))
+        self.assertIsNone(parse_bug_id("http://bugs.webkit.org/show_bug.cgi?excludefield=attachmentdata&id=12345&ctype=xml"))
 
     def test_parse_attachment_id(self):
         self.assertEqual(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=review"))

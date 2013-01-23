@@ -24,7 +24,7 @@
 """Unit test for xcodeproj.py."""
 
 import xcodeproj
-import unittest
+import unittest2 as unittest
 
 
 class TestErrorHandler(object):

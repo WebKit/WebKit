@@ -22,7 +22,7 @@
 
 """Unit test for cmake.py."""
 
-import unittest
+import unittest2 as unittest
 
 from cmake import CMakeChecker
 

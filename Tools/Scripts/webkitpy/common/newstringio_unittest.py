@@ -28,7 +28,7 @@
 
 """Unit tests for newstringio module."""
 
-import unittest
+import unittest2 as unittest
 
 import newstringio
 

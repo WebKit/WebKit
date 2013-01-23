@@ -29,7 +29,7 @@
 
 # Unit test for omahaproxy.py
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.net.omahaproxy import OmahaProxy
 
@@ -128,9 +128,9 @@ class OmahaProxyTest(unittest.TestCase):
         revisions = omahaproxy.get_revisions()
         self.assertEqual(len(revisions), 5)
         for revision in revisions:
-            self.assertTrue("commit" in revision)
-            self.assertTrue("channel" in revision)
-            self.assertTrue("platform" in revision)
-            self.assertTrue("date" in revision)
+            self.assertIn("commit", revision)
+            self.assertIn("channel", revision)
+            self.assertIn("platform", revision)
+            self.assertIn("date", revision)
             self.assertEqual(len(revision.keys()), 4)
         self.assertEqual(revisions, self.expected_revisions)

@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 from webkitpy.common.config.committers import Account, CommitterList, Contributor, Committer, Reviewer
 
 class CommittersTest(unittest.TestCase):
@@ -51,7 +51,7 @@ class CommittersTest(unittest.TestCase):
         # Test valid committer, reviewer and contributor lookup
         self.assertEqual(committer_list.committer_by_name("Test One"), committer)
         self.assertEqual(committer_list.committer_by_name("Test Two"), reviewer)
-        self.assertEqual(committer_list.committer_by_name("Test Three"), None)
+        self.assertIsNone(committer_list.committer_by_name("Test Three"))
         self.assertEqual(committer_list.contributor_by_name("Test Three"), contributor)
         self.assertEqual(committer_list.contributor_by_name("test one"), committer)
         self.assertEqual(committer_list.contributor_by_name("test two"), reviewer)
@@ -62,21 +62,21 @@ class CommittersTest(unittest.TestCase):
 
         # Test lookup by login email address
         self.assertEqual(committer_list.account_by_login('zero@test.com'), account)
-        self.assertEqual(committer_list.account_by_login('zero@gmail.com'), None)
+        self.assertIsNone(committer_list.account_by_login('zero@gmail.com'))
         self.assertEqual(committer_list.account_by_login('one@test.com'), committer)
         self.assertEqual(committer_list.account_by_login('two@test.com'), reviewer)
-        self.assertEqual(committer_list.account_by_login('Two@rad.com'), None)
-        self.assertEqual(committer_list.account_by_login('so_two@gmail.com'), None)
+        self.assertIsNone(committer_list.account_by_login('Two@rad.com'))
+        self.assertIsNone(committer_list.account_by_login('so_two@gmail.com'))
 
         # Test that a known committer is not returned during reviewer lookup
-        self.assertEqual(committer_list.reviewer_by_email('one@test.com'), None)
-        self.assertEqual(committer_list.reviewer_by_email('three@test.com'), None)
+        self.assertIsNone(committer_list.reviewer_by_email('one@test.com'))
+        self.assertIsNone(committer_list.reviewer_by_email('three@test.com'))
         # and likewise that a known contributor is not returned for committer lookup.
-        self.assertEqual(committer_list.committer_by_email('three@test.com'), None)
+        self.assertIsNone(committer_list.committer_by_email('three@test.com'))
 
         # Test that unknown email address fail both committer and reviewer lookup
-        self.assertEqual(committer_list.committer_by_email('bar@bar.com'), None)
-        self.assertEqual(committer_list.reviewer_by_email('bar@bar.com'), None)
+        self.assertIsNone(committer_list.committer_by_email('bar@bar.com'))
+        self.assertIsNone(committer_list.reviewer_by_email('bar@bar.com'))
 
         # Test that emails returns a list.
         self.assertEqual(committer.emails, ['one@test.com'])

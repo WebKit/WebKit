@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
@@ -54,7 +54,7 @@ class FactoryTest(unittest.TestCase):
     def assert_port(self, port_name=None, os_name=None, os_version=None, options=None, cls=None):
         host = MockSystemHost(os_name=os_name, os_version=os_version)
         port = factory.PortFactory(host).get(port_name, options=options)
-        self.assertTrue(isinstance(port, cls))
+        self.assertIsInstance(port, cls)
 
     def test_mac(self):
         self.assert_port(port_name='mac-lion', cls=mac.MacPort)

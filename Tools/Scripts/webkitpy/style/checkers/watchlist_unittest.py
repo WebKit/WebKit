@@ -31,7 +31,7 @@
 '''Unit tests for watchlist.py.'''
 
 
-import unittest
+import unittest2 as unittest
 
 
 import watchlist

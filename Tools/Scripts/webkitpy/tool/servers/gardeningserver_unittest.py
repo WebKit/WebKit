@@ -28,7 +28,7 @@
 
 import json
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models.test_configuration import *

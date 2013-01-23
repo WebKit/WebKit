@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.filesystem_mock import MockFileSystem
@@ -69,13 +69,6 @@ Serial ATA Device: OPTIARC DVD RW AD-5670S
 """.format(process_name=process_name, pid=pid)
 
 class CrashLogsTest(unittest.TestCase):
-    def assertLinesEqual(self, a, b):
-        if hasattr(self, 'assertMultiLineEqual'):
-            self.assertMultiLineEqual(a, b)
-        else:
-            self.assertEqual(a.splitlines(), b.splitlines())
-
-
     def test_find_log_darwin(self):
         if not SystemHost().platform.is_mac():
             return
@@ -95,15 +88,15 @@ class CrashLogsTest(unittest.TestCase):
         filesystem = MockFileSystem(files)
         crash_logs = CrashLogs(MockSystemHost(filesystem=filesystem))
         log = crash_logs.find_newest_log("DumpRenderTree")
-        self.assertLinesEqual(log, newer_mock_crash_report)
+        self.assertMultiLineEqual(log, newer_mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28529)
-        self.assertLinesEqual(log, newer_mock_crash_report)
+        self.assertMultiLineEqual(log, newer_mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28530)
-        self.assertLinesEqual(log, mock_crash_report)
+        self.assertMultiLineEqual(log, mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28531)
-        self.assertEqual(log, None)
+        self.assertIsNone(log)
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0)
-        self.assertEqual(log, None)
+        self.assertIsNone(log)
 
         def bad_read(path):
             raise IOError('IOError: No such file or directory')
@@ -113,10 +106,10 @@ class CrashLogsTest(unittest.TestCase):
 
         filesystem.read_text_file = bad_read
         log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
-        self.assertTrue('IOError: No such file or directory' in log)
+        self.assertIn('IOError: No such file or directory', log)
 
         filesystem = MockFileSystem(files)
         crash_logs = CrashLogs(MockSystemHost(filesystem=filesystem))
         filesystem.mtime = bad_mtime
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
-        self.assertTrue('OSError: No such file or directory' in log)
+        self.assertIn('OSError: No such file or directory', log)

@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 
@@ -43,7 +43,7 @@ class OutputCaptureTest(unittest.TestCase):
         actual_stdout, actual_stderr, actual_logs = self.output.restore_output()
         self.assertEqual('', actual_stdout)
         self.assertEqual('', actual_stderr)
-        self.assertEqual(expected_logs, actual_logs)
+        self.assertMultiLineEqual(expected_logs, actual_logs)
 
     def test_initial_log_level(self):
         self.output.capture_output()

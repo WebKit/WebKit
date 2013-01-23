@@ -22,7 +22,7 @@
 
 """Unit tests for filter.py."""
 
-import unittest
+import unittest2 as unittest
 
 from filter import _CategoryFilter as CategoryFilter
 from filter import validate_filter_rules

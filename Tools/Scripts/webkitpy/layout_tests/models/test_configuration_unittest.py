@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.layout_tests.models.test_configuration import *
 
@@ -71,15 +71,15 @@ class TestConfigurationTest(unittest.TestCase):
     def test_hash(self):
         config_dict = {}
         config_dict[TestConfiguration('xp', 'x86', 'release')] = True
-        self.assertTrue(TestConfiguration('xp', 'x86', 'release') in config_dict)
+        self.assertIn(TestConfiguration('xp', 'x86', 'release'), config_dict)
         self.assertTrue(config_dict[TestConfiguration('xp', 'x86', 'release')])
 
         def query_unknown_key():
             return config_dict[TestConfiguration('xp', 'x86', 'debug')]
 
         self.assertRaises(KeyError, query_unknown_key)
-        self.assertTrue(TestConfiguration('xp', 'x86', 'release') in config_dict)
-        self.assertFalse(TestConfiguration('xp', 'x86', 'debug') in config_dict)
+        self.assertIn(TestConfiguration('xp', 'x86', 'release'), config_dict)
+        self.assertNotIn(TestConfiguration('xp', 'x86', 'debug'), config_dict)
         configs_list = [TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'), TestConfiguration('xp', 'x86', 'debug')]
         self.assertEqual(len(configs_list), 3)
         self.assertEqual(len(set(configs_list)), 2)
@@ -103,7 +103,7 @@ class SpecifierSorterTest(unittest.TestCase):
 
     def test_init(self):
         sorter = SpecifierSorter()
-        self.assertEqual(sorter.category_for_specifier('control'), None)
+        self.assertIsNone(sorter.category_for_specifier('control'))
         sorter = SpecifierSorter(self._all_test_configurations)
         self.assertEqual(sorter.category_for_specifier('xp'), 'version')
         sorter = SpecifierSorter(self._all_test_configurations, MOCK_MACROS)
@@ -111,7 +111,7 @@ class SpecifierSorterTest(unittest.TestCase):
 
     def test_add_specifier(self):
         sorter = SpecifierSorter()
-        self.assertEqual(sorter.category_for_specifier('control'), None)
+        self.assertIsNone(sorter.category_for_specifier('control'))
         sorter.add_specifier('version', 'control')
         self.assertEqual(sorter.category_for_specifier('control'), 'version')
         sorter.add_specifier('version', 'one')

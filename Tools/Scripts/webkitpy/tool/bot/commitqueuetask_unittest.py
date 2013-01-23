@@ -28,7 +28,7 @@
 
 from datetime import datetime
 import logging
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.net import bugzilla
 from webkitpy.common.net.layouttestresults import LayoutTestResults
@@ -372,7 +372,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
         patch = tool.bugs.fetch_attachment(10000)
         task = CommitQueueTask(commit_queue, patch)
         success = OutputCapture().assert_outputs(self, task.run, expected_logs=expected_logs)
-        self.assertEqual(success, False)
+        self.assertFalse(success)
 
     def test_test_failure(self):
         commit_queue = MockCommitQueue([

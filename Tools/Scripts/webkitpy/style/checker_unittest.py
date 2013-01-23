@@ -35,7 +35,7 @@
 
 import logging
 import os
-import unittest
+import unittest2 as unittest
 
 import checker as style
 from webkitpy.common.system.logtesting import LogTesting, TestLogStream
@@ -173,7 +173,7 @@ class GlobalVariablesTest(unittest.TestCase):
             # begin with -.
             self.assertTrue(rule.startswith('-'))
             # Check no rule occurs twice.
-            self.assertFalse(rule in already_seen)
+            self.assertNotIn(rule, already_seen)
             already_seen.append(rule)
 
     def test_defaults(self):
@@ -274,8 +274,8 @@ class GlobalVariablesTest(unittest.TestCase):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()
         for category in _MAX_REPORTS_PER_CATEGORY.iterkeys():
-            self.assertTrue(category in all_categories,
-                            'Key "%s" is not a category' % category)
+            self.assertIn(category, all_categories,
+                          'Key "%s" is not a category' % category)
 
 
 class CheckWebKitStyleFunctionTest(unittest.TestCase):
@@ -396,7 +396,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_none(self, file_path):
         """Assert that the dispatched checker is None."""
         checker = self.dispatch(file_path)
-        self.assertTrue(checker is None, 'Checking: "%s"' % file_path)
+        self.assertIsNone(checker, 'Checking: "%s"' % file_path)
 
     def assert_checker(self, file_path, expected_class):
         """Assert the type of the dispatched checker."""

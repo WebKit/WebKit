@@ -24,7 +24,7 @@
 """Unit test for changelog.py."""
 
 import changelog
-import unittest
+import unittest2 as unittest
 
 
 class ChangeLogCheckerTest(unittest.TestCase):

@@ -29,7 +29,7 @@
 import optparse
 import StringIO
 import time
-import unittest
+import unittest2 as unittest
 import sys
 
 from webkitpy.common.system import executive_mock
@@ -239,15 +239,15 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
 
     def test_drt_cmd_line(self):
         cmd_line = self.driver._drt_cmd_line(True, ['--a'])
-        self.assertTrue('--a' in cmd_line)
-        self.assertTrue('--create-stdin-fifo' in cmd_line)
-        self.assertTrue('--separate-stderr-fifo' in cmd_line)
+        self.assertIn('--a', cmd_line)
+        self.assertIn('--create-stdin-fifo', cmd_line)
+        self.assertIn('--separate-stderr-fifo', cmd_line)
 
     def test_read_prompt(self):
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['root@android:/ # '])
-        self.assertEqual(self.driver._read_prompt(time.time() + 1), None)
+        self.assertIsNone(self.driver._read_prompt(time.time() + 1))
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['$ '])
-        self.assertEqual(self.driver._read_prompt(time.time() + 1), None)
+        self.assertIsNone(self.driver._read_prompt(time.time() + 1))
 
     def test_command_from_driver_input(self):
         driver_input = driver.DriverInput('foo/bar/test.html', 10, 'checksum', True)

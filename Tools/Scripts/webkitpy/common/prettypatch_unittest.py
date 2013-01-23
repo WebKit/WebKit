@@ -28,7 +28,7 @@
 
 import os.path
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.prettypatch import PrettyPatch
@@ -77,7 +77,7 @@ Index: latin1_test
         pretty_patch = PrettyPatch(Executive(), self._webkit_root())
         pretty = pretty_patch.pretty_diff(self._diff_with_multiple_encodings)
         self.assertTrue(pretty)  # We got some output
-        self.assertTrue(isinstance(pretty, str))  # It's a byte array, not unicode
+        self.assertIsInstance(pretty, str)  # It's a byte array, not unicode
 
     def test_pretty_print_empty_string(self):
         if not self.check_ruby():

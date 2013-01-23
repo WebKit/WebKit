@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import builders
-import unittest
+import unittest2 as unittest
 
 
 class BuildersTest(unittest.TestCase):

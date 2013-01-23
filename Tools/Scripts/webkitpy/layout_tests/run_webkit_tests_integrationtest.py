@@ -40,7 +40,7 @@ import sys
 import thread
 import time
 import threading
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system import outputcapture, path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin

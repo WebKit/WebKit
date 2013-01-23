@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive_mock import MockExecutive
@@ -74,7 +74,7 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_versions(self):
         port = self.make_port()
-        self.assertTrue(port.name() in ('chromium-win-xp', 'chromium-win-win7'))
+        self.assertIn(port.name(), ('chromium-win-xp', 'chromium-win-win7'))
 
         self.assert_name(None, 'xp', 'chromium-win-xp')
         self.assert_name('chromium-win', 'xp', 'chromium-win-xp')

@@ -28,7 +28,7 @@
 
 '''Unit tests for watchlist.py.'''
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 from webkitpy.common.watchlist.watchlistparser import WatchListParser

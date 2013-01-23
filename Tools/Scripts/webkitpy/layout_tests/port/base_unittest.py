@@ -30,7 +30,7 @@ import logging
 import optparse
 import sys
 import tempfile
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system import executive_mock
@@ -57,7 +57,7 @@ class PortTest(unittest.TestCase):
 
     def test_default_child_processes(self):
         port = self.make_port()
-        self.assertNotEquals(port.default_child_processes(), None)
+        self.assertIsNotNone(port.default_child_processes())
 
     def test_format_wdiff_output_as_html(self):
         output = "OUTPUT %s %s %s" % (Port._WDIFF_DEL, Port._WDIFF_ADD, Port._WDIFF_END)
@@ -180,11 +180,11 @@ class PortTest(unittest.TestCase):
 
         # And make sure we actually get diff output.
         diff = port.diff_text('foo', 'bar', 'exp.txt', 'act.txt')
-        self.assertTrue('foo' in diff)
-        self.assertTrue('bar' in diff)
-        self.assertTrue('exp.txt' in diff)
-        self.assertTrue('act.txt' in diff)
-        self.assertFalse('nosuchthing' in diff)
+        self.assertIn('foo', diff)
+        self.assertIn('bar', diff)
+        self.assertIn('exp.txt', diff)
+        self.assertIn('act.txt', diff)
+        self.assertNotIn('nosuchthing', diff)
 
     def test_setup_test_run(self):
         port = self.make_port()
@@ -196,8 +196,8 @@ class PortTest(unittest.TestCase):
         port.host.filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
         port.host.filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
         dirs = port.test_dirs()
-        self.assertTrue('canvas' in dirs)
-        self.assertTrue('css2.1' in dirs)
+        self.assertIn('canvas', dirs)
+        self.assertIn('css2.1', dirs)
 
     def test_skipped_perf_tests(self):
         port = self.make_port()
@@ -223,7 +223,7 @@ class PortTest(unittest.TestCase):
 
     def test_get_option__unset(self):
         port = self.make_port()
-        self.assertEqual(port.get_option('foo'), None)
+        self.assertIsNone(port.get_option('foo'))
 
     def test_get_option__default(self):
         port = self.make_port()
@@ -320,7 +320,7 @@ class PortTest(unittest.TestCase):
     def test_find_with_skipped_directories(self):
         port = self.make_port(with_tests=True)
         tests = port.tests(['userscripts'])
-        self.assertTrue('userscripts/resources/iframe.html' not in tests)
+        self.assertNotIn('userscripts/resources/iframe.html', tests)
 
     def test_find_with_skipped_directories_2(self):
         port = self.make_port(with_tests=True)
@@ -432,20 +432,20 @@ class PortTest(unittest.TestCase):
     def test_tests(self):
         port = self.make_port(with_tests=True)
         tests = port.tests([])
-        self.assertTrue('passes/text.html' in tests)
-        self.assertTrue('virtual/passes/text.html' in tests)
+        self.assertIn('passes/text.html', tests)
+        self.assertIn('virtual/passes/text.html', tests)
 
         tests = port.tests(['passes'])
-        self.assertTrue('passes/text.html' in tests)
-        self.assertTrue('passes/passes/test-virtual-passes.html' in tests)
-        self.assertFalse('virtual/passes/text.html' in tests)
+        self.assertIn('passes/text.html', tests)
+        self.assertIn('passes/passes/test-virtual-passes.html', tests)
+        self.assertNotIn('virtual/passes/text.html', tests)
 
         tests = port.tests(['virtual/passes'])
-        self.assertFalse('passes/text.html' in tests)
-        self.assertTrue('virtual/passes/test-virtual-passes.html' in tests)
-        self.assertTrue('virtual/passes/passes/test-virtual-passes.html' in tests)
-        self.assertFalse('virtual/passes/test-virtual-virtual/passes.html' in tests)
-        self.assertFalse('virtual/passes/virtual/passes/test-virtual-passes.html' in tests)
+        self.assertNotIn('passes/text.html', tests)
+        self.assertIn('virtual/passes/test-virtual-passes.html', tests)
+        self.assertIn('virtual/passes/passes/test-virtual-passes.html', tests)
+        self.assertNotIn('virtual/passes/test-virtual-virtual/passes.html', tests)
+        self.assertNotIn('virtual/passes/virtual/passes/test-virtual-passes.html', tests)
 
     def test_build_path(self):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))

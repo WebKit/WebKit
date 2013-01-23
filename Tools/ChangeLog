@@ -1,5 +1,14 @@
 2013-01-22  Tim 'mithro' Ansell  <mithro@mithis.com>
 
+        Use Python 2.7 unittest syntax in our unittests
+        https://bugs.webkit.org/show_bug.cgi?id=105607
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/**/*_unittest.py:
+
+2013-01-22  Tim 'mithro' Ansell  <mithro@mithis.com>
+
         Convert disable-msg to disable for new pylint.
         https://bugs.webkit.org/show_bug.cgi?id=107627
 

@@ -22,7 +22,7 @@
 
 import StringIO
 import logging
-import unittest
+import unittest2 as unittest
 
 from webkitpy.test.skip import skip_if
 

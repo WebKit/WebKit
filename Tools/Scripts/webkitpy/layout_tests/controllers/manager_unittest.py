@@ -31,7 +31,7 @@
 
 import sys
 import time
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.manager import Manager

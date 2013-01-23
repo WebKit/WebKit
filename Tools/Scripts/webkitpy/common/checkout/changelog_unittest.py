@@ -29,7 +29,7 @@
 import codecs
 import os
 import tempfile
-import unittest
+import unittest2 as unittest
 
 from StringIO import StringIO
 
@@ -257,7 +257,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(parsed_entries[4].bug_description(), None)
         self.assertEqual(parsed_entries[5].reviewer_text(), "Adam Roben")
         self.assertEqual(parsed_entries[6].reviewer_text(), "Tony Chang")
-        self.assertEqual(parsed_entries[7].reviewer_text(), None)
+        self.assertIsNone(parsed_entries[7].reviewer_text())
         self.assertEqual(parsed_entries[8].reviewer_text(), 'Darin Adler')
 
     def test_parse_log_entries_from_annotated_file(self):

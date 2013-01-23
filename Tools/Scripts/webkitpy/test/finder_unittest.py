@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -112,7 +112,7 @@ class FinderTest(unittest.TestCase):
             self.check_names(['/tmp/another_unittest.py'], [])
         finally:
             _, _, logs = oc.restore_output()
-            self.assertTrue('another_unittest.py' in logs)
+            self.assertIn('another_unittest.py', logs)
 
         # Paths that don't exist are errors.
         oc.capture_output()
@@ -120,7 +120,7 @@ class FinderTest(unittest.TestCase):
             self.check_names(['/foo/bar/notexist_unittest.py'], [])
         finally:
             _, _, logs = oc.restore_output()
-            self.assertTrue('notexist_unittest.py' in logs)
+            self.assertIn('notexist_unittest.py', logs)
 
         # Names that don't exist are caught later, at load time.
         self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])

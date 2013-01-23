@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from .committervalidator import CommitterValidator
@@ -41,4 +41,4 @@ class CommitterValidatorTest(unittest.TestCase):
 - If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
 - If you have review rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
-        self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
+        self.assertMultiLineEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)

@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.layout_tests.models.test_results import TestResult
 
@@ -44,7 +44,7 @@ class TestResultsTest(unittest.TestCase):
                             test_run_time=1.1)
         s = result.dumps()
         new_result = TestResult.loads(s)
-        self.assertTrue(isinstance(new_result, TestResult))
+        self.assertIsInstance(new_result, TestResult)
 
         self.assertEqual(new_result, result)
 

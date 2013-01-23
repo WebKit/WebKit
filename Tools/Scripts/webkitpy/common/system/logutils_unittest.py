@@ -24,7 +24,7 @@
 
 import logging
 import os
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.common.system.logtesting import TestLogStream

@@ -31,7 +31,7 @@
 import StringIO
 import json
 import re
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.port.test import TestPort
@@ -72,7 +72,7 @@ class MainTest(unittest.TestCase):
         add_file('test2.html')
         add_file('test3.html')
         port.host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
-        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
+        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
 
     def test_collect_tests_with_skipped_list(self):
         runner, port = self.create_runner()
@@ -83,7 +83,7 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'inspector/resources', 'resource_file.html')
         self._add_file(runner, 'unsupported', 'unsupported_test2.html')
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
+        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_collect_tests_with_skipped_list_and_files(self):
         runner, port = self.create_runner(args=['Suite/Test1.html', 'Suite/SkippedTest1.html', 'SkippedSuite/Test1.html'])
@@ -95,7 +95,7 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'Suite', 'SkippedTest1.html')
         self._add_file(runner, 'Suite', 'SkippedTest2.html')
         port.skipped_perf_tests = lambda: ['Suite/SkippedTest1.html', 'Suite/SkippedTest1.html', 'SkippedSuite']
-        self.assertEqual(self._collect_tests_and_sort_test_name(runner),
+        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner),
             ['SkippedSuite/Test1.html', 'Suite/SkippedTest1.html', 'Suite/Test1.html'])
 
     def test_collect_tests_with_ignored_skipped_list(self):
@@ -107,12 +107,12 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'inspector/resources', 'resource_file.html')
         self._add_file(runner, 'unsupported', 'unsupported_test2.html')
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
+        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
 
     def test_collect_tests_should_ignore_replay_tests_by_default(self):
         runner, port = self.create_runner()
         self._add_file(runner, 'Replay', 'www.webkit.org.replay')
-        self.assertEqual(runner._collect_tests(), [])
+        self.assertItemsEqual(runner._collect_tests(), [])
 
     def test_collect_tests_with_replay_tests(self):
         runner, port = self.create_runner(args=['--replay'])
@@ -135,15 +135,15 @@ class MainTest(unittest.TestCase):
                 '--slave-config-json-path=a/source.json',
                 '--test-results-server=somehost',
                 '--debug'])
-        self.assertEqual(options.build, True)
+        self.assertTrue(options.build)
         self.assertEqual(options.build_directory, 'folder42')
         self.assertEqual(options.platform, 'platform42')
         self.assertEqual(options.builder_name, 'webkit-mac-1')
         self.assertEqual(options.build_number, '56')
         self.assertEqual(options.time_out_ms, '42')
         self.assertEqual(options.configuration, 'Debug')
-        self.assertEqual(options.show_results, False)
-        self.assertEqual(options.reset_results, True)
+        self.assertFalse(options.show_results)
+        self.assertTrue(options.reset_results)
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.slave_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')

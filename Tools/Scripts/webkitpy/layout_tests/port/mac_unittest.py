@@ -87,9 +87,9 @@ java/
         port._filesystem = MockFileSystem(dirs=platform_dir_paths)
 
         dirs_to_skip = port._tests_for_other_platforms()
-        self.assertTrue('platform/chromium-linux' in dirs_to_skip)
-        self.assertFalse('platform/mac' in dirs_to_skip)
-        self.assertFalse('platform/mac-snowleopard' in dirs_to_skip)
+        self.assertIn('platform/chromium-linux', dirs_to_skip)
+        self.assertNotIn('platform/mac', dirs_to_skip)
+        self.assertNotIn('platform/mac-snowleopard', dirs_to_skip)
 
     def test_version(self):
         port = self.make_port()

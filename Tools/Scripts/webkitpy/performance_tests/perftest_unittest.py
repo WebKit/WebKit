@@ -29,7 +29,7 @@
 import StringIO
 import json
 import math
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -89,7 +89,7 @@ class TestPerfTestMetric(unittest.TestCase):
             return json.loads(json.dumps(statistics))
 
         statistics = compute_statistics([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11])
-        self.assertEqual(sorted(statistics.keys()), ['avg', 'max', 'median', 'min', 'stdev'])
+        self.assertItemsEqual(statistics.keys(), ['avg', 'max', 'median', 'min', 'stdev'])
         self.assertEqual(statistics['avg'], 10.5)
         self.assertEqual(statistics['min'], 1)
         self.assertEqual(statistics['max'], 20)
@@ -111,7 +111,7 @@ class TestPerfTest(unittest.TestCase):
         parsed_results = test.parse_output(output)
         self.assertEqual(len(parsed_results), 1)
         some_test_results = parsed_results[0].to_dict()
-        self.assertEqual(sorted(some_test_results.keys()), ['avg', 'max', 'median', 'min', 'stdev', 'unit', 'values'])
+        self.assertItemsEqual(some_test_results.keys(), ['avg', 'max', 'median', 'min', 'stdev', 'unit', 'values'])
         self.assertEqual(some_test_results['values'], [1080, 1120, 1095, 1101, 1104])
         self.assertEqual(some_test_results['min'], 1080)
         self.assertEqual(some_test_results['max'], 1120)
@@ -164,7 +164,7 @@ max 1120 ms
         try:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             test._filter_output(output)
-            self.assertEqual(test.parse_output(output), None)
+            self.assertIsNone(test.parse_output(output))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
@@ -307,7 +307,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
             port = MockPort()
             test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
             driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], test)
-            self.assertEqual(test._run_with_driver(driver, None), None)
+            self.assertIsNone(test._run_with_driver(driver, None))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
@@ -461,7 +461,7 @@ class TestReplayPerfTest(unittest.TestCase):
         test, port = self._setup_test(run_test)
 
         try:
-            self.assertEqual(test.prepare(time_out_ms=100), True)
+            self.assertTrue(test.prepare(time_out_ms=100))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
@@ -485,7 +485,7 @@ class TestReplayPerfTest(unittest.TestCase):
         test.run_single = run_single
 
         try:
-            self.assertEqual(test.prepare(time_out_ms=100), False)
+            self.assertFalse(test.prepare(time_out_ms=100))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertTrue(called[0])

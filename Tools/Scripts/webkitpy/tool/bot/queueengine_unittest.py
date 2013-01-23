@@ -31,7 +31,7 @@ import os
 import shutil
 import tempfile
 import threading
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -168,7 +168,7 @@ class QueueEngineTest(unittest.TestCase):
     def test_now(self):
         """Make sure there are no typos in the QueueEngine.now() method."""
         engine = QueueEngine("test", None, None)
-        self.assertTrue(isinstance(engine._now(), datetime.datetime))
+        self.assertIsInstance(engine._now(), datetime.datetime)
 
     def test_sleep_message(self):
         engine = QueueEngine("test", None, None)

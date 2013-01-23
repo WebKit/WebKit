@@ -29,7 +29,7 @@
 import codecs
 import os
 import tempfile
-import unittest
+import unittest2 as unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest
@@ -115,8 +115,8 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
         changelog.update_with_unreviewed_message(PrepareChangeLogForRevert._message_for_revert(*args))
         actual_entry = changelog.latest_entry()
         os.remove(changelog_path)
-        self.assertEqual(actual_entry.contents(), expected_entry)
-        self.assertEqual(actual_entry.reviewer_text(), None)
+        self.assertMultiLineEqual(actual_entry.contents(), expected_entry)
+        self.assertIsNone(actual_entry.reviewer_text())
         # These checks could be removed to allow this to work on other entries:
         self.assertEqual(actual_entry.author_name(), "Eric Seidel")
         self.assertEqual(actual_entry.author_email(), "eric@webkit.org")

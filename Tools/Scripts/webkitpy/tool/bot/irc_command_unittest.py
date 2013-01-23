@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
@@ -97,7 +97,7 @@ class IRCCommandTest(unittest.TestCase):
 
     def test_roll_chromium_deps(self):
         roll = RollChromiumDEPS()
-        self.assertEqual(None, roll._parse_args([]))
+        self.assertIsNone(roll._parse_args([]))
         self.assertEqual("1234", roll._parse_args(["1234"]))
         self.assertEqual('"Alan Cutter" <alancutter@chromium.org>', roll._expand_irc_nickname("alancutter"))
         self.assertEqual("unknown_irc_nickname", roll._expand_irc_nickname("unknown_irc_nickname"))

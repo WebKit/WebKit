@@ -28,7 +28,7 @@
 
 """Unit tests for update_webgl_conformance_tests."""
 
-import unittest
+import unittest2 as unittest
 from webkitpy.to_be_moved import update_webgl_conformance_tests as webgl
 
 

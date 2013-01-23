@@ -28,7 +28,7 @@
 
 import sys
 import time
-import unittest
+import unittest2 as unittest
 
 from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.layout_tests.port import server_process
@@ -140,13 +140,13 @@ class TestServerProcess(unittest.TestCase):
         server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
-        self.assertNotEquals(server_process.pid(), None)
-        self.assertEqual(server_process._proc, None)
+        self.assertIsNotNone(server_process.pid())
+        self.assertIsNone(server_process._proc)
         self.assertEqual(server_process.broken_pipes, [server_process.stdin])
 
         port_obj.host.platform.os_name = 'mac'
         server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
-        self.assertEqual(server_process._proc, None)
+        self.assertIsNone(server_process._proc)
         self.assertEqual(server_process.broken_pipes, [server_process.stdin])

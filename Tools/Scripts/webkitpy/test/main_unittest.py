@@ -22,7 +22,7 @@
 
 import logging
 import sys
-import unittest
+import unittest2 as unittest
 import StringIO
 
 from webkitpy.common.system.filesystem import FileSystem
@@ -70,8 +70,8 @@ class TesterTest(unittest.TestCase):
             _, _, logs = oc.restore_output()
             root_logger.handlers = root_handlers
 
-        self.assertTrue('No tests to run' in errors.getvalue())
-        self.assertTrue('No tests to run' in logs)
+        self.assertIn('No tests to run', errors.getvalue())
+        self.assertIn('No tests to run', logs)
 
     def _find_test_names(self, args):
         tester = Tester()
@@ -114,4 +114,4 @@ class TesterTest(unittest.TestCase):
         out, _ = proc.communicate()
         retcode = proc.returncode
         self.assertEqual(retcode, 0)
-        self.assertTrue('Cover' in out)
+        self.assertIn('Cover', out)

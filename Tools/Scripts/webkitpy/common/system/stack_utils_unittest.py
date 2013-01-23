@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import stack_utils
@@ -42,11 +42,11 @@ class StackUtilsTest(unittest.TestCase):
     def test_find_thread_stack_found(self):
         thread_id = current_thread_id()
         found_stack = stack_utils._find_thread_stack(thread_id)
-        self.assertNotEqual(found_stack, None)
+        self.assertIsNotNone(found_stack)
 
     def test_find_thread_stack_not_found(self):
         found_stack = stack_utils._find_thread_stack(0)
-        self.assertEqual(found_stack, None)
+        self.assertIsNone(found_stack)
 
     def test_log_thread_state(self):
         msgs = []

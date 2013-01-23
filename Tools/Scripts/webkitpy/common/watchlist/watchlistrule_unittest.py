@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import unittest
+import unittest2 as unittest
 from webkitpy.common.watchlist.watchlistrule import WatchListRule
 
 

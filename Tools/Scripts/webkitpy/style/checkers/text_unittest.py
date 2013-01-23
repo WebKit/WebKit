@@ -28,7 +28,7 @@
 
 """Unit test for text_style.py."""
 
-import unittest
+import unittest2 as unittest
 
 import text as text_style
 from text import TextChecker
@@ -45,7 +45,7 @@ class TextStyleTestCase(unittest.TestCase):
             self.had_error = True
 
         text_style.process_file_data('', lines, error_for_test)
-        self.assertTrue(not self.had_error, '%s should not have any errors.' % lines)
+        self.assertFalse(self.had_error, '%s should not have any errors.' % lines)
 
     def assertError(self, lines, expected_line_number):
         """Asserts that the specified lines has an error."""

@@ -29,7 +29,7 @@
 """Unit tests for MockDRT."""
 
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common import newstringio
 from webkitpy.common.system.systemhost_mock import MockSystemHost

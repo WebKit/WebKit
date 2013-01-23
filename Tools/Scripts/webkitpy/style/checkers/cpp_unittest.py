@@ -39,7 +39,7 @@ import codecs
 import os
 import random
 import re
-import unittest
+import unittest2 as unittest
 import cpp as cpp_style
 from cpp import CppChecker
 from ..filter import FilterConfiguration

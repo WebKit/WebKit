@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 import json
 import optparse
 import random
@@ -123,12 +123,12 @@ class JSONGeneratorTest(unittest.TestCase):
         # Aliasing to a short name for better access to its constants.
         JRG = json_results_generator.JSONResultsGeneratorBase
 
-        self.assertTrue(JRG.VERSION_KEY in json)
-        self.assertTrue(self.builder_name in json)
+        self.assertIn(JRG.VERSION_KEY, json)
+        self.assertIn(self.builder_name, json)
 
         buildinfo = json[self.builder_name]
-        self.assertTrue(JRG.FIXABLE in buildinfo)
-        self.assertTrue(JRG.TESTS in buildinfo)
+        self.assertIn(JRG.FIXABLE, buildinfo)
+        self.assertIn(JRG.TESTS, buildinfo)
         self.assertEqual(len(buildinfo[JRG.BUILD_NUMBERS]), num_runs)
         self.assertEqual(buildinfo[JRG.BUILD_NUMBERS][0], self.build_number)
 
@@ -181,7 +181,7 @@ class JSONGeneratorTest(unittest.TestCase):
         nodes = path.split("/")
         sub_trie = trie
         for node in nodes:
-            self.assertTrue(node in sub_trie)
+            self.assertIn(node, sub_trie)
             sub_trie = sub_trie[node]
         return sub_trie
 

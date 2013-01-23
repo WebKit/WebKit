@@ -31,7 +31,7 @@
 
 
 import re
-import unittest
+import unittest2 as unittest
 
 
 from webkitpy.common.watchlist.amountchangedpattern import AmountChangedPattern

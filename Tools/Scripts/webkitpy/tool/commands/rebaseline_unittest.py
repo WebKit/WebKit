@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -83,15 +83,15 @@ class TestRebaselineTest(_BaseTestCase):
 
     def test_baseline_directory(self):
         command = self.command
-        self.assertEqual(command._baseline_directory("Apple Win XP Debug (Tests)"), "/mock-checkout/LayoutTests/platform/win-xp")
-        self.assertEqual(command._baseline_directory("Apple Win 7 Release (Tests)"), "/mock-checkout/LayoutTests/platform/win")
-        self.assertEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion")
-        self.assertEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertEqual(command._baseline_directory("GTK Linux 32-bit Release"), "/mock-checkout/LayoutTests/platform/gtk")
-        self.assertEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl-wk2")
-        self.assertEqual(command._baseline_directory("Qt Linux Release"), "/mock-checkout/LayoutTests/platform/qt")
-        self.assertEqual(command._baseline_directory("WebKit Mac10.7"), "/mock-checkout/LayoutTests/platform/chromium-mac-lion")
-        self.assertEqual(command._baseline_directory("WebKit Mac10.6"), "/mock-checkout/LayoutTests/platform/chromium-mac-snowleopard")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Win XP Debug (Tests)"), "/mock-checkout/LayoutTests/platform/win-xp")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Win 7 Release (Tests)"), "/mock-checkout/LayoutTests/platform/win")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("GTK Linux 32-bit Release"), "/mock-checkout/LayoutTests/platform/gtk")
+        self.assertMultiLineEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Qt Linux Release"), "/mock-checkout/LayoutTests/platform/qt")
+        self.assertMultiLineEqual(command._baseline_directory("WebKit Mac10.7"), "/mock-checkout/LayoutTests/platform/chromium-mac-lion")
+        self.assertMultiLineEqual(command._baseline_directory("WebKit Mac10.6"), "/mock-checkout/LayoutTests/platform/chromium-mac-snowleopard")
 
     def test_rebaseline_updates_expectations_file_noop(self):
         self._zero_out_test_expectations()
@@ -105,12 +105,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = "png,wav,txt"
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertEqual(self.tool.web.urls_fetched,
+        self.assertItemsEqual(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
              self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
              self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         new_expectations = self._read(self.lion_expectations_path)
-        self.assertEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
+        self.assertMultiLineEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
 Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 """)
 
@@ -121,12 +121,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = 'png,wav,txt'
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertEqual(self.tool.web.urls_fetched,
+        self.assertItemsEqual(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
              self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
              self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         new_expectations = self._read(self.lion_expectations_path)
-        self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self.assertMultiLineEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_does_not_include_overrides(self):
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
@@ -136,23 +136,23 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.options.suffixes = 'png,wav,txt'
         self.command._rebaseline_test_and_update_expectations(self.options)
 
-        self.assertEqual(self.tool.web.urls_fetched,
+        self.assertItemsEqual(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
              self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
              self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
         new_expectations = self._read(self.lion_expectations_path)
-        self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self.assertMultiLineEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
         self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", self.WEB_PREFIX)
-        self.assertEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_with_results_directory(self):
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         self.options.results_directory = '/tmp'
         self.command._rebaseline_test_and_update_expectations(self.options)
-        self.assertEqual(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
+        self.assertItemsEqual(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
         self.command._print_scm_changes = True
@@ -161,20 +161,20 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 
         self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", None)
 
-        self.assertEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
+        self.assertDictEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
         self._write("userscripts/another-test-expected.txt", "generic result")
 
         self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
-        self.assertEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
-        self.assertEqual(self._read('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt'), 'generic result')
+        self.assertMultiLineEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt'), 'generic result')
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
         self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
-        self.assertEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
         self.assertFalse(self.tool.filesystem.exists(self._expand('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt')))
 
     def test_rebaseline_and_copy_test_with_lion_result(self):
@@ -182,9 +182,9 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 
         self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", self.WEB_PREFIX)
 
-        self.assertEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
-        self.assertEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original lion result")
-        self.assertEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+        self.assertMultiLineEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original lion result")
+        self.assertMultiLineEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
         self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
@@ -192,8 +192,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 
         self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
-        self.assertEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original snowleopard result")
-        self.assertEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original snowleopard result")
+        self.assertMultiLineEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_test_internal_with_move_overwritten_baselines_to(self):
         self.tool.executive = MockExecutive2()
@@ -220,8 +220,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
             out, _, _ = oc.restore_output()
             builders._exact_matches = old_exact_matches
 
-        self.assertEqual(self._read(self.tool.filesystem.join(port.layout_tests_dir(), 'platform/test-mac-leopard/failures/expected/image-expected.txt')), 'original snowleopard result')
-        self.assertEqual(out, '{"add": []}\n')
+        self.assertMultiLineEqual(self._read(self.tool.filesystem.join(port.layout_tests_dir(), 'platform/test-mac-leopard/failures/expected/image-expected.txt')), 'original snowleopard result')
+        self.assertMultiLineEqual(out, '{"add": []}\n')
 
 
 class TestRebaselineJson(_BaseTestCase):
@@ -335,8 +335,8 @@ class TestRebaselineExpectations(_BaseTestCase):
 
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)
-        self.assertTrue(len(calls) == 1)
-        self.assertTrue(len(calls[0]) == 36)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(len(calls[0]), 36)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()
@@ -362,7 +362,7 @@ class TestRebaselineExpectations(_BaseTestCase):
                           'Bug(y) userscripts/test.html [ Crash ]\n')}
         self._write('/userscripts/another-test.html', '')
 
-        self.assertEqual(self.command._tests_to_rebaseline(self.lion_port), {'userscripts/another-test.html': set(['png', 'txt', 'wav'])})
+        self.assertDictEqual(self.command._tests_to_rebaseline(self.lion_port), {'userscripts/another-test.html': set(['png', 'txt', 'wav'])})
         self.assertEqual(self._read(self.lion_expectations_path), '')
 
 

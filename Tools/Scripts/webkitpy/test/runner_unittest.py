@@ -23,7 +23,7 @@
 import logging
 import re
 import StringIO
-import unittest
+import unittest2 as unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.test.printer import Printer

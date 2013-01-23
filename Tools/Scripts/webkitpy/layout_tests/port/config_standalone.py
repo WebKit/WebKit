@@ -33,7 +33,6 @@ https://bugs.webkit.org/show_bug?id=49360 for the motivation. We can remove
 this test when we remove the global configuration cache in config.py."""
 
 import os
-import unittest
 import sys
 
 

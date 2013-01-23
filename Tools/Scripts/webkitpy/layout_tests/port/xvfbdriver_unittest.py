@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
@@ -131,5 +131,5 @@ class XvfbDriverTest(unittest.TestCase):
         expected_logs = "MOCK kill_process pid: 1234\n"
         OutputCapture().assert_outputs(self, driver.stop, [], expected_logs=expected_logs)
 
-        self.assertEqual(driver._xvfb_process, None)
+        self.assertIsNone(driver._xvfb_process)
         self.assertFalse(port._filesystem.exists(driver._lock_file))

@@ -31,7 +31,7 @@
 import StringIO
 import json
 import re
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture

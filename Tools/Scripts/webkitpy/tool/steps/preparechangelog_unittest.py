@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest
+import unittest2 as unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest

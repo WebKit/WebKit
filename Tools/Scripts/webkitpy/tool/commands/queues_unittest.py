@@ -156,7 +156,7 @@ class AbstractPatchQueueTest(CommandsTest):
         queue.bind_to_tool(tool)
         queue._options = Mock()
         queue._options.port = None
-        self.assertEqual(queue._next_patch(), None)
+        self.assertIsNone(queue._next_patch())
         tool.status_server = MockStatusServer(work_items=[2, 10000, 10001])
         expected_stdout = "MOCK: fetch_attachment: 2 is not a known attachment id\n"  # A mock-only message to prevent us from making mistakes.
         expected_logs = "MOCK: release_work_item: None 2\n"
@@ -382,9 +382,9 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         state = {'patch': None}
         OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options, state], expected_exception=TryAgain, expected_logs=expected_logs)
 
-        self.assertEqual(options.update, True)
-        self.assertEqual(options.build, False)
-        self.assertEqual(options.test, False)
+        self.assertTrue(options.update)
+        self.assertFalse(options.build)
+        self.assertFalse(options.test)
 
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue(MockTool())

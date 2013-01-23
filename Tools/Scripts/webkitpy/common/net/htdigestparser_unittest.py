@@ -22,7 +22,7 @@
 
 import StringIO
 import os
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.net.htdigestparser import HTDigestParser
 

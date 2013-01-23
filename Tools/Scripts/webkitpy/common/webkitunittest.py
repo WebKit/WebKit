@@ -29,7 +29,7 @@
 '''Basic unit test functionality.'''
 
 import re
-import unittest
+import unittest2 as unittest
 
 
 class TestCase(unittest.TestCase):

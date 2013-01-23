@@ -28,7 +28,7 @@
 
 import os
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive2

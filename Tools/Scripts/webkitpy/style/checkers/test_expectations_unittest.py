@@ -28,7 +28,7 @@
 
 import os
 import sys
-import unittest
+import unittest2 as unittest
 
 from test_expectations import TestExpectationsChecker
 from webkitpy.common.host_mock import MockHost
@@ -70,7 +70,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         if port:
             self.assertTrue(port.name().startswith(expected_port_implementation))
         else:
-            self.assertEqual(None, expected_port_implementation)
+            self.assertIsNone(expected_port_implementation)
 
     def test_determine_port_from_expectations_path(self):
         self._expect_port_for_expectations_path(None, '/')
@@ -94,7 +94,7 @@ class TestExpectationsTestCase(unittest.TestCase):
                                           self._error_collector, host=host)
 
         # We should have failed to find a valid port object for that path.
-        self.assertEqual(checker._port_obj, None)
+        self.assertIsNone(checker._port_obj)
 
         # Now use a test port so we can check the lines.
         checker._port_obj = host.port_factory.get('test-mac-leopard')

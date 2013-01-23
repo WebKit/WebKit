@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
 from webkitpy.common.system.filesystem_mock import MockFileSystem

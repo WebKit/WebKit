@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2

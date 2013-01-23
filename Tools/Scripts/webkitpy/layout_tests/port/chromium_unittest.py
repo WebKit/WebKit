@@ -28,7 +28,6 @@
 
 import StringIO
 import time
-import unittest
 
 from webkitpy.common.system import logtesting
 from webkitpy.common.system.executive_mock import MockExecutive2

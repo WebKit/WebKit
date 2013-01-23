@@ -28,7 +28,7 @@
 
 import optparse
 import StringIO
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import lint_test_expectations
@@ -100,7 +100,7 @@ class LintTest(unittest.TestCase):
         res = lint_test_expectations.lint(host, options, logging_stream)
 
         self.assertEqual(res, 0)
-        self.assertTrue('Lint succeeded' in logging_stream.getvalue())
+        self.assertIn('Lint succeeded', logging_stream.getvalue())
 
     def test_lint_test_files__errors(self):
         options = optparse.Values({'platform': 'test', 'debug_rwt_logging': False})
@@ -118,9 +118,9 @@ class LintTest(unittest.TestCase):
         res = lint_test_expectations.lint(host, options, logging_stream)
 
         self.assertEqual(res, -1)
-        self.assertTrue('Lint failed' in logging_stream.getvalue())
-        self.assertTrue('foo:1' in logging_stream.getvalue())
-        self.assertTrue('bar:1' in logging_stream.getvalue())
+        self.assertIn('Lint failed', logging_stream.getvalue())
+        self.assertIn('foo:1', logging_stream.getvalue())
+        self.assertIn('bar:1', logging_stream.getvalue())
 
 
 class MainTest(unittest.TestCase):

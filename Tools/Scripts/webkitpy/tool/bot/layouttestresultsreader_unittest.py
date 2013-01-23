@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import unittest2 as unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -48,7 +48,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         self.assertRaises(IOError, host.filesystem.read_text_file, layout_tests_results_path)
         self.assertRaises(IOError, host.filesystem.read_text_file, unit_tests_results_path)
         # layout_test_results shouldn't raise even if the results.json file is missing.
-        self.assertEqual(reader.results(), None)
+        self.assertIsNone(reader.results())
 
     def test_create_unit_test_results(self):
         host = MockHost()
@@ -71,19 +71,19 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         reader._create_unit_test_results = lambda: None
         # layout_test_results shouldn't raise even if the unit tests xml file is missing.
-        self.assertNotEquals(reader.results(), None)
+        self.assertIsNotNone(reader.results(), None)
         self.assertEqual(reader.results().failing_tests(), [])
 
 
     def test_layout_test_results(self):
         reader = LayoutTestResultsReader(MockHost(), "/mock-results", "/var/logs")
         reader._read_file_contents = lambda path: None
-        self.assertEqual(reader.results(), None)
+        self.assertIsNone(reader.results())
         reader._read_file_contents = lambda path: ""
-        self.assertEqual(reader.results(), None)
+        self.assertIsNone(reader.results())
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         results = reader.results()
-        self.assertNotEquals(results, None)
+        self.assertIsNotNone(results)
         self.assertEqual(results.failure_limit_count(), 30)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
 
     def test_archive_last_layout_test_results(self):
@@ -95,10 +95,10 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         # Should fail because the results_directory does not exist.
         expected_logs = "/mock-results does not exist, not archiving.\n"
         archive = OutputCapture().assert_outputs(self, reader.archive, [patch], expected_logs=expected_logs)
-        self.assertEqual(archive, None)
+        self.assertIsNone(archive)
 
         host.filesystem.maybe_make_directory(results_directory)
         self.assertTrue(host.filesystem.exists(results_directory))
 
-        self.assertNotEqual(reader.archive(patch), None)
+        self.assertIsNotNone(reader.archive(patch))
         self.assertFalse(host.filesystem.exists(results_directory))

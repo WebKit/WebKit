@@ -28,7 +28,7 @@
 
 import os
 import re
-import unittest
+import unittest2 as unittest
 
 
 from webkitpy.common.system import filesystem_mock
