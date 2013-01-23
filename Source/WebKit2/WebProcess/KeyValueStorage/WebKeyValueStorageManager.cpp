@@ -60,11 +60,6 @@ void WebKeyValueStorageManager::initialize(const WebProcessCreationParameters& p
 #endif
 }
 
-void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebKeyValueStorageManagerMessage(connection, messageID, decoder);
-}
-
 static void keyValueStorageOriginIdentifiers(Vector<SecurityOriginData>& identifiers)
 {
     ASSERT(identifiers.isEmpty());

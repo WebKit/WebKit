@@ -87,11 +87,6 @@ void WebNotificationManagerProxy::derefWebContextSupplement()
 
 // CoreIPC::MessageReceiver
 
-void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebNotificationManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<String, bool>& permissions)
 {
     RefPtr<ImmutableDictionary> knownPermissions = m_provider.notificationPermissions();

@@ -56,11 +56,6 @@ WebGeolocationManager::~WebGeolocationManager()
 {
 }
 
-void WebGeolocationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebGeolocationManagerMessage(connection, messageID, decoder);
-}
-
 void WebGeolocationManager::registerWebPage(WebPage* page)
 {
     bool wasEmpty = m_pageSet.isEmpty();

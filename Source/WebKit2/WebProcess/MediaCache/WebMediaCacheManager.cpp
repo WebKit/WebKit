@@ -47,11 +47,6 @@ WebMediaCacheManager::WebMediaCacheManager(WebProcess* process)
     m_process->addMessageReceiver(Messages::WebMediaCacheManager::messageReceiverName(), this);
 }
 
-void WebMediaCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebMediaCacheManagerMessage(connection, messageID, decoder);
-}
-
 void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 {
     Vector<String> mediaCacheHostnames;

@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebPageGroupProxy LegacyReceiver {
+messages -> WebPageGroupProxy {
     AddUserStyleSheet(WebCore::UserStyleSheet userStyleSheet);
     AddUserScript(WebCore::UserScript userScript);
     RemoveAllUserStyleSheets();

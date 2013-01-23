@@ -286,16 +286,6 @@ void WebIconDatabase::didFinishURLImport()
     m_urlImportCompleted = true;
 }
 
-void WebIconDatabase::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebIconDatabaseMessage(connection, messageID, decoder);
-}
-
-void WebIconDatabase::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
-{
-    didReceiveSyncWebIconDatabaseMessage(connection, messageID, decoder, replyEncoder);
-}
-
 void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
 {
     m_iconDatabaseClient.iconDataReadyForPageURL(this, WebURL::create(pageURL).get());

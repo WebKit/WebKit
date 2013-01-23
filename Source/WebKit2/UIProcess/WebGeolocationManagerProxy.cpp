@@ -81,13 +81,6 @@ void WebGeolocationManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-// CoreIPC::MessageReceiver
-
-void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebGeolocationManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
 {
     if (!context())

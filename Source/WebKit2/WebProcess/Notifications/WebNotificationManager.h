@@ -72,10 +72,8 @@ private:
     virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
     // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);

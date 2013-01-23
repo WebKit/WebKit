@@ -51,12 +51,7 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
 WebPageGroupProxy::~WebPageGroupProxy()
 {
 }
-    
-void WebPageGroupProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebPageGroupProxyMessage(connection, messageID, decoder);
-}
-    
+
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))

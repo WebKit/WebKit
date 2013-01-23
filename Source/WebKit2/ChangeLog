@@ -1,5 +1,67 @@
 2013-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Remove LegacyReceiver from a couple of .messages.in files
+        https://bugs.webkit.org/show_bug.cgi?id=107749
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebGeolocationManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.messages.in:
+        * UIProcess/WebIconDatabase.cpp:
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+        * UIProcess/WebIconDatabase.messages.in:
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        (WebKeyValueStorageManagerProxy):
+        * UIProcess/WebKeyValueStorageManagerProxy.messages.in:
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        (WebMediaCacheManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.messages.in:
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        (WebResourceCacheManagerProxy):
+        * UIProcess/WebResourceCacheManagerProxy.messages.in:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h:
+        (WebIconDatabaseProxy):
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h:
+        (WebKeyValueStorageManager):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in:
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        * WebProcess/MediaCache/WebMediaCacheManager.h:
+        (WebMediaCacheManager):
+        * WebProcess/MediaCache/WebMediaCacheManager.messages.in:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        * WebProcess/Notifications/WebNotificationManager.h:
+        (WebNotificationManager):
+        * WebProcess/Notifications/WebNotificationManager.messages.in:
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+        (WebResourceCacheManager):
+        * WebProcess/ResourceCache/WebResourceCacheManager.messages.in:
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebPageGroupProxy):
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+
+2013-01-23  Anders Carlsson  <andersca@apple.com>
+
         Message receiver generation should work in terms of MessageReceiver objects
         https://bugs.webkit.org/show_bug.cgi?id=107742
 

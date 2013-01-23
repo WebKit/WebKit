@@ -74,11 +74,6 @@ WebNotificationManager::~WebNotificationManager()
 {
 }
 
-void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebNotificationManagerMessage(connection, messageID, decoder);
-}
-
 void WebNotificationManager::initialize(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

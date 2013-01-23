@@ -81,13 +81,6 @@ void WebMediaCacheManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-// CoreIPC::MessageReceiver
-
-void WebMediaCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebMediaCacheManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;

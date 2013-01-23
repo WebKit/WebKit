@@ -68,9 +68,6 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // Implemented in generated WebGeolocationManagerProxyMessageReceiver.cpp
-    void didReceiveWebGeolocationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     void startUpdating();
     void stopUpdating();
 

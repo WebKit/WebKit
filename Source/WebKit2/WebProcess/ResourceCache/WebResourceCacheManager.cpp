@@ -52,11 +52,6 @@ WebResourceCacheManager::WebResourceCacheManager(WebProcess* process)
     m_process->addMessageReceiver(Messages::WebResourceCacheManager::messageReceiverName(), this);
 }
 
-void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebResourceCacheManagerMessage(connection, messageID, decoder);
-}
-
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 {
     MemoryCache::SecurityOriginSet origins;

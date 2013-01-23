@@ -82,13 +82,6 @@ void WebKeyValueStorageManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-// CoreIPC::MessageReceiver
-
-void WebKeyValueStorageManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebKeyValueStorageManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;

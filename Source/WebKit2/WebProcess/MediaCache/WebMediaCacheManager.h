@@ -44,8 +44,7 @@ public:
     static const AtomicString& supplementName();
 
 private:
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebMediaCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getHostnamesWithMediaCache(uint64_t callbackID);
     void clearCacheForHostname(const String&);

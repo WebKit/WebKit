@@ -86,13 +86,6 @@ void WebResourceCacheManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-// CoreIPC::MessageReceiver
-
-void WebResourceCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;

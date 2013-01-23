@@ -143,9 +143,4 @@ void WebIconDatabaseProxy::urlImportFinished()
 {
 }
 
-void WebIconDatabaseProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebIconDatabaseProxyMessage(connection, messageID, decoder);
-}
-
 } // namespace WebKit

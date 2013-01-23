@@ -74,7 +74,6 @@ private:
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebResourceCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     // Message handlers.
     void didGetCacheOrigins(const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID);

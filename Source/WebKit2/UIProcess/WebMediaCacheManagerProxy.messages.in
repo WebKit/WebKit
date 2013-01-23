@@ -20,6 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebMediaCacheManagerProxy LegacyReceiver {
+messages -> WebMediaCacheManagerProxy {
     DidGetHostnamesWithMediaCache(Vector<WTF::String> hostnames, uint64_t callbackID);
 }
