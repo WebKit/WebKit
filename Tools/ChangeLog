@@ -1,3 +1,19 @@
+2013-01-23  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Create Regions watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=107281
+
+        Reviewed by Adam Barth.
+
+        This patch adds 4 new definitions:
+        - RegionsDevelopment - used to track the development progress for regions
+        - RegionsExpectationsMore and RegionsExpectationsLess - used to track expectations changes for the regions tests
+        - RegionsUsage - used to track changes that make use of regions in all the code base
+
+        For now, the Adobe internal tracker is the only email address listening for these patterns.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: only allow evaluateForTestInFrontend for front-ends under test.

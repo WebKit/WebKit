@@ -333,7 +333,30 @@
         "ContentSecurityPolicyFiles": {
             "filename": r"Source/WebCore/page/(Content|DOM)SecurityPolicy\."
                         r"|LayoutTests/http/tests/security/contentSecurityPolicy"
-        }
+        },
+        "RegionsDevelopment": {
+            "filename": r"Source/WebCore/rendering/RenderRegion\.(h|cpp)"
+                        r"|Source/WebCore/rendering/RenderFlowThread\.(h|cpp)"
+                        r"|Source/WebCore/rendering/FlowThreadController\.(h|cpp)"
+                        r"|Source/WebCore/rendering/RenderRegionSet\.(h|cpp)"
+                        r"|Source/WebCore/rendering/RenderNamedFlowThread\.(h|cpp)"
+                        r"|Source/WebCore/rendering/RenderBoxRegionInfo\.h"
+                        r"|Source/WebCore/dom/WebKitNamedFlow\.(h|cpp|idl)"
+                        r"|Source/WebCore/dom/(DOM)?NamedFlowCollection\.(h|cpp|idl)"
+                        r"|Source/WebCore/css/WebKitCSSRegionRule\.(h|cpp|idl)"
+                        r"|LayoutTests/fast/regions",
+        },
+        "RegionsExpectationsMore": {
+            "filename": r"LayoutTests/platform/.*TestExpectations",
+            "more": r"fast/regions/.*\.html",
+        },
+        "RegionsExpectationsLess": {
+            "filename": r"LayoutTests/platform/.*TestExpectations",
+            "less": r"fast/regions/.*\.html",
+        },
+        "RegionsUsage": {
+            "more": r"(RenderRegion|RenderFlowThread|RenderNamedFlowThread)(?!\.(h|cpp))",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -382,6 +405,7 @@
         "QtGraphics" : [ "noam@webkit.org" ],
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
+        "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],
         "Rendering": [ "eric@webkit.org", "ojan.autocc@gmail.com" ],
         "RenderLayers" : [ "simon.fraser@apple.com" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
