@@ -1050,13 +1050,13 @@ CommandLineAPIImpl.prototype = {
         if (this._canQuerySelectorOnNode(start))
             return start.querySelector(selector);
 
-        var result = document.querySelector(selector);
+        var result = inspectedWindow.document.querySelector(selector);
         if (result)
             return result;
         if (selector && selector[0] !== "#") {
-            result = document.getElementById(selector);
+            result = inspectedWindow.document.getElementById(selector);
             if (result) {
-                console.warn("The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $(\"#%s\")", selector );
+                inspectedWindow.console.warn("The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $(\"#%s\")", selector );
                 return null;
             }
         }
@@ -1071,11 +1071,11 @@ CommandLineAPIImpl.prototype = {
     {
         if (this._canQuerySelectorOnNode(start))
             return start.querySelectorAll(selector);
-        return document.querySelectorAll(selector);
+        return inspectedWindow.document.querySelectorAll(selector);
     },
 
     /**
-     * @param {Node|undefined} node
+     * @param {Node=} node
      * @return {boolean}
      */
     _canQuerySelectorOnNode: function(node)
@@ -1109,12 +1109,12 @@ CommandLineAPIImpl.prototype = {
 
     dir: function()
     {
-        return console.dir.apply(console, arguments)
+        return inspectedWindow.console.dir.apply(inspectedWindow.console, arguments)
     },
 
     dirxml: function()
     {
-        return console.dirxml.apply(console, arguments)
+        return inspectedWindow.console.dirxml.apply(inspectedWindow.console, arguments)
     },
 
     keys: function(object)
@@ -1132,12 +1132,12 @@ CommandLineAPIImpl.prototype = {
 
     profile: function()
     {
-        return console.profile.apply(console, arguments)
+        return inspectedWindow.console.profile.apply(inspectedWindow.console, arguments)
     },
 
     profileEnd: function()
     {
-        return console.profileEnd.apply(console, arguments)
+        return inspectedWindow.console.profileEnd.apply(inspectedWindow.console, arguments)
     },
 
     /**
@@ -1237,7 +1237,7 @@ CommandLineAPIImpl.prototype = {
      */
     _logEvent: function(event)
     {
-        console.log(event.type, event);
+        inspectedWindow.console.log(event.type, event);
     }
 }
 
