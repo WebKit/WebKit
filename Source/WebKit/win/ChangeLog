@@ -1,3 +1,11 @@
+2013-01-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Follow up to 140539, adding exports for Win build.
+
+        Not reviewed.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-01-22  Anders Carlsson  <andersca@apple.com>
 
         Use a platforom strategy for local storage

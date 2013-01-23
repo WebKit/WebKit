@@ -206,6 +206,7 @@ EXPORTS
         ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z
         ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ
         ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z
+        ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ
         ?moveWindowBy@InspectorFrontendClientLocal@WebCore@@UAEXMM@Z
         ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
         ?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UAEXW4DockSide@InspectorFrontendClient@2@@Z
