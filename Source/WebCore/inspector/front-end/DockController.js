@@ -92,6 +92,14 @@ WebInspector.DockController.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isDockedToBottom: function()
+    {
+        return this._dockSide == WebInspector.DockController.State.DockedToBottom;
+    },
+
+    /**
      * @param {boolean} unavailable
      */
     setDockingUnavailable: function(unavailable)
@@ -121,8 +129,6 @@ WebInspector.DockController.prototype = {
             break;
         }
 
-        if (WebInspector.toolbar)
-            WebInspector.toolbar.setDockedToBottom(this._dockSide === WebInspector.DockController.State.DockedToBottom);
         if (WebInspector.settings.showToolbarIcons.get())
             document.body.addStyleClass("show-toolbar-icons");
         else

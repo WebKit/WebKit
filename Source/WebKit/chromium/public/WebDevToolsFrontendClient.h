@@ -44,6 +44,7 @@ public:
     virtual void sendMessageToBackend(const WebString&) { }
 
     virtual void activateWindow() { }
+    virtual void changeAttachedWindowHeight(unsigned height) { }
     virtual void closeWindow() { }
     virtual void requestDockWindow() { }
     virtual void requestUndockWindow() { }

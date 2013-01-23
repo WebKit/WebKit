@@ -1,3 +1,16 @@
+2013-01-23  Dmitry Gozman  <dgozman@chromium.org>
+
+        Added changeAttachedWindowHeight method to inspector frontend API, which
+        allows to change inspector window height from inside.
+        https://bugs.webkit.org/show_bug.cgi?id=107648
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::changeAttachedWindowHeight):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::changeAttachedWindowHeight):
+
 2013-01-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         shadowAncestorNode() should be renamed to deprecatedShadowAncestorNode()

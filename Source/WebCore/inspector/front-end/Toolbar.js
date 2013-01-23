@@ -97,11 +97,11 @@ WebInspector.Toolbar.prototype = {
     },
 
     /**
-     * @param {boolean} dockedToBottom
+     * @return {boolean}
      */
-    setDockedToBottom: function(dockedToBottom)
+    _isDockedToBottom: function()
     {
-        this._isDockedToBottom = dockedToBottom;
+        return WebInspector.dockController && WebInspector.dockController.isDockedToBottom();
     },
 
     /**
@@ -109,7 +109,7 @@ WebInspector.Toolbar.prototype = {
      */
     _toolbarDragStart: function(event)
     {
-        if ((!this._isDockedToBottom && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
+        if ((!this._isDockedToBottom() && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
             return false;
 
         var target = event.target;
@@ -121,19 +121,25 @@ WebInspector.Toolbar.prototype = {
 
         this.element.lastScreenX = event.screenX;
         this.element.lastScreenY = event.screenY;
+        this._lastHeightDuringDrag = window.innerHeight;
         return true;
     },
 
     _toolbarDragEnd: function(event)
     {
+        // We may not get the drag event at the end.
+        // Apply last changes manually.
+        this._toolbarDrag(event);
         delete this.element.lastScreenX;
         delete this.element.lastScreenY;
+        delete this._lastHeightDuringDrag;
     },
 
     _toolbarDrag: function(event)
     {
-        if (this._isDockedToBottom) {
-            var height = window.innerHeight - (event.screenY - this.element.lastScreenY);
+        if (this._isDockedToBottom()) {
+            var height = this._lastHeightDuringDrag - (event.screenY - this.element.lastScreenY);
+            this._lastHeightDuringDrag = height;
 
             InspectorFrontendHost.setAttachedWindowHeight(height);
         } else {
