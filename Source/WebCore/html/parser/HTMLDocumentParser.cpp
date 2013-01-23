@@ -301,10 +301,6 @@ void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTM
             return;
         }
 
-        // FIXME: This is too abrupt a way to end parsing because we might
-        // have to wait for deferred scripts. We probably want to call
-        // attemptToRunDeferredScriptsAndEnd(), prepareToStopParsing(), or
-        // attemptToEnd() instead.
         if (it->type() == HTMLTokenTypes::EndOfFile) {
             ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
             prepareToStopParsing();
@@ -576,6 +572,16 @@ void HTMLDocumentParser::endIfDelayed()
 
 void HTMLDocumentParser::finish()
 {
+    // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
+    // makes sense to call any methods on DocumentParser once it's been stopped.
+    // However, FrameLoader::stop calls DocumentParser::finish unconditionally.
+
+    // We're not going to get any more data off the network, so we tell the
+    // input stream we've reached the end of file. finish() can be called more
+    // than once, if the first time does not call end().
+    if (!m_input.haveSeenEndOfFile())
+        m_input.markEndOfFile();
+
 #if ENABLE(THREADED_HTML_PARSER)
     // Empty documents never got an append() call, and thus have never started
     // a background parser. In those cases, we ignore shouldUseThreading()
@@ -586,15 +592,6 @@ void HTMLDocumentParser::finish()
     }
 #endif
 
-    // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
-    // makes sense to call any methods on DocumentParser once it's been stopped.
-    // However, FrameLoader::stop calls DocumentParser::finish unconditionally.
-
-    // We're not going to get any more data off the network, so we tell the
-    // input stream we've reached the end of file.  finish() can be called more
-    // than once, if the first time does not call end().
-    if (!m_input.haveSeenEndOfFile())
-        m_input.markEndOfFile();
     attemptToEnd();
 }
 
