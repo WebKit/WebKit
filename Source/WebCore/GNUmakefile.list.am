@@ -6419,8 +6419,8 @@ if USE_TEXTURE_MAPPER_CAIRO
 webcore_sources += \
 	Source/WebCore//platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp \
 	Source/WebCore//platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.cpp \
-	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperShaderProgram.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperShaderProgram.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
 	Source/WebCore/platform/graphics/GraphicsLayerTransform.cpp \

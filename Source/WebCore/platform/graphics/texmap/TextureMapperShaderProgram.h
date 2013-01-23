@@ -18,8 +18,8 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextureMapperShaderManager_h
-#define TextureMapperShaderManager_h
+#ifndef TextureMapperShaderProgram_h
+#define TextureMapperShaderProgram_h
 
 #if USE(TEXTURE_MAPPER)
 #include "GraphicsContext3D.h"
@@ -37,14 +37,32 @@ namespace WebCore {
 
 class TextureMapperShaderProgram : public RefCounted<TextureMapperShaderProgram> {
 public:
+    enum Option {
+        Texture          = 1L << 0,
+        Rect             = 1L << 1,
+        SolidColor       = 1L << 2,
+        Opacity          = 1L << 3,
+        Mask             = 1L << 4,
+        Antialiasing     = 1L << 5,
+        GrayscaleFilter  = 1L << 6,
+        SepiaFilter      = 1L << 7,
+        SaturateFilter   = 1L << 8,
+        HueRotateFilter  = 1L << 9,
+        BrightnessFilter = 1L << 10,
+        ContrastFilter   = 1L << 11,
+        InvertFilter     = 1L << 12,
+        OpacityFilter    = 1L << 13,
+        BlurFilter       = 1L << 14,
+        AlphaBlur        = 1L << 15,
+        ContentTexture   = 1L << 16
+    };
+
+    typedef unsigned Options;
+
+    static PassRefPtr<TextureMapperShaderProgram> create(PassRefPtr<GraphicsContext3D>, Options);
+    virtual ~TextureMapperShaderProgram();
     Platform3DObject programID() const { return m_id; }
     GraphicsContext3D* context() { return m_context.get(); }
-    static PassRefPtr<TextureMapperShaderProgram> create(PassRefPtr<GraphicsContext3D> context, const String& vertex, const String& fragment)
-    {
-        return adoptRef(new TextureMapperShaderProgram(context, vertex, fragment));
-    }
-
-    virtual ~TextureMapperShaderProgram();
 
     TEXMAP_DECLARE_ATTRIBUTE(vertex)
 
@@ -80,43 +98,7 @@ private:
     HashMap<AtomicString, GC3Duint> m_variables;
 };
 
-class TextureMapperShaderManager {
-public:
-    enum Option {
-        Texture          = 1L << 0,
-        Rect             = 1L << 1,
-        SolidColor       = 1L << 2,
-        Opacity          = 1L << 3,
-        Mask             = 1L << 4,
-        Antialiasing     = 1L << 5,
-        GrayscaleFilter  = 1L << 6,
-        SepiaFilter      = 1L << 7,
-        SaturateFilter   = 1L << 8,
-        HueRotateFilter  = 1L << 9,
-        BrightnessFilter = 1L << 10,
-        ContrastFilter   = 1L << 11,
-        InvertFilter     = 1L << 12,
-        OpacityFilter    = 1L << 13,
-        BlurFilter       = 1L << 14,
-        AlphaBlur        = 1L << 15,
-        ContentTexture   = 1L << 16
-    };
-
-    typedef unsigned Options;
-
-    TextureMapperShaderManager() { }
-    explicit TextureMapperShaderManager(GraphicsContext3D*);
-    virtual ~TextureMapperShaderManager();
-
-    PassRefPtr<TextureMapperShaderProgram> getShaderProgram(Options);
-
-private:
-    typedef HashMap<Options, RefPtr<TextureMapperShaderProgram> > TextureMapperShaderProgramMap;
-    TextureMapperShaderProgramMap m_programs;
-    RefPtr<GraphicsContext3D> m_context;
-};
-
 }
 #endif
 
-#endif // TextureMapperShaderManager_h
+#endif // TextureMapperShaderProgram_h

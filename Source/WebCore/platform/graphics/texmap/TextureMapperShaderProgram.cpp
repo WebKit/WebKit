@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "TextureMapperShaderManager.h"
+#include "TextureMapperShaderProgram.h"
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 #include "LengthFunctions.h"
@@ -351,14 +351,12 @@ static const char* fragmentTemplate =
         }
     );
 
-
-static void getShaderSpec(TextureMapperShaderManager::Options options, String& vertexSource, String& fragmentSource)
+PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderProgram::create(PassRefPtr<GraphicsContext3D> context, TextureMapperShaderProgram::Options options)
 {
-
     StringBuilder shaderBuilder;
 #define SET_APPLIER_FROM_OPTIONS(Applier) \
     shaderBuilder.append(\
-        (options & TextureMapperShaderManager::Applier) ? ENABLE_APPLIER(Applier) : DISABLE_APPLIER(Applier))
+        (options & TextureMapperShaderProgram::Applier) ? ENABLE_APPLIER(Applier) : DISABLE_APPLIER(Applier))
 
     SET_APPLIER_FROM_OPTIONS(Texture);
     SET_APPLIER_FROM_OPTIONS(Rect);
@@ -381,32 +379,12 @@ static void getShaderSpec(TextureMapperShaderManager::Options options, String& v
     vertexBuilder.append(shaderBuilder.toString());
     vertexBuilder.append(vertexTemplate);
     shaderBuilder.append(fragmentTemplate);
-    vertexSource = vertexBuilder.toString();
-    fragmentSource = shaderBuilder.toString();
+
+    String vertexSource = vertexBuilder.toString();
+    String fragmentSource = shaderBuilder.toString();
+
+    return adoptRef(new TextureMapperShaderProgram(context, vertexSource, fragmentSource));
 }
 
-TextureMapperShaderManager::TextureMapperShaderManager(GraphicsContext3D* context)
-    : m_context(context)
-{
 }
-
-TextureMapperShaderManager::~TextureMapperShaderManager()
-{
-}
-
-PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProgram(Options options)
-{
-    TextureMapperShaderProgramMap::iterator it = m_programs.find(options);
-    if (it != m_programs.end())
-        return it->value;
-
-    String vertexShader;
-    String fragmentShader;
-    getShaderSpec(options, vertexShader, fragmentShader);
-    RefPtr<TextureMapperShaderProgram> program = TextureMapperShaderProgram::create(m_context, vertexShader, fragmentShader);
-    m_programs.add(options, program);
-    return program;
-}
-};
-
 #endif
