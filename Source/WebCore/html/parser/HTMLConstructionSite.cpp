@@ -607,9 +607,10 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
     // When a node is to be foster parented, the last template element with no table element is below it in the stack of open elements is the foster parent element (NOT the template's parent!)
     HTMLElementStack::ElementRecord* lastTemplateElement = m_openElements.topmost(templateTag.localName());
     if (lastTemplateElement && !m_openElements.inTableScope(tableTag)) {
-        task.parent = lastTemplateElement->element();
+        task.parent = toHTMLTemplateElement(lastTemplateElement->element())->content();
         return;
     }
+
 #endif
 
     HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
