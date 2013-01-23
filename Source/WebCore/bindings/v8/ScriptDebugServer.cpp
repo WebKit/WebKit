@@ -464,7 +464,8 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 return;
 
             OwnPtr<ScriptPreprocessor> preprocessor(m_scriptPreprocessor.release());
-            v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
+            v8::Local<v8::Context> debugContext = v8::Debug::GetDebugContext();
+            v8::Context::Scope contextScope(debugContext);
             v8::Handle<v8::Function> getScriptSourceFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScriptSource")));
             v8::Handle<v8::Value> argv[] = { eventDetails.GetEventData() };
             v8::Handle<v8::Value> script = getScriptSourceFunction->Call(m_debuggerScript.get(), 1, argv);
@@ -476,7 +477,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
             v8::Handle<v8::Function> setScriptSourceFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setScriptSource")));
             String patchedScript = preprocessor->preprocessSourceCode(toWebCoreStringWithUndefinedOrNullCheck(script), toWebCoreStringWithUndefinedOrNullCheck(scriptName));
 
-            v8::Handle<v8::Value> argv2[] = { eventDetails.GetEventData(), v8String(patchedScript) };
+            v8::Handle<v8::Value> argv2[] = { eventDetails.GetEventData(), v8String(patchedScript, debugContext->GetIsolate()) };
             setScriptSourceFunction->Call(m_debuggerScript.get(), 2, argv2);
             m_scriptPreprocessor = preprocessor.release();
         } else if (event == v8::AfterCompile) {

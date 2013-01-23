@@ -50,12 +50,13 @@ v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExe
 {
     ASSERT(event->hasInterface(eventNames().interfaceForErrorEvent));
     v8::Local<v8::Object> listener = getListenerObject(context);
+    v8::Isolate* isolate = toV8Context(context, worldContext())->GetIsolate();
     v8::Local<v8::Value> returnValue;
     if (!listener.IsEmpty() && listener->IsFunction()) {
         ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
         v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::Cast(listener);
         v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
-        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), deprecatedV8String(errorEvent->filename()), deprecatedV8Integer(errorEvent->lineno()) };
+        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message(), isolate), v8String(errorEvent->filename(), isolate), v8Integer(errorEvent->lineno(), isolate) };
         V8RecursionScope recursionScope(context);
         returnValue = callFunction->Call(thisValue, 3, parameters);
     }
