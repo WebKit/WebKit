@@ -79,6 +79,9 @@ public:
     // Must be called from the scrolling thread. Handles the wheel event.
     void handleWheelEvent(const PlatformWheelEvent&);
 
+    void setMainFrameIsRubberBanding(bool);
+    bool isRubberBandInProgress();
+
     void invalidate();
     void commitNewTreeState(PassOwnPtr<ScrollingStateTree>);
 
@@ -98,6 +101,8 @@ public:
 
     void setScrollingPerformanceLoggingEnabled(bool flag);
     bool scrollingPerformanceLoggingEnabled();
+
+    ScrollingTreeScrollingNode* rootNode() const { return m_rootNode.get(); }
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
@@ -121,6 +126,7 @@ private:
     bool m_canGoForward;
     bool m_mainFramePinnedToTheLeft;
     bool m_mainFramePinnedToTheRight;
+    bool m_mainFrameIsRubberBanding;
 
     bool m_scrollingPerformanceLoggingEnabled;
     

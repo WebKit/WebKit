@@ -1907,6 +1907,28 @@ bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const
     return page->chrome()->client()->shouldRubberBandInDirection(direction);
 }
 
+bool FrameView::isRubberBandInProgress() const
+{
+    if (scrollbarsSuppressed())
+        return false;
+
+    // If the scrolling thread updates the scroll position for this FrameView, then we should return
+    // ScrollingCoordinator::isRubberBandInProgress().
+    if (Page* page = m_frame->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+                return scrollingCoordinator->isRubberBandInProgress();
+        }
+    }
+
+    // If the main thread updates the scroll position for this FrameView, we should return
+    // ScrollAnimator::isRubberBandInProgress().
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isRubberBandInProgress();
+
+    return false;
+}
+
 bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
 {
 #if ENABLE(THREADED_SCROLLING)

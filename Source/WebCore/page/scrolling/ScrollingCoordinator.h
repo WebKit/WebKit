@@ -126,6 +126,7 @@ public:
     virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*counterScrollingLayer*/) { }
     virtual void syncChildPositions(const LayoutRect&) { }
     virtual String scrollingStateTreeAsText() const;
+    virtual bool isRubberBandInProgress() const { return false; }
 
     // Generated a unique id for scroll layers.
     ScrollingNodeID uniqueScrollLayerID();

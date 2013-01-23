@@ -88,6 +88,11 @@ ScrollingTree* ScrollingCoordinatorMac::scrollingTree() const
     return m_scrollingTree.get();
 }
 
+bool ScrollingCoordinatorMac::isRubberBandInProgress() const
+{
+    return scrollingTree()->isRubberBandInProgress();
+}
+
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
     if (!m_scrollingStateTree->hasChangedProperties())

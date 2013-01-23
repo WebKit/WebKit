@@ -54,6 +54,7 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     , m_canGoForward(false)
     , m_mainFramePinnedToTheLeft(false)
     , m_mainFramePinnedToTheRight(false)
+    , m_mainFrameIsRubberBanding(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_isHandlingProgrammaticScroll(false)
 {
@@ -257,6 +258,20 @@ bool ScrollingTree::canGoForward()
     MutexLocker lock(m_swipeStateMutex);
 
     return m_canGoForward;
+}
+
+bool ScrollingTree::isRubberBandInProgress()
+{
+    MutexLocker lock(m_mutex);    
+
+    return m_mainFrameIsRubberBanding;
+}
+
+void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
+{
+    MutexLocker locker(m_mutex);
+
+    m_mainFrameIsRubberBanding = isRubberBanding;
 }
 
 bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wheelEvent)

@@ -75,6 +75,8 @@ public:
 
     virtual String scrollingStateTreeAsText() const OVERRIDE;
 
+    virtual bool isRubberBandInProgress() const OVERRIDE;
+
 private:
     // Return whether this scrolling coordinator can keep fixed position layers fixed to their
     // containers while scrolling.

@@ -152,6 +152,13 @@ IntSize ScrollingTreeScrollingNodeMac::stretchAmount()
     else if (scrollPosition().x() > maximumScrollPosition().x())
         stretch.setWidth(scrollPosition().x() - maximumScrollPosition().x());
 
+    if (scrollingTree()->rootNode() == this) {
+        if (stretch.isZero())
+            scrollingTree()->setMainFrameIsRubberBanding(false);
+        else
+            scrollingTree()->setMainFrameIsRubberBanding(true);
+    }
+
     return stretch;
 }
 
@@ -235,6 +242,8 @@ void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
 {
     if (!m_snapRubberbandTimer)
         return;
+
+    scrollingTree()->setMainFrameIsRubberBanding(false);
 
     CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
     m_snapRubberbandTimer = nullptr;

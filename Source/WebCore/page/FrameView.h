@@ -190,6 +190,7 @@ public:
     virtual void updateFixedElementsAfterScrolling();
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
     virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
+    virtual bool isRubberBandInProgress() const OVERRIDE;
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 
