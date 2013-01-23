@@ -1128,12 +1128,22 @@ WebViewHost::WebViewHost(TestShell* shell)
     : m_shell(shell)
     , m_proxy(0)
     , m_webWidget(0)
+    , m_shutdownWasInvoked(false)
 {
     reset();
 }
 
 WebViewHost::~WebViewHost()
 {
+    ASSERT(m_shutdownWasInvoked);
+    if (m_inModalLoop)
+        webkit_support::QuitMessageLoop();
+}
+
+void WebViewHost::shutdown()
+{
+    ASSERT(!m_shutdownWasInvoked);
+
     // DevTools frontend page is supposed to be navigated only once and
     // loading another URL in that Page is an error.
     if (m_shell->devToolsWebView() != this) {
@@ -1148,8 +1158,8 @@ WebViewHost::~WebViewHost()
 
     m_layerTreeView.clear();
     webWidget()->close();
-    if (m_inModalLoop)
-        webkit_support::QuitMessageLoop();
+    m_webWidget = 0;
+    m_shutdownWasInvoked = true;
 }
 
 void WebViewHost::setWebWidget(WebKit::WebWidget* widget)

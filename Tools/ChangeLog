@@ -1,3 +1,28 @@
+2013-01-23  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Use after free in plugins/geturlnotify-during-document-teardown.html
+        https://bugs.webkit.org/show_bug.cgi?id=107556
+
+        Reviewed by Tony Chang.
+
+        WebViewHost initiates a navigation to about:blank in its destructor.
+        However, since WebTestProxy inherits from WebViewHost, at this point
+        the WebViewClient and WebFrameClient interfaces are already partially
+        destructed resulting in the use after free.
+
+        This does not affect the chromium implementation since it doesn't
+        invoke WebKit API methods in its destructor.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+        (TestShell::closeWindow):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost):
+        (WebViewHost::~WebViewHost):
+        (WebViewHost::shutdown):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-23  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Create Regions watchlist

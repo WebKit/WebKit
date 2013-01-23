@@ -79,6 +79,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
  public:
     WebViewHost(TestShell*);
     virtual ~WebViewHost();
+    void shutdown();
     void setWebWidget(WebKit::WebWidget*);
     WebKit::WebView* webView() const;
     WebKit::WebWidget* webWidget() const;
@@ -372,6 +373,9 @@ private:
 
     bool m_hasWindow;
     bool m_inModalLoop;
+
+    bool m_shutdownWasInvoked;
+
     WebKit::WebRect m_windowRect;
 
     // true if we want to enable smart insert/delete.
