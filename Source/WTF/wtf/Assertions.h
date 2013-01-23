@@ -390,4 +390,14 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 #define UNREACHABLE_FOR_PLATFORM() ASSERT_NOT_REACHED()
 #endif
 
+#if ASSERT_DISABLED
+#define RELEASE_ASSERT(assertion) (!(assertion) ? (CRASH()) : (void)0)
+#define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) RELEASE_ASSERT(assertion)
+#define RELEASE_ASSERT_NOT_REACHED() CRASH()
+#else
+#define RELEASE_ASSERT(assertion) ASSERT(assertion)
+#define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) ASSERT_WITH_MESSAGE(assertion, __VA_ARGS__)
+#define RELEASE_ASSERT_NOT_REACHED() ASSERT_NOT_REACHED()
+#endif
+
 #endif /* WTF_Assertions_h */
