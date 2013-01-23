@@ -47,14 +47,18 @@ DOMWindowSpeechSynthesis::~DOMWindowSpeechSynthesis()
 {
 }
 
+const char* DOMWindowSpeechSynthesis::supplementName()
+{
+    return "DOMWindowSpeechSynthesis";
+}
+
 // static
 DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowSpeechSynthesis", AtomicString::ConstructFromLiteral));
-    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, name));
+    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, upplementName()));
     if (!supplement) {
         supplement = new DOMWindowSpeechSynthesis(window);
-        provideTo(window, name, adoptPtr(supplement));
+        provideTo(window, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

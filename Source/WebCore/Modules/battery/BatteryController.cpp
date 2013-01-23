@@ -89,10 +89,9 @@ void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, Pa
         (*it)->didChangeBatteryStatus(event, battery);
 }
 
-const AtomicString& BatteryController::supplementName()
+const char* BatteryController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("BatteryController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "BatteryController";
 }
 
 bool BatteryController::isActive(Page* page)

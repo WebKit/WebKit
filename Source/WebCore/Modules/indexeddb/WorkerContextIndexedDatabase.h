@@ -48,6 +48,7 @@ private:
     explicit WorkerContextIndexedDatabase(ScriptExecutionContext*);
 
     IDBFactory* indexedDB();
+    static const char* supplementName();
 
     ScriptExecutionContext* m_context;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;

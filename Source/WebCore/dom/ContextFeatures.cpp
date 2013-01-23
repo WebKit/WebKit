@@ -39,10 +39,9 @@ ContextFeaturesClient* ContextFeaturesClient::empty()
     return &empty;
 }
 
-const AtomicString& ContextFeatures::supplementName()
+const char* ContextFeatures::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("ContextFeatures", AtomicString::ConstructFromLiteral));
-    return name;
+    return "ContextFeatures";
 }
 
 ContextFeatures* ContextFeatures::defaultSwitch()

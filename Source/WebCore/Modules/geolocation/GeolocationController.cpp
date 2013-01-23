@@ -132,10 +132,9 @@ GeolocationPosition* GeolocationController::lastPosition()
     return m_client->lastPosition();
 }
 
-const AtomicString& GeolocationController::supplementName()
+const char* GeolocationController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("GeolocationController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "GeolocationController";
 }
 
 void provideGeolocationTo(Page* page, GeolocationClient* client)

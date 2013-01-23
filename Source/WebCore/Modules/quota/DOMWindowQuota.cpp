@@ -48,14 +48,18 @@ DOMWindowQuota::~DOMWindowQuota()
 {
 }
 
+const char* DOMWindowQuota::supplementName()
+{
+    return "DOMWindowQuota";
+}
+
 // static
 DOMWindowQuota* DOMWindowQuota::from(DOMWindow* window)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowQuota", AtomicString::ConstructFromLiteral));
-    DOMWindowQuota* supplement = static_cast<DOMWindowQuota*>(Supplement<DOMWindow>::from(window, name));
+    DOMWindowQuota* supplement = static_cast<DOMWindowQuota*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
         supplement = new DOMWindowQuota(window);
-        provideTo(window, name, adoptPtr(supplement));
+        provideTo(window, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

@@ -48,7 +48,7 @@ public:
         FeatureTypeSize // Should be the last entry.
     };
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static ContextFeatures* defaultSwitch();
     static PassRefPtr<ContextFeatures> create(ContextFeaturesClient*);
 

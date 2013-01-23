@@ -56,10 +56,9 @@ NotificationClient* NotificationController::clientFrom(Page* page)
     return 0;
 }
 
-const AtomicString& NotificationController::supplementName()
+const char* NotificationController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NotificationController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "NotificationController";
 }
 
 void provideNotification(Page* page, NotificationClient* client)

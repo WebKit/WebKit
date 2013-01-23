@@ -41,6 +41,7 @@ public:
 
 private:
     NavigatorGeolocation(Frame*);
+    static const char* supplementName();
 
     mutable RefPtr<Geolocation> m_geolocation;
 };

@@ -49,7 +49,7 @@ public:
 
     virtual void willAddPrerender(PrerenderHandle*) = 0;
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static PrerendererClient* from(Page*);
 
 protected:

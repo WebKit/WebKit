@@ -53,6 +53,7 @@ private:
     explicit DOMWindowIndexedDatabase(DOMWindow*);
 
     IDBFactory* indexedDB();
+    static const char* supplementName();
 
     DOMWindow* m_window;
     RefPtr<IDBFactory> m_idbFactory;

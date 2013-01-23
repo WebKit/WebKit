@@ -44,6 +44,7 @@ public:
 
 private:
     NavigatorNetworkInfoConnection();
+    static const char* supplementName();
 
     RefPtr<NetworkInfoConnection> m_connection;
 };

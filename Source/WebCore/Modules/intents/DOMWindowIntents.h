@@ -50,6 +50,7 @@ private:
     explicit DOMWindowIntents(DOMWindow*);
 
     DeliveredIntent* webkitIntent();
+    static const char* supplementName();
 
     RefPtr<DeliveredIntent> m_intent;
 };

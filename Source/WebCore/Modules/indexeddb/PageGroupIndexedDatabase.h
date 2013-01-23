@@ -44,6 +44,7 @@ public:
 
 private:
     PageGroupIndexedDatabase();
+    static const char* supplementName();
 
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
 };

@@ -30,10 +30,9 @@
 
 namespace WebCore {
 
-const AtomicString& SpeechRecognitionController::supplementName()
+const char* SpeechRecognitionController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("SpeechRecognitionController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "SpeechRecognitionController";
 }
 
 SpeechRecognitionController::SpeechRecognitionController(SpeechRecognitionClient* client)

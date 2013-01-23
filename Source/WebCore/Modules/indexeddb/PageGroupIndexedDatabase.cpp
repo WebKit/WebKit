@@ -41,13 +41,17 @@ PageGroupIndexedDatabase::~PageGroupIndexedDatabase()
 {
 }
 
+const char* PageGroupIndexedDatabase::supplementName()
+{
+    return "PageGroupIndexedDatabase";
+}
+
 PageGroupIndexedDatabase* PageGroupIndexedDatabase::from(PageGroup& group)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("PageGroupIndexedDatabase", AtomicString::ConstructFromLiteral));
-    PageGroupIndexedDatabase* supplement = static_cast<PageGroupIndexedDatabase*>(Supplement<PageGroup>::from(&group, name));
+    PageGroupIndexedDatabase* supplement = static_cast<PageGroupIndexedDatabase*>(Supplement<PageGroup>::from(&group, supplementName()));
     if (!supplement) {
         supplement = new PageGroupIndexedDatabase();
-        provideTo(&group, name, adoptPtr(supplement));
+        provideTo(&group, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

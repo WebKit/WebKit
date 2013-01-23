@@ -27,11 +27,37 @@
 #define Supplementable_h
 
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
+
+// What you should know about the Supplement keys
+// ==============================================
+// The Supplement is expected to use the same const char* string instance
+// as its key. The Supplementable's SupplementMap will use the address of the
+// string as the key and not the characters themselves. Hence, 2 strings with
+// the same characters will be treated as 2 different keys.
+//
+// In practice, it is recommended that Supplements implements a static method
+// for returning its key to use. For example:
+//
+//     class MyClass : public Supplement<MySupplementable> {
+//         ...
+//         static const char* supplementName();
+//     }
+//
+//     const char* MyClass::supplementName()
+//     {
+//         return "MyClass";
+//     }
+//
+// An example of the using the key:
+//
+//     MyClass* MyClass::from(MySupplementable* host)
+//     {
+//         return reinterpret_cast<MyClass*>(Supplement<MySupplementable>::from(host, supplementName()));
+//     }
 
 template<typename T>
 class Supplementable;
@@ -44,12 +70,12 @@ public:
     virtual bool isRefCountedWrapper() const { return false; }
 #endif
 
-    static void provideTo(Supplementable<T>* host, const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
+    static void provideTo(Supplementable<T>* host, const char* key, PassOwnPtr<Supplement<T> > supplement)
     {
         host->provideSupplement(key, supplement);
     }
 
-    static Supplement<T>* from(Supplementable<T>* host, const AtomicString& key)
+    static Supplement<T>* from(Supplementable<T>* host, const char* key)
     {
         return host ? host->requireSupplement(key) : 0;
     }
@@ -58,24 +84,24 @@ public:
 template<typename T>
 class Supplementable {
 public:
-    void provideSupplement(const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
+    void provideSupplement(const char* key, PassOwnPtr<Supplement<T> > supplement)
     {
-        ASSERT(!m_supplements.get(key.impl()));
+        ASSERT(!m_supplements.get(key));
         m_supplements.set(key, supplement);
     }
 
-    void removeSupplement(const AtomicString& key)
+    void removeSupplement(const char* key)
     {
         m_supplements.remove(key);
     }
 
-    Supplement<T>* requireSupplement(const AtomicString& key)
+    Supplement<T>* requireSupplement(const char* key)
     {
         return m_supplements.get(key);
     }
 
 private:
-    typedef HashMap<AtomicString, OwnPtr<Supplement<T> > > SupplementMap;
+    typedef HashMap<const char*, OwnPtr<Supplement<T> >, PtrHash<const char*> > SupplementMap;
     SupplementMap m_supplements;
 };
 

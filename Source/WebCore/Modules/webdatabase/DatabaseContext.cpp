@@ -44,9 +44,14 @@
 
 namespace WebCore {
 
-static DatabaseContext* existingDatabaseContextFrom(ScriptExecutionContext* context)
+const char* DatabaseContext::supplementName()
 {
-    return static_cast<DatabaseContext*>(Supplement<ScriptExecutionContext>::from(context, "DatabaseContext"));
+    return "DatabaseContext";
+}
+
+DatabaseContext* DatabaseContext::existingDatabaseContextFrom(ScriptExecutionContext* context)
+{
+    return static_cast<DatabaseContext*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
 }
 
 DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
@@ -68,7 +73,7 @@ DatabaseContext* DatabaseContext::from(ScriptExecutionContext* context)
     DatabaseContext* supplement = existingDatabaseContextFrom(context);
     if (!supplement) {
         supplement = new DatabaseContext(context);
-        provideTo(context, "DatabaseContext", adoptPtr(supplement));
+        provideTo(context, supplementName(), adoptPtr(supplement));
         ASSERT(supplement == existingDatabaseContextFrom(context));
     }
     return supplement;

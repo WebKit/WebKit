@@ -79,10 +79,9 @@ void NetworkInfoController::didChangeNetworkInformation(const AtomicString& even
          (*it)->didChangeNetworkInformation(event, networkInformation);
 }
 
-const AtomicString& NetworkInfoController::supplementName()
+const char* NetworkInfoController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NetworkInfoController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "NetworkInfoController";
 }
 
 void provideNetworkInfoTo(Page* page, NetworkInfoClient* client)

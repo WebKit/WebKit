@@ -53,12 +53,12 @@ public:
         RefPtr<ThisType> m_wrapped;
     };
 
-    static void provideTo(Supplementable<T>* host, const AtomicString& key, PassRefPtr<ThisType> supplement)
+    static void provideTo(Supplementable<T>* host, const char* key, PassRefPtr<ThisType> supplement)
     {
         host->provideSupplement(key, adoptPtr(new Wrapper(supplement)));
     }
 
-    static ThisType* from(Supplementable<T>* host, const AtomicString& key)
+    static ThisType* from(Supplementable<T>* host, const char* key)
     {
         Supplement<T>* found = host->requireSupplement(key);
         if (!found)

@@ -41,6 +41,7 @@ public:
 
  private:
     NavigatorBattery();
+    static const char* supplementName();
 
     RefPtr<BatteryManager> m_batteryManager;
 };

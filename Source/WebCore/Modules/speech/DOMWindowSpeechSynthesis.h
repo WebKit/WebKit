@@ -47,6 +47,7 @@ private:
     explicit DOMWindowSpeechSynthesis(DOMWindow*);
     
     SpeechSynthesis* speechSynthesis();
+    static const char* supplementName();
     
     RefPtr<SpeechSynthesis> m_speechSynthesis;
 };

@@ -55,6 +55,7 @@ private:
     explicit DOMWindowNotifications(DOMWindow*);
 
     NotificationCenter* webkitNotifications();
+    static const char* supplementName();
 
     DOMWindow* m_window;
     RefPtr<NotificationCenter> m_notificationCenter;

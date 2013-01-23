@@ -145,12 +145,16 @@ private:
     RefPtr<InternalSettings> m_internalSettings;
 };
 
+const char* InternalSettings::supplementName()
+{
+    return "InternalSettings";
+}
+
 InternalSettings* InternalSettings::from(Page* page)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("InternalSettings", AtomicString::ConstructFromLiteral));
-    if (!Supplement<Page>::from(page, name))
-        Supplement<Page>::provideTo(page, name, adoptPtr(new InternalSettingsWrapper(page)));
-    return static_cast<InternalSettingsWrapper*>(Supplement<Page>::from(page, name))->internalSettings();
+    if (!Supplement<Page>::from(page, supplementName()))
+        Supplement<Page>::provideTo(page, supplementName(), adoptPtr(new InternalSettingsWrapper(page)));
+    return static_cast<InternalSettingsWrapper*>(Supplement<Page>::from(page, supplementName()))->internalSettings();
 }
 
 InternalSettings::~InternalSettings()

@@ -201,10 +201,9 @@ void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, cons
 }
 #endif
 
-const AtomicString& NavigatorContentUtils::supplementName()
+const char* NavigatorContentUtils::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorContentUtils", AtomicString::ConstructFromLiteral));
-    return name;
+    return "NavigatorContentUtils";
 }
 
 void provideNavigatorContentUtilsTo(Page* page, NavigatorContentUtilsClient* client)

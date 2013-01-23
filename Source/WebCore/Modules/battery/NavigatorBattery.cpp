@@ -48,13 +48,17 @@ BatteryManager* NavigatorBattery::webkitBattery(Navigator* navigator)
     return navigatorBattery->m_batteryManager.get();
 }
 
+const char* NavigatorBattery::supplementName()
+{
+    return "NavigatorBattery";
+}
+
 NavigatorBattery* NavigatorBattery::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorBattery", AtomicString::ConstructFromLiteral));
-    NavigatorBattery* supplement = static_cast<NavigatorBattery*>(Supplement<Navigator>::from(navigator, name));
+    NavigatorBattery* supplement = static_cast<NavigatorBattery*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
         supplement = new NavigatorBattery();
-        provideTo(navigator, name, adoptPtr(supplement));
+        provideTo(navigator, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

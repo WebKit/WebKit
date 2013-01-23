@@ -47,13 +47,17 @@ WorkerContextIndexedDatabase::~WorkerContextIndexedDatabase()
 {
 }
 
+const char* WorkerContextIndexedDatabase::supplementName()
+{
+    return "WorkerContextIndexedDatabase";
+}
+
 WorkerContextIndexedDatabase* WorkerContextIndexedDatabase::from(ScriptExecutionContext* context)
 {
-    AtomicString name = "WorkderContextIndexedDatabase";
-    WorkerContextIndexedDatabase* supplement = static_cast<WorkerContextIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, name));
+    WorkerContextIndexedDatabase* supplement = static_cast<WorkerContextIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
         supplement = new WorkerContextIndexedDatabase(context);
-        provideTo(context, name, adoptPtr(supplement));
+        provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

@@ -48,6 +48,7 @@ private:
     explicit WorkerContextNotifications(WorkerContext*);
 
     NotificationCenter* webkitNotifications();
+    static const char* supplementName();
 
     WorkerContext* m_context;
     RefPtr<NotificationCenter> m_notificationCenter;

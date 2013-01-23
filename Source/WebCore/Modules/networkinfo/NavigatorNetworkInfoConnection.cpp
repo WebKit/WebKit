@@ -43,13 +43,17 @@ NavigatorNetworkInfoConnection::~NavigatorNetworkInfoConnection()
 {
 }
 
+const char* NavigatorNetworkInfoConnection::supplementName()
+{
+    return "NavigatorNetworkInfoConnection";
+}
+
 NavigatorNetworkInfoConnection* NavigatorNetworkInfoConnection::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorNetworkInfoConnection", AtomicString::ConstructFromLiteral));
-    NavigatorNetworkInfoConnection* supplement = static_cast<NavigatorNetworkInfoConnection*>(Supplement<Navigator>::from(navigator, name));
+    NavigatorNetworkInfoConnection* supplement = static_cast<NavigatorNetworkInfoConnection*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
         supplement = new NavigatorNetworkInfoConnection();
-        provideTo(navigator, name, adoptPtr(supplement));
+        provideTo(navigator, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

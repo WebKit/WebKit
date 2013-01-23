@@ -45,13 +45,17 @@ WorkerContextNotifications::~WorkerContextNotifications()
 {
 }
 
+const char* WorkerContextNotifications::supplementName()
+{
+    return "WorkerContextNotifications";
+}
+
 WorkerContextNotifications* WorkerContextNotifications::from(WorkerContext* context)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("WorkerContextNotifications", AtomicString::ConstructFromLiteral));
-    WorkerContextNotifications* supplement = static_cast<WorkerContextNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName));
+    WorkerContextNotifications* supplement = static_cast<WorkerContextNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
         supplement = new WorkerContextNotifications(context);
-        Supplement<ScriptExecutionContext>::provideTo(context, supplementName, adoptPtr(supplement));
+        Supplement<ScriptExecutionContext>::provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

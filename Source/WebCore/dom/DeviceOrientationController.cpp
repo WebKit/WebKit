@@ -68,10 +68,9 @@ PassRefPtr<Event> DeviceOrientationController::getLastEvent()
     return DeviceOrientationEvent::create(eventNames().deviceorientationEvent, deviceOrientationClient()->lastOrientation());
 }
 
-const AtomicString& DeviceOrientationController::supplementName()
+const char* DeviceOrientationController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceOrientationController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "DeviceOrientationController";
 }
 
 DeviceOrientationController* DeviceOrientationController::from(Page* page)

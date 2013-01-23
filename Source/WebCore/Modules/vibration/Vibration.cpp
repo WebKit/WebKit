@@ -126,10 +126,9 @@ void Vibration::timerStopFired(Timer<Vibration>* timer)
     }
 }
 
-const AtomicString& Vibration::supplementName()
+const char* Vibration::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("Vibration", AtomicString::ConstructFromLiteral));
-    return name;
+    return "Vibration";
 }
 
 bool Vibration::isActive(Page* page)

@@ -46,6 +46,7 @@ public:
 
 private:
     NavigatorGamepad();
+    static const char* supplementName();
 
     RefPtr<GamepadList> m_gamepads;
 };

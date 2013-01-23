@@ -45,7 +45,7 @@ class NavigatorContentUtils : public RefCountedSupplement<Page, NavigatorContent
 public:
     virtual ~NavigatorContentUtils();
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static NavigatorContentUtils* from(Page*);
 
     static void registerProtocolHandler(Navigator*, const String& scheme, const String& url, const String& title, ExceptionCode&);

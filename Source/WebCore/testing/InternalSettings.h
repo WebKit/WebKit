@@ -129,6 +129,7 @@ private:
 
     Settings* settings() const;
     Page* page() const { return m_page; }
+    static const char* supplementName();
 
     Page* m_page;
     Backup m_backup;

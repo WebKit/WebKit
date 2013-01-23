@@ -59,6 +59,8 @@ public:
 
 private:
     explicit DatabaseContext(ScriptExecutionContext*);
+    static const char* supplementName();
+    static DatabaseContext* existingDatabaseContextFrom(ScriptExecutionContext*);
 
     ScriptExecutionContext* m_scriptExecutionContext;
     RefPtr<DatabaseThread> m_databaseThread;

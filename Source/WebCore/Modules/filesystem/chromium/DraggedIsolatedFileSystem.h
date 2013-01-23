@@ -35,7 +35,6 @@
 
 #include "ChromiumDataObject.h"
 #include <wtf/Forward.h>
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,7 +53,7 @@ public:
     const String& filesystemId() const { return m_filesystemId; }
     DOMFileSystem* getDOMFileSystem(ScriptExecutionContext*);
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static DraggedIsolatedFileSystem* from(ChromiumDataObject* dataObject) { return static_cast<DraggedIsolatedFileSystem*>(Supplement<ChromiumDataObject>::from(dataObject, supplementName())); }
 
 private:

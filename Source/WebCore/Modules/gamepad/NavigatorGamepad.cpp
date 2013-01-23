@@ -43,13 +43,17 @@ NavigatorGamepad::~NavigatorGamepad()
 {
 }
 
+const char* NavigatorGamepad::supplementName()
+{
+    return "NavigatorGamepad";
+}
+
 NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGamepad", AtomicString::ConstructFromLiteral));
-    NavigatorGamepad* supplement = static_cast<NavigatorGamepad*>(Supplement<Navigator>::from(navigator, name));
+    NavigatorGamepad* supplement = static_cast<NavigatorGamepad*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
         supplement = new NavigatorGamepad();
-        provideTo(navigator, name, adoptPtr(supplement));
+        provideTo(navigator, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

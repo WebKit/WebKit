@@ -44,7 +44,7 @@ public:
 
     static PassOwnPtr<NetworkInfoController> create(Page*, NetworkInfoClient*);
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static NetworkInfoController* from(Page* page) { return static_cast<NetworkInfoController*>(Supplement<Page>::from(page, supplementName())); }
    
     void addListener(NetworkInfoConnection*);

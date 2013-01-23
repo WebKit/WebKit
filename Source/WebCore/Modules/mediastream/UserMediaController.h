@@ -42,7 +42,7 @@ public:
     void cancelUserMediaRequest(UserMediaRequest*);
 
     static PassOwnPtr<UserMediaController> create(UserMediaClient*);
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 protected:

@@ -48,10 +48,9 @@ DOMWindowPagePopup::~DOMWindowPagePopup()
     m_controller->clearPagePopupClient();
 }
 
-const AtomicString& DOMWindowPagePopup::supplementName()
+const char* DOMWindowPagePopup::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup", AtomicString::ConstructFromLiteral));
-    return name;
+    return "DOMWindowPagePopup";
 }
 
 PagePopupController* DOMWindowPagePopup::pagePopupController(DOMWindow* window)

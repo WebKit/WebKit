@@ -117,10 +117,9 @@ void SpeechInput::cancelRecognition(int listenerId)
     m_client->cancelRecognition(listenerId);
 }
 
-const AtomicString& SpeechInput::supplementName()
+const char* SpeechInput::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("SpeechInput", AtomicString::ConstructFromLiteral));
-    return name;
+    return "SpeechInput";
 }
 
 void provideSpeechInputTo(Page* page, SpeechInputClient* client)

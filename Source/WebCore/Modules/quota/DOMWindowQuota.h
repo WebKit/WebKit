@@ -50,6 +50,8 @@ public:
 
 private:
     explicit DOMWindowQuota(DOMWindow*);
+    static const char* supplementName();
+
     mutable RefPtr<StorageInfo> m_storageInfo;
 };
 

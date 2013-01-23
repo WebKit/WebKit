@@ -42,13 +42,17 @@ NavigatorGeolocation::~NavigatorGeolocation()
 {
 }
 
+const char* NavigatorGeolocation::supplementName()
+{
+    return "NavigatorGeolocation";
+}
+
 NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGeolocation", AtomicString::ConstructFromLiteral));
-    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, name));
+    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, supplementName()));
     if (!supplement) {
         supplement = new NavigatorGeolocation(navigator->frame());
-        provideTo(navigator, name, adoptPtr(supplement));
+        provideTo(navigator, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

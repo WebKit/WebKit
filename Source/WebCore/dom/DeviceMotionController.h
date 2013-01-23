@@ -46,7 +46,7 @@ public:
     virtual bool hasLastData() OVERRIDE;
     virtual PassRefPtr<Event> getLastEvent() OVERRIDE;
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);
 

@@ -43,7 +43,7 @@ public:
 
     BatteryClient* client() const { return m_client; }
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static BatteryController* from(Page* page) { return static_cast<BatteryController*>(Supplement<Page>::from(page, supplementName())); }
     static bool isActive(Page*);
 

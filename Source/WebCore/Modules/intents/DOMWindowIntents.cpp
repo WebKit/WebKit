@@ -43,14 +43,18 @@ DOMWindowIntents::~DOMWindowIntents()
 {
 }
 
+const char* DOMWindowIntents::supplementName()
+{
+    return "DOMWindowIntents";
+}
+
 DOMWindowIntents* DOMWindowIntents::from(DOMWindow* window)
 {
     ASSERT(window);
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowIntents", AtomicString::ConstructFromLiteral));
-    DOMWindowIntents* supplement = static_cast<DOMWindowIntents*>(Supplement<DOMWindow>::from(window, name));
+    DOMWindowIntents* supplement = static_cast<DOMWindowIntents*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
         supplement = new DOMWindowIntents(window);
-        provideTo(window, name, adoptPtr(supplement));
+        provideTo(window, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }

@@ -66,10 +66,9 @@ PassRefPtr<Event> DeviceMotionController::getLastEvent()
     return DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionClient()->lastMotion());
 }
 
-const AtomicString& DeviceMotionController::supplementName()
+const char* DeviceMotionController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceMotionController", AtomicString::ConstructFromLiteral));
-    return name;
+    return "DeviceMotionController";
 }
 
 DeviceMotionController* DeviceMotionController::from(Page* page)

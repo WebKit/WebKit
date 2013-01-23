@@ -55,7 +55,7 @@ public:
     virtual ~SpeechInput();
 
     static PassOwnPtr<SpeechInput> create(SpeechInputClient*);
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static SpeechInput* from(Page* page) { return static_cast<SpeechInput*>(Supplement<Page>::from(page, supplementName())); }
 
     // Generates a unique ID for the given listener to be used for speech requests.

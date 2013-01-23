@@ -49,7 +49,7 @@ public:
 
 private:
     explicit DOMWindowPagePopup(PagePopupClient*);
-    static const AtomicString& supplementName();
+    static const char* supplementName();
 
     RefPtr<PagePopupController> m_controller;
 };

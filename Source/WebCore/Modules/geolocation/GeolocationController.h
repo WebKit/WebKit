@@ -61,7 +61,7 @@ public:
 
     GeolocationClient* client() { return m_client; }
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:

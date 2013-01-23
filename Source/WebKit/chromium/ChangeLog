@@ -1,3 +1,17 @@
+2013-01-22  Mark Lam  <mark.lam@apple.com>
+
+        Change the Supplementable class to not use AtomicString.
+        https://bugs.webkit.org/show_bug.cgi?id=107535.
+
+        Reviewed by Adam Barth.
+
+        Replaced the use of AtomicString keys with literal const char* keys.
+        This simplifies the SupplementMap and makes it slightly leaner and faster.
+
+        * src/ContextFeaturesClientImpl.cpp:
+        (ContextFeaturesCache):
+        (WebKit::ContextFeaturesCache::supplementName):
+
 2013-01-22  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Expose didCommitCompositorFrame in WebWidgetClient.
