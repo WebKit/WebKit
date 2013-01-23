@@ -1921,6 +1921,11 @@
             ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
           ],
         }],
+        ['OS=="win" and chromium_win_pch==1', {
+          'sources/': [
+            ['include', '<(win_pch_dir)/WinPrecompile.cpp'],
+          ],
+        }],
         ['OS=="android"', {
           'sources/': [
             ['include', 'platform/chromium/ClipboardChromiumLinux\\.cpp$'],
@@ -2015,6 +2020,11 @@
         },{ # OS!="win"
           'sources/': [
             ['exclude', 'Win\\.cpp$'],
+          ],
+        }],
+        ['OS=="win" and chromium_win_pch==1', {
+          'sources/': [
+            ['include', '<(win_pch_dir)/WinPrecompile.cpp'],
           ],
         }],
         ['OS=="mac"', {
