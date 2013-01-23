@@ -516,6 +516,7 @@ set(WebCore_IDL_FILES
     html/canvas/CanvasRenderingContext2D.idl
     html/canvas/CanvasRenderingContext.idl
     html/canvas/DataView.idl
+    html/canvas/DOMPath.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
     html/canvas/Float32Array.idl
     html/canvas/Float64Array.idl
@@ -1495,6 +1496,7 @@ set(WebCore_SOURCES
 
     html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
+    html/canvas/CanvasPathMethods.cpp
     html/canvas/CanvasPattern.cpp
     html/canvas/CanvasProxy.cpp
     html/canvas/CanvasRenderingContext.cpp

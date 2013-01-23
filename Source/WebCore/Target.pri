@@ -703,6 +703,7 @@ SOURCES += \
     html/ValidityState.cpp \
     html/WeekInputType.cpp \
     html/canvas/CanvasGradient.cpp \
+    html/canvas/CanvasPathMethods.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasProxy.cpp \
     html/canvas/CanvasRenderingContext.cpp \
@@ -1761,12 +1762,14 @@ HEADERS += \
     history/HistoryItem.h \
     history/PageCache.h \
     html/canvas/CanvasGradient.h \
+    html/canvas/CanvasPathMethods.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasProxy.h \
     html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
     html/canvas/DataView.h \
+    html/canvas/DOMPath.h \
     html/ClassList.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \

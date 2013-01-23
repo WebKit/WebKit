@@ -6462,6 +6462,11 @@
 		FB49C39A16784932007FFB5D /* CSSHostRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB49C39916784932007FFB5D /* CSSHostRule.cpp */; };
 		FB49C39D16784947007FFB5D /* CSSHostRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB49C39C16784947007FFB5D /* CSSHostRule.h */; };
 		FB78AD2E151BF5E600FE54D3 /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FB91392416AE4C17001FE682 /* DOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392016AE4B0B001FE682 /* DOMPath.h */; };
+		FB91392616AE4C2F001FE682 /* CanvasPathMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */; };
+		FB91392716AE4C34001FE682 /* CanvasPathMethods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */; };
+		FB91392A16AE4FC0001FE682 /* JSDOMPath.h in Headers */ = {isa = PBXBuildFile; fileRef = FB91392816AE4FC0001FE682 /* JSDOMPath.h */; };
+		FB91392B16AE4FC0001FE682 /* JSDOMPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB91392916AE4FC0001FE682 /* JSDOMPath.cpp */; };
 		FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = FB92DF4915FED08700994433 /* ClipPathOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */; };
 		FBD6AF8815EF25C9008B7110 /* CSSBasicShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = FBD6AF8715EF21D4008B7110 /* CSSBasicShapes.h */; };
@@ -14081,6 +14086,12 @@
 		FB49C39C16784947007FFB5D /* CSSHostRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSHostRule.h; sourceTree = "<group>"; };
 		FB49C39E16784954007FFB5D /* CSSHostRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSHostRule.idl; sourceTree = "<group>"; };
 		FB78AD2C151BF5D200FE54D3 /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSParserMode.h; sourceTree = "<group>"; };
+		FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPathMethods.cpp; path = canvas/CanvasPathMethods.cpp; sourceTree = "<group>"; };
+		FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPathMethods.h; path = canvas/CanvasPathMethods.h; sourceTree = "<group>"; };
+		FB91392016AE4B0B001FE682 /* DOMPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMPath.h; path = canvas/DOMPath.h; sourceTree = "<group>"; };
+		FB91392116AE4B0B001FE682 /* DOMPath.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMPath.idl; path = canvas/DOMPath.idl; sourceTree = "<group>"; };
+		FB91392816AE4FC0001FE682 /* JSDOMPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPath.h; sourceTree = "<group>"; };
+		FB91392916AE4FC0001FE682 /* JSDOMPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPath.cpp; sourceTree = "<group>"; };
 		FB92DF4915FED08700994433 /* ClipPathOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipPathOperation.h; sourceTree = "<group>"; };
 		FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
 		FBD6AF8215EF21A3008B7110 /* BasicShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicShapes.cpp; path = style/BasicShapes.cpp; sourceTree = "<group>"; };
@@ -15499,6 +15510,10 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				FB91391E16AE4B0B001FE682 /* CanvasPathMethods.cpp */,
+				FB91391F16AE4B0B001FE682 /* CanvasPathMethods.h */,
+				FB91392016AE4B0B001FE682 /* DOMPath.h */,
+				FB91392116AE4B0B001FE682 /* DOMPath.idl */,
 				49EECDCC10503C2300099FAB /* ArrayBuffer.idl */,
 				49EECDC910503C2300099FAB /* ArrayBufferView.idl */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
@@ -18721,6 +18736,8 @@
 				2E97CE6E1293AD6B00C5C8FF /* JSDataView.h */,
 				2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */,
 				2E0888D31148848A00AF4265 /* JSDOMFormData.h */,
+				FB91392916AE4FC0001FE682 /* JSDOMPath.cpp */,
+				FB91392816AE4FC0001FE682 /* JSDOMPath.h */,
 				4ACBC0C812713D0A0094F9B2 /* JSDOMSettableTokenList.cpp */,
 				4ACBC0C912713D0A0094F9B2 /* JSDOMSettableTokenList.h */,
 				7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */,
@@ -26251,6 +26268,9 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				FB91392416AE4C17001FE682 /* DOMPath.h in Headers */,
+				FB91392616AE4C2F001FE682 /* CanvasPathMethods.h in Headers */,
+				FB91392A16AE4FC0001FE682 /* JSDOMPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29399,6 +29419,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				FB91392716AE4C34001FE682 /* CanvasPathMethods.cpp in Sources */,
+				FB91392B16AE4FC0001FE682 /* JSDOMPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

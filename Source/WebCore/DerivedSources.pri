@@ -305,6 +305,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/CanvasProxy.idl \
     $$PWD/html/canvas/CanvasRenderingContext.idl \
     $$PWD/html/canvas/CanvasRenderingContext2D.idl \
+    $$PWD/html/canvas/DOMPath.idl \
     $$PWD/html/canvas/EXTTextureFilterAnisotropic.idl \
     $$PWD/html/canvas/OESStandardDerivatives.idl \
     $$PWD/html/canvas/OESTextureFloat.idl \

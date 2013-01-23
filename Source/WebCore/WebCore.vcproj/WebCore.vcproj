@@ -3842,6 +3842,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMPath.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMPath.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMParser.cpp"
 				>
 				<FileConfiguration
@@ -59854,6 +59910,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\canvas\CanvasPathMethods.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\CanvasPathMethods.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\canvas\CanvasPattern.cpp"
 				>
 			</File>
@@ -59919,6 +59983,10 @@
 			</File>
 			<File
 				RelativePath="..\html\canvas\DataView.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\DOMPath.h"
 				>
 			</File>
 			<File

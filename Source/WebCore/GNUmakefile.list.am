@@ -197,6 +197,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMMimeType.h \
 	DerivedSources/WebCore/JSDOMNamedFlowCollection.cpp \
 	DerivedSources/WebCore/JSDOMNamedFlowCollection.h \
+	DerivedSources/WebCore/JSDOMPath.cpp \
+	DerivedSources/WebCore/JSDOMPath.h \
 	DerivedSources/WebCore/JSDOMParser.cpp \
 	DerivedSources/WebCore/JSDOMParser.h \
 	DerivedSources/WebCore/JSDOMPluginArray.cpp \
@@ -1524,6 +1526,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/CanvasRenderingContext.idl \
 	$(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
 	$(WebCore)/html/canvas/DataView.idl \
+	$(WebCore)/html/canvas/DOMPath.idl \
 	$(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
 	$(WebCore)/html/canvas/Float32Array.idl \
 	$(WebCore)/html/canvas/Float64Array.idl \
@@ -3215,6 +3218,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CanvasContextAttributes.h \
 	Source/WebCore/html/canvas/CanvasGradient.cpp \
 	Source/WebCore/html/canvas/CanvasGradient.h \
+	Source/WebCore/html/canvas/CanvasPathMethods.cpp \
+	Source/WebCore/html/canvas/CanvasPathMethods.h \
 	Source/WebCore/html/canvas/CanvasPattern.cpp \
 	Source/WebCore/html/canvas/CanvasPattern.h \
 	Source/WebCore/html/canvas/CanvasProxy.cpp \
@@ -3228,6 +3233,7 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
+	Source/WebCore/html/canvas/DOMPath.h \
 	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.cpp \
 	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.h \
 	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \

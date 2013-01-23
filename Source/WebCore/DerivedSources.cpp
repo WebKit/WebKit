@@ -95,6 +95,7 @@
 #include "JSDOMMimeTypeArray.cpp"
 #include "JSDOMNamedFlowCollection.cpp"
 #include "JSDOMParser.cpp"
+#include "JSDOMPath.cpp"
 #include "JSDOMPlugin.cpp"
 #include "JSDOMPluginArray.cpp"
 #include "JSDOMSecurityPolicy.cpp"

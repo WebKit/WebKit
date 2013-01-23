@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 5: ReferenceError: Can't find variable: Path
+Ensure that the constructor for Path object and dependent functions exist.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof document.getElementById is "function"
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

@@ -95,6 +95,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
                   in [Optional=DefaultIsUndefined] float height);
 
     void beginPath();
+
+    // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
     void moveTo(in [Optional=DefaultIsUndefined] float x,
                 in [Optional=DefaultIsUndefined] float y);
@@ -127,6 +129,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
              in [Optional=DefaultIsUndefined] float endAngle,
              in [Optional=DefaultIsUndefined] boolean anticlockwise)
         raises (DOMException);
+
     void fill(in [Optional] DOMString winding);
     void stroke();
     void clip(in [Optional] DOMString winding);

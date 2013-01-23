@@ -4323,6 +4323,9 @@ webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/date-suggesti
 webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
 webkit.org/b/105574 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
 
+webkit.org/b/97333 fast/canvas/canvas-path-object.html [ Failure ]
+webkit.org/b/97333 platform/chromium/virtual/gpu/fast/canvas/canvas-path-object.html [ Failure ]
+
 # This is won't fix, as the debug and release versions differ.
 webkit.org/b/99138 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 
