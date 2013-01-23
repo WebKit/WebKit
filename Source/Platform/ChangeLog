@@ -1,3 +1,25 @@
+2013-01-22  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add WebDiscardableMemory to platform
+        https://bugs.webkit.org/show_bug.cgi?id=107183
+
+        Reviewed by James Robinson.
+
+        WebDiscardable provides a wrapper around memory that can be
+        relcaimed by the underlying kernel when it is under heavy memory
+        pressure. This will be used in a followup patch in the Chromium
+        image decoding store for decoded/resized images.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::allocateDiscardableMemory):
+        * chromium/public/WebDiscardableMemory.h: Added.
+        (WebKit):
+        (WebDiscardableMemory):
+        (WebKit::WebDiscardableMemory::~WebDiscardableMemory):
+
 2013-01-21  Justin Schuh  <jschuh@chromium.org>
 
         [CHROMIUM] Suppress c4267 build warnings for Win64 targets

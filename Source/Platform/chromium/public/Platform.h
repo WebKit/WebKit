@@ -51,6 +51,7 @@ class WebBlobRegistry;
 class WebClipboard;
 class WebCompositorSupport;
 class WebCookieJar;
+class WebDiscardableMemory;
 class WebFileSystem;
 class WebFileUtilities;
 class WebFlingAnimator;
@@ -233,6 +234,13 @@ public:
     // Reports number of bytes used by memory allocator for internal needs.
     // Returns true if the size has been reported, or false otherwise.
     virtual bool memoryAllocatorWasteInBytes(size_t*) { return false; }
+
+    // Allocates discardable memory. May return 0, even if the platform supports
+    // discardable memory. If nonzero, however, then the WebDiscardableMmeory is
+    // returned in an locked state. You may use its underlying data() member
+    // directly, taking care to unlock it when you are ready to let it become
+    // discardable.
+    virtual WebDiscardableMemory* allocateAndLockDiscardableMemory(size_t bytes) { return 0; }
 
 
     // Message Ports -------------------------------------------------------
