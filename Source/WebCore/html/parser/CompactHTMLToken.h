@@ -72,11 +72,13 @@ public:
     // size of CompactHTMLToken, we just use the m_attributes vector.
     const String& publicIdentifier() const { return m_attributes[0].name(); }
     const String& systemIdentifier() const { return m_attributes[0].value(); }
+    bool doctypeForcesQuirks() const { return m_doctypeForcesQuirks; }
 
 private:
     unsigned m_type : 4;
     unsigned m_selfClosing : 1;
     unsigned m_isAll8BitData : 1;
+    unsigned m_doctypeForcesQuirks: 1;
 
     String m_data; // "name", "characters", or "data" depending on m_type
     Vector<CompactAttribute> m_attributes;

@@ -310,6 +310,7 @@ private:
             m_doctypeData->m_publicIdentifier.append(token.publicIdentifier().characters(), token.publicIdentifier().length());
             m_doctypeData->m_hasSystemIdentifier = true;
             m_doctypeData->m_systemIdentifier.append(token.systemIdentifier().characters(), token.systemIdentifier().length());
+            m_doctypeData->m_forceQuirks = token.doctypeForcesQuirks();
             break;
         case HTMLTokenTypes::EndOfFile:
             break;

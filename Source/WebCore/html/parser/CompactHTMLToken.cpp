@@ -45,6 +45,7 @@ COMPILE_ASSERT(sizeof(CompactHTMLToken) == sizeof(SameSizeAsCompactHTMLToken), C
 CompactHTMLToken::CompactHTMLToken(const HTMLToken& token, const TextPosition& textPosition)
     : m_type(token.type())
     , m_isAll8BitData(false)
+    , m_doctypeForcesQuirks(false)
     , m_textPosition(textPosition)
 {
     switch (m_type) {
@@ -58,6 +59,7 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken& token, const TextPosition& t
         String publicIdentifier(token.publicIdentifier().data(), token.publicIdentifier().size());
         String systemIdentifier(token.systemIdentifier().data(), token.systemIdentifier().size());
         m_attributes.append(CompactAttribute(publicIdentifier, systemIdentifier));
+        m_doctypeForcesQuirks = token.forceQuirks();
         break;
     }
     case HTMLTokenTypes::EndOfFile:
