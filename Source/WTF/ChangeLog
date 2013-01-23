@@ -1,3 +1,12 @@
+2013-01-23  Justin Schuh  <jschuh@chromium.org>
+
+        [CHROMIUM] Suppress c4267 build warnings in WTF for Win64 targets
+        https://bugs.webkit.org/show_bug.cgi?id=107721
+
+        Reviewed by Abhishek Arya.
+
+        * WTF.gyp/WTF.gyp:
+
 2013-01-23  Oliver Hunt  <oliver@apple.com>
 
         Add RELEASE_ASSERT (and a few friends)

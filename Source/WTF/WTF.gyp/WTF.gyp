@@ -149,7 +149,8 @@
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icui18n',
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
       ],
-      'msvs_disabled_warnings': [4127, 4355, 4510, 4512, 4610, 4706, 4068],
+      # Disable c4267 warnings until we fix size_t to int truncations.
+      'msvs_disabled_warnings': [4127, 4355, 4510, 4512, 4610, 4706, 4068, 4267],
       'conditions': [
         ['OS=="win"', {
           'sources/': [
