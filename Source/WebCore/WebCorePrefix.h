@@ -38,11 +38,11 @@
 #if defined(WIN32) || defined(_WIN32)
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0501
 #endif
 
 #ifndef WINVER
-#define WINVER 0x0500
+#define WINVER 0x0501
 #endif
 
 #ifndef WTF_USE_CURL

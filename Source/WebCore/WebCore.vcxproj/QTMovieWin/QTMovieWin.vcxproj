@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E498CA9D-3BD2-4D52-8E37-C8DC76526325}</ProjectGuid>
+    <RootNamespace>QuickTimeWin</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="QTMovieWinRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="QTMovieWinDebug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\platform\graphics\win\QTCFDictionary.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTDecompressionSession.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTMovie.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTMovieGWorld.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTMovieTask.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTMovieVisualContext.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTMovieWinTimer.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTPixelBuffer.cpp" />
+    <ClCompile Include="..\..\platform\graphics\win\QTTrack.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\platform\graphics\win\QTCFDictionary.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTDecompressionSession.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTMovie.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTMovieGWorld.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTMovieTask.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTMovieVisualContext.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTMovieWinTimer.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTPixelBuffer.h" />
+    <ClInclude Include="..\..\platform\graphics\win\QTTrack.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

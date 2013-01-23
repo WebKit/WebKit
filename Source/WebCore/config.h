@@ -45,11 +45,11 @@
 #if OS(WINDOWS)
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0501
 #endif
 
 #ifndef WINVER
-#define WINVER 0x0500
+#define WINVER 0x0501
 #endif
 
 // If we don't define these, they get defined in windef.h.
