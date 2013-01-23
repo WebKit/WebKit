@@ -738,6 +738,9 @@
     <ClCompile Include="..\yarr\YarrSyntaxChecker.cpp">
       <Filter>yarr</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\PrototypeMap.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICast.h">
@@ -1880,6 +1883,9 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\RegExpJitTables.h">
       <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\PrototypeMap.h">
+      <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

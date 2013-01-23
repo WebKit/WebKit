@@ -257,6 +257,7 @@
     <ClCompile Include="..\runtime\PropertyDescriptor.cpp" />
     <ClCompile Include="..\runtime\PropertyNameArray.cpp" />
     <ClCompile Include="..\runtime\PropertySlot.cpp" />
+    <ClCompile Include="..\runtime\PrototypeMap.cpp" />
     <ClCompile Include="..\runtime\RegExp.cpp" />
     <ClCompile Include="..\runtime\RegExpCache.cpp" />
     <ClCompile Include="..\runtime\RegExpCachedResult.cpp" />
@@ -626,6 +627,7 @@
     <ClInclude Include="..\runtime\PropertySlot.h" />
     <ClInclude Include="..\runtime\PropertyStorage.h" />
     <ClInclude Include="..\runtime\Protect.h" />
+    <ClInclude Include="..\runtime\PrototypeMap.h" />
     <ClInclude Include="..\runtime\PutDirectIndexMode.h" />
     <ClInclude Include="..\runtime\PutPropertySlot.h" />
     <ClInclude Include="..\runtime\RegExp.h" />

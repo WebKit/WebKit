@@ -1,5 +1,12 @@
 2013-01-22  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed VS2010 build fix following r140259.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
+2013-01-22  Roger Fong  <roger_fong@apple.com>
+
         JavaScriptCore property sheets, project files and modified build scripts.
         https://bugs.webkit.org/show_bug.cgi?id=106987
 
