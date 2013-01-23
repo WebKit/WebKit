@@ -90,7 +90,6 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
     RenderBox* scrollable = m_autoscrollRenderer;
     m_autoscrollTimer.stop();
-    m_autoscrollType = NoAutoscroll;
     m_autoscrollRenderer = 0;
 
     if (!scrollable)
@@ -114,6 +113,8 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
         }
     }
 #endif
+
+    m_autoscrollType = NoAutoscroll;
 
 #if ENABLE(PAN_SCROLLING)
     // If we're not in the top frame we notify it that we are not doing a panScroll any more.
