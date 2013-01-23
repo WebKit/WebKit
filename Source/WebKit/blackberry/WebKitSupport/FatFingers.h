@@ -159,7 +159,7 @@ public:
 
         // Shadow trees can be nested.
         while (result->isInShadowTree())
-            result = toElement(result->shadowAncestorNode());
+            result = toElement(result->deprecatedShadowAncestorNode());
 
         if (!shouldUseRootEditableElement || !result->isElementNode())
             return result;

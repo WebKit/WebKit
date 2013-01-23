@@ -302,7 +302,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     while (n && !n->isElementNode())
         n = n->parentNode();
     if (n)
-        n = n->shadowAncestorNode();
+        n = n->deprecatedShadowAncestorNode();
 
     return static_cast<Element*>(n);
 }

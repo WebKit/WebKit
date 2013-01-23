@@ -647,7 +647,7 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
 
     Node* node = 0;
     if (frame->selection()->rootEditableElement())
-        node = frame->selection()->rootEditableElement()->shadowAncestorNode();
+        node = frame->selection()->rootEditableElement()->deprecatedShadowAncestorNode();
 
     Vector<CompositionUnderline> underlines;
     bool hasSelection = false;
@@ -727,7 +727,7 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     RenderTextControl* renderTextControl = 0;
 
     if (frame->selection()->rootEditableElement())
-        renderer = frame->selection()->rootEditableElement()->shadowAncestorNode()->renderer();
+        renderer = frame->selection()->rootEditableElement()->deprecatedShadowAncestorNode()->renderer();
 
     if (renderer && renderer->isTextControl())
         renderTextControl = toRenderTextControl(renderer);

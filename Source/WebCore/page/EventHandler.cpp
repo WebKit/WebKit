@@ -1817,8 +1817,8 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     Node* clickTarget = mev.targetNode();
     if (clickTarget)
-        clickTarget = clickTarget->shadowAncestorNode();
-    Node* adjustedClickNode = m_clickNode ? m_clickNode->shadowAncestorNode() : 0;
+        clickTarget = clickTarget->deprecatedShadowAncestorNode();
+    Node* adjustedClickNode = m_clickNode ? m_clickNode->deprecatedShadowAncestorNode() : 0;
 
     bool contextMenuEvent = mouseEvent.button() == RightButton;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
@@ -2723,7 +2723,7 @@ bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
     // handle targetNode being a shadow DOM node. 
     bool success = findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
     if (success && targetNode)
-        targetNode = targetNode->shadowAncestorNode();
+        targetNode = targetNode->deprecatedShadowAncestorNode();
     return success;
 }
 

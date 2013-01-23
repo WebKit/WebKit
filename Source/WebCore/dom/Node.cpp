@@ -1229,7 +1229,7 @@ Element* Node::shadowHost() const
     return 0;
 }
 
-Node* Node::shadowAncestorNode() const
+Node* Node::deprecatedShadowAncestorNode() const
 {
     if (ShadowRoot* root = containingShadowRoot())
         return root->host();

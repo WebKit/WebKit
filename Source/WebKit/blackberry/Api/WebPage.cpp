@@ -2346,7 +2346,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     bool canStartSelection = node->canStartSelection();
 
     if (node->isElementNode()) {
-        Element* element = static_cast<Element*>(node->shadowAncestorNode());
+        Element* element = static_cast<Element*>(node->deprecatedShadowAncestorNode());
 
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
             if (!canStartSelection) {
@@ -2381,7 +2381,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     // Walk up the node tree looking for our custom webworks context attribute.
     while (node) {
         if (node->isElementNode()) {
-            Element* element = static_cast<Element*>(node->shadowAncestorNode());
+            Element* element = static_cast<Element*>(node->deprecatedShadowAncestorNode());
             String webWorksContext(DOMSupport::webWorksContext(element));
             if (!webWorksContext.stripWhiteSpace().isEmpty()) {
                 context.setFlag(Platform::WebContext::IsWebWorksContext);

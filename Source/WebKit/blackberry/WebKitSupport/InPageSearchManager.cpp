@@ -313,7 +313,7 @@ void InPageSearchManager::scopeStringMatches(const String& text, bool reset, boo
         if (resultRange->collapsed(ec)) {
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
-            searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), ec);
+            searchRange->setStartAfter(resultRange->startContainer()->deprecatedShadowAncestorNode(), ec);
             searchRange->setEnd(originalEndContainer, originalEndOffset, ec);
             continue;
         }

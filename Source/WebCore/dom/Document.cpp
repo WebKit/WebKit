@@ -1395,7 +1395,7 @@ PassRefPtr<NodeList> Document::handleZeroPadding(const HitTestRequest& request, 
     if (!node)
         return 0;
 
-    node = node->shadowAncestorNode();
+    node = node->deprecatedShadowAncestorNode();
     ListHashSet<RefPtr<Node> > list;
     list.add(node);
     return StaticHashSetNodeList::adopt(list);

@@ -156,7 +156,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     if (!editableRoot)
         return;
     
-    Node* shadowAncestorNode = editableRoot->shadowAncestorNode();
+    Node* shadowAncestorNode = editableRoot->deprecatedShadowAncestorNode();
     
     if (!editableRoot->getAttributeEventListener(eventNames().webkitBeforeTextInsertedEvent) &&
         // FIXME: Remove these checks once textareas and textfields actually register an event handler.

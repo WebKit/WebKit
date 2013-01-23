@@ -2709,9 +2709,9 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
     if (resultRange->collapsed() && shadowTreeRoot) {
         searchRange = rangeOfContents(m_frame->document());
         if (forward)
-            searchRange->setStartAfter(shadowTreeRoot->shadowAncestorNode());
+            searchRange->setStartAfter(shadowTreeRoot->deprecatedShadowAncestorNode());
         else
-            searchRange->setEndBefore(shadowTreeRoot->shadowAncestorNode());
+            searchRange->setEndBefore(shadowTreeRoot->deprecatedShadowAncestorNode());
 
         resultRange = findPlainText(searchRange.get(), target, options);
     }
@@ -2768,7 +2768,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
 
-            searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), exception);
+            searchRange->setStartAfter(resultRange->startContainer()->deprecatedShadowAncestorNode(), exception);
             searchRange->setEnd(originalEndContainer, originalEndOffset, exception);
             continue;
         }

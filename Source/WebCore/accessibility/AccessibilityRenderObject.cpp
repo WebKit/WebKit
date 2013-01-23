@@ -2194,7 +2194,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     layer->hitTest(request, hitTestResult);
     if (!hitTestResult.innerNode())
         return 0;
-    Node* node = hitTestResult.innerNode()->shadowAncestorNode();
+    Node* node = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
 
     if (node->hasTagName(areaTag)) 
         return accessibilityImageMapHitTest(static_cast<HTMLAreaElement*>(node), point);

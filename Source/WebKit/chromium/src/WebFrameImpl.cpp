@@ -1682,7 +1682,7 @@ void WebFrameImpl::scopeStringMatches(int identifier, const WebString& searchTex
                 break;
 
             searchRange->setStartAfter(
-                resultRange->startContainer()->shadowAncestorNode(), ec);
+                resultRange->startContainer()->deprecatedShadowAncestorNode(), ec);
             searchRange->setEnd(originalEndContainer, originalEndOffset, ec);
             continue;
         }
@@ -2336,7 +2336,7 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         // example, focus links if we have found text within the link.
         Node* node = m_activeMatch->firstNode();
         if (node && node->isInShadowTree()) {
-            Node* host = node->shadowAncestorNode();
+            Node* host = node->deprecatedShadowAncestorNode();
             if (host->hasTagName(HTMLNames::inputTag) || host->hasTagName(HTMLNames::textareaTag))
                 node = host;
         }

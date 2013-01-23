@@ -1,3 +1,16 @@
+2013-01-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        shadowAncestorNode() should be renamed to deprecatedShadowAncestorNode()
+        https://bugs.webkit.org/show_bug.cgi?id=107624
+
+        Reviewed by Dimitri Glazkov.
+
+        Since Node::shadowAncestorNode() is deprecated, we would like to rename it to prevent from further use.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection):
+
 2013-01-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: only allow evaluateForTestInFrontend for front-ends under test.

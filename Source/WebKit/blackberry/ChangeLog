@@ -1,3 +1,19 @@
+2013-01-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        shadowAncestorNode() should be renamed to deprecatedShadowAncestorNode()
+        https://bugs.webkit.org/show_bug.cgi?id=107624
+
+        Reviewed by Dimitri Glazkov.
+
+        Since Node::shadowAncestorNode() is deprecated, we would like to rename it to prevent from further use.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        * WebKitSupport/FatFingers.h:
+        (BlackBerry::WebKit::FatFingersResult::node):
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+
 2013-01-22  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] GIF & RAF animations sometimes don't resume after zoom

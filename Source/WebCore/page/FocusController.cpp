@@ -558,7 +558,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
         return;
 
     Node* selectionStartNode = s->selection().start().deprecatedNode();
-    if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->shadowAncestorNode() == newFocusedNode)
+    if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->deprecatedShadowAncestorNode() == newFocusedNode)
         return;
         
     if (Node* mousePressNode = newFocusedFrame->eventHandler()->mousePressNode()) {
@@ -568,7 +568,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
             if (!root)
                 return;
 
-            if (Node* shadowAncestorNode = root->shadowAncestorNode()) {
+            if (Node* shadowAncestorNode = root->deprecatedShadowAncestorNode()) {
                 if (!shadowAncestorNode->hasTagName(inputTag) && !shadowAncestorNode->hasTagName(textareaTag))
                     return;
             }

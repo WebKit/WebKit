@@ -441,7 +441,7 @@ IntRect RenderThemeBlackBerry::convertToPaintingRect(RenderObject* inputRenderer
 
 bool RenderThemeBlackBerry::paintSearchFieldCancelButton(RenderObject* cancelButtonObject, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* input = cancelButtonObject->node()->shadowAncestorNode();
+    Node* input = cancelButtonObject->node()->deprecatedShadowAncestorNode();
     if (!input->renderer()->isBox())
         return false;
 
