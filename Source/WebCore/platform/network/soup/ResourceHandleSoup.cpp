@@ -526,7 +526,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     if (bytesSkipped > 0) {
-        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, G_MAXSSIZE, G_PRIORITY_DEFAULT,
+        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
             d->m_cancellable.get(), redirectSkipCallback, handle.get());
         return;
     }
@@ -681,7 +681,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
             // We use read_async() rather than skip_async() to work around
             // https://bugzilla.gnome.org/show_bug.cgi?id=691489 until we can
             // depend on glib > 2.35.4
-            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, G_MAXSSIZE, G_PRIORITY_DEFAULT,
+            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
                 d->m_cancellable.get(), redirectSkipCallback, handle.get());
             return;
         }
