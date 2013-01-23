@@ -1,5 +1,11 @@
 2013-01-23  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Added eol-style=native to solution file.
+
+        * WebKit.vcxproj/WebKit.sln: Added property eol-style.
+
+2013-01-23  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Checkin the OpenSource WebKit solution.
 
         * WebKit.vcxproj/WebKit.sln:
