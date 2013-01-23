@@ -1,3 +1,14 @@
+2013-01-23  Roger Fong  <roger_fong@apple.com>
+
+        Add the VS2010 WebKit solution folder and solution file.
+        The solution of course will not load until the dependent projects are all completed.
+        https://bugs.webkit.org/show_bug.cgi?id=106949.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj: Added.
+        * WebKit.vcxproj/WebKit.sln: Added.
+
 2013-01-22  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Adds Accessibility support to wk1
