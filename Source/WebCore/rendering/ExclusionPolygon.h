@@ -62,6 +62,8 @@ public:
     const ExclusionPolygonEdge& edgeAt(unsigned index) const { return m_edges[index]; }
     unsigned numberOfEdges() const { return m_edges.size(); }
 
+    bool contains(const FloatPoint&) const;
+
     virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return m_boundingBox; }
     virtual bool isEmpty() const OVERRIDE { return m_empty; }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
@@ -72,6 +74,7 @@ private:
     void computeXIntersections(float y, bool isMinY, Vector<ExclusionInterval>&) const;
     void computeEdgeIntersections(float minY, float maxY, Vector<ExclusionInterval>&) const;
     unsigned findNextEdgeVertexIndex(unsigned vertexIndex1, bool clockwise) const;
+    bool firstFitRectInPolygon(const FloatRect&, unsigned offsetEdgeIndex1, unsigned offsetEdgeIndex) const;
 
     typedef PODInterval<float, ExclusionPolygonEdge*> EdgeInterval;
     typedef PODIntervalTree<float, ExclusionPolygonEdge*> EdgeIntervalTree;
@@ -95,6 +98,9 @@ public:
     float minY() const { return std::min(vertex1().y(), vertex2().y()); }
     float maxX() const { return std::max(vertex1().x(), vertex2().x()); }
     float maxY() const { return std::max(vertex1().y(), vertex2().y()); }
+
+    bool overlapsRect(const FloatRect&) const;
+    bool intersection(const VertexPair&, FloatPoint&) const;
 };
 
 // EdgeIntervalTree nodes store minY, maxY, and a ("UserData") pointer to an ExclusionPolygonEdge. Edge vertex
@@ -149,6 +155,32 @@ template<> struct ValueToString<ExclusionPolygonEdge*> {
     static String string(const ExclusionPolygonEdge* edge) { return String::format("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
 };
 #endif
+
+class OffsetPolygonEdge : public VertexPair {
+public:
+    OffsetPolygonEdge(const ExclusionPolygonEdge& edge, const FloatSize& offset)
+        : m_vertex1(edge.vertex1() + offset)
+        , m_vertex2(edge.vertex2() + offset)
+        , m_edgeIndex(edge.edgeIndex())
+    {
+    }
+
+    OffsetPolygonEdge(const ExclusionPolygon& polygon, float minLogicalIntervalTop, const FloatSize& offset)
+        : m_vertex1(FloatPoint(polygon.shapeLogicalBoundingBox().x(), minLogicalIntervalTop) + offset)
+        , m_vertex2(FloatPoint(polygon.shapeLogicalBoundingBox().maxX(), minLogicalIntervalTop) + offset)
+        , m_edgeIndex(polygon.numberOfEdges())
+    {
+    }
+
+    virtual const FloatPoint& vertex1() const OVERRIDE { return m_vertex1; }
+    virtual const FloatPoint& vertex2() const OVERRIDE { return m_vertex2; }
+    unsigned edgeIndex() const { return m_edgeIndex; }
+
+private:
+    FloatPoint m_vertex1;
+    FloatPoint m_vertex2;
+    unsigned m_edgeIndex;
+};
 
 } // namespace WebCore
 
