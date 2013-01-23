@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script type="text/javascript">
+    if (window.testRunner && window.internals) {
+      testRunner.dumpAsText();
+      internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+      internals.settings.setFixedPositionCreatesStackingContext(true);
+
+      addEventListener("load", function() {
+        document.getElementById("layerTree1").innerText = internals.layerTreeAsText(document);
+        document.getElementById("fixed1").style.top = "50px";
+        document.getElementById("fixed2").style.height = "10px";
+        document.getElementById("layerTree2").innerText = internals.layerTreeAsText(document);
+        document.getElementById("fixed1").style.top = "-100px";
+        document.getElementById("fixed2").style.height = "0px";
+        document.getElementById("layerTree3").innerText = internals.layerTreeAsText(document);
+      }, false);
+    }
+  </script>
+</head>
+
+<body>
+  Layer tree when the fixed elements are out-of-view (should be blank):
+  <pre id="layerTree1"></pre>
+  Layer tree when the fixed elements are in-view (both fixed elements should have layers):
+  <pre id="layerTree2"></pre>
+  Layer tree when the fixed elements are out-of-view again (should be blank):
+  <pre id="layerTree3"></pre>
+  <div id="fixed1" style="position: fixed; top: -100px; left: 100px; width: 10px; height: 10px"></div>
+  <div id="fixed2" style="position: fixed; top: 100px; left: 100px; width: 10px; height: 0px"></div>
+</body>
+</html>
+

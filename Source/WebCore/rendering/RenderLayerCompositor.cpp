@@ -2072,6 +2072,8 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         if (!viewBounds.intersects(enclosingIntRect(layerBounds))) {
             if (viewportConstrainedNotCompositedReason)
                 *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForBoundsOutOfView;
+            // Reevaluate compositing after layout because the layer bounds may change and become composited.
+            m_reevaluateCompositingAfterLayout = true;
             return false;
         }
     }
