@@ -149,7 +149,7 @@ void HTMLDocumentParser::prepareToStopParsing()
 #if ENABLE(THREADED_HTML_PARSER)
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
-    if (!shouldUseThreading())
+    if (!m_haveBackgroundParser)
 #endif
         pumpTokenizerIfPossible(ForceSynchronous);
 
@@ -202,7 +202,7 @@ bool HTMLDocumentParser::isScheduledForResume() const
 // Used by HTMLParserScheduler
 void HTMLDocumentParser::resumeParsingAfterYield()
 {
-    ASSERT(!shouldUseThreading());
+    ASSERT(!m_haveBackgroundParser);
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
@@ -586,7 +586,7 @@ void HTMLDocumentParser::finish()
     // Empty documents never got an append() call, and thus have never started
     // a background parser. In those cases, we ignore shouldUseThreading()
     // and fall through to the non-threading case.
-    if (shouldUseThreading() && m_haveBackgroundParser) {
+    if (m_haveBackgroundParser) {
         HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::finishPartial, ParserMap::identifierForParser(this)));
         return;
     }
@@ -610,7 +610,7 @@ String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
 OrdinalNumber HTMLDocumentParser::lineNumber() const
 {
 #if ENABLE(THREADED_HTML_PARSER)
-    if (shouldUseThreading())
+    if (m_haveBackgroundParser)
         return m_textPosition.m_line;
 #endif
 
@@ -620,7 +620,7 @@ OrdinalNumber HTMLDocumentParser::lineNumber() const
 TextPosition HTMLDocumentParser::textPosition() const
 {
 #if ENABLE(THREADED_HTML_PARSER)
-    if (shouldUseThreading())
+    if (m_haveBackgroundParser)
         return m_textPosition;
 #endif
 
