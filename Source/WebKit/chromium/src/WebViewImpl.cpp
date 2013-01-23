@@ -695,7 +695,8 @@ void WebViewImpl::scrollBy(const WebPoint& delta)
 #if ENABLE(GESTURE_EVENTS)
 bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 {
-    WebWidgetClient::EventStatus eventStatus = WebWidgetClient::EventStatusUnprocessed;
+    bool eventSwallowed = false;
+    bool eventCancelled = false; // for disambiguation
 
     // Handle link highlighting outside the main switch to avoid getting lost in the
     // complicated set of cases handled below.
@@ -729,7 +730,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         OwnPtr<WebGestureCurve> flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(event.sourceDevice, WebFloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY), WebSize()));
         m_gestureAnimation = WebActiveGestureAnimation::createAtAnimationStart(flingCurve.release(), this);
         scheduleAnimation();
-        eventStatus = WebWidgetClient::EventStatusProcessed;
+        eventSwallowed = true;
         break;
     }
     case WebInputEvent::GestureFlingCancel:
@@ -737,13 +738,13 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             m_gestureAnimation.clear();
             if (m_layerTreeView)
                 m_layerTreeView->didStopFlinging();
-            eventStatus = WebWidgetClient::EventStatusProcessed;
+            eventSwallowed = true;
         }
         break;
     case WebInputEvent::GestureTap: {
         m_client->cancelScheduledContentIntents();
         if (detectContentOnTouch(WebPoint(event.x, event.y))) {
-            eventStatus = WebWidgetClient::EventStatusProcessed;
+            eventSwallowed = true;
             break;
         }
 
@@ -759,13 +760,14 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
             if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets)) {
-                eventStatus = WebWidgetClient::EventStatusCancelled;
+                eventSwallowed = true;
+                eventCancelled = true;
                 break;
             }
         }
 
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        eventStatus = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent) ? WebWidgetClient::EventStatusProcessed : WebWidgetClient::EventStatusUnprocessed;
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
 
         if (m_selectPopup && m_selectPopup == selectPopup) {
             // That tap triggered a select popup which is the same as the one that
@@ -787,7 +789,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_page->contextMenuController()->clearContextMenu();
         m_contextMenuAllowed = true;
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        eventStatus = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent) ? WebWidgetClient::EventStatusProcessed : WebWidgetClient::EventStatusUnprocessed;
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         m_contextMenuAllowed = false;
 
         break;
@@ -795,14 +797,14 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GestureTapDown: {
         m_client->cancelScheduledContentIntents();
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        eventStatus = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent) ? WebWidgetClient::EventStatusProcessed : WebWidgetClient::EventStatusUnprocessed;
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         break;
     }
     case WebInputEvent::GestureDoubleTap:
         if (m_webSettings->doubleTapToZoomEnabled() && m_minimumPageScaleFactor != m_maximumPageScaleFactor) {
             m_client->cancelScheduledContentIntents();
             animateZoomAroundPoint(WebPoint(event.x, event.y), DoubleTap);
-            eventStatus = WebWidgetClient::EventStatusProcessed;
+            eventSwallowed = true;
             break;
         }
     case WebInputEvent::GestureScrollBegin:
@@ -814,14 +816,14 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        eventStatus = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent) ? WebWidgetClient::EventStatusProcessed : WebWidgetClient::EventStatusUnprocessed;
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         break;
     }
     default:
         ASSERT_NOT_REACHED();
     }
-    m_client->didHandleGestureEvent(event, eventStatus);
-    return eventStatus != WebWidgetClient::EventStatusUnprocessed;
+    m_client->didHandleGestureEvent(event, eventCancelled);
+    return eventSwallowed;
 }
 
 void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters& parameters)

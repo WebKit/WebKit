@@ -1,3 +1,21 @@
+2013-01-23  Tien-Ren Chen  <trchen@chromium.org>
+
+        Partially revert 104427, change WebWidgetClient::didHandleGestureEvent semantics.
+        https://bugs.webkit.org/show_bug.cgi?id=107605
+
+        Reviewed by Darin Fisher.
+
+        Per discussion in https://codereview.chromium.org/11473027/ we decided
+        not to introduce an enum to WebWidgetClient::didHandleGestureEvent().
+        Instead, change the semantics of the bool flag to indicate whether the
+        gesture event is cancelled for disambiguation.
+
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::didHandleGestureEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebViewTest.cpp:
+
 2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove WebArrayBufferView and WebSerializedScriptValue from chromium/public/platform/

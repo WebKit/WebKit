@@ -168,13 +168,7 @@ public:
     virtual bool isPointerLocked() { return false; }
 
     // Called when a gesture event is handled.
-    enum EventStatus {
-        EventStatusUnprocessed,
-        EventStatusProcessed,
-        EventStatusCancelled
-    };
-    virtual void didHandleGestureEvent(const WebGestureEvent& event, EventStatus) { }
-    virtual void didHandleGestureEvent(const WebGestureEvent& event, bool eventSwallowed) { } // deprecated
+    virtual void didHandleGestureEvent(const WebGestureEvent& event, bool eventCancelled) { }
 
 protected:
     ~WebWidgetClient() { }
