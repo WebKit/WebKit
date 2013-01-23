@@ -47,7 +47,7 @@
 #include "RenderStyle.h"
 #include "TextIterator.h"
 #include "WebFrameImpl.h"
-#include "platform/WebRect.h"
+#include <public/WebRect.h>
 
 using namespace WebCore;
 

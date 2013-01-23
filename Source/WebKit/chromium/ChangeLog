@@ -1,5 +1,18 @@
 2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Fix some #includes to headers in chromium/public/platform/ that have been moved to the new Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=107722
+
+        Reviewed by Darin Fisher.
+
+        These headers just redirect to the new versions, so call the new
+        versions directly.
+
+        * src/linux/WebFontInfo.cpp:
+        * src/mac/WebSubstringUtil.mm:
+
+2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Fix some #includes for WebSerializedScriptValue
         https://bugs.webkit.org/show_bug.cgi?id=107697
 

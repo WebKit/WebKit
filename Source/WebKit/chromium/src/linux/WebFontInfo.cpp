@@ -32,8 +32,8 @@
 #include "WebFontInfo.h"
 
 #include "WebFontRenderStyle.h"
-#include "platform/linux/WebFontFamily.h"
 #include <fontconfig/fontconfig.h>
+#include <public/linux/WebFontFamily.h>
 #include <string.h>
 #include <unicode/utf16.h>
 
