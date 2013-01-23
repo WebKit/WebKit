@@ -26,8 +26,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
-#include "IDBBindingUtilities.h"
-#include "IDBKey.h"
 #include "JSDOMBinding.h"
 #include "JSDOMStringList.h"
 #include "JSDocument.h"
@@ -271,7 +269,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodReturningSequence", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodReturningSequence), (intptr_t)1, NoIntrinsic },
     { "methodThatRequiresAllArgsAndThrows", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows), (intptr_t)2, NoIntrinsic },
     { "serializedValue", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t)1, NoIntrinsic },
-    { "idbKey", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIdbKey), (intptr_t)1, NoIntrinsic },
     { "optionsObject", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOptionsObject), (intptr_t)2, NoIntrinsic },
     { "methodWithException", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t)0, NoIntrinsic },
     { "customMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0, NoIntrinsic },
@@ -1599,23 +1596,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->serializedValue(serializedArg);
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
-{
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestObj::s_info))
-        return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
-    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    if (exec->argumentCount() < 1)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    PassRefPtr<IDBKey> key(createIDBKeyFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    impl->idbKey(key);
     return JSValue::encode(jsUndefined());
 }
 

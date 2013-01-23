@@ -204,7 +204,6 @@ if (ENABLE_INDEXED_DATABASE)
         bindings/js/IDBBindingUtilities.cpp
         bindings/js/JSIDBAnyCustom.cpp
         bindings/js/JSIDBDatabaseCustom.cpp
-        bindings/js/JSIDBKeyCustom.cpp
         bindings/js/JSIDBObjectStoreCustom.cpp
     )
 endif ()

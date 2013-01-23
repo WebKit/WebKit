@@ -121,7 +121,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBDatabase.idl \
     $$PWD/Modules/indexeddb/IDBFactory.idl \
     $$PWD/Modules/indexeddb/IDBIndex.idl \
-    $$PWD/Modules/indexeddb/IDBKey.idl \
     $$PWD/Modules/indexeddb/IDBKeyRange.idl \
     $$PWD/Modules/indexeddb/IDBObjectStore.idl \
     $$PWD/Modules/indexeddb/IDBRequest.idl \

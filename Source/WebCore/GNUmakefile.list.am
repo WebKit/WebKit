@@ -463,8 +463,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBFactory.h \
 	DerivedSources/WebCore/JSIDBIndex.cpp \
 	DerivedSources/WebCore/JSIDBIndex.h \
-	DerivedSources/WebCore/JSIDBKey.cpp \
-	DerivedSources/WebCore/JSIDBKey.h \
 	DerivedSources/WebCore/JSIDBKeyRange.cpp \
 	DerivedSources/WebCore/JSIDBKeyRange.h \
 	DerivedSources/WebCore/JSIDBObjectStore.cpp \
@@ -1229,7 +1227,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
 	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
-	$(WebCore)/Modules/indexeddb/IDBKey.idl \
 	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
 	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
 	$(WebCore)/Modules/indexeddb/IDBOpenDBRequest.idl \
@@ -2366,7 +2363,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHistoryCustom.h \
 	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
 	Source/WebCore/bindings/js/JSIDBDatabaseCustom.cpp \
-	Source/WebCore/bindings/js/JSIDBKeyCustom.cpp \
 	Source/WebCore/bindings/js/JSIDBObjectStoreCustom.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.h \

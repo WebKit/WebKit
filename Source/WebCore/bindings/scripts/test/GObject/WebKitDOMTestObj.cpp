@@ -28,7 +28,6 @@
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMDictionaryPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
-#include "WebKitDOMIDBKeyPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
 #include "WebKitDOMSerializedScriptValuePrivate.h"
@@ -995,17 +994,6 @@ webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerialized
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::SerializedScriptValue* convertedSerializedArg = WebKit::core(serializedArg);
     item->serializedValue(convertedSerializedArg);
-}
-
-void
-webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_IDB_KEY(key));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::IDBKey* convertedKey = WebKit::core(key);
-    item->idbKey(convertedKey);
 }
 
 void

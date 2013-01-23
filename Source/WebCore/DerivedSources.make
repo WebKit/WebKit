@@ -98,7 +98,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBDatabase.idl \
     $(WebCore)/Modules/indexeddb/IDBFactory.idl \
     $(WebCore)/Modules/indexeddb/IDBIndex.idl \
-    $(WebCore)/Modules/indexeddb/IDBKey.idl \
     $(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
     $(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
     $(WebCore)/Modules/indexeddb/IDBRequest.idl \

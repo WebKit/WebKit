@@ -3046,7 +3046,6 @@ my %nativeType = (
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
-    "IDBKey" => "PassRefPtr<IDBKey>",
     "Dictionary" => "Dictionary",
     "any" => "ScriptValue",
     "boolean" => "bool",
@@ -3193,12 +3192,6 @@ sub JSValueToNative
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "SerializedScriptValue::create(exec, $value, 0, 0)";
-    }
-
-    if ($type eq "IDBKey") {
-        AddToImplIncludes("IDBBindingUtilities.h", $conditional);
-        AddToImplIncludes("IDBKey.h", $conditional);
-        return "createIDBKeyFromValue(exec, $value)";
     }
 
     if ($type eq "Dictionary") {

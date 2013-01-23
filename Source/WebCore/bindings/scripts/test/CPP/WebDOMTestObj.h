@@ -33,7 +33,6 @@ class TestObj;
 class WebDOMDictionary;
 class WebDOMDocument;
 class WebDOMEventListener;
-class WebDOMIDBKey;
 class WebDOMNode;
 class WebDOMSVGPoint;
 class WebDOMString;
@@ -155,7 +154,6 @@ public:
     WebDOMTestObj objMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
-    void idbKey(const WebDOMIDBKey& key);
     void optionsObject(const WebDOMDictionary& oo, const WebDOMDictionary& ooo);
     void methodWithException();
     void addEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);

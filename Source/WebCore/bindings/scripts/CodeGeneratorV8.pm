@@ -3548,7 +3548,7 @@ sub GenerateFunctionCallString()
 
         if ($replacements{$paramName}) {
             push @arguments, $replacements{$paramName};
-        } elsif ($parameter->type eq "IDBKey" || $parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
+        } elsif ($parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
             push @arguments, "$paramName.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $interfaceName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";
@@ -3698,7 +3698,6 @@ sub GetNativeType
     return "Dictionary" if $type eq "Dictionary";
 
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
-    return "RefPtr<IDBKey>" if $type eq "IDBKey";
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
     return "RefPtr<NodeFilter>" if $type eq "NodeFilter";
     return "RefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
@@ -3775,12 +3774,6 @@ sub JSValueToNative
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h");
         return "SerializedScriptValue::create($value, $getIsolate)";
-    }
-
-    if ($type eq "IDBKey") {
-        AddToImplIncludes("IDBBindingUtilities.h");
-        AddToImplIncludes("IDBKey.h");
-        return "createIDBKeyFromValue($value)";
     }
 
     if ($type eq "Dictionary") {
@@ -3940,7 +3933,6 @@ my %non_wrapper_types = (
     # FIXME: When EventTarget is an interface and not a mixin, fix this so that
     # EventTarget is treated as a wrapper type.
     'EventTarget' => 1,
-    'IDBKey' => 1,
     'JSObject' => 1,
     'MediaQueryListListener' => 1,
     'NodeFilter' => 1,

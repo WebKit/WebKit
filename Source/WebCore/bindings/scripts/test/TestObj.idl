@@ -83,7 +83,6 @@
         raises(DOMException);
 
     void serializedValue(in SerializedScriptValue serializedArg);
-    void idbKey(in IDBKey key);
     void optionsObject(in Dictionary oo, in [Optional] Dictionary ooo);
 
     // Exceptions

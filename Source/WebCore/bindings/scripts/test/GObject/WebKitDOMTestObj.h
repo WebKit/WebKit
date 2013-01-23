@@ -139,17 +139,6 @@ WEBKIT_API void
 webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerializedScriptValue* serializedArg);
 
 /**
- * webkit_dom_test_obj_idb_key:
- * @self: A #WebKitDOMTestObj
- * @key: A #WebKitDOMIDBKey
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key);
-
-/**
  * webkit_dom_test_obj_options_object:
  * @self: A #WebKitDOMTestObj
  * @oo: A #WebKitDOMDictionary

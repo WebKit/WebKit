@@ -226,7 +226,6 @@
 #include "JSIDBDatabase.cpp"
 #include "JSIDBFactory.cpp"
 #include "JSIDBIndex.cpp"
-#include "JSIDBKey.cpp"
 #include "JSIDBKeyRange.cpp"
 #include "JSIDBObjectStore.cpp"
 #include "JSIDBRequest.cpp"

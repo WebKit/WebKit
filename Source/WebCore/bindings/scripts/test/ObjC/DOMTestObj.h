@@ -30,7 +30,6 @@
 
 @class DOMDictionary;
 @class DOMDocument;
-@class DOMIDBKey;
 @class DOMNode;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
@@ -125,7 +124,6 @@ enum {
 - (DOMTestObj *)objMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)serializedValue:(NSString *)serializedArg;
-- (void)idbKey:(DOMIDBKey *)key;
 - (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo;
 - (void)methodWithException;
 - (void)customMethod;

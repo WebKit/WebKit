@@ -33,7 +33,6 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBTracing.h"
-#include "JSIDBKey.h"
 
 #include <runtime/DateInstance.h>
 
@@ -68,6 +67,42 @@ static bool set(ExecState* exec, JSValue& object, const String& keyPathElement, 
     Identifier identifier(&exec->globalData(), keyPathElement.utf8().data());
     asObject(object)->putDirect(exec->globalData(), identifier, jsValue);
     return true;
+}
+
+static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject, IDBKey* key)
+{
+    if (!key) {
+        // This should be undefined, not null.
+        // Spec: http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#idl-def-IDBKeyRange
+        return jsUndefined();
+    }
+
+    switch (key->type()) {
+    case IDBKey::ArrayType:
+        {
+            const IDBKey::KeyArray& inArray = key->array();
+            size_t size = inArray.size();
+            JSArray* outArray = constructEmptyArray(exec, 0, globalObject, size);
+            for (size_t i = 0; i < size; ++i) {
+                IDBKey* arrayKey = inArray.at(i).get();
+                outArray->putDirectIndex(exec, i, idbKeyToJSValue(exec, globalObject, arrayKey));
+            }
+            return JSValue(outArray);
+        }
+    case IDBKey::StringType:
+        return jsStringWithCache(exec, key->string());
+    case IDBKey::DateType:
+        return jsDateOrNull(exec, key->date());
+    case IDBKey::NumberType:
+        return jsNumber(key->number());
+    case IDBKey::MinType:
+    case IDBKey::InvalidType:
+        ASSERT_NOT_REACHED();
+        return jsUndefined();
+    }
+
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
 }
 
 static const size_t maximumDepth = 2000;
@@ -210,7 +245,7 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKe
     if (parent.isUndefined())
         return false;
 
-    if (!set(exec, parent, keyPathElements.last(), toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get())))
+    if (!set(exec, parent, keyPathElements.last(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get())))
         return false;
 
     return true;
@@ -268,7 +303,7 @@ ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassRefPtr<Serial
 ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key)
 {
     ExecState* exec = requestState->exec();
-    return ScriptValue(exec->globalData(), toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
+    return ScriptValue(exec->globalData(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
 }
 
 PassRefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState* requestState, const ScriptValue& scriptValue)

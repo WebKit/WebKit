@@ -192,7 +192,6 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBDatabase.idl
     Modules/indexeddb/IDBFactory.idl
     Modules/indexeddb/IDBIndex.idl
-    Modules/indexeddb/IDBKey.idl
     Modules/indexeddb/IDBKeyRange.idl
     Modules/indexeddb/IDBObjectStore.idl
     Modules/indexeddb/IDBOpenDBRequest.idl

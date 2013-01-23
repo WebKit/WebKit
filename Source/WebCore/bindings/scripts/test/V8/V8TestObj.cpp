@@ -29,8 +29,6 @@
 #include "FeatureObserver.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "IDBBindingUtilities.h"
-#include "IDBKey.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPropertyTearOff.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -1040,16 +1038,6 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
-{
-    if (args.Length() < 1)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    imp->idbKey(key.get());
-    return v8Undefined();
-}
-
 static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
 {
     if (args.Length() < 1)
@@ -1963,7 +1951,6 @@ static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
     {"objMethod", TestObjV8Internal::objMethodCallback},
     {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceCallback},
     {"serializedValue", TestObjV8Internal::serializedValueCallback},
-    {"idbKey", TestObjV8Internal::idbKeyCallback},
     {"optionsObject", TestObjV8Internal::optionsObjectCallback},
     {"methodWithException", TestObjV8Internal::methodWithExceptionCallback},
     {"customMethod", V8TestObj::customMethodCallback},

@@ -24,14 +24,12 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "IDBKey.h"
 #include "KURL.h"
 #include "Node.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
-#include "WebDOMIDBKey.h"
 #include "WebDOMNode.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
@@ -732,14 +730,6 @@ void WebDOMTestObj::serializedValue(const WebDOMString& serializedArg)
         return;
 
     impl()->serializedValue(WebCore::SerializedScriptValue::create(WTF::String(serializedArg)));
-}
-
-void WebDOMTestObj::idbKey(const WebDOMIDBKey& key)
-{
-    if (!impl())
-        return;
-
-    impl()->idbKey(toWebCore(key));
 }
 
 void WebDOMTestObj::optionsObject(const WebDOMDictionary& oo, const WebDOMDictionary& ooo)

@@ -35,7 +35,6 @@
 #import "DOMDictionaryInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMEventInternal.h"
-#import "DOMIDBKeyInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGPointInternal.h"
@@ -55,7 +54,6 @@
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
 #import "HTMLNames.h"
-#import "IDBKey.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "Node.h"
@@ -767,12 +765,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->serializedValue(WebCore::SerializedScriptValue::create(WTF::String(serializedArg)));
-}
-
-- (void)idbKey:(DOMIDBKey *)key
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->idbKey(core(key));
 }
 
 - (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo
