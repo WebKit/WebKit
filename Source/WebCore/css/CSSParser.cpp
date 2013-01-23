@@ -4310,7 +4310,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationPlayState()
     return 0;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseAnimationProperty()
+PassRefPtr<CSSValue> CSSParser::parseAnimationProperty(bool& allowAnimationProperty)
 {
     CSSParserValue* value = m_valueList->current();
     if (value->unit != CSSPrimitiveValue::CSS_IDENT)
@@ -4320,8 +4320,10 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty()
         return cssValuePool().createIdentifierValue(result);
     if (equalIgnoringCase(value->string, "all"))
         return cssValuePool().createIdentifierValue(CSSValueAll);
-    if (equalIgnoringCase(value->string, "none"))
+    if (equalIgnoringCase(value->string, "none")) {
+        allowAnimationProperty = false;
         return cssValuePool().createIdentifierValue(CSSValueNone);
+    }
     return 0;
 }
 
@@ -4434,6 +4436,7 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
     CSSParserValue* val;
     RefPtr<CSSValue> value;
     bool allowComma = false;
+    bool allowAnimationProperty = true;
 
     result = 0;
 
@@ -4485,7 +4488,10 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
                         m_valueList->next();
                     break;
                 case CSSPropertyWebkitTransitionProperty:
-                    currValue = parseAnimationProperty();
+                    if (allowAnimationProperty)
+                        currValue = parseAnimationProperty(allowAnimationProperty);
+                    if (value && !allowAnimationProperty)
+                        return false;
                     if (currValue)
                         m_valueList->next();
                     break;

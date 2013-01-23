@@ -110,12 +110,35 @@ shouldBe("computedStyle.transitionProperty", "'all'");
 shouldBe("style.webkitTransitionProperty", "''");
 shouldBe("computedStyle.webkitTransitionProperty", "'all'");
 
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105428.
-/*style.transitionProperty = "all, none";
+style.transitionProperty = "all, none";
 shouldBe("style.transitionProperty", "''");
 shouldBe("computedStyle.transitionProperty", "'all'");
 shouldBe("style.webkitTransitionProperty", "''");
-shouldBe("computedStyle.webkitTransitionProperty", "'all'");*/
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+
+style.transitionProperty = "none, none";
+shouldBe("style.transitionProperty", "''");
+shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("style.webkitTransitionProperty", "''");
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+
+style.transitionProperty = "none, all";
+shouldBe("style.transitionProperty", "''");
+shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("style.webkitTransitionProperty", "''");
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+
+style.transitionProperty = "width, none";
+shouldBe("style.transitionProperty", "''");
+shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("style.webkitTransitionProperty", "''");
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+
+style.transitionProperty = "none, width";
+shouldBe("style.transitionProperty", "''");
+shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("style.webkitTransitionProperty", "''");
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
 
 // Tracked by https://bugs.webkit.org/show_bug.cgi?id=105430.
 /*style.transitionProperty = "background, font-size, all";

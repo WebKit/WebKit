@@ -140,7 +140,7 @@ public:
     PassRefPtr<CSSValue> parseAnimationIterationCount();
     PassRefPtr<CSSValue> parseAnimationName();
     PassRefPtr<CSSValue> parseAnimationPlayState();
-    PassRefPtr<CSSValue> parseAnimationProperty();
+    PassRefPtr<CSSValue> parseAnimationProperty(bool& allowAnimationProperty);
     PassRefPtr<CSSValue> parseAnimationTimingFunction();
 
     bool parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
