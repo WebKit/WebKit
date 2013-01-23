@@ -1071,11 +1071,7 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
         toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startAlignedOffsetForLine(blockHeight, false));
         toRenderInline(containerBlock)->layer()->setStaticBlockPosition(blockHeight);
     }
-
-    if (child->style()->isOriginalDisplayInlineType())
-        block->setStaticInlinePositionForChild(child, blockHeight, block->startAlignedOffsetForLine(blockHeight, false));
-    else
-        block->setStaticInlinePositionForChild(child, blockHeight, block->startOffsetForContent(blockHeight));
+    block->updateStaticInlinePositionForChild(child, blockHeight);
     child->layer()->setStaticBlockPosition(blockHeight);
 }
 

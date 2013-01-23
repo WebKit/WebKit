@@ -1751,7 +1751,7 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
     bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
     
     LayoutUnit logicalTop = logicalHeight();
-    setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
+    updateStaticInlinePositionForChild(child, logicalTop);
 
     if (!marginInfo.canCollapseWithMarginBefore()) {
         // Positioned blocks don't collapse margins, so add the margin provided by
@@ -7406,6 +7406,14 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
         return 0;
 
     return flowThread->regionAtBlockOffset(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+}
+
+void RenderBlock::updateStaticInlinePositionForChild(RenderBox* child, LayoutUnit logicalTop)
+{
+    if (child->style()->isOriginalDisplayInlineType())
+        setStaticInlinePositionForChild(child, logicalTop, startAlignedOffsetForLine(logicalTop, false));
+    else
+        setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
 }
 
 void RenderBlock::setStaticInlinePositionForChild(RenderBox* child, LayoutUnit blockOffset, LayoutUnit inlinePosition)
