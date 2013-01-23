@@ -68,7 +68,7 @@ namespace WebCore {
     v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);
 
     // A helper for throwing JavaScript TypeError.
-    v8::Handle<v8::Value> throwTypeError(const char* = 0, v8::Isolate* = 0);
+    v8::Handle<v8::Value> throwTypeError(const char*, v8::Isolate*);
 
     // A helper for throwing JavaScript TypeError for not enough arguments.
     v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate*);
@@ -281,7 +281,7 @@ namespace WebCore {
     };
 
     template <class T, class V8T>
-    Vector<RefPtr<T> > toRefPtrNativeArray(v8::Handle<v8::Value> value)
+    Vector<RefPtr<T> > toRefPtrNativeArray(v8::Handle<v8::Value> value, v8::Isolate* isolate)
     {
         if (!value->IsArray())
             return Vector<RefPtr<T> >();
@@ -297,7 +297,7 @@ namespace WebCore {
                 v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(element);
                 result.append(V8T::toNative(object));
             } else {
-                throwTypeError("Invalid Array element type");
+                throwTypeError("Invalid Array element type", isolate);
                 return Vector<RefPtr<T> >();
             }
         }
@@ -334,10 +334,10 @@ namespace WebCore {
 
     // Validates that the passed object is a sequence type per WebIDL spec
     // http://www.w3.org/TR/2012/WD-WebIDL-20120207/#es-sequence
-    inline v8::Handle<v8::Value> toV8Sequence(v8::Handle<v8::Value> value, uint32_t& length)
+    inline v8::Handle<v8::Value> toV8Sequence(v8::Handle<v8::Value> value, uint32_t& length, v8::Isolate* isolate)
     {
         if (!value->IsObject()) {
-            throwTypeError();
+            throwTypeError(0, isolate);
             return v8Undefined();
         }
 
@@ -347,7 +347,7 @@ namespace WebCore {
         V8TRYCATCH(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::NewSymbol("length")));
 
         if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
-            throwTypeError();
+            throwTypeError(0, isolate);
             return v8Undefined();
         }
 

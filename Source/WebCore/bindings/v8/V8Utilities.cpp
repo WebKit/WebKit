@@ -75,7 +75,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
         length = array->Length();
     } else {
-        if (toV8Sequence(value, length).IsEmpty())
+        if (toV8Sequence(value, length, isolate).IsEmpty())
             return false;
     }
 
@@ -101,7 +101,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         } else if (V8ArrayBuffer::HasInstance(transferrable))
             arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
         else {
-            throwTypeError();
+            throwTypeError(0, isolate);
             return false;
         }
     }
@@ -115,7 +115,7 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports, v8
     if (!result)
         return false;
     if (arrayBuffers.size() > 0) {
-        throwTypeError("MessagePortArray argument must contain only MessagePorts");
+        throwTypeError("MessagePortArray argument must contain only MessagePorts", isolate);
         return false;
     }
     return true;
