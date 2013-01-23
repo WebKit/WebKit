@@ -1,20 +1,20 @@
 function test()
 {
     WebInspector.showPanel("profiles");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildEdgeIndexes");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildRetainers");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatedNodes");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildAggregates");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateClassesRetainedSize");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateDistances");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateRetainedSizes");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markPageOwnedNodes");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildPostOrderIndex");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatorTree");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildEdgeIndexes");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildRetainers");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildDominatedNodes");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_calculateFlags");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildAggregates");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_calculateClassesRetainedSize");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_calculateDistances");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_calculateRetainedSizes");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_markQueriableHeapObjects");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_markPageOwnedNodes");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildPostOrderIndex");
+    InspectorTest.measureFunction(WebInspector.JSHeapSnapshot.prototype, "_buildDominatorTree");
     InspectorTest.measureFunction(WebInspector.HeapSnapshotConstructorsDataGrid.prototype, "_aggregatesReceived");
 
     function performanceTest(timer)

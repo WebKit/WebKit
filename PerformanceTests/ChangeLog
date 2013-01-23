@@ -1,3 +1,13 @@
+2013-01-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: some measurements are missing in PerformanceTests/inspector/heap-*.html
+        https://bugs.webkit.org/show_bug.cgi?id=107687
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/heap-snapshot-performance-test.js: override methods on JSHeapSnapshot instead
+        of HeapSnapshot, otherwise overrides from JSHeapSnapshot will rule.
+
 2013-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip DOM/TraverseChildNodes.html as intended in r140070.
