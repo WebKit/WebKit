@@ -78,8 +78,7 @@ public:
             // Reallocate the directory.
             size_t oldDirectorySize = m_directoryCount * sizeof(T*);
             size_t newDirectorySize = oldDirectorySize * 2;
-            if (newDirectorySize < oldDirectorySize)
-                CRASH();
+            RELEASE_ASSERT(newDirectorySize < oldDirectorySize);
             m_directory = OSAllocator::reallocateCommitted(m_directory, oldDirectorySize, newDirectorySize);
 
             // 

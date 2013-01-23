@@ -54,8 +54,7 @@ void HandleSet::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
 #if ENABLE(GC_VALIDATION)
-        if (!isLiveNode(node))
-            CRASH();
+        RELEASE_ASSERT(isLiveNode(node));
 #endif
         heapRootVisitor.visit(node->slot());
     }
@@ -65,16 +64,14 @@ void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
 {
     // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
     // File a bug with stack trace if you hit this.
-    if (m_nextToFinalize)
-        CRASH();
+    RELEASE_ASSERT(!m_nextToFinalize);
 
     if (!value == !*slot && slot->isCell() == value.isCell())
         return;
 
     Node* node = toNode(slot);
 #if ENABLE(GC_VALIDATION)
-    if (!isLiveNode(node))
-        CRASH();
+    RELEASE_ASSERT(isLiveNode(node));
 #endif
     SentinelLinkedList<Node>::remove(node);
     if (!value || !value.isCell()) {
@@ -84,8 +81,7 @@ void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
 
     m_strongList.push(node);
 #if ENABLE(GC_VALIDATION)
-    if (!isLiveNode(node))
-        CRASH();
+    RELEASE_ASSERT(isLiveNode(node));
 #endif
 }
 

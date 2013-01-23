@@ -114,8 +114,7 @@ protected:
 #endif
         
         PageReservation reservation = PageReservation::reserve(numPages * pageSize(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-        if (!reservation)
-            CRASH();
+        RELEASE_ASSERT(reservation);
         
         reservations.append(reservation);
         
@@ -216,8 +215,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     RefPtr<ExecutableMemoryHandle> result = allocator()->allocate(sizeInBytes, ownerUID);
-    if (!result && effort == JITCompilationMustSucceed)
-        CRASH();
+    RELEASE_ASSERT(result || effort != JITCompilationMustSucceed);
     return result.release();
 }
 

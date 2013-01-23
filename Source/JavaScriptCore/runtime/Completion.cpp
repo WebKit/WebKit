@@ -55,9 +55,8 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
-    ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
-    if (exec->globalData().isCollectorBusy())
-        CRASH();
+    RELEASE_ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(!exec->globalData().isCollectorBusy());
 
     CodeProfiling profile(source);
 

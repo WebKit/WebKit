@@ -721,8 +721,7 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
-    if (m_operationInProgress != NoOperation)
-        CRASH();
+    RELEASE_ASSERT(m_operationInProgress == NoOperation);
     m_operationInProgress = Collection;
 
     m_activityCallback->willCollect();
@@ -811,8 +810,8 @@ void Heap::collect(SweepToggle sweepToggle)
 
     if (Options::recordGCPauseTimes())
         HeapStatistics::recordGCPauseTime(lastGCStartTime, lastGCEndTime);
-    if (m_operationInProgress != Collection)
-        CRASH();
+    RELEASE_ASSERT(m_operationInProgress == Collection);
+
     m_operationInProgress = NoOperation;
     JAVASCRIPTCORE_GC_END();
 

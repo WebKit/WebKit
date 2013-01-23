@@ -835,9 +835,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 
     ASSERT(isValidThisObject(thisObj, callFrame));
     ASSERT(!globalData.exception);
-    ASSERT(!globalData.isCollectorBusy());
-    if (globalData.isCollectorBusy())
-        CRASH();
+    RELEASE_ASSERT(!globalData.isCollectorBusy());
 
     StackStats::CheckPoint stackCheckPoint;
     const StackBounds& nativeStack = wtfThreadData().stack();

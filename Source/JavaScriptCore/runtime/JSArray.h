@@ -291,8 +291,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
-    if (!array)
-        CRASH();
+    RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
         array->initializeIndex(globalData, i, values.at(i));
@@ -307,8 +306,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
-    if (!array)
-        CRASH();
+    RELEASE_ASSERT(array);
 
     for (unsigned i = 0; i < length; ++i)
         array->initializeIndex(globalData, i, values[i]);

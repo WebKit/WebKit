@@ -123,8 +123,8 @@ inline HandleSlot HandleSet::allocate()
 {
     // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
     // File a bug with stack trace if you hit this.
-    if (m_nextToFinalize)
-        CRASH();
+    RELEASE_ASSERT(!m_nextToFinalize);
+
     if (m_freeList.isEmpty())
         grow();
 

@@ -39,8 +39,7 @@ inline Butterfly* Butterfly::createUninitialized(JSGlobalData& globalData, size_
 {
     void* temp;
     size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    if (!globalData.heap.tryAllocateStorage(size, &temp))
-        CRASH();
+    RELEASE_ASSERT(globalData.heap.tryAllocateStorage(size, &temp));
     Butterfly* result = fromBase(temp, preCapacity, propertyCapacity);
     return result;
 }

@@ -593,8 +593,7 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSG
 
 void slowValidateCell(JSGlobalObject* globalObject)
 {
-    if (!globalObject->isGlobalObject())
-        CRASH();
+    RELEASE_ASSERT(globalObject->isGlobalObject());
     ASSERT_GC_OBJECT_INHERITS(globalObject, &JSGlobalObject::s_info);
 }
 

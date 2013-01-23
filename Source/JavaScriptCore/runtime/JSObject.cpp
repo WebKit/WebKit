@@ -558,8 +558,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
     }
 
     Butterfly* newButterfly = storage->butterfly()->resizeArray(globalData, structure(), 0, ArrayStorage::sizeFor(0));
-    if (!newButterfly)
-        CRASH();
+    RELEASE_ASSERT(newButterfly);
     
     m_butterfly = newButterfly;
     newButterfly->arrayStorage()->m_indexBias = 0;
@@ -659,8 +658,8 @@ ArrayStorage* JSObject::createArrayStorage(JSGlobalData& globalData, unsigned le
     Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(m_butterfly, 
         globalData, structure(), structure()->outOfLineCapacity(), false, 0,
         ArrayStorage::sizeFor(vectorLength));
-    if (!newButterfly)
-        CRASH();
+    RELEASE_ASSERT(newButterfly);
+
     ArrayStorage* result = newButterfly->arrayStorage();
     result->setLength(length);
     result->setVectorLength(vectorLength);

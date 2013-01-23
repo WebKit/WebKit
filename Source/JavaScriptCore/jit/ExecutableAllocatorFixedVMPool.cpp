@@ -63,8 +63,7 @@ public:
     {
         m_reservation = PageReservation::reserveWithGuardPages(fixedExecutableMemoryPoolSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #if !ENABLE(LLINT)
-        if (!m_reservation)
-            CRASH();
+        RELEASE_ASSERT(m_reservation);
 #endif
         if (m_reservation) {
             ASSERT(m_reservation.size() == fixedExecutableMemoryPoolSize);
@@ -165,8 +164,7 @@ PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData& g
             return result;
         releaseExecutableMemory(globalData);
         result = allocator->allocate(sizeInBytes, ownerUID);
-        if (!result)
-            CRASH();
+        RELEASE_ASSERT(result);
     }
     return result.release();
 }

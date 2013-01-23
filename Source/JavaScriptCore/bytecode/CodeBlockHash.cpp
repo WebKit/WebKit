@@ -36,8 +36,7 @@ namespace JSC {
 CodeBlockHash::CodeBlockHash(const char* string)
     : m_hash(0)
 {
-    if (strlen(string) != 6)
-        CRASH();
+    RELEASE_ASSERT(strlen(string) == 6);
     
     for (unsigned i = 0; i < 6; ++i) {
         m_hash *= 62;

@@ -1,3 +1,61 @@
+2013-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Replace numerous manual CRASH's in JSC with RELEASE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=107726
+
+        Reviewed by Filip Pizlo.
+
+        Fairly manual change from if (foo) CRASH(); to RELEASE_ASSERT(!foo);
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash):
+        * heap/BlockAllocator.h:
+        (JSC::Region::create):
+        (JSC::Region::createCustomSize):
+        * heap/GCAssertions.h:
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::visitStrongHandles):
+        (JSC::HandleSet::writeBarrier):
+        * heap/HandleSet.h:
+        (JSC::HandleSet::allocate):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::validate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::DemandExecutableAllocator::allocateNewSpace):
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ExecutableAllocator.h:
+        (JSC::roundUpAllocationSize):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::ExecutableAllocator::allocate):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/JSArray.h:
+        (JSC::constructArray):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::slowValidateCell):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createArrayStorage):
+        * tools/TieredMMapArray.h:
+        (JSC::TieredMMapArray::append):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::InputStream::readChecked):
+        (JSC::Yarr::Interpreter::InputStream::uncheckInput):
+        (JSC::Yarr::Interpreter::InputStream::atEnd):
+        (JSC::Yarr::Interpreter::interpret):
+
 2013-01-22  Filip Pizlo  <fpizlo@apple.com>
 
         Convert CSE phase to not rely too much on NodeIndex
