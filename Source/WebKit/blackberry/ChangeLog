@@ -1,5 +1,23 @@
 2013-01-23  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Take a better guess as to what text the user wants learned
+        https://bugs.webkit.org/show_bug.cgi?id=107706
+
+        Reviewed by Rob Buis.
+
+        If we still have a valid caret position, use it to give priority to a region
+        of text.  We now take the text before the caret, instead of the text at the end
+        of the field.  If the caret is not present, we start from the beginning of the field.
+        This helps learning in email where the region of interest is generally at the start,
+        not end of the field.
+
+        Internally reviewed by Mike Fenton
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::learnText):
+
+2013-01-23  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Optimize spellchecking by coalescing messages
         https://bugs.webkit.org/show_bug.cgi?id=107707
 
