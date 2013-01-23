@@ -388,9 +388,6 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
     if (changeMask & ChildrenChange)
         setChildren(graphicsLayer->children());
 
-    if ((changeMask & DrawsContentChange) && graphicsLayer->drawsContent())
-        graphicsLayer->setNeedsDisplay();
-
     if (changeMask & MaskLayerChange) {
        if (TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer->maskLayer()))
            layer->m_effectTarget = this;

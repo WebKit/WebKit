@@ -280,6 +280,9 @@ void GraphicsLayerTextureMapper::setDrawsContent(bool value)
         return;
     notifyChange(TextureMapperLayer::DrawsContentChange);
     GraphicsLayer::setDrawsContent(value);
+
+    if (value && m_hasOwnBackingStore)
+        setNeedsDisplay();
 }
 
 /* \reimp (GraphicsLayer.h)
