@@ -84,6 +84,9 @@ public:
     // input.
     virtual void didBecomeReadyForAdditionalInput() { }
 
+    // Called for compositing mode when a frame commit operation has finished.
+    virtual void didCommitCompositorFrame() { }
+
     // Called for compositing mode when the draw commands for a WebKit-side
     // frame have been issued.
     virtual void didCommitAndDrawCompositorFrame() { }

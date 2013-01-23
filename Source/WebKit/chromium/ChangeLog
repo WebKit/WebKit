@@ -1,3 +1,18 @@
+2013-01-22  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Expose didCommitCompositorFrame in WebWidgetClient.
+        https://bugs.webkit.org/show_bug.cgi?id=107325
+
+        Reviewed by James Robinson.
+
+        Add a notification on WebWidgetClient called when the compositor commits a frame.
+
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::didCommitCompositorFrame):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::didCommit):
+
 2013-01-21  Kentaro Hara  <haraken@chromium.org>
 
         Implement UIEvent constructor

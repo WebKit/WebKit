@@ -4162,8 +4162,10 @@ void WebViewImpl::willCommit()
 
 void WebViewImpl::didCommit()
 {
-    if (m_client)
+    if (m_client) {
+        m_client->didCommitCompositorFrame();
         m_client->didBecomeReadyForAdditionalInput();
+    }
 }
 
 void WebViewImpl::didCommitAndDrawFrame()
