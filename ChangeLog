@@ -1,3 +1,11 @@
+2013-01-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        Speculative build fix for the GTK port after 140539.
+
+        * Source/autotools/symbols.filter:
+
 2013-01-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Debug build failure on x86-64
