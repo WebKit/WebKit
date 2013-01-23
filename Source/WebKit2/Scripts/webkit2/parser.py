@@ -26,17 +26,20 @@ from webkit2 import model
 
 
 def parse(file):
+    receiver_attributes = None
     destination = None
     messages = []
     condition = None
     master_condition = None
     for line in file:
-        match = re.search(r'messages -> ([A-Za-z_0-9]+) {', line)
+        match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?:(?P<attributes>.*?)\s+)?{', line)
         if match:
+            receiver_attributes = parse_attributes_string(match.group('attributes'))
+
             if condition:
                 master_condition = condition
                 condition = None
-            destination = match.group(1)
+            destination = match.group('destination')
             continue
         if line.startswith('#'):
             if line.startswith('#if '):
@@ -66,7 +69,7 @@ def parse(file):
                 reply_parameters = None
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, condition))
-    return model.MessageReceiver(destination, messages, master_condition)
+    return model.MessageReceiver(destination, receiver_attributes, messages, master_condition)
 
 
 def parse_attributes_string(attributes_string):

@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> NPObjectMessageReceiver {
+messages -> NPObjectMessageReceiver LegacyReceiver {
     Deallocate() -> ()
     HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue)
     Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData)

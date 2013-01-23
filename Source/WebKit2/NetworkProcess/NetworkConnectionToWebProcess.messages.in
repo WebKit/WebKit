@@ -22,7 +22,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkConnectionToWebProcess {
+messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, CoreIPC::DataReference data) Delayed

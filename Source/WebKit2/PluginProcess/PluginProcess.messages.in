@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginProcess {
+messages -> PluginProcess LegacyReceiver {
     # Initializes the plug-in process.
     InitializePluginProcess(WebKit::PluginProcessCreationParameters processCreationParameters)
     

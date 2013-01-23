@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- messages -> WebCookieManager {
+ messages -> WebCookieManager LegacyReceiver {
     void GetHostnamesWithCookies(uint64_t callbackID)
     void DeleteCookiesForHostname(WTF::String hostname)
     void DeleteAllCookies()

@@ -22,7 +22,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkProcessProxy {
+messages -> NetworkProcessProxy LegacyReceiver {
     DidCreateNetworkConnectionToWebProcess(CoreIPC::Attachment connectionIdentifier)
 }
 

@@ -22,7 +22,7 @@
 
 #if ENABLE(SHARED_WORKER_PROCESS)
 
-messages -> SharedWorkerProcess {
+messages -> SharedWorkerProcess LegacyReceiver {
     # Initializes the shared worker process.
     InitializeSharedWorkerProcess(WebKit::SharedWorkerProcessCreationParameters processCreationParameters)
     

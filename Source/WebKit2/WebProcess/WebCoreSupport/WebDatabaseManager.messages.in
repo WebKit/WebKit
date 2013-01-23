@@ -22,7 +22,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-messages -> WebDatabaseManager {
+messages -> WebDatabaseManager LegacyReceiver {
     void GetDatabasesByOrigin(uint64_t callbackID)
     void GetDatabaseOrigins(uint64_t callbackID)
     void DeleteDatabaseWithNameForOrigin(WTF::String databaseIdentifier, WTF::String originIdentifier)

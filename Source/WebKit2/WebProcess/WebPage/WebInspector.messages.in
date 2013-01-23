@@ -22,7 +22,7 @@
 
 #if ENABLE(INSPECTOR)
 
-messages -> WebInspector {
+messages -> WebInspector LegacyReceiver {
     Show()
     Close()
     SetAttachedWindow(bool attached)

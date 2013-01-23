@@ -24,8 +24,9 @@ import itertools
 
 
 class MessageReceiver(object):
-    def __init__(self, name, messages, condition):
+    def __init__(self, name, attributes, messages, condition):
         self.name = name
+        self.attributes = frozenset(attributes or [])
         self.messages = messages
         self.condition = condition
 
@@ -33,6 +34,8 @@ class MessageReceiver(object):
         return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
             (reply_parameter for message in self.messages if message.reply_parameters for reply_parameter in message.reply_parameters))
 
+    def has_attribute(self, attribute):
+        return attribute in self.attributes
 
 class Message(object):
     def __init__(self, name, parameters, reply_parameters, attributes, condition):

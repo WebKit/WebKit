@@ -22,7 +22,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkResourceLoader {
+messages -> NetworkResourceLoader LegacyReceiver {
     ReceivedAuthenticationCredential(WebCore::AuthenticationChallenge challenge, WebCore::Credential credential)
     ReceivedRequestToContinueWithoutAuthenticationCredential(WebCore::AuthenticationChallenge challenge)
     ReceivedAuthenticationCancellation(WebCore::AuthenticationChallenge challenge)

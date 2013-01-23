@@ -22,7 +22,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkProcess {
+messages -> NetworkProcess LegacyReceiver {
     # Initializes the network process.
     InitializeNetworkProcess(WebKit::NetworkProcessCreationParameters processCreationParameters)
 

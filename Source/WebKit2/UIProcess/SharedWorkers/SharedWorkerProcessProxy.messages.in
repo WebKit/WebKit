@@ -22,7 +22,7 @@
 
 #if ENABLE(SHARED_WORKER_PROCESS)
 
-messages -> SharedWorkerProcessProxy {
+messages -> SharedWorkerProcessProxy LegacyReceiver {
     DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier)
 }
 

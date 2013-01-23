@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebIconDatabase {
+messages -> WebIconDatabase LegacyReceiver {
     RetainIconForPageURL(WTF::String pageURL)
     ReleaseIconForPageURL(WTF::String pageURL)
     SetIconURLForPageURL(WTF::String iconURL, WTF::String pageURL)

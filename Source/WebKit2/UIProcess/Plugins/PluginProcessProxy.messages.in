@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginProcessProxy {
+messages -> PluginProcessProxy LegacyReceiver {
     DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier, bool supportsAsynchronousPluginInitialization)
 
     DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)

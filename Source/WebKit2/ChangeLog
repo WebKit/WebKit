@@ -1,3 +1,78 @@
+2013-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Message receiver generation should work in terms of MessageReceiver objects
+        https://bugs.webkit.org/show_bug.cgi?id=107742
+
+        Reviewed by Beth Dakin.
+
+        The generated message receiver code should generate the MessageReceiver
+        member functions didReceiveMessage and didReceiveSyncMessage instead of
+        receiver specific member functions.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * PluginProcess/PluginProcess.messages.in:
+        * PluginProcess/WebProcessConnection.messages.in:
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * Scripts/webkit2/model.py:
+        (MessageReceiver.__init__):
+        (MessageReceiver.has_attribute):
+        * Scripts/webkit2/parser.py:
+        (parse):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in:
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        * Shared/WebConnection.messages.in:
+        * Shared/mac/SecItemShim.messages.in:
+        * SharedWorkerProcess/SharedWorkerProcess.messages.in:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.messages.in:
+        * UIProcess/WebApplicationCacheManagerProxy.messages.in:
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebCookieManagerProxy.messages.in:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * UIProcess/WebGeolocationManagerProxy.messages.in:
+        * UIProcess/WebIconDatabase.messages.in:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebKeyValueStorageManagerProxy.messages.in:
+        * UIProcess/WebMediaCacheManagerProxy.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/WebResourceCacheManagerProxy.messages.in:
+        * UIProcess/mac/RemoteLayerTreeHost.messages.in:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in:
+        * WebProcess/Authentication/AuthenticationManager.h:
+        * WebProcess/Authentication/AuthenticationManager.messages.in:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in:
+        * WebProcess/MediaCache/WebMediaCacheManager.messages.in:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Notifications/WebNotificationManager.messages.in:
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/ResourceCache/WebResourceCacheManager.messages.in:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+        * WebProcess/WebProcess.messages.in:
+
 2013-01-23  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: remove CoordinatedLayerInfo::encode/decode.

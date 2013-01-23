@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
+#include <WebCore/AuthenticationChallenge.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 

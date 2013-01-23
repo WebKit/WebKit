@@ -24,6 +24,7 @@ import collections
 import re
 from webkit2 import parser
 
+LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
 DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
 VARIADIC_ATTRIBUTE = 'Variadic'
@@ -560,7 +561,11 @@ def generate_message_handler(file):
         result.append('}\n\n')
 
     if async_messages:
-        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+        if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
+            result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+        else:
+            result.append('void %s::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name))
+
         result.append('{\n')
         result += [async_message_statement(receiver, message) for message in async_messages]
         result.append('    ASSERT_NOT_REACHED();\n')
@@ -568,7 +573,10 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+        if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
+            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+        else:
+            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection*%s,CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, ' connection' if sync_delayed_messages else ''))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         result.append('    ASSERT_NOT_REACHED();\n')

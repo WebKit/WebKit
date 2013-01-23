@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginProcessConnection {
+messages -> PluginProcessConnection LegacyReceiver {
     # Set a global JavaScript exception.
     SetException(WTF::String exceptionString) -> ()
 }

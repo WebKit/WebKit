@@ -52,7 +52,7 @@ _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved
 
 #if ENABLE(WEBKIT2)
 
-messages -> WebPage {
+messages -> WebPage LegacyReceiver {
     LoadURL(WTF::String url)
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)

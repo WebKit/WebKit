@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginControllerProxy {
+messages -> PluginControllerProxy LegacyReceiver {
     # Sent when the plug-in geometry changes.
     GeometryDidChange(WebCore::IntSize pluginSize, WebCore::IntRect clipRect, WebCore::AffineTransform pluginToRootViewTransform, float scaleFactor, WebKit::ShareableBitmap::Handle backingStoreHandle)
 

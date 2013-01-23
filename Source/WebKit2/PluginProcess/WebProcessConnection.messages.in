@@ -22,7 +22,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> WebProcessConnection {
+messages -> WebProcessConnection LegacyReceiver {
     # Creates a plug-in instance using the given creation parameters.
     CreatePlugin(WebKit::PluginCreationParameters pluginCreationParameters) -> (bool creationResult, bool wantsWheelEvents, uint32_t remoteLayerClientID) Delayed
 
