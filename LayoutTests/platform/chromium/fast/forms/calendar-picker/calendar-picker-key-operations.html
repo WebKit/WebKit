@@ -111,6 +111,10 @@ function test2() {
     shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
 
     eventSender.keyDown('\x1B');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"1999-12-26"');
 

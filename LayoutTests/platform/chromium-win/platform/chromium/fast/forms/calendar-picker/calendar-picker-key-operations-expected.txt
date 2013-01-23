@@ -51,7 +51,7 @@ PASS focusedElement() is ".today-button[value=<<CalendarToday>>]"
 PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
 PASS focusedElement() is ".year-month-button[value=<<]"
 PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
-FAIL document.getElementById("mock-page-popup") should be null. Was [object HTMLIFrameElement].
+PASS document.getElementById("mock-page-popup") is null
 PASS document.getElementById("date").value is "1999-12-26"
 PASS F4 opened picker.
 PASS successfullyParsed is true

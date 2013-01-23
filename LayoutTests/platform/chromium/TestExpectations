@@ -4100,7 +4100,6 @@ webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-bl
 
 webkit.org/b/101377 [ Linux MountainLion ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass Crash ]
 
-webkit.org/b/101408 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
 webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html [ Failure Pass ]
 
 webkit.org/b/104993 [ XP ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Failure ]
