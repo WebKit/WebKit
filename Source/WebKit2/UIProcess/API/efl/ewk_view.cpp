@@ -35,8 +35,10 @@
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
 #include "WKFindOptions.h"
+#include "WKInspector.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
+#include "WKURL.h"
 #include "WebContext.h"
 #include "WebData.h"
 #include "WebFullScreenManagerProxy.h"
@@ -562,7 +564,8 @@ Eina_Bool ewk_view_url_set(Evas_Object* ewkView, const char* url)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, false);
 
-    impl->page()->loadURL(url);
+    WKRetainPtr<WKURLRef> wkUrl = adoptWK(WKURLCreateWithUTF8CString(url));
+    WKPageLoadURL(impl->wkPage(), wkUrl.get());
     impl->informURLChange();
 
     return true;
@@ -586,7 +589,7 @@ Eina_Bool ewk_view_reload(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->reload(/*reloadFromOrigin*/ false);
+    WKPageReload(impl->wkPage());
     impl->informURLChange();
 
     return true;
@@ -596,7 +599,7 @@ Eina_Bool ewk_view_reload_bypass_cache(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->reload(/*reloadFromOrigin*/ true);
+    WKPageReloadFromOrigin(impl->wkPage());
     impl->informURLChange();
 
     return true;
@@ -606,7 +609,7 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->stopLoading();
+    WKPageStopLoading(impl->wkPage());
 
     return true;
 }
@@ -629,14 +632,14 @@ double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, -1.0);
 
-    return impl->page()->estimatedProgress();
+    return WKPageGetEstimatedProgress(impl->wkPage());
 }
 
 Eina_Bool ewk_view_scale_set(Evas_Object* ewkView, double scaleFactor, int x, int y)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->scalePage(scaleFactor, IntPoint(x, y));
+    WKPageSetScaleFactor(impl->wkPage(), scaleFactor, WKPointMake(x, y));
     return true;
 }
 
@@ -644,7 +647,7 @@ double ewk_view_scale_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, -1);
 
-    return impl->page()->pageScaleFactor();
+    return WKPageGetScaleFactor(impl->wkPage());
 }
 
 Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
@@ -660,7 +663,7 @@ float ewk_view_device_pixel_ratio_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, -1.0);
 
-    return impl->page()->deviceScaleFactor();
+    return WKPageGetBackingScaleFactor(impl->wkPage());
 }
 
 void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
@@ -681,9 +684,9 @@ Eina_Bool ewk_view_back(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WebPageProxy* page = impl->page();
-    if (page->canGoBack()) {
-        page->goBack();
+    WKPageRef page = impl->wkPage();
+    if (WKPageCanGoBack(page)) {
+        WKPageGoBack(page);
         return true;
     }
 
@@ -694,9 +697,9 @@ Eina_Bool ewk_view_forward(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WebPageProxy* page = impl->page();
-    if (page->canGoForward()) {
-        page->goForward();
+    WKPageRef page = impl->wkPage();
+    if (WKPageCanGoForward(page)) {
+        WKPageGoForward(page);
         return true;
     }
 
@@ -724,15 +727,13 @@ Eina_Bool ewk_view_intent_deliver(Evas_Object* ewkView, Ewk_Intent* intent)
 Eina_Bool ewk_view_back_possible(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
-
-    return impl->page()->canGoBack();
+    return WKPageCanGoBack(impl->wkPage());
 }
 
 Eina_Bool ewk_view_forward_possible(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
-
-    return impl->page()->canGoForward();
+    return WKPageCanGoForward(impl->wkPage());
 }
 
 Ewk_Back_Forward_List* ewk_view_back_forward_list_get(const Evas_Object* ewkView)
@@ -747,10 +748,14 @@ Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, cons
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(html, false);
 
-    if (unreachableUrl && *unreachableUrl)
-        impl->page()->loadAlternateHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "", String::fromUTF8(unreachableUrl));
-    else
-        impl->page()->loadHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "");
+    WKRetainPtr<WKStringRef> wkHTMLString = adoptWK(WKStringCreateWithUTF8CString(html));
+    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithUTF8CString(baseUrl));
+
+    if (unreachableUrl && *unreachableUrl) {
+        WKRetainPtr<WKURLRef> wkUnreachableURL = adoptWK(WKURLCreateWithUTF8CString(unreachableUrl));
+        WKPageLoadAlternateHTMLString(impl->wkPage(), wkHTMLString.get(), wkBaseURL.get(), wkUnreachableURL.get());
+    } else
+        WKPageLoadHTMLString(impl->wkPage(), wkHTMLString.get(), wkBaseURL.get());
 
     impl->informURLChange();
 
@@ -788,7 +793,8 @@ Eina_Bool ewk_view_text_find(Evas_Object* ewkView, const char* text, Ewk_Find_Op
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
 
-    impl->page()->findString(String::fromUTF8(text), static_cast<WebKit::FindOptions>(options), maxMatchCount);
+    WKRetainPtr<WKStringRef> wkText = adoptWK(WKStringCreateWithUTF8CString(text));
+    WKPageFindString(impl->wkPage(), wkText.get(), static_cast<WebKit::FindOptions>(options), maxMatchCount);
 
     return true;
 }
@@ -797,7 +803,7 @@ Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->hideFindUI();
+    WKPageHideFindUI(impl->wkPage());
 
     return true;
 }
@@ -807,7 +813,8 @@ Eina_Bool ewk_view_text_matches_count(Evas_Object* ewkView, const char* text, Ew
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
 
-    impl->page()->countStringMatches(String::fromUTF8(text), static_cast<WebKit::FindOptions>(options), maxMatchCount);
+    WKRetainPtr<WKStringRef> wkText = adoptWK(WKStringCreateWithUTF8CString(text));
+    WKPageCountStringMatches(impl->wkPage(), wkText.get(), static_cast<WebKit::FindOptions>(options), maxMatchCount);
 
     return true;
 }
@@ -879,9 +886,9 @@ Eina_Bool ewk_view_inspector_show(Evas_Object* ewkView)
 #if ENABLE(INSPECTOR)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WebInspectorProxy* inspector = impl->page()->inspector();
-    if (inspector)
-        inspector->show();
+    WKInspectorRef wkInspector = WKPageGetInspector(impl->wkPage());
+    if (wkInspector)
+        WKInspectorShow(wkInspector);
 
     return true;
 #else
@@ -895,9 +902,9 @@ Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
 #if ENABLE(INSPECTOR)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WebInspectorProxy* inspector = impl->page()->inspector();
-    if (inspector)
-        inspector->close();
+    WKInspectorRef wkInspector = WKPageGetInspector(impl->wkPage());
+    if (wkInspector)
+        WKInspectorClose(wkInspector);
 
     return true;
 #else

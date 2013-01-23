@@ -1,3 +1,30 @@
+2013-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2] Replace some internal API usage in EwkView with C API
+        https://bugs.webkit.org/show_bug.cgi?id=107652
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_url_set):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_stop):
+        (ewk_view_load_progress_get):
+        (ewk_view_scale_set):
+        (ewk_view_scale_get):
+        (ewk_view_device_pixel_ratio_get):
+        (ewk_view_back):
+        (ewk_view_forward):
+        (ewk_view_back_possible):
+        (ewk_view_forward_possible):
+        (ewk_view_html_string_load):
+        (ewk_view_text_find):
+        (ewk_view_text_find_highlight_clear):
+        (ewk_view_text_matches_count):
+        (ewk_view_inspector_show):
+        (ewk_view_inspector_close):
+
 2013-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
