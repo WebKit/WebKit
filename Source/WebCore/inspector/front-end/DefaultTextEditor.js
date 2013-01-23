@@ -1566,7 +1566,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._rangeToMark = range;
             this.revealLine(range.startLine);
             var chunk = this.makeLineAChunk(range.startLine);
-            this._paintLine(chunk.element);
+            this._paintLines(chunk.startLine, chunk.startLine + 1);
             if (this._markedRangeElement)
                 this._markedRangeElement.scrollIntoViewIfNeeded();
         }
@@ -1793,6 +1793,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         var chunk;
         var selection;
+        var lineRows = [];
         for (var lineNumber = fromLine; lineNumber < toLine; ++lineNumber) {
             if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
                 chunk = this.chunkForLine(lineNumber);
@@ -1801,8 +1802,20 @@ WebInspector.TextEditorMainPanel.prototype = {
                 continue;
             if (restoreSelection && !selection)
                 selection = this.selection();
-            this._paintLine(lineRow);
+            lineRows.push(lineRow);
         }
+
+        var highlight = {};
+        this.beginDomUpdates();
+        for(var regexString in this._highlightRegexs) {
+            var regexHighlightDescriptor = this._highlightRegexs[regexString];
+            this._measureRegexHighlight(highlight, lineRows, regexHighlightDescriptor.regex, regexHighlightDescriptor.cssClass);
+        }
+
+        for(var i = 0; i < lineRows.length; ++i)
+            this._paintLine(lineRows[i], highlight[lineRows[i].lineNumber]);
+
+        this.endDomUpdates();
 
         if (restoreSelection)
             this._restoreSelection(selection);
@@ -1827,48 +1840,67 @@ WebInspector.TextEditorMainPanel.prototype = {
     },
 
     /**
-     * @param {Element} lineRow
-     * @param {string} line
+     * @param {Object.<number, Array.<WebInspector.TextEditorMainPanel.LineOverlayHighlight>>} highlight
+     * @param {Array.<Element>} lineRows
      * @param {RegExp} regex
-     * @return {Array.<{left: number, width: number}>}
+     * @param {string} cssClass
      */
-    _measureRegex: function(lineRow, line, regex)
+    _measureRegexHighlight: function(highlight, lineRows, regex, cssClass)
     {
-        var ranges = this._findRegexOccurrences(line, regex);
-        if (ranges.length === 0)
-            return [];
+        var rowsToMeasure = [];
+        for(var i = 0; i < lineRows.length; ++i) {
+            var lineRow = lineRows[i];
+            var line = this._textModel.line(lineRow.lineNumber);
+            var ranges = this._findRegexOccurrences(line, regex);
+            if (ranges.length === 0)
+                continue;
 
-        this._renderRanges(lineRow, line, ranges);
+            this._renderRanges(lineRow, line, ranges);
+            rowsToMeasure.push(lineRow);
+        }
+
+        for(var i = 0; i < rowsToMeasure.length; ++i) {
+            var lineRow = rowsToMeasure[i];
+            var lineNumber = lineRow.lineNumber;
+            var metrics = this._measureSpans(lineRow);
+
+            if (!highlight[lineNumber])
+                highlight[lineNumber] = [];
+
+            highlight[lineNumber].push(new WebInspector.TextEditorMainPanel.LineOverlayHighlight(metrics, cssClass));
+        }
+    },
+
+    /**
+     * @param {Element} lineRow
+     * @return {Array.<WebInspector.TextEditorMainPanel.ElementMetrics>}
+     */
+    _measureSpans: function(lineRow)
+    {
         var spans = lineRow.getElementsByTagName("span");
-        if (WebInspector.debugDefaultTextEditor)
-            console.assert(spans.length === ranges.length, "Ranges number: " + ranges.length + " !== spans number: " + spans.length);
-
         var metrics = [];
-        for(var i = 0; i < ranges.length; ++i)
-            metrics.push({
-                left: spans[i].offsetLeft,
-                width: spans[i].offsetWidth
-            });
+        for(var i = 0; i < spans.length; ++i)
+            metrics.push(new WebInspector.TextEditorMainPanel.ElementMetrics(spans[i]));
         return metrics;
     },
 
     /**
      * @param {Element} lineRow
-     * @param {Array.<{offsetLeft: number, offsetTop: number, offsetWidth: number, offsetHeight: number}>} metrics
-     * @param {string} cssClass
+     * @param {WebInspector.TextEditorMainPanel.LineOverlayHighlight} highlight
      */
-    _appendOverlayHighlight: function(lineRow, metrics, cssClass)
+    _appendOverlayHighlight: function(lineRow, highlight)
     {
         const extraWidth = 1;
+        var metrics = highlight.metrics;
+        var cssClass = highlight.cssClass;
         for(var i = 0; i < metrics.length; ++i) {
-            var highlight = document.createElement("span");
-            highlight.addStyleClass(cssClass);
-            lineRow.appendChild(highlight);
-
-            highlight.style.marginLeft = (metrics[i].left - highlight.offsetLeft - extraWidth) + "px";
-            highlight.style.width = (metrics[i].width + extraWidth * 2) + "px";
-            highlight.innerHTML = "&nbsp;";
-            highlight.addStyleClass("text-editor-overlay-highlight");
+            var highlightSpan = document.createElement("span");
+            highlightSpan.addStyleClass(cssClass);
+            highlightSpan.style.left = (metrics[i].left - extraWidth) + "px";
+            highlightSpan.style.width = (metrics[i].width + extraWidth * 2) + "px";
+            highlightSpan.textContent = " ";
+            highlightSpan.addStyleClass("text-editor-overlay-highlight");
+            lineRow.appendChild(highlightSpan);
         }
     },
 
@@ -1914,32 +1946,25 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     /**
      * @param {Element} lineRow
+     * @param {Array.<WebInspector.TextEditorMainPanel.LineOverlayHighlight>} overlayHighlight
      */
-    _paintLine: function(lineRow)
+    _paintLine: function(lineRow, overlayHighlight)
     {
         var lineNumber = lineRow.lineNumber;
 
         this.beginDomUpdates();
         try {
-            var highlight = this._textModel.getAttribute(lineNumber, "highlight");
-            if (!highlight)
+            var syntaxHighlight = this._textModel.getAttribute(lineNumber, "highlight");
+            if (!syntaxHighlight)
                 return;
 
             var line = this._textModel.line(lineNumber);
-
-            var metrics = [];
-            var cssClasses = [];
-            for(var key in this._highlightRegexs) {
-                var value = this._highlightRegexs[key];
-                metrics.push(this._measureRegex(lineRow, line, value.regex));
-                cssClasses.push(value.cssClass);
-            }
-
-            var ranges = highlight.ranges;
+            var ranges = syntaxHighlight.ranges;
             this._renderRanges(lineRow, line, ranges);
 
-            for(var i = 0; i < metrics.length; ++i)
-                this._appendOverlayHighlight(lineRow, metrics[i], cssClasses[i]);
+            if (overlayHighlight)
+                for(var i = 0; i < overlayHighlight.length; ++i)
+                    this._appendOverlayHighlight(lineRow, overlayHighlight[i]);
         } finally {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
                 this._markedRangeElement = WebInspector.highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
@@ -2637,6 +2662,27 @@ WebInspector.TextEditorMainPanel.prototype = {
 
 /**
  * @constructor
+ * @param {Element} element
+ */
+WebInspector.TextEditorMainPanel.ElementMetrics = function(element)
+{
+    this.width = element.offsetWidth;
+    this.left = element.offsetLeft;
+}
+
+/**
+ * @constructor
+ * @param {Array.<WebInspector.TextEditorMainPanel.ElementMetrics>} metrics
+ * @param {string} cssClass
+ */
+WebInspector.TextEditorMainPanel.LineOverlayHighlight = function(metrics, cssClass)
+{
+    this.metrics = metrics;
+    this.cssClass = cssClass;
+}
+
+/**
+ * @constructor
  * @param {WebInspector.TextEditorChunkedPanel} chunkedPanel
  * @param {number} startLine
  * @param {number} endLine
@@ -2755,7 +2801,7 @@ WebInspector.TextEditorMainChunk.prototype = {
         this._expanded = true;
 
         if (this.linesCount === 1) {
-            this._chunkedPanel._paintLine(this.element);
+            this._chunkedPanel._paintLines(this.startLine, this.startLine + 1);
             return;
         }
 
