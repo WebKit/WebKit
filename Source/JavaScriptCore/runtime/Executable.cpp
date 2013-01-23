@@ -183,7 +183,7 @@ inline const char* samplingDescription(JITCode::JITType jitType)
     case JITCode::DFGJIT:
         return "DFG Compilation (TOTAL)";
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }

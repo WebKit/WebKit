@@ -290,7 +290,7 @@ namespace JSC {
              FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTHS)
 #undef OPCODE_ID_LENGTHS
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 

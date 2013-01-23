@@ -342,7 +342,7 @@ public:
 #else
         UNUSED_PARAM(src);
         UNUSED_PARAM(dest);
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
     }
 
@@ -1104,7 +1104,7 @@ public:
 
     void divDouble(Address src, FPRegisterID dest)
     {
-        ASSERT_NOT_REACHED(); // Untested
+        RELEASE_ASSERT_NOT_REACHED(); // Untested
         loadDouble(src, ARMRegisters::SD0);
         divDouble(ARMRegisters::SD0, dest);
     }

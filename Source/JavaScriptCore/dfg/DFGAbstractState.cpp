@@ -358,7 +358,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 constantWasSet = trySetConstant(nodeIndex, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 constantWasSet = false;
             }
             if (constantWasSet) {
@@ -583,7 +583,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 constantWasSet = trySetConstant(nodeIndex, JSValue(fmod(a, b)));
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 constantWasSet = false;
                 break;
             }
@@ -805,7 +805,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 constantWasSet = trySetConstant(nodeIndex, jsBoolean(a == b));
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 constantWasSet = false;
                 break;
             }
@@ -956,7 +956,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
         case Array::Undecided:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         case Array::ForceExit:
             m_isValid = false;
@@ -1039,7 +1039,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).set(SpecDouble);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         break;
@@ -1631,7 +1631,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child1()).filter(SpecFloat64Array);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         forNode(node.child1()).filterArrayModes(node.arrayMode().arrayModesThatPassFiltering());
@@ -1805,7 +1805,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case LastNodeType:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
     
@@ -1933,7 +1933,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             break;
         
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }
@@ -2021,7 +2021,7 @@ inline bool AbstractState::mergeToSuccessors(
         return false;
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 }

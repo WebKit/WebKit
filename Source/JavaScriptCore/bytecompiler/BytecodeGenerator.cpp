@@ -143,7 +143,7 @@ void ResolveResult::checkValidity()
         ASSERT(!m_local);
         return;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 #endif
@@ -1412,7 +1412,7 @@ RegisterID* BytecodeGenerator::emitGetLocalVar(RegisterID* dst, const ResolveRes
         return moveToDestinationIfNeeded(dst, resolveResult.local());
 
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }
@@ -2397,7 +2397,7 @@ void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::S
             emitOpcode(op_switch_string);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
     }
 
     instructions().append(0); // place holder for table index

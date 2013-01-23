@@ -517,7 +517,7 @@ public:
     
     void absDouble(FPRegisterID, FPRegisterID)
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
@@ -2252,12 +2252,12 @@ public:
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 

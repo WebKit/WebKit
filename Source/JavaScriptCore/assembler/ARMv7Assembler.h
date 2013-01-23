@@ -2019,7 +2019,7 @@ public:
             linkBX(reinterpret_cast_ptr<uint16_t*>(from), to);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }
@@ -2163,7 +2163,7 @@ public:
             cacheFlush(ptr, sizeof(uint16_t) * 2);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -2183,7 +2183,7 @@ public:
         case OP_ADD_imm_T3:
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 

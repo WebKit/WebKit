@@ -207,7 +207,7 @@ void Identifier::checkCurrentIdentifierTable(ExecState* exec)
 #else
 
 // These only exists so that our exports are the same for debug and release builds.
-// This would be an ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
+// This would be an RELEASE_ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
 NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
 NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
 

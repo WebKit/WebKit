@@ -88,7 +88,7 @@ public:
                 case ForwardStructureTransitionWatchpoint:
                     // We currently rely on the fact that we're the only ones who would
                     // insert this node.
-                    ASSERT_NOT_REACHED();
+                    RELEASE_ASSERT_NOT_REACHED();
                     break;
                     
                 case GetByOffset:

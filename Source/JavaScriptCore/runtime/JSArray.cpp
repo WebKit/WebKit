@@ -674,7 +674,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -1223,7 +1223,7 @@ void JSArray::sort(ExecState* exec)
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -1440,7 +1440,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
         return;
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

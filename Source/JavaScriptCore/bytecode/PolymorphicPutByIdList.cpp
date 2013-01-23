@@ -55,7 +55,7 @@ PutByIdAccess PutByIdAccess::fromStructureStubInfo(
         break;
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     return result;
@@ -77,7 +77,7 @@ bool PutByIdAccess::visitWeak() const
             return false;
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
     return true;

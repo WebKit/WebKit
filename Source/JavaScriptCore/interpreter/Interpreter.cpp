@@ -640,7 +640,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
         } else if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
             CodeOrigin origin;
             if (!callerCodeBlock->codeOriginForReturn(callFrame->returnPC(), origin))
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
             bytecodeOffset = origin.bytecodeIndex;
             if (InlineCallFrame* icf = origin.inlineCallFrame) {
                 FunctionExecutable* executable = static_cast<FunctionExecutable*>(icf->executable.get());
@@ -677,7 +677,7 @@ static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
     case GlobalCode:
         return StackFrameGlobalCode;
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return StackFrameGlobalCode;
 }
 
@@ -903,7 +903,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                     continue;
                 }
                 default:
-                    ASSERT_NOT_REACHED();
+                    RELEASE_ASSERT_NOT_REACHED();
                     return jsUndefined();
                 }
             }
@@ -938,7 +938,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                 break;
             }
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                     return jsUndefined();
             }
             result = JSONPValue;

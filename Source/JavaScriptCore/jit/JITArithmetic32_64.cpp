@@ -908,7 +908,7 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 addJump(branchDouble(DoubleGreaterThanOrUnordered, fpRegT0, fpRegT2), dst);
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
         }
 
         if (!notInt32Op2.empty())
@@ -1012,7 +1012,7 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsi
                 addJump(branchDouble(DoubleGreaterThanOrUnordered, fpRegT1, fpRegT0), dst);
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -1253,7 +1253,7 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     UNUSED_PARAM(iter);
     // We would have really useful assertions here if it wasn't for the compiler's
     // insistence on attribute noreturn.
-    // ASSERT_NOT_REACHED();
+    // RELEASE_ASSERT_NOT_REACHED();
 #endif
 }
 

@@ -1533,7 +1533,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     
     void absDouble(FPRegisterID, FPRegisterID)
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
@@ -2235,12 +2235,12 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 

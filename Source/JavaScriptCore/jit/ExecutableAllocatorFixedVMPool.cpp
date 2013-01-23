@@ -98,7 +98,7 @@ protected:
                 return;
             ASSERT(result == -1);
             if (errno != EAGAIN) {
-                ASSERT_NOT_REACHED(); // In debug mode, this should be a hard failure.
+                RELEASE_ASSERT_NOT_REACHED(); // In debug mode, this should be a hard failure.
                 break; // In release mode, we should just ignore the error - not returning memory to the OS is better than crashing, especially since we _will_ be able to reuse the memory internally anyway.
             }
         }

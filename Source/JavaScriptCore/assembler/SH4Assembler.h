@@ -534,7 +534,7 @@ public:
             oneShortOp(getOpcodeGroup2(SHLL16_OPCODE, dst));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -584,7 +584,7 @@ public:
             oneShortOp(getOpcodeGroup2(SHLR16_OPCODE, dst));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -654,7 +654,7 @@ public:
             oneShortOp(getOpcodeGroup1(CMPGT_OPCODE, left, right));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -731,7 +731,7 @@ public:
             oneShortOp(getOpcodeGroup5(BF_OPCODE, label));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -751,7 +751,7 @@ public:
             oneShortOp(getOpcodeGroup2(BSRF_OPCODE, reg));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 

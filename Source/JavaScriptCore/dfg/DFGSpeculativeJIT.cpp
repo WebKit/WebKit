@@ -411,7 +411,7 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
             fillAction = Load32Payload;
     } else if (registerFormat == DataFormatBoolean) {
 #if USE(JSVALUE64)
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         fillAction = DoNothingForFill;
 #elif USE(JSVALUE32_64)
         ASSERT(info.gpr() == source);
@@ -549,7 +549,7 @@ void SpeculativeJIT::silentSpill(const SilentRegisterSavePlan& plan)
         m_jit.storeDouble(plan.fpr(), JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()));
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
     
@@ -631,7 +631,7 @@ void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan, GPRReg canTr
         m_jit.loadDouble(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.fpr());
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
     
@@ -804,7 +804,7 @@ void SpeculativeJIT::checkArray(Node& node)
         expectedClassInfo = result->m_classInfo;
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
     
@@ -2262,7 +2262,7 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(NodeIndex node
     switch (info.registerFormat()) {
     case DataFormatBoolean: // This type never occurs.
     case DataFormatStorage:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     case DataFormatCell:
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
@@ -2283,7 +2283,7 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(NodeIndex node
         return GeneratedOperandDouble;
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return GeneratedOperandTypeUnknown;
     }
 }
@@ -2389,7 +2389,7 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
             return;
         }
         case GeneratedOperandTypeUnknown:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }
@@ -2780,7 +2780,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
         break;
     }
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     doubleResult(resultReg, m_compileIndex);
 }
@@ -2815,7 +2815,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescripto
         m_jit.storeDouble(valueOp.fpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesEight));
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     if (node.op() == PutByVal)
         outOfBounds.link(&m_jit);

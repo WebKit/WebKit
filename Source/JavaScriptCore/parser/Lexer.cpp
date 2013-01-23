@@ -1648,7 +1648,7 @@ inNumberAfterDecimalPoint:
         m_lexErrorMessage = invalidCharacterMessage();
         goto returnError;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         m_lexErrorMessage = "Internal Error";
         goto returnError;
     }

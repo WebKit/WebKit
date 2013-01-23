@@ -186,7 +186,7 @@ public:
             return ValueRecovery::argumentsThatWereNotCreated();
             
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return ValueRecovery();
         }
     }

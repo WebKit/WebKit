@@ -61,7 +61,7 @@ public:
     MacroAssembler::Label label() const { return m_label; }
     virtual MacroAssembler::Call call() const
     {
-        ASSERT_NOT_REACHED(); // By default slow path generators don't have a call.
+        RELEASE_ASSERT_NOT_REACHED(); // By default slow path generators don't have a call.
         return MacroAssembler::Call();
     }
 protected:

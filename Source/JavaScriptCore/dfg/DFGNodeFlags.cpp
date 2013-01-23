@@ -61,7 +61,7 @@ const char* nodeFlagsAsString(NodeFlags flags)
             ptr.strcat("Storage");
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         hasPrinted = true;

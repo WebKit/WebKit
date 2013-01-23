@@ -317,7 +317,7 @@ struct Node {
         case PhantomArguments:
             return JSValue();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return JSValue(); // Have to return something in release mode.
         }
     }
@@ -645,7 +645,7 @@ struct Node {
         case 1:
             return notTakenBlockIndex();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return NoBlock;
         }
     }

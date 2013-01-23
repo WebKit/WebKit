@@ -307,7 +307,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         codeBlock->jitSoon();
         return true;
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 

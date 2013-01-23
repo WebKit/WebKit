@@ -133,7 +133,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
         framePointer = 0;
 #else
         // This platform is not yet supported!
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
     }
 

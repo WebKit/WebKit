@@ -1050,7 +1050,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
         else if (opcodeID == op_nstricteq)
             generator.emitEqualityOp(op_stricteq, generator.finalDestination(tmp.get(), src1.get()), src1.get(), src2);
         else
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         return generator.emitUnaryOp(op_not, generator.finalDestination(dst, tmp.get()), tmp.get());
     }
     return generator.emitBinaryOp(opcodeID, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(left->resultDescriptor(), right->resultDescriptor()));
@@ -1231,7 +1231,7 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
             opcodeID = op_mod;
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return dst;
     }
 

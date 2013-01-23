@@ -371,7 +371,7 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWor
 template <typename T>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor()
 {
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return *(RegionSet*)0;
 }
 

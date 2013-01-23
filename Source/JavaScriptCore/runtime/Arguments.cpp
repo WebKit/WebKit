@@ -428,7 +428,7 @@ void Arguments::tearOffForInlineCallFrame(JSGlobalData& globalData, Register* re
             value = recovery.constant();
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         trySetArgument(globalData, i, value);

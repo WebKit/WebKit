@@ -328,7 +328,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
     
@@ -530,7 +530,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     thisObject->putByIndexBeyondVectorLength(exec, propertyName, value, shouldThrow);
@@ -1069,7 +1069,7 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(JSGlobalData& globalData)
         return convertContiguousToArrayStorage(globalData);
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }
@@ -1318,7 +1318,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 }
@@ -1521,7 +1521,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     object->methodTable()->getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
@@ -2035,7 +2035,7 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
         break;
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -2197,7 +2197,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
         return putDirectIndexBeyondVectorLengthWithArrayStorage(exec, i, value, attributes, mode, arrayStorage());
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 }
@@ -2426,7 +2426,7 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prope
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 }

@@ -58,7 +58,7 @@ EncodedJSValue* MethodOfGettingAValueProfile::getSpecFailBucket(unsigned index) 
                 u.lazyOperand.bytecodeOffset, u.lazyOperand.operand))->specFailBucket(index);
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }

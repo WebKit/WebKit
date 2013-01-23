@@ -756,7 +756,7 @@ private:
         case LastUntaggedToken: 
             break;
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return "internal error";
     }
     
@@ -788,7 +788,7 @@ private:
             m_errorMessage = ASCIILiteral("Return statements are only valid inside functions");
             return;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             m_errorMessage = ASCIILiteral("internal error");
             return;
         }

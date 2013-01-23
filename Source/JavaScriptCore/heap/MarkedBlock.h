@@ -408,11 +408,11 @@ namespace JSC {
 
         case New:
         case FreeListed:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 

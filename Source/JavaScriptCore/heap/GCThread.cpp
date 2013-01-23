@@ -119,10 +119,10 @@ void GCThread::gcThreadMain()
                 m_copyVisitor->doneCopying();
                 break;
             case NoPhase:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Exit:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
         }

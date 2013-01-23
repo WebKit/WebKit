@@ -383,7 +383,7 @@ public:
             break;
         
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 

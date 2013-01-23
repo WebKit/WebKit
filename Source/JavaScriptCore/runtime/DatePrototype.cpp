@@ -246,7 +246,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
             length += GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &systemTime, 0, buffer.data() + length, buffer.size() - length);
         }
     } else
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     //  Remove terminating null character.
     if (length)

@@ -166,7 +166,7 @@ namespace JSC {
         virtual bool isSubtract() const { return false; }
         virtual bool hasConditionContextCodegen() const { return false; }
 
-        virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, bool) { ASSERT_NOT_REACHED(); }
+        virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, bool) { RELEASE_ASSERT_NOT_REACHED(); }
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
 

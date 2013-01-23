@@ -1374,7 +1374,7 @@ bool JIT::isDirectPutById(StructureStubInfo* stubInfo)
         return false;
     }
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 }

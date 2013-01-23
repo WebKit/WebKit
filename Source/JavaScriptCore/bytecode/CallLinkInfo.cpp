@@ -42,7 +42,7 @@ void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer
 #if ENABLE(DFG_JIT)
         repatchBuffer.relink(callReturnLocation, (callType == Construct ? globalData.getCTIStub(DFG::linkConstructThunkGenerator) : globalData.getCTIStub(DFG::linkCallThunkGenerator)).code());
 #else
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
     } else
         repatchBuffer.relink(callReturnLocation, callType == Construct ? globalData.getCTIStub(linkConstructGenerator).code() : globalData.getCTIStub(linkCallGenerator).code());

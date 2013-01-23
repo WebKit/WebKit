@@ -569,7 +569,7 @@ public:
         case PutByValAlias:
             return !byValIsPure(node);
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
         }
     }

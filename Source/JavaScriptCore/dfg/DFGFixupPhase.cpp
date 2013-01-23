@@ -490,7 +490,7 @@ private:
             
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return;
             
         case Array::Generic:

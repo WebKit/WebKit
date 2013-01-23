@@ -61,7 +61,7 @@ inline DoubleFormatState mergeDoubleFormatStates(DoubleFormatState a, DoubleForm
     case CantUseDoubleFormat:
         return CantUseDoubleFormat;
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return CantUseDoubleFormat;
 }
 
@@ -86,7 +86,7 @@ inline const char* doubleFormatStateToString(DoubleFormatState state)
     case CantUseDoubleFormat:
         return "ForceValue";
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return 0;
 }
 

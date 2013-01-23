@@ -131,7 +131,7 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
         ASSERT(sweepMode == SweepToFreeList);
         return FreeList();
     case Allocated:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return FreeList();
     case Marked:
         return sweepMode == SweepToFreeList
@@ -139,7 +139,7 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
             : specializedSweep<Marked, SweepOnly, dtorType>();
     }
 
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return FreeList();
 }
 

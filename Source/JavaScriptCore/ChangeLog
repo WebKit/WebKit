@@ -1,3 +1,272 @@
+2013-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Replace ASSERT_NOT_REACHED with RELEASE_ASSERT_NOT_REACHED in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=107736
+
+        Reviewed by Mark Hahnenberg.
+
+        Mechanical change with no performance impact.
+
+        * API/JSBlockAdaptor.mm:
+        (BlockArgumentTypeDelegate::typeVoid):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::construct):
+        (JSC::::call):
+        * API/JSScriptRef.cpp:
+        * API/ObjCCallbackFunction.mm:
+        (ArgumentTypeDelegate::typeVoid):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::replaceWithLoad):
+        (JSC::ARMv7Assembler::replaceWithAddressComputation):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::invert):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::countLeadingZeros32):
+        (JSC::MacroAssemblerARM::divDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::absDouble):
+        (JSC::MacroAssemblerMIPS::replaceWithJump):
+        (JSC::MacroAssemblerMIPS::maxJumpReplacementSize):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::absDouble):
+        (JSC::MacroAssemblerSH4::replaceWithJump):
+        (JSC::MacroAssemblerSH4::maxJumpReplacementSize):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::shllImm8r):
+        (JSC::SH4Assembler::shlrImm8r):
+        (JSC::SH4Assembler::cmplRegReg):
+        (JSC::SH4Assembler::branch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::replaceWithLoad):
+        (JSC::X86Assembler::replaceWithAddressComputation):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CodeBlock.cpp:
+        (JSC::debugHookName):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::usesOpcode):
+        * bytecode/DataFormat.h:
+        (JSC::needDataFormatConversion):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        (JSC::exitKindIsCountable):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::getSpecFailBucket):
+        * bytecode/Opcode.h:
+        (JSC::opcodeLength):
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::fromStructureStubInfo):
+        (JSC::PutByIdAccess::visitWeak):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::checkValidity):
+        (JSC::BytecodeGenerator::emitGetLocalVar):
+        (JSC::BytecodeGenerator::beginSwitch):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::fixTailOperand):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::canHandleOpcodes):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::useKindToString):
+        * dfg/DFGDoubleFormatState.h:
+        (JSC::DFG::mergeDoubleFormatStates):
+        (JSC::DFG::doubleFormatStateToString):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::clobbersWorld):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::valueOfJSConstant):
+        (JSC::DFG::Node::successor):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::nodeFlagsAsString):
+        * dfg/DFGNodeType.h:
+        (JSC::DFG::defaultFlags):
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::call):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::silentSpill):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::bitOp):
+        (JSC::DFG::SpeculativeJIT::shiftOp):
+        (JSC::DFG::SpeculativeJIT::integerResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::valueRecovery):
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * heap/BlockAllocator.h:
+        (JSC::BlockAllocator::regionSetFor):
+        * heap/GCThread.cpp:
+        (JSC::GCThread::gcThreadMain):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isLive):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::inlineCallFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+        (JSC::getStackFrameCodeType):
+        (JSC::Interpreter::execute):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::notifyPageIsFree):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::isDirectPutById):
+        * jit/JITStubs.cpp:
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * parser/Lexer.cpp:
+        (JSC::::lex):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::emitBytecodeInConditionContext):
+        * parser/Parser.h:
+        (JSC::Parser::getTokenName):
+        (JSC::Parser::updateErrorMessageSpecialCase):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOffForInlineCallFrame):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/Executable.cpp:
+        (JSC::samplingDescription):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::unlinkCalls):
+        * runtime/Identifier.cpp:
+        (JSC):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::getCallData):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::push):
+        (JSC::JSArray::sort):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defaultValue):
+        (JSC::JSCell::getOwnPropertyNames):
+        (JSC::JSCell::getOwnNonIndexPropertyNames):
+        (JSC::JSCell::className):
+        (JSC::JSCell::getPropertyNames):
+        (JSC::JSCell::customHasInstance):
+        (JSC::JSCell::putDirectVirtual):
+        (JSC::JSCell::defineOwnProperty):
+        (JSC::JSCell::getOwnPropertyDescriptor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::put):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuicklyForPutDirect):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::isDynamicScope):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::putDirectVirtual):
+        * runtime/JSSymbolTableObject.h:
+        (JSSymbolTableObject):
+        * runtime/LiteralParser.cpp:
+        (JSC::::parse):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+        * yarr/YarrCanonicalizeUCS2.h:
+        (JSC::Yarr::getCanonicalPair):
+        (JSC::Yarr::areCanonicallyEquivalent):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackParenthesesTerminalEnd):
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::assertionWordBoundary):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBackReference):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassBuiltIn):
+
 2013-01-23  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style to CRLF on Windows .sln files.

@@ -121,7 +121,7 @@ public:
         case DoubleLessThanOrEqualOrUnordered:
             return DoubleGreaterThan;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return DoubleEqual; // make compiler happy
         }
     }
@@ -145,7 +145,7 @@ public:
         case NonZero:
             return Zero;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return Zero; // Make compiler happy for release builds.
         }
     }

@@ -1952,7 +1952,7 @@ public:
             *ptr = OP_MOV_GvEv;
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     
@@ -1970,7 +1970,7 @@ public:
         case OP_LEA:
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     

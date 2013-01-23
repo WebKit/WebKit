@@ -985,7 +985,7 @@ private:
             result.mayExit |= node.canExit();
             result.mayClobberWorld |= m_graph.clobbersWorld(index);
         }
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         // Be safe in release mode.
         result.mayBeAccessed = true;
         return result;

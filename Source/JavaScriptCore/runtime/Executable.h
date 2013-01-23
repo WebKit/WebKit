@@ -838,7 +838,7 @@ namespace JSC {
         case FunctionExecutableType:
             return jsCast<FunctionExecutable*>(this)->unlinkCalls();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 

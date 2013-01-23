@@ -404,7 +404,7 @@ void JIT::privateCompileMainPass()
         case op_put_by_id_generic:
         case op_put_by_id_replace:
         case op_put_by_id_transition:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -551,7 +551,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_put_to_base)
 
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to,"Not enough jumps linked in slow case codegen.");
@@ -636,7 +636,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         m_shouldEmitProfiling = true;
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 #endif

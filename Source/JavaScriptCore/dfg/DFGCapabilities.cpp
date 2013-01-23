@@ -119,7 +119,7 @@ ReturnType canHandleOpcodes(CodeBlock* codeBlock, ReturnType initialValue)
             FOR_EACH_OPCODE_ID(DEFINE_OP)
 #undef DEFINE_OP
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }

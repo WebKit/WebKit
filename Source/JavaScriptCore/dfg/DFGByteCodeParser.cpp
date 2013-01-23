@@ -1001,7 +1001,7 @@ private:
             break;
             
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         
@@ -3232,7 +3232,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         default:
             // Parse failed! This should not happen because the capabilities checker
             // should have caught it.
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }

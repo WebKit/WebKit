@@ -646,7 +646,7 @@ public:
             m_jit.xor32(Imm32(imm), op1, result);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     void bitOp(NodeType op, GPRReg op1, GPRReg op2, GPRReg result)
@@ -662,7 +662,7 @@ public:
             m_jit.xor32(op1, op2, result);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     void shiftOp(NodeType op, GPRReg op1, int32_t shiftAmount, GPRReg result)
@@ -678,7 +678,7 @@ public:
             m_jit.urshift32(op1, Imm32(shiftAmount), result);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     void shiftOp(NodeType op, GPRReg op1, GPRReg shiftAmount, GPRReg result)
@@ -694,7 +694,7 @@ public:
             m_jit.urshift32(op1, shiftAmount, result);
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     
@@ -804,7 +804,7 @@ public:
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
             info.initJSValue(nodeIndex, node.refCount(), reg, format);
 #elif USE(JSVALUE32_64)
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 #endif
         }
     }

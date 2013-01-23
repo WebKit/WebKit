@@ -70,7 +70,7 @@ void JSNameScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
     if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode()))
         return;
     
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool JSNameScope::getOwnPropertySlot(JSCell* cell, ExecState*, PropertyName propertyName, PropertySlot& slot)

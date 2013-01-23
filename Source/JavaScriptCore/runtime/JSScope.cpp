@@ -57,7 +57,7 @@ bool JSScope::isDynamicScope(bool& requiresDynamicChecks) const
     case NameScopeObjectType:
         return static_cast<const JSNameScope*>(this)->isDynamicScope(requiresDynamicChecks);
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 

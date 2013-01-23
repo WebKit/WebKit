@@ -209,7 +209,7 @@ public:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return i < m_butterfly->arrayStorage()->vectorLength() && m_butterfly->arrayStorage()->m_vector[i];
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }
@@ -225,7 +225,7 @@ public:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return m_butterfly->arrayStorage()->m_vector[i].get();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return JSValue();
         }
     }
@@ -254,7 +254,7 @@ public:
                 return m_butterfly->arrayStorage()->m_vector[i].get();
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         return JSValue();
@@ -294,7 +294,7 @@ public:
             return i < m_butterfly->arrayStorage()->vectorLength()
                 && !!m_butterfly->arrayStorage()->m_vector[i];
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }
@@ -311,7 +311,7 @@ public:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return i < m_butterfly->vectorLength();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }
@@ -363,7 +363,7 @@ public:
             break;
         }
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
         
@@ -412,7 +412,7 @@ public:
             break;
         }
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
         
@@ -428,7 +428,7 @@ public:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return m_butterfly->arrayStorage()->m_sparseMap;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }
@@ -445,7 +445,7 @@ public:
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return m_butterfly->arrayStorage()->inSparseMode();
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
     }

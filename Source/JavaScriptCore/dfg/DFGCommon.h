@@ -130,7 +130,7 @@ inline const char* useKindToString(UseKind useKind)
     case DoubleUse:
         return "d";
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }

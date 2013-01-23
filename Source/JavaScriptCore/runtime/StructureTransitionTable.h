@@ -85,7 +85,7 @@ inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition 
     case AddIndexedAccessors:
         return oldType | MayHaveIndexedAccessors;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return oldType;
     }
 }

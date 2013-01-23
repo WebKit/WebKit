@@ -132,7 +132,7 @@ void VariableEventStream::reconstruct(
                 operandSources.setOperand(event.operand(), ValueSource::forDataFormat(event.dataFormat()));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }

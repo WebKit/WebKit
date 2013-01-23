@@ -64,7 +64,7 @@ const String InternalFunction::displayName(ExecState* exec)
 
 CallType InternalFunction::getCallData(JSCell*, CallData&)
 {
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return CallTypeNone;
 }
 

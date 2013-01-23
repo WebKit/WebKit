@@ -231,7 +231,7 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
             return "didReachBreakpoint";
     }
 
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return "";
 }
 
@@ -305,7 +305,7 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
         op = "string_length";
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         op = 0;
     }
     int r0 = (++it)->u.operand;
@@ -415,7 +415,7 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 out.printf("string_length");
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
             
@@ -2111,7 +2111,7 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
         visitor.addWeakReferenceHarvester(this);
     
 #else // ENABLE(DFG_JIT)
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
 #endif // ENABLE(DFG_JIT)
 }
 
@@ -2227,7 +2227,7 @@ void CodeBlock::finalizeUnconditionally()
             case op_get_array_length:
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
             }
         }
 
@@ -3347,7 +3347,7 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
             FOR_EACH_OPCODE_ID(DEFINE_OP)
 #undef DEFINE_OP
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }

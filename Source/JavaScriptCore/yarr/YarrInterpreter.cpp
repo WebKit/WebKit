@@ -480,7 +480,7 @@ public:
             return true;
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -562,7 +562,7 @@ public:
             return true;
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -796,7 +796,7 @@ public:
     {
         // 'Terminal' parentheses are at the end of the regex, and as such a match past end
         // should always be returned as a successful match - we should never backtrack to here.
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -922,7 +922,7 @@ public:
             return JSRegExpMatch;
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return JSRegExpErrorNoMatch;
     }
 
@@ -1062,7 +1062,7 @@ public:
         }
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return JSRegExpErrorNoMatch;
     }
 
@@ -1268,7 +1268,7 @@ public:
         }
 
         // We should never fall-through to here.
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     backtrack:
         ASSERT(context->term < static_cast<int>(disjunction->terms.size()));
@@ -1277,7 +1277,7 @@ public:
         case ByteTerm::TypeSubpatternBegin:
             return JSRegExpNoMatch;
         case ByteTerm::TypeSubpatternEnd:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 
         case ByteTerm::TypeBodyAlternativeBegin:
         case ByteTerm::TypeBodyAlternativeDisjunction: {
@@ -1299,7 +1299,7 @@ public:
             MATCH_NEXT();
         }
         case ByteTerm::TypeBodyAlternativeEnd:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 
         case ByteTerm::TypeAlternativeBegin:
         case ByteTerm::TypeAlternativeDisjunction: {
@@ -1388,10 +1388,10 @@ public:
             BACKTRACK();
 
         case ByteTerm::TypeDotStarEnclosure:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return JSRegExpErrorNoMatch;
     }
 

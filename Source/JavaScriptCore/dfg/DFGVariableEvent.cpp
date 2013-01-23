@@ -61,7 +61,7 @@ void VariableEvent::dump(PrintStream& out) const
         out.printf("SetLocal(r%d, %s)", operand(), dataFormatToString(dataFormat()));
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 }

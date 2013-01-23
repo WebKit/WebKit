@@ -149,12 +149,12 @@ protected:
 
     // Dummy implementations of override-able static functions for classes to put in their MethodTable
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
-    static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_ASSERT void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static String className(const JSObject*);
     JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);
-    static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
+    static NO_RETURN_DUE_TO_CRASH void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 

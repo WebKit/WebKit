@@ -242,7 +242,7 @@ public:
 
     static ResultType typeVoid()
     {
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 

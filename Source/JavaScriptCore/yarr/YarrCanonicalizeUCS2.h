@@ -93,9 +93,9 @@ inline UChar getCanonicalPair(UCS2CanonicalizationRange* info, UChar ch)
     case CanonicalizeAlternatingUnaligned:
         return ((ch - 1) ^ 1) + 1;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -129,7 +129,7 @@ inline bool areCanonicallyEquivalent(UChar a, UChar b)
         return ((a - 1) | 1) == ((b - 1) | 1);
     }
 
-    ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 

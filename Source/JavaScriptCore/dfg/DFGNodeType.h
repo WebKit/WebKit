@@ -275,7 +275,7 @@ inline NodeFlags defaultFlags(NodeType op)
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
 }

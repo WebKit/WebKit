@@ -815,7 +815,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 return JSValue();
             }
             default:
-                ASSERT_NOT_REACHED();
+                RELEASE_ASSERT_NOT_REACHED();
         }
         if (stateStack.isEmpty())
             return lastValue;

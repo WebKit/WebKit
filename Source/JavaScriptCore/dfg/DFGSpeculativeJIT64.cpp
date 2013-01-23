@@ -94,7 +94,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
     case DataFormatJSBoolean:
     case DataFormatStorage:
         // Should only be calling this function if we know this operand to be integer.
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     case DataFormatJSInteger: {
         GPRReg gpr = info.gpr();
@@ -113,7 +113,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
 }
@@ -195,7 +195,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
     case DataFormatJSBoolean:
     case DataFormatStorage:
         // Should only be calling this function if we know this operand to be numeric.
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     case DataFormatJS: {
         GPRReg jsValueGpr = info.gpr();
@@ -263,7 +263,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidFPRReg;
     }
 }
@@ -358,10 +358,10 @@ GPRReg SpeculativeJIT::fillJSValue(NodeIndex nodeIndex)
     case DataFormatBoolean:
     case DataFormatStorage:
         // this type currently never occurs
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
 }
@@ -1190,10 +1190,10 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
     }
 
     case DataFormatStorage:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
 }
@@ -1285,7 +1285,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex, SpeculationDirec
     case DataFormatNone: // Should have filled, above.
     case DataFormatBoolean: // This type never occurs.
     case DataFormatStorage:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     case DataFormatCell:
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode, direction);
@@ -1360,7 +1360,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex, SpeculationDirec
     }
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidFPRReg;
     }
 }
@@ -1433,10 +1433,10 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex, SpeculationDirecti
     }
 
     case DataFormatStorage:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
 }
@@ -1515,10 +1515,10 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex, SpeculationDire
     }
         
     case DataFormatStorage:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
     }
 }
@@ -2568,7 +2568,7 @@ void SpeculativeJIT::compile(Node& node)
         switch (node.arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::ForceExit:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
             break;
         case Array::Generic: {
@@ -2781,7 +2781,7 @@ void SpeculativeJIT::compile(Node& node)
             compileGetByValOnFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), node, sizeof(double));
             break;
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         break;
@@ -2800,7 +2800,7 @@ void SpeculativeJIT::compile(Node& node)
         switch (arrayMode.type()) {
         case Array::SelectUsingPredictions:
         case Array::ForceExit:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
             alreadyHandled = true;
             break;
@@ -3081,7 +3081,7 @@ void SpeculativeJIT::compile(Node& node)
             break;
             
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
 
@@ -4578,7 +4578,7 @@ void SpeculativeJIT::compile(Node& node)
 #if ENABLE(DEBUG_WITH_BREAKPOINT)
         m_jit.breakpoint();
 #else
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
         break;
         
@@ -5020,11 +5020,11 @@ void SpeculativeJIT::compile(Node& node)
         
     case InlineStart:
     case Nop:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
         
     case LastNodeType:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 

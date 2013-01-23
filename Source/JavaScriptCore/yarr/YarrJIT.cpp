@@ -1255,7 +1255,7 @@ class YarrGenerator : private MacroAssembler {
 
         case PatternTerm::TypeParenthesesSubpattern:
         case PatternTerm::TypeParentheticalAssertion:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         case PatternTerm::TypeBackReference:
             m_shouldFallBack = true;
             break;
@@ -1321,7 +1321,7 @@ class YarrGenerator : private MacroAssembler {
 
         case PatternTerm::TypeParenthesesSubpattern:
         case PatternTerm::TypeParentheticalAssertion:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
 
         case PatternTerm::TypeDotStarEnclosure:
             backtrackDotStarEnclosure(opIndex);

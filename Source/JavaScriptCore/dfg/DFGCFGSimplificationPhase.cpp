@@ -347,7 +347,7 @@ private:
             break;
         }
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }
@@ -549,7 +549,7 @@ private:
         }
             
         default:
-            ASSERT_NOT_REACHED();
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     
