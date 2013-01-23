@@ -479,7 +479,7 @@ void _NPN_SetException(NPObject* npObject, const NPUTF8 *message)
     if (!npObject || npObject->_class != npScriptObjectClass) {
         // We won't be able to find a proper scope for this exception, so just throw it.
         // This is consistent with JSC, which throws a global exception all the time.
-        throwError(v8GeneralError, message);
+        throwError(v8GeneralError, message, v8::Isolate::GetCurrent());
         return;
     }
     v8::HandleScope handleScope;
@@ -490,7 +490,7 @@ void _NPN_SetException(NPObject* npObject, const NPUTF8 *message)
     v8::Context::Scope scope(context);
     ExceptionCatcher exceptionCatcher;
 
-    throwError(v8GeneralError, message);
+    throwError(v8GeneralError, message, context->GetIsolate());
 }
 
 bool _NPN_Enumerate(NPP npp, NPObject* npObject, NPIdentifier** identifier, uint32_t* count)

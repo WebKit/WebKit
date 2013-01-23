@@ -171,7 +171,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
         state->lineNumber = message->GetLineNumber();
         state->sourceURL = toWebCoreString(message->GetScriptResourceName());
         if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
-            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data());
+            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data(), m_context->GetIsolate());
         else
             state->exception = ScriptValue(block.Exception());
 
@@ -238,7 +238,7 @@ void WorkerScriptController::disableEval(const String& errorMessage)
 
 void WorkerScriptController::setException(const ScriptValue& exception)
 {
-    throwError(*exception.v8Value());
+    throwError(*exception.v8Value(), m_context->GetIsolate());
 }
 
 WorkerScriptController* WorkerScriptController::controllerForContext()

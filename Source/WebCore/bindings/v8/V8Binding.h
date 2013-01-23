@@ -62,10 +62,10 @@ namespace WebCore {
     v8::Handle<v8::Value> setDOMException(int, v8::Isolate*);
 
     // Schedule a JavaScript error to be thrown.
-    v8::Handle<v8::Value> throwError(V8ErrorType, const char*, v8::Isolate* = 0);
+    v8::Handle<v8::Value> throwError(V8ErrorType, const char*, v8::Isolate*);
 
     // Schedule a JavaScript error to be thrown.
-    v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);
+    v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate*);
 
     // A helper for throwing JavaScript TypeError.
     v8::Handle<v8::Value> throwTypeError(const char*, v8::Isolate*);
@@ -463,6 +463,7 @@ namespace WebCore {
     // If the current context causes out of memory, JavaScript setting
     // is disabled and it returns true.
     bool handleOutOfMemory();
+    // FIXME: This should receive an Isolate.
     v8::Local<v8::Value> handleMaxRecursionDepthExceeded();
 
     void crashIfV8IsDead();
