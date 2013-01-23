@@ -766,7 +766,7 @@ void FrameLoaderClient::dispatchDidNavigateWithinPage()
     // FIXME: this is not ideal, but it seems safer than changing our
     // current contract with the clients about provisional data
     // sources not being '0' during the provisional load stage.
-    dispatchDidCommitLoad();
+    dispatchDidCommitLoad(true);
     dispatchDidFinishLoad();
 }
 
@@ -841,6 +841,11 @@ void FrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
 
 void FrameLoaderClient::dispatchDidCommitLoad()
 {
+    FrameLoaderClient::dispatchDidCommitLoad(false);
+}
+
+void FrameLoaderClient::dispatchDidCommitLoad(bool isNavigatingWithinPage)
+{
     if (m_loadingErrorPage)
         return;
 
@@ -852,10 +857,12 @@ void FrameLoaderClient::dispatchDidCommitLoad()
     WebKitWebFramePrivate* priv = m_frame->priv;
     g_free(priv->uri);
     priv->uri = g_strdup(core(m_frame)->loader()->activeDocumentLoader()->url().string().utf8().data());
-    g_free(priv->title);
-    priv->title = NULL;
     g_object_notify(G_OBJECT(m_frame), "uri");
-    g_object_notify(G_OBJECT(m_frame), "title");
+    if (!isNavigatingWithinPage) {
+        g_free(priv->title);
+        priv->title = 0;
+        g_object_notify(G_OBJECT(m_frame), "title");
+    }
 
     g_signal_emit_by_name(m_frame, "load-committed");
     notifyStatus(m_frame, WEBKIT_LOAD_COMMITTED);
@@ -864,8 +871,9 @@ void FrameLoaderClient::dispatchDidCommitLoad()
     if (m_frame == webkit_web_view_get_main_frame(webView)) {
         g_object_freeze_notify(G_OBJECT(webView));
         g_object_notify(G_OBJECT(webView), "uri");
-        g_object_notify(G_OBJECT(webView), "title");
         g_object_thaw_notify(G_OBJECT(webView));
+        if (!isNavigatingWithinPage)
+            g_object_notify(G_OBJECT(webView), "title");
         g_signal_emit_by_name(webView, "load-committed", m_frame);
     }
 

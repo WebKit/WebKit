@@ -1,3 +1,23 @@
+2013-01-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Avoid reset title for navigation within the page
+        https://bugs.webkit.org/show_bug.cgi?id=106908
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidNavigateWithinPage): Call
+        dispatchDidCommitLoad with true as param.
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad): The method has been
+        overloaded. The default implementation (without params) simply calls
+        dispatchDidCommitLoad with false. The new private method with
+        isNavigatingWithinPage as param will avoid to reset the title for
+        navigation within the page.
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        (FrameLoaderClient): Add new private method dispatchDidCommitLoad with a
+        boolean parameter to know if it is navigating withing the same page or
+        not.
+
 2013-01-22  Anders Carlsson  <andersca@apple.com>
 
         Use a platforom strategy for local storage

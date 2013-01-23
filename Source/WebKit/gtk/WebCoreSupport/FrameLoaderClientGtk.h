@@ -198,6 +198,8 @@ namespace WebKit {
         // Plugin view to redirect data to
         WebCore::PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
+
+        virtual void dispatchDidCommitLoad(bool isNavigatingWithinPage);
     };
 
 }
