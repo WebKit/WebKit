@@ -187,6 +187,12 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty() && needsLayout());
     
+#ifndef NDEBUG
+    // FIXME: Remove the setNeedsLayoutIsForbidden calls once mathml stops modifying the render tree here.
+    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
+    setNeedsLayoutIsForbidden(false);
+#endif
+    
     computeChildrenPreferredLogicalHeights();
     
     int baseHeight = firstChild() ? roundToInt(preferredLogicalHeightAfterSizing(firstChild())) : style()->fontSize();
@@ -219,7 +225,11 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
             m_indexTop = - rootExtraTop;
     } else
         m_intrinsicPaddingStart = frontWidth;
-    
+
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
+#endif
+
     RenderMathMLBlock::computePreferredLogicalWidths();
     
     // Shrink our logical width to its probable value now without triggering unnecessary relayout of our children.
