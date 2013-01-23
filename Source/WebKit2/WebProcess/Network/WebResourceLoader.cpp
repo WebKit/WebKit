@@ -68,6 +68,11 @@ uint64_t WebResourceLoader::destinationID() const
     return m_coreLoader->identifier();
 }
 
+void WebResourceLoader::cancelResourceLoader()
+{
+    m_coreLoader->cancel();
+}
+
 void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());

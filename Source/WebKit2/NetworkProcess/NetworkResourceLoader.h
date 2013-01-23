@@ -109,7 +109,7 @@ private:
     void scheduleStopOnMainThread();
     static void performStops(void*);
 
-    void stop();
+    void resourceHandleStopped();
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;    

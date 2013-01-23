@@ -56,6 +56,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(isMainThread());
+    ASSERT(!m_handle);
 }
 
 CoreIPC::Connection* NetworkResourceLoader::connection() const
@@ -72,7 +73,7 @@ void NetworkResourceLoader::start()
 {
     ASSERT(isMainThread());
 
-    // Explicit ref() balanced by a deref() in NetworkResourceLoader::stop()
+    // Explicit ref() balanced by a deref() in NetworkResourceLoader::resourceHandleStopped()
     ref();
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
@@ -120,16 +121,21 @@ void NetworkResourceLoader::performStops(void*)
     }
     
     for (size_t i = 0; i < requests.size(); ++i)
-        requests[i]->stop();
+        requests[i]->resourceHandleStopped();
 }
 
-void NetworkResourceLoader::stop()
+void NetworkResourceLoader::resourceHandleStopped()
 {
     ASSERT(isMainThread());
 
-    // Remove this load identifier soon so we can start more network requests.
+    if (FormData* formData = loadParameters().request().httpBody())
+        formData->removeGeneratedFilesIfNeeded();
+
+    m_handle = 0;
+
+    // Tell the scheduler about this finished loader soon so it can start more network requests.
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
-    
+
     // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
     // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
     deref();
@@ -164,8 +170,6 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    if (FormData* formData = loadParameters().request().httpBody())
-        formData->removeGeneratedFilesIfNeeded();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
     scheduleStopOnMainThread();
 }
@@ -272,8 +276,11 @@ void NetworkResourceLoader::receivedAuthenticationCancellation(const Authenticat
     if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
         return;
 
-    m_currentAuthenticationChallenge->authenticationClient()->receivedCancellation(*m_currentAuthenticationChallenge);
+    m_handle->cancel();
     m_currentAuthenticationChallenge.clear();
+
+    send(Messages::WebResourceLoader::CancelResourceLoader());
+    scheduleStopOnMainThread();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

@@ -1,3 +1,31 @@
+2013-01-23  Brady Eidson  <beidson@apple.com>
+
+        Recursion handling cancelled authentication challenges in NetworkProcess
+        <rdar://problem/13024541> and https://bugs.webkit.org/show_bug.cgi?id=107702
+
+        Reviewed by Alexey Proskuryakov.
+
+        This turned in to both a bug fix with authentication and a minimal refactoring of NetworkResourceLoader.
+
+        - Rename ::stop to ::resourceHandleStopped
+        - Move all cleanup code to ::resourceHandleStopped
+        - Schedule a resourceHandleStopped call when an authentication cancellation occurs
+        - Tell the WebResourceLoader to cancel when an authentication cancellation occurs
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::performStops):
+        (WebKit::NetworkResourceLoader::resourceHandleStopped):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::receivedAuthenticationCancellation):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::cancelResourceLoader):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2013-01-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_cookie_manager
