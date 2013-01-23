@@ -37,6 +37,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
 
     UIProcess/API/C/soup/WKContextSoup.cpp
+    UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
     UIProcess/API/efl/EwkViewImpl.cpp

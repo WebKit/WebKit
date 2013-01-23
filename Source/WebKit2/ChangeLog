@@ -1,3 +1,38 @@
+2013-01-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_cookie_manager
+        https://bugs.webkit.org/show_bug.cgi?id=107661
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use C API inside ewk_cookie_manager instead of
+        accessing C++ classes directly and violating
+        layering.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/soup/WKCookieManagerSoup.cpp: Added.
+        (toSoupCookiePersistentStorageType):
+        (WKCookieManagerSetCookiePersistentStorage): Add C API for setting
+        the persistent storage path and type when using libsoup.
+        * UIProcess/API/C/soup/WKCookieManagerSoup.h: Added.
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::cookieManager):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookieManager::EwkCookieManager):
+        (EwkCookieManager::~EwkCookieManager):
+        (EwkCookieManager::setPersistentStorage):
+        (EwkCookieManager::setHTTPAcceptPolicy):
+        (EwkCookieManager::clearHostnameCookies):
+        (EwkCookieManager::clearAllCookies):
+        (EwkCookieManager::watchChanges):
+        (EwkCookieManager::getHostNamesWithCookies):
+        (EwkCookieManager::getHTTPAcceptPolicy):
+        (ewk_cookie_manager_persistent_storage_set):
+        (ewk_cookie_manager_hostname_cookies_clear):
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (EwkCookieManager::create):
+        (EwkCookieManager):
+
 2013-01-22  Anders Carlsson  <andersca@apple.com>
 
         Use a platforom strategy for local storage
