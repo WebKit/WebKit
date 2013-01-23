@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,6 +30,7 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
+from loggers.recordpatchevent import RecordPatchEvent
 from model.queues import Queue
 from model.workitems import WorkItems
 
@@ -41,26 +42,46 @@ class UpdateWorkItems(UpdateBase):
         self.response.out.write(template.render("templates/updateworkitems.html", None))
 
     def _parse_work_items_string(self, items_string):
-        # Our parsing could be much more robust.
-        item_strings = items_string.split(" ") if items_string else []
-        return map(int, item_strings)
+        try:
+            item_strings = items_string.split(" ") if items_string else []
+            return map(int, item_strings)
+        except ValueError:
+            return None
 
-    def _work_items_from_request(self):
+    def _update_work_items_from_request(self, work_items):
+        items_string = self.request.get("work_items")
+        new_work_items = self._parse_work_items_string(items_string)
+        if new_work_items == None:
+            self.response.out.write("Failed to parse work items: %s" % items_string)
+            return False
+        work_items.item_ids = new_work_items
+        work_items.date = datetime.utcnow()
+        return True
+
+    def _queue_from_request(self):
         queue_name = self.request.get("queue_name")
         queue = Queue.queue_with_name(queue_name)
         if not queue:
             self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
             return None
-
-        items_string = self.request.get("work_items")
-        work_items = queue.work_items()
-        work_items.item_ids = self._parse_work_items_string(items_string)
-        work_items.date = datetime.now()
-        return work_items
+        return queue
 
     def post(self):
-        work_items = self._work_items_from_request()
-        if not work_items:
+        queue = self._queue_from_request()
+        if not queue:
             self.response.set_status(500)
             return
+        work_items = queue.work_items()
+        old_items = set(work_items.item_ids)
+
+        success = self._update_work_items_from_request(work_items)
+        if not success:
+            self.response.set_status(500)
+            return
+        new_items = set(work_items.item_ids)
         work_items.put()
+
+        for work_item in new_items - old_items:
+            RecordPatchEvent.added(work_item, queue.name())
+        for work_item in old_items - new_items:
+            RecordPatchEvent.stopped(work_item, queue.name())

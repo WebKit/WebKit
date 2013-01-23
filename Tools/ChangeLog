@@ -1,3 +1,54 @@
+2013-01-22  Alan Cutter  <alancutter@chromium.org>
+
+        Add monitoring of patches and queues to the QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=107612
+
+        Reviewed by Adam Barth.
+
+        Created classes for recording events into the datastore and integrated them into the existing handlers.
+        Code for presenting the recorded data will come in a separate patch.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/config/__init__.py: Added.
+        * QueueStatusServer/config/logging.py: Copied from Tools/QueueStatusServer/model/queuestatus.py.
+        * QueueStatusServer/config/messages.py: Copied from Tools/QueueStatusServer/model/queuestatus.py.
+        * QueueStatusServer/handlers/nextpatch.py:
+        (NextPatch.get):
+        (NextPatch._assign_patch):
+        * QueueStatusServer/handlers/releasepatch.py:
+        (ReleasePatch.post):
+        * QueueStatusServer/handlers/updatestatus.py:
+        (UpdateStatus.post):
+        * QueueStatusServer/handlers/updateworkitems.py:
+        (UpdateWorkItems._parse_work_items_string):
+        (UpdateWorkItems):
+        (UpdateWorkItems._update_work_items_from_request):
+        (UpdateWorkItems._queue_from_request):
+        (UpdateWorkItems.post):
+        * QueueStatusServer/loggers/__init__.py: Added.
+        * QueueStatusServer/loggers/recordbotevent.py: Copied from Tools/QueueStatusServer/model/queuestatus.py.
+        (RecordBotEvent):
+        (RecordBotEvent.activity):
+        * QueueStatusServer/loggers/recordpatchevent.py: Added.
+        (RecordPatchEvent):
+        (RecordPatchEvent.added):
+        (RecordPatchEvent.retrying):
+        (RecordPatchEvent.started):
+        (RecordPatchEvent.stopped):
+        (RecordPatchEvent.updated):
+        (RecordPatchEvent._get_patches_waiting):
+        * QueueStatusServer/model/patchlog.py: Copied from Tools/QueueStatusServer/model/queuestatus.py.
+        (PatchLog):
+        (PatchLog.lookup):
+        (PatchLog.calculate_wait_duration):
+        (PatchLog.calculate_process_duration):
+        * QueueStatusServer/model/queuelog.py: Copied from Tools/QueueStatusServer/handlers/nextpatch.py.
+        (QueueLog):
+        (QueueLog.get_current):
+        (QueueLog.create_key):
+        * QueueStatusServer/model/queuestatus.py:
+        (QueueStatus.is_retry_request):
+
 2013-01-22  Timothy Loh  <timloh@chromium.com>
 
         prepare-Changelog should support updating the list of changed files

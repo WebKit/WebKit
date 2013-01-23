@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,6 +30,7 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
+from loggers.recordpatchevent import RecordPatchEvent
 from model.attachment import Attachment
 from model.queues import Queue
 
@@ -57,6 +58,9 @@ class ReleasePatch(UpdateBase):
         # Allow removing it from the queue even if there is no last_status for easier testing.
         if not last_status or not last_status.is_retry_request():
             queue.work_items().remove_work_item(attachment_id)
+            RecordPatchEvent.stopped(attachment_id, queue_name)
+        else:
+            RecordPatchEvent.retrying(attachment_id, queue_name)
 
         # Always release the lock on the item.
         queue.active_work_items().expire_item(attachment_id)

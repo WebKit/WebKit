@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,6 +31,7 @@ from datetime import datetime
 from google.appengine.ext import db
 from google.appengine.ext import webapp
 
+from loggers.recordpatchevent import RecordPatchEvent
 from model.queues import Queue
 
 
@@ -47,11 +48,12 @@ class NextPatch(webapp.RequestHandler):
         if not patch_id:
             self.error(404)
             return
+        RecordPatchEvent.started(patch_id, queue_name)
         self.response.out.write(patch_id)
 
     @staticmethod
     def _assign_patch(key, work_item_ids):
-        now = datetime.now()
+        now = datetime.utcnow()
         active_work_items = db.get(key)
         active_work_items.deactivate_expired(now)
         next_item = active_work_items.next_item(work_item_ids, now)

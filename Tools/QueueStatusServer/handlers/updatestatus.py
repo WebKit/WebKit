@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,6 +31,8 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
+from loggers.recordbotevent import RecordBotEvent
+from loggers.recordpatchevent import RecordPatchEvent
 from model.attachment import Attachment
 from model.queuestatus import QueueStatus
 
@@ -62,5 +64,8 @@ class UpdateStatus(UpdateBase):
     def post(self):
         queue_status = self._queue_status_from_request()
         queue_status.put()
+        RecordBotEvent.record_activity(queue_status.queue_name, queue_status.bot_id)
+        if queue_status.active_patch_id:
+            RecordPatchEvent.updated(queue_status.active_patch_id, queue_status.queue_name, queue_status.bot_id)
         Attachment.dirty(queue_status.active_patch_id)
         self.response.out.write(queue_status.key().id())

@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,20 +26,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from config import messages
+from time import time
+from datetime import datetime
+
 from google.appengine.ext import db
-from model.queuepropertymixin import QueuePropertyMixin
 
 
-class QueueStatus(db.Model, QueuePropertyMixin):
-    author = db.UserProperty()
+class QueueLog(db.Model):
+    date = db.DateTimeProperty()
+    # duration specifies in seconds the time period these log values apply to.
+    duration = db.IntegerProperty()
     queue_name = db.StringProperty()
-    bot_id = db.StringProperty()
-    active_bug_id = db.IntegerProperty()
-    active_patch_id = db.IntegerProperty()
-    message = db.StringProperty(multiline=True)
-    date = db.DateTimeProperty(auto_now_add=True)
-    results_file = db.BlobProperty()
+    bot_ids_seen = db.StringListProperty()
+    max_patches_waiting = db.IntegerProperty(default=0)
+    patch_wait_durations = db.ListProperty(int)
+    patch_process_durations = db.ListProperty(int)
+    patch_retry_count = db.IntegerProperty(default=0)
+    status_update_count = db.IntegerProperty(default=0)
 
-    def is_retry_request(self):
-        return self.message == messages.retry_status
+    @classmethod
+    def get_current(cls, queue_name, duration):
+        timestamp_now = time()
+        timestamp = int(timestamp_now / duration) * duration
+        date = datetime.utcfromtimestamp(timestamp)
+        key = cls.create_key(queue_name, duration, timestamp)
+        return cls.get_or_insert(key, date=date, duration=duration, queue_name=queue_name)
+
+    @staticmethod
+    def create_key(queue_name, duration, timestamp):
+        return "%s-%s-%s" % (queue_name, duration, timestamp)
