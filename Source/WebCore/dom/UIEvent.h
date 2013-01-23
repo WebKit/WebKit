@@ -30,65 +30,77 @@
 
 namespace WebCore {
 
-    typedef DOMWindow AbstractView;
+typedef DOMWindow AbstractView;
 
-    class UIEvent : public Event {
-    public:
-        static PassRefPtr<UIEvent> create()
-        {
-            return adoptRef(new UIEvent);
-        }
-        static PassRefPtr<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, int detail)
-        {
-            return adoptRef(new UIEvent(type, canBubble, cancelable, view, detail));
-        }
-        virtual ~UIEvent();
+struct UIEventInit : public EventInit {
+    UIEventInit();
 
-        void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
+    RefPtr<AbstractView> view;
+    int detail;
+};
 
-        AbstractView* view() const { return m_view.get(); }
-        int detail() const { return m_detail; }
+class UIEvent : public Event {
+public:
+    static PassRefPtr<UIEvent> create()
+    {
+        return adoptRef(new UIEvent);
+    }
+    static PassRefPtr<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, int detail)
+    {
+        return adoptRef(new UIEvent(type, canBubble, cancelable, view, detail));
+    }
+    static PassRefPtr<UIEvent> create(const AtomicString& type, const UIEventInit& initializer)
+    {
+        return adoptRef(new UIEvent(type, initializer));
+    }
+    virtual ~UIEvent();
 
-        virtual const AtomicString& interfaceName() const;
-        virtual bool isUIEvent() const;
+    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
 
-        virtual int keyCode() const;
-        virtual int charCode() const;
+    AbstractView* view() const { return m_view.get(); }
+    int detail() const { return m_detail; }
 
-        virtual int layerX();
-        virtual int layerY();
+    virtual const AtomicString& interfaceName() const;
+    virtual bool isUIEvent() const;
 
-        virtual int pageX() const;
-        virtual int pageY() const;
+    virtual int keyCode() const;
+    virtual int charCode() const;
 
-        virtual int which() const;
+    virtual int layerX();
+    virtual int layerY();
 
-    protected:
-        UIEvent();
-        UIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
+    virtual int pageX() const;
+    virtual int pageY() const;
 
-    private:
-        RefPtr<AbstractView> m_view;
-        int m_detail;
-    };
+    virtual int which() const;
 
-    class FocusInEventDispatchMediator : public EventDispatchMediator {
-    public:
-        static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-    private:
-        explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
-        RefPtr<Node> m_oldFocusedNode;
-    };
+protected:
+    UIEvent();
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
+    UIEvent(const AtomicString&, const UIEventInit&);
 
-    class FocusOutEventDispatchMediator : public EventDispatchMediator {
-    public:
-        static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-    private:
-        explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
-        RefPtr<Node> m_newFocusedNode;
-    };
+private:
+    RefPtr<AbstractView> m_view;
+    int m_detail;
+};
+
+class FocusInEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+private:
+    explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_oldFocusedNode;
+};
+
+class FocusOutEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+private:
+    explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_newFocusedNode;
+};
 
 } // namespace WebCore
 

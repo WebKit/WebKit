@@ -104,6 +104,9 @@ fast/events/constructors/media-stream-event-constructor.html
 # ENABLE(DIRECTORY_UPLOAD) is disabled.
 fast/forms/file/input-file-directory-upload.html
 
+# ENABLE(DOM4_EVENTS_CONSTRUCTOR) is disabled.
+fast/events/constructors/ui-event-constructor.html
+
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
 http/tests/inspector/indexeddb

@@ -17,10 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
-interface UIEvent : Event {
-    readonly attribute DOMWindow            view;
-    readonly attribute long                 detail;
+[
+    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
+    ConstructorTemplate=Event
+] interface UIEvent : Event {
+    [InitializedByEventConstructor] readonly attribute DOMWindow view;
+    [InitializedByEventConstructor] readonly attribute long detail;
     
     [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=DefaultIsUndefined] DOMString type, 
                                     in [Optional=DefaultIsUndefined] boolean canBubble, 

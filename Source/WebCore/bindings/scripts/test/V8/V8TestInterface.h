@@ -46,9 +46,7 @@ public:
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
-#if ENABLE(TEST_INTERFACE)
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
-#endif // ENABLE(TEST_INTERFACE)
     static v8::Handle<v8::Value> namedPropertySetter(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static void installPerContextProperties(v8::Handle<v8::Object>, TestInterface*) { }

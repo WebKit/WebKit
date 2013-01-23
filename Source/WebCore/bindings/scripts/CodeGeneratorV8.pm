@@ -405,10 +405,7 @@ END
     }
 
     if (IsConstructable($interface)) {
-        my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
-        push(@headerContent, "#if $conditionalString\n") if $conditionalString;
         push(@headerContent, "    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);\n");
-        push(@headerContent, "#endif // $conditionalString\n") if $conditionalString;
 END
     }
     if (HasCustomConstructor($interface)) {

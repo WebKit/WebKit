@@ -1,3 +1,17 @@
+2013-01-21  Kentaro Hara  <haraken@chromium.org>
+
+        Implement UIEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=107430
+
+        Reviewed by Adam Barth.
+
+        Editor's draft: https://dvcs.w3.org/hg/d4e/raw-file/tip/source_respec.htm
+
+        UIEvent constructor is implemented under a DOM4_EVENTS_CONSTRUCTOR flag,
+        which is enabled on Safari and Chromium for now.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-01-22  Timothy Loh  <timloh@chromium.com>
 
         Add functions to ChangeLog - parse bug desc/changed functions, delete/prepend entries

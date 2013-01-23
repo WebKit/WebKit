@@ -30,6 +30,12 @@
 
 namespace WebCore {
 
+UIEventInit::UIEventInit()
+    : view(0)
+    , detail(0)
+{
+}
+
 UIEvent::UIEvent()
     : m_detail(0)
 {
@@ -39,6 +45,13 @@ UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelab
     : Event(eventType, canBubbleArg, cancelableArg)
     , m_view(viewArg)
     , m_detail(detailArg)
+{
+}
+
+UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer)
+    : Event(eventType, initializer)
+    , m_view(initializer.view)
+    , m_detail(initializer.detail)
 {
 }
 

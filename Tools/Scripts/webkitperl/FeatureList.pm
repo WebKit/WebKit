@@ -73,6 +73,7 @@ my (
     $deviceOrientationSupport,
     $dialogElementSupport,
     $directoryUploadSupport,
+    $dom4EventsConstructor,
     $downloadAttributeSupport,
     $fileSystemSupport,
     $filtersSupport,
@@ -241,6 +242,9 @@ my @features = (
 
     { option => "directory-upload", desc => "Toggle Directory Upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
+
+    { option => "dom4-events-constructor", desc => "Expose DOM4 Events constructors",
+      define => "ENABLE_DOM4_EVENTS_CONSTRUCTOR", default => isAppleWebKit(), value => \$dom4EventsConstructor },
 
     { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isBlackBerry() || isEfl()), value => \$downloadAttributeSupport },
