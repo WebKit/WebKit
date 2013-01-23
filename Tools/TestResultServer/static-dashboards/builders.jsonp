@@ -6,11 +6,13 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "ash_unittests": {
                 "builders": [
+                    "Win8 Aura", 
                     "Win Aura Tests (1)"
                 ]
             }, 
             "aura_unittests": {
                 "builders": [
+                    "Win8 Aura", 
                     "Win Aura Tests (1)"
                 ]
             }, 
@@ -100,9 +102,19 @@ LOAD_BUILDBOT_DATA([
                     "XP Tests (dbg)(1)"
                 ]
             }, 
+            "components_unittests": {
+                "builders": [
+                    "Win7 Tests (dbg)(1)", 
+                    "XP Tests (3)", 
+                    "Vista Tests (3)", 
+                    "Win7 Tests (3)", 
+                    "XP Tests (dbg)(1)"
+                ]
+            }, 
             "compositor_unittests": {
                 "builders": [
-                    "Win Aura Tests (2)"
+                    "Win Aura Tests (2)", 
+                    "Win8 Aura"
                 ]
             }, 
             "content_browsertests": {
@@ -325,6 +337,7 @@ LOAD_BUILDBOT_DATA([
                     "Win Aura Tests (2)", 
                     "Vista Tests (3)", 
                     "Win7 Tests (3)", 
+                    "Win8 Aura", 
                     "XP Tests (dbg)(1)"
                 ]
             }, 
@@ -392,6 +405,14 @@ LOAD_BUILDBOT_DATA([
                     "Mac 10.7 Tests (dbg)(1)", 
                     "Mac10.6 Tests (1)", 
                     "Mac 10.6 Tests (dbg)(1)"
+                ]
+            }, 
+            "components_unittests": {
+                "builders": [
+                    "Mac10.6 Tests (2)", 
+                    "Mac 10.6 Tests (dbg)(4)", 
+                    "Mac10.7 Tests (2)", 
+                    "Mac 10.7 Tests (dbg)(4)"
                 ]
             }, 
             "content_browsertests": {
@@ -560,16 +581,19 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "Run tests": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
             "android_webview_unittests": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
             "androidwebview_instrumentation_tests": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
@@ -582,6 +606,7 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Linux Precise (dbg)", 
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Precise x64", 
                     "Linux Clang (dbg)", 
@@ -608,6 +633,7 @@ LOAD_BUILDBOT_DATA([
             "cc_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)"
                 ]
@@ -620,7 +646,15 @@ LOAD_BUILDBOT_DATA([
             }, 
             "chromiumtestshell_instrumentation_tests": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
+                ]
+            }, 
+            "components_unittests": {
+                "builders": [
+                    "Linux Tests (dbg)(2)", 
+                    "Linux Tests x64", 
+                    "Linux Clang (dbg)"
                 ]
             }, 
             "compositor_unittests": {
@@ -640,6 +674,7 @@ LOAD_BUILDBOT_DATA([
             "content_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -648,6 +683,7 @@ LOAD_BUILDBOT_DATA([
             }, 
             "contentshell_instrumentation_tests": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
@@ -683,6 +719,7 @@ LOAD_BUILDBOT_DATA([
             "gpu_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
                     "Linux Aura"
@@ -698,6 +735,7 @@ LOAD_BUILDBOT_DATA([
             "ipc_tests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -714,6 +752,7 @@ LOAD_BUILDBOT_DATA([
             "media_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
                     "Linux Aura"
@@ -722,6 +761,7 @@ LOAD_BUILDBOT_DATA([
             "net_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(1)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)", 
                     "Linux Aura"
@@ -758,6 +798,7 @@ LOAD_BUILDBOT_DATA([
             "sql_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -772,6 +813,7 @@ LOAD_BUILDBOT_DATA([
             "sync_unit_tests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -780,12 +822,14 @@ LOAD_BUILDBOT_DATA([
             }, 
             "test_report": {
                 "builders": [
+                    "Android Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
             "ui_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -795,6 +839,7 @@ LOAD_BUILDBOT_DATA([
             "unit_tests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Linux Clang (dbg)", 
                     "Android Tests (dbg)", 
@@ -809,6 +854,7 @@ LOAD_BUILDBOT_DATA([
             "webkit_compositor_bindings_unittests": {
                 "builders": [
                     "Linux Tests (dbg)(2)", 
+                    "Android Tests", 
                     "Linux Tests x64", 
                     "Android Tests (dbg)"
                 ]
@@ -850,6 +896,12 @@ LOAD_BUILDBOT_DATA([
                 ]
             }, 
             "chromeos_unittests": {
+                "builders": [
+                    "Linux ChromiumOS Tests (dbg)(1)", 
+                    "Linux ChromiumOS Tests (1)"
+                ]
+            }, 
+            "components_unittests": {
                 "builders": [
                     "Linux ChromiumOS Tests (dbg)(1)", 
                     "Linux ChromiumOS Tests (1)"
@@ -1203,6 +1255,11 @@ LOAD_BUILDBOT_DATA([
                     "Android Tests (dbg)"
                 ]
             }, 
+            "androidwebview_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (dbg)"
+                ]
+            }, 
             "aura_unittests": {
                 "builders": [
                     "Linux Aura"
@@ -1223,6 +1280,8 @@ LOAD_BUILDBOT_DATA([
             }, 
             "cc_unittests": {
                 "builders": [
+                    "Linux Tests", 
+                    "Mac10.6 Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
@@ -1239,6 +1298,11 @@ LOAD_BUILDBOT_DATA([
             "chrome_frame_unittests": {
                 "builders": [
                     "Chrome Frame Tests"
+                ]
+            }, 
+            "chromiumtestshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (dbg)"
                 ]
             }, 
             "content_browsertests": {
@@ -1264,6 +1328,11 @@ LOAD_BUILDBOT_DATA([
                     "Android Tests (dbg)", 
                     "Linux Aura", 
                     "Mac10.8 Tests"
+                ]
+            }, 
+            "contentshell_instrumentation_tests": {
+                "builders": [
+                    "Android Tests (dbg)"
                 ]
             }, 
             "gl_tests": {
@@ -1488,6 +1557,8 @@ LOAD_BUILDBOT_DATA([
             }, 
             "webkit_compositor_bindings_unittests": {
                 "builders": [
+                    "Linux Tests", 
+                    "Mac10.6 Tests", 
                     "Android Tests (dbg)"
                 ]
             }, 
@@ -1519,7 +1590,6 @@ LOAD_BUILDBOT_DATA([
             "Run tests": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -1528,7 +1598,6 @@ LOAD_BUILDBOT_DATA([
             "android_webview_unittests": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -1537,7 +1606,6 @@ LOAD_BUILDBOT_DATA([
             "androidwebview_instrumentation_tests": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -1550,10 +1618,10 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
@@ -1583,7 +1651,8 @@ LOAD_BUILDBOT_DATA([
                     "Win ASAN Tests (1)", 
                     "Vista Tests (dbg)(2)", 
                     "Chromium Win (ash)", 
-                    "Win ASAN Tests (2)"
+                    "Win ASAN Tests (2)", 
+                    "Chromium Linux TSan v2"
                 ]
             }, 
             "browser_tests_buildrunner_ignore": {
@@ -1607,6 +1676,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1615,6 +1685,7 @@ LOAD_BUILDBOT_DATA([
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -1631,7 +1702,6 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -1669,10 +1739,25 @@ LOAD_BUILDBOT_DATA([
             "chromiumtestshell_instrumentation_tests": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "components_unittests": {
+                "builders": [
+                    "Chromium Win7 Ninja Goma (shared)", 
+                    "Linux ARM Tests (Panda)", 
+                    "Chromium Win x64 Clobber", 
+                    "Chromium Win VS2012", 
+                    "Chromium Win Ninja Goma (shared)", 
+                    "Chromium Win Ninja Goma", 
+                    "Chromium Win7 Ninja Goma", 
+                    "Chromium Win (aura)", 
+                    "Chromium Win (ash)", 
+                    "Vista Tests (dbg)(1)", 
+                    "Chromium Win VS2012 (dbg)", 
+                    "Win8 Tests (1)"
                 ]
             }, 
             "content_browsertests": {
@@ -1682,7 +1767,8 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win (aura)", 
                     "Vista Tests (dbg)(2)", 
                     "Chromium Win (ash)", 
-                    "Win ASAN Tests (2)"
+                    "Win ASAN Tests (2)", 
+                    "Chromium Linux TSan v2"
                 ]
             }, 
             "content_browsertests_buildrunner_ignore": {
@@ -1700,26 +1786,20 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
-                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
-                ]
-            }, 
-            "content_unittests_1": {
-                "builders": [
-                    "Chromium Linux TSan v2"
                 ]
             }, 
             "content_unittests_buildrunner_ignore": {
@@ -1730,7 +1810,6 @@ LOAD_BUILDBOT_DATA([
             "contentshell_instrumentation_tests": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -1739,6 +1818,7 @@ LOAD_BUILDBOT_DATA([
             "courgette_unittests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1761,6 +1841,7 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1769,6 +1850,7 @@ LOAD_BUILDBOT_DATA([
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -1796,6 +1878,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1803,6 +1886,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win (aura)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -1812,6 +1896,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1820,6 +1905,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win (ash)", 
                     "Win ASAN Tests (2)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -1837,15 +1923,16 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
@@ -1864,6 +1951,7 @@ LOAD_BUILDBOT_DATA([
             "installer_util_unittests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Windows Buildrunner", 
@@ -1887,16 +1975,15 @@ LOAD_BUILDBOT_DATA([
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Chromium Win (ash)", 
                     "Win ASAN Tests (2)", 
                     "Vista Tests (dbg)(1)", 
-                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
@@ -1914,6 +2001,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -1922,6 +2010,7 @@ LOAD_BUILDBOT_DATA([
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -1940,10 +2029,10 @@ LOAD_BUILDBOT_DATA([
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Chromium Win (ash)", 
@@ -1969,18 +2058,18 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: browser_tests": {
                 "builders": [
                     "Chromium Linux Browser (valgrind) (2)", 
-                    "Windows Browser (DrMemory) (6)", 
                     "Chromium Linux Browser (valgrind) (4)", 
                     "Windows Browser (DrMemory) (2)", 
+                    "Windows Browser (DrMemory) (6)", 
                     "Windows Browser (DrMemory) (3)", 
                     "Chromium Linux Browser (valgrind) (1)", 
                     "Windows Browser (DrMemory) (5)", 
@@ -2014,10 +2103,10 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: device_unittests": {
@@ -2029,10 +2118,10 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: interactive_ui": {
@@ -2049,60 +2138,60 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: media": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: net": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: printing": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: remoting": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: sql": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
                     "Windows Tests (TSan Win 7)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
                     "Chromium Mac 10.6 (tsan)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: sync": {
@@ -2120,9 +2209,9 @@ LOAD_BUILDBOT_DATA([
             "memory test: unit": {
                 "builders": [
                     "Windows Tests (DrMemory XP)", 
+                    "Windows Tests (DrMemory pattern)", 
                     "Windows Tests (DrMemory full)", 
-                    "Linux Tests (tsan RV)", 
-                    "Windows Tests (DrMemory pattern)"
+                    "Linux Tests (tsan RV)"
                 ]
             }, 
             "memory test: unit_1": {
@@ -2184,10 +2273,10 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
@@ -2220,6 +2309,7 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2228,6 +2318,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win (ash)", 
                     "Win ASAN Tests (2)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -2244,6 +2335,7 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2252,6 +2344,7 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Win (ash)", 
                     "Win ASAN Tests (2)", 
                     "Vista Tests (dbg)(1)", 
+                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)"
                 ]
@@ -2268,6 +2361,7 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
                     "Linux ARM Tests (Panda)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2296,7 +2390,7 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
-                    "Android Tests (ICS GalaxyNexus)", 
+                    "Chromium Linux TSan v2", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)"
                 ]
@@ -2304,6 +2398,7 @@ LOAD_BUILDBOT_DATA([
             "sbox_integration_tests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2323,6 +2418,7 @@ LOAD_BUILDBOT_DATA([
             "sbox_unittests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2342,6 +2438,7 @@ LOAD_BUILDBOT_DATA([
             "sbox_validation_tests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2365,16 +2462,15 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
-                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
@@ -2399,16 +2495,15 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Chromium Win (ash)", 
                     "Win ASAN Tests (2)", 
                     "Vista Tests (dbg)(1)", 
-                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
@@ -2421,10 +2516,23 @@ LOAD_BUILDBOT_DATA([
                     "Chromium Linux Buildrunner"
                 ]
             }, 
+            "telemetry_perf_unittests": {
+                "builders": [
+                    "Chromium Mac Perf Annotator", 
+                    "Chromium Linux Perf Annotator", 
+                    "Chromium Windows Perf Annotator"
+                ]
+            }, 
+            "telemetry_unittests": {
+                "builders": [
+                    "Chromium Mac Perf Annotator", 
+                    "Chromium Linux Perf Annotator", 
+                    "Chromium Windows Perf Annotator"
+                ]
+            }, 
             "test_report": {
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
@@ -2437,16 +2545,15 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Win ASAN Tests (1)", 
                     "Chromium Win (ash)", 
                     "Vista Tests (dbg)(1)", 
-                    "Chromium Linux TSan v2", 
                     "Chromium Win VS2012 (dbg)", 
                     "Win8 Tests (1)", 
                     "Android Tests (JB Nexus7)(dbg)", 
@@ -2466,10 +2573,10 @@ LOAD_BUILDBOT_DATA([
                     "Linux ARM Tests (Panda)", 
                     "Chromium Linux Redux", 
                     "Chromium iOS Simulator (dbg)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Chromium Win7 Ninja Goma", 
                     "Chromium Win (aura)", 
                     "Chromium Win (ash)", 
@@ -2491,6 +2598,7 @@ LOAD_BUILDBOT_DATA([
             "views_unittests": {
                 "builders": [
                     "Chromium Win7 Ninja Goma (shared)", 
+                    "Chromium Win x64 Clobber", 
                     "Chromium Win VS2012", 
                     "Chromium Win Ninja Goma (shared)", 
                     "Chromium Win Ninja Goma", 
@@ -2506,10 +2614,16 @@ LOAD_BUILDBOT_DATA([
                 "builders": [
                     "Android Tests (JB GalaxyNexus)(dbg)", 
                     "Linux ARM Tests (Panda)", 
-                    "Android Tests (ICS GalaxyNexus)", 
                     "Android Tests (JB Nexus7)(dbg)", 
                     "Android Tests (ICS GalaxyNexus)(dbg)", 
                     "Android Asan Tests (dbg)"
+                ]
+            }, 
+            "webkit_unit_tests": {
+                "builders": [
+                    "Android Tests (JB GalaxyNexus)(dbg)", 
+                    "Android Tests (JB Nexus7)(dbg)", 
+                    "Android Tests (ICS GalaxyNexus)(dbg)"
                 ]
             }
         }, 
