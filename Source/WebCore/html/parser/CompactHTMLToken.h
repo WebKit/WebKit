@@ -64,6 +64,7 @@ public:
     HTMLTokenTypes::Type type() const { return static_cast<HTMLTokenTypes::Type>(m_type); }
     const String& data() const { return m_data; }
     bool selfClosing() const { return m_selfClosing; }
+    bool isAll8BitData() const { return m_isAll8BitData; }
     const Vector<CompactAttribute>& attributes() const { return m_attributes; }
     const TextPosition& textPosition() const { return m_textPosition; }
 
@@ -75,6 +76,7 @@ public:
 private:
     unsigned m_type : 4;
     unsigned m_selfClosing : 1;
+    unsigned m_isAll8BitData : 1;
 
     String m_data; // "name", "characters", or "data" depending on m_type
     Vector<CompactAttribute> m_attributes;

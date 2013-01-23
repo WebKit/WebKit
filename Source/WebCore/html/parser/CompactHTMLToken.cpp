@@ -44,6 +44,7 @@ COMPILE_ASSERT(sizeof(CompactHTMLToken) == sizeof(SameSizeAsCompactHTMLToken), C
 
 CompactHTMLToken::CompactHTMLToken(const HTMLToken& token, const TextPosition& textPosition)
     : m_type(token.type())
+    , m_isAll8BitData(false)
     , m_textPosition(textPosition)
 {
     switch (m_type) {
@@ -71,9 +72,10 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken& token, const TextPosition& t
         // Fall through!
     case HTMLTokenTypes::Comment:
     case HTMLTokenTypes::Character:
-        if (token.isAll8BitData())
+        if (token.isAll8BitData()) {
             m_data = String::make8BitFrom16BitSource(token.data().data(), token.data().size());
-        else
+            m_isAll8BitData = true;
+        } else
             m_data = String(token.data().data(), token.data().size());
         break;
     default:

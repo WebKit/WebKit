@@ -242,6 +242,7 @@ private:
         case HTMLTokenTypes::Character:
             m_externalCharacters = token.data().characters();
             m_externalCharactersLength = token.data().length();
+            m_isAll8BitData = token.isAll8BitData();
             break;
         default:
             break;
