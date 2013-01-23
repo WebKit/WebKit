@@ -319,14 +319,15 @@ http/tests/inspector/resource-parameters.html
 http/tests/inspector/compiler-source-mapping-debug.html
 http/tests/inspector/console-websocket-error.html
 inspector/styles/svg-style.xhtml
-inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/live-edit.html
 inspector/debugger/live-edit-breakpoints.html
-inspector/debugger/step-through-event-listeners.html
-inspector/debugger/xhr-breakpoints.html
 inspector/debugger/debugger-compile-and-run.html
-inspector/debugger/dom-breakpoints.html
 inspector/timeline/timeline-receive-response-event.html
+
+webkit.org/b/88780 inspector/debugger/dom-breakpoints.html [ Timeout Failure ]
+webkit.org/b/88780 inspector/debugger/event-listener-breakpoints.html [ Failure ]
+webkit.org/b/88780 inspector/debugger/step-through-event-listeners.html [ Failure ]
+webkit.org/b/89056 inspector/debugger/xhr-breakpoints.html [ Failure Timeout ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
