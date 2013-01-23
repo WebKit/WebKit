@@ -22,11 +22,11 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Color.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-#include "GraphicsLayer.h"
+#include "IntRect.h"
+#include "TransformationMatrix.h"
 
 namespace WebKit {
 
@@ -71,9 +71,6 @@ struct CoordinatedLayerInfo {
         };
         unsigned flags;
     };
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, CoordinatedLayerInfo&);
 };
 
 }

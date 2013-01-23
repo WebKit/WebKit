@@ -52,6 +52,10 @@ struct GraphicsSurfaceToken;
 #endif
 }
 
+namespace WebKit {
+struct CoordinatedLayerInfo;
+}
+
 namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
@@ -104,6 +108,11 @@ template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
     static bool decode(ArgumentDecoder*, WebCore::GraphicsSurfaceToken&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebKit::CoordinatedLayerInfo> {
+    static void encode(ArgumentEncoder&, const WebKit::CoordinatedLayerInfo&);
+    static bool decode(ArgumentDecoder*, WebKit::CoordinatedLayerInfo&);
+};
 
 } // namespace CoreIPC
 

@@ -224,7 +224,6 @@ set(WebKit2_SOURCES
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
-    Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
 

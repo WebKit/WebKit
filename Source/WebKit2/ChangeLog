@@ -1,3 +1,24 @@
+2013-01-23  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: remove CoordinatedLayerInfo::encode/decode.
+        https://bugs.webkit.org/show_bug.cgi?id=107644
+
+        Reviewed by Anders Carlsson.
+
+        We want to remove the dependency on CoreIPC from CoordinatedLayerInfo because we
+        will extract Coordinated Graphics from WK2.
+
+        * CMakeLists.txt:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC):
+        (CoreIPC::::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        (WebKit):
+        * Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp: Removed.
+        * Shared/CoordinatedGraphics/CoordinatedLayerInfo.h:
+        * Target.pri:
+
 2013-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [WK2] Replace some internal API usage in EwkView with C API

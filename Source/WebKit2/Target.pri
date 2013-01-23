@@ -512,7 +512,6 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp \
-    Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp \
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp \
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp \
     Shared/qt/ArgumentCodersQt.cpp \
