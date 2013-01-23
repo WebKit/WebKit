@@ -31,7 +31,7 @@
 #define WebDOMCustomEvent_h
 
 #include "WebDOMEvent.h"
-#include "platform/WebSerializedScriptValue.h"
+#include "WebSerializedScriptValue.h"
 
 namespace WebKit {
 
