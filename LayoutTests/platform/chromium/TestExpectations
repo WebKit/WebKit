@@ -2080,6 +2080,7 @@ webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panS
 webkit.org/b/107205 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-click.html [ Skip ]
 webkit.org/b/107205 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-drag.html [ Skip ]
 webkit.org/b/107623 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-panIcon.html [ Skip ]
+webkit.org/b/107729 [ Win ] platform/chromium-win/fast/events/panScroll-panIcon.html [ ImageOnlyFailure ]
 
 crbug.com/31623 [ SnowLeopard Win ] http/tests/appcache/remove-cache.html [ Failure Pass Timeout ]
 
