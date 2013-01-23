@@ -10,6 +10,7 @@
                 testExpected("video.canPlayType('video/ogg')", "maybe");
 
                 testExpected("video.canPlayType('audio/ogg; codecs=vorbis')", "probably");
+                testExpected("video.canPlayType('audio/ogg; codecs=opus')", "probably");
                 testExpected("video.canPlayType('video/ogg; codecs=theora')", "probably");
                 testExpected("video.canPlayType('video/ogg; codecs=theora,vorbis')", "probably");
 

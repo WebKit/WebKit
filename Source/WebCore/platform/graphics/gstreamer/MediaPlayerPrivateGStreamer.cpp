@@ -1636,6 +1636,7 @@ static HashSet<String> mimeTypeCache()
         "audio/mp4",
         "audio/mpeg",
         "audio/ogg",
+        "audio/opus",
         "audio/qcelp",
         "audio/riff-midi",
         "audio/wav",
