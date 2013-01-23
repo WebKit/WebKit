@@ -242,6 +242,11 @@ function loadBuildersList(groupName, testType) {
     case 'chromiumtestshell_instrumentation_tests':
     case 'contentshell_instrumentation_tests':
         switch(groupName) {
+        case '@DEPS - chromium.org':
+            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
+            requestBuilderList(CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
+            break;
+
         case '@DEPS FYI - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
             requestBuilderList(CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS, CHROMIUM_FYI_BUILDER_MASTER , groupName, builderGroup, testType);
@@ -297,5 +302,6 @@ var CHROMIUM_GTESTS_BUILDER_GROUPS = {
 };
 
 var CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS = {
+    '@DEPS - chromium.org': null,
     '@DEPS FYI - chromium.org': null,
 };
