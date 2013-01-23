@@ -50,12 +50,6 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class ScriptErrorTest(unittest.TestCase):
-    def test_string_from_args(self):
-        error = ScriptError()
-        self.assertEqual(error._string_from_args(None), 'None')
-        self.assertEqual(error._string_from_args([]), '[]')
-        self.assertEqual(error._string_from_args(map(str, range(30))), "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'...")
-
     def test_message_with_output(self):
         error = ScriptError('My custom message!', '', -1)
         self.assertEqual(error.message_with_output(), 'My custom message!')

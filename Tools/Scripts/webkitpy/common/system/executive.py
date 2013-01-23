@@ -46,14 +46,6 @@ _log = logging.getLogger(__name__)
 
 class ScriptError(Exception):
 
-    # This is a custom List.__str__ implementation to allow size limiting.
-    def _string_from_args(self, args, limit=100):
-        args_string = unicode(args)
-        # We could make this much fancier, but for now this is OK.
-        if len(args_string) > limit:
-            return args_string[:limit - 3] + "..."
-        return args_string
-
     def __init__(self,
                  message=None,
                  script_args=None,
@@ -61,7 +53,7 @@ class ScriptError(Exception):
                  output=None,
                  cwd=None):
         if not message:
-            message = 'Failed to run "%s"' % self._string_from_args(script_args)
+            message = 'Failed to run "%s"' % script_args
             if exit_code:
                 message += " exit_code: %d" % exit_code
             if cwd:

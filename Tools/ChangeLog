@@ -1,5 +1,17 @@
 2013-01-23  Tim 'mithro' Ansell  <mithro@mithis.com>
 
+        Removing command line shortening as it makes it difficult to see the command during errors.
+        https://bugs.webkit.org/show_bug.cgi?id=107643
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (ScriptError):
+        (ScriptError.__init__):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
+2013-01-23  Tim 'mithro' Ansell  <mithro@mithis.com>
+
         Adding myself as contributor in committers.py (as requested by eseidel).
         https://bugs.webkit.org/show_bug.cgi?id=107647
 
