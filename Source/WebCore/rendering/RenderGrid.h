@@ -58,6 +58,7 @@ private:
     void layoutGridItems();
 
     LayoutUnit minContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
+    LayoutUnit maxContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);
     size_t resolveGridPosition(TrackSizingDirection, const RenderObject*) const;
     size_t resolveGridPosition(const GridPosition&) const;
