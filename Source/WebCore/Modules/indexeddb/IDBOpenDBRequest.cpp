@@ -37,15 +37,15 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
+PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
 {
-    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, source, callbacks, transactionId, version)));
+    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, callbacks, transactionId, version)));
     request->suspendIfNeeded();
     return request.release();
 }
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
-    : IDBRequest(context, source, IDBTransactionBackendInterface::NormalTask, 0)
+IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
+    : IDBRequest(context, IDBAny::createNull(), IDBTransactionBackendInterface::NormalTask, 0)
     , m_databaseCallbacks(callbacks)
     , m_transactionId(transactionId)
     , m_version(version)
@@ -147,7 +147,7 @@ bool IDBOpenDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
     // If the connection closed between onUpgradeNeeded and the delivery of the "success" event,
     // an "error" event should be fired instead.
-    if (event->type() == eventNames().successEvent && m_result->idbDatabase()->isClosePending()) {
+    if (event->type() == eventNames().successEvent && m_result->type() == IDBAny::IDBDatabaseType && m_result->idbDatabase()->isClosePending()) {
         m_result.clear();
         onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "The connection was closed."));
         return false;

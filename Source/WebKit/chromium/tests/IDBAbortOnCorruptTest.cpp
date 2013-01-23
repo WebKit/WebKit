@@ -69,7 +69,6 @@ public:
     virtual void onSuccess() OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) { };
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
-    virtual void onBlocked() { }
 private:
     MockIDBCallbacks() : m_wasErrorCalled(false) { }
 

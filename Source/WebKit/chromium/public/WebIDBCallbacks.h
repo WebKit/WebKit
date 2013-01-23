@@ -57,6 +57,7 @@ public:
     virtual void onSuccess(long long) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Remove the following overload once callers are updated:
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked(long long oldVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }

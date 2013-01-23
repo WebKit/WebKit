@@ -110,11 +110,6 @@ void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key, const WebIDBKey& prima
     m_callbacks->onSuccess(key, primaryKey, value);
 }
 
-void WebIDBCallbacksImpl::onBlocked()
-{
-    m_callbacks->onBlocked();
-}
-
 void WebIDBCallbacksImpl::onBlocked(long long oldVersion)
 {
     m_callbacks->onBlocked(oldVersion);

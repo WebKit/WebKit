@@ -7,7 +7,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 dbname = "intversion-upgrades.html"
 indexedDB.deleteDatabase(dbname)
-FAIL String(request) should be [object IDBOpenDBRequest]. Was [object IDBVersionChangeRequest].
+PASS String(request) is "[object IDBOpenDBRequest]"
 
 Call open with no version parameter:
 indexedDB.open(dbname)

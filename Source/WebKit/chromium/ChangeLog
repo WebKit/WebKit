@@ -1,3 +1,18 @@
+2013-01-23  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove IDBVersionChangeRequest
+        https://bugs.webkit.org/show_bug.cgi?id=107711
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBCallbacks.h: Note to delete onBlocked() once Chromium is cleaned up.
+        * src/IDBCallbacksProxy.cpp: Remove unused onBlocked() overload.
+        * src/IDBCallbacksProxy.h: Ditto.
+        * src/WebIDBCallbacksImpl.cpp: Ditto.
+        * src/WebIDBCallbacksImpl.h: Ditto.
+        * tests/IDBAbortOnCorruptTest.cpp: Ditto.
+        * tests/IDBDatabaseBackendTest.cpp: Ditto.
+
 2013-01-23  Tien-Ren Chen  <trchen@chromium.org>
 
         Partially revert 104427, change WebWidgetClient::didHandleGestureEvent semantics.

@@ -151,11 +151,6 @@ void IDBCallbacksProxy::onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& key
     m_callbacks->onSuccessWithPrefetch(webKeys, webPrimaryKeys, webValues);
 }
 
-void IDBCallbacksProxy::onBlocked()
-{
-    m_callbacks->onBlocked();
-}
-
 void IDBCallbacksProxy::onBlocked(int64_t existingVersion)
 {
     m_callbacks->onBlocked(existingVersion);
