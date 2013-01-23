@@ -26,12 +26,25 @@
 #ifndef Supplementable_h
 #define Supplementable_h
 
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
+#if !ASSERT_DISABLED
+#include <wtf/Threading.h>
+#endif
+
 namespace WebCore {
 
+// What you should know about Supplementable and Supplement
+// ========================================================
+// Supplementable and Supplement instances are meant to be thread local. They
+// should only be accessed from within the thread that created them. The
+// 2 classes are not designed for safe access from another thread. Violating
+// this design assumption can result in memory corruption and unpredictable
+// behavior.
+//
 // What you should know about the Supplement keys
 // ==============================================
 // The Supplement is expected to use the same const char* string instance
@@ -86,25 +99,37 @@ class Supplementable {
 public:
     void provideSupplement(const char* key, PassOwnPtr<Supplement<T> > supplement)
     {
+        ASSERT(m_threadId == currentThread());
         ASSERT(!m_supplements.get(key));
         m_supplements.set(key, supplement);
     }
 
     void removeSupplement(const char* key)
     {
+        ASSERT(m_threadId == currentThread());
         m_supplements.remove(key);
     }
 
     Supplement<T>* requireSupplement(const char* key)
     {
+        ASSERT(m_threadId == currentThread());
         return m_supplements.get(key);
     }
+
+#if !ASSERT_DISABLED
+protected:
+    Supplementable() : m_threadId(currentThread()) { }
+#endif
 
 private:
     typedef HashMap<const char*, OwnPtr<Supplement<T> >, PtrHash<const char*> > SupplementMap;
     SupplementMap m_supplements;
+#if !ASSERT_DISABLED
+    ThreadIdentifier m_threadId;
+#endif
 };
 
 } // namespace WebCore
 
 #endif // Supplementable_h
+
