@@ -86,6 +86,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_overlay(InspectorOverlay::create(page, inspectorClient))
     , m_page(page)
     , m_inspectorClient(inspectorClient)
+    , m_isUnderTest(false)
 {
     OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_injectedScriptManager.get(), m_instrumentingAgents.get(), m_state.get()));
     m_inspectorAgent = inspectorAgentPtr.get();
@@ -299,8 +300,14 @@ void InspectorController::webViewResized(const IntSize& size)
     m_pageAgent->webViewResized(size);
 }
 
+bool InspectorController::isUnderTest()
+{
+    return m_isUnderTest;
+}
+
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
+    m_isUnderTest = true;
     m_inspectorAgent->evaluateForTestInFrontend(callId, script);
 }
 

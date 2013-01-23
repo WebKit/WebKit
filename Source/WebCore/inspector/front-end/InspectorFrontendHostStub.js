@@ -224,6 +224,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     canInspectWorkers: function()
     {
         return true;
+    },
+
+    isUnderTest: function()
+    {
+        return false;
     }
 }
 

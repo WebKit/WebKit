@@ -60,6 +60,7 @@ public:
     virtual void closeWindow();
     virtual void dockWindow();
     virtual void undockWindow();
+    virtual bool isUnderTest();
 
     void asyncCall(const WebKit::WebString& args);
 

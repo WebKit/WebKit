@@ -1,3 +1,16 @@
+2013-01-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: only allow evaluateForTestInFrontend for front-ends under test.
+        https://bugs.webkit.org/show_bug.cgi?id=107523
+
+        Reviewed by Yury Semikhatsky.
+
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::isUnderTest):
+        (DRTDevToolsClient::call):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        (DRTDevToolsClient):
+
 2013-01-23  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Removing command line shortening as it makes it difficult to see the command during errors.

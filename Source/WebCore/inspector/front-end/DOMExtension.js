@@ -573,8 +573,6 @@ function consumeEvent(e)
     e.consume();
 }
 
-window.isUnderTest = false;
-
 /**
  * Mutation observers leak memory. Keep track of them and disconnect
  * on unload.

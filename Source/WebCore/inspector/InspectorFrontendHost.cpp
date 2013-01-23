@@ -328,6 +328,11 @@ PassRefPtr<DOMFileSystem> InspectorFrontendHost::isolatedFileSystem(const String
 }
 #endif
 
+bool InspectorFrontendHost::isUnderTest()
+{
+    return m_client && m_client->isUnderTest();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

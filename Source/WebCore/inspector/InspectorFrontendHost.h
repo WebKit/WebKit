@@ -94,6 +94,8 @@ public:
     PassRefPtr<DOMFileSystem> isolatedFileSystem(const String& fileSystemName, const String& rootURL);
 #endif
 
+    bool isUnderTest();
+
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;

@@ -28,33 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- */
-WebInspector.TestController = function()
-{
-}
-
-WebInspector.TestController.prototype = {
-    notifyDone: function(callId, result)
-    {
-        var message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
-        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + callId + ", " + message + ")", "test");
-    }
-}
-
 WebInspector.evaluateForTestInFrontend = function(callId, script)
 {
-    window.isUnderTest = true;
+    if (!InspectorFrontendHost.isUnderTest())
+        return;
+
     function invokeMethod()
     {
+        var message;
         try {
             script = script + "//@ sourceURL=evaluateInWebInspector" + callId + ".js";
             var result = window.eval(script);
-            WebInspector.TestController.prototype.notifyDone(callId, result);
+            message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
         } catch (e) {
-            WebInspector.TestController.prototype.notifyDone(callId, e.toString());
+            message = e.toString();
         }
+        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + callId + ", " + message + ")", "test");
     }
     InspectorBackend.runAfterPendingDispatches(invokeMethod);
 }

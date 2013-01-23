@@ -92,6 +92,11 @@ void DRTDevToolsClient::undockWindow()
     // Not implemented.
 }
 
+bool DRTDevToolsClient::isUnderTest()
+{
+    return true;
+}
+
 void DRTDevToolsClient::asyncCall(const WebString& args)
 {
     postTask(new AsyncCallTask(this, args));
@@ -101,4 +106,3 @@ void DRTDevToolsClient::call(const WebString& args)
 {
     m_webDevToolsFrontend->dispatchOnInspectorFrontend(args);
 }
-

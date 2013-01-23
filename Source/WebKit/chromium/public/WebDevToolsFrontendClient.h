@@ -57,6 +57,8 @@ public:
     virtual void addFileSystem() { }
     virtual void removeFileSystem(const WebString& fileSystemPath) { }
 
+    virtual bool isUnderTest() { return false; }
+
 protected:
     virtual ~WebDevToolsFrontendClient() {}
 };

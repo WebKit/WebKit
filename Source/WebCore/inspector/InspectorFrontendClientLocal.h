@@ -80,6 +80,7 @@ public:
     virtual void requestFileSystems() { }
     virtual void addFileSystem() { }
     virtual void removeFileSystem(const String&) { }
+    virtual bool isUnderTest();
 
     bool canAttachWindow();
     void setDockingUnavailable(bool);

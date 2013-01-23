@@ -65,8 +65,6 @@ function postMessage(message) {}
 /** @type {*} */
 window.testRunner = null;
 
-window.isUnderTest = false;
-
 /**
  * @constructor
  */

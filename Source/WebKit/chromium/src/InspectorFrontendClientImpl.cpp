@@ -174,5 +174,9 @@ void InspectorFrontendClientImpl::removeFileSystem(const String& fileSystemPath)
     m_client->removeFileSystem(fileSystemPath);
 }
 
+bool InspectorFrontendClientImpl::isUnderTest()
+{
+    return m_client->isUnderTest();
+}
 
 } // namespace WebKit

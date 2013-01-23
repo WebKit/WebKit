@@ -104,6 +104,7 @@ public:
     void hideHighlight();
     Node* highlightedNode() const;
 
+    bool isUnderTest();
     void evaluateForTestInFrontend(long callId, const String& script);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -150,6 +151,7 @@ private:
     Page* m_page;
     InspectorClient* m_inspectorClient;
     InspectorAgentRegistry m_agents;
+    bool m_isUnderTest;
 };
 
 }
