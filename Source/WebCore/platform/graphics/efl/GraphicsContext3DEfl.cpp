@@ -292,7 +292,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     }
 
     m_imagePixelData = cairo_image_surface_get_data(m_imageSurface.get());
-    m_imageSourceFormat = SourceFormatBGRA8;
+    m_imageSourceFormat = DataFormatBGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
 
     return true;

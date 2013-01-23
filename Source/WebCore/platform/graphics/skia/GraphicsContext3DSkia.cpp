@@ -89,7 +89,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     if (!m_skiaImage)
         return false;
 
-    m_imageSourceFormat = SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8;
+    m_imageSourceFormat = SK_B32_SHIFT ? DataFormatRGBA8 : DataFormatBGRA8;
     m_imageWidth = m_skiaImage->bitmap().width();
     m_imageHeight = m_skiaImage->bitmap().height();
     if (!m_imageWidth || !m_imageHeight)

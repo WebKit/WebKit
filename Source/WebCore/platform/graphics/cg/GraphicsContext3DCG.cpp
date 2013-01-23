@@ -62,7 +62,7 @@ enum AlphaFormat {
 };
 
 // This returns SourceFormatNumFormats if the combination of input parameters is unsupported.
-static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
+static GraphicsContext3D::DataFormat getSourceDataFormat(unsigned componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
 {
     const static SourceDataFormatBase formatTableBase[4][AlphaFormatNumFormats] = { // componentsPerPixel x AlphaFormat
         // AlphaFormatNone            AlphaFormatFirst            AlphaFormatLast
@@ -71,21 +71,21 @@ static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int comp
         { SourceFormatBaseRGB,        SourceFormatBaseNumFormats, SourceFormatBaseNumFormats }, // 3 componentsPerPixel
         { SourceFormatBaseNumFormats, SourceFormatBaseARGB,       SourceFormatBaseRGBA        } // 4 componentsPerPixel
     };
-    const static GraphicsContext3D::SourceDataFormat formatTable[SourceFormatBaseNumFormats][4] = { // SourceDataFormatBase x bitsPerComponent x endian
+    const static GraphicsContext3D::DataFormat formatTable[SourceFormatBaseNumFormats][4] = { // SourceDataFormatBase x bitsPerComponent x endian
         // 8bits, little endian                 8bits, big endian                     16bits, little endian                        16bits, big endian
-        { GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR16Little,    GraphicsContext3D::SourceFormatR16Big },
-        { GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA16Little,    GraphicsContext3D::SourceFormatA16Big },
-        { GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatRA16Little,   GraphicsContext3D::SourceFormatRA16Big },
-        { GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatAR16Little,   GraphicsContext3D::SourceFormatAR16Big },
-        { GraphicsContext3D::SourceFormatBGR8,  GraphicsContext3D::SourceFormatRGB8,  GraphicsContext3D::SourceFormatRGB16Little,  GraphicsContext3D::SourceFormatRGB16Big },
-        { GraphicsContext3D::SourceFormatABGR8, GraphicsContext3D::SourceFormatRGBA8, GraphicsContext3D::SourceFormatRGBA16Little, GraphicsContext3D::SourceFormatRGBA16Big },
-        { GraphicsContext3D::SourceFormatBGRA8, GraphicsContext3D::SourceFormatARGB8, GraphicsContext3D::SourceFormatARGB16Little, GraphicsContext3D::SourceFormatARGB16Big }
+        { GraphicsContext3D::DataFormatR8,    GraphicsContext3D::DataFormatR8,    GraphicsContext3D::DataFormatR16Little,    GraphicsContext3D::DataFormatR16Big },
+        { GraphicsContext3D::DataFormatA8,    GraphicsContext3D::DataFormatA8,    GraphicsContext3D::DataFormatA16Little,    GraphicsContext3D::DataFormatA16Big },
+        { GraphicsContext3D::DataFormatAR8,   GraphicsContext3D::DataFormatRA8,   GraphicsContext3D::DataFormatRA16Little,   GraphicsContext3D::DataFormatRA16Big },
+        { GraphicsContext3D::DataFormatRA8,   GraphicsContext3D::DataFormatAR8,   GraphicsContext3D::DataFormatAR16Little,   GraphicsContext3D::DataFormatAR16Big },
+        { GraphicsContext3D::DataFormatBGR8,  GraphicsContext3D::DataFormatRGB8,  GraphicsContext3D::DataFormatRGB16Little,  GraphicsContext3D::DataFormatRGB16Big },
+        { GraphicsContext3D::DataFormatABGR8, GraphicsContext3D::DataFormatRGBA8, GraphicsContext3D::DataFormatRGBA16Little, GraphicsContext3D::DataFormatRGBA16Big },
+        { GraphicsContext3D::DataFormatBGRA8, GraphicsContext3D::DataFormatARGB8, GraphicsContext3D::DataFormatARGB16Little, GraphicsContext3D::DataFormatARGB16Big }
     };
 
     ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
     SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
     if (formatBase == SourceFormatBaseNumFormats)
-        return GraphicsContext3D::SourceFormatNumFormats;
+        return GraphicsContext3D::DataFormatNumFormats;
     return formatTable[formatBase][(is16BitFormat ? 2 : 0) + (bigEndian ? 1 : 0)];
 }
 
@@ -230,7 +230,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     }
 
     m_imageSourceFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, bigEndianSource);
-    if (m_imageSourceFormat == SourceFormatNumFormats)
+    if (m_imageSourceFormat == DataFormatNumFormats)
         return false;
 
     m_pixelData.adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(m_cgImage)));
