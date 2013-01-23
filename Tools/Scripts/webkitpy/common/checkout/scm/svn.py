@@ -54,7 +54,7 @@ class SVNRepository(object):
         # If we are working on a file:// repository realm will be None
         if realm is None:
             return True
-        # ignore false positives for methods implemented in the mixee class. pylint: disable-msg=E1101
+        # ignore false positives for methods implemented in the mixee class. pylint: disable=E1101
         # Assumes find and grep are installed.
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):
             return False

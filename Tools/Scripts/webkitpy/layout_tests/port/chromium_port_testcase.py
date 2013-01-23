@@ -130,12 +130,12 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_default_configuration(self):
         mock_options = MockOptions()
         port = ChromiumPortTestCase.TestLinuxPort(options=mock_options)
-        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
+        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable=E1101
         self.assertTrue(port.default_configuration_called)
 
         mock_options = MockOptions(configuration=None)
         port = ChromiumPortTestCase.TestLinuxPort(mock_options)
-        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
+        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable=E1101
         self.assertTrue(port.default_configuration_called)
 
     def test_diff_image(self):

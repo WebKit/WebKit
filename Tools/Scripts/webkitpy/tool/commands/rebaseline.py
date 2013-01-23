@@ -50,7 +50,7 @@ def _baseline_name(fs, test_name, suffix):
 
 
 class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
-    # not overriding execute() - pylint: disable-msg=W0223
+    # not overriding execute() - pylint: disable=W0223
 
     move_overwritten_baselines_option = optparse.make_option("--move-overwritten-baselines", action="store_true", default=False,
         help="Move overwritten baselines elsewhere in the baseline path. This is for bringing up new ports.")
@@ -266,7 +266,7 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
 
 
 class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
-    # not overriding execute() - pylint: disable-msg=W0223
+    # not overriding execute() - pylint: disable=W0223
 
     def _run_webkit_patch(self, args, verbose):
         try:

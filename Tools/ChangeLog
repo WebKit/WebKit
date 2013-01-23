@@ -1,3 +1,35 @@
+2013-01-22  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Convert disable-msg to disable for new pylint.
+        https://bugs.webkit.org/show_bug.cgi?id=107627
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVNRepository.has_authorization_for_realm):
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder.force_build):
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive2.run_command):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.reference_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_default_configuration):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_expectations_ordering):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._check_that_all_ports_are_available):
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        (AbstractLocalServerCommand.execute):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (AbstractParallelRebaselineCommand):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_BaseTestCase.setUp):
+        (TestAnalyzeBaselines.setUp):
+
 2013-01-22  Frank Farzan  <frankf@chromium.org>
 
         Flakiness dashboard: update builders.jsonp

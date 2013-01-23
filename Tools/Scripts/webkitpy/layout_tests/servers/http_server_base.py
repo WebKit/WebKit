@@ -193,7 +193,7 @@ class HttpServerBase(object):
             except IOError, e:
                 if e.errno in (errno.EALREADY, errno.EADDRINUSE):
                     raise ServerError('Port %d is already in use.' % port)
-                elif sys.platform == 'win32' and e.errno in (errno.WSAEACCES,):  # pylint: disable-msg=E1101
+                elif sys.platform == 'win32' and e.errno in (errno.WSAEACCES,):  # pylint: disable=E1101
                     raise ServerError('Port %d is already in use.' % port)
                 else:
                     raise

@@ -149,7 +149,7 @@ class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.
     #
-    # pylint: disable-msg=E1101
+    # pylint: disable=E1101
     # def _fetch_list_of_patches_to_process(self, options, args, tool):
     # def _prepare_to_process(self, options, args, tool):
     # def _process_patch(self, options, args, tool):

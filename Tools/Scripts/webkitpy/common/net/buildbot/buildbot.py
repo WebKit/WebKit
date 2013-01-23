@@ -131,7 +131,7 @@ class Builder(object):
                 return form.find_control("username")
             except Exception, e:
                 return False
-        # ignore false positives for missing Browser methods - pylint: disable-msg=E1102
+        # ignore false positives for missing Browser methods - pylint: disable=E1102
         self._browser.open(self.url())
         self._browser.select_form(predicate=predicate)
         self._browser["username"] = username

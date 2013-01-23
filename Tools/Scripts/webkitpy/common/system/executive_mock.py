@@ -178,7 +178,7 @@ class MockExecutive2(MockExecutive):
         self.calls.append(args)
         assert(isinstance(args, list) or isinstance(args, tuple))
         if self._exception:
-            raise self._exception  # pylint: disable-msg=E0702
+            raise self._exception  # pylint: disable=E0702
         if self._run_command_fn:
             return self._run_command_fn(args)
         if return_exit_code:
