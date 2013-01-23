@@ -4153,8 +4153,6 @@
             'platform/graphics/texmap/TextureMapperLayer.cpp',
             'platform/graphics/texmap/TextureMapperLayer.h',
             'platform/graphics/texmap/TextureMapperPlatformLayer.h',
-            'platform/graphics/texmap/TextureMapperShaderManager.cpp',
-            'platform/graphics/texmap/TextureMapperShaderManager.h',
             'platform/graphics/transforms/IdentityTransformOperation.h',
             'platform/graphics/transforms/Matrix3DTransformOperation.cpp',
             'platform/graphics/transforms/Matrix3DTransformOperation.h',
