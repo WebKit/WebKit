@@ -8,21 +8,13 @@
         <script src=../media-controls.js></script>
 
         <style>
+        ::cue {word-spacing: 100px;}
         ::cue(c) {padding-left: 10px; color: red;}
         </style>
 
         <script>
 
         var cueNode;
-
-        function skipNonElements(root)
-        {
-            nextElementSibling = root;
-            while (nextElementSibling.nodeType != 1) {
-                nextElementSibling = nextElementSibling.nextSibling;
-            }
-            return nextElementSibling;
-        }
 
         function seeked()
         {
@@ -32,16 +24,18 @@
             consoleWrite("<br>");
             consoleWrite("Test that only allowed for the ::cue pseudo-element properties are applied to WebVTT node objects.");
 
-            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
-            skipNonElements(cueNode);
+            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild;
             testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
             testExpected("getComputedStyle(cueNode).padding", "0px");
-            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).wordSpacing", "0px");
+            cueNode = cueNode.nextElementSibling;
             testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
             testExpected("getComputedStyle(cueNode).padding", "0px");
-            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).wordSpacing", "0px");
+            cueNode = cueNode.nextElementSibling;
             testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
             testExpected("getComputedStyle(cueNode).padding", "0px");
+            testExpected("getComputedStyle(cueNode).wordSpacing", "0px");
             endTest();
         }
 

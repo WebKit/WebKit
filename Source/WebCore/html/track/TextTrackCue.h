@@ -79,6 +79,12 @@ public:
         return adoptRef(new TextTrackCue(context, start, end, content));
     }
 
+    static const AtomicString& cueShadowPseudoId()
+    {
+        DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));
+        return cue;
+    }
+
     static const QualifiedName& voiceElementTagName()
     {
         DEFINE_STATIC_LOCAL(QualifiedName, vTag, (nullAtom, "v", nullAtom));

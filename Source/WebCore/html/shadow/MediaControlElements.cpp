@@ -1221,9 +1221,8 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
 
 void MediaControlTextTrackContainerElement::createSubtrees(Document* document)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));
     m_cueContainer = HTMLElement::create(spanTag, document);
-    m_cueContainer->setPseudo(cue);
+    m_cueContainer->setPseudo(TextTrackCue::cueShadowPseudoId());
     appendChild(m_cueContainer, ASSERT_NO_EXCEPTION, false);
 }
 

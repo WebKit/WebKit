@@ -47,6 +47,10 @@
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrackCue.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -118,9 +122,11 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
         return PropertyWhitelistRegion;
 #if ENABLE(VIDEO_TRACK)
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-        if (component->pseudoType() == CSSSelector::PseudoCue)
+        if (component->pseudoType() == CSSSelector::PseudoCue || (component->m_match != CSSSelector::Tag && component->value() == TextTrackCue::cueShadowPseudoId()))
             return PropertyWhitelistCue;
     }
+#else
+    UNUSED_PARAM(selector);
 #endif
     return PropertyWhitelistNone;
 }
