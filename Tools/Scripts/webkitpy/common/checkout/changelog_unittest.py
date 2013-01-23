@@ -236,14 +236,25 @@ class ChangeLogTest(unittest.TestCase):
         changelog_file = StringIO(self._example_changelog)
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
         self.assertEqual(len(parsed_entries), 9)
+        self.assertEqual(parsed_entries[0].date_line(), u"2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>")
         self.assertEqual(parsed_entries[0].reviewer_text(), "David Levin")
+        self.assertEqual(parsed_entries[0].is_touched_files_text_clean(), False)
         self.assertEqual(parsed_entries[1].author_email(), "ddkilzer@apple.com")
+        self.assertEqual(parsed_entries[1].touched_files_text(), "        * Scripts/bugzilla-tool:\n        * Scripts/modules/scm.py:\n")
+        self.assertEqual(parsed_entries[1].is_touched_files_text_clean(), True)
         self.assertEqual(parsed_entries[2].reviewer_text(), "Mark Rowe")
         self.assertEqual(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
+        self.assertEqual(parsed_entries[2].touched_functions(), {"DumpRenderTree/mac/DumpRenderTreeWindow.mm": ["-[DumpRenderTreeWindow close]"]})
+        self.assertEqual(parsed_entries[2].is_touched_files_text_clean(), False)
         self.assertEqual(parsed_entries[3].author_name(), "Benjamin Poulain")
         self.assertEqual(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
             "WebCoreSupport/ChromeClientEfl.cpp", "ewk/ewk_private.h", "ewk/ewk_view.cpp"])
+        self.assertEqual(parsed_entries[3].touched_functions(), {"platform/cf/KURLCFNet.cpp": ["WebCore::createCFURLFromBuffer", "WebCore::KURL::createCFURL"],
+            "platform/mac/KURLMac.mm": ["WebCore::KURL::operator NSURL *", "WebCore::KURL::createCFURL"],
+            "WebCoreSupport/ChromeClientEfl.cpp": ["WebCore::ChromeClientEfl::closeWindowSoon"], "ewk/ewk_private.h": [], "ewk/ewk_view.cpp": []})
+        self.assertEqual(parsed_entries[3].bug_description(), "[Mac] ResourceRequest's nsURLRequest() does not differentiate null and empty URLs with CFNetwork")
         self.assertEqual(parsed_entries[4].reviewer_text(), "David Hyatt")
+        self.assertEqual(parsed_entries[4].bug_description(), None)
         self.assertEqual(parsed_entries[5].reviewer_text(), "Adam Roben")
         self.assertEqual(parsed_entries[6].reviewer_text(), "Tony Chang")
         self.assertEqual(parsed_entries[7].reviewer_text(), None)
@@ -462,7 +473,9 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(latest_entry.author_name(), "Peter Kasting")
         self.assertEqual(latest_entry.author_email(), "pkasting@google.com")
         self.assertEqual(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
-        self.assertEqual(latest_entry.touched_files(), ["DumpRenderTree/win/DumpRenderTree.vcproj", "DumpRenderTree/win/ImageDiff.vcproj", "DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj"])
+        touched_files = ["DumpRenderTree/win/DumpRenderTree.vcproj", "DumpRenderTree/win/ImageDiff.vcproj", "DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj"]
+        self.assertEqual(latest_entry.touched_files(), touched_files)
+        self.assertEqual(latest_entry.touched_functions(), dict((f, []) for f in touched_files))
 
         self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
 
@@ -583,3 +596,37 @@ class ChangeLogTest(unittest.TestCase):
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)
         os.remove(changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+
+    def test_delete_entries(self):
+        changelog_path = self._write_tmp_file_with_contents(self._example_changelog.encode("utf-8"))
+        ChangeLog(changelog_path).delete_entries(8)
+        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        expected_contents = """2011-10-11  Antti Koivisto  <antti@apple.com>
+
+       Resolve regular and visited link style in a single pass
+       https://bugs.webkit.org/show_bug.cgi?id=69838
+
+       Reviewed by Darin Adler
+
+       We can simplify and speed up selector matching by removing the recursive matching done
+       to generate the style for the :visited pseudo selector. Both regular and visited link style
+       can be generated in a single pass through the style selector.
+
+== Rolled over to ChangeLog-2009-06-16 ==
+"""
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+
+        ChangeLog(changelog_path).delete_entries(2)
+        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        expected_contents = "== Rolled over to ChangeLog-2009-06-16 ==\n"
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+
+        os.remove(changelog_path)
+
+    def test_prepend_text(self):
+        changelog_path = self._write_tmp_file_with_contents(self._example_changelog.encode("utf-8"))
+        ChangeLog(changelog_path).prepend_text(self._example_entry + "\n")
+        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        expected_contents = self._example_entry + "\n" + self._example_changelog
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+        os.remove(changelog_path)

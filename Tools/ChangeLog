@@ -1,3 +1,42 @@
+2013-01-22  Timothy Loh  <timloh@chromium.com>
+
+        Add functions to ChangeLog - parse bug desc/changed functions, delete/prepend entries
+        https://bugs.webkit.org/show_bug.cgi?id=107478
+
+        Reviewed by Eric Seidel.
+
+        On the road to resolving Bug 74358, we need a few more functions in
+        changelog.py.
+        To make things easier to mock, change @staticmethods to @classmethods.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry):
+        (ChangeLogEntry._parse_reviewer_text):
+        (ChangeLogEntry._split_contributor_names):
+        (ChangeLogEntry._parse_author_name_and_email):
+        (ChangeLogEntry._parse_author_text):
+        (ChangeLogEntry._parse_touched_functions):
+        (ChangeLogEntry._parse_bug_description):
+        (ChangeLogEntry._parse_entry):
+        (ChangeLogEntry.date_line):
+        (ChangeLogEntry.bug_description):
+        (ChangeLogEntry.touched_functions):
+        (ChangeLogEntry.touched_files_text):
+        (ChangeLogEntry.is_touched_files_text_clean):
+        (ChangeLog):
+        (ChangeLog.parse_latest_entry_from_file):
+        (ChangeLog._separate_revision_and_line):
+        (ChangeLog.parse_entries_from_file):
+        (ChangeLog.set_short_description_and_bug_url):
+        (ChangeLog.delete_entries):
+        (ChangeLog.prepend_text):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_log_entries_from_changelog):
+        (test_latest_entry_parse):
+        (test_set_short_description_and_bug_url):
+        (test_delete_entries):
+        (test_prepend_text):
+
 2013-01-22  Lucas Forschler  <lforschler@apple.com>
 
         Create a MAC EWS startup shell script.
