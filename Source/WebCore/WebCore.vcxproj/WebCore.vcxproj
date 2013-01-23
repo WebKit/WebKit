@@ -790,10 +790,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSIDBKeyCustom.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSIDBKeyRange.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -943,14 +939,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformance.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceEntry.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceEntryList.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -3113,10 +3101,6 @@
     </ClCompile>
     <ClCompile Include="..\rendering\RenderFlexibleBox.cpp" />
     <ClCompile Include="..\rendering\RenderFlowThread.cpp" />
-    <ClCompile Include="..\rendering\svg\RenderForeignObject.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\rendering\RenderFrame.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -3918,10 +3902,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\dom\DynamicNodeList.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\dom\Element.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -3960,10 +3940,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\dom\EventNames.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\dom\EventQueue.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -4973,10 +4949,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\DOMTransaction.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\DOMWrapperWorld.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -5177,10 +5149,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSEventListener.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSEventSourceCustom.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -5437,10 +5405,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSWebKitCSSMatrixCustom.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSWebKitPointCustom.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -5490,10 +5454,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\bindings\js\ScriptController.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\ScriptControllerWin.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -5849,7 +5809,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ExceptionCodeDescription.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ExceptionHeaders.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\ExceptionInterfaces.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HashTools.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HTMLElementFactory.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HTMLNames.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InjectedScriptCanvasModuleSource.h" />
@@ -5928,7 +5887,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMTokenList.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMURL.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindow.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindowBase.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSElement.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSEntity.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSEntityReference.h" />
@@ -6085,8 +6043,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSOverflowEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPageTransitionEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformance.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceEntry.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceEntryList.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceNavigation.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPerformanceTiming.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSPopStateEvent.h" />
@@ -6286,7 +6242,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWheelEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSWorker.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSWorkerContext.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSWorkerContextBase.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSWorkerLocation.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSWorkerNavigator.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h" />
@@ -6300,7 +6255,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSXPathNSResolver.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSXPathResult.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSXSLTProcessor.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\kjs_navigator.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\MathMLElementFactory.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\MathMLNames.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\SVGElementFactory.h" />
@@ -6312,6 +6266,55 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XMLViewerCSS.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XMLViewerJS.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XPathGrammar.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\AllocationSpace.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\CardSet.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\Heap.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\SlotVisitor.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\StrongInlines.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\Weak.h" />
+    <ClInclude Include="..\ForwardingHeaders\masm\X86Assembler.h" />
+    <ClInclude Include="..\ForwardingHeaders\parser\SourceCode.h" />
+    <ClInclude Include="..\ForwardingHeaders\parser\SourceProvider.h" />
+    <ClInclude Include="..\ForwardingHeaders\profiler\LegacyProfiler.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ArrayPrototype.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\BooleanObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\CallData.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\Completion.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ConstructData.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\DateInstance.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\Error.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ErrorPrototype.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ExceptionHelpers.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\Executable.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\FunctionConstructor.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\FunctionPrototype.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\InitializeThreading.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\InternalFunction.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSAPIValueWrapper.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSArray.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSCell.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSDestructibleObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSExportMacros.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSFunction.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSGlobalData.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSGlobalObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSProxy.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSWithScope.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\MatchResult.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\ObjectPrototype.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\PrivateName.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\PropertyNameArray.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\PrototypeFunction.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\RegExp.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\RegExpObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\StorageBarrier.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\StringPrototype.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\Structure.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\StructureChain.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\SymbolTable.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\WeakGCMap.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\WriteBarrier.h" />
+    <ClInclude Include="..\ForwardingHeaders\yarr\YarrJIT.h" />
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h" />
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriterClient.h" />
     <ClInclude Include="..\Modules\filesystem\DirectoryEntry.h" />
@@ -6335,7 +6338,6 @@
     <ClInclude Include="..\Modules\filesystem\FileCallback.h" />
     <ClInclude Include="..\Modules\filesystem\FileEntry.h" />
     <ClInclude Include="..\Modules\filesystem\FileEntrySync.h" />
-    <ClInclude Include="..\Modules\filesystem\FileError.h" />
     <ClInclude Include="..\Modules\filesystem\FileSystemCallback.h" />
     <ClInclude Include="..\Modules\filesystem\FileSystemCallbacks.h" />
     <ClInclude Include="..\Modules\filesystem\FileSystemFlags.h" />
@@ -6513,7 +6515,6 @@
     <ClInclude Include="..\page\DragClient.h" />
     <ClInclude Include="..\page\DragController.h" />
     <ClInclude Include="..\page\DragState.h" />
-    <ClInclude Include="..\bridge\EditorClient.h" />
     <ClInclude Include="..\page\EventHandler.h" />
     <ClInclude Include="..\page\EventSource.h" />
     <ClInclude Include="..\page\FeatureObserver.h" />
@@ -6526,7 +6527,6 @@
     <ClInclude Include="..\page\FrameView.h" />
     <ClInclude Include="..\page\GeolocationClient.h" />
     <ClInclude Include="..\page\GroupSettings.h" />
-    <ClInclude Include="..\page\HaltablePlugin.h" />
     <ClInclude Include="..\page\History.h" />
     <ClInclude Include="..\page\animation\ImplicitAnimation.h" />
     <ClInclude Include="..\page\animation\KeyframeAnimation.h" />
@@ -6546,7 +6546,7 @@
     <ClInclude Include="..\page\PerformanceResourceTiming.h" />
     <ClInclude Include="..\page\PerformanceTiming.h" />
     <ClInclude Include="..\page\PlugInClient.h" />
-    <ClInclude Include="..\page\PoppupOpeningObserver.h" />
+    <ClInclude Include="..\page\PopupOpeningObserver.h" />
     <ClInclude Include="..\page\PrintContext.h" />
     <ClInclude Include="..\page\Screen.h" />
     <ClInclude Include="..\page\scrolling\ScrollingConstraints.h" />
@@ -6615,7 +6615,6 @@
     <ClInclude Include="..\loader\SubresourceLoader.h" />
     <ClInclude Include="..\loader\SubstituteData.h" />
     <ClInclude Include="..\loader\SubstituteResource.h" />
-    <ClInclude Include="..\loader\TextDocument.h" />
     <ClInclude Include="..\loader\TextResourceDecoder.h" />
     <ClInclude Include="..\loader\TextTrackLoader.h" />
     <ClInclude Include="..\loader\ThreadableLoader.h" />
@@ -6702,7 +6701,6 @@
     <ClInclude Include="..\platform\LengthSize.h" />
     <ClInclude Include="..\platform\LinkHash.h" />
     <ClInclude Include="..\platform\LocalizedStrings.h" />
-    <ClInclude Include="..\platform\Locker.h" />
     <ClInclude Include="..\platform\Logging.h" />
     <ClInclude Include="..\platform\MemoryPressureHandler.h" />
     <ClInclude Include="..\platform\MemoryUsageSupport.h" />
@@ -6743,11 +6741,9 @@
     <ClInclude Include="..\platform\SharedTimer.h" />
     <ClInclude Include="..\platform\Sound.h" />
     <ClInclude Include="..\platform\SSLKeyGenerator.h" />
-    <ClInclude Include="..\platform\StaticConstructors.h" />
     <ClInclude Include="..\platform\StatsCounter.h" />
     <ClInclude Include="..\platform\SuddenTermination.h" />
     <ClInclude Include="..\platform\SystemTime.h" />
-    <ClInclude Include="..\platform\text\TextStyle.h" />
     <ClInclude Include="..\platform\Theme.h" />
     <ClInclude Include="..\platform\ThemeTypes.h" />
     <ClInclude Include="..\platform\ThreadGlobalData.h" />
@@ -6788,12 +6784,10 @@
     <ClInclude Include="..\platform\win\WindowMessageListener.h" />
     <ClInclude Include="..\platform\win\WindowsTouch.h" />
     <ClInclude Include="..\platform\cf\BinaryPropertyList.h" />
-    <ClInclude Include="..\platform\cf\RetainPtr.h" />
     <ClInclude Include="..\platform\cf\SchedulePair.h" />
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h" />
     <ClInclude Include="..\platform\graphics\BitmapImage.h" />
     <ClInclude Include="..\platform\graphics\Color.h" />
-    <ClInclude Include="..\platform\graphics\ColorPath.h" />
     <ClInclude Include="..\platform\graphics\CrossfadeGeneratedImage.h" />
     <ClInclude Include="..\platform\graphics\FloatPoint.h" />
     <ClInclude Include="..\platform\graphics\FloatPoint3D.h" />
@@ -6822,7 +6816,6 @@
     <ClInclude Include="..\platform\graphics\GlyphPageTreeNode.h" />
     <ClInclude Include="..\platform\graphics\Gradient.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext.h" />
-    <ClInclude Include="..\platform\graphics\GraphicsContextPrivate.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayer.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerClient.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerUpdater.h" />
@@ -7254,7 +7247,6 @@
     <ClInclude Include="..\rendering\ExclusionShape.h" />
     <ClInclude Include="..\rendering\ExclusionShapeInsideInfo.h" />
     <ClInclude Include="..\rendering\ExclusionShapeOutsideInfo.h" />
-    <ClInclude Include="..\rendering\ExclusionSRectangle.h" />
     <ClInclude Include="..\rendering\FilterEffectRenderer.h" />
     <ClInclude Include="..\rendering\FixedTableLayout.h" />
     <ClInclude Include="..\rendering\FlowThreadController.h" />
@@ -7287,7 +7279,6 @@
     <ClInclude Include="..\rendering\RenderFileUploadControl.h" />
     <ClInclude Include="..\rendering\RenderFlexibleBox.h" />
     <ClInclude Include="..\rendering\RenderFlowThread.h" />
-    <ClInclude Include="..\rendering\svg\RenderForeignObject.h" />
     <ClInclude Include="..\rendering\RenderFrame.h" />
     <ClInclude Include="..\rendering\RenderFrameBase.h" />
     <ClInclude Include="..\rendering\RenderFrameSet.h" />
@@ -7404,7 +7395,6 @@
     <ClInclude Include="..\rendering\style\BasicShapes.h" />
     <ClInclude Include="..\rendering\style\BorderData.h" />
     <ClInclude Include="..\rendering\style\BorderValue.h" />
-    <ClInclude Include="..\rendering\style\ClipPathOperation.h" />
     <ClInclude Include="..\rendering\style\CollapsedBorderValue.h" />
     <ClInclude Include="..\rendering\style\ContentData.h" />
     <ClInclude Include="..\rendering\style\CounterContent.h" />
@@ -7504,16 +7494,12 @@
     <ClInclude Include="..\xml\XSLTExtensions.h" />
     <ClInclude Include="..\xml\XSLTProcessor.h" />
     <ClInclude Include="..\xml\XSLTUnicodeSort.h" />
-    <ClInclude Include="..\xml\parser\CharacterReferenceInlines.h" />
     <ClInclude Include="..\xml\parser\MarkupTokenBase.h" />
     <ClInclude Include="..\xml\parser\MarkupTokenizerBase.h" />
     <ClInclude Include="..\xml\parser\MarkupTokenizerInlines.h" />
     <ClInclude Include="..\xml\parser\XMLDocumentParser.h" />
     <ClInclude Include="..\xml\parser\XMLDocumentParserScope.h" />
-    <ClInclude Include="..\xml\parser\XMLToken.h" />
-    <ClInclude Include="..\xml\parser\XMLTokenizer.h" />
     <ClInclude Include="..\dom\ActiveDOMObject.h" />
-    <ClInclude Include="..\dom\AtomicStringList.h" />
     <ClInclude Include="..\dom\Attr.h" />
     <ClInclude Include="..\dom\Attribute.h" />
     <ClInclude Include="..\dom\BeforeLoadEvent.h" />
@@ -7566,7 +7552,6 @@
     <ClInclude Include="..\dom\DOMStringList.h" />
     <ClInclude Include="..\dom\DOMStringMap.h" />
     <ClInclude Include="..\dom\DOMTimeStamp.h" />
-    <ClInclude Include="..\dom\DynamicNodeList.h" />
     <ClInclude Include="..\dom\Element.h" />
     <ClInclude Include="..\dom\Entity.h" />
     <ClInclude Include="..\dom\EntityReference.h" />
@@ -7694,7 +7679,6 @@
     <ClInclude Include="..\editing\ApplyStyleCommand.h" />
     <ClInclude Include="..\editing\BreakBlockquoteCommand.h" />
     <ClInclude Include="..\editing\CompositeEditCommand.h" />
-    <ClInclude Include="..\editing\CorrectionPanelInfo.h" />
     <ClInclude Include="..\editing\CreateLinkCommand.h" />
     <ClInclude Include="..\editing\DeleteButton.h" />
     <ClInclude Include="..\editing\DeleteButtonController.h" />
@@ -7969,14 +7953,12 @@
     <ClInclude Include="..\html\shadow\MediaControls.h" />
     <ClInclude Include="..\html\shadow\MediaControlsApple.h" />
     <ClInclude Include="..\html\shadow\MeterShadowElement.h" />
-    <ClInclude Include="..\html\shadow\ProgressBarValueElement.h" />
     <ClInclude Include="..\html\shadow\ProgressShadowElement.h" />
     <ClInclude Include="..\html\shadow\SelectRuleFeatureSet.h" />
     <ClInclude Include="..\html\shadow\SliderThumbElement.h" />
     <ClInclude Include="..\html\shadow\SpinButtonElement.h" />
     <ClInclude Include="..\html\shadow\TextControlInnerElements.h" />
     <ClInclude Include="..\html\track\InbandTextTrack.h" />
-    <ClInclude Include="..\html\track\InbandTextTrackPrivate.h" />
     <ClInclude Include="..\html\track\LoadableTextTrack.h" />
     <ClInclude Include="..\html\track\TextTrack.h" />
     <ClInclude Include="..\html\track\TextTrackCue.h" />
@@ -7998,7 +7980,6 @@
     <ClInclude Include="..\bindings\js\CallbackFunction.h" />
     <ClInclude Include="..\bindings\js\Dictionary.h" />
     <ClInclude Include="..\bindings\js\DOMObjectHashTableMap.h" />
-    <ClInclude Include="..\bindings\js\DOMTransaction.h" />
     <ClInclude Include="..\bindings\js\DOMWrapperWorld.h" />
     <ClInclude Include="..\bindings\js\GCController.h" />
     <ClInclude Include="..\bindings\js\IDBBindingUtilities.h" />
@@ -8028,7 +8009,6 @@
     <ClInclude Include="..\bindings\js\JSLocationCustom.h" />
     <ClInclude Include="..\bindings\js\JSMainThreadExecState.h" />
     <ClInclude Include="..\bindings\js\JSMessagePortCustom.h" />
-    <ClInclude Include="..\bindings\js\JSMicroDataItemValueCustom.h" />
     <ClInclude Include="..\bindings\js\JSNodeCustom.h" />
     <ClInclude Include="..\bindings\js\JSNodeFilterCondition.h" />
     <ClInclude Include="..\bindings\js\JSPluginElementFunctions.h" />
@@ -8075,9 +8055,6 @@
     <ClInclude Include="..\plugins\PluginView.h" />
     <ClInclude Include="..\plugins\win\PluginMessageThrottlerWin.h" />
     <ClInclude Include="..\svg\ColorDistance.h" />
-    <ClInclude Include="..\svg\DeprecatedSVGAnimatedProperty.h" />
-    <ClInclude Include="..\svg\DeprecatedSVGAnimatedPropertyTraits.h" />
-    <ClInclude Include="..\svg\DeprecatedSVGAnimatedTemplate.h" />
     <ClInclude Include="..\svg\ElementTimeControl.h" />
     <ClInclude Include="..\svg\SVGAElement.h" />
     <ClInclude Include="..\svg\SVGAltGlyphDefElement.h" />
@@ -8226,7 +8203,6 @@
     <ClInclude Include="..\svg\SVGSetElement.h" />
     <ClInclude Include="..\svg\SVGStopElement.h" />
     <ClInclude Include="..\svg\SVGStringList.h" />
-    <ClInclude Include="..\svg\SVGStylable.h" />
     <ClInclude Include="..\svg\SVGStyledElement.h" />
     <ClInclude Include="..\svg\SVGStyledLocatableElement.h" />
     <ClInclude Include="..\svg\SVGStyledTransformableElement.h" />
@@ -8284,38 +8260,7 @@
     <ClInclude Include="..\svg\properties\SVGStaticPropertyTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGStaticPropertyWithParentTearOff.h" />
     <ClInclude Include="..\svg\properties\SVGTransformListPropertyTearOff.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\MainThread.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\AlwaysInline.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Assertions.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Deque.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\dtoa.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\FastMalloc.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Forward.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\GetPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\HashCountedSet.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\HashMap.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\HashSet.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\HashTable.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\HashTraits.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\ListHashSet.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\MathExtras.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\MessageQueue.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Noncopyable.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\OwnArrayPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\OwnPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\OwnPtrCommon.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\PassOwnPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\PassRefPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Platform.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\RefPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\RetainPtr.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\StringExtras.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\Vector.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\unicode\Unicode.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\unicode\icu\UnicodeIcu.h" />
-    <ClInclude Include="..\ForwardingHeaders\wtf\text\CString.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\ArgList.h" />
-    <ClInclude Include="..\ForwardingHeaders\runtime\Heap.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Identifier.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSLock.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSObject.h" />
@@ -8323,19 +8268,13 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\JSValue.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Lookup.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Operations.h" />
-    <ClInclude Include="..\ForwardingHeaders\runtime\PropertyMap.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Protect.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\StringObject.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\Yarr.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\YarrInterpreter.h" />
     <ClInclude Include="..\ForwardingHeaders\yarr\YarrPattern.h" />
-    <ClInclude Include="..\ForwardingHeaders\bindings\NP_jsobject.h" />
-    <ClInclude Include="..\ForwardingHeaders\bindings\npruntime_impl.h" />
-    <ClInclude Include="..\ForwardingHeaders\bindings\runtime_root.h" />
     <ClInclude Include="..\ForwardingHeaders\profiler\Profile.h" />
     <ClInclude Include="..\ForwardingHeaders\profiler\ProfileNode.h" />
-    <ClInclude Include="..\ForwardingHeaders\profiler\Profiler.h" />
-    <ClInclude Include="..\ForwardingHeaders\masm\MacroAssembler.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Strong.h" />
     <ClInclude Include="..\history\BackForwardController.h" />
     <ClInclude Include="..\history\BackForwardList.h" />
@@ -8352,9 +8291,6 @@
     <ClInclude Include="..\storage\StorageAreaSync.h" />
     <ClInclude Include="..\storage\StorageEvent.h" />
     <ClInclude Include="..\storage\StorageEventDispatcher.h" />
-    <ClInclude Include="..\storage\StorageInfoErrorCallback.h" />
-    <ClInclude Include="..\storage\StorageInfoQuotaCallback.h" />
-    <ClInclude Include="..\storage\StorageInfoUsageCallback.h" />
     <ClInclude Include="..\storage\StorageMap.h" />
     <ClInclude Include="..\storage\StorageNamespace.h" />
     <ClInclude Include="..\storage\StorageNamespaceImpl.h" />
@@ -8592,7 +8528,6 @@
     <None Include="..\inspector\front-end\IsolatedFileSystemModel.js" />
     <None Include="..\inspector\front-end\cm\javascript.js" />
     <None Include="..\inspector\front-end\JavaScriptFormatter.js" />
-    <None Include="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js" />
     <None Include="..\inspector\front-end\JavaScriptSourceFrame.js" />
     <None Include="..\inspector\front-end\jsdifflib.js" />
     <None Include="..\inspector\front-end\JSHeapSnapshot.js" />
@@ -8698,7 +8633,6 @@
     <None Include="..\inspector\front-end\StyleSheetOutlineDialog.js" />
     <None Include="..\inspector\front-end\StylesSidebarPane.js" />
     <None Include="..\inspector\front-end\StylesSourceMapping.js" />
-    <None Include="..\inspector\front-end\SummaryBar.js" />
     <None Include="..\inspector\front-end\TabbedEditorContainer.js" />
     <None Include="..\inspector\front-end\tabbedPane.css" />
     <None Include="..\inspector\front-end\TabbedPane.js" />
