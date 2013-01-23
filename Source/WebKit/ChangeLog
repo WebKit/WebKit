@@ -1,3 +1,9 @@
+2013-01-23  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Checkin the OpenSource WebKit solution.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2013-01-23  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style to CRLF on Windows .sln files.
