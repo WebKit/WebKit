@@ -36,32 +36,34 @@ namespace JSC { namespace DFG {
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
-#define NodeResultMask              0xF
+#define NodeResultMask              0x7
 #define NodeResultJS                0x1
 #define NodeResultNumber            0x2
 #define NodeResultInt32             0x3
 #define NodeResultBoolean           0x4
 #define NodeResultStorage           0x5
                                 
-#define NodeMustGenerate           0x10 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeHasVarArgs             0x20
-#define NodeClobbersWorld          0x40
-#define NodeMightClobber           0x80
+#define NodeMustGenerate           0x08 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeHasVarArgs             0x10
+#define NodeClobbersWorld          0x20
+#define NodeMightClobber           0x40
                                 
-#define NodeBehaviorMask          0x300
-#define NodeMayOverflow           0x100
-#define NodeMayNegZero            0x200
+#define NodeBehaviorMask          0x180
+#define NodeMayOverflow           0x080
+#define NodeMayNegZero            0x100
                                 
-#define NodeBackPropMask         0x7C00
+#define NodeBackPropMask         0x3E00
 #define NodeUseBottom            0x0000
-#define NodeUsedAsNumber          0x400 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
-#define NodeNeedsNegZero          0x800 // The result of this computation may be used in a context that observes -0.
-#define NodeUsedAsOther          0x1000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
+#define NodeUsedAsNumber         0x0200 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
+#define NodeNeedsNegZero         0x0400 // The result of this computation may be used in a context that observes -0.
+#define NodeUsedAsOther          0x0800 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeUsedAsValue          (NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther)
-#define NodeUsedAsInt            0x2000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
-#define NodeUsedAsIntLocally     0x4000 // Same as NodeUsedAsInt, but within the same basic block.
+#define NodeUsedAsInt            0x1000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeUsedAsIntLocally     0x2000 // Same as NodeUsedAsInt, but within the same basic block.
 
-#define NodeDoesNotExit          0x8000 // This flag is negated to make it natural for the default to be that a node does exit.
+#define NodeDoesNotExit          0x4000 // This flag is negated to make it natural for the default to be that a node does exit.
+
+#define NodeRelevantToOSR        0x8000
 
 typedef uint16_t NodeFlags;
 

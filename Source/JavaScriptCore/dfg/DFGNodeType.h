@@ -60,8 +60,8 @@ namespace JSC { namespace DFG {
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
     macro(Phantom, NodeMustGenerate | NodeDoesNotExit) \
-    macro(Nop, 0 | NodeDoesNotExit) \
-    macro(Phi, 0 | NodeDoesNotExit) \
+    macro(Nop, NodeDoesNotExit) \
+    macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
     macro(Flush, NodeMustGenerate | NodeDoesNotExit) \
     \
     /* Get the value of a local variable, without linking into the VariableAccessData */\

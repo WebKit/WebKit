@@ -39,10 +39,6 @@ public:
     CSEPhase(Graph& graph)
         : Phase(graph, "common subexpression elimination")
     {
-        for (unsigned i = 0; i < m_graph.size(); ++i)
-            m_graph[i].replacement = NoNode;
-        
-        m_relevantToOSR.resize(m_graph.size());
     }
     
     bool run()
@@ -1023,7 +1019,7 @@ private:
             Edge edge = node.children.child(i);
             if (!edge)
                 continue;
-            if (m_relevantToOSR.get(edge.index()))
+            if (m_graph[edge].flags() & NodeRelevantToOSR)
                 continue;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -1108,7 +1104,7 @@ private:
         }
         
         if (node.op() == SetLocal)
-            m_relevantToOSR.set(node.child1().index());
+            m_graph[node.child1()].mergeFlags(NodeRelevantToOSR);
         
         if (!shouldGenerate)
             return;
@@ -1429,20 +1425,29 @@ private:
         for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
         
-        // Make all of my Phi nodes relevant to OSR.
-        for (unsigned i = 0; i < block->phis.size(); ++i)
-            m_relevantToOSR.set(block->phis[i]);
+        // All Phis need to already be marked as relevant to OSR, and have their
+        // replacements cleared, so we don't get confused while doing substitutions on
+        // GetLocal's.
+        for (unsigned i = 0; i < block->phis.size(); ++i) {
+            ASSERT(m_graph[block->phis[i]].flags() & NodeRelevantToOSR);
+            m_graph[block->phis[i]].replacement = NoNode;
+        }
         
-        // Make all of my SetLocal and GetLocal nodes relevant to OSR.
+        // Make all of my SetLocal and GetLocal nodes relevant to OSR, and do some other
+        // necessary bookkeeping.
         for (unsigned i = 0; i < block->size(); ++i) {
             NodeIndex nodeIndex = block->at(i);
             Node& node = m_graph[nodeIndex];
+            
+            node.replacement = NoNode;
+            
             switch (node.op()) {
             case SetLocal:
             case GetLocal: // FIXME: The GetLocal case is only necessary until we do https://bugs.webkit.org/show_bug.cgi?id=106707.
-                m_relevantToOSR.set(nodeIndex);
+                node.mergeFlags(NodeRelevantToOSR);
                 break;
             default:
+                node.clearFlags(NodeRelevantToOSR);
                 break;
             }
         }
@@ -1457,7 +1462,6 @@ private:
     NodeIndex m_compileIndex;
     unsigned m_indexInBlock;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
-    FastBitVector m_relevantToOSR;
     bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.
 };
 
