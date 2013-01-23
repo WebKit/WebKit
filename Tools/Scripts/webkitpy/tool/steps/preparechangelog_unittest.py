@@ -36,10 +36,82 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
+# FIXME: These tests should use a MockFileSystem instead of a real file system,
+# once changelog.py and preparechangelog.py are FileSystem compatible.
 
 class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
+    def test_resolve_existing_entry(self):
+        step = PrepareChangeLog(MockTool(), MockOptions())
+
+        roll_over = "== Rolled over to ChangeLog-2012-10-02 =="
+
+        headers = ["2013-01-18  Timothy Loh  <timloh@chromium.com>\n\n",
+                   "2013-01-20  Timothy Loh  <timloh@chromium.com>\n\n",
+                  u"2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>\n\n",
+                  u"2009-08-18  Tor Arne Vestb\xf8  <vestbo@webkit.org>\n\n",
+                  ]
+
+        bug_descs = ["        prepare-Changelog should support updating the list of changed files\n",
+                     "        webkit-patch upload should support updating the list of changed files\n"]
+
+        bug_url = "        https://bugs.webkit.org/show_bug.cgi?id=74358\n\n"
+
+        descriptions = ["", "        A description of the changes.\n\n",
+                "        A description.\n\n        With some\n        line breaks\n\n"]
+
+        changes = [
+"""        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog):
+        (PrepareChangeLog.run):\n\n""",
+"""        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._resolve_existing_entry):
+        (PrepareChangeLog):
+        (PrepareChangeLog.run):\n\n""",
+"""        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog): Some annotations
+        (PrepareChangeLog.run):
+            More annotations\n\n""",
+"""        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog): Some annotations
+        (PrepareChangeLog.run):
+            More annotations
+
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._resolve_existing_entry):
+        (PrepareChangeLog):
+        (PrepareChangeLog.run):\n\n""",
+            ]
+
+        def make_entry(indices):
+            a, b, c, d = indices
+            return headers[a] + bug_descs[b] + bug_url + descriptions[c] + changes[d]
+
+        test_cases = [((0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)),
+                      ((0, 0, 0, 0), (0, 0, 1, 0), (0, 0, 1, 0)),
+                      ((1, 0, 0, 0), (0, 0, 2, 0), (1, 0, 2, 0)),
+                      ((0, 1, 0, 0), (0, 0, 1, 0), (0, 1, 1, 0)),
+                      ((0, 0, 0, 1), (0, 0, 0, 0), (0, 0, 0, 1)),
+                      ((0, 0, 0, 0), (0, 0, 1, 1), (0, 0, 1, 0)),
+                      ((0, 0, 0, 0), (0, 0, 2, 2), (0, 0, 2, 2)),
+                      ((0, 0, 0, 1), (0, 0, 1, 2), (0, 0, 1, 3)),
+                      ((1, 1, 0, 1), (0, 0, 0, 2), (1, 1, 0, 3)),
+                      ((3, 0, 0, 0), (2, 0, 1, 0), (3, 0, 1, 0)),
+        ]
+
+        for new, old, final in test_cases:
+            new_entry = make_entry(new)
+            old_entry = make_entry(old)
+            start_file = new_entry + old_entry + roll_over
+
+            final_entry = make_entry(final)
+            end_file = final_entry + roll_over
+
+            path = self._write_tmp_file_with_contents(start_file.encode("utf-8"))
+            step._resolve_existing_entry(path)
+            actual_output = self._read_file_contents(path, "utf-8")
+            self.assertEquals(actual_output, end_file)
+
     def test_ensure_bug_url(self):
-        # FIXME: This should use a MockFileSystem instead of a real FileSystem.
         capture = OutputCapture()
         step = PrepareChangeLog(MockTool(), MockOptions())
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
@@ -49,7 +121,7 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             "bug_id": 1234,
             "changelogs": [changelog_path],
         }
-        capture.assert_outputs(self, step.run, [state])
+        capture.assert_outputs(self, step._ensure_bug_url, [state])
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         expected_message = "Example title\n        http://example.com/1234"
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)

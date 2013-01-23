@@ -1,3 +1,27 @@
+2013-01-22  Timothy Loh  <timloh@chromium.com>
+
+        prepare-Changelog should support updating the list of changed files
+        https://bugs.webkit.org/show_bug.cgi?id=74358
+
+        Reviewed by Eric Seidel.
+
+        Needing to re-make ChangeLog entries when the list of files/functions
+        changes is a bit annoying, it'd be nice to have this more automated.
+        This patch makes `webkit-patch update' update the date line and bug
+        description if needed, and if the list of changed files/functions has
+        changed, either updates the list (if there are no annotations), or
+        otherwise appends the new list below.
+
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._resolve_existing_entry):
+        (PrepareChangeLog):
+        (PrepareChangeLog._merge_entries):
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (PrepareChangeLogTest.test_resolve_existing_entry):
+        (make_entry):
+        (test_ensure_bug_url):
+
 2013-01-22  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Use Python 2.7 unittest syntax in our unittests
