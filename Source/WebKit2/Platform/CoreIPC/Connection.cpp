@@ -435,7 +435,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         m_pendingSyncReplies.removeLast();
     }
 
-    if (!pendingReply.replyDecoder)
+    if (!reply)
         didFailToSendSyncMessage();
 
     return reply.release();

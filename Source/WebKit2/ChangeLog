@@ -1,5 +1,12 @@
 2013-01-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * Platform/CoreIPC/Connection.cpp: (CoreIPC::Connection::sendSyncMessage):
+        Copy/paste trouble fix.
+
+2013-01-23  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/13064414> REGRESSION(r139514): didFailToSendSyncMessage is not called by Connection
         https://bugs.webkit.org/show_bug.cgi?id=107715
 
