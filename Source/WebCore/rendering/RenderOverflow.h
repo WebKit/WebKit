@@ -67,9 +67,14 @@ public:
     void setLayoutOverflow(const LayoutRect&);
     void setVisualOverflow(const LayoutRect&);
 
+    LayoutUnit layoutClientAfterEdge() const { return m_layoutClientAfterEdge; }
+    void setLayoutClientAfterEdge(LayoutUnit clientAfterEdge) { m_layoutClientAfterEdge = clientAfterEdge; }
+
 private:
     LayoutRect m_layoutOverflow;
     LayoutRect m_visualOverflow;
+
+    LayoutUnit m_layoutClientAfterEdge;
 };
 
 inline void RenderOverflow::move(LayoutUnit dx, LayoutUnit dy)

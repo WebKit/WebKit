@@ -1674,6 +1674,8 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
         else
             rectToApply = LayoutRect(clientRect.x(), clientRect.y(), max<LayoutUnit>(0, oldClientAfterEdge - clientRect.x()), 1);
         addLayoutOverflow(rectToApply);
+        if (hasRenderOverflow())
+            m_overflow->setLayoutClientAfterEdge(oldClientAfterEdge);
     }
         
     // Add visual overflow from box-shadow and border-image-outset.
@@ -2606,8 +2608,11 @@ bool RenderBlock::simplifiedLayout()
     // updating our overflow if we either used to have overflow or if the new temporary object has overflow.
     // For now just always recompute overflow.  This is no worse performance-wise than the old code that called rightmostPosition and
     // lowestPosition on every relayout so it's not a regression.
+    // computeOverflow expects the bottom edge before we clamp our height. Since this information isn't available during
+    // simplifiedLayout, we cache the value in m_overflow.
+    LayoutUnit oldClientAfterEdge = hasRenderOverflow() ? m_overflow->layoutClientAfterEdge() : clientLogicalBottom();
     m_overflow.clear();
-    computeOverflow(clientLogicalBottom(), true);
+    computeOverflow(oldClientAfterEdge, true);
 
     statePusher.pop();
     
