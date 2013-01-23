@@ -83,7 +83,6 @@ class FunctionWrapper<R (*)()> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
-    static const bool shouldValidateFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)())
         : m_function(function)
@@ -104,7 +103,6 @@ class FunctionWrapper<R (*)(P1)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
-    static const bool shouldValidateFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)(P1))
         : m_function(function)
@@ -125,7 +123,6 @@ class FunctionWrapper<R (*)(P1, P2)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
-    static const bool shouldValidateFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)(P1, P2))
         : m_function(function)
@@ -146,7 +143,6 @@ class FunctionWrapper<R (*)(P1, P2, P3)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
-    static const bool shouldValidateFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)(P1, P2, P3))
         : m_function(function)
@@ -167,7 +163,6 @@ class FunctionWrapper<R (C::*)()> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)())
         : m_function(function)
@@ -179,6 +174,14 @@ public:
         return (c->*m_function)();
     }
 
+    R operator()(const WeakPtr<C>& c)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)();
+    }
+
 private:
     R (C::*m_function)();
 };
@@ -188,7 +191,6 @@ class FunctionWrapper<R (C::*)(P1)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)(P1))
         : m_function(function)
@@ -200,6 +202,14 @@ public:
         return (c->*m_function)(p1);
     }
 
+    R operator()(const WeakPtr<C>& c, P1 p1)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)(p1);
+    }
+
 private:
     R (C::*m_function)(P1);
 };
@@ -209,7 +219,6 @@ class FunctionWrapper<R (C::*)(P1, P2)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)(P1, P2))
         : m_function(function)
@@ -221,6 +230,14 @@ public:
         return (c->*m_function)(p1, p2);
     }
 
+    R operator()(const WeakPtr<C>& c, P1 p1, P2 p2)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)(p1, p2);
+    }
+
 private:
     R (C::*m_function)(P1, P2);
 };
@@ -230,7 +247,6 @@ class FunctionWrapper<R (C::*)(P1, P2, P3)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)(P1, P2, P3))
         : m_function(function)
@@ -242,6 +258,14 @@ public:
         return (c->*m_function)(p1, p2, p3);
     }
 
+    R operator()(const WeakPtr<C>& c, P1 p1, P2 p2, P3 p3)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)(p1, p2, p3);
+    }
+
 private:
     R (C::*m_function)(P1, P2, P3);
 };
@@ -251,7 +275,6 @@ class FunctionWrapper<R (C::*)(P1, P2, P3, P4)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)(P1, P2, P3, P4))
         : m_function(function)
@@ -263,6 +286,14 @@ public:
         return (c->*m_function)(p1, p2, p3, p4);
     }
 
+    R operator()(const WeakPtr<C>& c, P1 p1, P2 p2, P3 p3, P4 p4)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)(p1, p2, p3, p4);
+    }
+
 private:
     R (C::*m_function)(P1, P2, P3, P4);
 };
@@ -272,7 +303,6 @@ class FunctionWrapper<R (C::*)(P1, P2, P3, P4, P5)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
-    static const bool shouldValidateFirstParameter = true;
 
     explicit FunctionWrapper(R (C::*function)(P1, P2, P3, P4, P5))
         : m_function(function)
@@ -282,6 +312,14 @@ public:
     R operator()(C* c, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
     {
         return (c->*m_function)(p1, p2, p3, p4, p5);
+    }
+
+    R operator()(const WeakPtr<C>& c, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+    {
+        C* obj = c.get();
+        if (!obj)
+            return R();
+        return (obj->*m_function)(p1, p2, p3, p4, p5);
     }
 
 private:
@@ -294,7 +332,6 @@ class FunctionWrapper<R (^)()> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
-    static const bool shouldValidateFirstParameter = false;
 
     explicit FunctionWrapper(R (^block)())
         : m_block(Block_copy(block))
@@ -335,7 +372,6 @@ template<typename T> struct ParamStorageTraits {
     typedef T StorageType;
 
     static StorageType wrap(const T& value) { return value; }
-    static bool validate(const StorageType&) { return true; }
     static const T& unwrap(const StorageType& value) { return value; }
 };
 
@@ -343,7 +379,6 @@ template<typename T> struct ParamStorageTraits<PassRefPtr<T> > {
     typedef RefPtr<T> StorageType;
 
     static StorageType wrap(PassRefPtr<T> value) { return value; }
-    static bool validate(const StorageType&) { return true; }
     static T* unwrap(const StorageType& value) { return value.get(); }
 };
 
@@ -351,18 +386,8 @@ template<typename T> struct ParamStorageTraits<RefPtr<T> > {
     typedef RefPtr<T> StorageType;
 
     static StorageType wrap(RefPtr<T> value) { return value.release(); }
-    static bool validate(const StorageType&) { return true; }
     static T* unwrap(const StorageType& value) { return value.get(); }
 };
-
-template<typename T> struct ParamStorageTraits<WeakPtr<T> > {
-    typedef WeakPtr<T> StorageType;
-
-    static StorageType wrap(WeakPtr<T> value) { return value; }
-    static bool validate(const StorageType& value) { return value.get(); }
-    static T* unwrap(const StorageType& value) { return value.get(); }
-};
-
 
 template<typename> class RetainPtr;
 
@@ -370,7 +395,6 @@ template<typename T> struct ParamStorageTraits<RetainPtr<T> > {
     typedef RetainPtr<T> StorageType;
 
     static StorageType wrap(const RetainPtr<T>& value) { return value; }
-    static bool validate(const StorageType&) { return true; }
     static typename RetainPtr<T>::PtrType unwrap(const StorageType& value) { return value.get(); }
 };
 
@@ -425,8 +449,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1));
     }
 
@@ -453,8 +475,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2));
     }
 
@@ -483,8 +503,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3));
     }
 
@@ -515,8 +533,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3), ParamStorageTraits<P4>::unwrap(m_p4));
     }
 
@@ -549,8 +565,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3), ParamStorageTraits<P4>::unwrap(m_p4), ParamStorageTraits<P5>::unwrap(m_p5));
     }
 
@@ -585,8 +599,6 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        if (FunctionWrapper::shouldValidateFirstParameter && !ParamStorageTraits<P1>::validate(m_p1))
-            return typename FunctionWrapper::ResultType();
         return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3), ParamStorageTraits<P4>::unwrap(m_p4), ParamStorageTraits<P5>::unwrap(m_p5), ParamStorageTraits<P6>::unwrap(m_p6));
     }
 

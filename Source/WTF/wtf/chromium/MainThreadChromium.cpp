@@ -34,6 +34,7 @@
 #include "Assertions.h"
 #include "ChromiumThreading.h"
 #include "Threading.h"
+#include <wtf/Functional.h>
 
 namespace WTF {
 
@@ -52,6 +53,18 @@ void initializeMainThread()
 void callOnMainThread(MainThreadFunction* function, void* context)
 {
     ChromiumThreading::callOnMainThread(function, context);
+}
+
+static void callFunctionObject(void* context)
+{
+    Function<void()>* function = static_cast<Function<void()>*>(context);
+    (*function)();
+    delete function;
+}
+
+void callOnMainThread(const Function<void()>& function)
+{
+    callOnMainThread(callFunctionObject, new Function<void()>(function));
 }
 
 void callOnMainThreadAndWait(MainThreadFunction*, void*)

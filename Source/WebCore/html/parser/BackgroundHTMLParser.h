@@ -32,6 +32,7 @@
 #include "HTMLParserOptions.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -44,18 +45,18 @@ public:
     void append(const String&);
     void finish();
 
-    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, ParserIdentifier identifier)
+    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, WeakPtr<HTMLDocumentParser> parser)
     {
-        return adoptPtr(new BackgroundHTMLParser(options, identifier));
+        return adoptPtr(new BackgroundHTMLParser(options, parser));
     }
 
-    static void createPartial(ParserIdentifier, HTMLParserOptions);
+    static void createPartial(ParserIdentifier, HTMLParserOptions, WeakPtr<HTMLDocumentParser>);
     static void stopPartial(ParserIdentifier);
     static void appendPartial(ParserIdentifier, const String& input);
     static void finishPartial(ParserIdentifier);
 
 private:
-    explicit BackgroundHTMLParser(const HTMLParserOptions&, ParserIdentifier);
+    BackgroundHTMLParser(const HTMLParserOptions&, WeakPtr<HTMLDocumentParser>);
 
     void markEndOfFile();
     void pumpTokenizer();
@@ -68,7 +69,7 @@ private:
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;
-    ParserIdentifier m_parserIdentifer;
+    WeakPtr<HTMLDocumentParser> m_parser;
     OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
 };
 
@@ -80,14 +81,11 @@ public:
     }
 
     typedef HashMap<ParserIdentifier, OwnPtr<BackgroundHTMLParser> > BackgroundParserMap;
-    typedef HashMap<ParserIdentifier, HTMLDocumentParser*> MainThreadParserMap;
 
     BackgroundParserMap& backgroundParsers();
-    MainThreadParserMap& mainThreadParsers();
 
 private:
     BackgroundParserMap m_backgroundParsers;
-    MainThreadParserMap m_mainThreadParsers;
 };
 
 ParserMap& parserMap();

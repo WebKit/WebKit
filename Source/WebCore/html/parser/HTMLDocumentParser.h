@@ -39,6 +39,7 @@
 #include "XSSAuditor.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -171,6 +172,7 @@ private:
 
 #if ENABLE(THREADED_HTML_PARSER)
     Deque<OwnPtr<CompactHTMLTokenStream> > m_pendingTokens;
+    WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
 #endif
 
     bool m_endWasDelayed;

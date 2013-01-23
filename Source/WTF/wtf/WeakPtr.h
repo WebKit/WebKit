@@ -96,6 +96,14 @@ public:
     // We should consider having createWeakPtr populate m_ref the first time createWeakPtr is called.
     WeakPtr<T> createWeakPtr() { return WeakPtr<T>(m_ref); }
 
+    void revokeAll()
+    {
+        T* ptr = m_ref->get();
+        m_ref->clear();
+        // We create a new WeakReference so that future calls to createWeakPtr() create nonzero WeakPtrs.
+        m_ref = Internal::WeakReference<T>::create(ptr);
+    }
+
 private:
     RefPtr<Internal::WeakReference<T> > m_ref;
 };

@@ -82,6 +82,9 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_xssAuditor(this)
+#if ENABLE(THREADED_HTML_PARSER)
+    , m_weakFactory(this)
+#endif
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -96,6 +99,9 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
     , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
     , m_xssAuditor(this)
+#if ENABLE(THREADED_HTML_PARSER)
+    , m_weakFactory(this)
+#endif
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -456,9 +462,8 @@ void HTMLDocumentParser::startBackgroundParser()
     m_haveBackgroundParser = true;
 
     ParserIdentifier identifier = ParserMap::identifierForParser(this);
-    parserMap().mainThreadParsers().set(identifier, this);
-
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::createPartial, identifier, m_options));
+    WeakPtr<HTMLDocumentParser> parser = m_weakFactory.createWeakPtr();
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::createPartial, identifier, m_options, parser));
 }
 
 void HTMLDocumentParser::stopBackgroundParser()
@@ -469,9 +474,7 @@ void HTMLDocumentParser::stopBackgroundParser()
 
     ParserIdentifier identifier = ParserMap::identifierForParser(this);
     HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::stopPartial, identifier));
-
-    parserMap().mainThreadParsers().set(identifier, 0);
-    // We will not recieve any messages from the parser after this point.
+    m_weakFactory.revokeAll();
 }
 
 #endif

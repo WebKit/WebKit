@@ -68,9 +68,6 @@ static bool threadSafeMatch(const String& localName, const QualifiedName& qName)
     return threadSafeEqual(localName.impl(), qName.localName().impl());
 }
 
-typedef const void* ParserIdentifier;
-class HTMLDocumentParser;
-
 ParserMap& parserMap()
 {
     // This initialization assumes that this will be initialize on the main thread before
@@ -85,17 +82,11 @@ ParserMap::BackgroundParserMap& ParserMap::backgroundParsers()
     return m_backgroundParsers;
 }
 
-ParserMap::MainThreadParserMap& ParserMap::mainThreadParsers()
-{
-    ASSERT(isMainThread());
-    return m_mainThreadParsers;
-}
-
-BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, ParserIdentifier identifier)
+BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, WeakPtr<HTMLDocumentParser> parser)
     : m_inForeignContent(false)
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
-    , m_parserIdentifer(identifier)
+    , m_parser(parser)
     , m_pendingTokens(adoptPtr(new CompactHTMLTokenStream))
 {
 }
@@ -173,29 +164,6 @@ void BackgroundHTMLParser::pumpTokenizer()
     sendTokensToMainThread();
 }
 
-class TokenDelivery {
-    WTF_MAKE_NONCOPYABLE(TokenDelivery);
-public:
-    TokenDelivery()
-        : identifier(0)
-    {
-    }
-
-    ParserIdentifier identifier;
-    OwnPtr<CompactHTMLTokenStream> tokens;
-    static void execute(void* context)
-    {
-        TokenDelivery* delivery = static_cast<TokenDelivery*>(context);
-        HTMLDocumentParser* parser = parserMap().mainThreadParsers().get(delivery->identifier);
-        if (parser)
-            parser->didReceiveTokensFromBackgroundParser(delivery->tokens.release());
-        // FIXME: Ideally we wouldn't need to call delete manually. Instead
-        // we would like an API where the message queue owns the tasks and
-        // takes care of deleting them.
-        delete delivery;
-    }
-};
-
 void BackgroundHTMLParser::sendTokensToMainThread()
 {
     if (m_pendingTokens->isEmpty())
@@ -205,18 +173,15 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens.get());
 #endif
 
-    TokenDelivery* delivery = new TokenDelivery;
-    delivery->identifier = m_parserIdentifer;
-    delivery->tokens = m_pendingTokens.release();
-    callOnMainThread(TokenDelivery::execute, delivery);
+    callOnMainThread(bind(&HTMLDocumentParser::didReceiveTokensFromBackgroundParser, m_parser, m_pendingTokens.release()));
 
     m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);
 }
 
-void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, HTMLParserOptions options)
+void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, HTMLParserOptions options, WeakPtr<HTMLDocumentParser> parser)
 {
     ASSERT(!parserMap().backgroundParsers().get(identifier));
-    parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, identifier));
+    parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, parser));
 }
 
 void BackgroundHTMLParser::stopPartial(ParserIdentifier identifier)

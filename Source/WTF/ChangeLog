@@ -1,3 +1,26 @@
+2013-01-23  Adam Barth  <abarth@webkit.org>
+
+        BackgroundHTMLParser::sendTokensToMainThread should use bind
+        https://bugs.webkit.org/show_bug.cgi?id=107637
+
+        Reviewed by Eric Seidel.
+
+        * wtf/Functional.h:
+            - I had to re-work the approach to validating WeakPtr |this|
+              arguments a bit. Previously you couldn't pass a WeakPtr as a
+              non-|this| argument to a function because we would try to unwrap
+              it into a raw pointer.
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrFactory::revokeAll):
+        (WeakPtrFactory):
+            - Let clients revoke all outstanding WeakPtrs without needing to
+              destroy the WeakPtrFactory.
+        * wtf/chromium/MainThreadChromium.cpp:
+        (WTF::callFunctionObject):
+        (WTF::callOnMainThread):
+            - Implement callOnMainThread for Function objects. The non-Chromium
+              implementation of MainThread.cpp already implements this feature.
+
 2013-01-23  Justin Schuh  <jschuh@chromium.org>
 
         [CHROMIUM] Suppress c4267 build warnings in WTF for Win64 targets
