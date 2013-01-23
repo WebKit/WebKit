@@ -400,7 +400,7 @@ void SVGUseElement::clearResourceReferences()
 {
     // FIXME: We should try to optimize this, to at least allow partial reclones.
     if (ShadowRoot* shadowTreeRootElement =  shadow()->oldestShadowRoot())
-        shadowTreeRootElement->removeAllChildren();
+        shadowTreeRootElement->removeChildren();
 
     if (m_targetElementInstance) {
         m_targetElementInstance->detach();
