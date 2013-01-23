@@ -18,9 +18,6 @@
 
 namespace WebCore {
 class Range;
-class SpellChecker;
-class VisibleSelection;
-class VisiblePosition;
 }
 
 namespace BlackBerry {

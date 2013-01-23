@@ -516,6 +516,11 @@ Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
         : curr->tree()->traversePreviousWithWrap(wrapFlag);
 }
 
+PassRefPtr<Range> trimWhitespaceFromRange(PassRefPtr<Range> range)
+{
+    return trimWhitespaceFromRange(VisiblePosition(range->startPosition()), VisiblePosition(range->endPosition()));
+}
+
 PassRefPtr<Range> trimWhitespaceFromRange(VisiblePosition startPosition, VisiblePosition endPosition)
 {
     if (isEmptyRangeOrAllSpaces(startPosition, endPosition))

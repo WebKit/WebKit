@@ -23,6 +23,7 @@
 #include "TextChecking.h"
 
 #include <BlackBerryPlatformInputEvents.h>
+#include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformSettings.h>
 
 #include <imf/events.h>
@@ -240,6 +241,7 @@ private:
     bool m_didSpellCheckWord;
     SpellingHandler* m_spellingHandler;
 
+    DISABLE_COPY(InputHandler);
 };
 
 }

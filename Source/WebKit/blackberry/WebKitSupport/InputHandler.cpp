@@ -70,7 +70,6 @@
 #include <BlackBerryPlatformIMF.h>
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>
-#include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
 #include <sys/keycodes.h>

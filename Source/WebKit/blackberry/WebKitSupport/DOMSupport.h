@@ -93,6 +93,7 @@ WebCore::VisibleSelection visibleSelectionForClosestActualWordStart(const WebCor
 
 WebCore::Frame* incrementFrame(WebCore::Frame* curr, bool forward, bool wrapFlag);
 
+PassRefPtr<WebCore::Range> trimWhitespaceFromRange(PassRefPtr<WebCore::Range>);
 PassRefPtr<WebCore::Range> trimWhitespaceFromRange(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
 bool isEmptyRangeOrAllSpaces(WebCore::VisiblePosition, WebCore::VisiblePosition);
 

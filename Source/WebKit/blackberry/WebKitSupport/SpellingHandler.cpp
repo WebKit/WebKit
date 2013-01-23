@@ -9,7 +9,6 @@
 #include "InputHandler.h"
 #include "Range.h"
 #include "SpellChecker.h"
-#include "TextIterator.h"
 #include "visible_units.h"
 
 #include <BlackBerryPlatformIMF.h>
@@ -44,6 +43,8 @@ SpellingHandler::~SpellingHandler()
 
 void SpellingHandler::spellCheckTextBlock(WebCore::VisibleSelection& visibleSelection, WebCore::TextCheckingProcessType textCheckingProcessType)
 {
+    SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckTextBlock");
+
     // Check if this request can be sent off in one message, or if it needs to be broken down.
     RefPtr<Range> rangeForSpellChecking = visibleSelection.toNormalizedRange();
     if (!rangeForSpellChecking || !rangeForSpellChecking->text() || !rangeForSpellChecking->text().length())
@@ -79,43 +80,41 @@ void SpellingHandler::spellCheckTextBlock(WebCore::VisibleSelection& visibleSele
 void SpellingHandler::createSpellCheckRequest(PassRefPtr<WebCore::Range> rangeForSpellCheckingPtr, WebCore::TextCheckingProcessType textCheckingProcessType)
 {
     RefPtr<WebCore::Range> rangeForSpellChecking = rangeForSpellCheckingPtr;
-    if (isSpellCheckActive() && rangeForSpellChecking->text().length() >= MinSpellCheckingStringLength)
+    rangeForSpellChecking = DOMSupport::trimWhitespaceFromRange(rangeForSpellChecking);
+
+    SpellingLog(Platform::LogLevelInfo, "SpellingHandler::createSpellCheckRequest Substring text is '%s', of size %d"
+        , rangeForSpellChecking->text().latin1().data()
+        , rangeForSpellChecking->text().length());
+
+    if (rangeForSpellChecking->text().length() >= MinSpellCheckingStringLength)
         m_inputHandler->callRequestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling, textCheckingProcessType, rangeForSpellChecking, rangeForSpellChecking));
 }
 
 void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>*)
 {
-    if (isEndOfDocument(m_startOfCurrentLine)) {
-        m_isSpellCheckActive = false;
-        return;
-    }
-
     // Create a selection with the start and end points of the line, and convert to Range to create a SpellCheckRequest.
-    RefPtr<Range> rangeForSpellChecking = VisibleSelection(m_startOfCurrentLine, m_endOfCurrentLine).toNormalizedRange();
+    RefPtr<Range> rangeForSpellChecking = makeRange(m_startOfCurrentLine, m_endOfCurrentLine);
     if (!rangeForSpellChecking) {
-        SpellingLog(Platform::LogLevelInfo, "SpellingHandler::spellCheckBlock Failed to set text range for spellchecking.");
+        SpellingLog(Platform::LogLevelInfo, "SpellingHandler::parseBlockForSpellChecking Failed to set text range for spellchecking.");
         return;
     }
 
     if (rangeForSpellChecking->text().length() < MaxSpellCheckingStringLength) {
-        m_startOfCurrentLine = nextLinePosition(m_startOfCurrentLine, m_startOfCurrentLine.lineDirectionPointForBlockDirectionNavigation());
-        m_endOfCurrentLine = endOfLine(m_startOfCurrentLine);
-    } else {
-        // Iterate through words from the start of the line to the end.
-        rangeForSpellChecking = getRangeForSpellCheckWithFineGranularity(m_startOfCurrentLine, m_endOfCurrentLine);
-        if (!rangeForSpellChecking) {
-            SpellingLog(Platform::LogLevelWarn, "SpellingHandler::spellCheckBlock Failed to set text range with fine granularity.");
+        if (isEndOfDocument(m_endOfCurrentLine)) {
+            createSpellCheckRequest(rangeForSpellChecking, m_textCheckingProcessType);
+            m_isSpellCheckActive = false;
             return;
         }
-        m_startOfCurrentLine = VisiblePosition(rangeForSpellChecking->endPosition());
-        m_endOfCurrentLine = endOfLine(m_startOfCurrentLine);
-        rangeForSpellChecking = DOMSupport::trimWhitespaceFromRange(VisiblePosition(rangeForSpellChecking->startPosition()), VisiblePosition(rangeForSpellChecking->endPosition()));
+        m_endOfCurrentLine = endOfLine(nextLinePosition(m_endOfCurrentLine, m_endOfCurrentLine.lineDirectionPointForBlockDirectionNavigation()));
+        m_timer.startOneShot(s_timeout);
+        return;
     }
 
-    SpellingLog(Platform::LogLevelInfo,
-        "SpellingHandler::spellCheckBlock Substring text is '%s', of size %d",
-        rangeForSpellChecking->text().latin1().data(),
-        rangeForSpellChecking->text().length());
+    // Iterate through words from the start of the line to the end.
+    rangeForSpellChecking = getRangeForSpellCheckWithFineGranularity(m_startOfCurrentLine, m_endOfCurrentLine);
+
+    m_startOfCurrentLine = VisiblePosition(rangeForSpellChecking->endPosition());
+    m_endOfCurrentLine = endOfLine(m_startOfCurrentLine);
 
     // Call spellcheck with substring.
     createSpellCheckRequest(rangeForSpellChecking, m_textCheckingProcessType);
@@ -125,25 +124,33 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
 
 PassRefPtr<Range> SpellingHandler::getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition)
 {
+    SpellingLog(Platform::LogLevelWarn, "SpellingHandler::getRangeForSpellCheckWithFineGranularity");
+    ASSERT(makeRange(startPosition, endOfCurrentWord));
     VisiblePosition endOfCurrentWord = endOfWord(startPosition);
 
     // Keep iterating until one of our cases is hit, or we've incremented the starting position right to the end.
     while (startPosition != endPosition) {
         // Check the text length within this range.
-        if (VisibleSelection(startPosition, endOfCurrentWord).toNormalizedRange()->text().length() >= MaxSpellCheckingStringLength) {
+        if (makeRange(startPosition, endOfCurrentWord)->text().length() >= MaxSpellCheckingStringLength) {
             // If this is not the first word, return a Range with end boundary set to the previous word.
-            if (startOfWord(endOfCurrentWord, LeftWordIfOnBoundary) != startPosition && !DOMSupport::isEmptyRangeOrAllSpaces(startPosition, endOfCurrentWord))
-                return VisibleSelection(startPosition, endOfWord(previousWordPosition(endOfCurrentWord), LeftWordIfOnBoundary)).toNormalizedRange();
-
+            if (startOfWord(endOfCurrentWord, LeftWordIfOnBoundary) != startPosition && !DOMSupport::isEmptyRangeOrAllSpaces(startPosition, endOfCurrentWord)) {
+                // When a series of whitespace follows a word, previousWordPosition will jump passed all of them, and using LeftWordIfOnBoundary brings us to
+                // our starting position. Check for this case and use RightWordIfOnBoundary to jump back over the word.
+                VisiblePosition endOfPreviousWord = endOfWord(previousWordPosition(endOfCurrentWord), LeftWordIfOnBoundary);
+                if (startPosition == endOfPreviousWord)
+                    return makeRange(startPosition, endOfWord(previousWordPosition(endOfCurrentWord), RightWordIfOnBoundary));
+                return makeRange(startPosition, endOfPreviousWord);
+            }
             // Our first word has gone over the character limit. Increment the starting position past an uncheckable word.
             startPosition = endOfCurrentWord;
             endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord));
         } else if (endOfCurrentWord == endPosition)
-            return VisibleSelection(startPosition, endPosition).toNormalizedRange(); // Return the last segment if the end of our word lies at the end of the range.
+            return makeRange(startPosition, endPosition); // Return the last segment if the end of our word lies at the end of the range.
         else
             endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord)); // Increment the current word.
     }
-    return 0;
+    // This will return an range with no string, but allows processing to continue
+    return makeRange(startPosition, endPosition);
 }
 
 } // WebKit

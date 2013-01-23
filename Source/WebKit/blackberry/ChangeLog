@@ -1,3 +1,32 @@
+2013-01-23  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Optimize spellchecking by coalescing messages
+        https://bugs.webkit.org/show_bug.cgi?id=107707
+
+        Reviewed by Rob Buis.
+
+        PR233604
+        Instead of taking chunks one line at a time, coalesce them together
+        to fire off messages as close to our character limit as possible.
+        This should dramatically reduce the total number of messages in email
+        giving us a little performance bump.
+
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::trimWhitespaceFromRange):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InputHandler.cpp:
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        (BlackBerry::WebKit::SpellingHandler::createSpellCheckRequest):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+        (BlackBerry::WebKit::SpellingHandler::getRangeForSpellCheckWithFineGranularity):
+        * WebKitSupport/SpellingHandler.h:
+
 2013-01-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         shadowAncestorNode() should be renamed to deprecatedShadowAncestorNode()
