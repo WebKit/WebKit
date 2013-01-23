@@ -352,6 +352,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     switch (type) {
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowScriptFromSource(url))
+            return false;
+        break;
 #endif
     case CachedResource::Script:
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowScriptFromSource(url))
