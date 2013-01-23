@@ -35,7 +35,7 @@
 #include "EventSender.h"
 #include "GamepadController.h"
 #include "TextInputController.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 using WebKit::WebFrame;
 using WebKit::WebString;

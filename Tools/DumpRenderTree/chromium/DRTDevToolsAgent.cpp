@@ -34,10 +34,10 @@
 #include "DRTDevToolsClient.h"
 
 #include "Task.h"
-#include "platform/WebCString.h"
 #include "WebDevToolsAgent.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"
+#include <public/WebCString.h>
 
 using namespace WebKit;
 using namespace WebTestRunner;

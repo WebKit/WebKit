@@ -41,7 +41,7 @@
 #include "WebDragOperation.h"
 #include "WebInputEvent.h"
 #include "WebTask.h"
-#include "platform/WebPoint.h"
+#include <public/WebPoint.h>
 
 namespace WebKit {
 class WebDragData;

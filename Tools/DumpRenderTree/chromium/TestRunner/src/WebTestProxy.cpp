@@ -48,9 +48,9 @@
 #include "WebTestInterfaces.h"
 #include "WebTestRunner.h"
 #include "WebView.h"
-#include "platform/WebCString.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
+#include <public/WebCString.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 #include <wtf/StringExtras.h>
 
 using namespace WebKit;

@@ -1,3 +1,44 @@
+2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Update some #includes in DumpRenderTree for headers in the new Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=107145
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 82948.
+        
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        * DumpRenderTree/chromium/MockWebPrerenderingSupport.h:
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        * DumpRenderTree/chromium/TestNavigationController.h:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/CppBoundClass.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.h:
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        * DumpRenderTree/chromium/TestRunner/src/TextInputController.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebPermissions.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm:
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+
 2013-01-23  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Use after free in plugins/geturlnotify-during-document-teardown.html

@@ -37,8 +37,8 @@
 #include "WebInputEvent.h"
 #include "WebRange.h"
 #include "WebView.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebString.h>
+#include <public/WebVector.h>
 #include <string>
 #include <wtf/StringExtras.h>
 

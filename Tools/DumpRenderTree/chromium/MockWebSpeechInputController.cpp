@@ -28,8 +28,8 @@
 
 #include "Task.h"
 #include "WebSpeechInputListener.h"
-#include "platform/WebCString.h"
-#include "platform/WebVector.h"
+#include <public/WebCString.h>
+#include <public/WebVector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

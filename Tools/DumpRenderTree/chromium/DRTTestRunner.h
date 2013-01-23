@@ -43,10 +43,10 @@
 #define DRTTestRunner_h
 
 #include "TestRunner/src/TestRunner.h"
+#include "WebArrayBufferView.h"
 #include "WebTask.h"
-#include "platform/WebArrayBufferView.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 

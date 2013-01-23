@@ -33,7 +33,7 @@
 
 #include "WebDevToolsFrontendClient.h"
 #include "WebTask.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 namespace WebKit {

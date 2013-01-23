@@ -34,11 +34,11 @@
 #define TestRunner_h
 
 #include "CppBoundClass.h"
+#include "WebArrayBufferView.h"
 #include "WebDeliveredIntentClient.h"
 #include "WebTask.h"
 #include "WebTestRunner.h"
-#include "platform/WebArrayBufferView.h"
-#include "platform/WebURL.h"
+#include <public/WebURL.h>
 
 namespace WebKit {
 class WebView;

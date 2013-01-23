@@ -37,7 +37,7 @@
 #include "WebFrame.h"
 #include "WebNode.h"
 #include "WebView.h"
-#include "platform/WebCString.h"
+#include <public/WebCString.h>
 
 using namespace WebKit;
 

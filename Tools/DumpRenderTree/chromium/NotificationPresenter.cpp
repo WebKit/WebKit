@@ -37,10 +37,10 @@
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 #include "googleurl/src/gurl.h"
 #include <public/Platform.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

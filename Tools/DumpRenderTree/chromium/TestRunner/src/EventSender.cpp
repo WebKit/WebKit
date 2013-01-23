@@ -51,10 +51,10 @@
 #include "WebEventSender.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"
-#include "platform/WebDragData.h"
-#include "platform/WebPoint.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebDragData.h>
+#include <public/WebPoint.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 #include <wtf/Deque.h>
 #include <wtf/StringExtras.h>
 

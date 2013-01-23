@@ -30,7 +30,7 @@
 #ifndef WebThemeEngineDRTMac_h
 #define WebThemeEngineDRTMac_h
 
-#include "third_party/WebKit/Source/Platform/chromium/public/mac/WebThemeEngine.h"
+#include <public/mac/WebThemeEngine.h>
 
 class WebThemeEngineDRTMac : public WebKit::WebThemeEngine {
 public:

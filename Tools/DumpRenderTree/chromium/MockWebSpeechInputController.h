@@ -29,9 +29,9 @@
 #if ENABLE(INPUT_SPEECH)
 
 #include "WebTask.h"
-#include "platform/WebRect.h"
 #include "WebSpeechInputController.h"
 #include "WebSpeechInputResult.h"
+#include <public/WebRect.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>

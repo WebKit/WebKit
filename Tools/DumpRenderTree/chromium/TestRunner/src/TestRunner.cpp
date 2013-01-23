@@ -47,15 +47,15 @@
 #include "WebPreferences.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
+#include "WebSerializedScriptValue.h"
 #include "WebSettings.h"
 #include "WebSurroundingText.h"
 #include "WebTask.h"
 #include "WebTestDelegate.h"
 #include "WebView.h"
 #include "WebWorkerInfo.h"
-#include "platform/WebPoint.h"
-#include "platform/WebSerializedScriptValue.h"
 #include "v8/include/v8.h"
+#include <public/WebPoint.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
 

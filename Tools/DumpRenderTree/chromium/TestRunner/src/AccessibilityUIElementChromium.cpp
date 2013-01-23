@@ -32,10 +32,10 @@
 #include "AccessibilityUIElementChromium.h"
 
 #include "WebAccessibilityObject.h"
-#include "platform/WebCString.h"
-#include "platform/WebPoint.h"
-#include "platform/WebRect.h"
-#include "platform/WebString.h"
+#include <public/WebCString.h>
+#include <public/WebPoint.h>
+#include <public/WebRect.h>
+#include <public/WebString.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
 

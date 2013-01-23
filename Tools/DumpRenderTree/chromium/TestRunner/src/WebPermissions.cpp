@@ -32,8 +32,8 @@
 #include "WebPermissions.h"
 
 #include "WebTestDelegate.h"
-#include "platform/WebCString.h"
-#include "platform/WebURL.h"
+#include <public/WebCString.h>
+#include <public/WebURL.h>
 
 namespace WebTestRunner {
 

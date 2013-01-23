@@ -33,11 +33,11 @@
 #include "WebPluginParams.h"
 #include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "public/WebCompositorSupport.h"
-#include "public/WebExternalTextureLayer.h"
-#include "public/WebExternalTextureLayerClient.h"
 #include <public/Platform.h>
+#include <public/WebCompositorSupport.h>
+#include <public/WebExternalTextureLayer.h>
+#include <public/WebExternalTextureLayerClient.h>
+#include <public/WebGraphicsContext3D.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

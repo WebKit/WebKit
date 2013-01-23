@@ -31,9 +31,9 @@
 #include "config.h"
 #include "WebThemeEngineDRTWin.h"
 
-#include "platform/WebRect.h"
 #include "WebThemeControlDRTWin.h"
 #include "third_party/skia/include/core/SkRect.h"
+#include <public/WebRect.h>
 
 // Although all this code is generic, we include these headers
 // to pull in the Windows #defines for the parts and states of
