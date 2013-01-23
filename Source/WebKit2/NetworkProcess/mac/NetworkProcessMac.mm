@@ -31,6 +31,7 @@
 #import "NetworkProcessCreationParameters.h"
 #import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
+#import "SandboxInitializationParameters.h"
 #import "StringUtilities.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
@@ -61,37 +62,6 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
     if (!parameters.uiProcessName.isNull()) {
         NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
         WKSetVisibleApplicationName((CFStringRef)applicationName);
-    }
-}
-
-void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters)
-{
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
-
-#if DEBUG_BYPASS_SANDBOX
-    WTFLogAlways("Bypassing network process sandbox.\n");
-    return;
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    // Use private temporary and cache directories.
-    String systemDirectorySuffix = "com.apple.WebKit.NetworkProcess+" + parameters.clientIdentifier;
-    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
-    char temporaryDirectory[PATH_MAX];
-    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
-        WTFLogAlways("NetworkProcess: couldn't retrieve private temporary directory path: %d\n", errno);
-        exit(EX_NOPERM);
-    }
-    setenv("TMPDIR", temporaryDirectory, 1);
-#endif
-
-    // FIXME (NetworkProcess): <rdar://problem/12772605> Actually initialize the sandbox.
-
-    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
-    OSStatus error = WKEnableSandboxStyleFileQuarantine();
-    if (error) {
-        WTFLogAlways("NetworkProcess: Couldn't enable sandbox style file quarantine: %ld\n", (long)error);
-        exit(EX_NOPERM);
     }
 }
 
@@ -206,6 +176,12 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo& certificateInfo, const String& host)
 {
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
+}
+
+// FIXME: Remove when the process has a profile.
+void NetworkProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters& parameters)
+{
+    parameters.setSandboxProfilePath(String());
 }
 
 } // namespace WebKit

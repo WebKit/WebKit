@@ -86,7 +86,13 @@ void ChildProcess::initializeProcessName(const ChildProcessInitializationParamet
 {
 }
 
+#if !PLATFORM(MAC)
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&)
+{
+}
+#endif
+
+void ChildProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 

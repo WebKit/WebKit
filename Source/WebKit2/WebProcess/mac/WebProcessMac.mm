@@ -28,6 +28,7 @@
 
 #import "CustomProtocolManager.h"
 #import "SandboxExtension.h"
+#import "SandboxInitializationParameters.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WebInspector.h"
 #import "WebPage.h"
@@ -49,23 +50,6 @@
 
 #if USE(SECURITY_FRAMEWORK)
 #import "SecItemShim.h"
-#endif
-
-#if ENABLE(WEB_PROCESS_SANDBOX)
-#import <pwd.h>
-#import <stdlib.h>
-#import <sysexits.h>
-
-// We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>). 
-#undef __APPLE_API_PRIVATE
-#import <sandbox.h>
-
-#define SANDBOX_NAMED_EXTERNAL 0x0003
-extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
-
-// Define this to 1 to bypass the sandbox for debugging purposes.
-#define DEBUG_BYPASS_SANDBOX 0
-
 #endif
 
 using namespace WebCore;
@@ -154,108 +138,6 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     });
 }
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
-static void appendSandboxParameterPathInternal(Vector<const char*>& vector, const char* name, const char* path)
-{
-    char normalizedPath[PATH_MAX];
-    if (!realpath(path, normalizedPath))
-        normalizedPath[0] = '\0';
-
-    vector.append(name);
-    vector.append(fastStrDup(normalizedPath));
-}
-
-static void appendReadwriteConfDirectory(Vector<const char*>& vector, const char* name, int confID)
-{
-    char path[PATH_MAX];
-    if (confstr(confID, path, PATH_MAX) <= 0)
-        path[0] = '\0';
-
-    appendSandboxParameterPathInternal(vector, name, path);
-}
-
-static void appendReadonlySandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
-{
-    appendSandboxParameterPathInternal(vector, name, [path length] ? [(NSString *)path fileSystemRepresentation] : "");
-}
-
-static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const char* name, const char* path)
-{
-    appendSandboxParameterPathInternal(vector, name, path);
-}
-
-#endif
-
-void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters)
-{
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
-
-#if ENABLE(WEB_PROCESS_SANDBOX)
-
-#if DEBUG_BYPASS_SANDBOX
-    WTFLogAlways("Bypassing web process sandbox.\n");
-    return;
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    // Use private temporary and cache directories.
-    String systemDirectorySuffix = "com.apple.WebProcess+" + parameters.clientIdentifier;
-    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
-    char temporaryDirectory[PATH_MAX];
-    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
-        WTFLogAlways("WebProcess: couldn't retrieve private temporary directory path: %d\n", errno);
-        exit(EX_NOPERM);
-    }
-    setenv("TMPDIR", temporaryDirectory, 1);
-#endif
-
-    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-
-    Vector<const char*> sandboxParameters;
-
-    // These are read-only.
-    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
-
-    // These are read-write getconf paths.
-    appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
-    appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
-
-    char buffer[4096];
-    int bufferSize = sizeof(buffer);
-    struct passwd pwd;
-    struct passwd* result = 0;
-    if (getpwuid_r(getuid(), &pwd, buffer, bufferSize, &result) || !result) {
-        WTFLogAlways("WebProcess: Couldn't find home directory\n");
-        exit(EX_NOPERM);
-    }
-
-    // These are read-write paths.
-    appendReadwriteSandboxDirectory(sandboxParameters, "HOME_DIR", pwd.pw_dir);
-
-    sandboxParameters.append(static_cast<const char*>(0));
-
-    const char* profilePath = [[webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"] fileSystemRepresentation];
-
-    char* errorBuf;
-    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParameters.data(), &errorBuf)) {
-        WTFLogAlways("WebProcess: Couldn't initialize sandbox profile [%s] error '%s'\n", profilePath, errorBuf);
-        for (size_t i = 0; sandboxParameters[i]; i += 2)
-            WTFLogAlways("%s=%s\n", sandboxParameters[i], sandboxParameters[i + 1]);
-        exit(EX_NOPERM);
-    }
-
-    for (size_t i = 0; sandboxParameters[i]; i += 2)
-        fastFree(const_cast<char*>(sandboxParameters[i + 1]));
-
-    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
-    OSStatus error = WKEnableSandboxStyleFileQuarantine();
-    if (error) {
-        WTFLogAlways("WebProcess: Couldn't enable sandbox style file quarantine: %ld\n", (long)error);
-        exit(EX_NOPERM);
-    }
-#endif
-}
-
 static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 {
     WebPage* page = WebProcess::shared().focusedWebPage();
@@ -319,6 +201,13 @@ void WebProcess::platformTerminate()
         dispatch_release(m_clearResourceCachesDispatchGroup);
         m_clearResourceCachesDispatchGroup = 0;
     }
+}
+
+void WebProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters& parameters)
+{
+    // Need to overide the default, because service has a different bundle ID.
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+    parameters.setSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 }
 
 } // namespace WebKit

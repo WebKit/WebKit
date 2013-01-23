@@ -1053,6 +1053,8 @@
 		E1B78473163F253E0007B692 /* RemoteNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
 		E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
+		E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */; };
+		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EDFDA61628868E0039ECDA /* MainMacProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMacProcess.cpp */; };
 		E1EDFDA7162886960039ECDA /* SharedWorkerProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFD9B16287D0B0039ECDA /* SharedWorkerProcessMainMac.mm */; };
 		E1EDFDA8162886990039ECDA /* SharedWorkerProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFDA21628838C0039ECDA /* SharedWorkerProcessMac.mm */; };
@@ -2374,6 +2376,8 @@
 		E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteNetworkingContext.mm; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
+		E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxInitialiationParametersMac.mm; sourceTree = "<group>"; };
+		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EDFD9816287BD10039ECDA /* SharedWorkerProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessMain.h; sourceTree = "<group>"; };
 		E1EDFD9B16287D0B0039ECDA /* SharedWorkerProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessMainMac.mm; sourceTree = "<group>"; };
 		E1EDFD9D16287F190039ECDA /* SharedWorkerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcess.h; sourceTree = "<group>"; };
@@ -2833,6 +2837,7 @@
 				F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
+				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
 				33152973130D0CB200ED2483 /* SecurityOriginData.cpp */,
 				33152974130D0CB200ED2483 /* SecurityOriginData.h */,
 				518D2CC812D51DFB003BB93B /* SessionState.cpp */,
@@ -3850,6 +3855,7 @@
 				1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */,
 				1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */,
 				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
+				E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */,
 				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
@@ -5051,6 +5057,7 @@
 				1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */,
 				51815BA016A622210054501F /* SyncNetworkResourceLoader.h in Headers */,
 				519B4FF516A9EA970066874D /* SchedulableLoader.h in Headers */,
+				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6029,6 +6036,7 @@
 				1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */,
 				51815B9F16A622210054501F /* SyncNetworkResourceLoader.cpp in Sources */,
 				519B4FF416A9EA970066874D /* SchedulableLoader.cpp in Sources */,
+				E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

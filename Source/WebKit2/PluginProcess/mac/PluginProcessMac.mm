@@ -352,6 +352,7 @@ void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationP
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
+    // FIXME: Use ChildProcess::initializeSandbox.
     WebKit::initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
 
     if (parameters.processType == TypeSnapshotProcess)

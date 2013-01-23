@@ -76,6 +76,9 @@ private:
     virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
 
+    // FIXME: PluginProcess should switch to common code for sandbox initialization.
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&) OVERRIDE { }
+
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
 
     // CoreIPC::Connection::Client

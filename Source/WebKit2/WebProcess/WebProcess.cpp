@@ -1079,7 +1079,7 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 {
 }
 
-void WebProcess::initializeSandbox(const ChildProcessInitializationParameters&)
+void WebProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 

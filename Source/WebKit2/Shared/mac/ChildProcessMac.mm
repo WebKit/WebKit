@@ -26,8 +26,22 @@
 #import "config.h"
 #import "ChildProcess.h"
 
+#import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/FileSystem.h>
 #import <mach/task.h>
+#import <pwd.h>
+#import <stdlib.h>
+#import <sysexits.h>
+
+// We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>). 
+#undef __APPLE_API_PRIVATE
+#import <sandbox.h>
+
+#define SANDBOX_NAMED_EXTERNAL 0x0003
+extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -62,6 +76,75 @@ void ChildProcess::platformInitialize()
 #endif
     // Starting as unoccluded.  The proxy for this process will set the actual value from didFinishLaunching().
     setApplicationIsOccluded(false);
+}
+
+void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters)
+{
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+
+    SandboxInitializationParameters sandboxParameters;
+
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+    NSString *defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
+
+    sandboxParameters.setSandboxProfilePath(defaultProfilePath);
+
+    String defaultSystemDirectorySuffix = [[NSBundle mainBundle] bundleIdentifier] + parameters.clientIdentifier;
+    sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
+
+    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
+    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
+    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
+
+    char buffer[4096];
+    int bufferSize = sizeof(buffer);
+    struct passwd pwd;
+    struct passwd* result = 0;
+    if (getpwuid_r(getuid(), &pwd, buffer, bufferSize, &result) || !result) {
+        WTFLogAlways("%s: Couldn't find home directory\n", getprogname());
+        exit(EX_NOPERM);
+    }
+
+    sandboxParameters.addPathParameter("HOME_DIR", pwd.pw_dir);
+
+    processUpdateSandboxInitializationParameters(parameters, sandboxParameters);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    // Use private temporary and cache directories.
+    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.systemDirectorySuffix()).data(), 0);
+    char temporaryDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+        WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
+        exit(EX_NOPERM);
+    }
+    setenv("TMPDIR", temporaryDirectory, 1);
+#endif
+
+    if (!sandboxParameters.sandboxProfilePath().isEmpty()) {
+        CString profilePath = fileSystemRepresentation(sandboxParameters.sandboxProfilePath());
+        char* errorBuf;
+        if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
+            WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);
+            for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
+                WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
+            exit(EX_NOPERM);
+        }
+    } else if (!sandboxParameters.sandboxProfile().isEmpty()) {
+        char* errorBuf;
+        if (sandbox_init_with_parameters(sandboxParameters.sandboxProfile().utf8().data(), 0, sandboxParameters.namedParameterArray(), &errorBuf)) {
+            WTFLogAlways("%s: Couldn't initialize sandbox profile, error '%s'\n", getprogname(), errorBuf);
+            for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
+                WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
+            exit(EX_NOPERM);
+        }
+    }
+
+    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
+    OSStatus error = WKEnableSandboxStyleFileQuarantine();
+    if (error) {
+        WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), (long)error);
+        exit(EX_NOPERM);
+    }
 }
 
 }
