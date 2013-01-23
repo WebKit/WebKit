@@ -181,6 +181,7 @@ contributors_who_are_not_committers = [
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),
     Contributor("Tien-Ren Chen", "trchen@chromium.org", "trchen"),
+    Contributor("Tim 'mithro' Ansell", "mithro@mithis.com", "mithro"),
     Contributor("Tim Volodine", "timvolodine@chromium.org", "timvolodine"),
     Contributor("WebKit Review Bot", "webkit.review.bot@gmail.com", "sheriff-bot"),
     Contributor("Web Components Team", "webcomponents-bugzilla@chromium.org"),

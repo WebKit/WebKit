@@ -1,3 +1,12 @@
+2013-01-23  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Adding myself as contributor in committers.py (as requested by eseidel).
+        https://bugs.webkit.org/show_bug.cgi?id=107647
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-22  Alan Cutter  <alancutter@chromium.org>
 
         Add monitoring of patches and queues to the QueueStatusServer
