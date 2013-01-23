@@ -155,15 +155,6 @@ Bug(GTK) editing/undo/undo-indent.html [ Failure ]
 Bug(GTK) editing/undo/undo-misspellings.html [ Failure ]
 Bug(GTK) fast/forms/plaintext-mode-1.html [ Failure ]
 
-# Implement layoutTestController.setViewModeMediaFeature support
-Bug(GTK) fast/media/media-query-list-02.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-03.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-04.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-05.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-07.html [ Failure ]
-Bug(GTK) fast/media/view-mode-media-feature.html [ Failure ]
-
 # Implement testRunner.setAsynchronousSpellCheckingEnabled
 # http://webkit.org/b/81042
 webkit.org/b/81042 editing/spelling/spellcheck-paste.html [ Failure ]
