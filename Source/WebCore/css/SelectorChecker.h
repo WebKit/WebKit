@@ -59,7 +59,6 @@ public:
             , visitedMatchType(visitedMatchType)
             , pseudoStyle(NOPSEUDO)
             , elementStyle(0)
-            , elementParentStyle(0)
             , isSubSelector(false)
             , hasScrollbarPseudo(false)
             , hasSelectionPseudo(false)
@@ -71,7 +70,6 @@ public:
         VisitedMatchType visitedMatchType;
         PseudoId pseudoStyle;
         RenderStyle* elementStyle;
-        RenderStyle* elementParentStyle;
         bool isSubSelector;
         bool hasScrollbarPseudo;
         bool hasSelectionPseudo;

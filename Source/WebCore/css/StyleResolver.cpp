@@ -2283,7 +2283,6 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
     // Slow path.
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), m_element, SelectorChecker::VisitedMatchEnabled);
     context.elementStyle = style();
-    context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
     context.pseudoStyle = m_pseudoStyle;
     SelectorChecker::Match match = m_selectorChecker.match(context, m_dynamicPseudo, DOMSiblingTraversalStrategy());

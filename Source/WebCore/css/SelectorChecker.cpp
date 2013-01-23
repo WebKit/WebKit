@@ -309,7 +309,6 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
         nextContext.element = context.element->parentElement();
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->parentElement()) {
             Match match = this->match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
@@ -325,7 +324,6 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             return SelectorFailsCompletely;
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
         return match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
 
     case CSSSelector::DirectAdjacent:
@@ -338,7 +336,6 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             return SelectorFailsAllSiblings;
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
         return match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
 
     case CSSSelector::IndirectAdjacent:
@@ -349,7 +346,6 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
         nextContext.element = context.element->previousElementSibling();
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
-        nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
             Match match = this->match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
@@ -381,7 +377,6 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             nextContext.element = shadowHostNode;
             nextContext.isSubSelector = false;
             nextContext.elementStyle = 0;
-            nextContext.elementParentStyle = 0;
             return match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
         }
     }
