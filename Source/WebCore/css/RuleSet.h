@@ -59,7 +59,7 @@ public:
 
     unsigned position() const { return m_position; }
     StyleRule* rule() const { return m_rule; }
-    CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
+    const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
     unsigned selectorIndex() const { return m_selectorIndex; }
 
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
@@ -159,11 +159,11 @@ public:
     RuleFeatureSet m_features;
 
     struct RuleSetSelectorPair {
-        RuleSetSelectorPair(CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
+        RuleSetSelectorPair(const CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
         RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
         void reportMemoryUsage(MemoryObjectInfo*) const;
 
-        CSSSelector* selector;
+        const CSSSelector* selector;
         OwnPtr<RuleSet> ruleSet;
     };
 

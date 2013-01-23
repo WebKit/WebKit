@@ -697,7 +697,7 @@ void StyleResolver::collectMatchingRulesForRegion(const MatchRequest& matchReque
 
     unsigned size = matchRequest.ruleSet->m_regionSelectorsAndRuleSets.size();
     for (unsigned i = 0; i < size; ++i) {
-        CSSSelector* regionSelector = matchRequest.ruleSet->m_regionSelectorsAndRuleSets.at(i).selector;
+        const CSSSelector* regionSelector = matchRequest.ruleSet->m_regionSelectorsAndRuleSets.at(i).selector;
         if (checkRegionSelector(regionSelector, static_cast<Element*>(m_regionForStyling->node()))) {
             RuleSet* regionRules = matchRequest.ruleSet->m_regionSelectorsAndRuleSets.at(i).ruleSet.get();
             ASSERT(regionRules);
@@ -2294,14 +2294,14 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
     return true;
 }
 
-bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* regionElement)
+bool StyleResolver::checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement)
 {
     if (!regionSelector || !regionElement)
         return false;
 
     m_pseudoStyle = NOPSEUDO;
 
-    for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
+    for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
         if (m_selectorChecker.matches(s, regionElement))
             return true;
 

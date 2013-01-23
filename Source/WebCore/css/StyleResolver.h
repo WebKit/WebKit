@@ -373,7 +373,7 @@ private:
     void sortAndTransferMatchedRules(MatchResult&);
 
     bool ruleMatches(const RuleData&, const ContainerNode* scope);
-    bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
+    bool checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&, const Element*);
     enum StyleApplicationPass {
 #if ENABLE(CSS_VARIABLES)

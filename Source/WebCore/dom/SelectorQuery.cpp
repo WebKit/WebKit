@@ -40,11 +40,11 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
     ASSERT(m_selectors.isEmpty());
 
     unsigned selectorCount = 0;
-    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
+    for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         selectorCount++;
 
     m_selectors.reserveInitialCapacity(selectorCount);
-    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
+    for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         m_selectors.uncheckedAppend(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
 }
 
@@ -107,7 +107,7 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
 {
     if (canUseIdLookup(rootNode)) {
         ASSERT(m_selectors.size() == 1);
-        CSSSelector* selector = m_selectors[0].selector;
+        const CSSSelector* selector = m_selectors[0].selector;
         Element* element = rootNode->treeScope()->getElementById(selector->value());
         if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;

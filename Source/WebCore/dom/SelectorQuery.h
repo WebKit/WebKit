@@ -48,8 +48,8 @@ public:
 
 private:
     struct SelectorData {
-        SelectorData(CSSSelector* selector, bool isFastCheckable) : selector(selector), isFastCheckable(isFastCheckable) { }
-        CSSSelector* selector;
+        SelectorData(const CSSSelector* selector, bool isFastCheckable) : selector(selector), isFastCheckable(isFastCheckable) { }
+        const CSSSelector* selector;
         bool isFastCheckable;
     };
 

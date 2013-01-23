@@ -75,11 +75,11 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* sele
 
 static inline bool selectorListContainsUncommonAttributeSelector(const CSSSelector* selector)
 {
-    CSSSelectorList* selectorList = selector->selectorList();
+    const CSSSelectorList* selectorList = selector->selectorList();
     if (!selectorList)
         return false;
-    for (CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-        for (CSSSelector* component = selector; component; component = component->tagHistory()) {
+    for (const CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
+        for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
             if (component->isAttributeSelector())
                 return true;
         }
@@ -190,11 +190,11 @@ void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObj
 static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData& ruleData)
 {
     bool foundSiblingSelector = false;
-    for (CSSSelector* selector = ruleData.selector(); selector; selector = selector->tagHistory()) {
+    for (const CSSSelector* selector = ruleData.selector(); selector; selector = selector->tagHistory()) {
         features.collectFeaturesFromSelector(selector);
         
-        if (CSSSelectorList* selectorList = selector->selectorList()) {
-            for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 if (!foundSiblingSelector && selector->isSiblingSelector())
                     foundSiblingSelector = true;
                 features.collectFeaturesFromSelector(subSelector);

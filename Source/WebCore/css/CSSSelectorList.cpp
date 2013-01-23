@@ -134,7 +134,7 @@ String CSSSelectorList::selectorsText() const
 {
     StringBuilder result;
 
-    for (CSSSelector* s = first(); s; s = next(s)) {
+    for (const CSSSelector* s = first(); s; s = next(s)) {
         if (s != first())
             result.append(", ");
         result.append(s->selectorText());
@@ -150,15 +150,15 @@ void CSSSelectorList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
 }
 
 template <typename Functor>
-static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
+static bool forEachTagSelector(Functor& functor, const CSSSelector* selector)
 {
     ASSERT(selector);
 
     do {
         if (functor(selector))
             return true;
-        if (CSSSelectorList* selectorList = selector->selectorList()) {
-            for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 if (forEachTagSelector(functor, subSelector))
                     return true;
             }
@@ -171,7 +171,7 @@ static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
 template <typename Functor>
 static bool forEachSelector(Functor& functor, const CSSSelectorList* selectorList)
 {
-    for (CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
+    for (const CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
         if (forEachTagSelector(functor, selector))
             return true;
     }
@@ -181,7 +181,7 @@ static bool forEachSelector(Functor& functor, const CSSSelectorList* selectorLis
 
 class SelectorNeedsNamespaceResolutionFunctor {
 public:
-    bool operator()(CSSSelector* selector)
+    bool operator()(const CSSSelector* selector)
     {
         if (selector->m_match == CSSSelector::Tag && selector->tagQName().prefix() != nullAtom && selector->tagQName().prefix() != starAtom)
             return true;
@@ -199,7 +199,7 @@ bool CSSSelectorList::selectorsNeedNamespaceResolution()
 
 class SelectorHasInvalidSelectorFunctor {
 public:
-    bool operator()(CSSSelector* selector)
+    bool operator()(const CSSSelector* selector)
     {
         return selector->isUnknownPseudoElement() || selector->isCustomPseudoElement();
     }

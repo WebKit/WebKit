@@ -560,7 +560,7 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoUnknown;
 }
 
-bool CSSSelector::operator==(const CSSSelector& other)
+bool CSSSelector::operator==(const CSSSelector& other) const
 {
     const CSSSelector* sel1 = this;
     const CSSSelector* sel2 = &other;
@@ -616,7 +616,7 @@ String CSSSelector::selectorText() const
 
             switch (cs->pseudoType()) {
             case PseudoNot:
-                if (CSSSelectorList* selectorList = cs->selectorList())
+                if (const CSSSelectorList* selectorList = cs->selectorList())
                     str.append(selectorList->first()->selectorText());
                 str.append(')');
                 break;
@@ -629,8 +629,8 @@ String CSSSelector::selectorText() const
                 str.append(')');
                 break;
             case PseudoAny: {
-                CSSSelector* firstSubSelector = cs->selectorList()->first();
-                for (CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                const CSSSelector* firstSubSelector = cs->selectorList()->first();
+                for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                     if (subSelector != firstSubSelector)
                         str.append(',');
                     str.append(subSelector->selectorText());
@@ -688,7 +688,7 @@ String CSSSelector::selectorText() const
         cs = cs->tagHistory();
     }
 
-    if (CSSSelector* tagHistory = cs->tagHistory()) {
+    if (const CSSSelector* tagHistory = cs->tagHistory()) {
         String tagHistoryText = tagHistory->selectorText();
         switch (cs->relation()) {
         case CSSSelector::Descendant:
@@ -727,7 +727,7 @@ void CSSSelector::setSelectorList(PassOwnPtr<CSSSelectorList> selectorList)
     m_data.m_rareData->m_selectorList = selectorList;
 }
 
-bool CSSSelector::parseNth()
+bool CSSSelector::parseNth() const
 {
     if (!m_hasRareData)
         return false;
@@ -737,7 +737,7 @@ bool CSSSelector::parseNth()
     return m_parsedNth;
 }
 
-bool CSSSelector::matchNth(int count)
+bool CSSSelector::matchNth(int count) const
 {
     ASSERT(m_hasRareData);
     return m_data.m_rareData->matchNth(count);

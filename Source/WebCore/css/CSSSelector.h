@@ -47,7 +47,7 @@ namespace WebCore {
         String selectorText() const;
 
         // checks if the 2 selectors (including sub selectors) agree.
-        bool operator==(const CSSSelector&);
+        bool operator==(const CSSSelector&) const;
 
         // tag == -1 means apply to all elements (Selector = *)
 
@@ -198,21 +198,21 @@ namespace WebCore {
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
         // the next item in the array.
-        CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
+        const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         const QualifiedName& tagQName() const;
         const AtomicString& value() const;
         const QualifiedName& attribute() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
-        CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
+        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
 
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&);
         void setArgument(const AtomicString&);
         void setSelectorList(PassOwnPtr<CSSSelectorList>);
 
-        bool parseNth();
-        bool matchNth(int count);
+        bool parseNth() const;
+        bool matchNth(int count) const;
 
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
@@ -237,7 +237,7 @@ namespace WebCore {
         mutable unsigned m_pseudoType : 8; // PseudoType
 
     private:
-        bool m_parsedNth              : 1; // Used for :nth-*
+        mutable bool m_parsedNth      : 1; // Used for :nth-*
         bool m_isLastInSelectorList   : 1;
         bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;

@@ -47,7 +47,7 @@ class ContentSelectorChecker {
 public:
     ContentSelectorChecker(Document*);
 
-    bool checkContentSelector(CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
+    bool checkContentSelector(const CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 private:
     SelectorChecker m_selectorChecker;
 };
@@ -58,7 +58,7 @@ public:
     bool matches(const ContentSelectorChecker&, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 
 private:
-    Vector<CSSSelector*> m_selectors;
+    Vector<const CSSSelector*> m_selectors;
 };
 
 class ContentSelectorQuery {

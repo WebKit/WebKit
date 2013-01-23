@@ -69,16 +69,16 @@ SelectorChecker::SelectorChecker(Document* document)
 {
 }
 
-bool SelectorChecker::matches(CSSSelector* sel, Element* element, bool isFastCheckableSelector) const
+bool SelectorChecker::matches(const CSSSelector* selector, Element* element, bool isFastCheckableSelector) const
 {
     if (isFastCheckableSelector && !element->isSVGElement()) {
-        if (!fastCheckRightmostSelector(sel, element, VisitedMatchDisabled))
+        if (!fastCheckRightmostSelector(selector, element, VisitedMatchDisabled))
             return false;
-        return fastCheck(sel, element);
+        return fastCheck(selector, element);
     }
 
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return match(SelectorCheckingContext(sel, element, SelectorChecker::VisitedMatchDisabled), ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorMatches;
+    return match(SelectorCheckingContext(selector, element, SelectorChecker::VisitedMatchDisabled), ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorMatches;
 }
 
 namespace {
@@ -280,7 +280,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
     CSSSelector::Relation relation = context.selector->relation();
 
     // Prepare next selector
-    CSSSelector* historySelector = context.selector->tagHistory();
+    const CSSSelector* historySelector = context.selector->tagHistory();
     if (!historySelector)
         return SelectorMatches;
 
@@ -473,7 +473,7 @@ template<typename SiblingTraversalStrategy>
 bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const SiblingTraversalStrategy& siblingTraversalStrategy) const
 {
     Element* const & element = context.element;
-    CSSSelector* const & selector = context.selector;
+    const CSSSelector* const & selector = context.selector;
     ASSERT(element);
     ASSERT(selector);
 
@@ -501,7 +501,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
     if (selector->m_match == CSSSelector::PseudoClass) {
         // Handle :not up front.
         if (selector->pseudoType() == CSSSelector::PseudoNot) {
-            CSSSelectorList* selectorList = selector->selectorList();
+            const CSSSelectorList* selectorList = selector->selectorList();
 
             // FIXME: We probably should fix the parser and make it never produce :not rules with missing selector list.
             if (!selectorList)
@@ -903,7 +903,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
         subContext.isSubSelector = true;
 
         PseudoId ignoreDynamicPseudo = NOPSEUDO;
-        CSSSelector* const & selector = context.selector;
+        const CSSSelector* const & selector = context.selector;
         for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
             if (match(subContext, ignoreDynamicPseudo, siblingTraversalStrategy) == SelectorMatches)
                 return true;
@@ -915,21 +915,21 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
     return true;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(Document* document, CSSSelector* sel) const
+bool SelectorChecker::checkScrollbarPseudoClass(Document* document, const CSSSelector* selector) const
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
     ScrollbarPart part = RenderScrollbar::partForStyleResolve();
 
     // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
     // pseudo class and just apply to everything.
-    if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
+    if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
         return !document->page()->focusController()->isActive();
 
     if (!scrollbar)
         return false;
 
-    ASSERT(sel->m_match == CSSSelector::PseudoClass);
-    switch (sel->pseudoType()) {
+    ASSERT(selector->m_match == CSSSelector::PseudoClass);
+    switch (selector->pseudoType()) {
     case CSSSelector::PseudoEnabled:
         return scrollbar->enabled();
     case CSSSelector::PseudoDisabled:
@@ -1024,11 +1024,11 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
         case CSSSelector::PseudoNot:
             {
                 // :not(:visited) is equivalent to :link. Parser enforces that :not can't nest.
-                CSSSelectorList* selectorList = selector->selectorList();
+                const CSSSelectorList* selectorList = selector->selectorList();
                 if (!selectorList)
                     break;
 
-                for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = subSelector->tagHistory()) {
+                for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = subSelector->tagHistory()) {
                     CSSSelector::PseudoType subType = subSelector->pseudoType();
                     if (subType == CSSSelector::PseudoVisited)
                         linkMatchType &= ~SelectorChecker::MatchVisited;

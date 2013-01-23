@@ -117,7 +117,7 @@ void HTMLContentElement::parseAttribute(const QualifiedName& name, const AtomicS
         InsertionPoint::parseAttribute(name, value);
 }
 
-static bool validateSubSelector(CSSSelector* selector)
+static bool validateSubSelector(const CSSSelector* selector)
 {
     switch (selector->m_match) {
     case CSSSelector::Tag:
@@ -162,15 +162,15 @@ static bool validateSubSelector(CSSSelector* selector)
     }
 }
 
-static bool validateSelector(CSSSelector* selector)
+static bool validateSelector(const CSSSelector* selector)
 {
     ASSERT(selector);
 
     if (!validateSubSelector(selector))
         return false;
 
-    CSSSelector* prevSubSelector = selector;
-    CSSSelector* subSelector = selector->tagHistory();
+    const CSSSelector* prevSubSelector = selector;
+    const CSSSelector* subSelector = selector->tagHistory();
 
     while (subSelector) {
         if (prevSubSelector->relation() != CSSSelector::SubSelector)
@@ -195,7 +195,7 @@ bool HTMLContentElement::validateSelect() const
     if (!m_selectorList.first())
         return false;
 
-    for (CSSSelector* selector = m_selectorList.first(); selector; selector = m_selectorList.next(selector)) {
+    for (const CSSSelector* selector = m_selectorList.first(); selector; selector = m_selectorList.next(selector)) {
         if (!validateSelector(selector))
             return false;
     }

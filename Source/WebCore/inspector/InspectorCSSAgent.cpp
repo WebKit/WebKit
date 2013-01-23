@@ -1163,7 +1163,7 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::RuleMatch> > InspectorCSSAgent::
         RefPtr<TypeBuilder::Array<int> > matchingSelectors = TypeBuilder::Array<int>::create();
         const CSSSelectorList& selectorList = rule->styleRule()->selectorList();
         long index = 0;
-        for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+        for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
             ExceptionCode ec;
             bool matched = element->webkitMatchesSelector(selector->selectorText(), ec);
             if (matched)

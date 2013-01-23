@@ -52,7 +52,7 @@ public:
 
     struct SelectorCheckingContext {
         // Initial selector constructor
-        SelectorCheckingContext(CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType)
+        SelectorCheckingContext(const CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType)
             : selector(selector)
             , element(element)
             , scope(0)
@@ -65,7 +65,7 @@ public:
             , hasSelectionPseudo(false)
         { }
 
-        CSSSelector* selector;
+        const CSSSelector* selector;
         Element* element;
         const ContainerNode* scope;
         VisitedMatchType visitedMatchType;
@@ -77,7 +77,7 @@ public:
         bool hasSelectionPseudo;
     };
 
-    bool matches(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
+    bool matches(const CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
     template<typename SiblingTraversalStrategy>
     Match match(const SelectorCheckingContext&, PseudoId&, const SiblingTraversalStrategy&) const;
     template<typename SiblingTraversalStrategy>
@@ -101,7 +101,7 @@ public:
     static unsigned determineLinkMatchType(const CSSSelector*);
 
 private:
-    bool checkScrollbarPseudoClass(Document*, CSSSelector*) const;
+    bool checkScrollbarPseudoClass(Document*, const CSSSelector*) const;
     static bool isFrameFocused(const Element*);
 
     bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;
