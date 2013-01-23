@@ -778,9 +778,9 @@ WebInspector.HeapSnapshot.prototype = {
         return this._aggregatesForDiff;
     },
 
-    canHaveDistanceOne: function(node)
+    distanceForUserRoot: function(node)
     {
-        return true;
+        return 1;
     },
 
     _calculateDistances: function()
@@ -793,9 +793,10 @@ WebInspector.HeapSnapshot.prototype = {
         var nodesToVisitLength = 0;
         for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
             var node = iter.edge.node();
-            if (this.canHaveDistanceOne(node)) {
+            var distance = this.distanceForUserRoot(node);
+            if (distance !== -1) {
                 nodesToVisit[nodesToVisitLength++] = node.nodeIndex;
-                distances[node.nodeIndex / nodeFieldCount] = 1;
+                distances[node.nodeIndex / nodeFieldCount] = distance;
             }
         }
         this._bfs(nodesToVisit, nodesToVisitLength, distances);

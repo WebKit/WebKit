@@ -102,9 +102,13 @@ WebInspector.JSHeapSnapshot.prototype = {
         this._markPageOwnedNodes();
     },
 
-    canHaveDistanceOne: function(node)
+    distanceForUserRoot: function(node)
     {
-        return node.isWindow();
+        if (node.isWindow())
+            return 1;
+        if (node.isDocumentDOMTreesRoot())
+            return 0;
+        return -1;
     },
 
     userObjectsMapAndFlag: function()
@@ -194,6 +198,7 @@ WebInspector.JSHeapSnapshot.prototype = {
     _markPageOwnedNodes: function()
     {
         var edgeShortcutType = this._edgeShortcutType;
+        var edgeElementType = this._edgeElementType;
         var edgeToNodeOffset = this._edgeToNodeOffset;
         var edgeTypeOffset = this._edgeTypeOffset;
         var edgeFieldsCount = this._edgeFieldsCount;
@@ -215,14 +220,21 @@ WebInspector.JSHeapSnapshot.prototype = {
         var nodesToVisitLength = 0;
 
         var rootNodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+        var node = this.rootNode();
         for (var edgeIndex = firstEdgeIndexes[rootNodeOrdinal], endEdgeIndex = firstEdgeIndexes[rootNodeOrdinal + 1];
              edgeIndex < endEdgeIndex;
              edgeIndex += edgeFieldsCount) {
-            if (containmentEdges[edgeIndex + edgeTypeOffset] === edgeShortcutType) {
-                var nodeOrdinal = containmentEdges[edgeIndex + edgeToNodeOffset] / nodeFieldCount;
-                nodesToVisit[nodesToVisitLength++] = nodeOrdinal;
-                flags[nodeOrdinal] |= visitedMarker;
-            }
+            var edgeType = containmentEdges[edgeIndex + edgeTypeOffset];
+            var nodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
+            if (edgeType === edgeElementType) {
+                node.nodeIndex = nodeIndex;
+                if (!node.isDocumentDOMTreesRoot())
+                    continue;
+            } else if (edgeType !== edgeShortcutType)
+                continue;
+            var nodeOrdinal = nodeIndex / nodeFieldCount;
+            nodesToVisit[nodesToVisitLength++] = nodeOrdinal;
+            flags[nodeOrdinal] |= visitedMarker;
         }
 
         while (nodesToVisitLength) {
@@ -323,6 +335,11 @@ WebInspector.JSHeapSnapshotNode.prototype = {
     isDetachedDOMTreesRoot: function()
     {
         return this.name() === "(Detached DOM trees)";
+    },
+
+    isDocumentDOMTreesRoot: function()
+    {
+        return this.isSynthetic() && this.name() === "(Document DOM trees)";
     },
 
     isDetachedDOMTree: function()
