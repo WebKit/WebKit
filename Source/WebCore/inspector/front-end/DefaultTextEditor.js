@@ -1791,33 +1791,17 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _paintLines: function(fromLine, toLine, restoreSelection)
     {
-        // First, paint visible lines, so that in case of long lines we should start highlighting
-        // the visible area immediately, instead of waiting for the lines above the visible area.
-        var visibleFrom = this.scrollTop();
-        var firstVisibleLineNumber = this.lineNumberAtOffset(visibleFrom);
-
         var chunk;
         var selection;
-        var invisibleLineRows = [];
         for (var lineNumber = fromLine; lineNumber < toLine; ++lineNumber) {
             if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
                 chunk = this.chunkForLine(lineNumber);
             var lineRow = chunk.expandedLineRow(lineNumber);
             if (!lineRow)
                 continue;
-            if (lineNumber < firstVisibleLineNumber) {
-                invisibleLineRows.push(lineRow);
-                continue;
-            }
             if (restoreSelection && !selection)
                 selection = this.selection();
             this._paintLine(lineRow);
-        }
-
-        for (var i = 0; i < invisibleLineRows.length; ++i) {
-            if (restoreSelection && !selection)
-                selection = this.selection();
-            this._paintLine(invisibleLineRows[i]);
         }
 
         if (restoreSelection)
