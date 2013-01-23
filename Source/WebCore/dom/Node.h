@@ -685,6 +685,9 @@ public:
 #if ENABLE(DIALOG_ELEMENT)
     bool isInTopLayer() const { return getFlag(IsInTopLayer); }
     void setIsInTopLayer(bool);
+#else
+    bool isInTopLayer() const { return false; }
+    void setIsInTopLayer(bool) { }
 #endif
 
 private:

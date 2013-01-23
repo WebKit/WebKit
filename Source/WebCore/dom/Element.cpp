@@ -1182,14 +1182,22 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     if (Element* after = pseudoElement(AFTER))
         after->removedFrom(insertionPoint);
 
+    // FIXME: Fullscreen should be migrated to use the top layer (bug 107617). Then this can just be a single check.
+    // The purpose of the outer if statement is to quickly determine whether we must do the additional
+    // checks in a slow path.
+#if ENABLE(DIALOG_ELEMENT) || ENABLE(FULLSCREEN_API)
+    if (hasRareData() || isInTopLayer()) {
 #if ENABLE(DIALOG_ELEMENT)
-    if (isInTopLayer())
-        document()->removeFromTopLayer(this);
+        if (isInTopLayer())
+            document()->removeFromTopLayer(this);
 #endif
 #if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement())
-        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
+        if (containsFullScreenElement())
+            setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
+    }
+#endif
+
 #if ENABLE(POINTER_LOCK)
     if (document()->page())
         document()->page()->pointerLockController()->elementRemoved(this);
