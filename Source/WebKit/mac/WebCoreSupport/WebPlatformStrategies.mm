@@ -78,6 +78,11 @@ SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
     return this;
 }
 
+StorageStrategy* WebPlatformStrategies::createStorageStrategy()
+{
+    return this;
+}
+
 VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;

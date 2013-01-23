@@ -74994,6 +74994,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\StorageStrategy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageStrategy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\StorageSyncManager.cpp"
 				>
 			</File>

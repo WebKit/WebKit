@@ -27,9 +27,10 @@
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
 #include "SharedWorkerStrategy.h"
+#include "StorageStrategy.h"
 #include "VisitedLinkStrategy.h"
 
-class PlatformStrategiesEfl : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
+class PlatformStrategiesEfl : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
 
@@ -43,6 +44,7 @@ private:
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy();
+    virtual WebCore::StorageStrategy* createStorageStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
 
     // WebCore::CookiesStrategy

@@ -4621,6 +4621,8 @@ webcore_sources += \
 	Source/WebCore/storage/StorageNamespace.h \
 	Source/WebCore/storage/StorageNamespaceImpl.cpp \
 	Source/WebCore/storage/StorageNamespaceImpl.h \
+	Source/WebCore/storage/StorageStrategy.cpp \
+	Source/WebCore/storage/StorageStrategy.h \
 	Source/WebCore/storage/StorageSyncManager.cpp \
 	Source/WebCore/storage/StorageSyncManager.h \
 	Source/WebCore/storage/StorageTracker.cpp \

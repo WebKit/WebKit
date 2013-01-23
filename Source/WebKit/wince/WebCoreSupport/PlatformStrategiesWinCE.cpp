@@ -74,6 +74,11 @@ SharedWorkerStrategy* PlatformStrategiesWinCE::createSharedWorkerStrategy()
     return this;
 }
 
+StorageStrategy* PlatformStrategiesWinCE::createStorageStrategy()
+{
+    return this;
+}
+
 VisitedLinkStrategy* PlatformStrategiesWinCE::createVisitedLinkStrategy()
 {
     return this;

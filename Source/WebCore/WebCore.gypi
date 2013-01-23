@@ -2596,6 +2596,8 @@
             'storage/StorageNamespace.h',
             'storage/StorageNamespaceImpl.cpp',
             'storage/StorageNamespaceImpl.h',
+            'storage/StorageStrategy.cpp',
+            'storage/StorageStrategy.h',
             'storage/StorageSyncManager.cpp',
             'storage/StorageSyncManager.h',
             'storage/StorageTask.cpp',

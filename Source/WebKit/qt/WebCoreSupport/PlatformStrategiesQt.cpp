@@ -90,6 +90,11 @@ SharedWorkerStrategy* PlatformStrategiesQt::createSharedWorkerStrategy()
     return this;
 }
 
+StorageStrategy* PlatformStrategiesQt::createStorageStrategy()
+{
+    return this;
+}
+
 VisitedLinkStrategy* PlatformStrategiesQt::createVisitedLinkStrategy()
 {
     return this;

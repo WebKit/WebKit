@@ -70,6 +70,11 @@ SharedWorkerStrategy* PlatformStrategiesGtk::createSharedWorkerStrategy()
     return this;
 }
 
+StorageStrategy* PlatformStrategiesGtk::createStorageStrategy()
+{
+    return this;
+}
+
 VisitedLinkStrategy* PlatformStrategiesGtk::createVisitedLinkStrategy()
 {
     return this;

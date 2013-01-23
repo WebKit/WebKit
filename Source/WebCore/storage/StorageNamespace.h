@@ -36,7 +36,6 @@ class Page;
 class SecurityOrigin;
 class StorageArea;
 
-// This interface is required for Chromium since these actions need to be proxied between processes.
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path, unsigned quota);

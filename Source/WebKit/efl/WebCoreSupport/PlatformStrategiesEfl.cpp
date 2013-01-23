@@ -81,6 +81,11 @@ VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
     return this;
 }
 
+StorageStrategy* PlatformStrategiesEfl::createStorageStrategy()
+{
+    return this;
+}
+
 // CookiesStrategy
 String PlatformStrategiesEfl::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {

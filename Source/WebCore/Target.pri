@@ -1277,6 +1277,7 @@ SOURCES += \
     storage/StorageNamespace.cpp \
     storage/StorageNamespaceImpl.cpp \
     storage/StorageSyncManager.cpp \
+    storage/StorageStrategy.cpp \
     storage/StorageTracker.cpp \
     testing/Internals.cpp \
     testing/InternalSettings.cpp \

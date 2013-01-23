@@ -1,3 +1,17 @@
+2013-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Use a platforom strategy for local storage
+        https://bugs.webkit.org/show_bug.cgi?id=107600
+
+        Reviewed by Andreas Kling.
+
+        Update for new storage strategy.
+
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::createStorageStrategy):
+        * WebCoreSupport/PlatformStrategiesEfl.h:
+        (PlatformStrategiesEfl):
+
 2013-01-22  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Adds Accessibility support to wk1.
