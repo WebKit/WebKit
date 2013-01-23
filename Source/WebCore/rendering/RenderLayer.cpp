@@ -4014,7 +4014,7 @@ Node* RenderLayer::enclosingElement() const
 bool RenderLayer::isInTopLayer() const
 {
     Node* node = renderer()->node();
-    return node && node->isInTopLayer();
+    return node && node->isElementNode() && toElement(node)->isInTopLayer();
 }
 
 bool RenderLayer::isInTopLayerSubtree() const
@@ -5167,7 +5167,8 @@ void RenderLayer::rebuildZOrderLists()
     if (isRootLayer()) {
         RenderObject* view = renderer()->view();
         for (RenderObject* child = view->firstChild(); child; child = child->nextSibling()) {
-            if (child->node() && child->node()->isInTopLayer()) {
+            Element* childElement = (child->node() && child->node()->isElementNode()) ? toElement(child->node()) : 0;
+            if (childElement && childElement->isInTopLayer()) {
                 RenderLayer* layer = toRenderLayerModelObject(child)->layer();
                 m_posZOrderList->append(layer);
             }

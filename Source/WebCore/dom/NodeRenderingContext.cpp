@@ -75,10 +75,12 @@ NodeRenderingContext::~NodeRenderingContext()
 
 static bool isRendererReparented(const RenderObject* renderer)
 {
-    if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
+    if (!renderer->node()->isElementNode())
+        return false;
+    if (renderer->style() && !renderer->style()->flowThread().isEmpty())
         return true;
 #if ENABLE(DIALOG_ELEMENT)
-    if (renderer->node()->isInTopLayer())
+    if (toElement(renderer->node())->isInTopLayer())
         return true;
 #endif
     return false;
@@ -129,7 +131,7 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     // FIXME: This doesn't work correctly for things in the top layer that are
     // display: none. We'd need to duplicate the logic in nextRenderer, but since
     // nothing needs that yet just assert.
-    ASSERT(!m_node->isInTopLayer());
+    ASSERT(!m_node->isElementNode() || !toElement(m_node)->isInTopLayer());
 #endif
 
     if (m_parentFlowRenderer)
@@ -152,7 +154,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
         return renderer->parent();
 
 #if ENABLE(DIALOG_ELEMENT)
-    if (m_node->isInTopLayer()) {
+    if (m_node->isElementNode() && toElement(m_node)->isInTopLayer()) {
         // The parent renderer of top layer elements is the RenderView, but only
         // if the normal parent would have had a renderer.
         // FIXME: This behavior isn't quite right as the spec for top layer
