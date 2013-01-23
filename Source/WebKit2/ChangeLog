@@ -1,3 +1,16 @@
+2013-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13064414> REGRESSION(r139514): didFailToSendSyncMessage is not called by Connection
+        https://bugs.webkit.org/show_bug.cgi?id=107715
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::sendSyncMessageFromSecondaryThread):
+        Correcting a misapplied edit - didFailToSendSyncMessage should be kept in main
+        thread message sending, not in secondary thread.
+
 2013-01-23  Brady Eidson  <beidson@apple.com>
 
         Recursion handling cancelled authentication challenges in NetworkProcess

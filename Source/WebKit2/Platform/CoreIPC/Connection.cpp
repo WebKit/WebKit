@@ -404,8 +404,10 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         return sendSyncMessageFromSecondaryThread(messageID, syncRequestID, encoder, timeout);
     }
 
-    if (!isValid())
+    if (!isValid()) {
+        didFailToSendSyncMessage();
         return nullptr;
+    }
 
     // Push the pending sync reply information on our stack.
     {
@@ -433,6 +435,9 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         m_pendingSyncReplies.removeLast();
     }
 
+    if (!pendingReply.replyDecoder)
+        didFailToSendSyncMessage();
+
     return reply.release();
 }
 
@@ -440,20 +445,16 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(Messag
 {
     ASSERT(RunLoop::current() != m_clientRunLoop);
 
-    if (!isValid()) {
-        didFailToSendSyncMessage();
+    if (!isValid())
         return nullptr;
-    }
 
     SecondaryThreadPendingSyncReply pendingReply;
 
     // Push the pending sync reply information on our stack.
     {
         MutexLocker locker(m_syncReplyStateMutex);
-        if (!m_shouldWaitForSyncReplies) {
-            didFailToSendSyncMessage();
+        if (!m_shouldWaitForSyncReplies)
             return nullptr;
-        }
 
         ASSERT(!m_secondaryThreadPendingSyncReplyMap.contains(syncRequestID));
         m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
@@ -473,9 +474,6 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(Messag
         ASSERT(m_secondaryThreadPendingSyncReplyMap.contains(syncRequestID));
         m_secondaryThreadPendingSyncReplyMap.remove(syncRequestID);
     }
-
-    if (!pendingReply.replyDecoder)
-        didFailToSendSyncMessage();
 
     return adoptPtr(pendingReply.replyDecoder);
 }
