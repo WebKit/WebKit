@@ -114,6 +114,26 @@ void CachedImage::didRemoveClient(CachedResourceClient* c)
     CachedResource::didRemoveClient(c);
 }
 
+void CachedImage::switchClientsToRevalidatedResource()
+{
+    ASSERT(resourceToRevalidate());
+    ASSERT(resourceToRevalidate()->isImage());
+    // Pending container size requests need to be transferred to the revalidated resource.
+    if (!m_pendingContainerSizeRequests.isEmpty()) {
+        // A copy of pending size requests is needed as they are deleted during CachedResource::switchClientsToRevalidateResouce().
+        ContainerSizeRequests switchContainerSizeRequests;
+        for (ContainerSizeRequests::iterator it = m_pendingContainerSizeRequests.begin(); it != m_pendingContainerSizeRequests.end(); ++it)
+            switchContainerSizeRequests.set(it->key, it->value);
+        CachedResource::switchClientsToRevalidatedResource();
+        CachedImage* revalidatedCachedImage = static_cast<CachedImage*>(resourceToRevalidate());
+        for (ContainerSizeRequests::iterator it = switchContainerSizeRequests.begin(); it != switchContainerSizeRequests.end(); ++it)
+            revalidatedCachedImage->setContainerSizeForRenderer(it->key, it->value.first, it->value.second);
+        return;
+    }
+
+    CachedResource::switchClientsToRevalidatedResource();
+}
+
 void CachedImage::allClientsRemoved()
 {
     m_pendingContainerSizeRequests.clear();

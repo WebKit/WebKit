@@ -109,6 +109,8 @@ private:
     virtual PurgePriority purgePriority() const { return PurgeFirst; }
     void checkShouldPaintBrokenImage();
 
+    virtual void switchClientsToRevalidatedResource() OVERRIDE;
+
     typedef pair<IntSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
     ContainerSizeRequests m_pendingContainerSizeRequests;
