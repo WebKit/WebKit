@@ -290,7 +290,8 @@ void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTM
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-    // FIXME: Add support for InspectorInstrumentation.
+    // FIXME: Pass in current input length.
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), 0, lineNumber().zeroBasedInt());
 
     for (Vector<CompactHTMLToken>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
         ASSERT(!isWaitingForScripts());
@@ -300,7 +301,7 @@ void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTM
         constructTreeFromCompactHTMLToken(*it);
 
         if (isStopped())
-            return;
+            break;
 
         // FIXME: We'll probably need to check document()->frame()->navigationScheduler()->locationChangePending())
         // as we do in canTakeNextToken;
@@ -308,15 +309,17 @@ void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTM
         if (isWaitingForScripts()) {
             ASSERT(it + 1 == tokens->end()); // The </script> is assumed to be the last token of this bunch.
             runScriptsForPausedTreeBuilder();
-            return;
+            break;
         }
 
         if (it->type() == HTMLTokenTypes::EndOfFile) {
             ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
             prepareToStopParsing();
-            return;
+            break;
         }
     }
+
+    InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
 #endif // ENABLE(THREADED_HTML_PARSER)
