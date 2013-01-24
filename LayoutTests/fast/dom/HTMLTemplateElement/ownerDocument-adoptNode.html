@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <body>
 <template><div></div></template>
-<iframe srcdoc="<template><div></div></template>" style="display:none"></iframe>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script>
 description('Adopting a template from another document should also switch the template content document');
+jsTestIsAsync = true;
 
-var template = document.querySelector('template');
-var frameTemplate = frames[0].document.querySelector('template');
+var template;
+var frameTemplate;
+function test() {
+    template = document.querySelector('template');
+    frameTemplate = frames[0].document.querySelector('template');
 
-debug('Before adoption:');
-shouldNotBe('template.ownerDocument', 'frameTemplate.ownerDocument');
-shouldNotBe('template.content.ownerDocument', 'frameTemplate.content.ownerDocument');
-frameTemplate = document.adoptNode(frameTemplate);
-debug('\nAfter adoption:');
-shouldBe('template.ownerDocument', 'frameTemplate.ownerDocument');
-shouldBe('template.content.ownerDocument', 'frameTemplate.content.ownerDocument');
-debug('');
+    debug('Before adoption:');
+    shouldNotBe('template.ownerDocument', 'frameTemplate.ownerDocument');
+    shouldNotBe('template.content.ownerDocument', 'frameTemplate.content.ownerDocument');
+    frameTemplate = document.adoptNode(frameTemplate);
+    debug('\nAfter adoption:');
+    shouldBe('template.ownerDocument', 'frameTemplate.ownerDocument');
+    shouldBe('template.content.ownerDocument', 'frameTemplate.content.ownerDocument');
+    debug('');
+    finishJSTest();
+}
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
+<iframe srcdoc="<template><div></div></template>" onload="test()" style="display:none"></iframe>
 </body>
