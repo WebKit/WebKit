@@ -155,7 +155,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
             "};"
         "}}}})";
 
-    v8::Handle<v8::String> codeExternalString = deprecatedV8String(code);
+    v8::Handle<v8::String> codeExternalString = v8String(code, v8Context->GetIsolate());
 
     v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(codeExternalString, m_sourceURL, m_position);
     if (script.IsEmpty())
@@ -185,11 +185,11 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     v8::Local<v8::Object> thisObject = v8::Object::New();
     if (thisObject.IsEmpty())
         return;
-    if (!thisObject->ForceSet(deprecatedV8Integer(0), nodeWrapper))
+    if (!thisObject->ForceSet(v8Integer(0, v8Context->GetIsolate()), nodeWrapper))
         return;
-    if (!thisObject->ForceSet(deprecatedV8Integer(1), formWrapper))
+    if (!thisObject->ForceSet(v8Integer(1, v8Context->GetIsolate()), formWrapper))
         return;
-    if (!thisObject->ForceSet(deprecatedV8Integer(2), documentWrapper))
+    if (!thisObject->ForceSet(v8Integer(2, v8Context->GetIsolate()), documentWrapper))
         return;
 
     // FIXME: Remove this code when we stop doing the 'with' hack above.
@@ -220,11 +220,11 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
         toStringFunction = toStringTemplate->GetFunction();
     if (!toStringFunction.IsEmpty()) {
         String toStringString = "function " + m_functionName + "(" + m_eventParameterName + ") {\n  " + m_code + "\n}";
-        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), deprecatedV8String(toStringString));
+        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8String(toStringString, v8Context->GetIsolate()));
         wrappedFunction->Set(v8::String::NewSymbol("toString"), toStringFunction);
     }
 
-    wrappedFunction->SetName(deprecatedV8String(m_functionName));
+    wrappedFunction->SetName(v8String(m_functionName, v8Context->GetIsolate()));
 
     // FIXME: Remove the following comment-outs.
     // See https://bugs.webkit.org/show_bug.cgi?id=85152 for more details.

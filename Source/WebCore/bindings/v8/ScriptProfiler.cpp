@@ -59,7 +59,7 @@ void ScriptProfiler::start(ScriptState* state, const String& title)
     profileNameIdleTimeMap->add(title, 0);
 
     v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(deprecatedV8String(title));
+    v8::CpuProfiler::StartProfiling(v8String(title, state->isolate()));
 }
 
 void ScriptProfiler::startForPage(Page*, const String& title)
@@ -78,8 +78,8 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
 {
     v8::HandleScope hs;
     const v8::CpuProfile* profile = state ?
-        v8::CpuProfiler::StopProfiling(deprecatedV8String(title), state->context()->GetSecurityToken()) :
-        v8::CpuProfiler::StopProfiling(deprecatedV8String(title));
+        v8::CpuProfiler::StopProfiling(v8String(title, state->isolate()), state->context()->GetSecurityToken()) :
+        v8::CpuProfiler::StopProfiling(v8String(title, state->isolate()));
     if (!profile)
         return 0;
 

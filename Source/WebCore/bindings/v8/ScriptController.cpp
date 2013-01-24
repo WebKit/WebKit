@@ -492,7 +492,7 @@ void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObj
 
     // Attach to the global object.
     v8::Handle<v8::Object> global = v8Context->Global();
-    global->Set(deprecatedV8String(key), value);
+    global->Set(v8String(key, v8Context->GetIsolate()), value);
 }
 
 bool ScriptController::haveInterpreter() const
@@ -515,7 +515,7 @@ void ScriptController::disableEval(const String& errorMessage)
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = m_windowShell->context();
     v8Context->AllowCodeGenerationFromStrings(false);
-    v8Context->SetErrorMessageForCodeGenerationFromStrings(deprecatedV8String(errorMessage));
+    v8Context->SetErrorMessageForCodeGenerationFromStrings(v8String(errorMessage, v8Context->GetIsolate()));
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
