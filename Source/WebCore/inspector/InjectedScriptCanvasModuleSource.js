@@ -3053,25 +3053,35 @@ InjectedCanvasModule.prototype = {
     /**
      * @param {CanvasAgent.TraceLogId} id
      * @param {number=} startOffset
+     * @param {number=} maxLength
      * @return {!CanvasAgent.TraceLog|string}
      */
-    traceLog: function(id, startOffset)
+    traceLog: function(id, startOffset, maxLength)
     {
         var traceLog = this._traceLogs[id];
         if (!traceLog)
             return "Error: Trace log with the given ID not found.";
-        startOffset = Math.max(0, startOffset || 0);
+
+        var replayableCalls = traceLog.replayableCalls();
+        if (typeof startOffset !== "number")
+            startOffset = 0;
+        if (typeof maxLength !== "number")
+            maxLength = replayableCalls.length;
+
+        var fromIndex = Math.max(0, startOffset);
+        var toIndex = Math.min(replayableCalls.length - 1, fromIndex + maxLength - 1);
+
         var alive = this._manager.capturing() && this._manager.lastTraceLog() === traceLog;
         var result = {
             id: id,
             /** @type {Array.<CanvasAgent.Call>} */
             calls: [],
             alive: alive,
-            startOffset: startOffset
+            startOffset: fromIndex,
+            totalAvailableCalls: replayableCalls.length
         };
-        var calls = traceLog.replayableCalls();
-        for (var i = startOffset, n = calls.length; i < n; ++i) {
-            var call = calls[i];
+        for (var i = fromIndex; i <= toIndex; ++i) {
+            var call = replayableCalls[i];
             var contextResource = call.replayableResource().replayableContextResource();
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};

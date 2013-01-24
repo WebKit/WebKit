@@ -155,13 +155,13 @@ void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String&
         module.stopCapturing(errorString, traceLogId);
 }
 
-void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
+void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
 {
     if (!checkIsEnabled(errorString))
         return;
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
-        module.traceLog(errorString, traceLogId, startOffset, &traceLog);
+        module.traceLog(errorString, traceLogId, startOffset, maxLength, &traceLog);
 }
 
 void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, RefPtr<TypeBuilder::Canvas::ResourceState>& result)

@@ -3282,8 +3282,9 @@
                 "properties": [
                     { "name": "id", "$ref": "TraceLogId" },
                     { "name": "calls", "type": "array", "items": { "$ref": "Call" } },
-                    { "name": "startOffset", "type": "integer", "optional": true },
-                    { "name": "alive", "type": "boolean", "optional": true }
+                    { "name": "startOffset", "type": "integer" },
+                    { "name": "alive", "type": "boolean" },
+                    { "name": "totalAvailableCalls", "type": "number" }
                 ]
             }
         ],
@@ -3331,7 +3332,8 @@
                 "name": "getTraceLog",
                 "parameters": [
                     { "name": "traceLogId", "$ref": "TraceLogId" },
-                    { "name": "startOffset", "type": "integer", "optional": true }
+                    { "name": "startOffset", "type": "integer", "optional": true },
+                    { "name": "maxLength", "type": "integer", "optional": true }
                 ],
                 "returns": [
                     { "name": "traceLog", "$ref": "TraceLog" }

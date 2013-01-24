@@ -124,12 +124,14 @@ void InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument(const St
         *errorString = "Internal error: " + functionName;
 }
 
-void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, RefPtr<TypeBuilder::Canvas::TraceLog>* traceLog)
+void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TypeBuilder::Canvas::TraceLog>* traceLog)
 {
     ScriptFunctionCall function(injectedScriptObject(), "traceLog");
     function.appendArgument(traceLogId);
     if (startOffset)
         function.appendArgument(*startOffset);
+    if (maxLength)
+        function.appendArgument(*maxLength);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     if (!resultValue || resultValue->type() != InspectorValue::TypeObject) {
