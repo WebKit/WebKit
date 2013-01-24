@@ -1032,7 +1032,7 @@ static bool allLayersAreFixed(const FillLayer* layer)
     bool allFixed = true;
     
     for (const FillLayer* currLayer = layer; currLayer; currLayer = currLayer->next())
-        allFixed &= currLayer->attachment() == FixedBackgroundAttachment;
+        allFixed &= (currLayer->image() && currLayer->attachment() == FixedBackgroundAttachment);
 
     return layer && allFixed;
 }
