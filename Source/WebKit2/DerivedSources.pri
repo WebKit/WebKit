@@ -45,12 +45,12 @@ VPATH = \
     WebProcess/FullScreen \
     WebProcess/Geolocation \
     WebProcess/IconDatabase \
-    WebProcess/KeyValueStorage \
     WebProcess/MediaCache \
     WebProcess/NetworkInfo \
     WebProcess/Notifications \
     WebProcess/Plugins \
     WebProcess/ResourceCache \
+    WebProcess/Storage \
     WebProcess/WebCoreSupport \
     WebProcess/WebPage \
     WebProcess/WebPage/CoordinatedGraphics \

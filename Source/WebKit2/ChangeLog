@@ -1,3 +1,10 @@
+2013-01-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial buildfix after r140711.
+
+        * DerivedSources.pri:
+        * Target.pri:
+
 2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h

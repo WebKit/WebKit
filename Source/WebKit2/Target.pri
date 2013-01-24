@@ -328,7 +328,6 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-    WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
     WebProcess/MediaCache/WebMediaCacheManager.h \
     WebProcess/NetworkInfo/WebNetworkInfoManager.h \
     WebProcess/Notifications/NotificationPermissionRequestManager.h \
@@ -348,6 +347,7 @@ HEADERS += \
     WebProcess/Plugins/PluginProxy.h \
     WebProcess/Plugins/PluginProcessConnection.h \
     WebProcess/Plugins/PluginProcessConnectionManager.h \
+    WebProcess/Storage/WebKeyValueStorageManager.h \
     WebProcess/WebCoreSupport/WebBatteryClient.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebColorChooser.h \
@@ -711,7 +711,6 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
-    WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
     WebProcess/MediaCache/WebMediaCacheManager.cpp \
     WebProcess/NetworkInfo/WebNetworkInfoManager.cpp \
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
@@ -733,6 +732,7 @@ SOURCES += \
     WebProcess/Plugins/PluginProxy.cpp \
     WebProcess/Plugins/PluginProcessConnection.cpp \
     WebProcess/Plugins/PluginProcessConnectionManager.cpp \
+    WebProcess/Storage/WebKeyValueStorageManager.cpp \
     WebProcess/WebCoreSupport/WebBatteryClient.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebColorChooser.cpp \
