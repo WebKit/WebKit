@@ -26,6 +26,9 @@
 #include "config.h"
 #include "StorageNamespaceProxy.h"
 
+#include "StorageAreaProxy.h"
+#include <WebCore/SecurityOrigin.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -43,14 +46,12 @@ StorageNamespaceProxy::~StorageNamespaceProxy()
 {
 }
 
-PassRefPtr<WebCore::StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<WebCore::SecurityOrigin>)
+PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return StorageAreaProxy::create(this, securityOrigin);
 }
 
-PassRefPtr<WebCore::StorageNamespace> StorageNamespaceProxy::copy()
+PassRefPtr<StorageNamespace> StorageNamespaceProxy::copy()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
@@ -63,7 +64,7 @@ void StorageNamespaceProxy::close()
     ASSERT_NOT_REACHED();
 }
 
-void StorageNamespaceProxy::clearOriginForDeletion(WebCore::SecurityOrigin*)
+void StorageNamespaceProxy::clearOriginForDeletion(SecurityOrigin*)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();

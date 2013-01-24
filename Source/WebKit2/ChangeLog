@@ -1,3 +1,17 @@
+2013-01-24  Anders Carlsson  <andersca@apple.com>
+
+        More StorageAreaProxy cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=107870
+
+        Reviewed by Beth Dakin.
+
+        Remove some unnecessary 'WebCore::' qualifications, 
+        and implement StorageNamespaceProxy::storageArea.
+        
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        * WebProcess/Storage/StorageAreaProxy.h:
+        * WebProcess/Storage/StorageNamespaceProxy.cpp:
+
 2013-01-24  Sam Weinig  <sam@webkit.org>
 
         Cleanup sandbox initialization a bit

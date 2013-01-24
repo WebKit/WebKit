@@ -26,67 +26,72 @@
 #include "config.h"
 #include "StorageAreaProxy.h"
 
+#include <WebCore/SecurityOrigin.h>
+
+using namespace WebCore;
+
 namespace WebKit {
 
-PassRefPtr<StorageAreaProxy> StorageAreaProxy::create()
+PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    return adoptRef(new StorageAreaProxy);
+    return adoptRef(new StorageAreaProxy(storageNamespaceProxy, securityOrigin));
 }
 
-StorageAreaProxy::StorageAreaProxy()
+StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy*, PassRefPtr<SecurityOrigin>)
 {
+    // FIXME: Implement.
 }
 
 StorageAreaProxy::~StorageAreaProxy()
 {
 }
 
-unsigned StorageAreaProxy::length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const
+unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame) const
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-String StorageAreaProxy::key(unsigned index, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String StorageAreaProxy::getItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const
+String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame) const
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     return String();
 }
 
-void StorageAreaProxy::setItem(const String& key, const String& value, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame)
+String StorageAreaProxy::getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const
+{
+    // FIXME: Implement this.
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageAreaProxy::removeItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame)
+void StorageAreaProxy::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageAreaProxy::clear(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame)
+void StorageAreaProxy::clear(ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-bool StorageAreaProxy::contains(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const
+bool StorageAreaProxy::contains(const String& key, ExceptionCode&, Frame* sourceFrame) const
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     return false;
 }
 
-bool StorageAreaProxy::canAccessStorage(WebCore::Frame*) const
+bool StorageAreaProxy::canAccessStorage(Frame*) const
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();

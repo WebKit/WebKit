@@ -30,13 +30,15 @@
 
 namespace WebKit {
 
+class StorageNamespaceProxy;
+
 class StorageAreaProxy : public WebCore::StorageArea {
 public:
-    static PassRefPtr<StorageAreaProxy> create();
+    static PassRefPtr<StorageAreaProxy> create(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
     virtual ~StorageAreaProxy();
 
 private:
-    StorageAreaProxy();
+    StorageAreaProxy(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
 
     // WebCore::StorageArea.
     virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const OVERRIDE;
