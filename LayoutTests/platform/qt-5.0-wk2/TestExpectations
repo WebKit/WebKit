@@ -131,6 +131,10 @@ fast/dom/DeviceOrientation/updates.html
 # https://bugs.webkit.org/show_bug.cgi?id=58337
 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 
+# [Qt] REGRESSION(r140229) fast/css/sticky/sticky-top-zoomed.html test fails
+# https://bugs.webkit.org/show_bug.cgi?id=105390
+fast/css/sticky/sticky-top-zoomed.html
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
