@@ -1,3 +1,31 @@
+2013-01-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140612.
+        http://trac.webkit.org/changeset/140612
+        https://bugs.webkit.org/show_bug.cgi?id=107768
+
+         broke the build (Requested by smfr on #webkit).
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp: Renamed from Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.cpp.
+        (WebKit):
+        (WebKit::WebKeyValueStorageManager::supplementName):
+        (WebKit::WebKeyValueStorageManager::WebKeyValueStorageManager):
+        (WebKit::WebKeyValueStorageManager::initialize):
+        (WebKit::keyValueStorageOriginIdentifiers):
+        (WebKit::WebKeyValueStorageManager::dispatchDidGetKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::didFinishLoadingOrigins):
+        (WebKit::WebKeyValueStorageManager::dispatchDidModifyOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h: Renamed from Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.h.
+        (WebKit):
+        (WebKeyValueStorageManager):
+        (WebKit::WebKeyValueStorageManager::localStorageDirectory):
+        (WebKit::WebKeyValueStorageManager::indexedDBDatabaseDirectory):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in: Renamed from Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.messages.in.
+
 2013-01-23  Ian Vollick  <vollick@chromium.org>
 
         Introduce the "stacking container" concept.
