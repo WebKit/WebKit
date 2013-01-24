@@ -1,3 +1,28 @@
+2013-01-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL][WK2] Expose accessibility hierarchy in WebKit2-EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=106216
+
+        Reviewed by Andreas Kling.
+
+        Create WebPage's accessibility object on WebPage initialization.
+        Wrap around WebCore's accessibility objects.
+        Updating accessibility hierarchy. Expands accessibility implementation
+        of WebKit-GTK to be used in EFL.
+
+        * PlatformEfl.cmake:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp:
+        (webPageAccessibilityObjectGetIndexInParent):
+        (web_page_accessibility_object_init):
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit):
+        (WebKit::WebPage::updateAccessibilityTree):
+
 2013-01-23  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Unreviewed build fix after r140605

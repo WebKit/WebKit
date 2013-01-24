@@ -42,14 +42,32 @@
 #include <WebCore/RenderThemeEfl.h>
 #include <WebCore/Settings.h>
 
+#if HAVE(ACCESSIBILITY)
+#include "WebPageAccessibilityObject.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
 
 void WebPage::platformInitialize()
 {
+#if HAVE(ACCESSIBILITY)
+    m_accessibilityObject = adoptGRef(webPageAccessibilityObjectNew(this));
+#else
     notImplemented();
+#endif
 }
+
+#if HAVE(ACCESSIBILITY)
+void WebPage::updateAccessibilityTree()
+{
+    if (!m_accessibilityObject)
+        return;
+
+    webPageAccessibilityObjectRefresh(m_accessibilityObject.get());
+}
+#endif
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 {

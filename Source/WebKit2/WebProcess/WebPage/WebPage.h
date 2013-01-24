@@ -78,9 +78,13 @@
 #include <QNetworkRequest>
 #endif
 
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#include "WebPageAccessibilityObject.h"
+#include <wtf/gobject/GRefPtr.h>
+#endif
+
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
-#include "WebPageAccessibilityObject.h"
 #include "WebPrintOperationGtk.h"
 #endif
 
@@ -460,10 +464,13 @@ public:
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
     void cancelComposition();
 #elif PLATFORM(GTK)
-    void updateAccessibilityTree();
 #if USE(TEXTURE_MAPPER_GL)
     void setAcceleratedCompositingWindowId(int64_t nativeWindowHandle);
 #endif
+#endif
+
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+    void updateAccessibilityTree();
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);
@@ -849,7 +856,7 @@ private:
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 
-#elif PLATFORM(GTK)
+#elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;
 
 #if USE(TEXTURE_MAPPER_GL)

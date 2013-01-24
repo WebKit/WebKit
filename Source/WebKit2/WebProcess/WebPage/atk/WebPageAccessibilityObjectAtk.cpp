@@ -75,7 +75,7 @@ static void webPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer 
     atk_object_set_role(atkObject, ATK_ROLE_FILLER);
 }
 
-static gint webPageAccessibilityObjectGetIndexInParent(AtkObject *atkObject)
+static gint webPageAccessibilityObjectGetIndexInParent(AtkObject*)
 {
     // An AtkPlug is the only child an AtkSocket can have.
     return 0;
@@ -106,7 +106,7 @@ static AtkObject* webPageAccessibilityObjectRefChild(AtkObject* atkObject, gint 
     return rootObject;
 }
 
-static void web_page_accessibility_object_init(WebPageAccessibilityObject* accessible)
+static void web_page_accessibility_object_init(WebPageAccessibilityObject*)
 {
 }
 

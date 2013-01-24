@@ -136,6 +136,7 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
+    WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
@@ -409,5 +410,15 @@ if (ENABLE_SPELLCHECK)
     )
     list(APPEND WebKit2_LIBRARIES
         ${ENCHANT_LIBRARIES}
+    )
+endif ()
+
+if (ENABLE_ACCESSIBILITY)
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
+        "${WEBKIT2_DIR}/WebProcess/WebPage/atk"
+        ${ATK_INCLUDE_DIRS}
+    )
+    list(APPEND WebKit2_LIBRARIES
+        ${ATK_LIBRARIES}
     )
 endif ()
