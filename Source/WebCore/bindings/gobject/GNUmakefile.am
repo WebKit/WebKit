@@ -232,7 +232,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMPerformance.cpp \
 	DerivedSources/webkitdom/WebKitDOMPerformanceEntry.cpp \
 	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.cpp \
-	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceEntryPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPerformancePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.cpp \
