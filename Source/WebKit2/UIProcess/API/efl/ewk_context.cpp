@@ -151,7 +151,7 @@ void EwkContext::ensureFaviconDatabase()
     if (m_faviconDatabase)
         return;
 
-    m_faviconDatabase = EwkFaviconDatabase::create(m_context.get()->iconDatabase());
+    m_faviconDatabase = EwkFaviconDatabase::create(WKContextGetIconDatabase(toAPI(m_context.get())));
 }
 
 bool EwkContext::setFaviconDatabaseDirectoryPath(const String& databaseDirectory)
