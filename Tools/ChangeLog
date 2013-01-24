@@ -1,3 +1,11 @@
+2013-01-24  Joshua Bell  <jsbell@chromium.org>
+
+        Add watchlist for IndexedDB development, and add myself and others.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Abstract the logic for appending a UChar32 onto StringBuilder

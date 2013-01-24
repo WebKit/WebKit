@@ -357,6 +357,15 @@
         "RegionsUsage": {
             "more": r"(RenderRegion|RenderFlowThread|RenderNamedFlowThread)(?!\.(h|cpp))",
         },
+        "IndexedDB": {
+            "filename": r"Source/WebCore/Modules/indexeddb"
+                        r"|Source/WebCore/bindings/.*IDB.*\.(h|cpp)"
+                        r"|Source/WebCore/bindings/.*SerializedScriptValue.*\.(h|cpp)"
+                        r"|Source/WebKit/chromium/.*IDB.*\.(h|cpp)"
+                        r"|Source/WebCore/platform/leveldb"
+                        r"|LayoutTests/storage/indexeddb"
+                        r"|LayoutTests/platform/.*/storage/indexeddb",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -394,6 +403,7 @@
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
         "HTML": [ "ojan.autocc@gmail.com" ],
+        "IndexedDB": [ "alecflett@chromium.org", "dgrogan@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
