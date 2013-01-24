@@ -30,21 +30,21 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class PageLoadClientEfl {
 public:
-    static PassOwnPtr<PageLoadClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<PageLoadClientEfl> create(EwkView* viewImpl)
     {
         return adoptPtr(new PageLoadClientEfl(viewImpl));
     }
 
 private:
-    explicit PageLoadClientEfl(EwkViewImpl*);
+    explicit PageLoadClientEfl(EwkView*);
 
-    inline EwkViewImpl* viewImpl() const { return m_viewImpl; }
+    inline EwkView* view() const { return m_view; }
 
     static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef, WKTypeRef, const void* clientInfo);
 #if ENABLE(WEB_INTENTS)
@@ -66,7 +66,7 @@ private:
     static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo);
     static void didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFrameRef, WKAuthenticationChallengeRef, const void* clientInfo);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

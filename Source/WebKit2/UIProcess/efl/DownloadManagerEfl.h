@@ -45,7 +45,7 @@ public:
 
     ~DownloadManagerEfl();
 
-    void registerDownload(DownloadProxy*, EwkViewImpl*);
+    void registerDownload(DownloadProxy*, EwkView*);
 
 private:
     explicit DownloadManagerEfl(EwkContext*);

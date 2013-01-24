@@ -30,24 +30,24 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class FindClientEfl {
 public:
-    static PassOwnPtr<FindClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<FindClientEfl> create(EwkView* viewImpl)
     {
         return adoptPtr(new FindClientEfl(viewImpl));
     }
 
 private:
-    explicit FindClientEfl(EwkViewImpl*);
+    explicit FindClientEfl(EwkView*);
 
     static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo);
     static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

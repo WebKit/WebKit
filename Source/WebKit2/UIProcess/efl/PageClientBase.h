@@ -30,7 +30,7 @@
 #include "PageClient.h"
 #include <Evas.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
@@ -42,10 +42,10 @@ public:
     virtual void updateViewportSize() = 0;
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
 
-    EwkViewImpl* viewImpl() const;
+    EwkView* view() const;
 
 protected:
-    explicit PageClientBase(EwkViewImpl*);
+    explicit PageClientBase(EwkView*);
 
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -116,7 +116,7 @@ protected:
 #endif
 
 protected:
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
     DefaultUndoController m_undoController;
 };
 

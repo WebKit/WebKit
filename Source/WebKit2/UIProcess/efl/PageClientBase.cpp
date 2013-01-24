@@ -28,7 +28,7 @@
 
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "DrawingAreaProxyImpl.h"
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "InputMethodContextEfl.h"
 #include "LayerTreeRenderer.h"
 #include "NativeWebKeyboardEvent.h"
@@ -52,8 +52,8 @@ using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
-PageClientBase::PageClientBase(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+PageClientBase::PageClientBase(EwkView* view)
+    : m_view(view)
 {
 }
 
@@ -61,21 +61,21 @@ PageClientBase::~PageClientBase()
 {
 }
 
-EwkViewImpl* PageClientBase::viewImpl() const
+EwkView* PageClientBase::view() const
 {
-    return m_viewImpl;
+    return m_view;
 }
 
 // PageClient
 PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
 {
-    OwnPtr<DrawingAreaProxy> drawingArea = DrawingAreaProxyImpl::create(m_viewImpl->page());
+    OwnPtr<DrawingAreaProxy> drawingArea = DrawingAreaProxyImpl::create(m_view->page());
     return drawingArea.release();
 }
 
 void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    m_viewImpl->update(rect);
+    m_view->update(rect);
 }
 
 void PageClientBase::displayView()
@@ -90,7 +90,7 @@ void PageClientBase::scrollView(const WebCore::IntRect& scrollRect, const WebCor
 
 WebCore::IntSize PageClientBase::viewSize()
 {
-    return m_viewImpl->size();
+    return m_view->size();
 }
 
 bool PageClientBase::isViewWindowActive()
@@ -101,12 +101,12 @@ bool PageClientBase::isViewWindowActive()
 
 bool PageClientBase::isViewFocused()
 {
-    return m_viewImpl->isFocused();
+    return m_view->isFocused();
 }
 
 bool PageClientBase::isViewVisible()
 {
-    return m_viewImpl->isVisible();
+    return m_view->isVisible();
 }
 
 bool PageClientBase::isViewInWindow()
@@ -118,31 +118,31 @@ bool PageClientBase::isViewInWindow()
 void PageClientBase::processDidCrash()
 {
     // Check if loading was ongoing, when web process crashed.
-    double loadProgress = ewk_view_load_progress_get(m_viewImpl->view());
+    double loadProgress = ewk_view_load_progress_get(m_view->view());
     if (loadProgress >= 0 && loadProgress < 1) {
         loadProgress = 1;
-        m_viewImpl->smartCallback<LoadProgress>().call(&loadProgress);
+        m_view->smartCallback<LoadProgress>().call(&loadProgress);
     }
 
-    m_viewImpl->smartCallback<TooltipTextUnset>().call();
+    m_view->smartCallback<TooltipTextUnset>().call();
 
     bool handled = false;
-    m_viewImpl->smartCallback<WebProcessCrashed>().call(&handled);
+    m_view->smartCallback<WebProcessCrashed>().call(&handled);
 
     if (!handled) {
-        CString url = m_viewImpl->page()->urlAtProcessExit().utf8();
+        CString url = m_view->page()->urlAtProcessExit().utf8();
         WARN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
 
         // Display an error page
-        ewk_view_html_string_load(m_viewImpl->view(), "The web process has crashed.", 0, url.data());
+        ewk_view_html_string_load(m_view->view(), "The web process has crashed.", 0, url.data());
     }
 }
 
 void PageClientBase::didRelaunchProcess()
 {
-    const char* themePath = m_viewImpl->themePath();
+    const char* themePath = m_view->themePath();
     if (themePath)
-        m_viewImpl->page()->setThemePath(themePath);
+        m_view->page()->setThemePath(themePath);
 }
 
 void PageClientBase::pageClosed()
@@ -153,14 +153,14 @@ void PageClientBase::pageClosed()
 void PageClientBase::toolTipChanged(const String&, const String& newToolTip)
 {
     if (newToolTip.isEmpty())
-        m_viewImpl->smartCallback<TooltipTextUnset>().call();
+        m_view->smartCallback<TooltipTextUnset>().call();
     else
-        m_viewImpl->smartCallback<TooltipTextSet>().call(newToolTip);
+        m_view->smartCallback<TooltipTextSet>().call(newToolTip);
 }
 
 void PageClientBase::setCursor(const Cursor& cursor)
 {
-    m_viewImpl->setCursor(cursor);
+    m_view->setCursor(cursor);
 }
 
 void PageClientBase::setCursorHiddenUntilMouseMoves(bool)
@@ -214,12 +214,12 @@ void PageClientBase::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEv
 
 PassRefPtr<WebPopupMenuProxy> PageClientBase::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuProxyEfl::create(m_viewImpl, page);
+    return WebPopupMenuProxyEfl::create(m_view, page);
 }
 
 PassRefPtr<WebContextMenuProxy> PageClientBase::createContextMenuProxy(WebPageProxy* page)
 {
-    return WebContextMenuProxyEfl::create(m_viewImpl, page);
+    return WebContextMenuProxyEfl::create(m_view, page);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -238,12 +238,12 @@ void PageClientBase::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientBase::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    m_viewImpl->enterAcceleratedCompositingMode();
+    m_view->enterAcceleratedCompositingMode();
 }
 
 void PageClientBase::exitAcceleratedCompositingMode()
 {
-    m_viewImpl->exitAcceleratedCompositingMode();
+    m_view->exitAcceleratedCompositingMode();
 }
 
 void PageClientBase::updateAcceleratedCompositingMode(const LayerTreeContext&)
@@ -290,15 +290,15 @@ void PageClientBase::countStringMatchesInCustomRepresentation(const String&, Fin
 
 void PageClientBase::updateTextInputState()
 {
-    InputMethodContextEfl* inputMethodContext = m_viewImpl->inputMethodContext();
+    InputMethodContextEfl* inputMethodContext = m_view->inputMethodContext();
     if (inputMethodContext)
         inputMethodContext->updateTextInputState();
 }
 
 void PageClientBase::handleDownloadRequest(DownloadProxy* download)
 {
-    EwkContext* context = m_viewImpl->ewkContext();
-    context->downloadManager()->registerDownload(download, m_viewImpl);
+    EwkContext* context = m_view->ewkContext();
+    context->downloadManager()->registerDownload(download, m_view);
 }
 
 } // namespace WebKit

@@ -28,7 +28,7 @@
 
 #if USE(TILED_BACKING_STORE)
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "PageClientBase.h"
 #include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
@@ -37,7 +37,7 @@ namespace WebKit {
 
 class PageViewportControllerClientEfl : public PageViewportControllerClient {
 public:
-    static PassOwnPtr<PageViewportControllerClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<PageViewportControllerClientEfl> create(EwkView* viewImpl)
     {
         return adoptPtr(new PageViewportControllerClientEfl(viewImpl));
     }
@@ -61,9 +61,9 @@ public:
     virtual void setController(PageViewportController*);
 
 private:
-    explicit PageViewportControllerClientEfl(EwkViewImpl*);
+    explicit PageViewportControllerClientEfl(EwkView*);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
     WebCore::IntSize m_viewportSize;
     WebCore::FloatPoint m_contentPosition;
     PageViewportController* m_controller;

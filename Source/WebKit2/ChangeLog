@@ -1,3 +1,319 @@
+2013-01-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Rename EwkViewImpl class to EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=107719
+
+        Reviewed by Andreas Kling.
+
+        Rename EwkViewImpl class to EwkView, due to ewk view
+        refactoring plan (https://bugs.webkit.org/show_bug.cgi?id=107662#c1).
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreate):
+        (WKViewCreateWithFixedLayout):
+        (WKViewGetPage):
+        (WKViewCreateSnapshot):
+        * UIProcess/API/efl/EwkView.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/EwkViewImpl.cpp.
+        (pageViewMap):
+        (EwkView::addToPageViewMap):
+        (EwkView::removeFromPageViewMap):
+        (EwkView::viewFromPageViewMap):
+        (EwkView::EwkView):
+        (EwkView::~EwkView):
+        (EwkView::smartData):
+        (EwkView::fromEvasObject):
+        (EwkView::wkPage):
+        (EwkView::setCursor):
+        (EwkView::setDeviceScaleFactor):
+        (EwkView::deviceScaleFactor):
+        (EwkView::transformFromScene):
+        (EwkView::transformToScene):
+        (EwkView::transformToScreen):
+        (EwkView::layerTreeRenderer):
+        (EwkView::displayTimerFired):
+        (EwkView::update):
+        (EwkView::enterFullScreen):
+        (EwkView::exitFullScreen):
+        (EwkView::windowGeometry):
+        (EwkView::setWindowGeometry):
+        (EwkView::setImageData):
+        (EwkView::size):
+        (EwkView::isFocused):
+        (EwkView::isVisible):
+        (EwkView::title):
+        (EwkView::inputMethodContext):
+        (EwkView::themePath):
+        (EwkView::setThemePath):
+        (EwkView::customTextEncodingName):
+        (EwkView::setCustomTextEncodingName):
+        (EwkView::setMouseEventsEnabled):
+        (EwkView::setTouchEventsEnabled):
+        (EwkView::informIconChange):
+        (EwkView::createGLSurface):
+        (EwkView::enterAcceleratedCompositingMode):
+        (EwkView::exitAcceleratedCompositingMode):
+        (EwkView::requestColorPicker):
+        (EwkView::dismissColorPicker):
+        (EwkView::showContextMenu):
+        (EwkView::hideContextMenu):
+        (EwkView::requestPopupMenu):
+        (EwkView::closePopupMenu):
+        (EwkView::requestJSAlertPopup):
+        (EwkView::requestJSConfirmPopup):
+        (EwkView::requestJSPromptPopup):
+        (EwkView::informDatabaseQuotaReached):
+        (EwkView::informURLChange):
+        (EwkView::windowFeatures):
+        (EwkView::createNewPage):
+        (EwkView::close):
+        (EwkView::onMouseDown):
+        (EwkView::onMouseUp):
+        (EwkView::onMouseMove):
+        (EwkView::feedTouchEvents):
+        (EwkView::onTouchDown):
+        (EwkView::onTouchUp):
+        (EwkView::onTouchMove):
+        (EwkView::onFaviconChanged):
+        (EwkView::takeSnapshot):
+        * UIProcess/API/efl/EwkView.h: Renamed from Source/WebKit2/UIProcess/API/efl/EwkViewImpl.h.
+        (WebKit):
+        (WebCore):
+        (EwkView):
+        (EwkView::view):
+        (EwkView::page):
+        (EwkView::ewkContext):
+        (EwkView::settings):
+        (EwkView::backForwardList):
+        (EwkView::url):
+        (EwkView::faviconURL):
+        (EwkView::mouseEventsEnabled):
+        (EwkView::touchEventsEnabled):
+        (EwkView::setNeedsSurfaceResize):
+        (EwkView::smartCallback):
+        (EwkView::pageClient):
+        (EwkView::setPageScaleFactor):
+        (EwkView::pageScaleFactor):
+        (EwkView::setPagePosition):
+        (EwkView::pagePosition):
+        (EwkView::isHardwareAccelerated):
+        (EwkView::setDrawsBackground):
+        (EwkView::evasGLContext):
+        (EwkView::evasGLSurface):
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        (EwkContextMenu::EwkContextMenu):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu::create):
+        (EwkContextMenu):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (EwkDownloadJob::EwkDownloadJob):
+        (EwkDownloadJob::view):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (EwkDownloadJob::create):
+        (EwkDownloadJob):
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::EwkPopupMenu):
+        (EwkPopupMenu::close):
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        (EwkPopupMenu::create):
+        (EwkPopupMenu):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (EwkSettings::preferences):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (EwkSettings::create):
+        (EwkSettings::EwkSettings):
+        (EwkSettings):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (createEwkView):
+        (ewk_view_base_add):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_window_features.cpp:
+        (EwkWindowFeatures::EwkWindowFeatures):
+        (EwkWindowFeatures::setToolbarVisible):
+        (EwkWindowFeatures::setStatusBarVisible):
+        (EwkWindowFeatures::setMenuBarVisible):
+        (EwkWindowFeatures::setResizable):
+        * UIProcess/API/efl/ewk_window_features_private.h:
+        (EwkWindowFeatures::create):
+        (EwkWindowFeatures):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        (WebKit::ContextHistoryClientEfl::didPerformClientRedirect):
+        (WebKit::ContextHistoryClientEfl::didPerformServerRedirect):
+        (WebKit::ContextHistoryClientEfl::didUpdateHistoryTitle):
+        * UIProcess/efl/ContextMenuClientEfl.cpp:
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+        * UIProcess/efl/ContextMenuClientEfl.h:
+        (WebKit::ContextMenuClientEfl::create):
+        (ContextMenuClientEfl):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        (WebKit::DownloadManagerEfl::registerDownload):
+        * UIProcess/efl/DownloadManagerEfl.h:
+        (DownloadManagerEfl):
+        * UIProcess/efl/FindClientEfl.cpp:
+        (WebKit::FindClientEfl::didFindString):
+        (WebKit::FindClientEfl::didFailToFindString):
+        (WebKit::FindClientEfl::FindClientEfl):
+        * UIProcess/efl/FindClientEfl.h:
+        (WebKit::FindClientEfl::create):
+        (FindClientEfl):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::willSubmitForm):
+        (WebKit::FormClientEfl::FormClientEfl):
+        * UIProcess/efl/FormClientEfl.h:
+        (WebKit::FormClientEfl::create):
+        (FormClientEfl):
+        * UIProcess/efl/InputMethodContextEfl.cpp:
+        (WebKit::InputMethodContextEfl::InputMethodContextEfl):
+        (WebKit::InputMethodContextEfl::onIMFInputSequenceComplete):
+        (WebKit::InputMethodContextEfl::onIMFPreeditSequenceChanged):
+        (WebKit::InputMethodContextEfl::updateTextInputState):
+        * UIProcess/efl/InputMethodContextEfl.h:
+        (WebKit::InputMethodContextEfl::create):
+        (InputMethodContextEfl):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::PageClientBase):
+        (WebKit::PageClientBase::view):
+        (WebKit::PageClientBase::createDrawingAreaProxy):
+        (WebKit::PageClientBase::setViewNeedsDisplay):
+        (WebKit::PageClientBase::viewSize):
+        (WebKit::PageClientBase::isViewFocused):
+        (WebKit::PageClientBase::isViewVisible):
+        (WebKit::PageClientBase::processDidCrash):
+        (WebKit::PageClientBase::didRelaunchProcess):
+        (WebKit::PageClientBase::toolTipChanged):
+        (WebKit::PageClientBase::setCursor):
+        (WebKit::PageClientBase::createPopupMenuProxy):
+        (WebKit::PageClientBase::createContextMenuProxy):
+        (WebKit::PageClientBase::enterAcceleratedCompositingMode):
+        (WebKit::PageClientBase::exitAcceleratedCompositingMode):
+        (WebKit::PageClientBase::updateTextInputState):
+        (WebKit::PageClientBase::handleDownloadRequest):
+        * UIProcess/efl/PageClientBase.h:
+        (PageClientBase):
+        * UIProcess/efl/PageClientDefaultImpl.cpp:
+        (WebKit::PageClientDefaultImpl::PageClientDefaultImpl):
+        (WebKit::PageClientDefaultImpl::updateViewportSize):
+        (WebKit::PageClientDefaultImpl::convertToDeviceSpace):
+        (WebKit::PageClientDefaultImpl::convertToUserSpace):
+        (WebKit::PageClientDefaultImpl::didChangeContentsSize):
+        * UIProcess/efl/PageClientDefaultImpl.h:
+        (WebKit::PageClientDefaultImpl::create):
+        (PageClientDefaultImpl):
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::PageClientLegacyImpl):
+        (WebKit::PageClientLegacyImpl::didCommitLoad):
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+        (WebKit::PageClientLegacyImpl::didChangeViewportProperties):
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        (WebKit::PageClientLegacyImpl::pageDidRequestScroll):
+        (WebKit::PageClientLegacyImpl::didRenderFrame):
+        (WebKit::PageClientLegacyImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientLegacyImpl.h:
+        (WebKit::PageClientLegacyImpl::create):
+        (PageClientLegacyImpl):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveTitleForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveIntentForFrame):
+        (WebKit::PageLoadClientEfl::registerIntentServiceForFrame):
+        (WebKit::PageLoadClientEfl::didChangeProgress):
+        (WebKit::PageLoadClientEfl::didFinishLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didStartProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        (WebKit::PageLoadClientEfl::didChangeBackForwardList):
+        (WebKit::PageLoadClientEfl::didSameDocumentNavigationForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame):
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.h:
+        (WebKit::PageLoadClientEfl::create):
+        (PageLoadClientEfl):
+        (WebKit::PageLoadClientEfl::view):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForNavigationAction):
+        (WebKit::PagePolicyClientEfl::decidePolicyForNewWindowAction):
+        (WebKit::PagePolicyClientEfl::PagePolicyClientEfl):
+        * UIProcess/efl/PagePolicyClientEfl.h:
+        (WebKit::PagePolicyClientEfl::create):
+        (PagePolicyClientEfl):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        (WebKit::PageUIClientEfl::close):
+        (WebKit::PageUIClientEfl::takeFocus):
+        (WebKit::PageUIClientEfl::focus):
+        (WebKit::PageUIClientEfl::unfocus):
+        (WebKit::PageUIClientEfl::runJavaScriptAlert):
+        (WebKit::PageUIClientEfl::runJavaScriptConfirm):
+        (WebKit::PageUIClientEfl::runJavaScriptPrompt):
+        (WebKit::PageUIClientEfl::toolbarsAreVisible):
+        (WebKit::PageUIClientEfl::setToolbarsAreVisible):
+        (WebKit::PageUIClientEfl::menuBarIsVisible):
+        (WebKit::PageUIClientEfl::setMenuBarIsVisible):
+        (WebKit::PageUIClientEfl::statusBarIsVisible):
+        (WebKit::PageUIClientEfl::setStatusBarIsVisible):
+        (WebKit::PageUIClientEfl::isResizable):
+        (WebKit::PageUIClientEfl::setIsResizable):
+        (WebKit::PageUIClientEfl::getWindowFrame):
+        (WebKit::PageUIClientEfl::setWindowFrame):
+        (WebKit::PageUIClientEfl::exceededDatabaseQuota):
+        (WebKit::PageUIClientEfl::runOpenPanel):
+        (WebKit::PageUIClientEfl::createNewPage):
+        (WebKit::PageUIClientEfl::showColorPicker):
+        (WebKit::PageUIClientEfl::hideColorPicker):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (WebKit::PageUIClientEfl::create):
+        (PageUIClientEfl):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::drawingArea):
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setPageScaleFactor):
+        (WebKit::PageViewportControllerClientEfl::didResumeContent):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (WebKit::PageViewportControllerClientEfl::create):
+        (PageViewportControllerClientEfl):
+        * UIProcess/efl/VibrationClientEfl.cpp:
+        (VibrationClientEfl::vibrateCallback):
+        (VibrationClientEfl::cancelVibrationCallback):
+        (VibrationClientEfl::create):
+        (VibrationClientEfl::VibrationClientEfl):
+        (VibrationClientEfl::~VibrationClientEfl):
+        * UIProcess/efl/VibrationClientEfl.h:
+        (VibrationClientEfl):
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::WebContextMenuProxyEfl):
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        (WebKit::WebContextMenuProxyEfl::hideContextMenu):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+        (WebKit::WebContextMenuProxyEfl::create):
+        (WebContextMenuProxyEfl):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+        * UIProcess/efl/WebPopupMenuProxyEfl.cpp:
+        (WebKit::WebPopupMenuProxyEfl::WebPopupMenuProxyEfl):
+        (WebKit::WebPopupMenuProxyEfl::showPopupMenu):
+        (WebKit::WebPopupMenuProxyEfl::hidePopupMenu):
+        * UIProcess/efl/WebPopupMenuProxyEfl.h:
+        (WebKit::WebPopupMenuProxyEfl::create):
+        (WebPopupMenuProxyEfl):
+
 2013-01-24  Andras Becsi  <andras.becsi@digia.com>
 
         Remove nonexistent header from WebKit2/Target.pri

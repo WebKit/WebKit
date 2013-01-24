@@ -27,15 +27,15 @@
 #include "config.h"
 #include "ewk_popup_menu.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WebPopupMenuProxyEfl.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
 
 using namespace WebKit;
 
-EwkPopupMenu::EwkPopupMenu(EwkViewImpl* viewImpl, WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
-    : m_viewImpl(viewImpl)
+EwkPopupMenu::EwkPopupMenu(EwkView* view, WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
+    : m_view(view)
     , m_popupMenuProxy(popupMenuProxy)
     , m_popupMenuItems(0)
     , m_selectedIndex(selectedIndex)
@@ -54,7 +54,7 @@ EwkPopupMenu::~EwkPopupMenu()
 
 void EwkPopupMenu::close()
 {
-    m_viewImpl->closePopupMenu();
+    m_view->closePopupMenu();
 }
 
 const Eina_List* EwkPopupMenu::items() const

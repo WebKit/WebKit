@@ -31,19 +31,19 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class PageUIClientEfl {
 public:
-    static PassOwnPtr<PageUIClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<PageUIClientEfl> create(EwkView* view)
     {
-        return adoptPtr(new PageUIClientEfl(viewImpl));
+        return adoptPtr(new PageUIClientEfl(view));
     }
 
 private:
-    explicit PageUIClientEfl(EwkViewImpl*);
+    explicit PageUIClientEfl(EwkView*);
 
     static void close(WKPageRef, const void*);
     static void takeFocus(WKPageRef, WKFocusDirection, const void*);
@@ -72,7 +72,7 @@ private:
     static void hideColorPicker(WKPageRef, const void*);
 #endif
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

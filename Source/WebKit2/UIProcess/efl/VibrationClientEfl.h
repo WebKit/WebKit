@@ -31,23 +31,23 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class VibrationClientEfl {
 public:
-    static PassOwnPtr<VibrationClientEfl> create(EwkViewImpl*);
+    static PassOwnPtr<VibrationClientEfl> create(EwkView*);
 
     virtual ~VibrationClientEfl();
 
 private:
-    explicit VibrationClientEfl(EwkViewImpl*);
+    explicit VibrationClientEfl(EwkView*);
 
     static void vibrateCallback(WKVibrationRef, uint32_t vibrationTime, const void* clientInfo);
     static void cancelVibrationCallback(WKVibrationRef, const void* clientInfo);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

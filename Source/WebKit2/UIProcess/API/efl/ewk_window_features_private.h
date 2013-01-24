@@ -26,20 +26,20 @@
 #ifndef ewk_window_features_private_h
 #define ewk_window_features_private_h
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "ImmutableDictionary.h"
 #include "WindowFeatures.h"
 #include "ewk_object_private.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/RefCounted.h>
 
-class EwkViewImpl;
+class EwkView;
 
 class EwkWindowFeatures : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkWindowFeatures)
 
-    static PassRefPtr<EwkWindowFeatures> create(WebKit::ImmutableDictionary* windowFeatures, EwkViewImpl* viewImpl)
+    static PassRefPtr<EwkWindowFeatures> create(WebKit::ImmutableDictionary* windowFeatures, EwkView* viewImpl)
     {
         return adoptRef(new EwkWindowFeatures(windowFeatures, viewImpl));
     }
@@ -69,11 +69,11 @@ public:
     void setFullScreen(bool fullScreen) { m_fullScreen = fullScreen; }
 
 private:
-    EwkWindowFeatures(WebKit::ImmutableDictionary* windowFeatures, EwkViewImpl* viewImpl);
+    EwkWindowFeatures(WebKit::ImmutableDictionary* windowFeatures, EwkView* viewImpl);
     template <typename T1, typename T2>
     static T1 getWindowFeatureValue(WebKit::ImmutableDictionary* windowFeatures, const String& featureName);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 
     WebCore::FloatRect m_geometry;
     bool m_toolbarVisible;

@@ -38,19 +38,19 @@ namespace WebKit {
 class DownloadProxy;
 }
 
-class EwkViewImpl;
+class EwkView;
 
 class EwkDownloadJob : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkDownloadJob)
 
-    static PassRefPtr<EwkDownloadJob> create(WebKit::DownloadProxy* download, EwkViewImpl* viewImpl)
+    static PassRefPtr<EwkDownloadJob> create(WebKit::DownloadProxy* download, EwkView* viewImpl)
     {
         return adoptRef(new EwkDownloadJob(download, viewImpl));
     }
 
     uint64_t id() const;
-    EwkViewImpl* viewImpl() const;
+    EwkView* view() const;
 
     Ewk_Download_Job_State state() const;
     void setState(Ewk_Download_Job_State);
@@ -72,10 +72,10 @@ public:
     void incrementReceivedData(uint64_t length);
 
 private:
-    EwkDownloadJob(WebKit::DownloadProxy* download, EwkViewImpl* viewImpl);
+    EwkDownloadJob(WebKit::DownloadProxy* download, EwkView* view);
 
     WebKit::DownloadProxy* m_downloadProxy;
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_viewImpl;
     Ewk_Download_Job_State m_state;
     mutable RefPtr<EwkUrlRequest> m_request;
     RefPtr<EwkUrlResponse> m_response;

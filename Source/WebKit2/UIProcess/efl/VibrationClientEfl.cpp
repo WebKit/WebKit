@@ -28,7 +28,7 @@
 
 #if ENABLE(VIBRATION)
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WKAPICast.h"
 #include "WKVibration.h"
 
@@ -42,25 +42,25 @@ static inline VibrationClientEfl* toVibrationClient(const void* clientInfo)
 
 void VibrationClientEfl::vibrateCallback(WKVibrationRef, uint32_t vibrationTime, const void* clientInfo)
 {
-    toVibrationClient(clientInfo)->m_viewImpl->smartCallback<Vibrate>().call(&vibrationTime);
+    toVibrationClient(clientInfo)->m_view->smartCallback<Vibrate>().call(&vibrationTime);
 }
 
 void VibrationClientEfl::cancelVibrationCallback(WKVibrationRef, const void* clientInfo)
 {
-    toVibrationClient(clientInfo)->m_viewImpl->smartCallback<CancelVibration>().call();
+    toVibrationClient(clientInfo)->m_view->smartCallback<CancelVibration>().call();
 }
 
-PassOwnPtr<VibrationClientEfl> VibrationClientEfl::create(EwkViewImpl* viewImpl)
+PassOwnPtr<VibrationClientEfl> VibrationClientEfl::create(EwkView* viewImpl)
 {
     return adoptPtr(new VibrationClientEfl(viewImpl));
 }
 
-VibrationClientEfl::VibrationClientEfl(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+VibrationClientEfl::VibrationClientEfl(EwkView* view)
+    : m_view(view)
 {
-    ASSERT(m_viewImpl);
+    ASSERT(m_view);
 
-    WKPageRef pageRef = m_viewImpl->wkPage();
+    WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
     WKVibrationRef wkVibration = WKPageGetVibration(pageRef);
@@ -77,7 +77,7 @@ VibrationClientEfl::VibrationClientEfl(EwkViewImpl* viewImpl)
 
 VibrationClientEfl::~VibrationClientEfl()
 {
-    WKPageRef pageRef = m_viewImpl->wkPage();
+    WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
     WKVibrationRef wkVibration = WKPageGetVibration(pageRef);

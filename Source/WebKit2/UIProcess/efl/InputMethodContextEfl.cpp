@@ -21,7 +21,7 @@
 #include "config.h"
 #include "InputMethodContextEfl.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WebPageProxy.h"
 #include <Ecore_Evas.h>
 #include <Ecore_IMF_Evas.h>
@@ -30,8 +30,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InputMethodContextEfl::InputMethodContextEfl(EwkViewImpl* viewImpl, PassOwnPtr<Ecore_IMF_Context> context)
-    : m_viewImpl(viewImpl)
+InputMethodContextEfl::InputMethodContextEfl(EwkView* view, PassOwnPtr<Ecore_IMF_Context> context)
+    : m_view(view)
     , m_context(context)
     , m_focused(false)
 {
@@ -50,14 +50,14 @@ void InputMethodContextEfl::onIMFInputSequenceComplete(void* data, Ecore_IMF_Con
     if (!eventInfo || !inputMethodContext->m_focused)
         return;
 
-    inputMethodContext->m_viewImpl->page()->confirmComposition(String::fromUTF8(static_cast<char*>(eventInfo)));
+    inputMethodContext->m_view->page()->confirmComposition(String::fromUTF8(static_cast<char*>(eventInfo)));
 }
 
 void InputMethodContextEfl::onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Context* context, void*)
 {
     InputMethodContextEfl* inputMethodContext = static_cast<InputMethodContextEfl*>(data);
 
-    if (!inputMethodContext->m_viewImpl->page()->focusedFrame() || !inputMethodContext->m_focused)
+    if (!inputMethodContext->m_view->page()->focusedFrame() || !inputMethodContext->m_focused)
         return;
 
     char* buffer = 0;
@@ -69,7 +69,7 @@ void InputMethodContextEfl::onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Co
     free(buffer);
     Vector<CompositionUnderline> underlines;
     underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
-    inputMethodContext->m_viewImpl->page()->setComposition(preeditString, underlines, 0);
+    inputMethodContext->m_view->page()->setComposition(preeditString, underlines, 0);
 }
 
 PassOwnPtr<Ecore_IMF_Context> InputMethodContextEfl::createIMFContext(Evas* canvas)
@@ -107,7 +107,7 @@ void InputMethodContextEfl::updateTextInputState()
     if (!m_context)
         return;
 
-    const EditorState& editor = m_viewImpl->page()->editorState();
+    const EditorState& editor = m_view->page()->editorState();
 
     if (editor.isContentEditable) {
         if (m_focused)
@@ -121,7 +121,7 @@ void InputMethodContextEfl::updateTextInputState()
             return;
 
         if (editor.hasComposition)
-            m_viewImpl->page()->cancelComposition();
+            m_view->page()->cancelComposition();
 
         m_focused = false;
         ecore_imf_context_reset(m_context.get());

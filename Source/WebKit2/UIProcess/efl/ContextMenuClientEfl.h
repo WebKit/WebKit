@@ -33,13 +33,13 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class ContextMenuClientEfl {
 public:
-    static PassOwnPtr<ContextMenuClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<ContextMenuClientEfl> create(EwkView* viewImpl)
     {
         return adoptPtr(new ContextMenuClientEfl(viewImpl));
     }
@@ -47,9 +47,9 @@ public:
     static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKHitTestResultRef, WKTypeRef userData, const void* clientInfo);
 
 private:
-    explicit ContextMenuClientEfl(EwkViewImpl*);
+    explicit ContextMenuClientEfl(EwkView*);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

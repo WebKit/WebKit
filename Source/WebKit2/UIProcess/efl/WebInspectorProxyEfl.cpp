@@ -28,7 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WebProcessProxy.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
@@ -98,8 +98,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     if (!m_inspectorWindow)
         return 0;
 
-    m_inspectorView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()), EwkViewImpl::LegacyBehavior);
-    EwkViewImpl* inspectorViewImpl = EwkViewImpl::fromEvasObject(m_inspectorView);
+    m_inspectorView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
+    EwkView* inspectorViewImpl = EwkView::fromEvasObject(m_inspectorView);
     inspectorViewImpl->setThemePath(TEST_THEME_DIR "/default.edj");
 
     Ewk_Settings* settings = inspectorViewImpl->settings();

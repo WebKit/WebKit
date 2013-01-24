@@ -26,7 +26,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
@@ -34,7 +34,7 @@ class WebPageProxy;
 
 class InputMethodContextEfl {
 public:
-    static PassOwnPtr<InputMethodContextEfl> create(EwkViewImpl* viewImpl, Evas* canvas)
+    static PassOwnPtr<InputMethodContextEfl> create(EwkView* viewImpl, Evas* canvas)
     {
         OwnPtr<Ecore_IMF_Context> context = createIMFContext(canvas);
         if (!context)
@@ -49,13 +49,13 @@ public:
     void updateTextInputState();
 
 private:
-    InputMethodContextEfl(EwkViewImpl*, PassOwnPtr<Ecore_IMF_Context>);
+    InputMethodContextEfl(EwkView*, PassOwnPtr<Ecore_IMF_Context>);
 
     static PassOwnPtr<Ecore_IMF_Context> createIMFContext(Evas* canvas);
     static void onIMFInputSequenceComplete(void* data, Ecore_IMF_Context*, void* eventInfo);
     static void onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Context*, void* eventInfo);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
     OwnPtr<Ecore_IMF_Context> m_context;
     bool m_focused;
 };

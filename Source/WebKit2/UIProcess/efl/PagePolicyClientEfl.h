@@ -31,25 +31,25 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
 class PagePolicyClientEfl {
 public:
-    static PassOwnPtr<PagePolicyClientEfl> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<PagePolicyClientEfl> create(EwkView* view)
     {
-        return adoptPtr(new PagePolicyClientEfl(viewImpl));
+        return adoptPtr(new PagePolicyClientEfl(view));
     }
 
 private:
-    explicit PagePolicyClientEfl(EwkViewImpl*);
+    explicit PagePolicyClientEfl(EwkView*);
 
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKStringRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

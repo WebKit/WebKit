@@ -37,11 +37,11 @@ class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 }
 
-class EwkViewImpl;
+class EwkView;
 
 class EwkContextMenu {
 public:
-    static PassOwnPtr<EwkContextMenu> create(EwkViewImpl* viewImpl, WebKit::WebContextMenuProxyEfl* contextMenuProxy, const Vector<WebKit::WebContextMenuItemData>& items)
+    static PassOwnPtr<EwkContextMenu> create(EwkView* viewImpl, WebKit::WebContextMenuProxyEfl* contextMenuProxy, const Vector<WebKit::WebContextMenuItemData>& items)
     {
         return adoptPtr(new EwkContextMenu(viewImpl, contextMenuProxy, items));
     }
@@ -68,9 +68,9 @@ public:
 private:
     EwkContextMenu();
     EwkContextMenu(Eina_List* items);
-    EwkContextMenu(EwkViewImpl* viewImpl, WebKit::WebContextMenuProxyEfl*, const Vector<WebKit::WebContextMenuItemData>& items);
+    EwkContextMenu(EwkView* viewImpl, WebKit::WebContextMenuProxyEfl*, const Vector<WebKit::WebContextMenuItemData>& items);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_viewImpl;
     WebKit::WebContextMenuProxyEfl* m_contextMenuProxy;
     Eina_List* m_contextMenuItems;
 };

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebPopupMenuProxyEfl.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "NativeWebMouseEvent.h"
 #include "WebPopupItem.h"
 #include "ewk_view.h"
@@ -36,20 +36,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyEfl::WebPopupMenuProxyEfl(EwkViewImpl* viewImpl, WebPopupMenuProxy::Client* client)
+WebPopupMenuProxyEfl::WebPopupMenuProxyEfl(EwkView* view, WebPopupMenuProxy::Client* client)
     : WebPopupMenuProxy(client)
-    , m_viewImpl(viewImpl)
+    , m_view(view)
 {
 }
 
 void WebPopupMenuProxyEfl::showPopupMenu(const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
-    m_viewImpl->requestPopupMenu(this, rect, textDirection, pageScaleFactor, items, selectedIndex);
+    m_view->requestPopupMenu(this, rect, textDirection, pageScaleFactor, items, selectedIndex);
 }
 
 void WebPopupMenuProxyEfl::hidePopupMenu()
 {
-    m_viewImpl->closePopupMenu();
+    m_view->closePopupMenu();
 }
 
 void WebPopupMenuProxyEfl::valueChanged(int newSelectedIndex)

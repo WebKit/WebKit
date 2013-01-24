@@ -28,7 +28,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -57,7 +57,7 @@ void WebFullScreenManagerProxy::enterFullScreen()
         return;
 
     willEnterFullScreen();
-    EwkViewImpl::fromEvasObject(m_webView)->enterFullScreen();
+    EwkView::fromEvasObject(m_webView)->enterFullScreen();
     didEnterFullScreen();
 }
 
@@ -68,7 +68,7 @@ void WebFullScreenManagerProxy::exitFullScreen()
 
 
     willExitFullScreen();
-    EwkViewImpl::fromEvasObject(m_webView)->exitFullScreen();
+    EwkView::fromEvasObject(m_webView)->exitFullScreen();
     didExitFullScreen();
 }
 

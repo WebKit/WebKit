@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WKView.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WKAPICast.h"
 #include "ewk_view_private.h"
 #include <WebKit2/WKImageCairo.h>
@@ -29,24 +29,24 @@ using namespace WebKit;
 
 WKViewRef WKViewCreate(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkViewImpl::LegacyBehavior));
+    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::LegacyBehavior));
 }
 
 WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkViewImpl::DefaultBehavior));
+    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::DefaultBehavior));
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(toImpl(viewRef));
+    EwkView* view = EwkView::fromEvasObject(toImpl(viewRef));
 
-    return viewImpl->wkPage();
+    return view->wkPage();
 }
 
 WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
 {
-    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(toImpl(viewRef));
+    EwkView* view = EwkView::fromEvasObject(toImpl(viewRef));
 
-    return WKImageCreateFromCairoSurface(viewImpl->takeSnapshot().get(), 0 /* options */);
+    return WKImageCreateFromCairoSurface(view->takeSnapshot().get(), 0 /* options */);
 }

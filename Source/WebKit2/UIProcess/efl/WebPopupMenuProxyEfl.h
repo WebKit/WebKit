@@ -32,7 +32,7 @@ namespace WebCore {
 class IntRect;
 }
 
-class EwkViewImpl;
+class EwkView;
 
 namespace WebKit {
 
@@ -40,7 +40,7 @@ class WebPageProxy;
 
 class WebPopupMenuProxyEfl : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyEfl> create(EwkViewImpl* viewImpl, WebPopupMenuProxy::Client* client)
+    static PassRefPtr<WebPopupMenuProxyEfl> create(EwkView* viewImpl, WebPopupMenuProxy::Client* client)
     {
         return adoptRef(new WebPopupMenuProxyEfl(viewImpl, client));
     }
@@ -51,9 +51,9 @@ public:
     void valueChanged(int newSelectedIndex);
 
 private:
-    WebPopupMenuProxyEfl(EwkViewImpl*, WebPopupMenuProxy::Client*);
+    WebPopupMenuProxyEfl(EwkView*, WebPopupMenuProxy::Client*);
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 } // namespace WebKit

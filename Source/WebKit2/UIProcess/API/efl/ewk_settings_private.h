@@ -32,14 +32,14 @@
 namespace WebKit {
 class WebPreferences;
 }
-class EwkViewImpl;
+class EwkView;
 /**
  * \struct  Ewk_Settings
  * @brief   Contains the settings data.
  */
 class EwkSettings {
 public:
-    static PassOwnPtr<EwkSettings> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<EwkSettings> create(EwkView* viewImpl)
     {
         return adoptPtr(new EwkSettings(viewImpl));
     }
@@ -48,13 +48,13 @@ public:
     WebKit::WebPreferences* preferences();
 
 private:
-    explicit EwkSettings(EwkViewImpl* viewImpl)
-        : m_viewImpl(viewImpl)
+    explicit EwkSettings(EwkView* viewImpl)
+        : m_view(viewImpl)
     {
-        ASSERT(m_viewImpl);
+        ASSERT(m_view);
     }
 
-    EwkViewImpl* m_viewImpl;
+    EwkView* m_view;
 };
 
 #endif // ewk_settings_private_h

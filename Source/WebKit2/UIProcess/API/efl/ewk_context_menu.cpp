@@ -27,7 +27,7 @@
 #include "ewk_context_menu.h"
 
 #include "APIObject.h"
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WebContextMenuItemData.h"
 #include "WebContextMenuProxyEfl.h"
 #include "ewk_context_menu_item.h"
@@ -36,8 +36,8 @@
 
 using namespace WebKit;
 
-EwkContextMenu::EwkContextMenu(EwkViewImpl* viewImpl, WebContextMenuProxyEfl* contextMenuProxy, const Vector<WebKit::WebContextMenuItemData>& items)
-    : m_viewImpl(viewImpl)
+EwkContextMenu::EwkContextMenu(EwkView* view, WebContextMenuProxyEfl* contextMenuProxy, const Vector<WebKit::WebContextMenuItemData>& items)
+    : m_viewImpl(view)
     , m_contextMenuProxy(contextMenuProxy)
     , m_contextMenuItems(0)
 {

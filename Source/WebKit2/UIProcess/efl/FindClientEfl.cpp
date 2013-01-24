@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FindClientEfl.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WKPage.h"
 
 using namespace EwkViewCallbacks;
@@ -42,20 +42,20 @@ static inline FindClientEfl* toFindClientEfl(const void* clientInfo)
 void FindClientEfl::didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    findClient->m_viewImpl->smartCallback<TextFound>().call(&matchCount);
+    findClient->m_view->smartCallback<TextFound>().call(&matchCount);
 }
 
 void FindClientEfl::didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
     unsigned matchCount = 0;
-    findClient->m_viewImpl->smartCallback<TextFound>().call(&matchCount);
+    findClient->m_view->smartCallback<TextFound>().call(&matchCount);
 }
 
-FindClientEfl::FindClientEfl(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+FindClientEfl::FindClientEfl(EwkView* viewImpl)
+    : m_view(viewImpl)
 {
-    WKPageRef pageRef = m_viewImpl->wkPage();
+    WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
     WKPageFindClient findClient;

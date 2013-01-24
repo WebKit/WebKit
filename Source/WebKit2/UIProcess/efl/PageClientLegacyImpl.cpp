@@ -28,7 +28,7 @@
 #include "PageClientLegacyImpl.h"
 
 #include "CoordinatedLayerTreeHostProxy.h"
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "NotImplemented.h"
 #include "ewk_view.h"
 
@@ -37,20 +37,20 @@ using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
-PageClientLegacyImpl::PageClientLegacyImpl(EwkViewImpl* viewImpl)
-    : PageClientBase(viewImpl)
+PageClientLegacyImpl::PageClientLegacyImpl(EwkView* view)
+    : PageClientBase(view)
 {
 }
 
 void PageClientLegacyImpl::didCommitLoad()
 {
-    m_viewImpl->update();
+    m_view->update();
 }
 
 void PageClientLegacyImpl::updateViewportSize()
 {
 #if USE(TILED_BACKING_STORE)
-    m_viewImpl->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_viewImpl->pagePosition()), m_viewImpl->size()), m_viewImpl->pageScaleFactor(), FloatPoint());
+    m_view->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_view->pagePosition()), m_view->size()), m_view->pageScaleFactor(), FloatPoint());
 #endif
 }
 
@@ -68,34 +68,34 @@ FloatRect PageClientLegacyImpl::convertToUserSpace(const FloatRect& viewRect)
 
 void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
 {
-    m_viewImpl->update();
+    m_view->update();
 }
 
 void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
 #if USE(TILED_BACKING_STORE)
-    m_viewImpl->page()->drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(FloatSize(size.width(), size.height()));
-    m_viewImpl->update();
+    m_view->page()->drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(FloatSize(size.width(), size.height()));
+    m_view->update();
 #endif
 
-    m_viewImpl->smartCallback<ContentsSizeChanged>().call(size);
+    m_view->smartCallback<ContentsSizeChanged>().call(size);
 }
 
 #if USE(TILED_BACKING_STORE)
 void PageClientLegacyImpl::pageDidRequestScroll(const IntPoint& position)
 {
-    m_viewImpl->setPagePosition(FloatPoint(position));
-    m_viewImpl->update();
+    m_view->setPagePosition(FloatPoint(position));
+    m_view->update();
 }
 
 void PageClientLegacyImpl::didRenderFrame(const WebCore::IntSize&, const WebCore::IntRect&)
 {
-    m_viewImpl->update();
+    m_view->update();
 }
 
 void PageClientLegacyImpl::pageTransitionViewportReady()
 {
-    m_viewImpl->update();
+    m_view->update();
 }
 #endif
 

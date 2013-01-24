@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ContextMenuClientEfl.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "NotImplemented.h"
 #include "WKArray.h"
 #include "WKPage.h"
@@ -40,10 +40,10 @@ static inline ContextMenuClientEfl* toContextClientEfl(const void* clientInfo)
     return static_cast<ContextMenuClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-ContextMenuClientEfl::ContextMenuClientEfl(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
+    : m_view(view)
 {
-    WKPageRef pageRef = m_viewImpl->wkPage();
+    WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
     WKPageContextMenuClient contextMenuClient;

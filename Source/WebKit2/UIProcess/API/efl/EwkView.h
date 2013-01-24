@@ -18,8 +18,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef EwkViewImpl_h
-#define EwkViewImpl_h
+#ifndef EwkView_h
+#define EwkView_h
 
 #include "EwkViewCallbacks.h"
 #include "ImmutableDictionary.h"
@@ -96,18 +96,18 @@ typedef struct _Evas_GL_Surface Evas_GL_Surface;
 
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 
-class EwkViewImpl {
+class EwkView {
 public:
 
     enum ViewBehavior {
         LegacyBehavior,
         DefaultBehavior
     };
-    EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, PassRefPtr<WebKit::WebPageGroup> pageGroup, ViewBehavior);
-    ~EwkViewImpl();
+    EwkView(Evas_Object* view, PassRefPtr<EwkContext> context, PassRefPtr<WebKit::WebPageGroup> pageGroup, ViewBehavior);
+    ~EwkView();
 
-    static EwkViewImpl* fromEvasObject(const Evas_Object* view);
-    Evas_Object* view() { return m_view; }
+    static EwkView* fromEvasObject(const Evas_Object* view);
+    Evas_Object* view() { return m_evasObject; }
 
     WKPageRef wkPage();
     WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
@@ -149,8 +149,8 @@ public:
 
     void update(const WebCore::IntRect& rect = WebCore::IntRect());
 
-    static void addToPageViewMap(EwkViewImpl* viewImpl);
-    static void removeFromPageViewMap(EwkViewImpl* viewImpl);
+    static void addToPageViewMap(EwkView* view);
+    static void removeFromPageViewMap(EwkView* view);
     static const Evas_Object* viewFromPageViewMap(const WKPageRef);
 
 #if ENABLE(FULLSCREEN_API)
@@ -191,7 +191,7 @@ public:
     template<EwkViewCallbacks::CallbackType callbackType>
     EwkViewCallbacks::CallBack<callbackType> smartCallback() const
     {
-        return EwkViewCallbacks::CallBack<callbackType>(m_view);
+        return EwkViewCallbacks::CallBack<callbackType>(m_evasObject);
     }
 
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
@@ -221,7 +221,7 @@ private:
 #endif
 
     inline Ewk_View_Smart_Data* smartData() const;
-    void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
+    void displayTimerFired(WebCore::Timer<EwkView>*);
 
 #if USE(COORDINATED_GRAPHICS)
     WebKit::LayerTreeRenderer* layerTreeRenderer();
@@ -241,7 +241,7 @@ private:
     static void onFaviconChanged(const char* pageURL, void* eventInfo);
 
     // Note, initialization order matters.
-    Evas_Object* m_view;
+    Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<Evas_GL> m_evasGL;
@@ -277,7 +277,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;
 #endif
-    WebCore::Timer<EwkViewImpl> m_displayTimer;
+    WebCore::Timer<EwkView> m_displayTimer;
     OwnPtr<EwkContextMenu> m_contextMenu;
     OwnPtr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
@@ -288,4 +288,4 @@ private:
     bool m_setDrawsBackground;
 };
 
-#endif // EwkViewImpl_h
+#endif // EwkView_h

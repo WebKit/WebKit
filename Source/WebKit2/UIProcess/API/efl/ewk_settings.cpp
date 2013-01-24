@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ewk_settings.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "ewk_settings_private.h"
 #include <WebKit2/WebPageGroup.h>
 #include <WebKit2/WebPageProxy.h>
@@ -45,12 +45,12 @@ using namespace WebKit;
 
 const WebKit::WebPreferences* EwkSettings::preferences() const
 {
-    return m_viewImpl->page()->pageGroup()->preferences();
+    return m_view->page()->pageGroup()->preferences();
 }
 
 WebKit::WebPreferences* EwkSettings::preferences()
 {
-    return m_viewImpl->page()->pageGroup()->preferences();
+    return m_view->page()->pageGroup()->preferences();
 }
 
 #if ENABLE(SPELLCHECK)

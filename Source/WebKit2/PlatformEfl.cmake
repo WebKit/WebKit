@@ -40,7 +40,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
-    UIProcess/API/efl/EwkViewImpl.cpp
+    UIProcess/API/efl/EwkView.cpp
     UIProcess/API/efl/EvasGLContext.cpp
     UIProcess/API/efl/EvasGLSurface.cpp
     UIProcess/API/efl/SnapshotImageGL.cpp

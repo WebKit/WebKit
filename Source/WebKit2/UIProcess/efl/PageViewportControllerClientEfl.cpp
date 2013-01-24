@@ -29,7 +29,7 @@
 #if USE(TILED_BACKING_STORE)
 
 #include "CoordinatedLayerTreeHostProxy.h"
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "LayerTreeRenderer.h"
 #include "PageViewportController.h"
 #include "TransformationMatrix.h"
@@ -38,11 +38,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkView* view)
+    : m_view(view)
     , m_controller(0)
 {
-    ASSERT(m_viewImpl);
+    ASSERT(m_view);
 }
 
 PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
@@ -51,7 +51,7 @@ PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
 
 DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
 {
-    return m_viewImpl->page()->drawingArea();
+    return m_view->page()->drawingArea();
 }
 
 void PageViewportControllerClientEfl::setRendererActive(bool active)
@@ -62,7 +62,7 @@ void PageViewportControllerClientEfl::setRendererActive(bool active)
 void PageViewportControllerClientEfl::updateViewportSize()
 {
     ASSERT(m_controller);
-    FloatSize size = m_viewImpl->size();
+    FloatSize size = m_view->size();
     // The viewport controller expects sizes in UI units, and not raw device units.
     size.scale(1 / m_controller->deviceScaleFactor());
     m_controller->didChangeViewportSize(size);
@@ -71,7 +71,7 @@ void PageViewportControllerClientEfl::updateViewportSize()
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
     drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(contentsSize);
-    m_viewImpl->update();
+    m_view->update();
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
@@ -79,27 +79,27 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
     m_contentPosition = contentsPoint;
 
     FloatPoint pos(contentsPoint);
-    pos.scale(m_viewImpl->pageScaleFactor(), m_viewImpl->pageScaleFactor());
-    pos.scale(m_viewImpl->deviceScaleFactor(), m_viewImpl->deviceScaleFactor());
-    m_viewImpl->setPagePosition(pos);
+    pos.scale(m_view->pageScaleFactor(), m_view->pageScaleFactor());
+    pos.scale(m_view->deviceScaleFactor(), m_view->deviceScaleFactor());
+    m_view->setPagePosition(pos);
 
-    m_controller->didChangeContentsVisibility(m_contentPosition, m_viewImpl->pageScaleFactor());
+    m_controller->didChangeContentsVisibility(m_contentPosition, m_view->pageScaleFactor());
 }
 
 void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
 {
-    m_viewImpl->setPageScaleFactor(newScale);
+    m_view->setPageScaleFactor(newScale);
 }
 
 void PageViewportControllerClientEfl::didResumeContent()
 {
     ASSERT(m_controller);
-    m_controller->didChangeContentsVisibility(m_contentPosition, m_viewImpl->pageScaleFactor());
+    m_controller->didChangeContentsVisibility(m_contentPosition, m_view->pageScaleFactor());
 }
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
-    m_viewImpl->update();
+    m_view->update();
 }
 
 void PageViewportControllerClientEfl::didChangeViewportAttributes()

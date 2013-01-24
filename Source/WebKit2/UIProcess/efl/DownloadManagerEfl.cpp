@@ -27,7 +27,7 @@
 #include "DownloadManagerEfl.h"
 
 #include "DownloadProxy.h"
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "WKContext.h"
 #include "WKString.h"
 #include "ewk_context_private.h"
@@ -52,7 +52,7 @@ WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContext
 
     // We send the new download signal on the Ewk_View only once we have received the response
     // and the suggested file name.
-    download->viewImpl()->smartCallback<DownloadJobRequested>().call(download);
+    download->view()->smartCallback<DownloadJobRequested>().call(download);
 
     // DownloadSoup expects the destination to be a URL.
     String destination = ASCIILiteral("file://") + String::fromUTF8(download->destination());
@@ -92,7 +92,7 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
     OwnPtr<EwkError> ewkError = EwkError::create(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
     Ewk_Download_Job_Error downloadError = { download, ewkError.get() };
-    download->viewImpl()->smartCallback<DownloadJobFailed>().call(&downloadError);
+    download->view()->smartCallback<DownloadJobFailed>().call(&downloadError);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -104,7 +104,7 @@ void DownloadManagerEfl::didCancel(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
-    download->viewImpl()->smartCallback<DownloadJobCancelled>().call(download);
+    download->view()->smartCallback<DownloadJobCancelled>().call(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -116,7 +116,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
-    download->viewImpl()->smartCallback<DownloadJobFinished>().call(download);
+    download->view()->smartCallback<DownloadJobFinished>().call(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -144,7 +144,7 @@ DownloadManagerEfl::~DownloadManagerEfl()
     WKContextSetDownloadClient(toAPI(m_context->webContext().get()), 0);
 }
 
-void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkViewImpl* viewImpl)
+void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkView* viewImpl)
 {
     uint64_t downloadId = download->downloadID();
     if (m_downloadJobs.contains(downloadId))

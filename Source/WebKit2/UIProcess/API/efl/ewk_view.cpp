@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
-#include "EwkViewImpl.h"
+#include "EwkView.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "InputMethodContextEfl.h"
@@ -126,7 +126,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
         EINA_LOG_CRIT("smart data is null");                                   \
         return __VA_ARGS__;                                                    \
     }                                                                          \
-    EwkViewImpl* impl = smartData->priv;                                       \
+    EwkView* impl = smartData->priv;                                           \
     do {                                                                       \
         if (!impl) {                                                           \
             EINA_LOG_CRIT("no private data for object %p (%s)",                \
@@ -136,7 +136,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
     } while (0)
 
 #define EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, ...)                        \
-    EwkViewImpl* impl = 0;                                                     \
+    EwkView* impl = 0;                                                         \
     do {                                                                       \
         EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, __VA_ARGS__);            \
         impl = smartData->priv;                                                \
@@ -505,7 +505,7 @@ static inline Evas_Smart* createEwkViewSmartClass(void)
     return smart;
 }
 
-static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef = 0, EwkViewImpl::ViewBehavior behavior = EwkViewImpl::DefaultBehavior)
+static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef = 0, EwkView::ViewBehavior behavior = EwkView::DefaultBehavior)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
@@ -524,7 +524,7 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
 
     // Default WebPageGroup is created in WebContext constructor if the pageGroupRef is 0,
     // so we do not need to create it here.
-    smartData->priv = new EwkViewImpl(ewkView, context, toImpl(pageGroupRef), behavior);
+    smartData->priv = new EwkView(ewkView, context, toImpl(pageGroupRef), behavior);
     return ewkView;
 }
 
@@ -532,7 +532,7 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
  * @internal
  * Constructs a ewk_view Evas_Object with WKType parameters.
  */
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkViewImpl::ViewBehavior behavior)
+Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkView::ViewBehavior behavior)
 {
     return createEwkView(canvas, createEwkViewSmartClass(), contextRef ? EwkContext::create(toImpl(contextRef)) : EwkContext::defaultContext(), pageGroupRef, behavior);
 }

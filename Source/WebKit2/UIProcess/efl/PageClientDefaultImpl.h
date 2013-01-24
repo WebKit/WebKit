@@ -36,7 +36,7 @@ namespace WebKit {
 
 class PageClientDefaultImpl : public PageClientBase {
 public:
-    static PassOwnPtr<PageClientBase> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<PageClientBase> create(EwkView* viewImpl)
     {
         return adoptPtr(new PageClientDefaultImpl(viewImpl));
     }
@@ -50,7 +50,7 @@ public:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
 private:
-    explicit PageClientDefaultImpl(EwkViewImpl*);
+    explicit PageClientDefaultImpl(EwkView*);
 
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     virtual void didChangeContentsSize(const WebCore::IntSize&);

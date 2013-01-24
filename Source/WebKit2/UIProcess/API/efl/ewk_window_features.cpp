@@ -32,8 +32,8 @@
 
 using namespace WebKit;
 
-EwkWindowFeatures::EwkWindowFeatures(ImmutableDictionary* windowFeatures, EwkViewImpl* viewImpl)
-    : m_viewImpl(viewImpl)
+EwkWindowFeatures::EwkWindowFeatures(ImmutableDictionary* windowFeatures, EwkView* view)
+    : m_view(view)
     , m_geometry(0, 0, 100, 100)
     , m_toolbarVisible(true)
     , m_statusBarVisible(true)
@@ -73,25 +73,25 @@ T1 EwkWindowFeatures::getWindowFeatureValue(ImmutableDictionary* windowFeatures,
 void EwkWindowFeatures::setToolbarVisible(bool toolbarVisible)
 {
     m_toolbarVisible = toolbarVisible;
-    m_viewImpl->smartCallback<EwkViewCallbacks::ToolbarVisible>().call(&toolbarVisible);
+    m_view->smartCallback<EwkViewCallbacks::ToolbarVisible>().call(&toolbarVisible);
 }
 
 void EwkWindowFeatures::setStatusBarVisible(bool statusBarVisible)
 {
     m_statusBarVisible = statusBarVisible;
-    m_viewImpl->smartCallback<EwkViewCallbacks::StatusBarVisible>().call(&statusBarVisible);
+    m_view->smartCallback<EwkViewCallbacks::StatusBarVisible>().call(&statusBarVisible);
 }
 
 void EwkWindowFeatures::setMenuBarVisible(bool menuBarVisible)
 {
     m_menuBarVisible = menuBarVisible;
-    m_viewImpl->smartCallback<EwkViewCallbacks::MenuBarVisible>().call(&menuBarVisible);
+    m_view->smartCallback<EwkViewCallbacks::MenuBarVisible>().call(&menuBarVisible);
 }
 
 void EwkWindowFeatures::setResizable(bool resizable)
 {
     m_resizable = resizable;
-    m_viewImpl->smartCallback<EwkViewCallbacks::WindowResizable>().call(&resizable);
+    m_view->smartCallback<EwkViewCallbacks::WindowResizable>().call(&resizable);
 }
 
 Eina_Bool ewk_window_features_toolbar_visible_get(const Ewk_Window_Features* window_features)
