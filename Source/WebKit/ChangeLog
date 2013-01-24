@@ -1,5 +1,11 @@
 2013-01-23  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Add svn:eol-style to solution file, not eol-style.
+
+        * WebKit.vcxproj/WebKit.sln: Added property svn:eol-style. Removed property eol-style.
+
+2013-01-23  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Added eol-style=native to solution file.
 
         * WebKit.vcxproj/WebKit.sln: Added property eol-style.
