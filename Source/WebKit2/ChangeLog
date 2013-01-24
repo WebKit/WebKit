@@ -1,3 +1,17 @@
+2013-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Move WebKeyValueStorageManager to WebProcess/Storage.
+
+        Rubber-stamped by Sam Weinig.
+
+        Try this again, with DerivedSources.make correctly updated this time.
+
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebKeyValueStorageManager.cpp: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp.
+        * WebProcess/Storage/WebKeyValueStorageManager.h: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h.
+        * WebProcess/Storage/WebKeyValueStorageManager.messages.in: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in.
+
 2013-01-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_favicon_database
