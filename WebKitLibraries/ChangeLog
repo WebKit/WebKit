@@ -1,3 +1,22 @@
+2013-01-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Get WTF compiling in VS2010 (32bit)
+        https://bugs.webkit.org/show_bug.cgi?id=106986
+
+        Reviewed by Tim Horton.
+
+        If you do not have Cygwin in the overall operating system
+        PATH, the project will not build.  In VS2005 we had logic
+        in the build system to guard against this.  We should
+        retain this in the VS2010 work.
+
+        Furthermore, VS2010 has a nasty bug where to Visual Studio
+        tools path is not defined when performing a 'clean' phase
+        on an NMAKE-based build.  This is corrected here as well.
+
+        * win/tools/vsprops/common.props: Revise environment setup
+        to ensure proper tools are in path during build.
+
 2013-01-19  Roger Fong  <roger_fong@apple.com>
 
         Add WebKitLibraries property sheets for compiling WebKit in VS2010.

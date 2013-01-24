@@ -9,10 +9,19 @@
     <OutDir>$(ConfigurationBuildDir)\bin\</OutDir>
     <IntDir>$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <NMakeBuildCommandLine>nmake -f $(ProjectName).make</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake /nologo -f $(ProjectName).make clean
-nmake -f $(ProjectName).make</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
+    <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
+if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+nmake /nologo -f $(ProjectName).make</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
+if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+nmake /nologo -f $(ProjectName).make clean
+nmake /nologo -f $(ProjectName).make</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
+if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+
+set PATH=$(VSInstallDir)\VC\bin;%PATH%
+
+REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
   </PropertyGroup>
