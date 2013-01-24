@@ -46,11 +46,6 @@
 
 namespace WebCore {
 
-    enum ListenerLookupType {
-        ListenerFindOnly,
-        ListenerFindOrCreate,
-    };
-
     class V8DOMWrapper {
     public:
 #ifndef NDEBUG
@@ -66,9 +61,6 @@ namespace WebCore {
         static inline void clearNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*);
         static inline void setWrapperClass(void*, v8::Persistent<v8::Object>);
         static inline void setWrapperClass(Node*, v8::Persistent<v8::Object>);
-
-        // FIXME: This function should probably move to V8EventListenerList.h
-        static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value>, bool isAttribute, ListenerLookupType);
 
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 

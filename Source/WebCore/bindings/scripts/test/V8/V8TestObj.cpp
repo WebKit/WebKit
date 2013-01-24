@@ -41,6 +41,7 @@
 #include "V8DOMStringList.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"
+#include "V8EventListenerList.h"
 #include "V8Float32Array.h"
 #include "V8Node.h"
 #include "V8SVGDocument.h"
@@ -1069,7 +1070,7 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
 
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 {
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
+    RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOrCreate);
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
         V8TestObj::toNative(args.Holder())->addEventListener(stringResource, listener, args[2]->BooleanValue());
@@ -1080,7 +1081,7 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& args)
 {
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOnly);
+    RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOnly);
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
         V8TestObj::toNative(args.Holder())->removeEventListener(stringResource, listener.get(), args[2]->BooleanValue());

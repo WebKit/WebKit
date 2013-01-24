@@ -1264,16 +1264,15 @@ END
             if (!$codeGenerator->IsSubType($interface, "Node")) {
                 push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, ${v8InterfaceName}::eventListenerCacheIndex);\n");
             }
+            AddToImplIncludes("V8EventListenerList.h");
             if ($interfaceName eq "WorkerContext" and $attribute->signature->name eq "onerror") {
-                AddToImplIncludes("V8EventListenerList.h");
                 AddToImplIncludes("V8WorkerContextErrorHandler.h");
                 push(@implContentDecls, "    imp->set$implSetterFunctionName(V8EventListenerList::findOrCreateWrapper<V8WorkerContextErrorHandler>(value, true)");
             } elsif ($interfaceName eq "DOMWindow" and $attribute->signature->name eq "onerror") {
-                AddToImplIncludes("V8EventListenerList.h");
                 AddToImplIncludes("V8WindowErrorHandler.h");
                 push(@implContentDecls, "    imp->set$implSetterFunctionName(V8EventListenerList::findOrCreateWrapper<V8WindowErrorHandler>(value, true)");
             } else {
-                push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
+                push(@implContentDecls, "    imp->set$implSetterFunctionName(V8EventListenerList::getEventListener(value, true, ListenerFindOrCreate)");
             }
             push(@implContentDecls, ", ec") if $useExceptions;
             push(@implContentDecls, ");\n");
@@ -1353,11 +1352,12 @@ sub GenerateEventListenerCallback
     my $lookupType = ($functionName eq "add") ? "OrCreate" : "Only";
     my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
     my $hiddenDependencyAction = ($functionName eq "add") ? "create" : "remove";
- 
+
+    AddToImplIncludes("V8EventListenerList.h");
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Arguments& args)
 {
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFind${lookupType});
+    RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFind${lookupType});
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
         V8${interfaceName}::toNative(args.Holder())->${functionName}EventListener(stringResource, listener${passRefPtrHandling}, args[2]->BooleanValue());

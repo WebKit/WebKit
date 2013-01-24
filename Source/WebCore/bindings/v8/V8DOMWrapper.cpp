@@ -33,13 +33,11 @@
 
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
-#include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
-#include "V8WorkerContextEventListener.h"
 
 namespace WebCore {
 
@@ -128,22 +126,6 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
-}
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
-    if (context.IsEmpty())
-        return 0;
-    if (lookup == ListenerFindOnly)
-        return V8EventListenerList::findWrapper(value, isAttribute);
-    if (isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info))
-        return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-#if ENABLE(WORKERS)
-    return V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(value, isAttribute);
-#else
-    return 0;
-#endif
 }
 
 }  // namespace WebCore
