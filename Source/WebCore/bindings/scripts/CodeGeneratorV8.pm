@@ -3385,7 +3385,7 @@ END
             @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName, "v8::Handle<v8::Object>()", "v8::Isolate::GetCurrent()") . ";\n");
+                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName, "v8::Handle<v8::Object>()", "v8Context->GetIsolate()") . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
                 push(@implContent, "        if (!isScriptControllerTerminating())\n");
                 push(@implContent, "            CRASH();\n");
@@ -4017,6 +4017,7 @@ sub NativeToJSValue
     my $value = shift;
     my $getCreationContext = shift;
     my $getIsolate = shift;
+    die "An Isolate is mandatory for native value => JS value conversion." unless $getIsolate;
     my $getHolderContainer = shift;
     my $getHolderContainerArg = $getHolderContainer ? ", $getHolderContainer" : "";
     my $getScriptWrappable = shift;
@@ -4026,7 +4027,7 @@ sub NativeToJSValue
 
     my $type = $signature->type;
 
-    return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
+    return "v8Boolean($value, $getIsolate)" if $type eq "boolean";
     return "v8Undefined()" if $type eq "void";     # equivalent to v8Undefined()
 
     # HTML5 says that unsigned reflected attributes should be in the range
@@ -4057,7 +4058,7 @@ sub NativeToJSValue
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return $getIsolate ? "v8String($value, $getIsolate$returnHandleTypeArg)" : "deprecatedV8String($value)";
+        return "v8String($value, $getIsolate$returnHandleTypeArg)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
@@ -4087,12 +4088,12 @@ sub NativeToJSValue
 
     if ($type eq "EventListener") {
         AddToImplIncludes("V8AbstractEventListener.h");
-        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(" . ($getIsolate ? "v8Null($getIsolate)" : "v8::Null()") . ")";
+        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(v8Null($getIsolate))";
     }
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("$type.h");
-        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(" . ($getIsolate ? "v8Null($getIsolate)" : "v8::Null()") . ")";
+        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(v8Null($getIsolate))";
     }
 
     AddToImplIncludes("wtf/RefCounted.h");
