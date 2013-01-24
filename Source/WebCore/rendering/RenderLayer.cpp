@@ -5143,7 +5143,7 @@ void RenderLayer::dirtyNormalFlowList()
 void RenderLayer::rebuildZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
-    ASSERT(isDirtyStackingContext());
+    ASSERT(isDirtyStackingContainer());
 
 #if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
