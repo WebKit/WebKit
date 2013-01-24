@@ -49,9 +49,14 @@ class PatchLog(db.Model):
 
     def calculate_wait_duration(self):
         time_delta = datetime.utcnow() - self.date
-        self.wait_duration = int(time_delta.total_seconds())
+        self.wait_duration = int(self._time_delta_to_seconds(time_delta))
 
     def calculate_process_duration(self):
         if self.wait_duration:
             time_delta = datetime.utcnow() - self.date
-            self.process_duration = int(time_delta.total_seconds()) - self.wait_duration
+            self.process_duration = int(self._time_delta_to_seconds(time_delta)) - self.wait_duration
+
+    # Needed to support Python 2.5's lack of timedelta.total_seconds().
+    @classmethod
+    def _time_delta_to_seconds(cls, time_delta):
+        return time_delta.seconds + time_delta.days * 24 * 3600
