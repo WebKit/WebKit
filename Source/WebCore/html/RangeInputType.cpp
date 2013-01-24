@@ -34,6 +34,7 @@
 
 #include "AXObjectCache.h"
 #include "ElementShadow.h"
+#include "FeatureObserver.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -81,6 +82,7 @@ static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimu
 
 PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeRange);
     return adoptPtr(new RangeInputType(element));
 }
 

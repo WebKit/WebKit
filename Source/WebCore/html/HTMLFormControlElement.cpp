@@ -30,6 +30,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FeatureObserver.h"
 #include "Frame.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
@@ -122,9 +123,10 @@ void HTMLFormControlElement::ancestorDisabledStateWasChanged()
 
 void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == formAttr)
+    if (name == formAttr) {
         formAttributeChanged();
-    else if (name == disabledAttr) {
+        FeatureObserver::observe(document(), FeatureObserver::FormAttribute);
+    } else if (name == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !value.isNull();
         if (oldDisabled != m_disabled)
@@ -143,6 +145,10 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         m_isRequired = !value.isNull();
         if (wasRequired != m_isRequired)
             requiredAttributeChanged();
+        FeatureObserver::observe(document(), FeatureObserver::RequiredAttribute);
+    } else if (name == autofocusAttr) {
+        HTMLElement::parseAttribute(name, value);
+        FeatureObserver::observe(document(), FeatureObserver::AutoFocusAttribute);
     } else
         HTMLElement::parseAttribute(name, value);
 }

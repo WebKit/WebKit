@@ -24,6 +24,7 @@
 #include "config.h"
 #include "EmailInputType.h"
 
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
@@ -55,6 +56,7 @@ static bool isValidEmailAddress(const String& address)
 
 PassOwnPtr<InputType> EmailInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeEmail);
     return adoptPtr(new EmailInputType(element));
 }
 

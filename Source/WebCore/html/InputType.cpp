@@ -140,8 +140,13 @@ PassOwnPtr<InputType> InputType::create(HTMLInputElement* element, const String&
 {
     static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
     PassOwnPtr<InputType> (*factory)(HTMLInputElement*) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
-    if (!factory)
+    if (!factory) {
         factory = TextInputType::create;
+        if (typeName == InputTypeNames::datetime())
+            FeatureObserver::observe(element->document(), FeatureObserver::InputTypeDateTimeFallback);
+        else if (typeName == InputTypeNames::week())
+            FeatureObserver::observe(element->document(), FeatureObserver::InputTypeWeekFallback);
+    }
     return factory(element);
 }
 

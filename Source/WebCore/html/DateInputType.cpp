@@ -34,6 +34,7 @@
 #if ENABLE(INPUT_TYPE_DATE)
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -58,6 +59,7 @@ inline DateInputType::DateInputType(HTMLInputElement* element)
 
 PassOwnPtr<InputType> DateInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeDate);
     return adoptPtr(new DateInputType(element));
 }
 

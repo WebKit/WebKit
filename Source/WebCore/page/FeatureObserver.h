@@ -26,11 +26,15 @@
 #ifndef FeatureObserver_h
 #define FeatureObserver_h
 
+#include <wtf/BitVector.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class DOMWindow;
+class Document;
 
 class FeatureObserver {
     WTF_MAKE_NONCOPYABLE(FeatureObserver);
@@ -60,22 +64,57 @@ public:
         PrefixedTransitionEndEvent,
         UnprefixedTransitionEndEvent,
         PrefixedAndUnprefixedTransitionEndEvent,
-        // Add new features above this line.
+        AutoFocusAttribute,
+        AutoSaveAttribute,
+        DataListElement,
+        FormAttribute,
+        IncrementalAttribute,
+        InputTypeColor,
+        InputTypeDate,
+        InputTypeDateTime,
+        InputTypeDateTimeFallback,
+        InputTypeDateTimeLocal,
+        InputTypeEmail,
+        InputTypeMonth,
+        InputTypeNumber,
+        InputTypeRange,
+        InputTypeSearch,
+        InputTypeTel,
+        InputTypeTime,
+        InputTypeURL,
+        InputTypeWeek,
+        InputTypeWeekFallback,
+        ListAttribute,
+        MaxAttribute,
+        MinAttribute,
+        PatternAttribute,
+        PlaceholderAttribute,
+        PrecisionAttribute,
+        PrefixedDirectoryAttribute,
+        PrefixedSpeechAttribute,
+        RequiredAttribute,
+        ResultsAttribute,
+        StepAttribute,
+        // Add new features above this line. Don't change assigned numbers of each items.
         NumberOfFeatures, // This enum value must be last.
     };
 
+    static void observe(Document*, Feature);
     static void observe(DOMWindow*, Feature);
 
 private:
     void didObserve(Feature feature)
     {
-        COMPILE_ASSERT(sizeof(m_featureMask) * 8 >= NumberOfFeatures, FeaturesMustNotOverflowBitmask);
         ASSERT(feature != PageDestruction); // PageDestruction is reserved as a scaling factor.
         ASSERT(feature < NumberOfFeatures);
-        m_featureMask |= 1 << static_cast<int>(feature);
+        if (!m_featureBits) {
+            m_featureBits = adoptPtr(new BitVector(NumberOfFeatures));
+            m_featureBits->clearAll();
+        }
+        m_featureBits->quickSet(feature);
     }
 
-    int m_featureMask;
+    OwnPtr<BitVector> m_featureBits;
 };
 
 } // namespace WebCore

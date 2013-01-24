@@ -31,6 +31,7 @@
 #include "config.h"
 #include "SearchInputType.h"
 
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -54,6 +55,7 @@ inline SearchInputType::SearchInputType(HTMLInputElement* element)
 
 PassOwnPtr<InputType> SearchInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeSearch);
     return adoptPtr(new SearchInputType(element));
 }
 

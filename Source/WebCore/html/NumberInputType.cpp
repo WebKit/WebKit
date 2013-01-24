@@ -34,6 +34,7 @@
 
 #include "BeforeTextInsertedEvent.h"
 #include "ExceptionCode.h"
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -98,6 +99,7 @@ static RealNumberRenderSize calculateRenderSize(const Decimal& value)
 
 PassOwnPtr<InputType> NumberInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeNumber);
     return adoptPtr(new NumberInputType(element));
 }
 

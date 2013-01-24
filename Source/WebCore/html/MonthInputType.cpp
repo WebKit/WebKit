@@ -32,6 +32,7 @@
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -59,6 +60,7 @@ static const int monthStepScaleFactor = 1;
 
 PassOwnPtr<InputType> MonthInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeMonth);
     return adoptPtr(new MonthInputType(element));
 }
 

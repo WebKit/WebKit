@@ -32,6 +32,7 @@
 #include "DateTimeLocalInputType.h"
 
 #include "DateComponents.h"
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -57,6 +58,7 @@ static const int dateTimeLocalStepScaleFactor = 1000;
 
 PassOwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeDateTimeLocal);
     return adoptPtr(new DateTimeLocalInputType(element));
 }
 

@@ -34,7 +34,6 @@
 namespace WebCore {
 
 FeatureObserver::FeatureObserver()
-    : m_featureMask(0)
 {
 }
 
@@ -43,20 +42,17 @@ FeatureObserver::~FeatureObserver()
     // We always log PageDestruction so that we have a scale for the rest of the features.
     HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", PageDestruction, NumberOfFeatures);
 
-    if (!m_featureMask)
+    if (!m_featureBits)
         return;
 
-    for (int i = 0; i < NumberOfFeatures; ++i) {
-        if (m_featureMask & (1 << i))
+    for (unsigned i = 0; i < NumberOfFeatures; ++i) {
+        if (m_featureBits->quickGet(i))
             HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", i, NumberOfFeatures);
     }
 }
 
-void FeatureObserver::observe(DOMWindow* domWindow, Feature feature)
+void FeatureObserver::observe(Document* document, Feature feature)
 {
-    ASSERT(domWindow);
-
-    Document* document = domWindow->document();
     if (!document)
         return;
 
@@ -65,6 +61,12 @@ void FeatureObserver::observe(DOMWindow* domWindow, Feature feature)
         return;
 
     page->featureObserver()->didObserve(feature);
+}
+
+void FeatureObserver::observe(DOMWindow* domWindow, Feature feature)
+{
+    ASSERT(domWindow);
+    observe(domWindow->document(), feature);
 }
 
 } // namespace WebCore

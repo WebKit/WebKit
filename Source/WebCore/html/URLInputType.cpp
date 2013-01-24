@@ -31,6 +31,7 @@
 #include "config.h"
 #include "URLInputType.h"
 
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
@@ -41,6 +42,7 @@ namespace WebCore {
 
 PassOwnPtr<InputType> URLInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeURL);
     return adoptPtr(new URLInputType(element));
 }
 

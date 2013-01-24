@@ -32,6 +32,7 @@
 #include "DateTimeInputType.h"
 
 #include "DateComponents.h"
+#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -58,6 +59,7 @@ static const int dateTimeStepScaleFactor = 1000;
 
 PassOwnPtr<InputType> DateTimeInputType::create(HTMLInputElement* element)
 {
+    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeDateTime);
     return adoptPtr(new DateTimeInputType(element));
 }
 
