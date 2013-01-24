@@ -1,3 +1,21 @@
+2013-01-24  Erik Arvidsson  <arv@chromium.org>
+
+        Unreviewed, rolling out r140703.
+        http://trac.webkit.org/changeset/140703
+        https://bugs.webkit.org/show_bug.cgi?id=107556
+
+        r140561 was not the reason for the Android breakage
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+        (TestShell::closeWindow):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost):
+        (WebViewHost::~WebViewHost):
+        (WebViewHost::shutdown):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-24  Dean Jackson  <dino@apple.com>
 
         Allow some plugin snapshot UI content to come from Injected Bundle
