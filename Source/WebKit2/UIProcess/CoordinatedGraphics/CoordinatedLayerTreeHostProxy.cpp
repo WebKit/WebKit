@@ -95,14 +95,14 @@ void CoordinatedLayerTreeHostProxy::removeUpdateAtlas(uint32_t atlasID)
     m_surfaces.remove(atlasID);
 }
 
-void CoordinatedLayerTreeHostProxy::createCompositingLayer(CoordinatedLayerID id)
+void CoordinatedLayerTreeHostProxy::createCompositingLayers(const Vector<CoordinatedLayerID>& ids)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::createLayer, m_renderer.get(), id));
+    dispatchUpdate(bind(&LayerTreeRenderer::createLayers, m_renderer.get(), ids));
 }
 
-void CoordinatedLayerTreeHostProxy::deleteCompositingLayer(CoordinatedLayerID id)
+void CoordinatedLayerTreeHostProxy::deleteCompositingLayers(const Vector<CoordinatedLayerID>& ids)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::deleteLayer, m_renderer.get(), id));
+    dispatchUpdate(bind(&LayerTreeRenderer::deleteLayers, m_renderer.get(), ids));
 }
 
 void CoordinatedLayerTreeHostProxy::setRootCompositingLayer(CoordinatedLayerID id)

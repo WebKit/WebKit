@@ -39,6 +39,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -60,8 +61,8 @@ public:
     void createCustomFilterProgram(int id, const WebCore::CustomFilterProgramInfo&);
     void removeCustomFilterProgram(int id);
 #endif
-    void createCompositingLayer(CoordinatedLayerID);
-    void deleteCompositingLayer(CoordinatedLayerID);
+    void createCompositingLayers(const Vector<CoordinatedLayerID>&);
+    void deleteCompositingLayers(const Vector<CoordinatedLayerID>&);
     void setRootCompositingLayer(CoordinatedLayerID);
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&, float pageScaleFactor, const WebCore::FloatPoint& trajectoryVector);

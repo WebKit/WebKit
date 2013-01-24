@@ -353,11 +353,23 @@ GraphicsLayer* LayerTreeRenderer::getLayerByIDIfExists(CoordinatedLayerID id)
     return (id != InvalidCoordinatedLayerID) ? layerByID(id) : 0;
 }
 
+void LayerTreeRenderer::createLayers(const Vector<CoordinatedLayerID>& ids)
+{
+    for (size_t index = 0; index < ids.size(); ++index)
+        createLayer(ids[index]);
+}
+
 void LayerTreeRenderer::createLayer(CoordinatedLayerID id)
 {
     OwnPtr<WebCore::GraphicsLayer> newLayer = GraphicsLayer::create(0 /* factory */, this);
     toGraphicsLayerTextureMapper(newLayer.get())->setHasOwnBackingStore(false);
     m_layers.add(id, newLayer.release());
+}
+
+void LayerTreeRenderer::deleteLayers(const Vector<CoordinatedLayerID>& layerIDs)
+{
+    for (size_t index = 0; index < layerIDs.size(); ++index)
+        deleteLayer(layerIDs[index]);
 }
 
 void LayerTreeRenderer::deleteLayer(CoordinatedLayerID layerID)

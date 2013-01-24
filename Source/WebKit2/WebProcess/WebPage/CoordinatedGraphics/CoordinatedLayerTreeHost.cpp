@@ -318,8 +318,7 @@ void CoordinatedLayerTreeHost::createCompositingLayers()
         }
     }
 
-    for (size_t i = 0; i < m_layersToCreate.size(); ++i)
-        m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateCompositingLayer(m_layersToCreate[i]));
+    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateCompositingLayers(m_layersToCreate));
     m_layersToCreate.clear();
     m_shouldSyncFrame = true;
 }
@@ -334,8 +333,7 @@ void CoordinatedLayerTreeHost::deleteCompositingLayers()
         return;
     }
 
-    for (size_t i = 0; i < m_layersToDelete.size(); ++i)
-        m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::DeleteCompositingLayer(m_layersToDelete[i]));
+    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::DeleteCompositingLayers(m_layersToDelete));
     m_layersToDelete.clear();
     m_shouldSyncFrame = true;
 }
