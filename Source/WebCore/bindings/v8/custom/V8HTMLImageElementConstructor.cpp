@@ -93,7 +93,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8HTMLImageElement::internalFieldCount);
     result->SetClassName(v8::String::NewSymbol("HTMLImageElement"));
-    result->Inherit(V8HTMLImageElement::GetTemplate());
+    result->Inherit(V8HTMLImageElement::GetTemplate(isolate));
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
     return cachedTemplate;

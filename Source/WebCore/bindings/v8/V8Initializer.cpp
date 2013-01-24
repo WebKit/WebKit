@@ -46,12 +46,12 @@
 
 namespace WebCore {
 
-static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
+static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data, v8::Isolate* isolate)
 {
     WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
 
     if (V8DOMWindow::info.equals(type)) {
-        v8::Handle<v8::Object> windowWrapper = host->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate());
+        v8::Handle<v8::Object> windowWrapper = host->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(isolate));
         if (windowWrapper.IsEmpty())
             return 0;
         return V8DOMWindow::toNative(windowWrapper)->frame();
@@ -97,7 +97,7 @@ static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Hand
 
 static void failedAccessCheckCallbackInMainThread(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
 {
-    Frame* target = findFrame(host, data);
+    Frame* target = findFrame(host, data, v8::Isolate::GetCurrent());
     if (!target)
         return;
     DOMWindow* targetWindow = target->document()->domWindow();

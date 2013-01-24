@@ -53,9 +53,9 @@ static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parame
     object.Clear();
 }
 
-static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHost* host)
+static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHost* host, v8::Isolate* isolate)
 {
-    v8::Local<v8::Function> function = V8InjectedScriptHost::GetTemplate()->GetFunction();
+    v8::Local<v8::Function> function = V8InjectedScriptHost::GetTemplate(isolate)->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.
         return v8::Local<v8::Object>();
@@ -85,7 +85,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSou
     // instead of calling toV8() that would create the
     // wrapper in the current context.
     // FIXME: make it possible to use generic bindings factory for InjectedScriptHost.
-    v8::Local<v8::Object> scriptHostWrapper = createInjectedScriptHostV8Wrapper(m_injectedScriptHost.get());
+    v8::Local<v8::Object> scriptHostWrapper = createInjectedScriptHostV8Wrapper(m_injectedScriptHost.get(), inspectedContext->GetIsolate());
     if (scriptHostWrapper.IsEmpty())
         return ScriptObject();
 
@@ -118,7 +118,7 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
     v8::Local<v8::Object> global = context->Global();
     if (global.IsEmpty())
         return false;
-    v8::Handle<v8::Object> holder = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate());
+    v8::Handle<v8::Object> holder = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate()));
     if (holder.IsEmpty())
         return false;
     Frame* frame = V8DOMWindow::toNative(holder)->frame();
