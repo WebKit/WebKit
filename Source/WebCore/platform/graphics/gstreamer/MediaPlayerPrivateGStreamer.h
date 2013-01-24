@@ -72,6 +72,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void seek(float);
 
             void setRate(float);
+            void setPreservesPitch(bool);
 
             void setVolume(float);
             void volumeChanged();
@@ -137,6 +138,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             static bool isAvailable();
 
             void updateAudioSink();
+            void createAudioSink();
 
             float playbackPosition() const;
 
@@ -205,6 +207,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             mutable IntSize m_videoSize;
             KURL m_url;
             bool m_originalPreloadWasAutoAndWasOverridden;
+            bool m_preservesPitch;
     };
 }
 

@@ -250,6 +250,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_webkitAudioSink(0)
     , m_totalBytes(-1)
     , m_originalPreloadWasAutoAndWasOverridden(false)
+    , m_preservesPitch(false)
 {
 }
 
@@ -738,6 +739,11 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
         LOG_MEDIA_MESSAGE("Set rate to %f failed", rate);
     else
         g_object_set(m_playBin.get(), "mute", mute, NULL);
+}
+
+void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
+{
+    m_preservesPitch = preservesPitch;
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamer::networkState() const
@@ -1795,6 +1801,40 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
     }
 }
 
+void MediaPlayerPrivateGStreamer::createAudioSink()
+{
+    // Construct audio sink if pitch preserving is enabled.
+    if (!m_preservesPitch)
+        return;
+
+    if (!m_playBin)
+        return;
+
+    GstElement* scale = gst_element_factory_make("scaletempo", 0);
+    if (!scale) {
+        GST_WARNING("Failed to create scaletempo");
+        return;
+    }
+
+    GstElement* convert = gst_element_factory_make("audioconvert", 0);
+    GstElement* resample = gst_element_factory_make("audioresample", 0);
+    GstElement* sink = gst_element_factory_make("autoaudiosink", 0);
+
+    GstElement* audioSink = gst_bin_new("audio-sink");
+    gst_bin_add_many(GST_BIN(audioSink), scale, convert, resample, sink, NULL);
+
+    if (!gst_element_link_many(scale, convert, resample, sink, NULL)) {
+        GST_WARNING("Failed to link audio sink elements");
+        gst_object_unref(audioSink);
+        return;
+    }
+
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(scale, "sink"));
+    gst_element_add_pad(audioSink, gst_ghost_pad_new("sink", pad.get()));
+
+    g_object_set(m_playBin.get(), "audio-sink", audioSink, NULL);
+}
+
 void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 {
     ASSERT(!m_playBin);
@@ -1830,7 +1870,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 
 
 #ifndef GST_API_VERSION_1
-    m_videoSinkBin = gst_bin_new("sink");
+    m_videoSinkBin = gst_bin_new("video-sink");
 
     GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
     GstElement* queue = gst_element_factory_make("queue", 0);
@@ -1907,6 +1947,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     if (videoSinkPad)
         g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
 
+    createAudioSink();
 }
 
 }
