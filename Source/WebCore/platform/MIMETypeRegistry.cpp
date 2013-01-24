@@ -702,6 +702,7 @@ static const MIMETypeAssociationMap& mimeTypeAssociationMap()
     mimeTypeMap->add(ASCIILiteral("application/java"), ASCIILiteral("application/java-archive"));
     mimeTypeMap->add(ASCIILiteral("application/x-java-archive"), ASCIILiteral("application/java-archive"));
     mimeTypeMap->add(ASCIILiteral("application/x-zip-compressed"), ASCIILiteral("application/zip"));
+    mimeTypeMap->add(ASCIILiteral("text/cache-manifest"), ASCIILiteral("text/plain"));
 
     return *mimeTypeMap;
 }
