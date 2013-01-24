@@ -3957,7 +3957,8 @@ void WebViewImpl::invalidateRect(const IntRect& rect)
     if (m_layerTreeViewCommitsDeferred) {
         // If we receive an invalidation from WebKit while in deferred commit mode,
         // that means it's time to start producing frames again so un-defer.
-        m_layerTreeView->setDeferCommits(false);
+        if (m_layerTreeView)
+            m_layerTreeView->setDeferCommits(false);
         m_layerTreeViewCommitsDeferred = false;
     }
     if (m_isAcceleratedCompositingActive) {

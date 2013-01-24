@@ -1,3 +1,16 @@
+2013-01-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Null check WebLayerTreeView before dereffing in WebViewImpl::invalidateRect
+        https://bugs.webkit.org/show_bug.cgi?id=107855
+
+        Reviewed by Adrienne Walker.
+
+        During frame shutdown, WebViewImpl::m_layerTreeView may become 0 while commits are deferred but we still
+        may get invalidateRect() calls before shutdown completes.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::invalidateRect):
+
 2013-01-24  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSSRegions] remove setExperimentalCSSRegionsEnabled deprecated API in Source/WebKit/chromium/public/WebSettings.h
