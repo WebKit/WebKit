@@ -113,5 +113,13 @@ TestWebView {
             verify(webView.waitForLoadSucceeded())
             compare(webView.title, "title with copyright ©")
         }
+
+        function test_qrcScheme() {
+            var testUrl = "qrc:///common/qrctest.html"
+            webView.url = testUrl
+            verify(webView.waitForLoadSucceeded())
+            compare(webView.title, "Loaded from qrc.")
+
+        }
     }
 }

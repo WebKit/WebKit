@@ -27,6 +27,7 @@
 
 class QQuickNetworkRequest;
 class QQuickNetworkReply;
+class QUrl;
 
 class QWEBKIT_EXPORT QQuickUrlSchemeDelegate : public QObject {
     Q_OBJECT
@@ -52,6 +53,16 @@ private:
 };
 
 QML_DECLARE_TYPE(QQuickUrlSchemeDelegate)
+
+class QQuickQrcSchemeDelegate : public QQuickUrlSchemeDelegate {
+    Q_OBJECT
+public:
+    QQuickQrcSchemeDelegate(const QUrl& url);
+    void readResourceAndSend();
+
+private:
+    QString m_fileName;
+};
 
 #endif // qquickurlschemedelegate_p_h
 

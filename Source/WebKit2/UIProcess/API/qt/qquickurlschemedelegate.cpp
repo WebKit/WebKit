@@ -24,6 +24,11 @@
 #include "qquicknetworkreply_p.h"
 #include "qquicknetworkrequest_p.h"
 
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QMimeDatabase>
+#include <QtCore/QUrl>
+
 QQuickUrlSchemeDelegate::QQuickUrlSchemeDelegate(QObject* parent)
     : QObject(parent)
     , m_request(new QQuickNetworkRequest(this))
@@ -49,6 +54,29 @@ QQuickNetworkRequest* QQuickUrlSchemeDelegate::request() const
 QQuickNetworkReply* QQuickUrlSchemeDelegate::reply() const
 {
     return m_reply;
+}
+
+QQuickQrcSchemeDelegate::QQuickQrcSchemeDelegate(const QUrl& url)
+    : QQuickUrlSchemeDelegate()
+    , m_fileName(QLatin1Char(':') + url.path())
+{
+}
+
+void QQuickQrcSchemeDelegate::readResourceAndSend()
+{
+    QFile file(m_fileName);
+    QFileInfo fileInfo(file);
+    if (fileInfo.isDir() || !file.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
+        return;
+
+    QByteArray fileData(file.readAll());
+    QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFileNameAndData(m_fileName, fileData);
+    file.close();
+
+    reply()->setData(fileData);
+    reply()->setContentType(mimeType.name());
+    reply()->send();
 }
 
 #include "moc_qquickurlschemedelegate_p.cpp"

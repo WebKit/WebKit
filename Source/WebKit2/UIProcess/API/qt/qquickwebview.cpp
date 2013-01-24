@@ -328,6 +328,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();
+    webPageProxy->registerApplicationScheme(ASCIILiteral("qrc"));
 
     q_ptr->setAcceptedMouseButtons(Qt::MouseButtonMask);
     q_ptr->setAcceptHoverEvents(true);
@@ -1312,6 +1313,12 @@ QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QQmlListP
 
 void QQuickWebViewExperimental::schemeDelegates_Append(QQmlListProperty<QQuickUrlSchemeDelegate>* property, QQuickUrlSchemeDelegate *scheme)
 {
+    if (!scheme->scheme().compare(QLatin1String("qrc"), Qt::CaseInsensitive)) {
+        qWarning("WARNING: The qrc scheme is reserved to be handled internally. The handler will be ignored.");
+        delete scheme;
+        return;
+    }
+
     QObject* schemeParent = property->object;
     scheme->setParent(schemeParent);
     QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(property->object->parent());
@@ -1349,6 +1356,15 @@ QQmlListProperty<QQuickUrlSchemeDelegate> QQuickWebViewExperimental::schemeDeleg
 void QQuickWebViewExperimental::invokeApplicationSchemeHandler(PassRefPtr<QtRefCountedNetworkRequestData> request)
 {
     RefPtr<QtRefCountedNetworkRequestData> req = request;
+    if (req->data().m_scheme.startsWith("qrc", false)) {
+        QQuickQrcSchemeDelegate qrcDelegate(QUrl(QString(req->data().m_urlString)));
+        qrcDelegate.request()->setNetworkRequestData(req);
+        qrcDelegate.reply()->setNetworkRequestData(req);
+        qrcDelegate.reply()->setWebViewExperimental(this);
+        qrcDelegate.readResourceAndSend();
+        return;
+    }
+
     const QObjectList children = schemeParent->children();
     for (int index = 0; index < children.count(); index++) {
         QQuickUrlSchemeDelegate* delegate = qobject_cast<QQuickUrlSchemeDelegate*>(children.at(index));

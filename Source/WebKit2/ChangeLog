@@ -1,3 +1,29 @@
+2013-01-24  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] Pages / resources cannot be loaded from qrc files.
+        https://bugs.webkit.org/show_bug.cgi?id=107031
+
+        Reviewed by Jocelyn Turcotte.
+
+        Enables WebKit2 Qt applications to load files from the bundled
+        qrc files. This is achieved by adding a url scheme handler for
+        the "qrc" scheme using the application scheme handler and ignoring
+        all handlers for the qrc application scheme that the application might
+        set.
+
+        * UIProcess/API/qt/qquickurlschemedelegate.cpp:
+        (QQuickQrcSchemeDelegate::QQuickQrcSchemeDelegate):
+        (QQuickQrcSchemeDelegate::readResourceAndSend):
+        * UIProcess/API/qt/qquickurlschemedelegate_p.h:
+        (QQuickQrcSchemeDelegate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewExperimental::schemeDelegates_Append):
+        (QQuickWebViewExperimental::invokeApplicationSchemeHandler):
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_applicationScheme.qml:
+        * UIProcess/API/qt/tests/qmltests/common/qrctest.html: Added.
+        * UIProcess/API/qt/tests/qmltests/resources.qrc:
+
 2013-01-24  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL][WK2] Expose accessibility hierarchy in WebKit2-EFL.
