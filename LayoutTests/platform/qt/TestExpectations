@@ -645,10 +645,6 @@ http/tests/workers/terminate-during-sync-operation.html
 # Needs custom policy delegate enhancement to log downloads
 http/tests/download
 
-# [Qt] New http/tests/cache/cancel-multiple-post-xhrs.html introduced in 140174.
-# https://bugs.webkit.org/show_bug.cgi?id=107434
-http/tests/cache/cancel-multiple-post-xhrs.html
-
 # We cannot implement FrameLoaderClient::canHandleRequest() since QNAM doesn't know
 # whether or not a given scheme is supported prior to createRequest().
 # This means we will never reach FrameLoaderClient::dispatchUnableToImplementPolicy()
