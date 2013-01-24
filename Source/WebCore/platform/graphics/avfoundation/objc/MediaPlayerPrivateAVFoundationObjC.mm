@@ -1061,7 +1061,9 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
         // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
         // is autoreleased, and there is no non-autoreleased version of that function.
         CIContext* ciContext = [CIContext contextWithCGContext:context->platformContext() options:nil];
-        [ciContext drawImage:image.get() inRect:rect fromRect:rect];
+        CGRect outputRect = { CGPointZero, rect.size() };
+        CGRect imageRect = CGRectMake(0, 0, CVPixelBufferGetWidth(m_lastImage.get()), CVPixelBufferGetHeight(m_lastImage.get()));
+        [ciContext drawImage:image.get() inRect:outputRect fromRect:imageRect];
     }
 }
 
