@@ -176,6 +176,17 @@ enum EmptyInlineBehavior {
     IncludeEmptyInlines,
 };
 
+static bool isEmptyInline(RenderObject* object)
+{
+    if (!object->isRenderInline())
+        return false;
+
+    if (!object->firstChild())
+        return true;
+
+    return object->firstChild()->isText() && (object->firstChild() == object->lastChild()) && toRenderText(object->firstChild())->isAllCollapsibleWhitespace();
+}
+
 // FIXME: This function is misleadingly named. It has little to do with bidi.
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
@@ -225,7 +236,7 @@ static inline RenderObject* bidiNextShared(RenderObject* root, RenderObject* cur
             break;
 
         if (isIteratorTarget(next)
-            || ((emptyInlineBehavior == IncludeEmptyInlines || !next->firstChild()) // Always return EMPTY inlines.
+            || ((emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(next)) // Always return EMPTY inlines.
                 && next->isRenderInline()))
             break;
         current = next;
@@ -265,7 +276,7 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderObject* root, In
 
     if (o->isRenderInline()) {
         notifyObserverEnteredObject(resolver, o);
-        if (o->firstChild())
+        if (!isEmptyInline(o))
             o = bidiNextSkippingEmptyInlines(root, o, resolver);
         else {
             // Never skip empty inlines.
