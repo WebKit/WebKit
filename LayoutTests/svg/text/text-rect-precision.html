@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <svg style="position: absolute; top: 10px; left: 10px; width: 500px; height: 300px;">
+        <g>
+            <text id="test" x="0" y="50" font-size="25" fill="#000" text-rendering="geometricPrecision">Sphinx of black quartz, judge my vow.</text>
+        </g>
+        <g>
+            <text id="measure" x="0" y="150" fill="#000" text-rendering="geometricPrecision" xml:space="preserve">&nbsp;</text>
+        </g>
+    </svg>
+<script>
+    
+    function measureText(testElement)
+    {
+        var measureElement = document.getElementById('measure');
+        measureElement.setAttribute('font-size', testElement.getAttribute('font-size'));
+        var str = testElement.firstChild.nodeValue;
+        
+        var characterWidths = {};
+        var width = 0;
+        for (var i = 0; i < str.length; i++) {
+            var c = str[i];
+            var w = characterWidths[c];
+            if (!w) {
+                measureElement.firstChild.nodeValue = c;
+                w = measureElement.getBoundingClientRect().width;
+                characterWidths[c] = w;
+            }
+            width += w;
+        }
+        return width;
+    }
+
+    var el = document.getElementById('test');
+    var elementWidth = el.getBoundingClientRect().width;
+    var textWidth = measureText(el);
+    if (Math.abs(elementWidth - textWidth) <= 0.1)
+        testPassed('Width of text element is the sum of the width of all characters.');
+    else
+        testPassed('Width of text element is ' + elementWidth + ', expected ' + textWidth);
+</script>
+</body>
+</html>

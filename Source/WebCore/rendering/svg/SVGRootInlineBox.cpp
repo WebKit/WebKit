@@ -171,9 +171,9 @@ void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
     ASSERT(parentBlock);
 
     // Finally, assign the root block position, now that all content is laid out.
-    IntRect roundedChildRect = enclosingIntRect(childRect);
-    parentBlock->setLocation(roundedChildRect.location());
-    parentBlock->setSize(roundedChildRect.size());
+    LayoutRect boundingRect = enclosingLayoutRect(childRect);
+    parentBlock->setLocation(boundingRect.location());
+    parentBlock->setSize(boundingRect.size());
 
     // Position all children relative to the parent block.
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -188,7 +188,7 @@ void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
     setY(0);
     setLogicalWidth(childRect.width());
     setLogicalHeight(childRect.height());
-    setLineTopBottomPositions(0, roundedChildRect.height(), 0, roundedChildRect.height());
+    setLineTopBottomPositions(0, boundingRect.height(), 0, boundingRect.height());
 }
 
 InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& point)
