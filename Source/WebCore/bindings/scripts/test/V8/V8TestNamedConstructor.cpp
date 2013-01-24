@@ -75,8 +75,10 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     return setDOMException(ec, args.GetIsolate());
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate(v8::Isolate* isolate)
 {
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
     if (!cachedTemplate.IsEmpty())
         return cachedTemplate;
@@ -109,9 +111,11 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTempl
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetRawTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetRawTemplate(v8::Isolate* isolate)
 {
-    V8PerIsolateData* data = V8PerIsolateData::current();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
     V8PerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
     if (result != data->rawTemplateMap().end())
         return result->value;
@@ -122,9 +126,11 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetRawTemplate()
     return templ;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate()
+v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate(v8::Isolate* isolate)
 {
-    V8PerIsolateData* data = V8PerIsolateData::current();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
     V8PerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
     if (result != data->templateMap().end())
         return result->value;

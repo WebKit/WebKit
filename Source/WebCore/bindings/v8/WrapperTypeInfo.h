@@ -45,7 +45,7 @@ namespace WebCore {
     static const uint16_t v8DOMNodeClassId = 1;
     static const uint16_t v8DOMObjectClassId = 2;
 
-    typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)();
+    typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)(v8::Isolate*);
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
     typedef void* (*OpaqueRootForGC)(void*, v8::Persistent<v8::Object>);
@@ -82,7 +82,7 @@ namespace WebCore {
             return false;
         }
         
-        v8::Persistent<v8::FunctionTemplate> getTemplate() { return getTemplateFunction(); }
+        v8::Persistent<v8::FunctionTemplate> getTemplate(v8::Isolate* isolate = 0) { return getTemplateFunction(isolate); }
         
         void derefObject(void* object)
         {
