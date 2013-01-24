@@ -61,7 +61,7 @@ private:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
     RefPtr<StyleRuleFontFace> m_fontFaceRule;
-    RefPtr<SVGFontElement> m_fontElement;
+    SVGFontElement* m_fontElement;
 };
 
 } // namespace WebCore
