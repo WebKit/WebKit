@@ -82,7 +82,7 @@ ParserMap::BackgroundParserMap& ParserMap::backgroundParsers()
     return m_backgroundParsers;
 }
 
-BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, WeakPtr<HTMLDocumentParser> parser)
+BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
     : m_inForeignContent(false)
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
@@ -178,7 +178,7 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);
 }
 
-void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, HTMLParserOptions options, WeakPtr<HTMLDocumentParser> parser)
+void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
 {
     ASSERT(!parserMap().backgroundParsers().get(identifier));
     parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, parser));

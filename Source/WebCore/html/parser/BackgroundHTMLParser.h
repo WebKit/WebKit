@@ -45,18 +45,18 @@ public:
     void append(const String&);
     void finish();
 
-    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, WeakPtr<HTMLDocumentParser> parser)
+    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
     {
         return adoptPtr(new BackgroundHTMLParser(options, parser));
     }
 
-    static void createPartial(ParserIdentifier, HTMLParserOptions, WeakPtr<HTMLDocumentParser>);
+    static void createPartial(ParserIdentifier, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&);
     static void stopPartial(ParserIdentifier);
     static void appendPartial(ParserIdentifier, const String& input);
     static void finishPartial(ParserIdentifier);
 
 private:
-    BackgroundHTMLParser(const HTMLParserOptions&, WeakPtr<HTMLDocumentParser>);
+    BackgroundHTMLParser(const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&);
 
     void markEndOfFile();
     void pumpTokenizer();
