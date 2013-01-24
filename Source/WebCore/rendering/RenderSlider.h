@@ -52,7 +52,7 @@ private:
 
 inline RenderSlider* toRenderSlider(RenderObject* object)
 {
-    ASSERT(!object || object->isSlider());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSlider());
     return static_cast<RenderSlider*>(object);
 }
 

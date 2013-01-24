@@ -57,7 +57,7 @@ protected:
     
 inline RenderFullScreen* toRenderFullScreen(RenderObject* object)
 {
-    ASSERT(object->isRenderFullScreen());
+    ASSERT_WITH_SECURITY_IMPLICATION(object->isRenderFullScreen());
     return static_cast<RenderFullScreen*>(object);
 }
     

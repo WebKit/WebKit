@@ -78,13 +78,13 @@ private:
 
 inline RenderScrollbarPart* toRenderScrollbarPart(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderScrollbarPart());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderScrollbarPart());
     return static_cast<RenderScrollbarPart*>(object);
 }
 
 inline const RenderScrollbarPart* toRenderScrollbarPart(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderScrollbarPart());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderScrollbarPart());
     return static_cast<const RenderScrollbarPart*>(object);
 }
 

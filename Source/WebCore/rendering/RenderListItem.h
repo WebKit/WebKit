@@ -90,7 +90,7 @@ private:
 
 inline RenderListItem* toRenderListItem(RenderObject* object)
 {
-    ASSERT(!object || object->isListItem());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isListItem());
     return static_cast<RenderListItem*>(object);
 }
 

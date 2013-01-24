@@ -76,13 +76,13 @@ private:
 
 inline RenderButton* toRenderButton(RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderButton());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderButton());
     return static_cast<RenderButton*>(object);
 }
 
 inline const RenderButton* toRenderButton(const RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderButton());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderButton());
     return static_cast<const RenderButton*>(object);
 }
 

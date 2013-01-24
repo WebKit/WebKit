@@ -310,13 +310,13 @@ private:
 
 inline RenderBoxModelObject* toRenderBoxModelObject(RenderObject* object)
 { 
-    ASSERT(!object || object->isBoxModelObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBoxModelObject());
     return static_cast<RenderBoxModelObject*>(object);
 }
 
 inline const RenderBoxModelObject* toRenderBoxModelObject(const RenderObject* object)
 { 
-    ASSERT(!object || object->isBoxModelObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBoxModelObject());
     return static_cast<const RenderBoxModelObject*>(object);
 }
 

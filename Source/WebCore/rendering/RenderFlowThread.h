@@ -203,13 +203,13 @@ protected:
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderFlowThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderFlowThread());
     return static_cast<RenderFlowThread*>(object);
 }
 
 inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderFlowThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderFlowThread());
     return static_cast<const RenderFlowThread*>(object);
 }
 

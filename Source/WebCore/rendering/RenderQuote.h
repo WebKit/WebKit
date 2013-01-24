@@ -67,7 +67,7 @@ private:
 
 inline RenderQuote* toRenderQuote(RenderObject* object)
 {
-    ASSERT(!object || object->isQuote());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isQuote());
     return static_cast<RenderQuote*>(object);
 }
 

@@ -104,13 +104,13 @@ private:
 
 inline RenderWidget* toRenderWidget(RenderObject* object)
 {
-    ASSERT(!object || object->isWidget());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isWidget());
     return static_cast<RenderWidget*>(object);
 }
 
 inline const RenderWidget* toRenderWidget(const RenderObject* object)
 {
-    ASSERT(!object || object->isWidget());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isWidget());
     return static_cast<const RenderWidget*>(object);
 }
 

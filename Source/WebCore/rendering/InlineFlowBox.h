@@ -350,13 +350,13 @@ private:
 
 inline InlineFlowBox* toInlineFlowBox(InlineBox* object)
 {
-    ASSERT(!object || object->isInlineFlowBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isInlineFlowBox());
     return static_cast<InlineFlowBox*>(object);
 }
 
 inline const InlineFlowBox* toInlineFlowBox(const InlineBox* object)
 {
-    ASSERT(!object || object->isInlineFlowBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isInlineFlowBox());
     return static_cast<const InlineFlowBox*>(object);
 }
 

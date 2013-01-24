@@ -277,13 +277,13 @@ private:
 
 inline RenderTableCell* toRenderTableCell(RenderObject* object)
 {
-    ASSERT(!object || object->isTableCell());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableCell());
     return static_cast<RenderTableCell*>(object);
 }
 
 inline const RenderTableCell* toRenderTableCell(const RenderObject* object)
 {
-    ASSERT(!object || object->isTableCell());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableCell());
     return static_cast<const RenderTableCell*>(object);
 }
 

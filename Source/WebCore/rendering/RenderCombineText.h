@@ -51,13 +51,13 @@ private:
 
 inline RenderCombineText* toRenderCombineText(RenderObject* object)
 { 
-    ASSERT(!object || object->isCombineText());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCombineText());
     return static_cast<RenderCombineText*>(object);
 }
 
 inline const RenderCombineText* toRenderCombineText(const RenderObject* object)
 { 
-    ASSERT(!object || object->isCombineText());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCombineText());
     return static_cast<const RenderCombineText*>(object);
 }
 

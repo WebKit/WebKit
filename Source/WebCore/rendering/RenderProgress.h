@@ -61,7 +61,7 @@ private:
 
 inline RenderProgress* toRenderProgress(RenderObject* object)
 {
-    ASSERT(!object || object->isProgress());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isProgress());
     return static_cast<RenderProgress*>(object);
 }
 

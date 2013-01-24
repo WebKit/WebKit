@@ -63,7 +63,7 @@ private:
 
 inline RenderCounter* toRenderCounter(RenderObject* object)
 {
-    ASSERT(!object || object->isCounter());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCounter());
     return static_cast<RenderCounter*>(object);
 }
 

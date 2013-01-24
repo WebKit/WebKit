@@ -80,13 +80,13 @@ private:
 
 inline RenderRubyRun* toRenderRubyRun(RenderObject* object)
 {
-    ASSERT(!object || object->isRubyRun());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRubyRun());
     return static_cast<RenderRubyRun*>(object);
 }
 
 inline const RenderRubyRun* toRenderRubyRun(const RenderObject* object)
 {
-    ASSERT(!object || object->isBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBox());
     return static_cast<const RenderRubyRun*>(object);
 }
 

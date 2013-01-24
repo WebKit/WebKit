@@ -111,7 +111,7 @@ private:
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)
 {
-    ASSERT(!object || object->isEmbeddedObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isEmbeddedObject());
     return static_cast<RenderEmbeddedObject*>(object);
 }
 

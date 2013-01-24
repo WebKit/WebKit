@@ -91,13 +91,13 @@ private:
   
 inline RenderSVGContainer* toRenderSVGContainer(RenderObject* object)
 {
-    ASSERT(!object || object->isSVGContainer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGContainer());
     return static_cast<RenderSVGContainer*>(object);
 }
 
 inline const RenderSVGContainer* toRenderSVGContainer(const RenderObject* object)
 {
-    ASSERT(!object || object->isSVGContainer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGContainer());
     return static_cast<const RenderSVGContainer*>(object);
 }
 

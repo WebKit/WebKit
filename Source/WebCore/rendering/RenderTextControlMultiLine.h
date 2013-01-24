@@ -48,7 +48,7 @@ private:
 
 inline RenderTextControlMultiLine* toRenderTextControlMultiLine(RenderObject* object)
 { 
-    ASSERT(!object || object->isTextArea());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTextArea());
     return static_cast<RenderTextControlMultiLine*>(object);
 }
 

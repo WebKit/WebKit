@@ -51,7 +51,7 @@ private:
 
 inline RenderMeter* toRenderMeter(RenderObject* object)
 {
-    ASSERT(!object || object->isMeter());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMeter());
     return static_cast<RenderMeter*>(object);
 }
 

@@ -142,7 +142,7 @@ private:
 
 inline RenderFrameSet* toRenderFrameSet(RenderObject* object)
 {
-    ASSERT(!object || object->isFrameSet());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isFrameSet());
     return static_cast<RenderFrameSet*>(object);
 }
 

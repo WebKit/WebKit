@@ -119,13 +119,13 @@ private:
 
 inline RenderTableRow* toRenderTableRow(RenderObject* object)
 {
-    ASSERT(!object || object->isTableRow());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableRow());
     return static_cast<RenderTableRow*>(object);
 }
 
 inline const RenderTableRow* toRenderTableRow(const RenderObject* object)
 {
-    ASSERT(!object || object->isTableRow());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableRow());
     return static_cast<const RenderTableRow*>(object);
 }
 

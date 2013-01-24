@@ -113,13 +113,13 @@ private:
 
 inline RenderImage* toRenderImage(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderImage());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderImage());
     return static_cast<RenderImage*>(object);
 }
 
 inline const RenderImage* toRenderImage(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderImage());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderImage());
     return static_cast<const RenderImage*>(object);
 }
 

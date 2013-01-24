@@ -141,7 +141,7 @@ private:
 
 inline RenderMenuList* toRenderMenuList(RenderObject* object)
 {
-    ASSERT(!object || object->isMenuList());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMenuList());
     return static_cast<RenderMenuList*>(object);
 }
 

@@ -278,13 +278,13 @@ private:
 
 inline RenderTableSection* toRenderTableSection(RenderObject* object)
 {
-    ASSERT(!object || object->isTableSection());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableSection());
     return static_cast<RenderTableSection*>(object);
 }
 
 inline const RenderTableSection* toRenderTableSection(const RenderObject* object)
 {
-    ASSERT(!object || object->isTableSection());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableSection());
     return static_cast<const RenderTableSection*>(object);
 }
 

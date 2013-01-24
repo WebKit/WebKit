@@ -135,13 +135,13 @@ private:
 
 inline RenderMultiColumnSet* toRenderMultiColumnSet(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderMultiColumnSet());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnSet());
     return static_cast<RenderMultiColumnSet*>(object);
 }
 
 inline const RenderMultiColumnSet* toRenderMultiColumnSet(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderMultiColumnSet());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnSet());
     return static_cast<const RenderMultiColumnSet*>(object);
 }
 

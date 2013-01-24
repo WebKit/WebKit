@@ -63,13 +63,13 @@ private:
 
 inline RenderBR* toRenderBR(RenderObject* object)
 { 
-    ASSERT(!object || object->isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBR());
     return static_cast<RenderBR*>(object);
 }
 
 inline const RenderBR* toRenderBR(const RenderObject* object)
 { 
-    ASSERT(!object || object->isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBR());
     return static_cast<const RenderBR*>(object);
 }
 

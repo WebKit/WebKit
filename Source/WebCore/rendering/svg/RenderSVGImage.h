@@ -83,13 +83,13 @@ private:
 
 inline RenderSVGImage* toRenderSVGImage(RenderObject* object)
 {
-    ASSERT(!object || object->isSVGImage());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGImage());
     return static_cast<RenderSVGImage*>(object);
 }
 
 inline const RenderSVGImage* toRenderSVGImage(const RenderObject* object)
 {
-    ASSERT(!object || object->isSVGImage());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGImage());
     return static_cast<const RenderSVGImage*>(object);
 }
 

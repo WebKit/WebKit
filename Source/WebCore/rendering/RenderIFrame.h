@@ -59,13 +59,13 @@ private:
 
 inline RenderIFrame* toRenderIFrame(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderIFrame());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderIFrame());
     return static_cast<RenderIFrame*>(object);
 }
 
 inline const RenderIFrame* toRenderIFrame(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderIFrame());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderIFrame());
     return static_cast<const RenderIFrame*>(object);
 }
 

@@ -90,13 +90,13 @@ private:
 
 inline RenderListMarker* toRenderListMarker(RenderObject* object)
 {
-    ASSERT(!object || object->isListMarker());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isListMarker());
     return static_cast<RenderListMarker*>(object);
 }
 
 inline const RenderListMarker* toRenderListMarker(const RenderObject* object)
 {
-    ASSERT(!object || object->isListMarker());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isListMarker());
     return static_cast<const RenderListMarker*>(object);
 }
 

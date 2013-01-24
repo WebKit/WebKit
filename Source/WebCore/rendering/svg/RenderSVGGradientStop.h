@@ -57,7 +57,7 @@ private:
 
 inline const RenderSVGGradientStop* toRenderSVGGradientStop(const RenderObject* object)
 {
-    ASSERT(!object || object->isSVGGradientStop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGGradientStop());
     return static_cast<const RenderSVGGradientStop*>(object);
 }
 

@@ -104,13 +104,13 @@ protected:
 
 inline RenderMathMLBlock* toRenderMathMLBlock(RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderMathMLBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMathMLBlock());
     return static_cast<RenderMathMLBlock*>(object);
 }
 
 inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderMathMLBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMathMLBlock());
     return static_cast<const RenderMathMLBlock*>(object);
 }
 

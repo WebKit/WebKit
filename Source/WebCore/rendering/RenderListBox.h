@@ -153,7 +153,7 @@ private:
 
 inline RenderListBox* toRenderListBox(RenderObject* object)
 { 
-    ASSERT(!object || object->isListBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isListBox());
     return static_cast<RenderListBox*>(object);
 }
 

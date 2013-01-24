@@ -70,13 +70,13 @@ private:
 
 inline RenderLayerModelObject* toRenderLayerModelObject(RenderObject* object)
 {
-    ASSERT(!object || object->isLayerModelObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isLayerModelObject());
     return static_cast<RenderLayerModelObject*>(object);
 }
 
 inline const RenderLayerModelObject* toRenderLayerModelObject(const RenderObject* object)
 {
-    ASSERT(!object || object->isLayerModelObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isLayerModelObject());
     return static_cast<const RenderLayerModelObject*>(object);
 }
 

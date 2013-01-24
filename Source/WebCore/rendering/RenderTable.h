@@ -348,13 +348,13 @@ inline RenderTableSection* RenderTable::topSection() const
 
 inline RenderTable* toRenderTable(RenderObject* object)
 {
-    ASSERT(!object || object->isTable());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
     return static_cast<RenderTable*>(object);
 }
 
 inline const RenderTable* toRenderTable(const RenderObject* object)
 {
-    ASSERT(!object || object->isTable());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
     return static_cast<const RenderTable*>(object);
 }
 

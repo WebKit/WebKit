@@ -104,13 +104,13 @@ private:
 
 inline RenderSVGText* toRenderSVGText(RenderObject* object)
 {
-    ASSERT(!object || object->isSVGText());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGText());
     return static_cast<RenderSVGText*>(object);
 }
 
 inline const RenderSVGText* toRenderSVGText(const RenderObject* object)
 {
-    ASSERT(!object || object->isSVGText());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGText());
     return static_cast<const RenderSVGText*>(object);
 }
 

@@ -149,13 +149,13 @@ private:
 
 inline RenderSVGShape* toRenderSVGShape(RenderObject* object)
 {
-    ASSERT(!object || object->isSVGShape());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGShape());
     return static_cast<RenderSVGShape*>(object);
 }
 
 inline const RenderSVGShape* toRenderSVGShape(const RenderObject* object)
 {
-    ASSERT(!object || object->isSVGShape());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGShape());
     return static_cast<const RenderSVGShape*>(object);
 }
 

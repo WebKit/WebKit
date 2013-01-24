@@ -107,13 +107,13 @@ private:
 
 inline RenderTableCol* toRenderTableCol(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderTableCol());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderTableCol());
     return static_cast<RenderTableCol*>(object);
 }
 
 inline const RenderTableCol* toRenderTableCol(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderTableCol());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderTableCol());
     return static_cast<const RenderTableCol*>(object);
 }
 

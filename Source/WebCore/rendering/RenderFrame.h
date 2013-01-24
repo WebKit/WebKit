@@ -47,7 +47,7 @@ private:
 
 inline RenderFrame* toRenderFrame(RenderObject* object)
 {
-    ASSERT(!object || object->isFrame());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isFrame());
     return static_cast<RenderFrame*>(object);
 }
 

@@ -55,7 +55,7 @@ private:
 
 inline RenderPart* toRenderPart(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderPart());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderPart());
     return static_cast<RenderPart*>(object);
 }
 

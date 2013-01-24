@@ -72,13 +72,13 @@ private:
 
 inline RenderMultiColumnBlock* toRenderMultiColumnBlock(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderMultiColumnBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnBlock());
     return static_cast<RenderMultiColumnBlock*>(object);
 }
 
 inline const RenderMultiColumnBlock* toRenderMultiColumnBlock(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderMultiColumnBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnBlock());
     return static_cast<const RenderMultiColumnBlock*>(object);
 }
 

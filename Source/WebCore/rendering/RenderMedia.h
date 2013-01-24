@@ -68,7 +68,7 @@ private:
 
 inline RenderMedia* toRenderMedia(RenderObject* object)
 {
-    ASSERT(!object || object->isMedia());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMedia());
     return static_cast<RenderMedia*>(object);
 }
 

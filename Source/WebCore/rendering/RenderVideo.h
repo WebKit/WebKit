@@ -88,7 +88,7 @@ private:
 
 inline RenderVideo* toRenderVideo(RenderObject* object)
 {
-    ASSERT(!object || object->isVideo());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isVideo());
     return static_cast<RenderVideo*>(object);
 }
 

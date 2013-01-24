@@ -130,13 +130,13 @@ private:
 
 inline RenderSVGRoot* toRenderSVGRoot(RenderObject* object)
 { 
-    ASSERT(!object || object->isSVGRoot());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGRoot());
     return static_cast<RenderSVGRoot*>(object);
 }
 
 inline const RenderSVGRoot* toRenderSVGRoot(const RenderObject* object)
 { 
-    ASSERT(!object || object->isSVGRoot());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGRoot());
     return static_cast<const RenderSVGRoot*>(object);
 }
 

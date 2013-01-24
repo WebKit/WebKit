@@ -343,13 +343,13 @@ private:
 
 inline RenderView* toRenderView(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderView());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderView());
     return static_cast<RenderView*>(object);
 }
 
 inline const RenderView* toRenderView(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderView());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderView());
     return static_cast<const RenderView*>(object);
 }
 

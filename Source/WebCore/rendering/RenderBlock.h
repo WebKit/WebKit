@@ -1236,13 +1236,13 @@ private:
 
 inline RenderBlock* toRenderBlock(RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderBlock());
     return static_cast<RenderBlock*>(object);
 }
 
 inline const RenderBlock* toRenderBlock(const RenderObject* object)
 { 
-    ASSERT(!object || object->isRenderBlock());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderBlock());
     return static_cast<const RenderBlock*>(object);
 }
 

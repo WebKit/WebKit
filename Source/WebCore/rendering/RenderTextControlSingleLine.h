@@ -99,7 +99,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 
 inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
 {
-    ASSERT(!object || object->isTextField());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTextField());
     return static_cast<RenderTextControlSingleLine*>(object);
 }
 
