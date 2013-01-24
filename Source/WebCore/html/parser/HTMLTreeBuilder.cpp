@@ -2152,7 +2152,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             m_scriptToProcess = m_tree.currentElement();
             m_tree.openElements()->pop();
             if (isParsingFragment() && !scriptingContentIsAllowed(m_fragmentContext.scriptingPermission()))
-                m_scriptToProcess->removeAllChildren();
+                m_scriptToProcess->removeChildren();
             setInsertionMode(m_originalInsertionMode);
 
             // This token will not have been created by the tokenizer if a

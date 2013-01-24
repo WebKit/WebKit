@@ -489,14 +489,14 @@ void InputType::destroyShadowSubtree()
     if (!root)
         return;
 
-    root->removeAllChildren();
+    root->removeChildren();
 
     // It's ok to clear contents of all other ShadowRoots because they must have
     // been created by TextFieldDecorationElement, and we don't allow adding
     // AuthorShadowRoot to HTMLInputElement.
     while ((root = root->youngerShadowRoot())) {
 #if ENABLE(SHADOW_DOM)
-        root->removeAllChildren();
+        root->removeChildren();
         root->appendChild(HTMLShadowElement::create(shadowTag, element()->document()));
 #else
         ASSERT_NOT_REACHED();

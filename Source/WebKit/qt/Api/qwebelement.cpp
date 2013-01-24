@@ -1198,7 +1198,7 @@ void QWebElement::removeAllChildren()
     if (!m_element)
         return;
 
-    m_element->removeAllChildren();
+    m_element->removeChildren();
 }
 
 // FIXME: This code, and all callers are wrong, and have no place in a

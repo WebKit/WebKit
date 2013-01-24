@@ -125,8 +125,8 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
     ASSERT(!validationMessageClient());
     ASSERT(m_messageHeading);
     ASSERT(m_messageBody);
-    m_messageHeading->removeAllChildren();
-    m_messageBody->removeAllChildren();
+    m_messageHeading->removeChildren();
+    m_messageBody->removeChildren();
     Vector<String> lines;
     m_message.split('\n', lines);
     Document* doc = m_messageHeading->document();

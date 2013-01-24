@@ -752,7 +752,8 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             detach();
             m_inputType->destroyShadowSubtree();
             m_inputType->createShadowSubtree();
-            attach();
+            if (!attached())
+                attach();
         } else {
             m_inputType->destroyShadowSubtree();
             m_inputType->createShadowSubtree();
