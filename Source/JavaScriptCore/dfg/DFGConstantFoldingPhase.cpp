@@ -373,9 +373,10 @@ private:
                 if (tailNodeIndex == nodeIndex)
                     block->variablesAtTail.operand(node.local()) = previousLocalAccess;
                 else {
-                    ASSERT(m_graph[tailNodeIndex].op() == Flush
+                    ASSERT(
+                        m_graph[tailNodeIndex].op() == Flush
                         || m_graph[tailNodeIndex].op() == SetLocal
-                        || node.variableAccessData()->isCaptured());
+                        || isCapturedAtOrAfter(block, indexInBlock, node.local()));
                 }
             }
             
@@ -393,6 +394,22 @@ private:
         
         return changed;
     }
+    
+#if !ASSERT_DISABLED
+    bool isCapturedAtOrAfter(BasicBlock* block, unsigned indexInBlock, int operand)
+    {
+        for (; indexInBlock < block->size(); ++indexInBlock) {
+            Node& node = m_graph[block->at(indexInBlock)];
+            if (!node.hasLocal())
+                continue;
+            if (node.local() != operand)
+                continue;
+            if (node.variableAccessData()->isCaptured())
+                return true;
+        }
+        return false;
+    }
+#endif // !ASSERT_DISABLED
     
     void addStructureTransitionCheck(CodeOrigin codeOrigin, unsigned indexInBlock, JSCell* cell)
     {

@@ -1,3 +1,22 @@
+2013-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Constant folding an access to an uncaptured variable that is captured later in the same basic block shouldn't lead to assertion failures
+        https://bugs.webkit.org/show_bug.cgi?id=107750
+        <rdar://problem/12387265>
+
+        Reviewed by Mark Hahnenberg.
+        
+        The point of this assertion was that if there is no variable capturing going on, then there should only be one GetLocal
+        for the variable anywhere in the basic block. But if there is some capturing, then we'll have an unbounded number of
+        GetLocals. The assertion was too imprecise for the latter case. I want to keep this assertion, so I introduced a
+        checker that verifies this precisely: if there are any captured accesses to the variable anywhere at or after the
+        GetLocal we are eliminating, then we allow redundant GetLocals.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::isCapturedAtOrAfter):
+
 2013-01-23  Oliver Hunt  <oliver@apple.com>
 
         Replace ASSERT_NOT_REACHED with RELEASE_ASSERT_NOT_REACHED in JSC
