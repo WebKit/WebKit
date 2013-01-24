@@ -81,6 +81,8 @@ void SpellingHandler::createSpellCheckRequest(PassRefPtr<WebCore::Range> rangeFo
 {
     RefPtr<WebCore::Range> rangeForSpellChecking = rangeForSpellCheckingPtr;
     rangeForSpellChecking = DOMSupport::trimWhitespaceFromRange(rangeForSpellChecking);
+    if (!rangeForSpellChecking)
+        return;
 
     SpellingLog(Platform::LogLevelInfo, "SpellingHandler::createSpellCheckRequest Substring text is '%s', of size %d"
         , rangeForSpellChecking->text().latin1().data()

@@ -1,3 +1,21 @@
+2013-01-24  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Fix crash in SpellingHandler
+        https://bugs.webkit.org/show_bug.cgi?id=107842
+
+        Reviewed by Rob Buis.
+
+        If we have an empty range or one with all spaces, we can simply return 0 instead of
+        still creating a range. Putting in a null check after trimming to catch this case
+        which was causing the crash in some DRT tests.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::trimWhitespaceFromRange):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::createSpellCheckRequest):
+
 2013-01-24  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] It can't Select texts in main frame when the current focus is in a IFrame
