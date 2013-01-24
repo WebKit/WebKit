@@ -1,3 +1,32 @@
+2013-01-24  Dean Jackson  <dino@apple.com>
+
+        Allow some plugin snapshot UI content to come from Injected Bundle
+        https://bugs.webkit.org/show_bug.cgi?id=107852
+
+        Reviewed by Anders Carlsson.
+
+        Hook up three new methods: plugInStartLabelTitle, plugInStartLabelSubtitle and
+        plugInExtraStyleSheet to allow some custom styling and content to come
+        from the InjectedBundle.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Callbacks added to
+        WKBundlePageUIClient structure.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Stub implementations
+        of the three new methods.
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelTitle):
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelSubtitle):
+        (WebKit::InjectedBundlePageUIClient::plugInExtraStyleSheet):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        (InjectedBundlePageUIClient):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Call into the injected bundle
+        for each of these methods.
+        (WebKit::WebChromeClient::plugInStartLabelTitle):
+        (WebKit::WebChromeClient::plugInStartLabelSubtitle):
+        (WebKit::WebChromeClient::plugInExtraStyleSheet):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient): Declare the virtual methods in the Chrome
+        Client so that they can accessed from WebCore eventually.
+
 2013-01-24  Anders Carlsson  <andersca@apple.com>
 
         Add stubbed out StorageNamespaceProxy class

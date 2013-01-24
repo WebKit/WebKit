@@ -1,3 +1,16 @@
+2013-01-24  Dean Jackson  <dino@apple.com>
+
+        Allow some plugin snapshot UI content to come from Injected Bundle
+        https://bugs.webkit.org/show_bug.cgi?id=107852
+
+        Reviewed by Anders Carlsson.
+
+        Null implementations of plugInStartLabelTitle, plugInStartLabelSubtitle and
+        plugInExtraStyleSheet.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2013-01-24  Erik Arvidsson  <arv@chromium.org>
 
         Unreviewed, rolling out r140561.

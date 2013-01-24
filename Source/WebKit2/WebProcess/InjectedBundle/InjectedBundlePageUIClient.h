@@ -72,6 +72,10 @@ public:
     uint64_t didExceedDatabaseQuota(WebPage*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes);
 
     PassRefPtr<WebImage> plugInStartLabelImage(WebCore::RenderSnapshottedPlugIn::LabelSize) const;
+    String plugInStartLabelTitle() const;
+    String plugInStartLabelSubtitle() const;
+    String plugInExtraStyleSheet() const;
+
 };
 
 } // namespace WebKit

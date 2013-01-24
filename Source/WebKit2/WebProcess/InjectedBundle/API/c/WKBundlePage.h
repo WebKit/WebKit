@@ -249,6 +249,9 @@ typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisibleCallback
 typedef void (*WKBundlePageReachedAppCacheOriginQuotaCallback)(WKBundlePageRef page, WKSecurityOriginRef origin, int64_t totalBytesNeeded, const void *clientInfo);
 typedef uint64_t (*WKBundlePageExceededDatabaseQuotaCallback)(WKBundlePageRef page, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes, const void *clientInfo);
 typedef WKImageRef (*WKBundlePagePlugInStartLabelImageCallback)(WKBundlePageLabelSize size, const void *clientInfo);
+typedef WKStringRef (*WKBundlePagePlugInStartLabelTitleCallback)(const void *clientInfo);
+typedef WKStringRef (*WKBundlePagePlugInStartLabelSubtitleCallback)(const void *clientInfo);
+typedef WKStringRef (*WKBundlePagePlugInExtraStyleSheetCallback)(const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -274,6 +277,9 @@ struct WKBundlePageUIClient {
     // Version 2.
     WKBundlePageExceededDatabaseQuotaCallback                           didExceedDatabaseQuota;
     WKBundlePagePlugInStartLabelImageCallback                           plugInStartLabelImage;
+    WKBundlePagePlugInStartLabelTitleCallback                           plugInStartLabelTitle;
+    WKBundlePagePlugInStartLabelSubtitleCallback                        plugInStartLabelSubtitle;
+    WKBundlePagePlugInExtraStyleSheetCallback                           plugInExtraStyleSheet;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

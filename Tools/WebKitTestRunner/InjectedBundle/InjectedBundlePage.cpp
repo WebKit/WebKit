@@ -377,6 +377,9 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didReachApplicationCacheOriginQuota,
         didExceedDatabaseQuota,
         0, /*plugInStartLabelImage*/
+        0, /*plugInStartLabelTitle*/
+        0, /*plugInStartLabelSubtitle*/
+        0, /*plugInExtraStyleSheet*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

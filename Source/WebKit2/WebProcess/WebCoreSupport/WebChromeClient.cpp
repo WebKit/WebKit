@@ -805,4 +805,19 @@ PassRefPtr<Image> WebChromeClient::plugInStartLabelImage(RenderSnapshottedPlugIn
     return m_page->injectedBundleUIClient().plugInStartLabelImage(size)->bitmap()->createImage();
 }
 
+String WebChromeClient::plugInStartLabelTitle() const
+{
+    return m_page->injectedBundleUIClient().plugInStartLabelTitle();
+}
+
+String WebChromeClient::plugInStartLabelSubtitle() const
+{
+    return m_page->injectedBundleUIClient().plugInStartLabelSubtitle();
+}
+
+String WebChromeClient::plugInExtraStyleSheet() const
+{
+    return m_page->injectedBundleUIClient().plugInExtraStyleSheet();
+}
+
 } // namespace WebKit

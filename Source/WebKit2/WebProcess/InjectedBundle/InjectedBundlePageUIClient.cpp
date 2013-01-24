@@ -183,4 +183,19 @@ PassRefPtr<WebImage> InjectedBundlePageUIClient::plugInStartLabelImage(RenderSna
     return adoptRef(toImpl(m_client.plugInStartLabelImage(wkSize, m_client.clientInfo)));
 }
 
+String InjectedBundlePageUIClient::plugInStartLabelTitle() const
+{
+    return String();
+}
+
+String InjectedBundlePageUIClient::plugInStartLabelSubtitle() const
+{
+    return String();
+}
+
+String InjectedBundlePageUIClient::plugInExtraStyleSheet() const
+{
+    return String();
+}
+
 } // namespace WebKit
