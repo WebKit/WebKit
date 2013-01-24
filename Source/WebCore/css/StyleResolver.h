@@ -310,6 +310,12 @@ private:
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
 
+    struct RuleRange {
+        RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
+        int& firstRuleIndex;
+        int& lastRuleIndex;
+    };
+
     struct MatchRanges {
         MatchRanges() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
         int firstUARule;
@@ -318,6 +324,9 @@ private:
         int lastAuthorRule;
         int firstUserRule;
         int lastUserRule;
+        RuleRange UARuleRange() { return RuleRange(firstUARule, lastUARule); }
+        RuleRange authorRuleRange() { return RuleRange(firstAuthorRule, lastAuthorRule); }
+        RuleRange userRuleRange() { return RuleRange(firstUserRule, lastUserRule); }
     };
 
     struct MatchedProperties {
@@ -364,9 +373,9 @@ private:
     void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
     void matchHostRules(MatchResult&, bool includeEmptyRules);
 
-    void collectMatchingRules(const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
-    void collectMatchingRulesForRegion(const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
-    void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, int& firstRuleIndex, int& lastRuleIndex);
+    void collectMatchingRules(const MatchRequest&, RuleRange&);
+    void collectMatchingRulesForRegion(const MatchRequest&, RuleRange&);
+    void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, RuleRange&);
 
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
