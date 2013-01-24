@@ -323,8 +323,8 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     ASSERT(newChild);
     ASSERT(nextChild);
     ASSERT(nextChild->parentNode() == this);
-    ASSERT(document() == newChild->document());
     ASSERT(!newChild->isDocumentFragment());
+    ASSERT_WITH_SECURITY_IMPLICATION(document() == newChild->document());
 
     if (nextChild->previousSibling() == newChild || nextChild == newChild) // nothing to do
         return;
@@ -696,7 +696,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild->isDocumentFragment());
-    ASSERT(document() == newChild->document());
+    ASSERT_WITH_SECURITY_IMPLICATION(document() == newChild->document());
 
     Node* last = m_lastChild;
     {

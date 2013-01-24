@@ -547,12 +547,12 @@ namespace WTF {
 
         T& at(size_t i) 
         { 
-            ASSERT(i < size());
+            ASSERT_WITH_SECURITY_IMPLICATION(i < size());
             return m_buffer.buffer()[i]; 
         }
         const T& at(size_t i) const 
         {
-            ASSERT(i < size());
+            ASSERT_WITH_SECURITY_IMPLICATION(i < size());
             return m_buffer.buffer()[i]; 
         }
 

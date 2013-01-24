@@ -266,6 +266,28 @@ inline void assertUnused(T& x) { (void)x; }
 
 #endif
 
+/* ASSERT_WITH_SECURITY_IMPLICATION
+   
+   Failure of this assertion indicates a possible security vulnerability.
+   Class of vulnerabilities that it tests include bad casts, out of bounds
+   accesses, use-after-frees, etc. Please file a bug using the security
+   template - https://bugs.webkit.org/enter_bug.cgi?product=Security.
+
+*/
+#ifdef ADDRESS_SANITIZER
+
+#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
+    (!(assertion) ? \
+        (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
+         CRASH()) : \
+        (void)0)
+
+#else
+
+#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) ASSERT(assertion)
+
+#endif
+
 /* ASSERT_WITH_MESSAGE */
 
 #if COMPILER(MSVC7_OR_LOWER)
