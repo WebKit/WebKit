@@ -43,6 +43,7 @@ public:
     }
     static void derefObject(void*);
     static WrapperTypeInfo info;
+    static EventTarget* toEventTarget(v8::Handle<v8::Object>);
     static v8::Handle<v8::Value> indexedPropertyGetter(uint32_t, const v8::AccessorInfo&);
     static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
     static const int eventListenerCacheIndex = v8DefaultWrapperInternalFieldCount + 0;

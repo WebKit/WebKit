@@ -62,6 +62,7 @@ namespace WebCore {
         static inline void setWrapperClass(void*, v8::Persistent<v8::Object>);
         static inline void setWrapperClass(Node*, v8::Persistent<v8::Object>);
 
+        static bool isDOMWrapper(v8::Handle<v8::Value>);
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 
         // FIXME: Why is this function in V8DOMWrapper?

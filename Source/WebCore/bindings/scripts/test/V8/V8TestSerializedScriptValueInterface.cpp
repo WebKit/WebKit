@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestSerializedScriptValueInterface::info = { V8TestSerializedScriptValueInterface::GetTemplate, V8TestSerializedScriptValueInterface::derefObject, 0, 0, V8TestSerializedScriptValueInterface::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo V8TestSerializedScriptValueInterface::info = { V8TestSerializedScriptValueInterface::GetTemplate, V8TestSerializedScriptValueInterface::derefObject, 0, 0, 0, V8TestSerializedScriptValueInterface::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
 namespace TestSerializedScriptValueInterfaceV8Internal {
 
@@ -300,7 +300,6 @@ v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::createWrapper(PassR
         wrapperHandle.MarkIndependent();
     return wrapper;
 }
-
 void V8TestSerializedScriptValueInterface::derefObject(void* object)
 {
     static_cast<TestSerializedScriptValueInterface*>(object)->deref();

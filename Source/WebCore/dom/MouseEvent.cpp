@@ -32,6 +32,25 @@
 
 namespace WebCore {
 
+MouseEventInit::MouseEventInit()
+    : screenX(0)
+    , screenY(0)
+    , clientX(0)
+    , clientY(0)
+    , ctrlKey(false)
+    , altKey(false)
+    , shiftKey(false)
+    , metaKey(false)
+    , button(0)
+    , relatedTarget(0)
+{
+}
+
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventInit& initializer)
+{
+    return adoptRef(new MouseEvent(type, initializer));
+}
+
 PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
 {
     ASSERT(event.type() == PlatformEvent::MouseMoved || event.button() != NoButton);
@@ -72,6 +91,21 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
     , m_relatedTarget(relatedTarget)
     , m_clipboard(clipboard)
 {
+}
+
+MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer)
+    : MouseRelatedEvent(eventType, initializer.bubbles, initializer.cancelable, initializer.view, initializer.detail, IntPoint(initializer.screenX, initializer.screenY),
+        IntPoint(0 /* pageX */, 0 /* pageY */),
+#if ENABLE(POINTER_LOCK)
+        IntPoint(0 /* movementX */, 0 /* movementY */),
+#endif
+        initializer.ctrlKey, initializer.altKey, initializer.shiftKey, initializer.metaKey, false /* isSimulated */)
+    , m_button(initializer.button == (unsigned short)-1 ? 0 : initializer.button)
+    , m_buttonDown(initializer.button != (unsigned short)-1)
+    , m_relatedTarget(initializer.relatedTarget)
+    , m_clipboard(0 /* clipboard */)
+{
+    initCoordinates(IntPoint(initializer.clientX, initializer.clientY));
 }
 
 MouseEvent::~MouseEvent()

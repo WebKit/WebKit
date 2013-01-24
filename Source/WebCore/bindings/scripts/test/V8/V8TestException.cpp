@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestException::info = { V8TestException::GetTemplate, V8TestException::derefObject, 0, 0, V8TestException::installPerContextPrototypeProperties, 0, WrapperTypeErrorPrototype };
+WrapperTypeInfo V8TestException::info = { V8TestException::GetTemplate, V8TestException::derefObject, 0, 0, 0, V8TestException::installPerContextPrototypeProperties, 0, WrapperTypeErrorPrototype };
 
 namespace TestExceptionV8Internal {
 
@@ -118,7 +118,6 @@ v8::Handle<v8::Object> V8TestException::createWrapper(PassRefPtr<TestException> 
         wrapperHandle.MarkIndependent();
     return wrapper;
 }
-
 void V8TestException::derefObject(void* object)
 {
     static_cast<TestException*>(object)->deref();

@@ -17,20 +17,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
-interface MouseEvent : UIEvent {
-    readonly attribute long             screenX;
-    readonly attribute long             screenY;
-    readonly attribute long             clientX;
-    readonly attribute long             clientY;
-    [Conditional=POINTER_LOCK] readonly attribute long webkitMovementX;
-    [Conditional=POINTER_LOCK] readonly attribute long webkitMovementY;
-    readonly attribute boolean          ctrlKey;
-    readonly attribute boolean          shiftKey;
-    readonly attribute boolean          altKey;
-    readonly attribute boolean          metaKey;
-    readonly attribute unsigned short   button;
-    readonly attribute EventTarget      relatedTarget;
+[
+    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
+    ConstructorTemplate=Event
+] interface MouseEvent : UIEvent {
+    [InitializedByEventConstructor] readonly attribute long             screenX;
+    [InitializedByEventConstructor] readonly attribute long             screenY;
+    [InitializedByEventConstructor] readonly attribute long             clientX;
+    [InitializedByEventConstructor] readonly attribute long             clientY;
+    [InitializedByEventConstructor] readonly attribute boolean          ctrlKey;
+    [InitializedByEventConstructor] readonly attribute boolean          shiftKey;
+    [InitializedByEventConstructor] readonly attribute boolean          altKey;
+    [InitializedByEventConstructor] readonly attribute boolean          metaKey;
+    [InitializedByEventConstructor] readonly attribute unsigned short   button;
+    [InitializedByEventConstructor] readonly attribute EventTarget      relatedTarget;
+    [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementX;
+    [Conditional=POINTER_LOCK]      readonly attribute long             webkitMovementY;
     
     [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=DefaultIsUndefined] DOMString type, 
                                        in [Optional=DefaultIsUndefined] boolean canBubble, 

@@ -373,6 +373,10 @@ END
         push(@headerContent, "    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);\n");
     }
 
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
+        push(@headerContent, "    static EventTarget* toEventTarget(v8::Handle<v8::Object>);\n");
+    }
+
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, <<END);
     static v8::Persistent<v8::ObjectTemplate> GetShadowObjectTemplate();
@@ -2095,10 +2099,15 @@ sub GenerateNamedConstructorCallback
     if ($interface->extendedAttributes->{"ActiveDOMObject"}) {
         $toActiveDOMObject = "${v8InterfaceName}::toActiveDOMObject";
     }
-    AddToImplIncludes("Frame.h");
 
+    my $toEventTarget = "0";
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
+        $toEventTarget = "${v8InterfaceName}::toEventTarget";
+    }
+
+    AddToImplIncludes("Frame.h");
     push(@implContent, <<END);
-WrapperTypeInfo ${v8InterfaceName}Constructor::info = { ${v8InterfaceName}Constructor::GetTemplate, ${v8InterfaceName}::derefObject, ${toActiveDOMObject}, 0, ${v8InterfaceName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo ${v8InterfaceName}Constructor::info = { ${v8InterfaceName}Constructor::GetTemplate, ${v8InterfaceName}::derefObject, $toActiveDOMObject, $toEventTarget, 0, ${v8InterfaceName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
 static v8::Handle<v8::Value> ${v8InterfaceName}ConstructorCallback(const v8::Arguments& args)
 {
@@ -2618,7 +2627,8 @@ sub GenerateImplementation
 
     AddIncludesForType($interfaceName);
 
-    my $toActive = $interface->extendedAttributes->{"ActiveDOMObject"} ? "${v8InterfaceName}::toActiveDOMObject" : "0";
+    my $toActiveDOMObject = $interface->extendedAttributes->{"ActiveDOMObject"} ? "${v8InterfaceName}::toActiveDOMObject" : "0";
+    my $toEventTarget = $codeGenerator->InheritsExtendedAttribute($interface, "EventTarget") ? "${v8InterfaceName}::toEventTarget" : "0";
     my $rootForGC = NeedsCustomOpaqueRootForGC($interface) ? "${v8InterfaceName}::opaqueRootForGC" : "0";
 
     # Find the super descriptor.
@@ -2636,7 +2646,7 @@ sub GenerateImplementation
 
     my $WrapperTypePrototype = $interface->isException ? "WrapperTypeErrorPrototype" : "WrapperTypeObjectPrototype";
 
-    push(@implContentDecls, "WrapperTypeInfo ${v8InterfaceName}::info = { ${v8InterfaceName}::GetTemplate, ${v8InterfaceName}::derefObject, $toActive, $rootForGC, ${v8InterfaceName}::installPerContextPrototypeProperties, $parentClassInfo, $WrapperTypePrototype };\n\n");
+    push(@implContentDecls, "WrapperTypeInfo ${v8InterfaceName}::info = { ${v8InterfaceName}::GetTemplate, ${v8InterfaceName}::derefObject, $toActiveDOMObject, $toEventTarget, $rootForGC, ${v8InterfaceName}::installPerContextPrototypeProperties, $parentClassInfo, $WrapperTypePrototype };\n\n");
     push(@implContentDecls, "namespace ${interfaceName}V8Internal {\n\n");
 
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
@@ -3121,6 +3131,7 @@ END
         }
         push(@implContent, <<END);
 }
+
 END
     }
 
@@ -3154,6 +3165,7 @@ END
 
         push(@implContent, <<END);
 }
+
 END
     }
 
@@ -3164,8 +3176,19 @@ END
         push(@implContent, <<END);
 ActiveDOMObject* ${v8InterfaceName}::toActiveDOMObject(v8::Handle<v8::Object> object)
 {
-    return ${returnValue};
-}      
+    return $returnValue;
+}
+
+END
+    }
+
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
+        push(@implContent, <<END);
+EventTarget* ${v8InterfaceName}::toEventTarget(v8::Handle<v8::Object> object)
+{
+    return toNative(object);
+}
+
 END
     }
 
@@ -3180,13 +3203,13 @@ v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate()
     }
     return V8DOMWindowShadowObjectCache;
 }
+
 END
     }
 
     GenerateToV8Converters($interface, $v8InterfaceName, $nativeType);
 
     push(@implContent, <<END);
-
 void ${v8InterfaceName}::derefObject(void* object)
 {
     static_cast<${nativeType}*>(object)->deref();

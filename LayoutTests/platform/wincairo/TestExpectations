@@ -1739,6 +1739,7 @@ fast/images/large-size-image-crash.html
 
 # DOM4_EVENTS_CONSTRUCTOR is not yet enabled.
 fast/events/constructors/ui-event-constructor.html
+fast/events/constructors/mouse-event-constructor.html
 
 # Disable until the windows WebKit API supports injecting in the top frame only.
 # https://bugs.webkit.org/show_bug.cgi?id=41800

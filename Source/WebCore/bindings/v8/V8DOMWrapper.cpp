@@ -115,6 +115,21 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
 }
 #endif
 
+bool V8DOMWrapper::isDOMWrapper(v8::Handle<v8::Value> value)
+{
+    if (value.IsEmpty() || !value->IsObject())
+        return false;
+
+    v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(value);
+    if (wrapper->InternalFieldCount() < v8DefaultWrapperInternalFieldCount)
+        return false;
+    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
+    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
+
+    // FIXME: Add class id checks.
+    return true;
+}
+
 bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo* type)
 {
     if (!hasInternalField(value))

@@ -30,6 +30,7 @@
 #include "DOMStringList.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
+#include "V8EventTarget.h"
 #include "V8Storage.h"
 #include "V8Uint8Array.h"
 #include "V8Utilities.h"
@@ -457,6 +458,21 @@ bool Dictionary::get(const String& key, RefPtr<MediaStream>& value) const
     return true;
 }
 #endif
+
+bool Dictionary::get(const String& key, RefPtr<EventTarget>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    EventTarget* target = 0;
+    if (V8DOMWrapper::isDOMWrapper(v8Value)) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        target = toWrapperTypeInfo(wrapper)->toEventTarget(wrapper);
+    }
+    value = target;
+    return true;
+}
 
 bool Dictionary::get(const String& key, Dictionary& value) const
 {

@@ -33,76 +33,95 @@ namespace WebCore {
 class EventDispatcher;
 class PlatformMouseEvent;
 
-    // Introduced in DOM Level 2
-    class MouseEvent : public MouseRelatedEvent {
-    public:
-        static PassRefPtr<MouseEvent> create()
-        {
-            return adoptRef(new MouseEvent);
-        }
-        static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
-            int detail, int screenX, int screenY, int pageX, int pageY,
+struct MouseEventInit : public UIEventInit {
+    MouseEventInit();
+
+    int screenX;
+    int screenY;
+    int clientX;
+    int clientY;
+    bool ctrlKey;
+    bool altKey;
+    bool shiftKey;
+    bool metaKey;
+    unsigned short button;
+    RefPtr<EventTarget> relatedTarget;
+};
+
+class MouseEvent : public MouseRelatedEvent {
+public:
+    static PassRefPtr<MouseEvent> create()
+    {
+        return adoptRef(new MouseEvent);
+    }
+
+    static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+        int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
-            int movementX, int movementY,
+        int movementX, int movementY,
 #endif
-            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-            PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard = 0, bool isSimulated = false)
-        {
-            return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard = 0, bool isSimulated = false)
+    {
+        return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
 #if ENABLE(POINTER_LOCK)
-                movementX, movementY,
+        movementX, movementY,
 #endif
-                ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
-        }
-        static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
+    }
 
-        virtual ~MouseEvent();
+    static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
-        void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
-                            int detail, int screenX, int screenY, int clientX, int clientY,
-                            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                            unsigned short button, PassRefPtr<EventTarget> relatedTarget);
+    static PassRefPtr<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&);
 
-        // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others),
-        // but we will match the standard DOM.
-        unsigned short button() const { return m_button; }
-        bool buttonDown() const { return m_buttonDown; }
-        EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
-        void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
+    virtual ~MouseEvent();
 
-        Clipboard* clipboard() const { return m_clipboard.get(); }
+    void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
+        int detail, int screenX, int screenY, int clientX, int clientY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, PassRefPtr<EventTarget> relatedTarget);
 
-        Node* toElement() const;
-        Node* fromElement() const;
+    // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others),
+    // but we will match the standard DOM.
+    unsigned short button() const { return m_button; }
+    bool buttonDown() const { return m_buttonDown; }
+    EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
+    void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
-        Clipboard* dataTransfer() const { return isDragEvent() ? m_clipboard.get() : 0; }
+    Clipboard* clipboard() const { return m_clipboard.get(); }
 
-        virtual const AtomicString& interfaceName() const;
+    Node* toElement() const;
+    Node* fromElement() const;
 
-        virtual bool isMouseEvent() const;
-        virtual bool isDragEvent() const;
-        virtual int which() const;
+    Clipboard* dataTransfer() const { return isDragEvent() ? m_clipboard.get() : 0; }
 
-        virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const OVERRIDE;
+    virtual const AtomicString& interfaceName() const;
 
-    protected:
-        MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
-                   int detail, int screenX, int screenY, int pageX, int pageY,
+    virtual bool isMouseEvent() const;
+    virtual bool isDragEvent() const;
+    virtual int which() const;
+
+    virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const OVERRIDE;
+
+protected:
+    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
+        int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
-                   int movementX, int movementY,
+        int movementX, int movementY,
 #endif
-                   bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-                   PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated);
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard>, bool isSimulated);
 
-    protected:
-        MouseEvent();
+    MouseEvent(const AtomicString& type, const MouseEventInit&);
 
-    private:
-        unsigned short m_button;
-        bool m_buttonDown;
-        RefPtr<EventTarget> m_relatedTarget;
-        RefPtr<Clipboard> m_clipboard;
-    };
+    MouseEvent();
+
+private:
+    unsigned short m_button;
+    bool m_buttonDown;
+    RefPtr<EventTarget> m_relatedTarget;
+    RefPtr<Clipboard> m_clipboard;
+};
 
 class SimulatedMouseEvent : public MouseEvent {
 public:
