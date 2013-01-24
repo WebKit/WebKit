@@ -26,7 +26,7 @@
 #ifndef ProfilerBytecode_h
 #define ProfilerBytecode_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "Opcode.h"
 #include <wtf/text/CString.h>
 

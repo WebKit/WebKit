@@ -27,7 +27,7 @@
 #define ProfilerCompilation_h
 
 #include "ExitKind.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "ProfilerCompilationKind.h"
 #include "ProfilerCompiledBytecode.h"
 #include "ProfilerExecutionCounter.h"

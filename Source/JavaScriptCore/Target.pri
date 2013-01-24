@@ -266,7 +266,7 @@ SOURCES += \
     runtime/JSString.cpp \
     runtime/JSStringJoiner.cpp \
     runtime/JSSymbolTableObject.cpp \
-    runtime/JSValue.cpp \
+    runtime/JSCJSValue.cpp \
     runtime/JSVariableObject.cpp \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \

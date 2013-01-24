@@ -76,8 +76,8 @@
 #define Status int
 #include <X11/extensions/Xrender.h>
 #endif
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 
 #include "QtX11ImageConversion.h"
 #include <QGuiApplication>

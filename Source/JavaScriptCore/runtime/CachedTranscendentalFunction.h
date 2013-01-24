@@ -26,7 +26,7 @@
 #ifndef CachedTranscendentalFunction_h
 #define CachedTranscendentalFunction_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

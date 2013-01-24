@@ -23,7 +23,7 @@
 #ifndef Completion_h
 #define Completion_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

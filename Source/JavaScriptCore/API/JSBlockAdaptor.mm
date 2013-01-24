@@ -34,7 +34,7 @@
 #import "JSBlockAdaptor.h"
 #import "JSContextInternal.h"
 #import "JSWrapperMap.h"
-#import "JSValue.h"
+#import "JSCJSValue.h"
 #import "JSValueInternal.h"
 #import "ObjcRuntimeExtras.h"
 #import "Operations.h"

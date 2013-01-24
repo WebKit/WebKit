@@ -27,7 +27,7 @@
 #define ProfilerOrigin_h
 
 #include "CodeBlockHash.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 

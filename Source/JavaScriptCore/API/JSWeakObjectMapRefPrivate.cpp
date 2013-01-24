@@ -28,8 +28,8 @@
 
 #include "APICast.h"
 #include "APIShims.h"
+#include "JSCJSValue.h"
 #include "JSCallbackObject.h"
-#include "JSValue.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "Operations.h"
 #include <wtf/HashMap.h>

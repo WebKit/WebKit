@@ -29,7 +29,7 @@
 #if ENABLE(LLINT_C_LOOP)
 
 #include "CodeSpecializationKind.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
 #include "Register.h"

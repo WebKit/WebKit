@@ -26,7 +26,7 @@
 #ifndef ResolveGlobalStatus_h
 #define ResolveGlobalStatus_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "PropertyOffset.h"
 #include <wtf/NotFound.h>
 

@@ -32,7 +32,7 @@
 #include "DFGArrayifySlowPathGenerator.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
-#include "JSValueInlines.h"
+#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {

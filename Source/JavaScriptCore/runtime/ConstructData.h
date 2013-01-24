@@ -30,7 +30,7 @@
 #define ConstructData_h
 
 #include "CallData.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

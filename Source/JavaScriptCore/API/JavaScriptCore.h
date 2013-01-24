@@ -32,7 +32,7 @@
 #if defined(__OBJC__) && JS_OBJC_API_ENABLED
 
 #import "JSContext.h"
-#import "APIJSValue.h"
+#import "JSValue.h"
 #import "JSVirtualMachine.h"
 #import "JSExport.h"
 

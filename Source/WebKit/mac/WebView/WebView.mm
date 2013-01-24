@@ -188,7 +188,7 @@
 #import <runtime/DateInstance.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
-#import <runtime/JSValue.h>
+#import <runtime/JSCJSValue.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>

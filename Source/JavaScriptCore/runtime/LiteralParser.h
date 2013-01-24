@@ -27,8 +27,8 @@
 #define LiteralParser_h
 
 #include "Identifier.h"
+#include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSValue.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

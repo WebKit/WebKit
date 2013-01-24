@@ -29,8 +29,8 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
+#include "JSCJSValue.h"
 #include "JSGlobalData.h"
-#include "JSValue.h"
 #include "Operations.h"
 
 #if ENABLE(JIT) || ENABLE(LLINT)

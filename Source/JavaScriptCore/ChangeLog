@@ -1,3 +1,93 @@
+2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h
+        https://bugs.webkit.org/show_bug.cgi?id=107327
+
+        Reviewed by Filip Pizlo.
+
+        We're renaming these two files, so we have to replace the names everywhere.
+
+        * API/APICast.h:
+        * API/APIJSValue.h: Removed.
+        * API/JSBlockAdaptor.mm:
+        * API/JSStringRefCF.cpp:
+        * API/JSValue.h: Copied from Source/JavaScriptCore/API/APIJSValue.h.
+        * API/JSValue.mm:
+        * API/JSValueInternal.h:
+        * API/JSValueRef.cpp:
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * API/JavaScriptCore.h:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * bytecode/ResolveGlobalStatus.cpp:
+        * bytecode/ResolveGlobalStatus.h:
+        * bytecode/SpeculatedType.h:
+        * bytecode/ValueRecovery.h:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * heap/CopiedBlock.h:
+        * heap/HandleStack.cpp:
+        * heap/HandleTypes.h:
+        * heap/WeakImpl.h:
+        * interpreter/Interpreter.h:
+        * interpreter/Register.h:
+        * interpreter/VMInspector.h:
+        * jit/HostCallReturnValue.cpp:
+        * jit/HostCallReturnValue.h:
+        * jit/JITCode.h:
+        * jit/JITExceptions.cpp:
+        * jit/JITExceptions.h:
+        * jit/JSInterfaceJIT.h:
+        * llint/LLIntCLoop.h:
+        * llint/LLIntData.h:
+        * llint/LLIntSlowPaths.cpp:
+        * profiler/ProfilerBytecode.h:
+        * profiler/ProfilerBytecodeSequence.h:
+        * profiler/ProfilerBytecodes.h:
+        * profiler/ProfilerCompilation.h:
+        * profiler/ProfilerCompiledBytecode.h:
+        * profiler/ProfilerDatabase.h:
+        * profiler/ProfilerOSRExit.h:
+        * profiler/ProfilerOSRExitSite.h:
+        * profiler/ProfilerOrigin.h:
+        * profiler/ProfilerOriginStack.h:
+        * runtime/ArgList.cpp:
+        * runtime/CachedTranscendentalFunction.h:
+        * runtime/CallData.h:
+        * runtime/Completion.h:
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSCJSValue.cpp: Copied from Source/JavaScriptCore/runtime/JSValue.cpp.
+        * runtime/JSCJSValue.h: Copied from Source/JavaScriptCore/runtime/JSValue.h.
+        (JSValue):
+        * runtime/JSCJSValueInlines.h: Copied from Source/JavaScriptCore/runtime/JSValueInlines.h.
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSStringJoiner.h:
+        * runtime/JSValue.cpp: Removed.
+        * runtime/JSValue.h: Removed.
+        * runtime/JSValueInlines.h: Removed.
+        * runtime/LiteralParser.h:
+        * runtime/Operations.h:
+        * runtime/PropertyDescriptor.h:
+        * runtime/PropertySlot.h:
+        * runtime/Protect.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/Structure.h:
+
 2013-01-23  Oliver Hunt  <oliver@apple.com>
 
         Harden JSC a bit with RELEASE_ASSERT

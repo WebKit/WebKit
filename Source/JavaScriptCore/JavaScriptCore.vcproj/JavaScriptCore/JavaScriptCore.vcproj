@@ -982,15 +982,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSValue.cpp"
+				RelativePath="..\..\runtime\JSCJSValue.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSValue.h"
+				RelativePath="..\..\runtime\JSCJSValue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSValueInlines.h"
+				RelativePath="..\..\runtime\JSCJSValueInlines.h"
 				>
 			</File>
 			<File

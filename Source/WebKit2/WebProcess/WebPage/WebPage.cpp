@@ -127,8 +127,8 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/markup.h>
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 #include <runtime/Operations.h>
 
 #if ENABLE(MHTML)

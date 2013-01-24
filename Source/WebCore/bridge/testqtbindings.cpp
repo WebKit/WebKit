@@ -25,8 +25,8 @@
 #include "config.h"
 
 #include "BridgeJSC.h"
+#include "JSCJSValue.h"
 #include "JSObject.h"
-#include "JSValue.h"
 #include "interpreter.h"
 #include "qdebug.h"
 #include "qobject.h"

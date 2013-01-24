@@ -66,8 +66,8 @@
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 

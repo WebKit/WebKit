@@ -62,8 +62,8 @@
 #include "JSDOMBinding.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 
 #ifdef GTK_API_VERSION_2
 #include <gdkconfig.h>

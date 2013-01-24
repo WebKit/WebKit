@@ -26,7 +26,7 @@
 #ifndef ProfilerOSRExitSite_h
 #define ProfilerOSRExitSite_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Profiler {

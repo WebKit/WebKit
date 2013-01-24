@@ -28,7 +28,7 @@
 #include "BridgeJSC.h"
 #include <Foundation/Foundation.h>
 #include "JSObject.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #import <WebKit/WebScriptObject.h>
 #include "interpreter.h"
 #include "runtime_object.h"

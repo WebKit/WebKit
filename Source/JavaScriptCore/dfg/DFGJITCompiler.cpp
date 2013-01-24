@@ -35,8 +35,8 @@
 #include "DFGSlowPathGenerator.h"
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalData.h"
-#include "JSValueInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {

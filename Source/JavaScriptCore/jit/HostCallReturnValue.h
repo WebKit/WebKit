@@ -26,7 +26,7 @@
 #ifndef HostCallReturnValue_h
 #define HostCallReturnValue_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/Platform.h>
 

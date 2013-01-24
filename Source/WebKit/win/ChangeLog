@@ -1,3 +1,15 @@
+2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h
+        https://bugs.webkit.org/show_bug.cgi?id=107327
+
+        Reviewed by Filip Pizlo.
+
+        We're renaming these two files, so we have to replace the names everywhere.
+
+        * WebFrame.cpp:
+        * WebView.cpp:
+
 2013-01-23  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style to CRLF on Windows .sln files.

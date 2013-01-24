@@ -29,9 +29,9 @@
 #include "BytecodeConventions.h"
 #include "JITCode.h"
 #include "JITStubs.h"
+#include "JSCJSValue.h"
 #include "JSStack.h"
 #include "JSString.h"
-#include "JSValue.h"
 #include "MacroAssembler.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>

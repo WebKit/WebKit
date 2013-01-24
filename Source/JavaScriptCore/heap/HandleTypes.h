@@ -26,7 +26,7 @@
 #ifndef HandleTypes_h
 #define HandleTypes_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

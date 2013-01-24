@@ -24,9 +24,9 @@
 
 #include "ExceptionHelpers.h"
 #include "Interpreter.h"
+#include "JSCJSValueInlines.h"
 #include "JSProxy.h"
 #include "JSString.h"
-#include "JSValueInlines.h"
 
 namespace JSC {
 

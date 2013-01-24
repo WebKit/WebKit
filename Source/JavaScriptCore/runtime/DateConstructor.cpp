@@ -25,12 +25,12 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "DatePrototype.h"
+#include "JSCJSValueInlines.h"
 #include "JSDateMath.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
-#include "JSValueInlines.h"
 #include "ObjectPrototype.h"
 #include <math.h>
 #include <time.h>

@@ -26,7 +26,7 @@
 #ifndef LLIntData_h
 #define LLIntData_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "Opcode.h"
 #include <wtf/Platform.h>
 

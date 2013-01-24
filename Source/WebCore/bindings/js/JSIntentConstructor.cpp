@@ -22,10 +22,10 @@
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "JSCJSValue.h"
 #include "JSDOMBinding.h"
 #include "JSIntent.h"
 #include "JSMessagePortCustom.h"
-#include "JSValue.h"
 #include <runtime/Error.h>
 #include <wtf/ArrayBuffer.h>
 

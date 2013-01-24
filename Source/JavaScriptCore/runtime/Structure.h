@@ -28,9 +28,9 @@
 
 #include "ClassInfo.h"
 #include "IndexingType.h"
+#include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSType.h"
-#include "JSValue.h"
 #include "PropertyMapHashTable.h"
 #include "PropertyName.h"
 #include "PropertyNameArray.h"

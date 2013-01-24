@@ -34,7 +34,7 @@
 // these #if's will disappear...
 #if ENABLE(DFG_JIT)
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

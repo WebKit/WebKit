@@ -23,7 +23,7 @@
 #define Protect_h
 
 #include "Heap.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

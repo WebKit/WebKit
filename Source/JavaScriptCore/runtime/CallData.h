@@ -29,7 +29,7 @@
 #ifndef CallData_h
 #define CallData_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

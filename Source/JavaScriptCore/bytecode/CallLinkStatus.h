@@ -28,7 +28,7 @@
 
 #include "CodeSpecializationKind.h"
 #include "Intrinsic.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

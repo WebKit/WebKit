@@ -39,7 +39,7 @@
 #include "DFGNodeFlags.h"
 #include "DFGNodeType.h"
 #include "DFGVariableAccessData.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "Operands.h"
 #include "SpeculatedType.h"
 #include "StructureSet.h"

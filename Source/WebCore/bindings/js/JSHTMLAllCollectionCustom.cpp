@@ -32,7 +32,7 @@
 #include "JSNodeList.h"
 #include "Node.h"
 #include "StaticNodeList.h"
-#include <runtime/JSValue.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 

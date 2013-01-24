@@ -26,7 +26,7 @@
 #ifndef ProfilerBytecodeSequence_h
 #define ProfilerBytecodeSequence_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "ProfilerBytecode.h"
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>

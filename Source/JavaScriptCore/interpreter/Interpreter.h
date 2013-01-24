@@ -31,9 +31,9 @@
 #define Interpreter_h
 
 #include "ArgList.h"
+#include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSFunction.h"
-#include "JSValue.h"
 #include "JSObject.h"
 #include "JSStack.h"
 #include "LLIntData.h"

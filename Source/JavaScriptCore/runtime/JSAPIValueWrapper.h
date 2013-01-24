@@ -23,8 +23,8 @@
 #ifndef JSAPIValueWrapper_h
 #define JSAPIValueWrapper_h
 
+#include "JSCJSValue.h"
 #include "JSCell.h"
-#include "JSValue.h"
 #include "CallFrame.h"
 #include "Structure.h"
 

@@ -1,3 +1,14 @@
+2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h
+        https://bugs.webkit.org/show_bug.cgi?id=107327
+
+        Reviewed by Filip Pizlo.
+
+        We're renaming these two files, so we have to replace the names everywhere.
+
+        * WebProcess/WebPage/WebPage.cpp:
+
 2013-01-24  Dean Jackson  <dino@apple.com>
 
         Allow some plugin snapshot UI content to come from Injected Bundle

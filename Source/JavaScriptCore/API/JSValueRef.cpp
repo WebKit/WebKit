@@ -30,13 +30,13 @@
 #include "APIShims.h"
 #include "JSCallbackObject.h"
 
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSONObject.h>
 #include <runtime/JSString.h>
 #include <runtime/LiteralParser.h>
 #include <runtime/Operations.h>
 #include <runtime/Protect.h>
-#include <runtime/JSValue.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/text/StringHash.h>

@@ -97,7 +97,7 @@
 #import <WebKitSystemInterface.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSObject.h>
-#import <runtime/JSValue.h>
+#import <runtime/JSCJSValue.h>
 #import <wtf/CurrentTime.h>
 
 using namespace std;

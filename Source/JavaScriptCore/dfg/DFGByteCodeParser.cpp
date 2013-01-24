@@ -35,7 +35,7 @@
 #include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
-#include "JSValueInlines.h"
+#include "JSCJSValueInlines.h"
 #include "PutByIdStatus.h"
 #include "ResolveGlobalStatus.h"
 #include <wtf/HashMap.h>

@@ -30,7 +30,7 @@
 #include "CallFrame.h"
 #include "Disassembler.h"
 #include "JITStubs.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "LegacyProfiler.h"
 #include "MacroAssemblerCodeRef.h"
 #endif

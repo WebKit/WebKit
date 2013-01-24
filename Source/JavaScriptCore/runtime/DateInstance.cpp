@@ -22,9 +22,9 @@
 #include "config.h"
 #include "DateInstance.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
-#include "JSValueInlines.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 

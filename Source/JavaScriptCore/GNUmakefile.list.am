@@ -646,9 +646,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSSymbolTableObject.h \
 	Source/JavaScriptCore/runtime/JSType.h \
 	Source/JavaScriptCore/runtime/JSTypeInfo.h \
-	Source/JavaScriptCore/runtime/JSValue.cpp \
-	Source/JavaScriptCore/runtime/JSValue.h \
-	Source/JavaScriptCore/runtime/JSValueInlines.h \
+	Source/JavaScriptCore/runtime/JSCJSValue.cpp \
+	Source/JavaScriptCore/runtime/JSCJSValue.h \
+	Source/JavaScriptCore/runtime/JSCJSValueInlines.h \
 	Source/JavaScriptCore/runtime/JSVariableObject.cpp \
 	Source/JavaScriptCore/runtime/JSVariableObject.h \
 	Source/JavaScriptCore/runtime/JSWithScope.h \

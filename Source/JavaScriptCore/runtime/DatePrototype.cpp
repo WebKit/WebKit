@@ -27,11 +27,11 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "JSCJSValueInlines.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
-#include "JSValueInlines.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 

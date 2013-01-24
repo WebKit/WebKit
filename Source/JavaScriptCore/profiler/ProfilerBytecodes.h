@@ -27,7 +27,7 @@
 #define ProfilerBytecodes_h
 
 #include "CodeBlockHash.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "ProfilerBytecodeSequence.h"
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>

@@ -24,7 +24,7 @@
  */
 
 #import <JavaScriptCore/JavaScriptCore.h>
-#import "APIJSValue.h"
+#import "JSValue.h"
 
 #if JS_OBJC_API_ENABLED
 

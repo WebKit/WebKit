@@ -30,7 +30,7 @@
 #include "InitializeThreading.h"
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
-#include <runtime/JSValue.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/OwnArrayPtr.h>
 
 JSStringRef JSStringCreateWithCFString(CFStringRef string)

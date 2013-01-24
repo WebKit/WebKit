@@ -51,7 +51,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
 #import <runtime/JSLock.h>
-#import <runtime/JSValue.h>
+#import <runtime/JSCJSValue.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;

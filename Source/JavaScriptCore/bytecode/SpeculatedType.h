@@ -29,7 +29,7 @@
 #ifndef SpeculatedType_h
 #define SpeculatedType_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 

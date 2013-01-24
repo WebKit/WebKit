@@ -42,9 +42,9 @@
 #include <interpreter/CallFrame.h>
 #include <interpreter/Interpreter.h>
 #include <runtime/ArgList.h>
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSFunction.h>
 #include <runtime/JSGlobalData.h>
-#include <runtime/JSValue.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;

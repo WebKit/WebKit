@@ -53,7 +53,7 @@
 #include "TextEncoding.h"
 
 #include "JSDOMBinding.h"
-#include <runtime/JSValue.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

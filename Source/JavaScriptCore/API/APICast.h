@@ -27,8 +27,8 @@
 #define APICast_h
 
 #include "JSAPIValueWrapper.h"
+#include "JSCJSValue.h"
 #include "JSGlobalObject.h"
-#include "JSValue.h"
 #include <wtf/UnusedParam.h>
 
 namespace JSC {

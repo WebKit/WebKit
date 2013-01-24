@@ -21,7 +21,7 @@
 #ifndef PropertySlot_h
 #define PropertySlot_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "PropertyName.h"
 #include "PropertyOffset.h"
 #include "Register.h"

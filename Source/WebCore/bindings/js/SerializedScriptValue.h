@@ -29,7 +29,7 @@
 
 #include "ScriptState.h"
 #include <heap/Strong.h>
-#include <runtime/JSValue.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/ArrayBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>

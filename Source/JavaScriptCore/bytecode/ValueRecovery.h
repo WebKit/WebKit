@@ -27,7 +27,7 @@
 #define ValueRecovery_h
 
 #include "DataFormat.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
 #include <stdio.h>

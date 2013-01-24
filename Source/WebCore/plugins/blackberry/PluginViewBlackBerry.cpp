@@ -67,8 +67,8 @@
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <BlackBerryPlatformWindow.h>
 
+#include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 #include <sys/keycodes.h>
 #include <vector>
 

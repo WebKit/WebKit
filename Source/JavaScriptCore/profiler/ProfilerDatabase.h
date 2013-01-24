@@ -26,7 +26,7 @@
 #ifndef ProfilerDatabase_h
 #define ProfilerDatabase_h
 
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include "ProfilerBytecodes.h"
 #include "ProfilerCompilation.h"
 #include "ProfilerCompilationKind.h"

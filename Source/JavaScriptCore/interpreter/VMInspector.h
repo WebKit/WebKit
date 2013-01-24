@@ -29,7 +29,7 @@
 #define ENABLE_VMINSPECTOR 0
 
 #include "CallFrame.h"
-#include "JSValue.h"
+#include "JSCJSValue.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
