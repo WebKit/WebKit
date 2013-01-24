@@ -30,11 +30,6 @@ function setUpTest()
       scrollable.appendChild(line);
     }
 
-    var scrollable = $('scrollable');
-
-   if (window.testRunner)
-        testRunner.dumpAsText(true);
-
     if (!window.eventSender)
         return;
 
@@ -42,7 +37,6 @@ function setUpTest()
     eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + 5);
     eventSender.mouseDown(MIDDLE_BUTTON);
     eventSender.mouseUp(MIDDLE_BUTTON);
-    eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + PAN_SCROLL_RADIUS + 6);
 
     // Stop pan scroll by click
     eventSender.mouseDown(MIDDLE_BUTTON);
