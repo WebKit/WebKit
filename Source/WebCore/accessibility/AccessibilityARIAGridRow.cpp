@@ -48,9 +48,7 @@ AccessibilityARIAGridRow::~AccessibilityARIAGridRow()
 
 PassRefPtr<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(RenderObject* renderer)
 {
-    AccessibilityARIAGridRow* obj = new AccessibilityARIAGridRow(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityARIAGridRow(renderer));
 }
 
 bool AccessibilityARIAGridRow::isARIATreeGridRow() const

@@ -69,9 +69,7 @@ void AccessibilityTable::init()
 
 PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
 {
-    AccessibilityTable* obj = new AccessibilityTable(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityTable(renderer));
 }
 
 bool AccessibilityTable::hasARIARole() const

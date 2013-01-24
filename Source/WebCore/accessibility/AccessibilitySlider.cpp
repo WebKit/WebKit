@@ -47,9 +47,7 @@ AccessibilitySlider::AccessibilitySlider(RenderObject* renderer)
 
 PassRefPtr<AccessibilitySlider> AccessibilitySlider::create(RenderObject* renderer)
 {
-    AccessibilitySlider* obj = new AccessibilitySlider(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilitySlider(renderer));
 }
 
 AccessibilityOrientation AccessibilitySlider::orientation() const

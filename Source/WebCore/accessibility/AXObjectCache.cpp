@@ -314,6 +314,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     m_widgetObjectMapping.set(widget, newObj->axObjectID());
     m_objects.set(newObj->axObjectID(), newObj);    
     attachWrapper(newObj.get());
+    newObj->init();
     return newObj.get();
 }
 
@@ -349,6 +350,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     m_objects.set(newObj->axObjectID(), newObj);
     attachWrapper(newObj.get());
 
+    newObj->init();
     newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
 
     return newObj.get();
@@ -373,6 +375,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     m_objects.set(newObj->axObjectID(), newObj);
     attachWrapper(newObj.get());
 
+    newObj->init();
     newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
 
     return newObj.get();
@@ -440,6 +443,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
 
     m_objects.set(obj->axObjectID(), obj);    
     attachWrapper(obj.get());
+    obj->init();
     return obj.get();
 }
 

@@ -89,6 +89,9 @@ AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     , m_childrenDirty(false)
     , m_roleForMSAA(UnknownRole)
     , m_node(node)
+#ifndef NDEBUG
+    , m_initialized(false)
+#endif
 {
 }
 
@@ -99,14 +102,16 @@ AccessibilityNodeObject::~AccessibilityNodeObject()
 
 void AccessibilityNodeObject::init()
 {
+#ifndef NDEBUG
+    ASSERT(!m_initialized);
+    m_initialized = true;
+#endif
     m_role = determineAccessibilityRole();
 }
 
 PassRefPtr<AccessibilityNodeObject> AccessibilityNodeObject::create(Node* node)
 {
-    AccessibilityNodeObject* obj = new AccessibilityNodeObject(node);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityNodeObject(node));
 }
 
 void AccessibilityNodeObject::detach()
@@ -386,6 +391,12 @@ bool AccessibilityNodeObject::canHaveChildren() const
 
 bool AccessibilityNodeObject::accessibilityIsIgnored() const
 {
+#ifndef NDEBUG
+    // Double-check that an AccessibilityObject is never accessed before
+    // it's been initialized.
+    ASSERT(m_initialized);
+#endif
+
     // If this element is within a parent that cannot have children, it should not be exposed.
     if (isDescendantOfBarrenParent())
         return true;

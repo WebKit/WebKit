@@ -54,9 +54,7 @@ AccessibilityTableRow::~AccessibilityTableRow()
 
 PassRefPtr<AccessibilityTableRow> AccessibilityTableRow::create(RenderObject* renderer)
 {
-    AccessibilityTableRow* obj = new AccessibilityTableRow(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityTableRow(renderer));
 }
 
 AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()

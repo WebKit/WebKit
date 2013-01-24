@@ -153,6 +153,9 @@ protected:
     AccessibilityRole m_ariaRole;
     bool m_childrenDirty;
     mutable AccessibilityRole m_roleForMSAA;
+#ifndef NDEBUG
+    bool m_initialized;
+#endif
 
     virtual bool isDetached() const { return !m_node; }
 

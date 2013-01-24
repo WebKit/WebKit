@@ -67,11 +67,8 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* 
     case MediaControlsPanel:
         return AccessibilityMediaControlsContainer::create(renderer);
 
-    default: {
-        AccessibilityMediaControl* obj = new AccessibilityMediaControl(renderer);
-        obj->init();
-        return adoptRef(obj);
-        }
+    default:
+        return adoptRef(new AccessibilityMediaControl(renderer));
     }
 }
 
@@ -226,9 +223,7 @@ AccessibilityMediaControlsContainer::AccessibilityMediaControlsContainer(RenderO
 
 PassRefPtr<AccessibilityObject> AccessibilityMediaControlsContainer::create(RenderObject* renderer)
 {
-    AccessibilityMediaControlsContainer* obj = new AccessibilityMediaControlsContainer(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityMediaControlsContainer(renderer));
 }
 
 String AccessibilityMediaControlsContainer::accessibilityDescription() const
@@ -272,9 +267,7 @@ AccessibilityMediaTimeline::AccessibilityMediaTimeline(RenderObject* renderer)
 
 PassRefPtr<AccessibilityObject> AccessibilityMediaTimeline::create(RenderObject* renderer)
 {
-    AccessibilityMediaTimeline* obj = new AccessibilityMediaTimeline(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityMediaTimeline(renderer));
 }
 
 String AccessibilityMediaTimeline::valueDescription() const
@@ -304,9 +297,7 @@ AccessibilityMediaTimeDisplay::AccessibilityMediaTimeDisplay(RenderObject* rende
 
 PassRefPtr<AccessibilityObject> AccessibilityMediaTimeDisplay::create(RenderObject* renderer)
 {
-    AccessibilityMediaTimeDisplay* obj = new AccessibilityMediaTimeDisplay(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityMediaTimeDisplay(renderer));
 }
 
 bool AccessibilityMediaTimeDisplay::accessibilityIsIgnored() const

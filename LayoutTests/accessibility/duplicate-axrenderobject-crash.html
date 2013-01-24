@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<label>
+    <summary>
+        <ul style="display: table-header-group">
+            <keygen></keygen>
+        </ul>
+    </summary>
+</label>
+
+<p id="description"></p>
+
+<script>
+    description("Ensures that it's not possible to have two AXRenderObjects that point to the same renderer, if the initialization of an AXRenderObject results in another object with the same renderer being created before AXObjectCache has added that mapping to its hash.");
+    if (window.accessibilityController)
+        accessibilityController.accessibleElementById("dummy");
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

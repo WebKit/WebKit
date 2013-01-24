@@ -54,9 +54,7 @@ AccessibilityListBox::~AccessibilityListBox()
     
 PassRefPtr<AccessibilityListBox> AccessibilityListBox::create(RenderObject* renderer)
 {
-    AccessibilityListBox* obj = new AccessibilityListBox(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityListBox(renderer));
 }
     
 bool AccessibilityListBox::canSetSelectedChildrenAttribute() const

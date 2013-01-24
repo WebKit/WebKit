@@ -61,9 +61,7 @@ void AccessibilityARIAGrid::init()
 
 PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {
-    AccessibilityARIAGrid* obj = new AccessibilityARIAGrid(renderer);
-    obj->init();
-    return adoptRef(obj);
+    return adoptRef(new AccessibilityARIAGrid(renderer));
 }
 
 bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)

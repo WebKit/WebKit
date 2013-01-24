@@ -355,6 +355,15 @@ protected:
     
 public:
     virtual ~AccessibilityObject();
+
+    // After constructing an AccessibilityObject, it must be given a
+    // unique ID, then added to AXObjectCache, and finally init() must
+    // be called last.
+    void setAXObjectID(AXID axObjectID) { m_id = axObjectID; }
+    virtual void init() { }
+
+    // When the corresponding WebCore object that this AccessibilityObject
+    // wraps is deleted, it must be detached.
     virtual void detach();
     virtual bool isDetached() const;
 
@@ -569,7 +578,6 @@ public:
 
     virtual AXObjectCache* axObjectCache() const;
     AXID axObjectID() const { return m_id; }
-    void setAXObjectID(AXID axObjectID) { m_id = axObjectID; }
     
     static AccessibilityObject* anchorElementForNode(Node*);
     virtual Element* anchorElement() const { return 0; }
