@@ -140,13 +140,6 @@ shouldBe("computedStyle.transitionProperty", "'all'");
 shouldBe("style.webkitTransitionProperty", "''");
 shouldBe("computedStyle.webkitTransitionProperty", "'all'");
 
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105430.
-/*style.transitionProperty = "background, font-size, all";
-shouldBe("style.transitionProperty", "''");
-shouldBe("computedStyle.transitionProperty", "'all'");
-shouldBe("style.webkitTransitionProperty", "''");
-shouldBe("computedStyle.webkitTransitionProperty", "'all'");*/
-
 style.transitionProperty = "";
 
 debug("Valid transition-duration values.");
@@ -525,8 +518,6 @@ shouldBe("computedStyle.transitionDelay", "'0s'");
 shouldBe("style.webkitTransitionDelay", "''");
 shouldBe("computedStyle.webkitTransitionDelay", "'0s'");
 
-// Transition and -webkit-transition is not correctly implemented.
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105035.
 debug("Valid transition shorthand values.");
 style.transition = "";
 // Initial test.
