@@ -1,5 +1,16 @@
 2013-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Move Move WebKeyValueStorageManager to WebProcess/Storage.
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebKeyValueStorageManager.cpp: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp.
+        * WebProcess/Storage/WebKeyValueStorageManager.h: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h.
+        * WebProcess/Storage/WebKeyValueStorageManager.messages.in: Renamed from Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in.
+
+2013-01-23  Anders Carlsson  <andersca@apple.com>
+
         Remove LegacyReceiver from a couple of .messages.in files
         https://bugs.webkit.org/show_bug.cgi?id=107749
 
