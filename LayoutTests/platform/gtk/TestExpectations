@@ -1217,7 +1217,6 @@ webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [
 webkit.org/b/86061 http/tests/security/referrer-policy-redirect-link.html [ Failure ]
 
 webkit.org/b/85308 [ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
-webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFailure ]
 
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]

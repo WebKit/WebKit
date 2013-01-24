@@ -1316,7 +1316,6 @@ Bug(EFL) [ Debug ] http/tests/incremental/slow-utf8-html.pl [ Pass Slow ]
 
 # Tests imported in r116658
 webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Crash ImageOnlyFailure ]
-webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFailure ]
 
 # LEGACY_VIEWPORT_ADAPTION flag is not enabled on EFL port
 webkit.org/b/88191 fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
