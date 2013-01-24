@@ -93,7 +93,7 @@ void InspectorInputAgent::dispatchKeyEvent(ErrorString* error, const String& typ
     m_page->mainFrame()->eventHandler()->keyEvent(event);
 }
 
-void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& type, int x, int y, const int* modifiers, const double* timestamp, const String* button, const int* clickCount)
+void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& type, const int* modifiers, const double* timestamp, int x, int y, const String* button, const int* clickCount)
 {
     PlatformEvent::Type convertedType;
     if (type == "mousePressed")
@@ -106,6 +106,8 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
         *error = "Unrecognized type: " + type;
         return;
     }
+
+    int convertedModifiers = modifiers ? *modifiers : 0;
 
     MouseButton convertedButton = NoButton;
     if (button) {
@@ -125,7 +127,7 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
     // assume the origin is in the top-left of the window. Convert.
     IntPoint convertedPoint = m_page->mainFrame()->view()->convertToContainingWindow(IntPoint(x, y));
     IntPoint globalPoint = m_page->chrome()->rootViewToScreen(IntRect(IntPoint(x, y), IntSize(0, 0))).location();
-    int convertedModifiers = modifiers ? *modifiers : 0;
+
     PlatformMouseEvent event(
         convertedPoint,
         globalPoint,

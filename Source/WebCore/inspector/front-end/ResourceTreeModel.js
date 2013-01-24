@@ -601,6 +601,18 @@ WebInspector.PageDispatcher.prototype = {
     frameDetached: function(frameId)
     {
         this._resourceTreeModel._frameDetached(frameId);
+    },
+
+    frameStartedLoading: function(frameId) {
+    },
+
+    frameStoppedLoading: function(frameId) {
+    },
+
+    frameScheduledNavigation: function(frameId, delay) {
+    },
+
+    frameClearedScheduledNavigation: function(frameId) {
     }
 }
 

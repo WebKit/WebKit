@@ -4309,11 +4309,6 @@ webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/107033 [ Debug ] fast/frames/valid.html [ Crash ]
-webkit.org/b/107033 [ Debug ] fast/events/form-iframe-target-before-load-crash.html [ Crash ]
-webkit.org/b/107033 [ Debug ] fast/events/before-unload-with-subframes.html [ Crash ]
-webkit.org/b/107033 [ Debug ] fast/css/stylesheet-enable-first-alternate-link.html [ Crash ]
-
 # Needs rebaseline.
 webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
 webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
