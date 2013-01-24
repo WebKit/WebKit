@@ -45,6 +45,7 @@ from webkitpy.tool.steps.discardlocalchanges import DiscardLocalChanges
 from webkitpy.tool.steps.editchangelog import EditChangeLog
 from webkitpy.tool.steps.ensurebugisopenandassigned import EnsureBugIsOpenAndAssigned
 from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
+from webkitpy.tool.steps.haslanded import HasLanded
 from webkitpy.tool.steps.obsoletepatches import ObsoletePatches
 from webkitpy.tool.steps.options import Options
 from webkitpy.tool.steps.postdiff import PostDiff

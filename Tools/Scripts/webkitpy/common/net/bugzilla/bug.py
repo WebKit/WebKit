@@ -28,6 +28,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 from .attachment import Attachment
 
 
@@ -123,3 +125,12 @@ class Bug(object):
                 return True
         return False
 
+    def commit_revision(self):
+        # Sort the comments in reverse order as we want the latest committed revision.
+        r = re.compile("Committed r(?P<svn_revision>\d+)")
+        for comment in sorted(self.comments(), reverse=True):
+            rev = r.search(comment['text'])
+            if rev:
+                return int(rev.group('svn_revision'))
+
+        return None

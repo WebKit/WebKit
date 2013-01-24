@@ -1,3 +1,50 @@
+2013-01-24  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Adding "has-landed" command to webkit-patch which compares a
+        committed patch to the changes which exist locally (ignoring the
+        ChangeLog file).
+
+        https://bugs.webkit.org/show_bug.cgi?id=106402
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        (git_diff_to_svn_diff):
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        (Bug.commit_revision):
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py:
+        (BugTest.test_is_in_comments):
+        (BugTest):
+        (BugTest.test_commit_revision):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (HasLanded):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/haslanded.py: Added.
+        (HasLanded):
+        (HasLanded.convert_to_svn):
+        (HasLanded.strip_change_log):
+        (run):
+
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        (Bug.commit_revision):
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py:
+        (BugTest.test_is_in_comments):
+        (BugTest):
+        (BugTest.test_commit_revision):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (HasLanded):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/haslanded.py: Added.
+        (HasLanded):
+        (HasLanded.convert_to_svn):
+        (HasLanded.strip_change_log):
+        (HasLanded.diff_diff):
+        (HasLanded.run):
+        * Scripts/webkitpy/tool/steps/haslanded_unittest.py: Added.
+        (HasLandedTest):
+        (HasLandedTest.test_run):
+        (test_convert_to_svn_and_strip_change_log):
+
 2013-01-24  Dan Carney  <dcarney@google.com>
 
         [chromium] move most WebViewHost printf calls to WebTestProxy

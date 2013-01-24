@@ -241,6 +241,15 @@ class LandSafely(AbstractPatchUploadingCommand):
     ]
 
 
+class HasLanded(AbstractPatchUploadingCommand):
+    name = "has-landed"
+    help_text = "Check that the current code was successfully landed and no changes remain."
+    argument_names = "[BUGID]"
+    steps = [
+        steps.HasLanded,
+    ]
+
+
 class Prepare(AbstractSequencedCommand):
     name = "prepare"
     help_text = "Creates a bug (or prompts for an existing bug) and prepares the ChangeLogs"

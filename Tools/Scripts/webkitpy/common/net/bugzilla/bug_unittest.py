@@ -45,3 +45,39 @@ class BugTest(unittest.TestCase):
                   bugzilla=None)
         self.assertTrue(bug.is_in_comments("Message3."))
         self.assertFalse(bug.is_in_comments("Message."))
+
+    def test_commit_revision(self):
+        bug = Bug({"comments": []}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), None)
+
+        bug = Bug({"comments": [
+            {"text": "Comment 1"},
+            {"text": "Comment 2"},
+            ]}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), None)
+
+        bug = Bug({"comments": [
+            {"text": "Committed r138776: <http://trac.webkit.org/changeset/138776>"},
+            ]}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), 138776)
+
+        bug = Bug({"comments": [
+            {"text": "(From update of attachment 181269) Clearing flags on attachment: 181269 Committed r138776: <http://trac.webkit.org/changeset/138776>"},
+            ]}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), 138776)
+
+        bug = Bug({"comments": [
+            {"text": "Comment before"},
+            {"text": "(From update of attachment 181269) Clearing flags on attachment: 181269 Committed r138776: <http://trac.webkit.org/changeset/138776>"},
+            {"text": "Comment after"},
+            ]}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), 138776)
+
+        bug = Bug({"comments": [
+            {"text": "Comment before"},
+            {"text": "(From update of attachment 181269) Clearing flags on attachment: 181269 Committed r138776: <http://trac.webkit.org/changeset/138776>"},
+            {"text": "Comment Middle"},
+            {"text": "(From update of attachment 181280) Clearing flags on attachment: 181280 Committed r138976: <http://trac.webkit.org/changeset/138976>"},
+            {"text": "Comment After"},
+            ]}, bugzilla=None)
+        self.assertEqual(bug.commit_revision(), 138976)
