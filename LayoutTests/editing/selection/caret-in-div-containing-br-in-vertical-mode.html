@@ -16,11 +16,11 @@ function runTest() {
 
     document.getElementById('textDiv').focus();
     if (window.internals)
-        withTextCaretRect = internals.absoluteCaretBounds(document);
+        withTextCaretRect = internals.absoluteCaretBounds();
 
     document.getElementById('noTextDiv').focus();
     if (window.internals)
-        withoutTextCaretRect = internals.absoluteCaretBounds(document);
+        withoutTextCaretRect = internals.absoluteCaretBounds();
 
     if (window.internals) {
         shouldBe("withTextCaretRect.top", "withoutTextCaretRect.top");

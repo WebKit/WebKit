@@ -285,16 +285,15 @@ String Internals::address(Node* node)
     return String(buf);
 }
 
-bool Internals::isPreloaded(Document* document, const String& url)
+bool Internals::isPreloaded(const String& url)
 {
-    if (!document)
-        return false;
-
+    Document* document = contextDocument();
     return document->cachedResourceLoader()->isPreloaded(url);
 }
 
-PassRefPtr<Element> Internals::createContentElement(Document* document, ExceptionCode& ec)
+PassRefPtr<Element> Internals::createContentElement(ExceptionCode& ec)
 {
+    Document* document = contextDocument();
     if (!document) {
         ec = INVALID_ACCESS_ERR;
         return 0;
@@ -763,8 +762,9 @@ PassRefPtr<PagePopupController> Internals::pagePopupController()
 }
 #endif
 
-PassRefPtr<ClientRect> Internals::absoluteCaretBounds(Document* document, ExceptionCode& ec)
+PassRefPtr<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
 {
+    Document* document = contextDocument();
     if (!document || !document->frame() || !document->frame()->selection()) {
         ec = INVALID_ACCESS_ERR;
         return ClientRect::create();

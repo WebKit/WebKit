@@ -19,7 +19,7 @@ another inline element, gets a valid caret rect.</p>
     var testInline = document.getElementById("testInline");
     getSelection().collapse(testInline, 0);
     if (window.internals) {
-        var caretRect = internals.absoluteCaretBounds(document);
+        var caretRect = internals.absoluteCaretBounds();
         shouldBe("caretRect.left", "268");
         shouldBe("caretRect.top", "180");
         shouldBe("caretRect.width", "1");

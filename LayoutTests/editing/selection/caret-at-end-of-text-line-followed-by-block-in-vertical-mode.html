@@ -23,12 +23,12 @@ if (window.internals) {
     eventSender.mouseMoveTo(testDiv.offsetLeft + testDiv.offsetWidth - 5, testDiv.offsetTop);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    caretRectAtStart = internals.absoluteCaretBounds(document);
+    caretRectAtStart = internals.absoluteCaretBounds();
     
     eventSender.mouseMoveTo(testDiv.offsetLeft + testDiv.offsetWidth - 5, testDiv.offsetTop + testDiv.offsetHeight - 5);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    caretRectAtEnd = internals.absoluteCaretBounds(document);
+    caretRectAtEnd = internals.absoluteCaretBounds();
     
     shouldBe("caretRectAtEnd.left", "caretRectAtStart.left");
     shouldBe("caretRectAtEnd.width", "caretRectAtStart.width");

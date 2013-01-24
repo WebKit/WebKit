@@ -61,7 +61,7 @@ function createSpanWithText(text) {
 function appendShadow(target, select) {
     var root = internals.ensureShadowRoot(target);
 
-    var content = internals.createContentElement(document);
+    var content = internals.createContentElement();
     content.setAttribute('select', select);
     content.appendChild(createSpanWithText("FALLBACK"));
 
@@ -75,7 +75,7 @@ function appendShadowDeep(target, select) {
 
     var child = document.createElement("span");
     {
-        var content = internals.createContentElement(document);
+        var content = internals.createContentElement();
         content.setAttribute('select', select);
         content.appendChild(createSpanWithText("FALLBACK"));
 
@@ -349,7 +349,7 @@ function testContentInContent(callIfDone) {
     target.appendChild(createSpanWithText('S2'));
 
     var root = internals.ensureShadowRoot(target);
-    var content1 = internals.createContentElement(document);
+    var content1 = internals.createContentElement();
     content1.setAttribute('select', 'div');
 
     root.appendChild(document.createTextNode("{SHADOW: "));
@@ -360,7 +360,7 @@ function testContentInContent(callIfDone) {
 
     var f = (function(target, content1, callIfDone) {
         return function() {
-            var content2 = internals.createContentElement(document);
+            var content2 = internals.createContentElement();
             content2.setAttribute('select', 'span');
             content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
             content1.appendChild(content2);
@@ -380,7 +380,7 @@ function testContentInContentFallback(callIfDone) {
     target.appendChild(createSpanWithText('S2'));
 
     var root = internals.ensureShadowRoot(target);
-    var content1 = internals.createContentElement(document);
+    var content1 = internals.createContentElement();
     content1.setAttribute('select', 'div');
 
     root.appendChild(document.createTextNode("{SHADOW: "));
@@ -391,7 +391,7 @@ function testContentInContentFallback(callIfDone) {
 
     var f = (function(target, content1, callIfDone) {
         return function() {
-            var content2 = internals.createContentElement(document);
+            var content2 = internals.createContentElement();
             content2.setAttribute('select', 'div');
             content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
             content1.appendChild(content2);
@@ -411,7 +411,7 @@ function testContentInContentFallbackDirect(callIfDone) {
     target.appendChild(createSpanWithText('S2'));
 
     var root = internals.ensureShadowRoot(target);
-    var content1 = internals.createContentElement(document);
+    var content1 = internals.createContentElement();
     content1.setAttribute('select', 'div');
     root.appendChild(content1);
 
@@ -419,7 +419,7 @@ function testContentInContentFallbackDirect(callIfDone) {
 
     var f = (function(target, content1, callIfDone) {
         return function() {
-            var content2 = internals.createContentElement(document);
+            var content2 = internals.createContentElement();
             content2.setAttribute('select', 'div');
             content2.appendChild(createSpanWithText('CONTENT 2 FALLBACK'));
             content1.appendChild(content2);

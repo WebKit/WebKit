@@ -71,7 +71,7 @@ public:
 
     String address(Node*);
 
-    bool isPreloaded(Document*, const String& url);
+    bool isPreloaded(const String& url);
 
     size_t numberOfScopedHTMLStyleChildren(const Node*, ExceptionCode&) const;
 
@@ -98,7 +98,7 @@ public:
     bool pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element*, const String& pseudoId, ExceptionCode&);
     bool pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element*, const String& pseudoId, ExceptionCode&);
 
-    PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
+    PassRefPtr<Element> createContentElement(ExceptionCode&);
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
     Node* treeScopeRootNode(Node*, ExceptionCode&);
     Node* parentTreeScope(Node*, ExceptionCode&);
@@ -127,7 +127,7 @@ public:
     PassRefPtr<PagePopupController> pagePopupController();
 #endif
 
-    PassRefPtr<ClientRect> absoluteCaretBounds(Document*, ExceptionCode&);
+    PassRefPtr<ClientRect> absoluteCaretBounds(ExceptionCode&);
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 

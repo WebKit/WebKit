@@ -24,7 +24,7 @@ The test case checks if caret is drawn properly(especially scrolls properly) ins
     editableContainer = document.getElementById('test');
     editableContainer.focus();
     if (window.internals)
-        startCaretRect = internals.absoluteCaretBounds(document);
+        startCaretRect = internals.absoluteCaretBounds();
 
     window.getSelection().setPosition(editableContainer,0);
     if (window.testRunner)
@@ -32,7 +32,7 @@ The test case checks if caret is drawn properly(especially scrolls properly) ins
 
     finalCaretRect = {right:-1,left:-1};
     if (window.internals)
-        finalCaretRect = internals.absoluteCaretBounds(document);
+        finalCaretRect = internals.absoluteCaretBounds();
 
     caretWidth = finalCaretRect.right - finalCaretRect.left;
 

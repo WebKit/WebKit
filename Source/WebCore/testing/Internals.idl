@@ -29,7 +29,7 @@
     DOMString address(in Node node);
 
     DOMString elementRenderTreeAsText(in Element element) raises(DOMException);
-    boolean isPreloaded(in Document document, in DOMString url);
+    boolean isPreloaded(in DOMString url);
 
     unsigned long numberOfScopedHTMLStyleChildren(in Node scope) raises(DOMException);
 
@@ -56,7 +56,7 @@
     Element includerFor(in Node node) raises (DOMException);
     DOMString shadowPseudoId(in Element element) raises (DOMException);
     void setShadowPseudoId(in Element element, in DOMString id) raises (DOMException);
-    Element createContentElement(in Document document) raises(DOMException);
+    Element createContentElement() raises(DOMException);
     boolean isValidContentSelect(in Element contentElement) raises(DOMException);
     Node treeScopeRootNode(in Node node) raises (DOMException);
     Node parentTreeScope(in Node node) raises (DOMException);
@@ -87,7 +87,7 @@
     readonly attribute PagePopupController pagePopupController;
 #endif
 
-    ClientRect absoluteCaretBounds(in Document document) raises(DOMException);
+    ClientRect absoluteCaretBounds() raises(DOMException);
 
     ClientRect boundingBox(in Element element) raises(DOMException);
 

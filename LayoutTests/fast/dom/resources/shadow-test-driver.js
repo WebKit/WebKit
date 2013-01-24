@@ -72,7 +72,7 @@ function createSpanWithText(text, className) {
 }
 
 function createContentWithSelect(select, fallbackText) {
-    var content = internals.createContentElement(document);
+    var content = internals.createContentElement();
     content.setAttribute('select', select);
     if (fallbackText)
         content.appendChild(createSpanWithText(fallbackText));
@@ -81,7 +81,7 @@ function createContentWithSelect(select, fallbackText) {
 }
 
 function createContentWithText(fallbackText) {
-    var content = internals.createContentElement(document);
+    var content = internals.createContentElement();
     if (fallbackText)
         content.innerHTML = fallbackText;
 
@@ -91,7 +91,7 @@ function createContentWithText(fallbackText) {
 function appendShadow(target, select) {
     var root = internals.ensureShadowRoot(target);
 
-    var content = internals.createContentElement(document);
+    var content = internals.createContentElement();
     content.setAttribute('select', select);
     content.appendChild(createSpanWithText("FALLBACK"));
 
@@ -105,7 +105,7 @@ function appendShadowDeep(target, select) {
 
     var child = document.createElement("span");
     {
-        var content = internals.createContentElement(document);
+        var content = internals.createContentElement();
         content.setAttribute('select', select);
         content.appendChild(createSpanWithText("FALLBACK"));
 

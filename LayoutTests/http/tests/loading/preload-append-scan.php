@@ -12,7 +12,7 @@ if (window.testRunner)
 
 function checkForPreload() {
     var result;
-    if (internals.isPreloaded(document, "resources/preload-test.jpg"))
+    if (internals.isPreloaded("resources/preload-test.jpg"))
         result = "PASS";
     else
         result = "FAIL";

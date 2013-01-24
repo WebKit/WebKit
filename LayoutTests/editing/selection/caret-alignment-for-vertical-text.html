@@ -18,17 +18,17 @@ function runTest() {
     /* Caret rect for the empty container. */
     document.getElementById('emptyDiv').focus();
     if (window.internals)
-        emptyDivCaretRect = internals.absoluteCaretBounds(document);
+        emptyDivCaretRect = internals.absoluteCaretBounds();
         
     /* Caret rect for am empty line. */
     document.getElementById('emptyLineDiv').focus();
     if (window.internals)
-        emptyLineCaretRect = internals.absoluteCaretBounds(document);
+        emptyLineCaretRect = internals.absoluteCaretBounds();
         
     /* Caret rect for the container with some text. */
     document.getElementById('textDiv').focus();
     if (window.internals)
-        textDivCaretRect = internals.absoluteCaretBounds(document);
+        textDivCaretRect = internals.absoluteCaretBounds();
         
     debug("The carets on the empty editable boxes should have the same orientation as that on the editable box containing some text. We thus compare the width and the height of the caret rects for verification. Width and height for all the three caret rects should be the same for the test to pass.")
     

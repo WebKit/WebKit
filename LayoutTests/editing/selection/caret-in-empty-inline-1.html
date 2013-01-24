@@ -18,7 +18,7 @@
     var testInline = document.getElementById("testInline");
     getSelection().collapse(testInline, 0);
     if (window.internals) {
-        var caretRect = internals.absoluteCaretBounds(document);
+        var caretRect = internals.absoluteCaretBounds();
         shouldBe("caretRect.left", "8");
         shouldBe("caretRect.top", "160");
         shouldBe("caretRect.width", "1");

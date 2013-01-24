@@ -20,7 +20,7 @@
     {
         if (window.internals) {
             var index = caretRects.length;
-            caretRects.push(internals.absoluteCaretBounds(document));
+            caretRects.push(internals.absoluteCaretBounds());
             shouldBe("caretRects[" + index + "].left", left.toString());
             shouldBe("caretRects[" + index + "].top", top.toString());
             shouldBe("caretRects[" + index + "].width", width.toString());

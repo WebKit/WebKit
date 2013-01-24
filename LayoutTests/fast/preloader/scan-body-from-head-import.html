@@ -6,7 +6,7 @@ if (window.testRunner)
 
 function checkForPreload() {
     var result;
-    if (internals.isPreloaded(document, "resources/image1.png") && internals.isPreloaded(document, "resources/style1.css"))
+    if (internals.isPreloaded("resources/image1.png") && internals.isPreloaded("resources/style1.css"))
         result = "PASS";
     else
         result = "FAIL";
