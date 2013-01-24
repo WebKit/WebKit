@@ -72,6 +72,7 @@
 		1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A119A94127B796200A9ECB1 /* MessageSender.h */; };
 		1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A13BEB11635A9C800F19C03 /* StringReference.cpp */; };
 		1A13BEB41635A9C800F19C03 /* StringReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A13BEB21635A9C800F19C03 /* StringReference.h */; };
+		1A17635616B1D5D000D88FD6 /* StorageNamespaceProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
 		1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */; };
 		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
@@ -1290,6 +1291,8 @@
 		1A119A94127B796200A9ECB1 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
 		1A13BEB11635A9C800F19C03 /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
 		1A13BEB21635A9C800F19C03 /* StringReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReference.h; sourceTree = "<group>"; };
+		1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceProxy.cpp; sourceTree = "<group>"; };
+		1A17635516B1D5D000D88FD6 /* StorageNamespaceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceProxy.h; sourceTree = "<group>"; };
 		1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginCreationParameters.cpp; sourceTree = "<group>"; };
 		1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginCreationParameters.h; sourceTree = "<group>"; };
 		1A186EE812EF7618008E5F37 /* LayerTreeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHost.h; sourceTree = "<group>"; };
@@ -2785,6 +2788,8 @@
 		1AAC4DDE16B1CBF6009425E3 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */,
+				1A17635516B1D5D000D88FD6 /* StorageNamespaceProxy.h */,
 				1AAC4DE116B1CBF6009425E3 /* WebKeyValueStorageManager.cpp */,
 				1AAC4DE216B1CBF6009425E3 /* WebKeyValueStorageManager.h */,
 				1AAC4DE316B1CBF6009425E3 /* WebKeyValueStorageManager.messages.in */,
@@ -5495,6 +5500,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6FA31111E3921E00DB1371 /* MainMacProcess.cpp in Sources */,
+				1A17635616B1D5D000D88FD6 /* StorageNamespaceProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
