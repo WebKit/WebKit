@@ -1,3 +1,11 @@
+2013-01-24  Andras Becsi  <andras.becsi@digia.com>
+
+        Remove nonexistent header from WebKit2/Target.pri
+
+        Unreviewed cleanup after r139919.
+
+        * Target.pri:
+
 2013-01-24  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] Pages / resources cannot be loaded from qrc files.
