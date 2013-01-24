@@ -233,8 +233,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
 
 void Console::debug(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    // In Firebug, console.debug has the same behavior as console.log. So we'll do the same.
-    log(state, arguments);
+    internalAddMessage(page(), LogMessageType, DebugMessageLevel, state, arguments);
 }
 
 void Console::error(ScriptState* state, PassRefPtr<ScriptArguments> arguments)

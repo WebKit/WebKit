@@ -16,7 +16,7 @@ Started extension.
 Running tests...
 RUNNING TEST: extension_testAddConsoleMessages
 log message extensions-console.html:46 console-message console-log-level
-debug message extensions-console.html:47 console-message console-log-level
+debug message extensions-console.html:47 console-message console-debug-level
 warning message extensions-console.html:48 console-message console-warning-level
 error message extensions-console.html:49 console-message console-error-level
 log message with two parameters, an integer: 42 and a string: foo extensions-console.html:50 console-message console-log-level
@@ -35,7 +35,7 @@ RUNNING TEST: extension_testGetConsoleMessages
     }
     1 : {
         line : 47
-        severity : "log"
+        severity : "debug"
         text : "debug message"
         url : .../extensions-console.html
     }
@@ -94,7 +94,7 @@ RUNNING TEST: extension_testOnConsoleMessageAdded
 {
     0 : {
         line : 47
-        severity : "log"
+        severity : "debug"
         text : "debug message"
         url : .../extensions-console.html
     }

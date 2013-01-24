@@ -22,7 +22,7 @@ CONSOLE MESSAGE: line 31: /regexp.*/
 Tests that console logging dumps proper messages.
 
 log console-tests.html:9 console-message console-log-level
-debug console-tests.html:10 console-message console-log-level
+debug console-tests.html:10 console-message console-debug-level
 info console-tests.html:11 console-message console-log-level
 warn console-tests.html:12 console-message console-warning-level
 error console-tests.html:13 console-message console-error-level
