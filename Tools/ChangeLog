@@ -1,3 +1,17 @@
+2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Give webkit_support a chance to reset state between layout test runs
+        https://bugs.webkit.org/show_bug.cgi?id=107132
+
+        Reviewed by Adam Barth.
+
+        We currently only have need for this on OS(ANDROID), but now it
+        would be useful to have a hook for resetting state on all
+        platforms. Will soon be using this for IDBFactory initialization.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController): Call webkit_support::ResetTestEnvironment()
+
 2013-01-23  Alan Cutter  <alancutter@chromium.org>
 
         QueueStatusServer crashes in production on next-patch
