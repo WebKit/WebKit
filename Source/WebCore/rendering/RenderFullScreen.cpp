@@ -57,7 +57,7 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
 }
 
 RenderFullScreen::RenderFullScreen()
-    : RenderDeprecatedFlexibleBox(0)
+    : RenderFlexibleBox(0)
     , m_placeholder(0)
 {
     setReplaced(false); 
@@ -84,7 +84,7 @@ void RenderFullScreen::willBeDestroyed()
     if (document() && document()->fullScreenRenderer() == this)
         document()->fullScreenRendererDestroyed();
 
-    RenderDeprecatedFlexibleBox::willBeDestroyed();
+    RenderFlexibleBox::willBeDestroyed();
 }
 
 static PassRefPtr<RenderStyle> createFullScreenStyle()
@@ -97,10 +97,10 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
     fullscreenStyle->setFontDescription(FontDescription());
     fullscreenStyle->font().update(0);
 
-    fullscreenStyle->setDisplay(BOX);
-    fullscreenStyle->setBoxPack(Center);
-    fullscreenStyle->setBoxAlign(BCENTER);
-    fullscreenStyle->setBoxOrient(VERTICAL);
+    fullscreenStyle->setDisplay(FLEX);
+    fullscreenStyle->setJustifyContent(JustifyCenter);
+    fullscreenStyle->setAlignItems(AlignCenter);
+    fullscreenStyle->setFlexDirection(FlowColumn);
     
     fullscreenStyle->setPosition(FixedPosition);
     fullscreenStyle->setWidth(Length(100.0, Percent));

@@ -36,9 +36,9 @@ video:-webkit-full-screen::-webkit-media-controls-embedded-panel {
 }
 
 video:-webkit-full-screen::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: stretch;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: stretch;
     position: absolute;
     bottom: 0px;
     width: 100%;
@@ -49,21 +49,21 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
 
 video:-webkit-full-screen::-webkit-media-controls-button-group-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: justify;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: space-between;
+    -webkit-flex: 1;
     background-color: rgb(0, 0, 0);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-display-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: justify;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: space-between;
+    -webkit-flex: 1;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-time-display-container {
@@ -72,7 +72,7 @@ video:-webkit-full-screen::-webkit-media-controls-time-display-container {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-play-button {
     -webkit-appearance: media-play-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {
@@ -81,11 +81,11 @@ video:-webkit-full-screen::-webkit-media-controls-play-button {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-timeline-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: stretch;
-    -webkit-box-pack: center;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: stretch;
+    -webkit-justify-content: center;
+    -webkit-flex: 1;
     height: auto;
     width: 100%;
 }
@@ -96,11 +96,11 @@ video:-webkit-full-screen::-webkit-media-controls-timeline-container {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-current-time-display {
     -webkit-appearance: media-current-time-display;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 0;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 0;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-current-time-display {
@@ -109,11 +109,11 @@ video:-webkit-full-screen::-webkit-media-controls-current-time-display {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-remaining-display {
     -webkit-appearance: media-time-remaining-display;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 0;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 0;
     color: rgb(125, 125, 125);
 }
 
@@ -123,8 +123,8 @@ video:-webkit-full-screen::-webkit-media-controls-time-remaining-display {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-timeline {
@@ -133,7 +133,7 @@ video:-webkit-full-screen::-webkit-media-controls-timeline {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-fullscreen-button {
     -webkit-appearance: media-exit-fullscreen-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-button {
@@ -154,29 +154,29 @@ video:-webkit-full-screen::-webkit-media-controls-volume-slider {
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-divider {
     -webkit-appearance: media-rewind-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container, video:-webkit-full-screen::-webkit-media-controls-play-button-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-flex: 1;
     min-width: 100%;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container {
-    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button-container {
-    -webkit-box-pack: center;
+    -webkit-justify-content: center;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-placeholder {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1;
     min-width: 100%;
 }

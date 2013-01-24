@@ -25,8 +25,8 @@
 /* alternate media controls - Extend fullscreen.css */
 
 video:-webkit-full-screen::-webkit-media-controls-panel {
-    -webkit-box-align: start !important;
-    -webkit-box-pack: end !important;
+    -webkit-align-items: flex-start !important;
+    -webkit-justify-content: flex-end !important;
     -webkit-appearance: none !important;
 
     padding: 12px 0 0 10px !important;
@@ -125,7 +125,7 @@ video:-webkit-full-screen::-webkit-media-controls-rewind-button {
 
 video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
     position: absolute;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 23px;
     height: 16px;
     left: 162px;
@@ -134,7 +134,7 @@ video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
 
 video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
     position: absolute;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 29px;
     height: 16px;
     left: 262px;
@@ -143,7 +143,7 @@ video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
 
 video:-webkit-full-screen::-webkit-media-controls-seek-forward-button {
     position: absolute;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 23px;
     height: 16px;
     left: 262px;

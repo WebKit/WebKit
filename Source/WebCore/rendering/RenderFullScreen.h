@@ -27,12 +27,12 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 #include "StyleInheritedData.h"
 
 namespace WebCore {
 
-class RenderFullScreen : public RenderDeprecatedFlexibleBox {
+class RenderFullScreen : public RenderFlexibleBox {
 public:
     static RenderFullScreen* createAnonymous(Document*);
 
