@@ -253,6 +253,11 @@
     <None Include="WTFPreBuild.cmd" />
     <None Include="WTFPreLink.cmd" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WTFGenerated.vcxproj">
+      <Project>{f7366596-0520-4433-b8ff-d843e31e5199}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8EF73779-BED3-45BB-816D-9FF58399AFA5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
