@@ -2815,12 +2815,7 @@ HEADERS += \
     xml/parser/MarkupTokenBase.h \
     xml/parser/MarkupTokenizerBase.h \
     xml/parser/MarkupTokenizerInlines.h \
-    xml/parser/NewXMLDocumentParser.h \
-    xml/parser/XMLCharacterReferenceParser.h \
     xml/parser/XMLDocumentParser.h \
-    xml/parser/XMLTokenizer.h \
-    xml/parser/XMLToken.h \
-    xml/parser/XMLTreeBuilder.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \
     xml/XMLHttpRequest.h \
