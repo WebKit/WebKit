@@ -29,16 +29,19 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+OBJC_CLASS NSString;
+#endif
+
 namespace WebKit {
 
 class SandboxInitializationParameters {
-WTF_MAKE_NONCOPYABLE(SandboxInitializationParameters);
+    WTF_MAKE_NONCOPYABLE(SandboxInitializationParameters);
 public:
-
-#if PLATFORM(MAC)
     SandboxInitializationParameters();
     ~SandboxInitializationParameters();
 
+#if PLATFORM(MAC)
     // Name must be a literal.
     void addConfDirectoryParameter(const char* name, int confID);
     void addPathParameter(const char* name, NSString *path);
@@ -50,11 +53,37 @@ public:
     const char* name(size_t index) const;
     const char* value(size_t index) const;
 
-    void setSandboxProfilePath(const String& path) { m_sandboxProfilePath = path; m_sandboxProfile = String(); }
-    const String& sandboxProfilePath() const { return m_sandboxProfilePath; }
+    enum ProfileSelectionMode {
+        UseDefaultSandboxProfilePath,
+        UseOverrideSandboxProfilePath,
+        UseSandboxProfile
+    };
 
-    void setSandboxProfile(const String& profile) { m_sandboxProfilePath = String(); m_sandboxProfile = profile; }
-    const String& sandboxProfile() const { return m_sandboxProfile; }
+    ProfileSelectionMode mode() const { return m_profileSelectionMode; }
+
+    void setOverrideSandboxProfilePath(const String& path)
+    {
+        m_profileSelectionMode = UseOverrideSandboxProfilePath;
+        m_overrideSandboxProfilePathOrSandboxProfile = path;
+    }
+
+    const String& overrideSandboxProfilePath() const
+    {
+        ASSERT(m_profileSelectionMode == UseOverrideSandboxProfilePath);
+        return m_overrideSandboxProfilePathOrSandboxProfile;
+    }
+
+    void setSandboxProfile(const String& profile)
+    {
+        m_profileSelectionMode = UseSandboxProfile;
+        m_overrideSandboxProfilePathOrSandboxProfile = profile;
+    }
+
+    const String& sandboxProfile() const
+    {
+        ASSERT(m_profileSelectionMode == UseSandboxProfile);
+        return m_overrideSandboxProfilePathOrSandboxProfile;
+    }
 
     void setSystemDirectorySuffix(const String& suffix) { m_systemDirectorySuffix = suffix; }
     const String& systemDirectorySuffix() const { return m_systemDirectorySuffix; }
@@ -67,11 +96,21 @@ private:
     mutable Vector<const char*> m_namedParameters;
     String m_systemDirectorySuffix;
 
-    String m_sandboxProfilePath;
-    String m_sandboxProfile;
+    ProfileSelectionMode m_profileSelectionMode;
+    String m_overrideSandboxProfilePathOrSandboxProfile;
 #endif
 };
 
+#if !PLATFORM(MAC)
+SandboxInitializationParameters::SandboxInitializationParameters()
+{
 }
+
+SandboxInitializationParameters::~SandboxInitializationParameters()
+{
+}
+#endif
+
+} // namespace WebKit
 
 #endif // SandboxInitializationParameters_h

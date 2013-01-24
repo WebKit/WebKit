@@ -29,6 +29,7 @@
 namespace WebKit {
 
 SandboxInitializationParameters::SandboxInitializationParameters()
+    : m_profileSelectionMode(UseDefaultSandboxProfilePath)
 {
 }
 
@@ -93,4 +94,4 @@ const char* SandboxInitializationParameters::value(size_t index) const
     return m_namedParameters[index * 2 + 1];
 }
 
-}
+} // namespace WebKit

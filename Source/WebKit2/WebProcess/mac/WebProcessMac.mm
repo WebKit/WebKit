@@ -146,7 +146,7 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
-    
+
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
@@ -203,11 +203,13 @@ void WebProcess::platformTerminate()
     }
 }
 
-void WebProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters& parameters)
+void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-    parameters.setSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
+
+    ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
 } // namespace WebKit

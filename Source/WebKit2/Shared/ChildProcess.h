@@ -79,6 +79,7 @@ protected:
 
     virtual void initializeProcess(const ChildProcessInitializationParameters&);
     virtual void initializeProcessName(const ChildProcessInitializationParameters&);
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&);
     virtual void initializeConnection(CoreIPC::Connection*);
 
     virtual bool shouldTerminate() = 0;
@@ -88,9 +89,6 @@ private:
     void terminationTimerFired();
 
     void platformInitialize();
-    // FIXME: This function is virtual only because PluginProcess needs to bypass it. It should switch to common code.
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&);
-    virtual void processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters&);
 
     // The timeout, in seconds, before this process will be terminated if termination
     // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.

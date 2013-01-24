@@ -216,7 +216,7 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 {
 }
 
-void NetworkProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
+void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 #endif

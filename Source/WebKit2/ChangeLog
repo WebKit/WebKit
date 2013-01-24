@@ -1,3 +1,41 @@
+2013-01-24  Sam Weinig  <sam@webkit.org>
+
+        Cleanup sandbox initialization a bit
+        https://bugs.webkit.org/show_bug.cgi?id=107847
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * PluginProcess/PluginProcess.h:
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/ChildProcess.h:
+        (ChildProcess):
+        * Shared/SandboxInitializationParameters.h:
+        (SandboxInitializationParameters):
+        (WebKit::SandboxInitializationParameters::mode):
+        (WebKit::SandboxInitializationParameters::setOverrideSandboxProfilePath):
+        (WebKit::SandboxInitializationParameters::overrideSandboxProfilePath):
+        (WebKit::SandboxInitializationParameters::setSandboxProfile):
+        (WebKit::SandboxInitializationParameters::sandboxProfile):
+        (WebKit::SandboxInitializationParameters::SandboxInitializationParameters):
+        (WebKit::SandboxInitializationParameters::~SandboxInitializationParameters):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize):
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/SandboxInitialiationParametersMac.mm:
+        (WebKit::SandboxInitializationParameters::SandboxInitializationParameters):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/WebProcess.h:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2013-01-24  Anders Carlsson  <andersca@apple.com>
 
         Add stubbed out StorageAreaProxy class

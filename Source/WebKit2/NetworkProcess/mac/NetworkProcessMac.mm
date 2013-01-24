@@ -178,10 +178,12 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertific
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }
 
-// FIXME: Remove when the process has a profile.
-void NetworkProcess::processUpdateSandboxInitializationParameters(const ChildProcessInitializationParameters&, SandboxInitializationParameters& parameters)
+void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    parameters.setSandboxProfilePath(String());
+    // FIXME: Remove when the process has a profile.
+    sandboxParameters.setOverrideSandboxProfilePath(String());
+
+    ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
 } // namespace WebKit
