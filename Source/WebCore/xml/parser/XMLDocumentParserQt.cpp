@@ -71,7 +71,7 @@ static QString decodeNamedEntity(const QString& entityName)
 {
     UChar utf16DecodedEntity[4];
     size_t numberOfCodePoints = decodeNamedEntityToUCharArray(entityName.toUtf8().constData(), utf16DecodedEntity);
-    return QString::fromUtf16(utf16DecodedEntity, numberOfCodePoints);
+    return QString(reinterpret_cast<const QChar*>(utf16DecodedEntity), numberOfCodePoints);
 }
 
 QString EntityResolver::resolveUndeclaredEntity(const QString &name)
