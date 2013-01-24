@@ -1362,24 +1362,28 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return 0;
 }
 
+static inline void expandRectForFilterOutsets(LayoutRect& rect, const RenderLayerModelObject* renderer)
+{
+    ASSERT(renderer);
+    if (!renderer->style()->hasFilterOutsets())
+        return;
+
+    int topOutset;
+    int rightOutset;
+    int bottomOutset;
+    int leftOutset;
+    renderer->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+    rect.move(-leftOutset, -topOutset);
+    rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+}
+
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, bool immediate)
 {
     if (rect.isEmpty())
         return;
     
     LayoutRect rectForRepaint = rect;
-    
-#if ENABLE(CSS_FILTERS)
-    if (renderer()->style()->hasFilterOutsets()) {
-        int topOutset;
-        int rightOutset;
-        int bottomOutset;
-        int leftOutset;
-        renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-        rectForRepaint.move(-leftOutset, -topOutset);
-        rectForRepaint.expand(leftOutset + rightOutset, topOutset + bottomOutset);
-    }
-#endif
+    expandRectForFilterOutsets(rectForRepaint, renderer());
 
     RenderLayerFilterInfo* filterInfo = this->filterInfo();
     ASSERT(filterInfo);
@@ -1547,11 +1551,17 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
 
         LayoutRect clipRect = layer->boundingBox(layer);
         expandClipRectForDescendantsAndReflection(clipRect, layer, layer, paintBehavior);
+#if ENABLE(CSS_FILTERS)
+        expandRectForFilterOutsets(clipRect, layer->renderer());
+#endif
         return transform.mapRect(clipRect);
     }
     
     LayoutRect clipRect = layer->boundingBox(rootLayer);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, paintBehavior);
+#if ENABLE(CSS_FILTERS)
+    expandRectForFilterOutsets(clipRect, layer->renderer());
+#endif
     return clipRect;
 }
 
@@ -3701,7 +3711,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         if (shouldPaintContent && !selectionOnly) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, localPaintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
         
             if (useClipRect) {
                 // Paint our background first, before painting any child layers.
@@ -3728,7 +3738,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         if (shouldPaintContent && !clipRectToApply.isEmpty()) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, localPaintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
 
             if (useClipRect) {
                 // Set up the clip used when painting our children.
@@ -4961,15 +4971,8 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
     // FIXME: We can optimize the size of the composited layers, by not enlarging
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
-    if ((flags & IncludeLayerFilterOutsets) && renderer->style()->hasFilterOutsets()) {
-        int topOutset;
-        int rightOutset;
-        int bottomOutset;
-        int leftOutset;
-        renderer->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-        unionBounds.move(-leftOutset, -topOutset);
-        unionBounds.expand(leftOutset + rightOutset, topOutset + bottomOutset);
-    }
+    if (flags & IncludeLayerFilterOutsets)
+        expandRectForFilterOutsets(unionBounds, renderer);
 #endif
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal)) {
