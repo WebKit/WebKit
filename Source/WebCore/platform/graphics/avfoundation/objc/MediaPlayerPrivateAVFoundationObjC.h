@@ -48,6 +48,7 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
 
 namespace WebCore {
 
@@ -172,6 +173,10 @@ private:
 #else
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<CVPixelBufferRef> m_lastImage;
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<VTPixelTransferSessionRef> m_pixelTransferSession;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

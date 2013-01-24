@@ -50,16 +50,24 @@
 #import <wtf/Uint16Array.h>
 #import <wtf/Uint32Array.h>
 
-#import <CoreMedia/CoreMedia.h>
 #import <AVFoundation/AVFoundation.h>
+#import <CoreMedia/CoreMedia.h>
+#import <CoreVideo/CoreVideo.h>
+#import <VideoToolbox/VideoToolbox.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
+SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
+SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolbox)
 
 SOFT_LINK(CoreMedia, CMTimeCompare, int32_t, (CMTime time1, CMTime time2), (time1, time2))
 SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 SOFT_LINK(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
+SOFT_LINK(CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferGetHeight, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(VideoToolbox, VTPixelTransferSessionCreate, OSStatus, (CFAllocatorRef allocator, VTPixelTransferSessionRef *pixelTransferSessionOut), (allocator, pixelTransferSessionOut))
+SOFT_LINK(VideoToolbox, VTPixelTransferSessionTransferImage, OSStatus, (VTPixelTransferSessionRef session, CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer), (session, sourceBuffer, destinationBuffer))
 
 SOFT_LINK_CLASS(AVFoundation, AVPlayer)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
@@ -1000,8 +1008,12 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     if (!m_avPlayerItem || m_videoOutput)
         return;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    NSDictionary* attributes = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_422YpCbCr8) };
+#else
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:k32BGRAPixelFormat], kCVPixelBufferPixelFormatTypeKey,
                                 nil];
+#endif
     m_videoOutput.adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
     ASSERT(m_videoOutput);
 
@@ -1032,7 +1044,26 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
     double start = WTF::currentTime();
 #endif
 
-    RetainPtr<CVPixelBufferRef> buffer = adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:[m_avPlayerItem.get() currentTime] itemTimeForDisplay:nil]);
+    CMTime currentTime = [m_avPlayerItem.get() currentTime];
+
+    if (![m_videoOutput.get() hasNewPixelBufferForItemTime:currentTime])
+        return 0;
+
+    RetainPtr<CVPixelBufferRef> buffer = adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    // Create a VTPixelTransferSession, if necessary, as we cannot guarantee timely delivery of ARGB pixels.
+    if (!m_pixelTransferSession) {
+        VTPixelTransferSessionRef session = 0;
+        VTPixelTransferSessionCreate(kCFAllocatorDefault, &session);
+        m_pixelTransferSession = adoptCF(session);
+    }
+
+    CVPixelBufferRef outputBuffer;
+    CVPixelBufferCreate(kCFAllocatorDefault, CVPixelBufferGetWidth(buffer.get()), CVPixelBufferGetHeight(buffer.get()), k32BGRAPixelFormat, 0, &outputBuffer);
+    VTPixelTransferSessionTransferImage(m_pixelTransferSession.get(), buffer.get(), outputBuffer);
+    buffer = adoptCF(outputBuffer);
+#endif
 
 #if !LOG_DISABLED
     double duration = WTF::currentTime() - start;
