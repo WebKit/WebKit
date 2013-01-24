@@ -2957,6 +2957,14 @@ static bool hasVariableReference(CSSValue* value)
     if (value->isCalculationValue())
         return static_cast<CSSCalcValue*>(value)->hasVariableReference();
 
+    if (value->isReflectValue()) {
+        CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
+        CSSPrimitiveValue* direction = reflectValue->direction();
+        CSSPrimitiveValue* offset = reflectValue->offset();
+        CSSValue* mask = reflectValue->mask();
+        return (direction && hasVariableReference(direction)) || (offset && hasVariableReference(offset)) || (mask && hasVariableReference(mask));
+    }
+
     for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
         if (hasVariableReference(i.value()))
             return true;
@@ -3394,7 +3402,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
         CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
         RefPtr<StyleReflection> reflection = StyleReflection::create();
-        reflection->setDirection(reflectValue->direction());
+        reflection->setDirection(*reflectValue->direction());
         if (reflectValue->offset())
             reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(style(), m_rootElementStyle, zoomFactor));
         NinePieceImage mask;

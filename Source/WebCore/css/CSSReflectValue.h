@@ -37,24 +37,27 @@ class CSSPrimitiveValue;
 
 class CSSReflectValue : public CSSValue {
 public:
-    static PassRefPtr<CSSReflectValue> create(CSSReflectionDirection direction,
+    static PassRefPtr<CSSReflectValue> create(PassRefPtr<CSSPrimitiveValue> direction,
         PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
     {
         return adoptRef(new CSSReflectValue(direction, offset, mask));
     }
 
-    CSSReflectionDirection direction() const { return m_direction; }
+    CSSPrimitiveValue* direction() const { return m_direction.get(); }
     CSSPrimitiveValue* offset() const { return m_offset.get(); }
     CSSValue* mask() const { return m_mask.get(); }
 
     String customCssText() const;
+#if ENABLE(CSS_VARIABLES)
+    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
+#endif
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    CSSReflectValue(CSSReflectionDirection direction, PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
+    CSSReflectValue(PassRefPtr<CSSPrimitiveValue> direction, PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
         : CSSValue(ReflectClass)
         , m_direction(direction)
         , m_offset(offset)
@@ -62,7 +65,7 @@ private:
     {
     }
 
-    CSSReflectionDirection m_direction;
+    RefPtr<CSSPrimitiveValue> m_direction;
     RefPtr<CSSPrimitiveValue> m_offset;
     RefPtr<CSSValue> m_mask;
 };

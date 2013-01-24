@@ -374,6 +374,8 @@ String CSSValue::serializeResolvingVariables(const HashMap<AtomicString, String>
     switch (classType()) {
     case PrimitiveClass:
         return static_cast<const CSSPrimitiveValue*>(this)->customSerializeResolvingVariables(variables);
+    case ReflectClass:
+        return static_cast<const CSSReflectValue*>(this)->customSerializeResolvingVariables(variables);
     case ValueListClass:
         return static_cast<const CSSValueList*>(this)->customSerializeResolvingVariables(variables);
     case WebKitCSSTransformClass:

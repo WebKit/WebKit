@@ -6214,19 +6214,18 @@ bool CSSParser::parseReflect(CSSPropertyID propId, bool important)
 
     // Direction comes first.
     CSSParserValue* val = m_valueList->current();
-    CSSReflectionDirection direction;
+    RefPtr<CSSPrimitiveValue> direction;
+#if ENABLE(CSS_VARIABLES)
+    if (val->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME)
+        direction = createPrimitiveVariableNameValue(val);
+    else
+#endif
     switch (val->id) {
         case CSSValueAbove:
-            direction = ReflectionAbove;
-            break;
         case CSSValueBelow:
-            direction = ReflectionBelow;
-            break;
         case CSSValueLeft:
-            direction = ReflectionLeft;
-            break;
         case CSSValueRight:
-            direction = ReflectionRight;
+            direction = cssValuePool().createIdentifierValue(val->id);
             break;
         default:
             return false;
@@ -6251,7 +6250,7 @@ bool CSSParser::parseReflect(CSSPropertyID propId, bool important)
             return false;
     }
 
-    RefPtr<CSSReflectValue> reflectValue = CSSReflectValue::create(direction, offset.release(), mask.release());
+    RefPtr<CSSReflectValue> reflectValue = CSSReflectValue::create(direction.release(), offset.release(), mask.release());
     addProperty(propId, reflectValue.release(), important);
     m_valueList->next();
     return true;
