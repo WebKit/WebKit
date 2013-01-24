@@ -291,18 +291,11 @@ String SVGFontData::createStringWithMirroredCharacters(const UChar* characters, 
     StringBuilder mirroredCharacters;
     mirroredCharacters.reserveCapacity(length);
 
-    UChar32 character;
     unsigned i = 0;
     while (i < length) {
+        UChar32 character;
         U16_NEXT(characters, i, length, character);
-        character = mirroredChar(character);
-
-        if (U16_LENGTH(character) == 1)
-            mirroredCharacters.append(static_cast<UChar>(character));
-        else {
-            mirroredCharacters.append(U16_LEAD(character));
-            mirroredCharacters.append(U16_TRAIL(character));
-        }
+        mirroredCharacters.append(mirroredChar(character));
     }
 
     return mirroredCharacters.toString();

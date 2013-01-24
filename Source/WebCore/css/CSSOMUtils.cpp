@@ -36,20 +36,10 @@
 
 namespace WebCore {
 
-static void appendCharacter(UChar32 c, StringBuilder& appendTo)
-{
-    if (U16_LENGTH(c) == 1)
-        appendTo.append(static_cast<UChar>(c));
-    else {
-        appendTo.append(U16_LEAD(c));
-        appendTo.append(U16_TRAIL(c));
-    }
-}
-
 void serializeCharacter(UChar32 c, StringBuilder& appendTo)
 {
     appendTo.append('\\');
-    appendCharacter(c, appendTo);
+    appendTo.append(c);
 }
 
 void serializeCharacterAsCodePoint(UChar32 c, StringBuilder& appendTo)
@@ -81,7 +71,7 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
         else if (c == 0x2d && isSecond && isFirstCharHyphen)
             serializeCharacter(c, appendTo);
         else if (0x80 <= c || c == 0x2d || c == 0x5f || (0x30 <= c && c <= 0x39) || (0x41 <= c && c <= 0x5a) || (0x61 <= c && c <= 0x7a))
-            appendCharacter(c, appendTo);
+            appendTo.append(c);
         else
             serializeCharacter(c, appendTo);
 
@@ -115,7 +105,7 @@ void serializeString(const String& string, StringBuilder& appendTo)
         else if (c == 0x22 || c == 0x5c)
             serializeCharacter(c, appendTo);
         else
-            appendCharacter(c, appendTo);
+            appendTo.append(c);
     }
 
     appendTo.append('\"');

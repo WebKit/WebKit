@@ -128,10 +128,10 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 16 + 10 + cc - 'A';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
                 return true;
             } else if (ParserFunctions::acceptMalformed()) {
-                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
                 return true;
             } else {
                 unconsumeCharacters(source, consumedCharacters);
@@ -144,10 +144,10 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 10 + cc - '0';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
                 return true;
             } else if (ParserFunctions::acceptMalformed()) {
-                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
                 return true;
             } else {
                 unconsumeCharacters(source, consumedCharacters);

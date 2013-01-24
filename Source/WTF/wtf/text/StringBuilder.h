@@ -141,6 +141,16 @@ public:
         append(static_cast<LChar>(c));
     }
 
+    void append(UChar32 c)
+    {
+        if (U_IS_BMP(c)) {
+            append(static_cast<UChar>(c));
+            return;
+        }
+        append(U16_LEAD(c));
+        append(U16_TRAIL(c));
+    }
+
     template<unsigned charactersCount>
     ALWAYS_INLINE void appendLiteral(const char (&characters)[charactersCount]) { append(characters, charactersCount - 1); }
 

@@ -68,18 +68,6 @@ public:
         return value;
     }
 
-    inline static void convertToUTF16(UChar32 value, StringBuilder& decodedEntity)
-    {
-        if (U_IS_BMP(value)) {
-            UChar character = static_cast<UChar>(value);
-            ASSERT(character == value);
-            decodedEntity.append(character);
-            return;
-        }
-        decodedEntity.append(U16_LEAD(value));
-        decodedEntity.append(U16_TRAIL(value));
-    }
-
     inline static bool acceptMalformed() { return true; }
 
     inline static bool consumeNamedEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
@@ -125,9 +113,9 @@ public:
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter
             || !(isAlphaNumeric(cc) || cc == '=')) {
-            convertToUTF16(entitySearch.mostRecentMatch()->firstValue, decodedEntity);
+            decodedEntity.append(entitySearch.mostRecentMatch()->firstValue);
             if (entitySearch.mostRecentMatch()->secondValue)
-                convertToUTF16(entitySearch.mostRecentMatch()->secondValue, decodedEntity);
+                decodedEntity.append(entitySearch.mostRecentMatch()->secondValue);
             return true;
         }
         unconsumeCharacters(source, consumedCharacters);

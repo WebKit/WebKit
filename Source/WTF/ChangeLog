@@ -1,3 +1,13 @@
+2013-01-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Abstract the logic for appending a UChar32 onto StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=107505
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append): Added a method for appending a UChar32 to a StringBuilder.
+
 2013-01-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Stipulate build order between WTFGenerated and WTF

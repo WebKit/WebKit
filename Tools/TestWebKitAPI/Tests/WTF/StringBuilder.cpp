@@ -33,11 +33,11 @@
 
 namespace TestWebKitAPI {
 
-void expectBuilderContent(const char* expected, const StringBuilder& builder)
+static void expectBuilderContent(const String& expected, const StringBuilder& builder)
 {
     // Not using builder.toString() or builder.toStringPreserveCapacity() because they all
     // change internal state of builder.
-    EXPECT_EQ(String(expected), String(builder.characters(), builder.length()));
+    EXPECT_EQ(expected, String(builder.characters(), builder.length()));
 }
 
 void expectEmpty(const StringBuilder& builder)
@@ -85,6 +85,16 @@ TEST(StringBuilderTest, Append)
     builder2.toStringPreserveCapacity(); // Test after reifyString with buffer preserved.
     builder2.append("abcd");
     ASSERT_EQ(characters, builder2.characters());
+
+    // Test appending UChar32 characters to StringBuilder.
+    StringBuilder builderForUChar32Append;
+    UChar32 frakturAChar = 0x1D504;
+    builderForUChar32Append.append(frakturAChar); // The fraktur A is not in the BMP, so it's two UTF-16 code units long.
+    ASSERT_EQ(2U, builderForUChar32Append.length());
+    builderForUChar32Append.append(static_cast<UChar32>('A'));
+    ASSERT_EQ(3U, builderForUChar32Append.length());
+    const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
+    expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builderForUChar32Append);
 }
 
 TEST(StringBuilderTest, ToString)
