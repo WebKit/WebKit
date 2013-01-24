@@ -429,7 +429,7 @@ namespace JSC {
 
         JSObject* compile(ExecState* exec, JSScope* scope)
         {
-            ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_evalCodeBlock)
                 error = compileInternal(exec, scope, JITCode::bottomTierJIT());
@@ -506,7 +506,7 @@ namespace JSC {
 
         JSObject* compile(ExecState* exec, JSScope* scope)
         {
-            ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_programCodeBlock)
                 error = compileInternal(exec, scope, JITCode::bottomTierJIT());
@@ -601,7 +601,7 @@ namespace JSC {
 
         JSObject* compileForCall(ExecState* exec, JSScope* scope)
         {
-            ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
                 error = compileForCallInternal(exec, scope, JITCode::bottomTierJIT());
@@ -629,7 +629,7 @@ namespace JSC {
 
         JSObject* compileForConstruct(ExecState* exec, JSScope* scope)
         {
-            ASSERT(exec->globalData().dynamicGlobalObject);
+            RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
                 error = compileForConstructInternal(exec, scope, JITCode::bottomTierJIT());

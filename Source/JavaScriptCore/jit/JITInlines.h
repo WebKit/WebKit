@@ -509,10 +509,10 @@ inline void JIT::emitLoad(const JSValue& v, RegisterID tag, RegisterID payload)
 
 inline void JIT::emitLoad(int index, RegisterID tag, RegisterID payload, RegisterID base)
 {
-    ASSERT(tag != payload);
+    RELEASE_ASSERT(tag != payload);
 
     if (base == callFrameRegister) {
-        ASSERT(payload != base);
+        RELEASE_ASSERT(payload != base);
         emitLoadPayload(index, payload);
         emitLoadTag(index, tag);
         return;

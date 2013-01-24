@@ -65,8 +65,8 @@ struct CodeOrigin {
         , valueProfileOffset(valueProfileOffset)
         , inlineCallFrame(inlineCallFrame)
     {
-        ASSERT(bytecodeIndex <= maximumBytecodeIndex);
-        ASSERT(valueProfileOffset < (1u << 3));
+        RELEASE_ASSERT(bytecodeIndex <= maximumBytecodeIndex);
+        RELEASE_ASSERT(valueProfileOffset < (1u << 3));
     }
     
     bool isSet() const { return bytecodeIndex != maximumBytecodeIndex; }

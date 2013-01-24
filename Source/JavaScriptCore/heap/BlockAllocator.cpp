@@ -44,7 +44,7 @@ BlockAllocator::BlockAllocator()
     , m_blockFreeingThreadShouldQuit(false)
     , m_blockFreeingThread(createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree"))
 {
-    ASSERT(m_blockFreeingThread);
+    RELEASE_ASSERT(m_blockFreeingThread);
     m_regionLock.Init();
 }
 
@@ -69,7 +69,7 @@ void BlockAllocator::releaseFreeRegions()
                 region = 0;
             else {
                 region = m_emptyRegions.removeHead();
-                ASSERT(region);
+                RELEASE_ASSERT(region);
                 m_numberOfEmptyRegions--;
             }
         }
@@ -141,7 +141,7 @@ void BlockAllocator::blockFreeingThreadMain()
                     region = 0;
                 else {
                     region = m_emptyRegions.removeHead();
-                    ASSERT(region);
+                    RELEASE_ASSERT(region);
                     m_numberOfEmptyRegions--;
                 }
             }

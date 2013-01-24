@@ -790,7 +790,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         int currentDepth = depth(codeBlock, scope);
         int targetDepth = handler->scopeDepth;
         scopeDelta = currentDepth - targetDepth;
-        ASSERT(scopeDelta >= 0);
+        RELEASE_ASSERT(scopeDelta >= 0);
     }
     while (scopeDelta--)
         scope = scope->next();
@@ -835,7 +835,9 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 
     ASSERT(isValidThisObject(thisObj, callFrame));
     ASSERT(!globalData.exception);
-    RELEASE_ASSERT(!globalData.isCollectorBusy());
+    ASSERT(!globalData.isCollectorBusy());
+    if (globalData.isCollectorBusy())
+        return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
     const StackBounds& nativeStack = wtfThreadData().stack();
@@ -1264,7 +1266,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     JSObject* variableObject;
     for (JSScope* node = scope; ; node = node->next()) {
-        ASSERT(node);
+        RELEASE_ASSERT(node);
         if (node->isVariableObject() && !node->isNameScopeObject()) {
             variableObject = node;
             break;

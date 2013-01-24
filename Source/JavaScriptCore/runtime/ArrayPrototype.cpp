@@ -194,11 +194,11 @@ static unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument
 template<JSArray::ShiftCountMode shiftCountMode>
 void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
 {
-    ASSERT(currentCount > resultCount);
+    RELEASE_ASSERT(currentCount > resultCount);
     unsigned count = currentCount - resultCount;
 
-    ASSERT(header <= length);
-    ASSERT(currentCount <= (length - header));
+    RELEASE_ASSERT(header <= length);
+    RELEASE_ASSERT(currentCount <= (length - header));
 
     if (isJSArray(thisObj)) {
         JSArray* array = asArray(thisObj);
@@ -232,11 +232,11 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
 template<JSArray::ShiftCountMode shiftCountMode>
 void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
 {
-    ASSERT(resultCount > currentCount);
+    RELEASE_ASSERT(resultCount > currentCount);
     unsigned count = resultCount - currentCount;
 
-    ASSERT(header <= length);
-    ASSERT(currentCount <= (length - header));
+    RELEASE_ASSERT(header <= length);
+    RELEASE_ASSERT(currentCount <= (length - header));
 
     // Guard against overflow.
     if (count > (UINT_MAX - length)) {
@@ -1290,7 +1290,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 
     JSValue searchElement = exec->argument(0);
     do {
-        ASSERT(index < length);
+        RELEASE_ASSERT(index < length);
         JSValue e = getProperty(exec, thisObj, index);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());

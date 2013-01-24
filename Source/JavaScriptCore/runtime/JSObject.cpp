@@ -135,7 +135,7 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
             case ALL_DOUBLE_INDEXING_TYPES: {
                 currentTarget = newButterfly->contiguous();
                 currentSource = butterfly->contiguous();
-                ASSERT(newButterfly->publicLength() <= newButterfly->vectorLength());
+                RELEASE_ASSERT(newButterfly->publicLength() <= newButterfly->vectorLength());
                 count = newButterfly->vectorLength();
                 break;
             }
@@ -1700,7 +1700,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, Propert
         notifyPresenceOfIndexedAccessors(exec->globalData());
 
     SparseArrayValueMap* map = m_butterfly->arrayStorage()->m_sparseMap.get();
-    ASSERT(map);
+    RELEASE_ASSERT(map);
 
     // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
     SparseArrayValueMap::AddResult result = map->add(this, index);
@@ -1873,7 +1873,7 @@ void JSObject::putByIndexBeyondVectorLengthWithoutAttributes(ExecState* exec, un
 
     ensureLength(globalData, i + 1);
 
-    ASSERT(i < m_butterfly->vectorLength());
+    RELEASE_ASSERT(i < m_butterfly->vectorLength());
     switch (indexingShape) {
     case Int32Shape:
         ASSERT(value.isInt32());

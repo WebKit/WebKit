@@ -137,14 +137,14 @@ public:
             if (scratchGPR == InvalidGPRReg && !m_lockedRegisters.getGPRByIndex(i) && !m_scratchRegisters.getGPRByIndex(i))
                 scratchGPR = GPRInfo::toRegister(i);
         }
-        ASSERT(scratchGPR != InvalidGPRReg);
+        RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
         for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
             if (m_usedRegisters.getFPRByIndex(i)) {
                 jit.move(MacroAssembler::TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++)), scratchGPR);
                 jit.storeDouble(FPRInfo::toRegister(i), scratchGPR);
             }
         }
-        ASSERT(count * sizeof(JSValue) == desiredScratchBufferSize());
+        RELEASE_ASSERT(count * sizeof(JSValue) == desiredScratchBufferSize());
         
         jit.move(MacroAssembler::TrustedImmPtr(&scratchBuffer->m_activeLength), scratchGPR);
         jit.storePtr(MacroAssembler::TrustedImmPtr(static_cast<size_t>(count * sizeof(JSValue))), scratchGPR);
@@ -161,7 +161,7 @@ public:
                 break;
             }
         }
-        ASSERT(scratchGPR != InvalidGPRReg);
+        RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
         
         jit.move(MacroAssembler::TrustedImmPtr(&scratchBuffer->m_activeLength), scratchGPR);
         jit.storePtr(MacroAssembler::TrustedImmPtr(0), scratchGPR);

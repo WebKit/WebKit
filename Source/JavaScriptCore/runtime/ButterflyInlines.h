@@ -74,7 +74,7 @@ inline void* Butterfly::base(Structure* structure)
 
 inline Butterfly* Butterfly::growPropertyStorage(JSGlobalData& globalData, size_t preCapacity, size_t oldPropertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes, size_t newPropertyCapacity)
 {
-    ASSERT(newPropertyCapacity > oldPropertyCapacity);
+    RELEASE_ASSERT(newPropertyCapacity > oldPropertyCapacity);
     Butterfly* result = createUninitialized(
         globalData, preCapacity, newPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
     memcpy(

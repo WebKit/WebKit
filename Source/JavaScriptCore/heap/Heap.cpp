@@ -280,8 +280,8 @@ bool Heap::isPagedOut(double deadline)
 // Run all pending finalizers now because we won't get another chance.
 void Heap::lastChanceToFinalize()
 {
-    ASSERT(!m_globalData->dynamicGlobalObject);
-    ASSERT(m_operationInProgress == NoOperation);
+    RELEASE_ASSERT(!m_globalData->dynamicGlobalObject);
+    RELEASE_ASSERT(m_operationInProgress == NoOperation);
 
     m_objectSpace.lastChanceToFinalize();
 
@@ -718,7 +718,7 @@ void Heap::collect(SweepToggle sweepToggle)
     
     GCPHASE(Collect);
     ASSERT(globalData()->apiLock().currentThreadIsHoldingLock());
-    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);

@@ -1,3 +1,146 @@
+2013-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Harden JSC a bit with RELEASE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=107766
+
+        Reviewed by Mark Hahnenberg.
+
+        Went through and replaced a pile of ASSERTs that were covering
+        significantly important details (bounds checks, etc) where
+        having the checks did not impact release performance in any
+        measurable way.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::bytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffsetForCallAtIndex):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::exceptionHandler):
+        (JSC::CodeBlock::codeOrigin):
+        (JSC::CodeBlock::immediateSwitchJumpTable):
+        (JSC::CodeBlock::characterSwitchJumpTable):
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::setIdentifiers):
+        (JSC::baselineCodeBlockForInlineCallFrame):
+        (JSC::ExecState::uncheckedR):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::inlineStack):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGOSRExit.cpp:
+        * dfg/DFGScratchRegisterAllocator.h:
+        (JSC::DFG::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::DFG::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::allocate):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::integerResult):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::dataFormatToValueSourceKind):
+        (JSC::DFG::ValueSource::ValueSource):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        (JSC::BlockAllocator::releaseFreeRegions):
+        (JSC::BlockAllocator::blockFreeingThreadMain):
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::collect):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoad):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_resolve_operations):
+        * jit/JITStubRoutine.cpp:
+        (JSC::JITStubRoutine::observeZeroRefCount):
+        * jit/JITStubs.cpp:
+        (JSC::returnToThrowTrampoline):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::deleteProperty):
+        (JSC::Arguments::defineOwnProperty):
+        (JSC::Arguments::didTearOffActivation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::growPropertyStorage):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        (JSC::CacheMap::add):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::EvalExecutable::unlinkCalls):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::unlinkCalls):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::unlinkCalls):
+        (JSC::NativeExecutable::hashFor):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::compile):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        * runtime/IndexingHeader.h:
+        (JSC::IndexingHeader::setVectorLength):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::jsStrDecimalLiteral):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::getIndexSlowCase):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::popParenthesesDisjunctionContext):
+
 2013-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         Constant folding an access to an uncaptured variable that is captured later in the same basic block shouldn't lead to assertion failures

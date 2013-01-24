@@ -233,7 +233,7 @@ JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
     if (exec->exception())
         return jsEmptyString(exec);
     ASSERT(!isRope());
-    ASSERT(i < m_value.length());
+    RELEASE_ASSERT(i < m_value.length());
     return jsSingleCharacterSubstring(exec, m_value, i);
 }
 

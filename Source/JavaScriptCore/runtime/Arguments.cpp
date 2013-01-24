@@ -127,7 +127,7 @@ bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName p
     Arguments* thisObject = jsCast<Arguments*>(cell);
     unsigned i = propertyName.asIndex();
     if (JSValue value = thisObject->tryGetArgument(i)) {
-        ASSERT(i < PropertyName::NotAnIndex);
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         slot.setValue(value);
         return true;
     }
@@ -156,7 +156,7 @@ bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prop
     Arguments* thisObject = jsCast<Arguments*>(object);
     unsigned i = propertyName.asIndex();
     if (JSValue value = thisObject->tryGetArgument(i)) {
-        ASSERT(i < PropertyName::NotAnIndex);
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         descriptor.setDescriptor(value, None);
         return true;
     }
@@ -253,7 +253,7 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     Arguments* thisObject = jsCast<Arguments*>(cell);
     unsigned i = propertyName.asIndex();
     if (i < thisObject->m_numArguments) {
-        ASSERT(i < PropertyName::NotAnIndex);
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         if (!Base::deleteProperty(cell, exec, propertyName))
             return false;
         if (thisObject->tryDeleteArgument(i))
@@ -284,7 +284,7 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
     Arguments* thisObject = jsCast<Arguments*>(object);
     unsigned i = propertyName.asIndex();
     if (i < thisObject->m_numArguments) {
-        ASSERT(i < PropertyName::NotAnIndex);
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
         PropertySlot slot;
         if (!thisObject->isDeletedArgument(i) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
@@ -366,7 +366,7 @@ void Arguments::tearOff(CallFrame* callFrame)
 
 void Arguments::didTearOffActivation(ExecState* exec, JSActivation* activation)
 {
-    ASSERT(activation);
+    RELEASE_ASSERT(activation);
     if (isTornOff())
         return;
 

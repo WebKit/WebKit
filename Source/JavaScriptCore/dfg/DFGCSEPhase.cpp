@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include "JSCellInlines.h"
 #include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {

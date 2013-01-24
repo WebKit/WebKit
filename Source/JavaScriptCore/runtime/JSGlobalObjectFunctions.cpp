@@ -364,7 +364,7 @@ static double jsHexIntegerLiteral(const CharType*& data, const CharType* end)
 template <typename CharType>
 static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
 {
-    ASSERT(data < end);
+    RELEASE_ASSERT(data < end);
 
     size_t parsedLength;
     double number = parseDouble(data, end - data, parsedLength);

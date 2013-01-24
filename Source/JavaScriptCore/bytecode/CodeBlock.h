@@ -278,7 +278,7 @@ namespace JSC {
             Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
             if (!callIndices.size())
                 return 1;
-            ASSERT(index < m_rareData->m_callReturnIndexVector.size());
+            RELEASE_ASSERT(index < m_rareData->m_callReturnIndexVector.size());
             return m_rareData->m_callReturnIndexVector[index].bytecodeOffset;
         }
 
@@ -457,7 +457,7 @@ namespace JSC {
 
         unsigned bytecodeOffset(Instruction* returnAddress)
         {
-            ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
+            RELEASE_ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
             return static_cast<Instruction*>(returnAddress) - instructions().begin();
         }
 
@@ -814,7 +814,7 @@ namespace JSC {
             }
 
         }
-        HandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
+        HandlerInfo& exceptionHandler(int index) { RELEASE_ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
         bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
@@ -849,7 +849,7 @@ namespace JSC {
         
         CodeOrigin codeOrigin(unsigned index)
         {
-            ASSERT(m_rareData);
+            RELEASE_ASSERT(m_rareData);
             return m_rareData->m_codeOrigins[index].codeOrigin;
         }
         
@@ -940,15 +940,15 @@ namespace JSC {
 
         size_t numberOfImmediateSwitchJumpTables() const { return m_rareData ? m_rareData->m_immediateSwitchJumpTables.size() : 0; }
         SimpleJumpTable& addImmediateSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_immediateSwitchJumpTables.append(SimpleJumpTable()); return m_rareData->m_immediateSwitchJumpTables.last(); }
-        SimpleJumpTable& immediateSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_immediateSwitchJumpTables[tableIndex]; }
+        SimpleJumpTable& immediateSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_immediateSwitchJumpTables[tableIndex]; }
 
         size_t numberOfCharacterSwitchJumpTables() const { return m_rareData ? m_rareData->m_characterSwitchJumpTables.size() : 0; }
         SimpleJumpTable& addCharacterSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_characterSwitchJumpTables.append(SimpleJumpTable()); return m_rareData->m_characterSwitchJumpTables.last(); }
-        SimpleJumpTable& characterSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_characterSwitchJumpTables[tableIndex]; }
+        SimpleJumpTable& characterSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_characterSwitchJumpTables[tableIndex]; }
 
         size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
         StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
-        StringJumpTable& stringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
+        StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
 
         SharedSymbolTable* symbolTable() const { return m_unlinkedCode->symbolTable(); }
@@ -1158,7 +1158,7 @@ namespace JSC {
 
         void setIdentifiers(const Vector<Identifier>& identifiers)
         {
-            ASSERT(m_identifiers.isEmpty());
+            RELEASE_ASSERT(m_identifiers.isEmpty());
             m_identifiers.appendVector(identifiers);
         }
 
@@ -1459,9 +1459,9 @@ namespace JSC {
 
     inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCallFrame)
     {
-        ASSERT(inlineCallFrame);
+        RELEASE_ASSERT(inlineCallFrame);
         ExecutableBase* executable = inlineCallFrame->executable.get();
-        ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
+        RELEASE_ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
         return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
     }
     
@@ -1495,7 +1495,7 @@ namespace JSC {
 
     inline Register& ExecState::uncheckedR(int index)
     {
-        ASSERT(index < FirstConstantRegisterIndex);
+        RELEASE_ASSERT(index < FirstConstantRegisterIndex);
         return this[index];
     }
 

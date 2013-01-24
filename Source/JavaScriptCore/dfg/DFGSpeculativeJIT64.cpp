@@ -70,7 +70,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
             // Tag it, since fillInteger() is used when we want a boxed integer.
             m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr);
         } else {
-            ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInteger);
+            RELEASE_ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInteger);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
         }
@@ -176,7 +176,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
             default:
                 GPRReg gpr = allocate();
         
-                ASSERT(spillFormat & DataFormatJS);
+                RELEASE_ASSERT(spillFormat & DataFormatJS);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
                 m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
                 info.fillJSValue(*m_stream, gpr, spillFormat);
@@ -309,7 +309,7 @@ GPRReg SpeculativeJIT::fillJSValue(NodeIndex nodeIndex)
                     m_jit.sub64(GPRInfo::tagTypeNumberRegister, gpr);
                     spillFormat = DataFormatJSDouble;
                 } else
-                    ASSERT(spillFormat & DataFormatJS);
+                    RELEASE_ASSERT(spillFormat & DataFormatJS);
             }
             info.fillJSValue(*m_stream, gpr, spillFormat);
         }
@@ -692,7 +692,7 @@ bool SpeculativeJIT::nonSpeculativeCompareNull(Node& node, Edge operand, bool in
     if (branchIndexInBlock != UINT_MAX) {
         NodeIndex branchNodeIndex = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
 
-        ASSERT(node.adjustedRefCount() == 1);
+        RELEASE_ASSERT(node.adjustedRefCount() == 1);
         
         nonSpeculativePeepholeBranchNull(operand, branchNodeIndex, invert);
     
@@ -992,7 +992,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert)
 void SpeculativeJIT::emitCall(Node& node)
 {
     if (node.op() != Call)
-        ASSERT(node.op() == Construct);
+        RELEASE_ASSERT(node.op() == Construct);
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
@@ -1094,7 +1094,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         
         DataFormat spillFormat = info.spillFormat();
         
-        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
+        RELEASE_ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
@@ -1207,7 +1207,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 {
     DataFormat mustBeDataFormatInteger;
     GPRReg result = fillSpeculateIntInternal<true>(nodeIndex, mustBeDataFormatInteger, BackwardSpeculation);
-    ASSERT(mustBeDataFormatInteger == DataFormatInteger);
+    RELEASE_ASSERT(mustBeDataFormatInteger == DataFormatInteger);
     return result;
 }
 
@@ -1272,7 +1272,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex, SpeculationDirec
         default:
             GPRReg gpr = allocate();
 
-            ASSERT(spillFormat & DataFormatJS);
+            RELEASE_ASSERT(spillFormat & DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
             info.fillJSValue(*m_stream, gpr, spillFormat);
@@ -1395,7 +1395,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex, SpeculationDirecti
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode, direction);
             return gpr;
         }
-        ASSERT(info.spillFormat() & DataFormatJS);
+        RELEASE_ASSERT(info.spillFormat() & DataFormatJS);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
@@ -1471,7 +1471,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex, SpeculationDire
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode, direction);
             return gpr;
         }
-        ASSERT(info.spillFormat() & DataFormatJS);
+        RELEASE_ASSERT(info.spillFormat() & DataFormatJS);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
@@ -2805,7 +2805,7 @@ void SpeculativeJIT::compile(Node& node)
             alreadyHandled = true;
             break;
         case Array::Generic: {
-            ASSERT(node.op() == PutByVal);
+            RELEASE_ASSERT(node.op() == PutByVal);
             
             JSValueOperand arg1(this, child1);
             JSValueOperand arg2(this, child2);
@@ -3463,7 +3463,7 @@ void SpeculativeJIT::compile(Node& node)
             globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
             
             Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node.indexingType());
-            ASSERT(structure->indexingType() == node.indexingType());
+            RELEASE_ASSERT(structure->indexingType() == node.indexingType());
             ASSERT(
                 hasUndecided(structure->indexingType())
                 || hasInt32(structure->indexingType())
@@ -3769,7 +3769,7 @@ void SpeculativeJIT::compile(Node& node)
 
             emitAllocateJSArray(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), resultGPR, storageGPR, numElements);
             
-            ASSERT(indexingType & IsArray);
+            RELEASE_ASSERT(indexingType & IsArray);
             JSValue* data = m_jit.codeBlock()->constantBuffer(node.startConstant());
             if (indexingType == ArrayWithDouble) {
                 for (unsigned index = 0; index < node.numConstants(); ++index) {
@@ -4655,7 +4655,7 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CreateActivation: {
-        ASSERT(!node.codeOrigin.inlineCallFrame);
+        RELEASE_ASSERT(!node.codeOrigin.inlineCallFrame);
         
         JSValueOperand value(this, node.child1());
         GPRTemporary result(this, value);
@@ -4700,7 +4700,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case TearOffActivation: {
-        ASSERT(!node.codeOrigin.inlineCallFrame);
+        RELEASE_ASSERT(!node.codeOrigin.inlineCallFrame);
 
         JSValueOperand activationValue(this, node.child1());
         GPRTemporary scratch(this);
@@ -4767,7 +4767,7 @@ void SpeculativeJIT::compile(Node& node)
                         m_jit.argumentsRegisterFor(node.codeOrigin))));
         }
         
-        ASSERT(!node.codeOrigin.inlineCallFrame);
+        RELEASE_ASSERT(!node.codeOrigin.inlineCallFrame);
         m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), resultGPR);
         m_jit.sub32(TrustedImm32(1), resultGPR);
         integerResult(resultGPR, m_compileIndex);

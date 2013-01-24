@@ -1494,7 +1494,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
 #if ENABLE(LLINT_C_LOOP)
         default:
-            ASSERT(false); // We should never get here.
+            RELEASE_ASSERT_NOT_REACHED();
 #endif
     }
 
@@ -2492,7 +2492,7 @@ void CodeBlock::dumpBytecodeComments()
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    RELEASE_ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData)
         return 0;
@@ -2510,7 +2510,7 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 
 int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    RELEASE_ASSERT(bytecodeOffset < instructions().size());
     return m_ownerExecutable->lineNo() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
@@ -2730,11 +2730,11 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         && returnAddress.value() <= LLInt::getCodePtr(llint_end))
 #endif
     {
-        ASSERT(exec->codeBlock());
-        ASSERT(exec->codeBlock() == this);
-        ASSERT(JITCode::isBaselineCode(getJITType()));
+        RELEASE_ASSERT(exec->codeBlock());
+        RELEASE_ASSERT(exec->codeBlock() == this);
+        RELEASE_ASSERT(JITCode::isBaselineCode(getJITType()));
         Instruction* instruction = exec->currentVPC();
-        ASSERT(instruction);
+        RELEASE_ASSERT(instruction);
 
         instruction = adjustPCIfAtCallSite(instruction);
         return bytecodeOffset(instruction);
@@ -2753,7 +2753,7 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         CallReturnOffsetToBytecodeOffset* result =
             binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
                 callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
-        ASSERT(result->callReturnOffset == callReturnOffset);
+        RELEASE_ASSERT(result->callReturnOffset == callReturnOffset);
         return result->bytecodeOffset;
     }
 

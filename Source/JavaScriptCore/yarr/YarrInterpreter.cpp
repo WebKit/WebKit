@@ -83,8 +83,8 @@ public:
 
     static inline void popParenthesesDisjunctionContext(BackTrackInfoParentheses* backTrack)
     {
-        ASSERT(backTrack->matchAmount);
-        ASSERT(backTrack->lastContext);
+        RELEASE_ASSERT(backTrack->matchAmount);
+        RELEASE_ASSERT(backTrack->lastContext);
         backTrack->lastContext = backTrack->lastContext->next;
         --backTrack->matchAmount;
     }

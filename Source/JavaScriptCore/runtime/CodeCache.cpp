@@ -160,7 +160,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlo
     ASSERT(exprStatement->isExprStatement());
     ExpressionNode* funcExpr = static_cast<ExprStatementNode*>(exprStatement)->expr();
     ASSERT(funcExpr);
-    ASSERT(funcExpr->isFuncExprNode());
+    RELEASE_ASSERT(funcExpr->isFuncExprNode());
     FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
     ASSERT(body);
     ASSERT(body->ident().isNull());

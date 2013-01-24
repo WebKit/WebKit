@@ -57,7 +57,7 @@ public:
     
     void setVectorLength(uint32_t length)
     {
-        ASSERT(length <= maximumLength);
+        RELEASE_ASSERT(length <= maximumLength);
         m_vectorLength = length;
     }
     

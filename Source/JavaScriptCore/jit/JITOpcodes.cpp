@@ -81,7 +81,7 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
 
 void JIT::emit_op_end(Instruction* currentInstruction)
 {
-    ASSERT(returnValueRegister != callFrameRegister);
+    RELEASE_ASSERT(returnValueRegister != callFrameRegister);
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
     restoreReturnAddressBeforeReturn(Address(callFrameRegister, JSStack::ReturnPC * static_cast<int>(sizeof(Register))));
     ret();
@@ -1306,7 +1306,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
             emitStoreCell(*baseVR, value);
             return;
         case ResolveOperation::SetBaseToGlobal:
-            ASSERT(baseVR);
+            RELEASE_ASSERT(baseVR);
             setBase = true;
             move(TrustedImmPtr(globalObject), scratch);
             emitStoreCell(*baseVR, scratch);
@@ -1314,7 +1314,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
             ++pc;
             break;
         case ResolveOperation::SetBaseToUndefined: {
-            ASSERT(baseVR);
+            RELEASE_ASSERT(baseVR);
             setBase = true;
 #if USE(JSVALUE64)
             move(TrustedImm64(JSValue::encode(jsUndefined())), scratch);
@@ -1327,7 +1327,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
             break;
         }
         case ResolveOperation::SetBaseToScope:
-            ASSERT(baseVR);
+            RELEASE_ASSERT(baseVR);
             setBase = true;
             emitStoreCell(*baseVR, scope);
             resolvingBase = false;
@@ -1335,7 +1335,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
             break;
         case ResolveOperation::ReturnScopeAsBase:
             emitStoreCell(*baseVR, scope);
-            ASSERT(value == regT0);
+            RELEASE_ASSERT(value == regT0);
             move(scope, value);
 #if USE(JSVALUE32_64)
             move(TrustedImm32(JSValue::CellTag), valueTag);
@@ -1385,7 +1385,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
     if (baseVR && !setBase)
         emitStoreCell(*baseVR, scope);
 
-    ASSERT(valueVR);
+    RELEASE_ASSERT(valueVR);
     ResolveOperation* resolveValueOperation = pc;
     switch (resolveValueOperation->m_operation) {
     case ResolveOperation::GetAndReturnGlobalProperty: {

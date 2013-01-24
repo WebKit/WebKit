@@ -38,7 +38,7 @@ JITStubRoutine::~JITStubRoutine() { }
 
 void JITStubRoutine::observeZeroRefCount()
 {
-    ASSERT(!m_refCount);
+    RELEASE_ASSERT(!m_refCount);
     delete this;
 }
 

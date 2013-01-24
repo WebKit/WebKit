@@ -469,7 +469,7 @@ JSValue JSArray::pop(ExecState* exec)
         if (!length--)
             return jsUndefined();
         
-        ASSERT(length < m_butterfly->vectorLength());
+        RELEASE_ASSERT(length < m_butterfly->vectorLength());
         JSValue value = m_butterfly->contiguous()[length].get();
         if (value) {
             m_butterfly->contiguous()[length].clear();
@@ -485,7 +485,7 @@ JSValue JSArray::pop(ExecState* exec)
         if (!length--)
             return jsUndefined();
         
-        ASSERT(length < m_butterfly->vectorLength());
+        RELEASE_ASSERT(length < m_butterfly->vectorLength());
         double value = m_butterfly->contiguousDouble()[length];
         if (value == value) {
             m_butterfly->contiguousDouble()[length] = QNaN;
@@ -513,7 +513,7 @@ JSValue JSArray::pop(ExecState* exec)
                 JSValue element = valueSlot.get();
                 valueSlot.clear();
             
-                ASSERT(isLengthWritable());
+                RELEASE_ASSERT(isLengthWritable());
                 storage->setLength(index);
                 return element;
             }
@@ -681,7 +681,7 @@ void JSArray::push(ExecState* exec, JSValue value)
 bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, ArrayStorage* storage)
 {
     unsigned oldLength = storage->length();
-    ASSERT(count <= oldLength);
+    RELEASE_ASSERT(count <= oldLength);
     
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
@@ -736,7 +736,7 @@ bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, Ar
 
 bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex, unsigned count)
 {
-    ASSERT(count > 0);
+    RELEASE_ASSERT(count > 0);
     
     switch (structure()->indexingType()) {
     case ArrayClass:
@@ -749,7 +749,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
     case ArrayWithInt32:
     case ArrayWithContiguous: {
         unsigned oldLength = m_butterfly->publicLength();
-        ASSERT(count <= oldLength);
+        RELEASE_ASSERT(count <= oldLength);
         
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
@@ -784,7 +784,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         
     case ArrayWithDouble: {
         unsigned oldLength = m_butterfly->publicLength();
-        ASSERT(count <= oldLength);
+        RELEASE_ASSERT(count <= oldLength);
         
         // We may have to walk the entire array to do the shift. We're willing to do
         // so only if it's not horribly slow.
@@ -832,7 +832,7 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
 {
     unsigned length = storage->length();
 
-    ASSERT(startIndex <= length);
+    RELEASE_ASSERT(startIndex <= length);
 
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.

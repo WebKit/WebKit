@@ -53,7 +53,7 @@ Vector<CodeOrigin> CodeOrigin::inlineStack() const
     unsigned index = result.size() - 2;
     for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
         result[index--] = current->caller;
-    ASSERT(!result[0].inlineCallFrame);
+    RELEASE_ASSERT(!result[0].inlineCallFrame);
     return result;
 }
 

@@ -181,7 +181,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         }
     }
     while (true) {
-        ASSERT(callFrame);
+        RELEASE_ASSERT(callFrame);
         int signedLineNumber;
         intptr_t sourceID;
         String urlString;

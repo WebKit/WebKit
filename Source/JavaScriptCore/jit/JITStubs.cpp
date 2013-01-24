@@ -1036,7 +1036,7 @@ struct StackHack {
 // handling code out of line as possible.
 static NEVER_INLINE void returnToThrowTrampoline(JSGlobalData* globalData, ReturnAddressPtr exceptionLocation, ReturnAddressPtr& returnAddressSlot)
 {
-    ASSERT(globalData->exception);
+    RELEASE_ASSERT(globalData->exception);
     globalData->exceptionLocation = exceptionLocation;
     returnAddressSlot = ReturnAddressPtr(FunctionPtr(ctiVMThrowTrampoline));
 }

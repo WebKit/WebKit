@@ -144,7 +144,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const SourceCod
     : ScriptExecutable(globalData.functionExecutableStructure.get(), globalData, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(globalData, this, unlinkedExecutable)
 {
-    ASSERT(!source.isNull());
+    RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());
     m_firstLine = firstLine;
     m_lastLine = lastLine;
@@ -262,7 +262,7 @@ void EvalExecutable::unlinkCalls()
 #if ENABLE(JIT)
     if (!m_jitCodeForCall)
         return;
-    ASSERT(m_evalCodeBlock);
+    RELEASE_ASSERT(m_evalCodeBlock);
     m_evalCodeBlock->unlinkCalls();
 #endif
 }
@@ -288,7 +288,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 
 JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    ASSERT(exec->globalData().dynamicGlobalObject);
+    RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
     if (m_programCodeBlock->getJITType() != JITCode::topTierJIT())
@@ -351,7 +351,7 @@ void ProgramExecutable::unlinkCalls()
 #if ENABLE(JIT)
     if (!m_jitCodeForCall)
         return;
-    ASSERT(m_programCodeBlock);
+    RELEASE_ASSERT(m_programCodeBlock);
     m_programCodeBlock->unlinkCalls();
 #endif
 }
@@ -375,9 +375,9 @@ int ProgramExecutable::addGlobalVar(JSGlobalObject* globalObject, const Identifi
 
 JSObject* ProgramExecutable::initializeGlobalProperties(JSGlobalData& globalData, CallFrame* callFrame, JSScope* scope)
 {
-    ASSERT(scope);
+    RELEASE_ASSERT(scope);
     JSGlobalObject* globalObject = scope->globalObject();
-    ASSERT(globalObject);
+    RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->globalData() == &globalData);
 
     JSObject* exception = 0;
@@ -442,21 +442,21 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     if (kind == CodeForCall)
         result = m_codeBlockForCall.get();
     else {
-        ASSERT(kind == CodeForConstruct);
+        RELEASE_ASSERT(kind == CodeForConstruct);
         result = m_codeBlockForConstruct.get();
     }
     if (!result)
         return 0;
     while (result->alternative())
         result = static_cast<FunctionCodeBlock*>(result->alternative());
-    ASSERT(result);
+    RELEASE_ASSERT(result);
     ASSERT(JITCode::isBaselineCode(result->getJITType()));
     return result;
 }
 
 JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    ASSERT(exec->globalData().dynamicGlobalObject);
+    RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
     if (m_codeBlockForCall->getJITType() != JITCode::topTierJIT())
@@ -467,7 +467,7 @@ JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* 
 
 JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    ASSERT(exec->globalData().dynamicGlobalObject);
+    RELEASE_ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
     if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
@@ -532,7 +532,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
     m_codeBlockForCall = newCodeBlock.release();
     
     m_numParametersForCall = m_codeBlockForCall->numParameters();
-    ASSERT(m_numParametersForCall);
+    RELEASE_ASSERT(m_numParametersForCall);
 
 #if ENABLE(JIT)
     if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, jitType, bytecodeIndex, CodeForCall))
@@ -568,7 +568,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
     m_codeBlockForConstruct = newCodeBlock.release();
     
     m_numParametersForConstruct = m_codeBlockForConstruct->numParameters();
-    ASSERT(m_numParametersForConstruct);
+    RELEASE_ASSERT(m_numParametersForConstruct);
 
 #if ENABLE(JIT)
     if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, jitType, bytecodeIndex, CodeForConstruct))
@@ -639,11 +639,11 @@ void FunctionExecutable::unlinkCalls()
 {
 #if ENABLE(JIT)
     if (!!m_jitCodeForCall) {
-        ASSERT(m_codeBlockForCall);
+        RELEASE_ASSERT(m_codeBlockForCall);
         m_codeBlockForCall->unlinkCalls();
     }
     if (!!m_jitCodeForConstruct) {
-        ASSERT(m_codeBlockForConstruct);
+        RELEASE_ASSERT(m_codeBlockForConstruct);
         m_codeBlockForConstruct->unlinkCalls();
     }
 #endif
@@ -679,7 +679,7 @@ CodeBlockHash NativeExecutable::hashFor(CodeSpecializationKind kind) const
     if (kind == CodeForCall)
         return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_function)));
     
-    ASSERT(kind == CodeForConstruct);
+    RELEASE_ASSERT(kind == CodeForConstruct);
     return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_constructor)));
 }
 

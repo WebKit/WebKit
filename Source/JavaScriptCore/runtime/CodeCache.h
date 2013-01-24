@@ -80,7 +80,7 @@ public:
         m_map.add(key, newIndex);
         m_data[newIndex].first = key;
         m_data[newIndex].second = value;
-        ASSERT(m_map.size() <= CacheSize);
+        RELEASE_ASSERT(m_map.size() <= CacheSize);
     }
 
     void clear()

@@ -39,7 +39,7 @@ namespace JSC {
 bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
-    ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     JSObject* error = program->checkSyntax(exec);
@@ -82,7 +82,7 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, J
         return jsUndefined();
     }
 
-    ASSERT(result);
+    RELEASE_ASSERT(result);
     return result;
 }
 

@@ -65,7 +65,7 @@ static inline ValueSourceKind dataFormatToValueSourceKind(DataFormat dataFormat)
     case DataFormatArguments:
         return ArgumentsSource;
     default:
-        ASSERT(dataFormat & DataFormatJS);
+        RELEASE_ASSERT(dataFormat & DataFormatJS);
         return ValueInJSStack;
     }
 }
@@ -122,7 +122,7 @@ public:
     explicit ValueSource(NodeIndex nodeIndex)
         : m_nodeIndex(nodeIndex)
     {
-        ASSERT(nodeIndex != NoNode);
+        RELEASE_ASSERT(nodeIndex != NoNode);
         ASSERT(kind() == HaveNode);
     }
     
