@@ -68,7 +68,7 @@ var Preferences = {
 };
 
 var ProfilerAgent = {
-    getProfile: function(uid, callback) {
+    getProfile: function(typeId, uid, callback) {
         this._callback = callback;
     },
 

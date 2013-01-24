@@ -1,5 +1,12 @@
 2013-01-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The previous patch wasn't complete. Finish reverting r139998 for real.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
+        (ProfilerAgent.getProfile):
+
+2013-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert r139998 for now since the Leaks Viewer pulls in a specific version of Inspector code.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/WebInspectorShims.js:
