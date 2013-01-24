@@ -340,11 +340,6 @@ public:
         m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
     }
     
-    // Helper methods to get predictions
-    SpeculatedType getSpeculation(Node& node) { return node.prediction(); }
-    SpeculatedType getSpeculation(NodeIndex nodeIndex) { return getSpeculation(graph()[nodeIndex]); }
-    SpeculatedType getSpeculation(Edge nodeUse) { return getSpeculation(nodeUse.index()); }
-
     void appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
     {
         OSRExitCompilationInfo info;

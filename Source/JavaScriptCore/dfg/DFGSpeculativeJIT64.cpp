@@ -1934,7 +1934,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
         return;
     }
     
-    SpeculatedType prediction = m_jit.getSpeculation(node.child1());
+    SpeculatedType prediction = at(node.child1()).prediction();
     if (isBooleanSpeculation(prediction)) {
         if (isBooleanSpeculation(m_state.forNode(node.child1()).m_type)) {
             SpeculateBooleanOperand value(this, node.child1());
@@ -2066,7 +2066,7 @@ void SpeculativeJIT::emitBranch(Node& node)
         JSValueOperand value(this, node.child1());
         GPRReg valueGPR = value.gpr();
         
-        bool predictBoolean = isBooleanSpeculation(m_jit.getSpeculation(node.child1()));
+        bool predictBoolean = isBooleanSpeculation(at(node.child1()).prediction());
     
         if (predictBoolean) {
             if (isBooleanSpeculation(m_state.forNode(node.child1()).m_type)) {

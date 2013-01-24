@@ -1,3 +1,16 @@
+2013-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::JITCompiler::getSpeculation() methods are badly named and superfluous
+        https://bugs.webkit.org/show_bug.cgi?id=107860
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h
