@@ -67,10 +67,16 @@ class EntityResolver : public QXmlStreamEntityResolver {
     virtual QString resolveUndeclaredEntity(const QString &name);
 };
 
+static QString decodeNamedEntity(const QString& entityName)
+{
+    UChar utf16DecodedEntity[4];
+    size_t numberOfCodePoints = decodeNamedEntityToUCharArray(entityName.toUtf8().constData(), utf16DecodedEntity);
+    return QString::fromUTF16(utf16DecodedEntity, numberOfCodePoints);
+}
+
 QString EntityResolver::resolveUndeclaredEntity(const QString &name)
 {
-    UChar c = decodeNamedEntity(name.toUtf8().constData());
-    return QString(c);
+    return decodeNamedEntity(name);
 }
 
 // --------------------------------
@@ -394,13 +400,11 @@ void XMLDocumentParser::parse()
             //        <<", t = "<<m_stream.text().toString();
             if (isXHTMLDocument()) {
                 QString entity = m_stream.name().toString();
-                UChar c = decodeNamedEntity(entity.toUtf8().constData());
                 if (!m_leafTextNode)
                     enterText();
                 ExceptionCode ec = 0;
-                String str(&c, 1);
                 // qDebug()<<" ------- adding entity "<<str;
-                m_leafTextNode->appendData(str, ec);
+                m_leafTextNode->appendData(decodeNamedEntity(entity), ec);
             }
             break;
         }

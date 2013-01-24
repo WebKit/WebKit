@@ -266,3 +266,9 @@ decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
 9827	2663	clubs	♣	♣	♣
 9829	2665	hearts	♥	♥	♥
 9830	2666	diams	♦	♦	♦
+Multi-byte entities from HTML5
+
+decimal	hexadecimal	entity name	&#nnn;	&#xhhh;	&entity;
+8882	22B2	vltri	⊲	⊲	⊲
+8834 + 8402	2282 + 20D2	sub	⊂⃒	⊂⃒	⊂⃒
+8804 + 8402	2264 + 20D2	sub	≤⃒	≤⃒	≤⃒
