@@ -41,7 +41,6 @@
 #include "IDBObjectStore.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
-#include "IDBUpgradeNeededEvent.h"
 #include "IDBVersionChangeEvent.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
@@ -304,10 +303,10 @@ void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
     if (m_closePending)
         return;
 
-    enqueueEvent(IDBUpgradeNeededEvent::create(oldVersion, newVersion, eventNames().versionchangeEvent));
+    enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), IDBAny::create(newVersion), eventNames().versionchangeEvent));
 }
 
-void IDBDatabase::onVersionChange(const String& version)
+void IDBDatabase::onVersionChange(const String& newVersion)
 {
     if (m_contextStopped || !scriptExecutionContext())
         return;
@@ -315,7 +314,8 @@ void IDBDatabase::onVersionChange(const String& version)
     if (m_closePending)
         return;
 
-    enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
+    RefPtr<IDBAny> newVersionAny = newVersion.isEmpty() ? IDBAny::createNull() : IDBAny::createString(newVersion);
+    enqueueEvent(IDBVersionChangeEvent::create(version(), newVersionAny.release(), eventNames().versionchangeEvent));
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)

@@ -55,7 +55,6 @@ function openSuccess(evt)
 function versionChangeCallback(evt)
 {
     preamble(evt);
-    debug("FIXME: These shouldn't be undefined. http://crbug.com/153122");
     shouldBe("event.oldVersion", "1");
     shouldBeNull("event.newVersion");
     evalAndLog("sawVersionChange = true");

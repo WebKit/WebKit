@@ -26,7 +26,7 @@ function firstSuccessCallback(evt)
 {
     event = evt;
     debug("");
-    debug("firstSuccessCallback():")
+    debug("firstSuccessCallback():");
     evalAndLog("connection1 = event.target.result");
     evalAndLog("connection1.onversionchange = connection1VersionChangeCallback");
     evalAndLog("request = indexedDB.open(dbname)");
@@ -56,7 +56,8 @@ function connection1VersionChangeCallback(evt)
 {
     preamble(evt);
     shouldBeEqualToString("event.type", "versionchange");
-    debug("event.version = " + event.version);
+    shouldBe("event.oldVersion", "1");
+    shouldBeNull("event.newVersion");
 }
 
 function connection2VersionChangeCallback(evt)

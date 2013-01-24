@@ -27,5 +27,6 @@
     Conditional=INDEXED_DATABASE,
     JSNoStaticTables
 ] interface IDBVersionChangeEvent : Event {
-    readonly attribute DOMString version;
+    readonly attribute IDBAny oldVersion;
+    readonly attribute IDBAny newVersion;
 };

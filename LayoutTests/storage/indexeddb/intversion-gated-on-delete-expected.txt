@@ -30,7 +30,8 @@ db.onversionchange = connection2VersionChangeCallback
 
 connection1VersionChangeCallback():
 PASS event.type is "versionchange"
-event.version = 
+PASS event.oldVersion is 1
+PASS event.newVersion is null
 
 connection2VersionChangeCallback():
 PASS event.type is "versionchange"
