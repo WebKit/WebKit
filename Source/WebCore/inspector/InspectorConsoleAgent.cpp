@@ -268,7 +268,7 @@ void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier,
         return;
     if (m_frontend && m_state->getBoolean(ConsoleAgentState::monitoringXHR)) {
         String message = "XHR finished loading: \"" + url + "\".";
-        addMessageToConsole(NetworkMessageSource, LogMessageType, LogMessageLevel, message, sendURL, sendLineNumber, 0, requestIdentifier);
+        addMessageToConsole(NetworkMessageSource, LogMessageType, DebugMessageLevel, message, sendURL, sendLineNumber, 0, requestIdentifier);
     }
 
 
