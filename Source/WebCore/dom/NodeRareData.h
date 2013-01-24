@@ -333,7 +333,7 @@ public:
         m_connectedFrameCount -= amount;
     }
 
-    // This member function is intentionially not virtual to avoid adding a vtable pointer.
+    // This member function is intentionally not virtual to avoid adding a vtable pointer.
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
