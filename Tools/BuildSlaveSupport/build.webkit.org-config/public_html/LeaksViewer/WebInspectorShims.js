@@ -68,11 +68,8 @@ var Preferences = {
 };
 
 var ProfilerAgent = {
-    getCPUProfile: function(uid, callback) {
+    getProfile: function(uid, callback) {
         this._callback = callback;
-    },
-
-    getHeapSnapshot: function(uid, callback) {
     },
 
     profileReady: function(head) {
