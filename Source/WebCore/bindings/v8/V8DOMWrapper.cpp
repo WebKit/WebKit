@@ -123,8 +123,8 @@ bool V8DOMWrapper::isDOMWrapper(v8::Handle<v8::Value> value)
     v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(value);
     if (wrapper->InternalFieldCount() < v8DefaultWrapperInternalFieldCount)
         return false;
-    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
-    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
+    ASSERT(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
+    ASSERT(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
 
     // FIXME: Add class id checks.
     return true;
