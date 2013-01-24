@@ -192,7 +192,7 @@ bool HTMLContentElement::validateSelect() const
     if (select().isNull() || select().isEmpty())
         return true;
 
-    if (!m_selectorList.first())
+    if (!m_selectorList.isValid())
         return false;
 
     for (const CSSSelector* selector = m_selectorList.first(); selector; selector = m_selectorList.next(selector)) {

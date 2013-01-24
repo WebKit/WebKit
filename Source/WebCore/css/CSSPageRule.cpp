@@ -73,7 +73,7 @@ void CSSPageRule::setSelectorText(const String& selectorText)
     CSSParser parser(parserContext());
     CSSSelectorList selectorList;
     parser.parseSelector(selectorText, selectorList);
-    if (!selectorList.first())
+    if (!selectorList.isValid())
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

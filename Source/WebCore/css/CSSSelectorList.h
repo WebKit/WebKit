@@ -43,7 +43,8 @@ public:
     void adopt(CSSSelectorList& list);
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
 
-    const CSSSelector* first() const { return m_selectorArray ? m_selectorArray : 0; }
+    bool isValid() const { return !!m_selectorArray; }
+    const CSSSelector* first() const { return m_selectorArray; }
     static const CSSSelector* next(const CSSSelector*);
     bool hasOneSelector() const { return m_selectorArray && !next(m_selectorArray); }
     const CSSSelector* selectorAt(size_t index) const { return &m_selectorArray[index]; }

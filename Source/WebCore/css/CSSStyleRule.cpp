@@ -96,7 +96,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     CSSParser p(parserContext());
     CSSSelectorList selectorList;
     p.parseSelector(selectorText, selectorList);
-    if (!selectorList.first())
+    if (!selectorList.isValid())
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

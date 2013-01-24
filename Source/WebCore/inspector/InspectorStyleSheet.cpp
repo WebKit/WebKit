@@ -831,7 +831,7 @@ static bool checkStyleRuleSelector(Document* document, const String& selector)
 {
     CSSSelectorList selectorList;
     createCSSParser(document)->parseSelector(selector, selectorList);
-    return selectorList.first();
+    return selectorList.isValid();
 }
 
 CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
