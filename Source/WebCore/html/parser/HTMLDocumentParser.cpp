@@ -121,6 +121,10 @@ HTMLDocumentParser::~HTMLDocumentParser()
 
 void HTMLDocumentParser::detach()
 {
+#if ENABLE(THREADED_HTML_PARSER)
+    if (m_haveBackgroundParser)
+        stopBackgroundParser();
+#endif
     DocumentParser::detach();
     if (m_scriptRunner)
         m_scriptRunner->detach();
