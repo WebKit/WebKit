@@ -88,10 +88,10 @@ AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     , m_ariaRole(UnknownRole)
     , m_childrenDirty(false)
     , m_roleForMSAA(UnknownRole)
-    , m_node(node)
 #ifndef NDEBUG
     , m_initialized(false)
 #endif
+    , m_node(node)
 {
 }
 
