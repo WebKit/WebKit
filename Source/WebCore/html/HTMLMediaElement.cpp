@@ -121,6 +121,10 @@
 #include "MediaSourceRegistry.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamRegistry.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1016,6 +1020,11 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 #endif
 
     LOG(Media, "HTMLMediaElement::loadResource - m_currentSrc -> %s", urlForLoggingMedia(m_currentSrc).utf8().data());
+
+#if ENABLE(MEDIA_STREAM)
+    if (MediaStreamRegistry::registry().lookupMediaStreamDescriptor(url.string()))
+        removeBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
+#endif
 
     if (m_sendProgressEvents) 
         startProgressEventTimer();

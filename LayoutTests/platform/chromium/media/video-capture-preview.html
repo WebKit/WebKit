@@ -10,6 +10,9 @@
 var previewURL = "";
 var localStream = null;
 
+if (window.internals) 
+    window.internals.settings.setMediaPlaybackRequiresUserGesture(true);
+
 function startPreview()
 {
     video.src = previewURL;
