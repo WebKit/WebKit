@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests that XPath expressions do not consider (traverse into) template content</p>
+
+<div id=test>
+    <span>A</span>
+    <span>B</span>
+    <template>
+        <span>C</span>
+        <span>D</span>
+    </template>
+</div>
+
+<div id="console"></div>
+<script>
+var test = document.getElementById('test');
+var result = document.evaluate('count(//span)', test, null, XPathResult.NUMBER_TYPE, null);
+shouldBe("document.evaluate('count(//span)', test, null, XPathResult.NUMBER_TYPE, null).numberValue", "2");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

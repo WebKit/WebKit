@@ -42,6 +42,7 @@
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "HTMLTemplateElement.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
@@ -789,7 +790,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     m_sawFirstElement = true;
 
     QualifiedName qName(prefix, localName, uri);
-    RefPtr<Element> newElement = document()->createElement(qName, true);
+    RefPtr<Element> newElement = m_currentNode->document()->createElement(qName, true);
     if (!newElement) {
         stopParsing();
         return;
@@ -819,7 +820,15 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     m_currentNode->parserAppendChild(newElement.get());
 
+#if ENABLE(TEMPLATE_ELEMENT)
+    if (newElement->hasTagName(HTMLNames::templateTag))
+        pushCurrentNode(toHTMLTemplateElement(newElement.get())->content());
+    else
+        pushCurrentNode(newElement.get());
+#else
     pushCurrentNode(newElement.get());
+#endif
+
     if (m_view && !newElement->attached())
         newElement->attach();
 
@@ -962,7 +971,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     // ### handle exceptions
     ExceptionCode ec = 0;
-    RefPtr<ProcessingInstruction> pi = document()->createProcessingInstruction(
+    RefPtr<ProcessingInstruction> pi = m_currentNode->document()->createProcessingInstruction(
         toString(target), toString(data), ec);
     if (ec)
         return;
@@ -996,7 +1005,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
     exitText();
 
-    RefPtr<CDATASection> newNode = CDATASection::create(document(), toString(s, len));
+    RefPtr<CDATASection> newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
     m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -1014,7 +1023,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
 
     exitText();
 
-    RefPtr<Comment> newNode = Comment::create(document(), toString(s));
+    RefPtr<Comment> newNode = Comment::create(m_currentNode->document(), toString(s));
     m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
