@@ -101,6 +101,9 @@ WebInspector.CompilerScriptMapping.prototype = {
             return;
         }
 
+        this._sourceMapForScriptId[script.scriptId] = sourceMap;
+        this._scriptForSourceMap.put(sourceMap, script);
+
         var sourceURLs = sourceMap.sources();
         for (var i = 0; i < sourceURLs.length; ++i) {
             var sourceURL = sourceURLs[i];
@@ -123,8 +126,6 @@ WebInspector.CompilerScriptMapping.prototype = {
                 uiSourceCode.isContentScript = script.isContentScript;
             }
         }
-        this._sourceMapForScriptId[script.scriptId] = sourceMap;
-        this._scriptForSourceMap.put(sourceMap, script);
         script.pushSourceMapping(this);
     },
 

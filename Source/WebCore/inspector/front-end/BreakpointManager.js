@@ -94,7 +94,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
         if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document) {
-            this._restoreBreakpoints(uiSourceCode);
+            uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.SourceMappingChanged, this._uiSourceCodeMappingChanged, this);
             uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._uiSourceCodeFormatted, this);
         }
     },
@@ -103,6 +103,15 @@ WebInspector.BreakpointManager.prototype = {
      * @param {WebInspector.Event} event
      */
     _uiSourceCodeFormatted: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
+        this._restoreBreakpoints(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeMappingChanged: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._restoreBreakpoints(uiSourceCode);
