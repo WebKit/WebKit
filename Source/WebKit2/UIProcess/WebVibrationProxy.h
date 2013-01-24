@@ -48,9 +48,6 @@ public:
 
     void initializeProvider(const WKVibrationProvider*);
 
-    // Implemented in generated WebVibrationProxyMessageReceiver.cpp
-    void didReceiveWebVibrationProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
 private:
     explicit WebVibrationProxy(WebPageProxy*);
 

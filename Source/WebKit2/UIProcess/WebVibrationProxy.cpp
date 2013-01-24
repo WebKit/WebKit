@@ -62,11 +62,6 @@ void WebVibrationProxy::initializeProvider(const WKVibrationProvider* provider)
     m_provider.initialize(provider);
 }
 
-void WebVibrationProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebVibrationProxyMessage(connection, messageID, decoder);
-}
-
 void WebVibrationProxy::vibrate(uint32_t vibrationTime)
 {
     m_provider.vibrate(this, vibrationTime);

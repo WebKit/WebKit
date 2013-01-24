@@ -69,16 +69,6 @@ void WebNetworkInfoManagerProxy::providerDidChangeNetworkInformation(const Atomi
     m_context->sendToAllProcesses(Messages::WebNetworkInfoManager::DidChangeNetworkInformation(eventType, networkInformation->data()));
 }
 
-void WebNetworkInfoManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebNetworkInfoManagerProxyMessage(connection, messageID, decoder);
-}
-
-void WebNetworkInfoManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
-{
-    didReceiveSyncWebNetworkInfoManagerProxyMessage(connection, messageID, decoder, replyEncoder);
-}
-
 void WebNetworkInfoManagerProxy::startUpdating()
 {
     if (m_isUpdating)

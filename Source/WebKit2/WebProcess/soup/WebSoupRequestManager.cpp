@@ -88,11 +88,6 @@ WebSoupRequestManager::~WebSoupRequestManager()
 {
 }
 
-void WebSoupRequestManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebSoupRequestManagerMessage(connection, messageID, decoder);
-}
-
 void WebSoupRequestManager::registerURIScheme(const String& scheme)
 {
     if (m_schemes->len)

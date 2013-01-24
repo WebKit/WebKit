@@ -50,11 +50,6 @@ WebBatteryManager::~WebBatteryManager()
 {
 }
 
-void WebBatteryManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebBatteryManagerMessage(connection, messageID, decoder);
-}
-
 void WebBatteryManager::registerWebPage(WebPage* page)
 {
     bool wasEmpty = m_pageSet.isEmpty();

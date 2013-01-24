@@ -55,9 +55,6 @@ private:
     // CoreIPC::MessageReceiver
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // Implemented in generated WebNetworkInfoManagerMessageReceiver.cpp
-    void didReceiveWebNetworkInfoManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     void didChangeNetworkInformation(const AtomicString& eventType, const WebNetworkInfo::Data&);
 
     WebProcess* m_process;

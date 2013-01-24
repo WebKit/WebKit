@@ -74,13 +74,6 @@ void WebSoupRequestManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-// CoreIPC::MessageReceiver
-
-void WebSoupRequestManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebSoupRequestManagerProxyMessage(connection, messageID, decoder);
-}
-
 void WebSoupRequestManagerProxy::registerURIScheme(const String& scheme)
 {
     if (!context())

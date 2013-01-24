@@ -67,7 +67,6 @@ private:
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebSoupRequestManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void didFailToLoadURIRequest(uint64_t requestID);
 

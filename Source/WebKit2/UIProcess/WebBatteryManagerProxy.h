@@ -61,9 +61,6 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // Implemented in generated WebBatteryManagerProxyMessageReceiver.cpp
-    void didReceiveWebBatteryManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     void startUpdating();
     void stopUpdating();
 

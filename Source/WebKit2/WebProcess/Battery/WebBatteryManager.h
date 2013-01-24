@@ -57,9 +57,6 @@ private:
     // CoreIPC::MessageReceiver
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // Implemented in generated WebBatteryManagerMessageReceiver.cpp
-    void didReceiveWebBatteryManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;
 };
