@@ -149,7 +149,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
     if (renderLayer->reflectionLayer())
         childrenArray->addItem(buildObjectForLayer(renderLayer->reflectionLayer()));
 
-    if (renderLayer->isStackingContext()) {
+    if (renderLayer->isStackingContainer()) {
         if (Vector<RenderLayer*>* negZOrderList = renderLayer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
@@ -163,7 +163,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
             childrenArray->addItem(buildObjectForLayer(normalFlowList->at(i)));
     }
     
-    if (renderLayer->isStackingContext()) {
+    if (renderLayer->isStackingContainer()) {
         if (Vector<RenderLayer*>* posZOrderList = renderLayer->posZOrderList()) {
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)

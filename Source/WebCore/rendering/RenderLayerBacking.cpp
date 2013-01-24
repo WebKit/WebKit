@@ -565,7 +565,7 @@ static IntRect clipBox(RenderBox* renderer)
 void RenderLayerBacking::updateGraphicsLayerGeometry()
 {
     // If we haven't built z-order lists yet, wait until later.
-    if (m_owningLayer->isStackingContext() && m_owningLayer->m_zOrderListsDirty)
+    if (m_owningLayer->isStackingContainer() && m_owningLayer->m_zOrderListsDirty)
         return;
 
     // Set transform property, if it is not animating. We have to do this here because the transform
@@ -1265,7 +1265,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
     for (RenderLayer* curr = m_owningLayer->parent(); curr; curr = curr->parent()) {
         // We only care about parents that are stacking contexts.
         // Recall that opacity creates stacking context.
-        if (!curr->isStackingContext())
+        if (!curr->isStackingContainer())
             continue;
         
         // If we found a compositing layer, we want to compute opacity
@@ -1475,7 +1475,7 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
         }
     }
 
-    if (m_owningLayer->isStackingContext()) {
+    if (m_owningLayer->isStackingContainer()) {
         if (!m_owningLayer->hasVisibleDescendant())
             return false;
 

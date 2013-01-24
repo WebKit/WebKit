@@ -1,3 +1,32 @@
+2013-01-23  Ian Vollick  <vollick@chromium.org>
+
+        Introduce the "stacking container" concept.
+        https://bugs.webkit.org/show_bug.cgi?id=107734
+
+        Reviewed by Simon Fraser.
+
+        A stacking container is treated just like a stacking context. That
+        is, it has z-order lists, it and its descendants are stacked as a
+        unit, and when the RenderLayerCompositor does its overlap testing,
+        the composited regions for all layer lists take effect only once the
+        stacking container is done being processed.
+
+        This patch also adds the function RenderLayer::isStackingContainer().
+        Currently, this is equivalent to RenderLayer::isStackingContext(),
+        but in future, the definition of stacking container will be broadened
+        to encompass more than just stacking contexts.
+
+        Other than the addition of this extra function, the patch is mostly
+        comprised of name changes. Any code that used to refer to the
+        stacking context concept, but didn't necessarily require a stacking
+        context in the strict, CSS-sense, was switched to refer to stacking
+        container. No functionality was changed.
+
+        No new tests, no change in functionality.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::updateOffsetFromViewportForSelf):
+
 2013-01-23  Anders Carlsson  <andersca@apple.com>
 
         Move Move WebKeyValueStorageManager to WebProcess/Storage.

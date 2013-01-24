@@ -480,7 +480,7 @@ static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
     if (!renderLayer->renderer()->container()->isRenderView())
         return;
 
-    if (!renderLayer->isStackingContext())
+    if (!renderLayer->isStackingContainer())
         return;
 
     CoordinatedGraphicsLayer* graphicsLayer = toCoordinatedGraphicsLayer(backing->graphicsLayer());
