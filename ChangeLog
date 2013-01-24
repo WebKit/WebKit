@@ -1,3 +1,17 @@
+2013-01-24  Soo-Hyun Choi  <s.choi@hackerslab.eu>
+
+        [CMake] Remove the definition of WTF_PLATFORM_WIN from the build system
+        https://bugs.webkit.org/show_bug.cgi?id=101635
+
+        Reviewed by Laszlo Gombos.
+
+        WTF_PLATFORM_WIN defined twice: Source/cmake/OptionsWindows.cmake and in
+        Source/WTF/wtf/Platform.h.
+        It would be more future-proof to have it only defined in common C++ code in
+        Platform.h.
+
+        * Source/cmake/OptionsWindows.cmake:
+
 2013-01-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed.

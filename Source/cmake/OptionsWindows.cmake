@@ -1,6 +1,3 @@
-add_definitions(-DWTF_PLATFORM_WIN=1)
-set(WTF_PLATFORM_WIN 1)
-
 add_definitions(-D_HAS_EXCEPTIONS=0 -DNOMINMAX -DUNICODE)
 
 include_directories(${JAVASCRIPTCORE_DIR}/os-win32)
