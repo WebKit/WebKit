@@ -1,3 +1,20 @@
+2013-01-24  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] It can't Select texts in main frame when the current focus is in a IFrame
+        https://bugs.webkit.org/show_bug.cgi?id=107773
+
+        Reviewed by Antonio Gomes.
+
+        PR285211 Internally reviewed by Genevieve Mak
+
+        When touch hold in the unfocused frame, it doesn't switch frame focus. Many
+        places in code depends on the webpage->forcusOrMainFrame(), including the
+        SelectionHandler, so it can't select in an unfocused frame. This patch switchs
+        frame focus when touch starts.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::doFatFingers):
+
 2013-01-23  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Take a better guess as to what text the user wants learned

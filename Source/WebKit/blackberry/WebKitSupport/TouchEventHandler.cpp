@@ -73,6 +73,13 @@ void TouchEventHandler::doFatFingers(const Platform::TouchPoint& point)
     m_webPage->postponeDocumentStyleRecalc();
     m_lastFatFingersResult = FatFingers(m_webPage, point.documentContentPosition(), FatFingers::ClickableElement).findBestPoint();
     m_webPage->resumeDocumentStyleRecalc();
+
+    Node* nodeUnderFatFinger = m_lastFatFingersResult.node();
+    if (nodeUnderFatFinger && nodeUnderFatFinger->document()->frame() != m_webPage->focusedOrMainFrame()) {
+        m_webPage->clearFocusNode();
+        m_webPage->m_selectionHandler->cancelSelection();
+        m_webPage->m_page->focusController()->setFocusedFrame(nodeUnderFatFinger->document()->frame());
+    }
 }
 
 void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
