@@ -894,6 +894,10 @@ WebInspector.TextEditorChunkedPanel.prototype = {
      */
     findVisibleChunks: function(visibleFrom, visibleTo)
     {
+        var span = (visibleTo - visibleFrom) * 0.5;
+        visibleFrom = Math.max(visibleFrom - span, 0);
+        visibleTo = visibleTo + span;
+
         var from = this._findFirstVisibleChunkNumber(visibleFrom);
         for (var to = from + 1; to < this._textChunks.length; ++to) {
             if (this._textChunks[to].offsetTop >= visibleTo)

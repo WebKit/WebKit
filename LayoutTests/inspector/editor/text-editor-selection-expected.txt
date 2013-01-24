@@ -2,7 +2,7 @@ This test checks the text editor selection calculation.
 
 Chunk model
 Chunk [0] 0:9 (expanded)
-Chunk [1] 9:18 (collapsed)
+Chunk [1] 9:18 (expanded)
 Chunk [2] 18:27 (collapsed)
 Chunk [3] 27:34 (collapsed)
 
