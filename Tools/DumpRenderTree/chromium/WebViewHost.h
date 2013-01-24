@@ -86,7 +86,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     WebTestRunner::WebTestProxyBase* proxy() const;
     void setProxy(WebTestRunner::WebTestProxyBase*);
     void reset();
-    void setLogConsoleOutput(bool);
     void waitForPolicyDelegate();
     void setCustomPolicyDelegate(bool, bool);
     WebKit::WebFrame* topLoadingFrame() { return m_topLoadingFrame; }
@@ -383,9 +382,6 @@ private:
 
     // true if we want to enable selection of trailing whitespaces
     bool m_selectTrailingWhitespaceEnabled;
-
-    // true if whatever is sent to the console should be logged to stdout.
-    bool m_logConsoleOutput;
 
     // Edit command associated to the current keyboard event.
     std::string m_editCommandName;

@@ -221,7 +221,7 @@ void TestShell::showDevTools()
         }
         m_devTools = createNewWindow(url, 0, m_devToolsTestInterfaces.get());
         m_devTools->webView()->settings()->setMemoryInfoEnabled(true);
-        m_devTools->setLogConsoleOutput(false);
+        m_devTools->proxy()->setLogConsoleOutput(false);
         m_devToolsTestInterfaces->setDelegate(m_devTools);
         m_devToolsTestInterfaces->setWebView(m_devTools->webView());
         ASSERT(m_devTools);

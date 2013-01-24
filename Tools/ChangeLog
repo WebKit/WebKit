@@ -1,3 +1,43 @@
+2013-01-24  Dan Carney  <dcarney@google.com>
+
+        [chromium] move most WebViewHost printf calls to WebTestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=107553
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::unableToImplementPolicyWithError):
+        (WebTestRunner::WebTestProxy::didAddMessageToConsole):
+        (WebTestRunner::WebTestProxy::runModalAlertDialog):
+        (WebTestRunner::WebTestProxy::runModalConfirmDialog):
+        (WebTestRunner::WebTestProxy::runModalPromptDialog):
+        (WebTestRunner::WebTestProxy::runModalBeforeUnloadDialog):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::reset):
+        (WebTestRunner::WebTestProxyBase::setLogConsoleOutput):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::unableToImplementPolicyWithError):
+        (WebTestRunner::WebTestProxyBase::didAddMessageToConsole):
+        (WebTestRunner::WebTestProxyBase::runModalAlertDialog):
+        (WebTestRunner::WebTestProxyBase::runModalConfirmDialog):
+        (WebTestRunner::WebTestProxyBase::runModalPromptDialog):
+        (WebTestRunner::WebTestProxyBase::runModalBeforeUnloadDialog):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::showDevTools):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didAddMessageToConsole):
+        (WebViewHost::runModalAlertDialog):
+        (WebViewHost::runModalConfirmDialog):
+        (WebViewHost::runModalPromptDialog):
+        (WebViewHost::runModalBeforeUnloadDialog):
+        (WebViewHost::unableToImplementPolicyWithError):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Give webkit_support a chance to reset state between layout test runs

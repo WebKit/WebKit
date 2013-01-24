@@ -36,6 +36,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebCachedURLRequest.h"
+#include "WebConsoleMessage.h"
 #include "WebElement.h"
 #include "WebEventSender.h"
 #include "WebFrame.h"
@@ -49,6 +50,7 @@
 #include "WebTestRunner.h"
 #include "WebView.h"
 #include <public/WebCString.h>
+#include <public/WebURLError.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
 #include <wtf/StringExtras.h>
@@ -186,6 +188,29 @@ void blockRequest(WebURLRequest& request)
     request.setURL(WebURL());
 }
 
+// Used to write a platform neutral file:/// URL by only taking the filename
+// (e.g., converts "file:///tmp/foo.txt" to just "foo.txt").
+string urlSuitableForTestResult(const string& url)
+{
+    if (url.empty() || string::npos == url.find("file://"))
+        return url;
+
+    size_t pos = url.rfind('/');
+    if (pos == string::npos) {
+#if OS(WINDOWS)
+        pos = url.rfind('\\');
+        if (pos == string::npos)
+            pos = 0;
+#else
+        pos = 0;
+#endif
+    }
+    string filename = url.substr(pos + 1);
+    if (filename.empty())
+        return "file:"; // A WebKit test has this in its expected output.
+    return filename;
+}
+
 }
 
 WebTestProxyBase::WebTestProxyBase()
@@ -193,6 +218,7 @@ WebTestProxyBase::WebTestProxyBase()
     , m_delegate(0)
     , m_spellcheck(new SpellCheckClient)
 {
+    reset();
 }
 
 WebTestProxyBase::~WebTestProxyBase()
@@ -215,6 +241,7 @@ void WebTestProxyBase::reset()
 {
     m_paintRect = WebRect();
     m_resourceIdentifierMap.clear();
+    m_logConsoleOutput = true;
 }
 
 WebSpellCheckClient* WebTestProxyBase::spellCheckClient() const
@@ -230,6 +257,11 @@ void WebTestProxyBase::setPaintRect(const WebRect& rect)
 WebRect WebTestProxyBase::paintRect() const
 {
     return m_paintRect;
+}
+
+void WebTestProxyBase::setLogConsoleOutput(bool enabled)
+{
+    m_logConsoleOutput = enabled;
 }
 
 void WebTestProxyBase::didInvalidateRect(const WebRect& rect)
@@ -789,6 +821,62 @@ void WebTestProxyBase::didFailResourceLoad(WebFrame*, unsigned identifier, const
         m_delegate->printMessage("\n");
     }
     m_resourceIdentifierMap.erase(identifier);
+}
+
+void WebTestProxyBase::unableToImplementPolicyWithError(WebKit::WebFrame* frame, const WebKit::WebURLError& error)
+{
+    char errorBuffer[40];
+    snprintf(errorBuffer, sizeof(errorBuffer), "%d", error.reason);
+    m_delegate->printMessage(string("Policy delegate: unable to implement policy with error domain '") + error.domain.utf8().data() +
+        "', error code " +  errorBuffer +
+        ", in frame '" + frame->uniqueName().utf8().data() + "'\n");
+}
+
+void WebTestProxyBase::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)
+{
+    // This matches win DumpRenderTree's UIDelegate.cpp.
+    if (!m_logConsoleOutput)
+        return;
+    m_delegate->printMessage(string("CONSOLE MESSAGE: "));
+    if (sourceLine) {
+        char buffer[40];
+        snprintf(buffer, sizeof(buffer), "line %d: ", sourceLine);
+        m_delegate->printMessage(buffer);
+    }
+    if (!message.text.isEmpty()) {
+        string newMessage;
+        newMessage = message.text.utf8();
+        size_t fileProtocol = newMessage.find("file://");
+        if (fileProtocol != string::npos) {
+            newMessage = newMessage.substr(0, fileProtocol)
+                + urlSuitableForTestResult(newMessage.substr(fileProtocol));
+        }
+        m_delegate->printMessage(newMessage);
+    }
+    m_delegate->printMessage(string("\n"));
+}
+
+void WebTestProxyBase::runModalAlertDialog(WebFrame*, const WebString& message)
+{
+    m_delegate->printMessage(string("ALERT: ") + message.utf8().data() + "\n");
+}
+
+bool WebTestProxyBase::runModalConfirmDialog(WebFrame*, const WebString& message)
+{
+    m_delegate->printMessage(string("CONFIRM: ") + message.utf8().data() + "\n");
+    return true;
+}
+
+bool WebTestProxyBase::runModalPromptDialog(WebFrame* frame, const WebString& message, const WebString& defaultValue, WebString*)
+{
+    m_delegate->printMessage(string("PROMPT: ") + message.utf8().data() + ", default text: " + defaultValue.utf8().data() + "\n");
+    return true;
+}
+
+bool WebTestProxyBase::runModalBeforeUnloadDialog(WebFrame*, const WebString& message)
+{
+    m_delegate->printMessage(string("CONFIRM NAVIGATION: ") + message.utf8().data() + "\n");
+    return true;
 }
 
 }
