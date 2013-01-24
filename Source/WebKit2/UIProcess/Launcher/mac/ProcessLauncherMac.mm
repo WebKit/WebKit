@@ -145,7 +145,7 @@ typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProce
 static void connectToWebProcessServiceForWebKitDevelopment(const ProcessLauncher::LaunchOptions&, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit2 XPC service.
-    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit2.WebProcessServiceForWebKitDevelopment", 0);
+    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit.WebContent.Development", 0);
     xpc_connection_set_instance(connection, instanceUUID->uuid);
 
     // XPC requires having an event handler, even if it is not used.
@@ -208,7 +208,7 @@ static void createWebProcessServiceForWebKitDevelopment(const ProcessLauncher::L
     // FIXME: This UUID should be stored on the WebProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
-    xpc_connection_t reExecConnection = xpc_connection_create("com.apple.WebKit2.WebProcessServiceForWebKitDevelopment", 0);
+    xpc_connection_t reExecConnection = xpc_connection_create("com.apple.WebKit.WebContent.Development", 0);
     xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);
 
     // Keep the ProcessLauncher alive while we do the re-execing (balanced in event handler).
@@ -261,7 +261,7 @@ static void createWebProcessService(const ProcessLauncher::LaunchOptions& launch
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
     // Create a connection to the WebKit2 XPC service.
-    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit2.WebProcessService", 0);
+    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit.WebContent", 0);
     xpc_connection_set_instance(connection, instanceUUID->uuid);
 
     // XPC requires having an event handler, even if it is not used.

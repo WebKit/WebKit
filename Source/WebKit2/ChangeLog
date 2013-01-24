@@ -1,3 +1,31 @@
+2013-01-23  Sam Weinig  <sam@webkit.org>
+
+        Cleanup the names of the WebKit2 xpc services
+        https://bugs.webkit.org/show_bug.cgi?id=107759
+
+        Reviewed by Anders Carlsson.
+
+        Renames:
+            com.apple.WebKit2.WebProcessService -> com.apple.WebKit.WebContent
+            com.apple.WebKit2.WebProcessServiceForWebKitDevelopment -> com.apple.WebKit.WebContent.Development
+
+        * Configurations/BaseXPCService.xcconfig: Copied from Source/WebKit2/Configurations/WebProcessService.xcconfig.
+        * Configurations/WebContentService.xcconfig: Copied from Source/WebKit2/Configurations/WebProcessService.xcconfig.
+        * Configurations/WebContentServiceForDevelopment.xcconfig: Copied from Source/WebKit2/Configurations/WebProcessServiceForWebKitDevelopment.xcconfig.
+        * Configurations/WebProcessService.xcconfig: Removed.
+        * Configurations/WebProcessServiceForWebKitDevelopment.xcconfig: Removed.
+        Rename config files to match new service names and add base config.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToWebProcessServiceForWebKitDevelopment):
+        (WebKit::createWebProcessServiceForWebKitDevelopment):
+        (WebKit::createWebProcessService):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Service: Removed.
+        * WebProcessService/Info.plist:
+        * WebProcessServiceForWebKitDevelopment/Info.plist:
+        Update for new names.
+
 2013-01-23  Seulgi Kim  <seulgikim@company100.net>
 
         Coordinated Graphics : Reduce the number of calls to Functional and number of IPC messages by sending the created/deleted layers in a vector.
