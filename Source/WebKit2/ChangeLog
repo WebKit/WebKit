@@ -1,3 +1,14 @@
+2013-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Add stubbed out StorageAreaProxy class
+        https://bugs.webkit.org/show_bug.cgi?id=107864
+
+        Reviewed by Beth Dakin.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/StorageAreaProxy.cpp: Added.
+        * WebProcess/Storage/StorageAreaProxy.h: Added.
+
 2013-01-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial buildfix after r140711.
