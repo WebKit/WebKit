@@ -870,6 +870,8 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
 #if ENABLE(VIDEO_TRACK)
         case CSSSelector::PseudoFutureCue:
             return (element->isWebVTTElement() && toWebVTTElement(element)->webVTTNodeType() == WebVTTNodeTypeFuture);
+        case CSSSelector::PseudoPastCue:
+            return (element->isWebVTTElement() && toWebVTTElement(element)->webVTTNodeType() == WebVTTNodeTypePast);
 #endif
 
         case CSSSelector::PseudoHorizontal:

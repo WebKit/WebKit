@@ -238,6 +238,7 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
 #if ENABLE(VIDEO_TRACK)
     case PseudoCue:
     case PseudoFutureCue:
+    case PseudoPastCue:
 #endif
 #if ENABLE(IFRAME_SEAMLESS)
     case PseudoSeamlessDocument:
@@ -327,6 +328,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(VIDEO_TRACK)
     DEFINE_STATIC_LOCAL(AtomicString, cue, ("cue(", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, futureCue, ("future", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, pastCue, ("past", AtomicString::ConstructFromLiteral));
 #endif
 #if ENABLE(IFRAME_SEAMLESS)
     DEFINE_STATIC_LOCAL(AtomicString, seamlessDocument, ("-webkit-seamless-document", AtomicString::ConstructFromLiteral));
@@ -409,6 +411,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(VIDEO_TRACK)
         nameToPseudoType->set(cue.impl(), CSSSelector::PseudoCue);
         nameToPseudoType->set(futureCue.impl(), CSSSelector::PseudoFutureCue);
+        nameToPseudoType->set(pastCue.impl(), CSSSelector::PseudoPastCue);
 #endif
 #if ENABLE(IFRAME_SEAMLESS)
         nameToPseudoType->set(seamlessDocument.impl(), CSSSelector::PseudoSeamlessDocument);
@@ -539,6 +542,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoOutOfRange:
 #if ENABLE(VIDEO_TRACK)
     case PseudoFutureCue:
+    case PseudoPastCue:
 #endif
         break;
     case PseudoFirstPage:

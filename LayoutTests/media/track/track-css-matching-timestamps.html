@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+        video::cue {color: green}
+        video::cue(:past) {color: lime}
+        video::cue(:future) {color: gray}
+        </style>
+
+        <script>
+
+        var cueNode;
+        var seekedCount = 0;
+        var seekTimes = [0.1, 0.3, 0.5, 0.7, 0.9];
+
+        var info = [["rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
+                    ["rgb(0, 255, 0)", "rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
+                    ["rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(128, 128, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
+                    ["rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(128, 128, 128)", "rgb(0, 255, 0)"],
+                    ["rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(0, 255, 0)", "rgb(0, 255, 0)"]];
+
+        function seeked()
+        {
+            if (testEnded)
+                return;
+
+            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][0]);
+            cueNode = cueNode.nextElementSibling;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][1]);
+            cueNode = cueNode.nextElementSibling.firstElementChild.firstChild;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][2]);
+            cueNode = cueNode.nextElementSibling;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][3]);
+            cueNode = cueNode.parentNode;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][4]);
+
+            if (++seekedCount == info.length)
+                endTest();
+            else {
+                consoleWrite("");
+                run("video.currentTime = " + seekTimes[seekedCount]);
+            }
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that cues are being matched properly by :past and :future pseudo classes.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = seekTimes[0]; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling-timestamps.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>
