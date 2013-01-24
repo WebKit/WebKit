@@ -1,3 +1,16 @@
+2013-01-24  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSSRegions] remove setExperimentalCSSRegionsEnabled deprecated API in Source/WebKit/chromium/public/WebSettings.h
+        https://bugs.webkit.org/show_bug.cgi?id=104564
+
+        Reviewed by Adam Barth.
+
+        Fixing bug 101192 has deprecated the use of setExperimentalCSSRegionsEnabled.
+        After http://code.google.com/p/chromium/issues/detail?id=164162 , setExperimentalCSSRegionsEnabled is no longer used anywhere.
+
+        * public/WebSettings.h:
+        removed setExperimentalCSSRegionsEnabled.
+
 2013-01-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r178434.  Requested by

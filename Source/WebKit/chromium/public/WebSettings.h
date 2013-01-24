@@ -176,9 +176,6 @@ public:
     // DEPRECATED (renamed. remove this after all call sites changed to the new name)
     void setApplyDefaultDeviceScaleFactorInCompositor(bool enabled) { setApplyDeviceScaleFactorInCompositor(enabled); }
 
-    // DEPRECATED
-    void setExperimentalCSSRegionsEnabled(bool) { }
-
 protected:
     ~WebSettings() { }
 };
