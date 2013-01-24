@@ -31,8 +31,8 @@
 #ifndef WebColorName_h
 #define WebColorName_h
 
-#include "platform/WebColor.h"
-#include "platform/WebCommon.h"
+#include "../../../Platform/chromium/public/WebColor.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
 
 namespace WebKit {
 

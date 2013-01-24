@@ -31,6 +31,9 @@
 #ifndef WebFrameClient_h
 #define WebFrameClient_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebFileSystem.h"
+#include "../../../Platform/chromium/public/WebURLError.h"
 #include "WebDOMMessageEvent.h"
 #include "WebIconURL.h"
 #include "WebNavigationPolicy.h"
@@ -38,9 +41,6 @@
 #include "WebSecurityOrigin.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
-#include "platform/WebCommon.h"
-#include "platform/WebFileSystem.h"
-#include "platform/WebURLError.h"
 
 #if WEBKIT_USING_V8
 #include <v8.h>

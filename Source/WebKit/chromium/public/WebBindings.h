@@ -31,9 +31,9 @@
 #ifndef WebBindings_h
 #define WebBindings_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include <bindings/npruntime.h>
 
 #if WEBKIT_USING_V8

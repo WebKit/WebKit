@@ -1,3 +1,17 @@
+2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove unused header files in chromium/public/platform/
+        https://bugs.webkit.org/show_bug.cgi?id=107741
+
+        Reviewed by James Robinson.
+
+        These header files have migrated to the new Platform directory.
+        This patch updates the remaining #include references and removes
+        the old files that did nothing but redirect to the new ones.
+
+        * DumpRenderTree/chromium/TestRunner/src/MockGrammarCheck.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.h:
+
 2013-01-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Bump webkitgtk-test-fonts dependency to cover fallbacks for Tamil, Bengali, and others

@@ -31,9 +31,9 @@
 #ifndef WebTextCheckingResult_h
 #define WebTextCheckingResult_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebTextCheckingType.h"
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
 
 namespace WebCore {
 struct TextCheckingResult;

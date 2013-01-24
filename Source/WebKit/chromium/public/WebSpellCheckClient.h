@@ -31,9 +31,9 @@
 #ifndef WebSpellCheckClient_h
 #define WebSpellCheckClient_h
 
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebTextCheckingType.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 
 namespace WebKit {
 

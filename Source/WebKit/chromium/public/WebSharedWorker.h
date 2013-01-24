@@ -31,8 +31,8 @@
 #ifndef WebSharedWorker_h
 #define WebSharedWorker_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
 #include "WebContentSecurityPolicy.h"
-#include "platform/WebCommon.h"
 
 namespace WebCore {
 class ScriptExecutionContext;

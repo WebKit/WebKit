@@ -31,8 +31,8 @@
 #ifndef WebFormElement_h
 #define WebFormElement_h
 
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebElement.h"
-#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLFormElement; }

@@ -31,11 +31,11 @@
 #ifndef WebPlugin_h
 #define WebPlugin_h
 
+#include "../../../Platform/chromium/public/WebCanvas.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 #include "WebDragOperation.h"
 #include "WebDragStatus.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 
 struct NPObject;
 

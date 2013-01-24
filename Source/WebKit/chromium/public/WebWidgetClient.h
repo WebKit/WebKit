@@ -31,10 +31,10 @@
 #ifndef WebWidgetClient_h
 #define WebWidgetClient_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebRect.h"
 #include "WebNavigationPolicy.h"
 #include "WebScreenInfo.h"
-#include "platform/WebCommon.h"
-#include "platform/WebRect.h"
 #include <public/WebLayerTreeView.h>
 
 namespace WebKit {

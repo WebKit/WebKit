@@ -31,9 +31,9 @@
 #ifndef WebIntentServiceInfo_h
 #define WebIntentServiceInfo_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 
 namespace WebKit {
 

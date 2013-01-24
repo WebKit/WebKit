@@ -31,9 +31,9 @@
 #ifndef WebFileSystemCallbacks_h
 #define WebFileSystemCallbacks_h
 
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebFileError.h"
 #include "WebFileSystemEntry.h"
-#include "platform/WebVector.h"
 
 namespace WebKit {
 

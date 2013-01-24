@@ -26,11 +26,11 @@
 #ifndef WebIDBDatabase_h
 #define WebIDBDatabase_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
 #include "WebDOMStringList.h"
 #include "WebExceptionCode.h"
 #include "WebIDBMetadata.h"
 #include "WebIDBTransaction.h"
-#include "platform/WebCommon.h"
 
 namespace WebKit {
 

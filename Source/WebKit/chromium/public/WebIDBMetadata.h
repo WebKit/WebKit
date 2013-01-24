@@ -26,10 +26,10 @@
 #ifndef WebIDBMetadata_h
 #define WebIDBMetadata_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebIDBKeyPath.h"
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 
 namespace WebCore {
 struct IDBDatabaseMetadata;

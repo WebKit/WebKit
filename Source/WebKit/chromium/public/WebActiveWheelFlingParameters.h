@@ -26,12 +26,11 @@
 #ifndef WebActiveWheelFlingParameters_h
 #define WebActiveWheelFlingParameters_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebFloatPoint.h"
+#include "../../../Platform/chromium/public/WebPoint.h"
+#include "../../../Platform/chromium/public/WebSize.h"
 #include "WebInputEvent.h"
-#include "platform/WebCommon.h"
-
-#include "platform/WebFloatPoint.h"
-#include "platform/WebPoint.h"
-#include "platform/WebSize.h"
 
 namespace WebKit {
 

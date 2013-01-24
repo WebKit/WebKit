@@ -31,9 +31,9 @@
 #ifndef WebSearchableFormData_h
 #define WebSearchableFormData_h
 
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 #include "WebInputElement.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 
 namespace WebKit {
 class WebFormElement;

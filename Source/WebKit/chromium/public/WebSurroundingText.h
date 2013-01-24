@@ -25,10 +25,10 @@
 #ifndef WebSurroundingText_h
 #define WebSurroundingText_h
 
+#include "../../../Platform/chromium/public/WebPrivateOwnPtr.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebNode.h"
 #include "WebRange.h"
-#include "platform/WebPrivateOwnPtr.h"
-#include "platform/WebString.h"
 
 namespace WebCore {
 class SurroundingText;

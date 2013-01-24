@@ -31,8 +31,8 @@
 #ifndef WebOptionElement_h
 #define WebOptionElement_h
 
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebElement.h"
-#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLOptionElement; }

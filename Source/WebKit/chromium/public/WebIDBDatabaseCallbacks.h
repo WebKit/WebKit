@@ -26,9 +26,9 @@
 #ifndef WebIDBDatabaseCallbacks_h
 #define WebIDBDatabaseCallbacks_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebIDBDatabaseError.h"
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
 
 namespace WebKit {
 

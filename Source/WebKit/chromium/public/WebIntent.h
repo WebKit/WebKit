@@ -31,12 +31,12 @@
 #ifndef WebIntent_h
 #define WebIntent_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebPrivatePtr.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebMessagePortChannel.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebVector.h"
 
 namespace WebCore { class Intent; }
 

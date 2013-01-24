@@ -26,8 +26,8 @@
 #ifndef WebDeviceOrientationClient_h
 #define WebDeviceOrientationClient_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
 #include "WebDeviceOrientation.h"
-#include "platform/WebCommon.h"
 
 namespace WebKit {
 

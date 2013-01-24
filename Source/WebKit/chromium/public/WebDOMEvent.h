@@ -31,9 +31,9 @@
 #ifndef WebDOMEvent_h
 #define WebDOMEvent_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebNode.h"
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
 
 namespace WebCore { class Event; }
 #if WEBKIT_IMPLEMENTATION

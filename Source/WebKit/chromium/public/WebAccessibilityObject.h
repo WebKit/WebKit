@@ -31,10 +31,10 @@
 #ifndef WebAccessibilityObject_h
 #define WebAccessibilityObject_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebPrivatePtr.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebAccessibilityRole.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WTF { template <typename T> class PassRefPtr; }

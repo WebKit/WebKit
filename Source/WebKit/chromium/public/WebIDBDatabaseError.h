@@ -29,9 +29,9 @@
 #ifndef WebIDBDatabaseError_h
 #define WebIDBDatabaseError_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebString.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebPrivatePtr.h"
+#include "../../../Platform/chromium/public/WebString.h"
 
 namespace WebCore { class IDBDatabaseError; }
 

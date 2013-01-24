@@ -26,11 +26,10 @@
 #ifndef WebDateTimeChooserParams_h
 #define WebDateTimeChooserParams_h
 
+#include "../../../Platform/chromium/public/WebRect.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebDateTimeInputType.h"
-
-#include "platform/WebRect.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 
 namespace WebKit {
 

@@ -31,10 +31,10 @@
 #ifndef WebCachedURLRequest_h
 #define WebCachedURLRequest_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebPrivateOwnPtr.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebElement.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivateOwnPtr.h"
-#include "platform/WebString.h"
 
 namespace WebCore { class CachedResourceRequest; }
 

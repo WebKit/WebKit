@@ -31,9 +31,9 @@
 #ifndef WebPasswordFormData_h
 #define WebPasswordFormData_h
 
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 #include "WebFormElement.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 
 namespace WebKit {
 

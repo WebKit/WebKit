@@ -31,8 +31,8 @@
 #ifndef WebPagePopup_h
 #define WebPagePopup_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
 #include "WebWidget.h"
-#include "platform/WebCommon.h"
 
 namespace WebKit {
 

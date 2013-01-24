@@ -31,8 +31,8 @@
 #include "config.h"
 #include "MockGrammarCheck.h"
 
+#include "Platform/chromium/public/WebString.h"
 #include "WebTextCheckingResult.h"
-#include "platform/WebString.h"
 
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>

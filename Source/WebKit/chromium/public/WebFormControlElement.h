@@ -31,9 +31,9 @@
 #ifndef WebFormControlElement_h
 #define WebFormControlElement_h
 
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebElement.h"
 #include "WebFormElement.h"
-#include "platform/WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLFormControlElement; }

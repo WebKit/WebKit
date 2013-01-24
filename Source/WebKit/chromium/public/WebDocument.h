@@ -31,11 +31,11 @@
 #ifndef WebDocument_h
 #define WebDocument_h
 
+#include "../../../Platform/chromium/public/WebReferrerPolicy.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebDraggableRegion.h"
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebReferrerPolicy.h"
-#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {

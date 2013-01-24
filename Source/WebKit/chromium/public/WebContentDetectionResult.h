@@ -26,9 +26,9 @@
 #ifndef WebContentDetectionResult_h
 #define WebContentDetectionResult_h
 
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 #include "WebRange.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 
 namespace WebKit {
 

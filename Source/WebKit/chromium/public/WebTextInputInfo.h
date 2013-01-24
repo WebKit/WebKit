@@ -26,8 +26,8 @@
 #ifndef WebTextInputInfo_h
 #define WebTextInputInfo_h
 
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebTextInputType.h"
-#include "platform/WebString.h"
 
 namespace WebKit {
 

@@ -31,8 +31,8 @@
 #ifndef WebSettings_h
 #define WebSettings_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebSize.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebSize.h"
 #include <unicode/uscript.h>
 
 namespace WebKit {

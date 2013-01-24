@@ -31,9 +31,9 @@
 #ifndef WebRegularExpression_h
 #define WebRegularExpression_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebNonCopyable.h"
 #include "WebTextCaseSensitivity.h"
-#include "platform/WebCommon.h"
-#include "platform/WebNonCopyable.h"
 
 namespace WebKit {
 

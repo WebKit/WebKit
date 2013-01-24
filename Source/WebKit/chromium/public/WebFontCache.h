@@ -31,7 +31,7 @@
 #ifndef WebFontCache_h
 #define WebFontCache_h
 
-#include "platform/WebCommon.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
 
 namespace WebKit {
 

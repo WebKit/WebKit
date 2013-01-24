@@ -26,8 +26,8 @@
 #ifndef WebIDBCallbacks_h
 #define WebIDBCallbacks_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebVector.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 
 namespace WebKit {
 

@@ -1,3 +1,242 @@
+2013-01-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove unused header files in chromium/public/platform/
+        https://bugs.webkit.org/show_bug.cgi?id=107741
+
+        Reviewed by James Robinson.
+
+        These header files have migrated to the new Platform directory.
+        This patch updates the remaining #include references and removes
+        the old files that did nothing but redirect to the new ones.
+
+        * WebKit.gyp:
+        * public/WebAccessibilityObject.h:
+        * public/WebAccessibilityRole.h:
+        * public/WebActiveWheelFlingParameters.h:
+        * public/WebAnimationController.h:
+        * public/WebApplicationCacheHost.h:
+        * public/WebApplicationCacheHostClient.h:
+        * public/WebArrayBuffer.h:
+        * public/WebArrayBufferView.h:
+        * public/WebAudioSourceProvider.h:
+        * public/WebBatteryStatus.h:
+        * public/WebBindings.h:
+        * public/WebBlob.h:
+        * public/WebCache.h:
+        * public/WebCachedURLRequest.h:
+        * public/WebColorChooser.h:
+        * public/WebColorChooserClient.h:
+        * public/WebColorName.h:
+        * public/WebCommonWorkerClient.h:
+        * public/WebCompositionUnderline.h:
+        * public/WebCompositorInputHandler.h:
+        * public/WebConsoleMessage.h:
+        * public/WebContentDetectionResult.h:
+        * public/WebContextMenuData.h:
+        * public/WebCrossOriginPreflightResultCache.h:
+        * public/WebCursorInfo.h:
+        * public/WebDOMEvent.h:
+        * public/WebDOMEventListener.h:
+        * public/WebDOMStringList.h:
+        * public/WebDataSource.h:
+        * public/WebDatabase.h:
+        * public/WebDateTimeChooserCompletion.h:
+        * public/WebDateTimeChooserParams.h:
+        * public/WebDeliveredIntentClient.h:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsAgentClient.h:
+        * public/WebDevToolsFrontend.h:
+        * public/WebDeviceOrientationClient.h:
+        * public/WebDeviceOrientationClientMock.h:
+        * public/WebDeviceOrientationController.h:
+        * public/WebDocument.h:
+        * public/WebDraggableRegion.h:
+        * public/WebExternalPopupMenuClient.h:
+        * public/WebFileChooserCompletion.h:
+        * public/WebFileChooserParams.h:
+        * public/WebFileSystemCallbacks.h:
+        * public/WebFileSystemEntry.h:
+        * public/WebFileWriter.h:
+        * public/WebFileWriterClient.h:
+        * public/WebFindOptions.h:
+        * public/WebFont.h:
+        * public/WebFontCache.h:
+        * public/WebFontDescription.h:
+        * public/WebFormControlElement.h:
+        * public/WebFormElement.h:
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        * public/WebGeolocationClientMock.h:
+        * public/WebGeolocationController.h:
+        * public/WebGeolocationError.h:
+        * public/WebGeolocationPermissionRequest.h:
+        * public/WebGeolocationPermissionRequestManager.h:
+        * public/WebGeolocationPosition.h:
+        * public/WebGlyphCache.h:
+        * public/WebHelperPlugin.h:
+        * public/WebHistoryItem.h:
+        * public/WebHitTestResult.h:
+        * public/WebIDBCallbacks.h:
+        * public/WebIDBCursor.h:
+        * public/WebIDBDatabase.h:
+        * public/WebIDBDatabaseCallbacks.h:
+        * public/WebIDBDatabaseError.h:
+        * public/WebIDBFactory.h:
+        * public/WebIDBKey.h:
+        * public/WebIDBKeyPath.h:
+        * public/WebIDBKeyRange.h:
+        * public/WebIDBMetadata.h:
+        * public/WebIDBTransaction.h:
+        * public/WebIDBTransactionCallbacks.h:
+        * public/WebIconURL.h:
+        * public/WebImageDecoder.h:
+        * public/WebInputEvent.h:
+        * public/WebIntent.h:
+        * public/WebIntentRequest.h:
+        * public/WebIntentServiceInfo.h:
+        * public/WebKit.h:
+        * public/WebMediaPlayer.h:
+        * public/WebMediaStreamRegistry.h:
+        * public/WebMenuItemInfo.h:
+        * public/WebNetworkStateNotifier.h:
+        * public/WebNode.h:
+        * public/WebNodeCollection.h:
+        * public/WebNodeList.h:
+        * public/WebNotification.h:
+        * public/WebNotificationPresenter.h:
+        * public/WebOptionElement.h:
+        * public/WebPageOverlay.h:
+        * public/WebPagePopup.h:
+        * public/WebPageSerializer.h:
+        * public/WebPasswordFormData.h:
+        * public/WebPerformance.h:
+        * public/WebPlugin.h:
+        * public/WebPluginContainer.h:
+        * public/WebPluginParams.h:
+        * public/WebPopupMenu.h:
+        * public/WebPopupMenuInfo.h:
+        * public/WebPrerendererClient.h:
+        * public/WebPrintParams.h:
+        * public/WebRange.h:
+        * public/WebRegularExpression.h:
+        * public/WebRuntimeFeatures.h:
+        * public/WebScopedMicrotaskSuppression.h:
+        * public/WebScopedUserGesture.h:
+        * public/WebScriptController.h:
+        * public/WebScriptSource.h:
+        * public/WebSearchableFormData.h:
+        * public/WebSecurityOrigin.h:
+        * public/WebSecurityPolicy.h:
+        * public/WebSelectElement.h:
+        * public/WebSerializedScriptValue.h:
+        * public/WebSettings.h:
+        * public/WebSharedWorker.h:
+        * public/WebSharedWorkerRepository.h:
+        * public/WebSocket.h:
+        * public/WebSocketClient.h:
+        * public/WebSpeechGrammar.h:
+        * public/WebSpeechInputController.h:
+        * public/WebSpeechInputResult.h:
+        * public/WebSpeechRecognitionHandle.h:
+        * public/WebSpeechRecognitionParams.h:
+        * public/WebSpeechRecognitionResult.h:
+        * public/WebSpeechRecognizer.h:
+        * public/WebSpeechRecognizerClient.h:
+        * public/WebSpellCheckClient.h:
+        * public/WebStorageEventDispatcher.h:
+        * public/WebSurroundingText.h:
+        * public/WebTestingSupport.h:
+        * public/WebTextCheckingCompletion.h:
+        * public/WebTextCheckingResult.h:
+        * public/WebTextFieldDecoratorClient.h:
+        * public/WebTextInputInfo.h:
+        * public/WebTextRun.h:
+        * public/WebTimeRange.h:
+        * public/WebTouchPoint.h:
+        * public/WebUserMediaRequest.h:
+        * public/WebView.h:
+        * public/WebViewBenchmarkSupport.h:
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        * public/WebWindowFeatures.h:
+        * public/WebWorkerInfo.h:
+        * public/android/WebInputEventFactory.h:
+        * public/android/WebSandboxSupport.h:
+        * public/default/WebRenderTheme.h:
+        * public/gtk/WebInputEventFactory.h:
+        * public/linux/WebFontRendering.h:
+        * public/linux/WebSandboxSupport.h:
+        * public/mac/WebInputEventFactory.h:
+        * public/mac/WebSandboxSupport.h:
+        * public/mac/WebScreenInfoFactory.h:
+        * public/mac/WebSubstringUtil.h:
+        * public/platform/WebAudioBus.h: Removed.
+        * public/platform/WebAudioDevice.h: Removed.
+        * public/platform/WebBlobData.h: Removed.
+        * public/platform/WebBlobRegistry.h: Removed.
+        * public/platform/WebCString.h: Removed.
+        * public/platform/WebCanvas.h: Removed.
+        * public/platform/WebClipboard.h: Removed.
+        * public/platform/WebColor.h: Removed.
+        * public/platform/WebCommon.h: Removed.
+        * public/platform/WebCookie.h: Removed.
+        * public/platform/WebCookieJar.h: Removed.
+        * public/platform/WebData.h: Removed.
+        * public/platform/WebDragData.h: Removed.
+        * public/platform/WebFileSystem.h: Removed.
+        * public/platform/WebFloatPoint.h: Removed.
+        * public/platform/WebFloatQuad.h: Removed.
+        * public/platform/WebFloatRect.h: Removed.
+        * public/platform/WebGamepad.h: Removed.
+        * public/platform/WebGamepads.h: Removed.
+        * public/platform/WebGraphicsContext3D.h: Removed.
+        * public/platform/WebHTTPBody.h: Removed.
+        * public/platform/WebHTTPHeaderVisitor.h: Removed.
+        * public/platform/WebHTTPLoadInfo.h: Removed.
+        * public/platform/WebImage.h: Removed.
+        * public/platform/WebLocalizedString.h: Removed.
+        * public/platform/WebMediaStreamCenter.h: Removed.
+        * public/platform/WebMediaStreamCenterClient.h: Removed.
+        * public/platform/WebMediaStreamComponent.h: Removed.
+        * public/platform/WebMediaStreamDescriptor.h: Removed.
+        * public/platform/WebMediaStreamSource.h: Removed.
+        * public/platform/WebMediaStreamSourcesRequest.h: Removed.
+        * public/platform/WebNonCopyable.h: Removed.
+        * public/platform/WebPoint.h: Removed.
+        * public/platform/WebPrivateOwnPtr.h: Removed.
+        * public/platform/WebPrivatePtr.h: Removed.
+        * public/platform/WebRect.h: Removed.
+        * public/platform/WebReferrerPolicy.h: Removed.
+        * public/platform/WebSize.h: Removed.
+        * public/platform/WebSocketStreamError.h: Removed.
+        * public/platform/WebSocketStreamHandle.h: Removed.
+        * public/platform/WebSocketStreamHandleClient.h: Removed.
+        * public/platform/WebString.h: Removed.
+        * public/platform/WebThread.h: Removed.
+        * public/platform/WebThreadSafeData.h: Removed.
+        * public/platform/WebURL.h: Removed.
+        * public/platform/WebURLError.h: Removed.
+        * public/platform/WebURLLoadTiming.h: Removed.
+        * public/platform/WebURLLoader.h: Removed.
+        * public/platform/WebURLLoaderClient.h: Removed.
+        * public/platform/WebURLRequest.h: Removed.
+        * public/platform/WebURLResponse.h: Removed.
+        * public/platform/WebVector.h: Removed.
+        * public/platform/android/WebSandboxSupport.h: Removed.
+        * public/platform/android/WebThemeEngine.h: Removed.
+        * public/platform/default/WebThemeEngine.h: Removed.
+        * public/platform/linux/WebFontFamily.h: Removed.
+        * public/platform/linux/WebSandboxSupport.h: Removed.
+        * public/platform/mac/WebSandboxSupport.h: Removed.
+        * public/platform/mac/WebThemeEngine.h: Removed.
+        * public/platform/win/WebSandboxSupport.h: Removed.
+        * public/platform/win/WebThemeEngine.h: Removed.
+        * public/win/WebInputEventFactory.h:
+        * public/win/WebSandboxSupport.h:
+        * public/win/WebScreenInfoFactory.h:
+        * public/x11/WebScreenInfoFactory.h:
+
 2013-01-23  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove IDBVersionChangeRequest

@@ -31,10 +31,10 @@
 #ifndef WebMediaPlayer_h
 #define WebMediaPlayer_h
 
+#include "../../../Platform/chromium/public/WebCanvas.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebTimeRange.h"
 #include "WebVideoFrame.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebString.h"
 
 namespace WebKit {
 

@@ -31,14 +31,14 @@
 #ifndef WebContextMenuData_h
 #define WebContextMenuData_h
 
+#include "../../../Platform/chromium/public/WebPoint.h"
+#include "../../../Platform/chromium/public/WebReferrerPolicy.h"
+#include "../../../Platform/chromium/public/WebString.h"
+#include "../../../Platform/chromium/public/WebURL.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebHistoryItem.h"
 #include "WebMenuItemInfo.h"
 #include "WebNode.h"
-#include "platform/WebPoint.h"
-#include "platform/WebReferrerPolicy.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebVector.h"
 
 #define WEBCONTEXT_MEDIATYPEFILE_DEFINED
 

@@ -31,9 +31,9 @@
 #ifndef WebGeolocationClientMock_h
 #define WebGeolocationClientMock_h
 
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebPrivateOwnPtr.h"
 #include "WebGeolocationClient.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivateOwnPtr.h"
 
 namespace WebCore {
 class GeolocationClientMock;

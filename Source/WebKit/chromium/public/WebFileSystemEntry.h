@@ -31,7 +31,7 @@
 #ifndef WebFileSystemEntry_h
 #define WebFileSystemEntry_h
 
-#include "platform/WebString.h"
+#include "../../../Platform/chromium/public/WebString.h"
 
 namespace WebKit {
 

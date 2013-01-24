@@ -31,9 +31,9 @@
 #ifndef WebPrintParams_h
 #define WebPrintParams_h
 
+#include "../../../Platform/chromium/public/WebRect.h"
+#include "../../../Platform/chromium/public/WebSize.h"
 #include "WebPrintScalingOption.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
 
 namespace WebKit {
 

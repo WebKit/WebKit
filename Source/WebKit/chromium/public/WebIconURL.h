@@ -34,7 +34,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IconURL.h"
 #endif
-#include "platform/WebURL.h"
+#include "../../../Platform/chromium/public/WebURL.h"
 
 namespace WebKit {
 

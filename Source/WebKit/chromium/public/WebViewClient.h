@@ -31,6 +31,9 @@
 #ifndef WebViewClient_h
 #define WebViewClient_h
 
+#include "../../../Platform/chromium/public/WebColor.h"
+#include "../../../Platform/chromium/public/WebGraphicsContext3D.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebAccessibilityNotification.h"
 #include "WebContentDetectionResult.h"
 #include "WebDragOperation.h"
@@ -42,9 +45,6 @@
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
 #include "WebWidgetClient.h"
-#include "platform/WebColor.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebString.h"
 
 namespace WebKit {
 

@@ -31,9 +31,9 @@
 #ifndef WebSelectElement_h
 #define WebSelectElement_h
 
+#include "../../../Platform/chromium/public/WebVector.h"
 #include "WebFormControlElement.h"
 #include "WebOptionElement.h"
-#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLSelectElement; }

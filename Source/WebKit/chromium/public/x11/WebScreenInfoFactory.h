@@ -31,7 +31,7 @@
 #ifndef WebScreenInfoFactory_h
 #define WebScreenInfoFactory_h
 
-#include "../platform/WebCommon.h"
+#include "../../../../Platform/chromium/public/WebCommon.h"
 
 typedef struct _XDisplay Display;
 

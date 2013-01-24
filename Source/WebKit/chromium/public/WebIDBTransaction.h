@@ -26,8 +26,8 @@
 #ifndef WebIDBTransaction_h
 #define WebIDBTransaction_h
 
+#include "../../../Platform/chromium/public/WebString.h"
 #include "WebExceptionCode.h"
-#include "platform/WebString.h"
 
 namespace WebCore { class IDBTransactionBackendInterface; }
 

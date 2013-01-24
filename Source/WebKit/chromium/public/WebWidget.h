@@ -31,13 +31,13 @@
 #ifndef WebWidget_h
 #define WebWidget_h
 
+#include "../../../Platform/chromium/public/WebCanvas.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebRect.h"
+#include "../../../Platform/chromium/public/WebSize.h"
 #include "WebCompositionUnderline.h"
 #include "WebTextDirection.h"
 #include "WebTextInputInfo.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebCommon.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
 
 namespace WebKit {
 

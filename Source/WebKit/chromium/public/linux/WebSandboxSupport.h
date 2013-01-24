@@ -29,5 +29,5 @@
  */
 
 #ifndef WEBKIT_MIGRATE_HEADERS_TO_PLATFORM
-#include "../platform/linux/WebSandboxSupport.h"
+#include "../../../../Platform/chromium/public/linux/WebSandboxSupport.h"
 #endif

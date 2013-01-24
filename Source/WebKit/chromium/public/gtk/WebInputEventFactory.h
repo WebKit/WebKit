@@ -31,7 +31,7 @@
 #ifndef WebInputEventFactory_h
 #define WebInputEventFactory_h
 
-#include "../platform/WebCommon.h"
+#include "../../../../Platform/chromium/public/WebCommon.h"
 
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventMotion GdkEventMotion;

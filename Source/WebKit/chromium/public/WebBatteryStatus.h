@@ -26,7 +26,7 @@
 #ifndef WebBatteryStatus_h
 #define WebBatteryStatus_h
 
-#include "platform/WebCommon.h"
+#include "../../../Platform/chromium/public/WebCommon.h"
 
 namespace WebKit {
 
