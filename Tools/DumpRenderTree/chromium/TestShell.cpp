@@ -202,8 +202,6 @@ TestShell::~TestShell()
     m_testRunner->setDelegate(0);
     m_testRunner->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
-    if (m_webViewHost)
-        m_webViewHost->shutdown();
 }
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)
@@ -796,7 +794,6 @@ void TestShell::closeWindow(WebViewHost* window)
     if (window->webWidget() == m_focusedWidget)
         focusedWidget = 0;
 
-    window->shutdown();
     delete window;
     // We set the focused widget after deleting the web view host because it
     // can change the focus.
