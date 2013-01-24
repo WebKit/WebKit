@@ -192,7 +192,7 @@ function StackTrace()
 StackTrace.prototype = {
     /**
      * @param {number} index
-     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}}
+     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}|undefined}
      */
     callFrame: function(index)
     {
@@ -222,50 +222,45 @@ StackTrace.create = function(stackTraceLimit, topMostFunctionToIgnore)
 function StackTraceV8(stackTraceLimit, topMostFunctionToIgnore)
 {
     StackTrace.call(this);
+
+    var oldPrepareStackTrace = Error.prepareStackTrace;
     var oldStackTraceLimit = Error.stackTraceLimit;
     if (typeof stackTraceLimit === "number")
         Error.stackTraceLimit = stackTraceLimit;
 
-    this._error = /** @type {{stack: Array}} */ ({});
-    Error.captureStackTrace(this._error, topMostFunctionToIgnore || arguments.callee);
+    /**
+     * @param {Object} error
+     * @param {Array.<CallSite>} structuredStackTrace
+     * @return {Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}
+     */
+    Error.prepareStackTrace = function(error, structuredStackTrace)
+    {
+        return structuredStackTrace.map(function(callSite) {
+            return {
+                sourceURL: callSite.getFileName(),
+                lineNumber: callSite.getLineNumber(),
+                columnNumber: callSite.getColumnNumber()
+            };
+        });
+    }
+
+    var holder = /** @type {{stack: Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}} */ ({});
+    Error.captureStackTrace(holder, topMostFunctionToIgnore || arguments.callee);
+    this._stackTrace = holder.stack;
 
     Error.stackTraceLimit = oldStackTraceLimit;
+    Error.prepareStackTrace = oldPrepareStackTrace;
 }
 
 StackTraceV8.prototype = {
     /**
      * @override
      * @param {number} index
-     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}}
+     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}|undefined}
      */
     callFrame: function(index)
     {
-        if (!this._stackTrace)
-            this._prepareStackTrace();
         return this._stackTrace[index];
-    },
-
-    _prepareStackTrace: function()
-    {
-        var oldPrepareStackTrace = Error.prepareStackTrace;
-        /**
-         * @param {Object} error
-         * @param {Array.<CallSite>} structuredStackTrace
-         * @return {Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}
-         */
-        Error.prepareStackTrace = function(error, structuredStackTrace)
-        {
-            return structuredStackTrace.map(function(callSite) {
-                return {
-                    sourceURL: callSite.getFileName(),
-                    lineNumber: callSite.getLineNumber(),
-                    columnNumber: callSite.getColumnNumber()
-                };
-            });
-        }
-        this._stackTrace = this._error.stack;
-        Error.prepareStackTrace = oldPrepareStackTrace;
-        delete this._error; // No longer needed, free memory.
     },
 
     __proto__: StackTrace.prototype

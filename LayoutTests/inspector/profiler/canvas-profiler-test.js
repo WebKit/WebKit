@@ -38,6 +38,46 @@ InspectorTest.disableCanvasAgent = function(callback)
     }
 };
 
+InspectorTest.dumpTraceLogCall = function(call, indent)
+{
+    indent = indent || "";
+    function formatSourceURL(url)
+    {
+        return url ? "\"" + url.replace(/^.*\/([^\/]+)\/?$/, "$1") + "\"" : "null";
+    }
+    var args = (call.arguments || []).map(function(arg) {
+        return arg.description;
+    });
+    var properties = [
+        "{Call}",
+        call.functionName ? "functionName:\"" + call.functionName + "\"" : "",
+        call.arguments ? "arguments:[" + args.join(",") + "]" : "",
+        call.result ? "result:" + call.result.description : "",
+        call.property ? "property:\"" + call.property + "\"" : "",
+        call.value ? "value:" + call.value.description : "",
+        call.isDrawingCall ? "isDrawingCall:true" : "",
+        "sourceURL:" + formatSourceURL(call.sourceURL),
+        "lineNumber:" + call.lineNumber,
+        "columnNumber:" + call.columnNumber
+    ];
+    InspectorTest.addResult(indent + properties.filter(Boolean).join("  "));
+};
+
+InspectorTest.dumpTraceLog = function(traceLog, indent)
+{
+    indent = indent || "";
+    var calls = traceLog.calls;
+    var properties = [
+        "{TraceLog}",
+        "alive:" + !!traceLog.alive,
+        "startOffset:" + (traceLog.startOffset || 0),
+        "#calls:" + traceLog.totalAvailableCalls
+    ];
+    InspectorTest.addResult(indent + properties.filter(Boolean).join("  "));
+    for (var i = 0, n = calls.length; i < n; ++i)
+        InspectorTest.dumpTraceLogCall(calls[i], indent + "  ");
+};
+
 };
 
 function createWebGLContext(opt_canvas)
