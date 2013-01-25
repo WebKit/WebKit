@@ -1,3 +1,13 @@
+2013-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] LDFLAGS are being incorrectly used at compile time (rather than linking)
+        https://bugs.webkit.org/show_bug.cgi?id=100616
+
+        Unreviewed, since this is just a build fix.
+
+        * GNUmakefile.am: use PACKAGE_CFLAGS instead of PACKAGE_LIBS when appending pkg-config
+        variables to build target _CFLAGS.
+
 2013-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Rename JSValue.h/APIJSValue.h to JSCJSValue.h/JSValue.h
