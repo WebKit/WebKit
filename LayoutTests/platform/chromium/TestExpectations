@@ -4332,3 +4332,6 @@ webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-f
 webkit.org/b/9221 [ Mac ] fast/css/resize-corner-tracking.html [ Failure ]
 webkit.org/b/9221 [ Mac ] fast/css/resize-corner-tracking-transformed.html [ Failure ]
 webkit.org/b/9221 [ Win Mac ] fast/css/resize-corner-tracking-transformed-iframe.html [ Missing Failure ]
+
+# The test is flaky on chromium-ews
+webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Pass Failure ]
