@@ -37,6 +37,11 @@
     z-index: -1;
 }
 
+.text-editor-token-highlight {
+    -webkit-border-radius: 3px;
+    border: 1px solid gray;
+}
+
 .text-editor-contents .inner-container {
     position: absolute;
     top: 0;
