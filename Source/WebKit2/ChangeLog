@@ -1,3 +1,18 @@
+2013-01-25  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt][Gtk] build fix after r140752.
+        https://bugs.webkit.org/show_bug.cgi?id=107908
+
+        Reviewed by Kentaro Hara.
+
+        Build break after r140752.
+
+        Move Authentication and Downloads to Shared.
+
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * WebKit2.pri:
+
 2013-01-24  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Page overlays should do their own animation, instead of relying on implicit animation

@@ -39,7 +39,6 @@ defineReplace(message_receiver_generator_output) {
 VPATH = \
     PluginProcess \
     WebProcess/ApplicationCache \
-    WebProcess/Authentication \
     WebProcess/Battery \
     WebProcess/Cookies \
     WebProcess/FullScreen \
@@ -61,6 +60,7 @@ VPATH = \
     UIProcess/Notifications \
     UIProcess/Plugins \
     Shared \
+    Shared/Authentication \
     Shared/Plugins
 
 MESSAGE_RECEIVERS = \

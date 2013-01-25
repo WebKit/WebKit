@@ -16,8 +16,11 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Platform/qt \
     $$SOURCE_DIR/Shared \
     $$SOURCE_DIR/Shared/API/c \
+    $$SOURCE_DIR/Shared/Authentication \
     $$SOURCE_DIR/Shared/CoordinatedGraphics \
     $$SOURCE_DIR/Shared/CoreIPCSupport \
+    $$SOURCE_DIR/Shared/Downloads \
+    $$SOURCE_DIR/Shared/Downloads/qt \
     $$SOURCE_DIR/Shared/Network \
     $$SOURCE_DIR/Shared/Plugins \
     $$SOURCE_DIR/Shared/Plugins/Netscape \
@@ -39,12 +42,9 @@ INCLUDEPATH += \
     $$SOURCE_DIR/UIProcess/texmap \
     $$SOURCE_DIR/WebProcess \
     $$SOURCE_DIR/WebProcess/ApplicationCache \
-    $$SOURCE_DIR/WebProcess/Authentication \
     $$SOURCE_DIR/WebProcess/Battery \
     $$SOURCE_DIR/WebProcess/Cookies \
     $$SOURCE_DIR/WebProcess/Cookies/qt \
-    $$SOURCE_DIR/WebProcess/Downloads \
-    $$SOURCE_DIR/WebProcess/Downloads/qt \
     $$SOURCE_DIR/WebProcess/FullScreen \
     $$SOURCE_DIR/WebProcess/Geolocation \
     $$SOURCE_DIR/WebProcess/IconDatabase \
