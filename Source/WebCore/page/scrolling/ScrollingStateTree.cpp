@@ -70,6 +70,7 @@ void ScrollingStateTree::removeNode(ScrollingStateNode* node)
 void ScrollingStateTree::didRemoveNode(ScrollingNodeID nodeID)
 {
     m_nodesRemovedSinceLastCommit.append(nodeID);
+    m_hasChangedProperties = true;
 }
 
 } // namespace WebCore
