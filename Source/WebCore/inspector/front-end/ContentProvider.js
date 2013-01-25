@@ -67,3 +67,29 @@ WebInspector.ContentProvider.SearchMatch = function(lineNumber, lineContent) {
     this.lineNumber = lineNumber;
     this.lineContent = lineContent;
 }
+
+/**
+ * @param {string} content
+ * @param {string} query
+ * @param {boolean} caseSensitive
+ * @param {boolean} isRegex
+ * @return {Array.<WebInspector.ContentProvider.SearchMatch>}
+ */
+WebInspector.ContentProvider.performSearchInContent = function(content, query, caseSensitive, isRegex)
+{
+    var regex = createSearchRegex(query, caseSensitive, isRegex);
+
+    var result = [];
+    var lineEndings = content.lineEndings();
+    for (var i = 0; i < lineEndings.length; ++i) {
+        var lineStart = i > 0 ? lineEndings[i - 1] + 1 : 0;
+        var lineEnd = lineEndings[i];
+        var lineContent = content.substring(lineStart, lineEnd);
+        if (lineContent.length > 0 && lineContent.charAt(lineContent.length - 1) === "\r")
+            lineContent = lineContent.substring(0, lineContent.length - 1)
+
+        if (regex.exec(lineContent))
+            result.push(new WebInspector.ContentProvider.SearchMatch(i, lineContent));
+    }
+    return result;
+}

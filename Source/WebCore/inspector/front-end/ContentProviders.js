@@ -287,21 +287,7 @@ WebInspector.StaticContentProvider.prototype = {
     {
         function performSearch()
         {
-            var regex = createSearchRegex(query, caseSensitive, isRegex);
-            
-            var result = [];
-            var lineEndings = this._content.lineEndings();
-            for (var i = 0; i < lineEndings.length; ++i) {
-                var lineStart = i > 0 ? lineEndings[i - 1] + 1 : 0;
-                var lineEnd = lineEndings[i];
-                var lineContent = this._content.substring(lineStart, lineEnd);
-                if (lineContent.length > 0 && lineContent.charAt(lineContent.length - 1) === "\r")
-                    lineContent = lineContent.substring(0, lineContent.length - 1)
-                
-                if (regex.exec(lineContent))
-                    result.push(new WebInspector.ContentProvider.SearchMatch(i, lineContent));
-            }
-            callback(result);
+            callback(WebInspector.ContentProvider.performSearchInContent(this._content, query, caseSensitive, isRegex));
         }
 
         // searchInContent should call back later.

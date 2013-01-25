@@ -91,7 +91,20 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
      */
     searchInFileContent: function(uri, query, caseSensitive, isRegex, callback)
     {
-        callback([]);
+        this.requestFileContent(uri, contentCallback.bind(this));
+
+        /**
+         * @param {?string} content
+         * @param {boolean} base64Encoded
+         * @param {string} mimeType
+         */
+        function contentCallback(content, base64Encoded, mimeType)
+        {
+            var result = [];
+            if (content)
+                result = WebInspector.ContentProvider.performSearchInContent(content, query, caseSensitive, isRegex);
+            callback(result);
+        }
     },
 
     /**
