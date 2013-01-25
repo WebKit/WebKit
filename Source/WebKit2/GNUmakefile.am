@@ -658,12 +658,12 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/FullScreen/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Geolocation/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/IconDatabase/*.in) \
-	$(shell ls $(WebKit2)/WebProcess/KeyValueStorage/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/MediaCache/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/NetworkInfo/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/ResourceCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Storage/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebCoreSupport/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebPage/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/soup/*.in)

@@ -1,5 +1,14 @@
 2013-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed.
+
+        Reincluding the input file for WebKeyValueStorageManager IPC messages
+        into the extra distribution list after the file was moved.
+
+        * GNUmakefile.am:
+
+2013-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Further GTK build fixing.
         Adding Source/WebKit2/WebProcess/Storage to the list of directories
         to be searched for header inclusion.
