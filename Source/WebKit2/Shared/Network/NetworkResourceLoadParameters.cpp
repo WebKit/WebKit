@@ -88,7 +88,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
 
     if (m_request.url().isLocalFile()) {
         SandboxExtension::Handle requestSandboxExtension;
-        SandboxExtension::createHandle(m_request.url().path(), SandboxExtension::ReadOnly, requestSandboxExtension);
+        SandboxExtension::createHandle(m_request.url().fileSystemPath(), SandboxExtension::ReadOnly, requestSandboxExtension);
         encoder.encode(requestSandboxExtension);
     }
 
