@@ -162,14 +162,14 @@ bool DateTimeNumericFieldElement::hasValue() const
     return m_hasValue;
 }
 
+void DateTimeNumericFieldElement::initialize(const AtomicString& pseudo, const String& axHelpText)
+{
+    DateTimeFieldElement::initialize(pseudo, axHelpText, m_range.minimum, m_range.maximum);
+}
+
 int DateTimeNumericFieldElement::maximum() const
 {
     return m_range.maximum;
-}
-
-int DateTimeNumericFieldElement::minimum() const
-{
-    return m_range.minimum;
 }
 
 void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)

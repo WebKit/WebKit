@@ -92,14 +92,12 @@ bool DateTimeSymbolicFieldElement::hasValue() const
     return m_selectedIndex >= 0;
 }
 
-int DateTimeSymbolicFieldElement::maximum() const
+void DateTimeSymbolicFieldElement::initialize(const AtomicString& pseudo, const String& axHelpText)
 {
-    return m_maximumIndex + 1;
-}
-
-int DateTimeSymbolicFieldElement::minimum() const
-{
-    return m_minimumIndex + 1;
+    // The minimum and maximum below are exposed to users, and 1-based numbers
+    // are natural for symbolic fields. For example, the minimum value of a
+    // month field should be 1, not 0.
+    DateTimeFieldElement::initialize(pseudo, axHelpText, m_minimumIndex + 1, m_maximumIndex + 1);
 }
 
 void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)

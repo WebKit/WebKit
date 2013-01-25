@@ -82,11 +82,9 @@ protected:
     virtual void didFocus();
     void focusOnNextField();
     virtual void handleKeyboardEvent(KeyboardEvent*) = 0;
-    void initialize(const AtomicString& pseudo, const String& axHelpText);
+    void initialize(const AtomicString& pseudo, const String& axHelpText, int axMinimum, int axMaximum);
     Locale& localeForOwner() const;
     AtomicString localeIdentifier() const;
-    virtual int maximum() const = 0;
-    virtual int minimum() const = 0;
     void updateVisibleValue(EventBehavior);
     virtual int valueAsInteger() const = 0;
 

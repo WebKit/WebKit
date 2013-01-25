@@ -68,7 +68,8 @@ protected:
 
     // DateTimeFieldElement functions.
     virtual bool hasValue() const OVERRIDE FINAL;
-    virtual int maximum() const OVERRIDE FINAL;
+    void initialize(const AtomicString& pseudo, const String& axHelpText);
+    int maximum() const;
     virtual void setEmptyValue(EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE;
     virtual int valueAsInteger() const OVERRIDE FINAL;
@@ -79,7 +80,6 @@ private:
     virtual void didBlur() OVERRIDE FINAL;
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
     virtual float maximumWidth(const Font&) OVERRIDE;
-    virtual int minimum() const OVERRIDE FINAL;
     virtual void stepDown() OVERRIDE FINAL;
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
