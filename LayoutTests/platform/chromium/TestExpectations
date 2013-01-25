@@ -4334,4 +4334,4 @@ webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-f
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
 webkit.org/b/9221 [ Win SnowLeopard MountainLion Lion ] fast/css/resize-corner-tracking.html [ Failure ]
 webkit.org/b/9221 [ SnowLeopard MountainLion Lion ] fast/css/resize-corner-tracking-transformed.html [ Failure ]
-webkit.org/b/9221 [ Win SnowLeopard MountainLion Lion ] fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]
+webkit.org/b/9221 [ Win SnowLeopard MountainLion Lion ] fast/css/resize-corner-tracking-transformed-iframe.html [ Missing Failure ]
