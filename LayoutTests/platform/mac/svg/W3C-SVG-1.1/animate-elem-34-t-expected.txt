@@ -19,10 +19,10 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,200) size 405x32 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 405x32
         chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 39 width 405.00: "Animation on: 'points' and 'fill-rule'."
-    RenderSVGText {text} at (5,238) size 325x21 contains 1 chunk(s)
+    RenderSVGText {text} at (5,238) size 325x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 325x21
         chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 325.00: "Digit should match outline at indicated time."
-    RenderSVGText {text} at (5,258) size 392x21 contains 1 chunk(s)
+    RenderSVGText {text} at (5,258) size 392x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 392x21
         chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 392.00: "Filled square should follow morphing digit discretely."
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)

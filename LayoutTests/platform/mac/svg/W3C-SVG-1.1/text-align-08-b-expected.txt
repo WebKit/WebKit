@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (50,79) size 383x152
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (50,79) size 383x150 contains 1 chunk(s)
+      RenderSVGText {text} at (50,79) size 383x151 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 225x151
           chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 3 width 225.00: "a\x{729C}\x{923}"
         RenderSVGTSpan {tspan} at (0,0) size 113x76

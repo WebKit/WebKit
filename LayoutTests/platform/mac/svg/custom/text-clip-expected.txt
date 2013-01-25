@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderSVGResourceClipper {clipPath} [id="myclip"] [clipPathUnits=userSpaceOnUse]
         RenderSVGPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M 200 200 L 300 200 L 300 400 L 200 400 Z"]
     RenderSVGContainer {g} at (0,75) size 133x64
-      RenderSVGText {text} at (0,75) size 133x63 contains 1 chunk(s)
+      RenderSVGText {text} at (0,75) size 133x64 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 133x63
           chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 4 width 133.00: "PASS"
-      RenderSVGText {text} at (0,75) size 648x63 contains 1 chunk(s)
+      RenderSVGText {text} at (0,75) size 648x64 contains 1 chunk(s)
         [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (200,200) size 100x200
         RenderSVGInlineText {#text} at (0,0) size 648x63
           [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (200,200) size 100x200

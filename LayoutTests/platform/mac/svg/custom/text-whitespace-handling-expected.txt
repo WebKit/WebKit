@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,10) size 498x518
-    RenderSVGContainer {g} at (20,10) size 498x518
+  RenderSVGRoot {svg} at (20,11) size 498x517
+    RenderSVGContainer {g} at (20,11) size 498x517
       RenderSVGText {text} at (10,5) size 240x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 240x19
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 36 width 239.50: "Testing xml:space=\"default\" support:"

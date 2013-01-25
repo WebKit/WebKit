@@ -3,37 +3,37 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGText {text} at (10,312) size 198x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,312) size 198x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x35
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 198.00: "$Revision: 1.1 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (10,22) size 99x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,22) size 99x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 99x35
         chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 8 width 99.00: "uievents"
-    RenderSVGText {text} at (370,22) size 56x35 contains 1 chunk(s)
+    RenderSVGText {text} at (370,22) size 56x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 56x35
         chunk 1 text run 1 at (370.00,50.00) startOffset 0 endOffset 5 width 56.00: "false"
-    RenderSVGText {text} at (10,72) size 154x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,72) size 154x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 154x35
         chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 11 width 154.00: "mouseevents"
-    RenderSVGText {text} at (370,72) size 46x35 contains 1 chunk(s)
+    RenderSVGText {text} at (370,72) size 46x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 46x35
         chunk 1 text run 1 at (370.00,100.00) startOffset 0 endOffset 4 width 46.00: "true"
-    RenderSVGText {text} at (10,122) size 181x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,122) size 181x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 181x35
         chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 14 width 181.00: "mutationevents"
-    RenderSVGText {text} at (370,122) size 46x35 contains 1 chunk(s)
+    RenderSVGText {text} at (370,122) size 46x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 46x35
         chunk 1 text run 1 at (370.00,150.00) startOffset 0 endOffset 4 width 46.00: "true"
-    RenderSVGText {text} at (10,172) size 102x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,172) size 102x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 102x35
         chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 9 width 102.00: "traversal"
-    RenderSVGText {text} at (370,172) size 46x35 contains 1 chunk(s)
+    RenderSVGText {text} at (370,172) size 46x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 46x35
         chunk 1 text run 1 at (370.00,200.00) startOffset 0 endOffset 4 width 46.00: "true"
-    RenderSVGText {text} at (10,222) size 148x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,222) size 148x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 148x35
         chunk 1 text run 1 at (10.00,250.00) startOffset 0 endOffset 11 width 148.00: "org.w3c.svg"
-    RenderSVGText {text} at (370,222) size 56x35 contains 1 chunk(s)
+    RenderSVGText {text} at (370,222) size 56x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 56x35
         chunk 1 text run 1 at (370.00,250.00) startOffset 0 endOffset 5 width 56.00: "false"

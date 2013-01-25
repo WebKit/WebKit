@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (37,20) size 134x133 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,20.00)}]
       RenderSVGRect {rect} at (37,20) size 134x133 [transform={m=((0.91,0.42)(-0.42,0.91)) t=(0.00,0.00)}] [fill={[type=PATTERN] [id="squares"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (10,288) size 287x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,300.00)}]
-      RenderSVGText {text} at (0,-12) size 287x44 contains 1 chunk(s)
+      RenderSVGText {text} at (0,-12) size 287x45 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 280x14
           RenderSVGInlineText {#text} at (0,0) size 280x14
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 280.00: "For this test case to be successful, the"

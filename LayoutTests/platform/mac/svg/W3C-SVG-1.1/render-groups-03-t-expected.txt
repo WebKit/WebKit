@@ -2,9 +2,9 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (35,9) size 429x306
+    RenderSVGContainer {g} at (35,10) size 429x305
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (35,9) size 429x306 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (35,10) size 429x305 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
         RenderSVGRect {rect} at (36,18) size 414x279 [fill={[type=SOLID] [color=#C0C0C0]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
         RenderSVGPath {line} at (58,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=10.00] [x2=40.00] [y2=175.00]
         RenderSVGPath {line} at (112,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=70.00] [y1=10.00] [x2=70.00] [y2=175.00]

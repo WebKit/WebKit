@@ -258,7 +258,7 @@ layer at (0,0) size 480x360
           RenderSVGRect {rect} at (429,239) size 12x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFA500]}] [x=75.00] [y=0.00] [width=10.00] [height=60.00]
           RenderSVGRect {rect} at (444,239) size 12x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFD700]}] [x=90.00] [y=0.00] [width=10.00] [height=60.00]
           RenderSVGRect {rect} at (354,239) size 102x62 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=RADIAL-GRADIENT] [id="grad6d"]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
-    RenderSVGText {text} at (10,312) size 198x35 contains 1 chunk(s)
+    RenderSVGText {text} at (10,312) size 198x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x35
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 198.00: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
