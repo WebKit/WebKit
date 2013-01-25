@@ -159,7 +159,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
     destination = m_webContext->downloadClient().decideDestinationWithSuggestedFilename(m_webContext.get(), this, filename, allowOverwrite);
 
     if (!destination.isNull())
-        SandboxExtension::createHandle(destination, SandboxExtension::WriteOnly, sandboxExtensionHandle);
+        SandboxExtension::createHandle(destination, SandboxExtension::ReadWrite, sandboxExtensionHandle);
 }
 
 void DownloadProxy::didCreateDestination(const String& path)

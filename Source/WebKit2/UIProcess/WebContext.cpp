@@ -474,7 +474,7 @@ WebProcessProxy* WebContext::createNewWebProcess()
 
     parameters.cookieStorageDirectory = cookieStorageDirectory();
     if (!parameters.cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.cookieStorageDirectory, SandboxExtension::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
@@ -597,7 +597,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
         SandboxExtension::Handle sampleLogSandboxHandle;        
         double now = WTF::currentTime();
         String sampleLogFilePath = String::format("WebProcess%llupid%d", static_cast<unsigned long long>(now), process->processIdentifier());
-        sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
+        sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::ReadWrite, sampleLogSandboxHandle);
         
         process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
     }
@@ -965,7 +965,7 @@ void WebContext::startMemorySampler(const double interval)
     SandboxExtension::Handle sampleLogSandboxHandle;    
     double now = WTF::currentTime();
     String sampleLogFilePath = String::format("WebProcess%llu", static_cast<unsigned long long>(now));
-    sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
+    sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::ReadWrite, sampleLogSandboxHandle);
     
     sendToAllProcesses(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval));
 }

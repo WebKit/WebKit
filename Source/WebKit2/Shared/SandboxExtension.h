@@ -47,8 +47,7 @@ class SandboxExtension : public RefCounted<SandboxExtension> {
 public:
     enum Type {
         ReadOnly,
-        WriteOnly,
-        ReadWrite,
+        ReadWrite
     };
 
     class Handle {

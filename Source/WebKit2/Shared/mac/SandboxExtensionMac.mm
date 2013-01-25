@@ -160,14 +160,11 @@ static WKSandboxExtensionType wkSandboxExtensionType(SandboxExtension::Type type
     switch (type) {
     case SandboxExtension::ReadOnly:
         return WKSandboxExtensionTypeReadOnly;
-    case SandboxExtension::WriteOnly:
-        return WKSandboxExtensionTypeWriteOnly;
     case SandboxExtension::ReadWrite:
         return WKSandboxExtensionTypeReadWrite;
     }
 
-    ASSERT_NOT_REACHED();
-    return WKSandboxExtensionTypeReadOnly;
+    CRASH();
 }
 
 static CString resolveSymlinksInPath(const CString& path)

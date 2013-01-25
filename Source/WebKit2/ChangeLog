@@ -1,3 +1,21 @@
+2013-01-24  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/9971916> [WK2] Update sandbox extension usage
+        https://bugs.webkit.org/show_bug.cgi?id=107861
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SandboxExtension.h:
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::wkSandboxExtensionType):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::startMemorySampler):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-01-24  Brady Eidson  <beidson@apple.com>
 
         Move Authentication and Downloads from WebProcess to Shared.

@@ -76,16 +76,21 @@
 
        (home-subpath "/Library/Dictionaries"))
 
-;; This should be updated when <rdar://problem/9355830> is fixed.
-;; Read-only extensions from UIProcess
-(if (defined? 'extension-class)
-    (allow file-read* (extension "com.apple.app-sandbox.read")))
-
-;; Read-write extensions from UIProcess
-(allow file-read* file-write* (extension))
-
-;; Mach lookup extensions from the UIProcess
-(allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+(allow mach-lookup (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 ;; Writable preferences and temporary files
 (allow file*
