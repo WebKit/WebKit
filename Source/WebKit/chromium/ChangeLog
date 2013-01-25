@@ -1,3 +1,21 @@
+2013-01-25  Alexandre Elias  <aelias@chromium.org>
+
+        Call FrameView::contentsResized() when setting fixed layout size
+        https://bugs.webkit.org/show_bug.cgi?id=107922
+
+        Reviewed by James Robinson.
+
+        In fixed layout mode, we should be calling contentsResized() when the
+        fixed layout size is changed; on the other hand, we don't need to layout
+        when the visible contents size changes.
+
+        This fixes test WebFrameTest::FixedLayoutInitializeAtMinimumPageScale.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        * tests/WebFrameTest.cpp:
+
 2013-01-25  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Move TaskType enum to IDBDatabaseBackendInterface

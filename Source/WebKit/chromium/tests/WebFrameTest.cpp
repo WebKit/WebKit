@@ -238,6 +238,8 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
 
     WebView* webView = static_cast<WebView*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_viewport_tag.html", true, 0, &client));
 
+    webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webView->settings()->setApplyPageScaleFactorInCompositor(true);
     webView->settings()->setViewportEnabled(true);
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
@@ -245,17 +247,15 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
 
     EXPECT_EQ(2, webView->deviceScaleFactor());
 
-    // Device scale factor should be a component of page scale factor in fixed-layout, so a scale of 1 becomes 2.
+    // Page scale factor should not be affected by device scale factor.
     webView->setPageScaleFactorLimits(1, 2);
-    EXPECT_EQ(2, webView->pageScaleFactor());
+    EXPECT_EQ(1, webView->pageScaleFactor());
 
     // Force the layout to happen before leaving the test.
     webView->mainFrame()->contentAsText(1024).utf8();
 }
 
-// Test is disabled because it started failing after r140025.
-// See bug for details: webkit.org/b/107206.
-TEST_F(WebFrameTest, DISABLED_FixedLayoutInitializeAtMinimumPageScale)
+TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
 {
     registerMockedHttpURLLoad("fixed_layout.html");
 
@@ -267,6 +267,8 @@ TEST_F(WebFrameTest, DISABLED_FixedLayoutInitializeAtMinimumPageScale)
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->enableFixedLayoutMode(true);
     webViewImpl->settings()->setViewportEnabled(true);
     webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
