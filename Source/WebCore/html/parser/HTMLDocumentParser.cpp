@@ -303,8 +303,9 @@ void HTMLDocumentParser::processTokensFromBackgroundParser(PassOwnPtr<CompactHTM
         if (isStopped())
             break;
 
-        // FIXME: We'll probably need to check document()->frame()->navigationScheduler()->locationChangePending())
-        // as we do in canTakeNextToken;
+        if (!isParsingFragment()
+            && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
+            break;
 
         if (isWaitingForScripts()) {
             ASSERT(it + 1 == tokens->end()); // The </script> is assumed to be the last token of this bunch.
