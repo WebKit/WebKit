@@ -1,3 +1,12 @@
+2013-01-24  Huang Dongsung  <luxtella@company100.net>
+
+        [EFL] Unreviewed build fix after r140752.
+        https://bugs.webkit.org/show_bug.cgi?id=107886
+
+        Build break after r140752.
+
+        * PlatformEfl.cmake: Move DownloadSoupErrorsEfl and DownloadSoup to Shared/Downloads.
+
 2013-01-24  Tim Horton  <timothy_horton@apple.com>
 
         Fix NetworkProcess loading after r140730.

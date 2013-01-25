@@ -13,6 +13,9 @@ list(APPEND WebKit2_SOURCES
 
     Shared/API/c/cairo/WKImageCairo.cpp
 
+    Shared/Downloads/efl/DownloadSoupErrorsEfl.cpp
+    Shared/Downloads/soup/DownloadSoup.cpp
+
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/efl/LayerTreeContextEfl.cpp
@@ -120,9 +123,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
-    WebProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp
-    WebProcess/Downloads/soup/DownloadSoup.cpp
-
     WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp
 
     WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
@@ -160,6 +160,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
     "${WEBCORE_DIR}/svg/graphics"
+    "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"
@@ -168,7 +169,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/efl"
     "${WEBKIT2_DIR}/UIProcess/efl"
     "${WEBKIT2_DIR}/UIProcess/soup"
-    "${WEBKIT2_DIR}/WebProcess/Downloads/soup"
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
