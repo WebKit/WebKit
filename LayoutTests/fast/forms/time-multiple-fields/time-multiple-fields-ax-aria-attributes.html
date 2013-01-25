@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/multiple-fields-ax-aria-attributes.js"></script>
 </head>
 <body>
 <input id=test type="time" value="12:34:56.789">
@@ -14,14 +15,6 @@ function enableAccessibility()
         debug("Please run inside DumpRenderTree.");
         return;
     }
-}
-
-function focusedFieldValueDescription()
-{
-    if (!window.accessibilityController)
-        return;
-    var element = accessibilityController.focusedElement
-    return element.helpText + ", " +  element.valueDescription + ", " + element.minValue + ", " + element.maxValue;
 }
 
 function keyDown(key, modifiers)
@@ -38,31 +31,31 @@ testInput.focus();
 
 debug('Non-empty value');
 testInput.focus();
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: 12, 1, 12');
+checkFocusedElementAXAttributes('AXHelp: Hours, AXValueDescription: 12, intValue:12, range:1-12');
 keyDown('\t');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: 34, 0, 59');
+checkFocusedElementAXAttributes('AXHelp: Minutes, AXValueDescription: 34, intValue:34, range:0-59');
 keyDown('\t');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: 56, 0, 59');
+checkFocusedElementAXAttributes('AXHelp: Seconds, AXValueDescription: 56, intValue:56, range:0-59');
 keyDown('\t');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: 789, 0, 999');
+checkFocusedElementAXAttributes('AXHelp: Milliseconds, AXValueDescription: 789, intValue:789, range:0-999');
 keyDown('\t');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: PM, 1, 2');
+checkFocusedElementAXAttributes('AXHelp: AM/PM, AXValueDescription: PM, intValue:2, range:1-2');
 
 debug('Empty value');
 keyDown('\b');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: blank, 1, 2');
+checkFocusedElementAXAttributes('AXHelp: AM/PM, AXValueDescription: blank, intValue:0, range:1-2');
 keyDown('\t', ['shiftKey']);
 keyDown('\b');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: blank, 0, 999');
+checkFocusedElementAXAttributes('AXHelp: Milliseconds, AXValueDescription: blank, intValue:0, range:0-999');
 keyDown('\t', ['shiftKey']);
 keyDown('\b');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: blank, 0, 59');
+checkFocusedElementAXAttributes('AXHelp: Seconds, AXValueDescription: blank, intValue:0, range:0-59');
 keyDown('\t', ['shiftKey']);
 keyDown('\b');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: blank, 0, 59');
+checkFocusedElementAXAttributes('AXHelp: Minutes, AXValueDescription: blank, intValue:0, range:0-59');
 keyDown('\t', ['shiftKey']);
 keyDown('\b');
-shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: blank, 1, 12');
+checkFocusedElementAXAttributes('AXHelp: Hours, AXValueDescription: blank, intValue:0, range:1-12');
 
 debug('');
 testInput.parentNode.removeChild(testInput);

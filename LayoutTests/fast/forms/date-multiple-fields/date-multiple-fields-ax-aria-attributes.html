@@ -2,40 +2,45 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/multiple-fields-ax-aria-attributes.js"></script>
 </head>
 <body>
-<input id="test" type="date" value="2012-10-09">
+<input id="test" type="date">
 <script>
 description('This test checks aria-help attribute of fields in multiple fields date input UI.');
-
-function focusedFieldValueDescription()
-{
-    var element = accessibilityController.focusedElement;
-    return element.helpText + ', ' +  element.valueDescription + ', ' + element.minValue + ', ' + element.maxValue;
-}
 
 var testInput = document.getElementById('test');
 
 if (!window.accessibilityController || !window.eventSender)
     debug('Please run inside DRT or WTR.');
 else {
-    debug('Non-empty value');
     testInput.focus();
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: 10, 1, 12');
+    debug('Initial empty state');
+    checkFocusedElementAXAttributes('AXHelp: Month, AXValueDescription: blank, intValue:0, range:1-12');
     eventSender.keyDown('\t');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Day, AXValueDescription: 09, 1, 31');
+    checkFocusedElementAXAttributes('AXHelp: Day, AXValueDescription: blank, intValue:0, range:1-31');
     eventSender.keyDown('\t');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: 2012, 1, 275760');
+    checkFocusedElementAXAttributes('AXHelp: Year, AXValueDescription: blank, intValue:0, range:1-275760');
+
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\t', ['shiftKey']);
+    debug('Non-empty value');
+    testInput.value = "2012-10-09";
+    checkFocusedElementAXAttributes('AXHelp: Month, AXValueDescription: 10, intValue:10, range:1-12');
+    eventSender.keyDown('\t');
+    checkFocusedElementAXAttributes('AXHelp: Day, AXValueDescription: 09, intValue:9, range:1-31');
+    eventSender.keyDown('\t');
+    checkFocusedElementAXAttributes('AXHelp: Year, AXValueDescription: 2012, intValue:2012, range:1-275760');
 
     debug('Empty value');
     eventSender.keyDown('\b');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: blank, 1, 275760');
+    checkFocusedElementAXAttributes('AXHelp: Year, AXValueDescription: blank, intValue:0, range:1-275760');
     eventSender.keyDown('\t', ['shiftKey']);
     eventSender.keyDown('\b');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Day, AXValueDescription: blank, 1, 31');
+    checkFocusedElementAXAttributes('AXHelp: Day, AXValueDescription: blank, intValue:0, range:1-31');
     eventSender.keyDown('\t', ['shiftKey']);
     eventSender.keyDown('\b');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: blank, 1, 12');
+    checkFocusedElementAXAttributes('AXHelp: Month, AXValueDescription: blank, intValue:0, range:1-12');
 
     debug('');
     testInput.parentNode.removeChild(testInput);

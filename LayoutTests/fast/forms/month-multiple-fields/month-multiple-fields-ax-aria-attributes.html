@@ -2,17 +2,12 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/multiple-fields-ax-aria-attributes.js"></script>
 </head>
 <body>
 <input id="test" type="month" value="2012-10">
 <script>
 description('This test checks aria-help attribute of fields in multiple fields week input UI.');
-
-function focusedFieldValueDescription()
-{
-    var element = accessibilityController.focusedElement;
-    return element.helpText + ', ' +  element.valueDescription + ', ' + element.minValue + ', ' + element.maxValue;
-}
 
 var testInput = document.getElementById('test');
 
@@ -21,16 +16,16 @@ if (!window.accessibilityController || !window.eventSender)
 else {
     debug('Non-empty value');
     testInput.focus();
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: October, 1, 12');
+    checkFocusedElementAXAttributes('AXHelp: Month, AXValueDescription: October, intValue:10, range:1-12');
     eventSender.keyDown('\t');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: 2012, 1, 275760');
+    checkFocusedElementAXAttributes('AXHelp: Year, AXValueDescription: 2012, intValue:2012, range:1-275760');
 
     debug('Empty value');
     eventSender.keyDown('\b');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: blank, 1, 275760');
+    checkFocusedElementAXAttributes('AXHelp: Year, AXValueDescription: blank, intValue:0, range:1-275760');
     eventSender.keyDown('\t', ['shiftKey']);
     eventSender.keyDown('\b');
-    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: blank, 1, 12');
+    checkFocusedElementAXAttributes('AXHelp: Month, AXValueDescription: blank, intValue:0, range:1-12');
 
     debug('');
     testInput.remove();

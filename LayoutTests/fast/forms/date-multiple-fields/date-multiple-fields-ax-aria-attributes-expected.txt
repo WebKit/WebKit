@@ -3,14 +3,18 @@ This test checks aria-help attribute of fields in multiple fields date input UI.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+Initial empty state
+PASS focusedElementDescription() is "AXHelp: Month, AXValueDescription: blank, intValue:0, range:1-12"
+PASS focusedElementDescription() is "AXHelp: Day, AXValueDescription: blank, intValue:0, range:1-31"
+PASS focusedElementDescription() is "AXHelp: Year, AXValueDescription: blank, intValue:0, range:1-275760"
 Non-empty value
-PASS focusedFieldValueDescription() is "AXHelp: Month, AXValueDescription: 10, 1, 12"
-PASS focusedFieldValueDescription() is "AXHelp: Day, AXValueDescription: 09, 1, 31"
-PASS focusedFieldValueDescription() is "AXHelp: Year, AXValueDescription: 2012, 1, 275760"
+PASS focusedElementDescription() is "AXHelp: Month, AXValueDescription: 10, intValue:10, range:1-12"
+PASS focusedElementDescription() is "AXHelp: Day, AXValueDescription: 09, intValue:9, range:1-31"
+PASS focusedElementDescription() is "AXHelp: Year, AXValueDescription: 2012, intValue:2012, range:1-275760"
 Empty value
-PASS focusedFieldValueDescription() is "AXHelp: Year, AXValueDescription: blank, 1, 275760"
-PASS focusedFieldValueDescription() is "AXHelp: Day, AXValueDescription: blank, 1, 31"
-PASS focusedFieldValueDescription() is "AXHelp: Month, AXValueDescription: blank, 1, 12"
+PASS focusedElementDescription() is "AXHelp: Year, AXValueDescription: blank, intValue:0, range:1-275760"
+PASS focusedElementDescription() is "AXHelp: Day, AXValueDescription: blank, intValue:0, range:1-31"
+PASS focusedElementDescription() is "AXHelp: Month, AXValueDescription: blank, intValue:0, range:1-12"
 
 PASS successfullyParsed is true
 

@@ -87,6 +87,7 @@ protected:
     AtomicString localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
     virtual int valueAsInteger() const = 0;
+    virtual int valueForARIAValueNow() const;
 
 private:
     void defaultKeyboardEventHandler(KeyboardEvent*);

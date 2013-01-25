@@ -4,17 +4,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Non-empty value
-PASS focusedFieldValueDescription() is "AXHelp: Hours, AXValueDescription: 12, 1, 12"
-PASS focusedFieldValueDescription() is "AXHelp: Minutes, AXValueDescription: 34, 0, 59"
-PASS focusedFieldValueDescription() is "AXHelp: Seconds, AXValueDescription: 56, 0, 59"
-PASS focusedFieldValueDescription() is "AXHelp: Milliseconds, AXValueDescription: 789, 0, 999"
-PASS focusedFieldValueDescription() is "AXHelp: AM/PM, AXValueDescription: PM, 1, 2"
+PASS focusedElementDescription() is "AXHelp: Hours, AXValueDescription: 12, intValue:12, range:1-12"
+PASS focusedElementDescription() is "AXHelp: Minutes, AXValueDescription: 34, intValue:34, range:0-59"
+PASS focusedElementDescription() is "AXHelp: Seconds, AXValueDescription: 56, intValue:56, range:0-59"
+PASS focusedElementDescription() is "AXHelp: Milliseconds, AXValueDescription: 789, intValue:789, range:0-999"
+PASS focusedElementDescription() is "AXHelp: AM/PM, AXValueDescription: PM, intValue:2, range:1-2"
 Empty value
-PASS focusedFieldValueDescription() is "AXHelp: AM/PM, AXValueDescription: blank, 1, 2"
-PASS focusedFieldValueDescription() is "AXHelp: Milliseconds, AXValueDescription: blank, 0, 999"
-PASS focusedFieldValueDescription() is "AXHelp: Seconds, AXValueDescription: blank, 0, 59"
-PASS focusedFieldValueDescription() is "AXHelp: Minutes, AXValueDescription: blank, 0, 59"
-PASS focusedFieldValueDescription() is "AXHelp: Hours, AXValueDescription: blank, 1, 12"
+PASS focusedElementDescription() is "AXHelp: AM/PM, AXValueDescription: blank, intValue:0, range:1-2"
+PASS focusedElementDescription() is "AXHelp: Milliseconds, AXValueDescription: blank, intValue:0, range:0-999"
+PASS focusedElementDescription() is "AXHelp: Seconds, AXValueDescription: blank, intValue:0, range:0-59"
+PASS focusedElementDescription() is "AXHelp: Minutes, AXValueDescription: blank, intValue:0, range:0-59"
+PASS focusedElementDescription() is "AXHelp: Hours, AXValueDescription: blank, intValue:0, range:1-12"
 
 PASS successfullyParsed is true
 

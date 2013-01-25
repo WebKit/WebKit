@@ -144,6 +144,12 @@ int DateTimeSymbolicFieldElement::valueAsInteger() const
     return m_selectedIndex;
 }
 
+int DateTimeSymbolicFieldElement::valueForARIAValueNow() const
+{
+    // Synchronize with minimum/maximum adjustment in initialize().
+    return m_selectedIndex + 1;
+}
+
 String DateTimeSymbolicFieldElement::visibleEmptyValue() const
 {
     return m_visibleEmptyValue;

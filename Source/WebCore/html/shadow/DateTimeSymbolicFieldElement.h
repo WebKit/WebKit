@@ -58,6 +58,7 @@ private:
     virtual void stepDown() OVERRIDE FINAL;
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
+    virtual int valueForARIAValueNow() const OVERRIDE FINAL;
     virtual String visibleValue() const OVERRIDE FINAL;
 
     // TypeAheadDataSource functions.
