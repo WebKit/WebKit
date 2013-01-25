@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,8) size 685x296
-    RenderSVGContainer {g} at (0,8) size 685x296
-      RenderSVGText {text} at (0,5) size 411x19 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (0,9) size 685x295
+    RenderSVGContainer {g} at (0,9) size 685x295
+      RenderSVGText {text} at (0,5) size 411x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 411x19
           chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 61 width 410.40: "This should show three markers on the path for start/mid/end."
-      RenderSVGText {text} at (0,25) size 386x19 contains 1 chunk(s)
+      RenderSVGText {text} at (0,25) size 386x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 386x19
           chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 55 width 385.20: "Start marker has no markerWidth/markerHeight specified."
-      RenderSVGText {text} at (0,45) size 286x19 contains 1 chunk(s)
+      RenderSVGText {text} at (0,45) size 286x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 286x19
           chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 40 width 285.60: "Mid marker has no markerWidth specified."
-      RenderSVGText {text} at (0,65) size 288x19 contains 1 chunk(s)
+      RenderSVGText {text} at (0,65) size 288x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 288x19
           chunk 1 text run 1 at (0.00,80.00) startOffset 0 endOffset 41 width 288.00: "End marker has no markerHeight specified."
       RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]

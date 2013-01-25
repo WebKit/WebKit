@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (15,42) size 376x249
       RenderSVGContainer {g} at (15,42) size 64x228
-        RenderSVGText {text} at (15,42) size 64x15 contains 1 chunk(s)
+        RenderSVGText {text} at (15,42) size 64x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x15
             chunk 1 text run 1 at (15.00,55.00) startOffset 0 endOffset 11 width 64.00: "Color at 3s"
         RenderSVGRect {rect} at (15,60) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=60.00] [width=30.00] [height=30.00]
         RenderSVGEllipse {circle} at (20,65) size 20x20 [fill={[type=SOLID] [color=#0000FF]}] [cx=30.00] [cy=75.00] [r=10.00]
-        RenderSVGText {text} at (15,132) size 64x15 contains 1 chunk(s)
+        RenderSVGText {text} at (15,132) size 64x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x15
             chunk 1 text run 1 at (15.00,145.00) startOffset 0 endOffset 11 width 64.00: "Color at 6s"
         RenderSVGRect {rect} at (15,150) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=150.00] [width=30.00] [height=30.00]
         RenderSVGEllipse {circle} at (20,155) size 20x20 [fill={[type=SOLID] [color=#40007F]}] [cx=30.00] [cy=165.00] [r=10.00]
-        RenderSVGText {text} at (15,222) size 64x15 contains 1 chunk(s)
+        RenderSVGText {text} at (15,222) size 64x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x15
             chunk 1 text run 1 at (15.00,235.00) startOffset 0 endOffset 11 width 64.00: "Color at 9s"
         RenderSVGRect {rect} at (15,240) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=240.00] [width=30.00] [height=30.00]
