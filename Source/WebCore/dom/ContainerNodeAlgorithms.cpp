@@ -121,4 +121,35 @@ void ChildFrameDisconnector::Target::disconnect()
     toFrameOwnerElement(m_owner.get())->disconnectContentFrame();
 }
 
+#ifndef NDEBUG
+unsigned assertConnectedSubrameCountIsConsistent(Node* node)
+{
+    unsigned count = 0;
+
+    if (node->isElementNode()) {
+        if (node->isFrameOwnerElement() && toFrameOwnerElement(node)->contentFrame())
+            count++;
+
+        if (ElementShadow* shadow = toElement(node)->shadow()) {
+            for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
+                count += assertConnectedSubrameCountIsConsistent(root);
+        }
+    }
+
+    for (Node* child = node->firstChild(); child; child = child->nextSibling())
+        count += assertConnectedSubrameCountIsConsistent(child);
+
+    // If we undercount there's possibly a security bug since we'd leave frames
+    // in subtrees outside the document.
+    ASSERT(node->connectedSubframeCount() >= count);
+
+    // If we overcount it's safe, but not optimal because it means we'll traverse
+    // through the document in ChildFrameDisconnector looking for frames that have
+    // already been disconnected.
+    ASSERT(node->connectedSubframeCount() == count);
+
+    return count;
+}
+#endif
+
 }

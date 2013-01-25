@@ -62,6 +62,17 @@ void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
         node->incrementConnectedSubframeCount();
 }
 
+void HTMLFrameOwnerElement::clearContentFrame()
+{
+    if (!m_contentFrame)
+        return;
+
+    m_contentFrame = 0;
+
+    for (ContainerNode* node = this; node; node = node->parentOrHostNode())
+        node->decrementConnectedSubframeCount();
+}
+
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     ASSERT(hasCustomCallbacks());
@@ -70,9 +81,6 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     // reach up into this document and then attempt to look back down. We should
     // see if this behavior is really needed as Gecko does not allow this.
     if (Frame* frame = contentFrame()) {
-        for (ContainerNode* node = this; node; node = node->parentOrHostNode())
-            node->decrementConnectedSubframeCount();
-
         RefPtr<Frame> protect(frame);
         frame->loader()->frameDetached();
         frame->disconnectOwnerElement();

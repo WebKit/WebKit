@@ -681,6 +681,8 @@ public:
     unsigned connectedSubframeCount() const;
     void incrementConnectedSubframeCount(unsigned amount = 1);
     void decrementConnectedSubframeCount(unsigned amount = 1);
+    void updateAncestorConnectedSubframeCountForRemoval() const;
+    void updateAncestorConnectedSubframeCountForInsertion() const;
 
 private:
     enum NodeFlags {

@@ -297,6 +297,10 @@ private:
     Node* m_root;
 };
 
+#ifndef NDEBUG
+unsigned assertConnectedSubrameCountIsConsistent(Node*);
+#endif
+
 inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
 {
     if (!root->connectedSubframeCount())
@@ -330,6 +334,10 @@ inline void ChildFrameDisconnector::disconnectCollectedFrameOwners()
 
 inline void ChildFrameDisconnector::disconnect(DisconnectPolicy policy)
 {
+#ifndef NDEBUG
+    assertConnectedSubrameCountIsConsistent(m_root);
+#endif
+
     if (!m_root->connectedSubframeCount())
         return;
 

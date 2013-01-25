@@ -43,7 +43,7 @@ public:
     Document* contentDocument() const;
 
     void setContentFrame(Frame*);
-    void clearContentFrame() { m_contentFrame = 0; }
+    void clearContentFrame();
 
     void disconnectContentFrame();
 
