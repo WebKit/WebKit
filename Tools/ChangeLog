@@ -1,3 +1,12 @@
+2013-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Anne's email address
+        https://bugs.webkit.org/show_bug.cgi?id=107866
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-24  Alan Cutter  <alancutter@chromium.org>
 
         HTTP 500 error between QueueStatusServer and bot(s)

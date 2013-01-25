@@ -129,7 +129,7 @@ contributors_who_are_not_committers = [
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
     Contributor("Andrei Bucur", "abucur@adobe.com", "abucur"),
-    Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
+    Contributor("Anne van Kesteren", "annevk@annevk.nl", "annevk"),
     Contributor("Annie Sullivan", "sullivan@chromium.org", "annie"),
     Contributor("Anton Vayvod", "avayvod@chromium.org", "avayvod"),
     Contributor("Antoine Quint", "graouts@apple.com", "graouts"),
