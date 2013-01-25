@@ -64590,6 +64590,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\MicroDataAttributeTokenList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MicroDataAttributeTokenList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\MicroDataItemValue.cpp"
 				>
 			</File>

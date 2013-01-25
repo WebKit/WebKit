@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="mydiv"></div>
+<script>
+description("This tests that itemtype, itemprop, itemref attributes must update correctly when tokens have been added or removed.");
+var element = document.getElementById("mydiv");
+
+debug("itemtype attribute test.");
+element.itemType.add('foo');
+element.itemType.add('FOO');
+shouldBe("element.getAttribute('itemtype')", "'foo FOO'");
+element.itemType.remove('foo');
+shouldBe("element.getAttribute('itemtype')", "'FOO'");
+element.itemType.remove('FOO');
+shouldBe("element.getAttribute('itemtype')", "''");
+
+debug("");
+debug("itemprop attribute test.");
+element.itemProp.add('foo');
+element.itemProp.add('FOO');
+shouldBe("element.getAttribute('itemprop')", "'foo FOO'");
+element.itemProp.remove('foo');
+shouldBe("element.getAttribute('itemprop')", "'FOO'");
+element.itemProp.remove('FOO');
+shouldBe("element.getAttribute('itemprop')", "''");
+
+debug("");
+debug("itemref attribute test.");
+element.itemRef.add('foo');
+element.itemRef.add('FOO');
+shouldBe("element.getAttribute('itemref')", "'foo FOO'");
+element.itemRef.remove('foo');
+shouldBe("element.getAttribute('itemref')", "'FOO'");
+element.itemRef.remove('FOO');
+shouldBe("element.getAttribute('itemref')", "''");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

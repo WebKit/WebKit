@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that adding or removing itemref tokens must update its PropertyNodeList.");
+var parent = createElement('div', {}, '<div id="id1" itemprop="foo"></div><div itemscope></div>');
+var testElement = parent.childNodes[1];
+var PNL = testElement.properties.namedItem('foo');
+
+shouldBe("PNL.length", "0");
+testElement.itemRef.add('id1');
+shouldBe("PNL.length", "1");
+shouldBe("PNL[0]", "parent.firstChild");
+testElement.itemRef.remove('id1');
+shouldBe("PNL.length", "0");
+shouldBeTrue("!PNL[0]");
+
+document.body.appendChild(parent);
+var length0 = PNL.length;
+testElement.itemRef.toggle('id1');
+var length1 = PNL.length;
+var foo0 = PNL[0];
+testElement.removeAttribute('itemref');
+var length2 = PNL.length;
+var foo1 = PNL[0];
+document.body.removeChild(parent);
+shouldBe("length0", "0");
+shouldBe("length1", "1");
+shouldBe("foo0", "parent.firstChild");
+shouldBe("length2", "0");
+shouldBeTrue("!foo1");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

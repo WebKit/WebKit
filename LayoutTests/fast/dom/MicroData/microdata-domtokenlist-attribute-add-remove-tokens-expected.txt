@@ -1,0 +1,23 @@
+This tests that itemtype, itemprop, itemref attributes must update correctly when tokens have been added or removed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+itemtype attribute test.
+PASS element.getAttribute('itemtype') is 'foo FOO'
+PASS element.getAttribute('itemtype') is 'FOO'
+PASS element.getAttribute('itemtype') is ''
+
+itemprop attribute test.
+PASS element.getAttribute('itemprop') is 'foo FOO'
+PASS element.getAttribute('itemprop') is 'FOO'
+PASS element.getAttribute('itemprop') is ''
+
+itemref attribute test.
+PASS element.getAttribute('itemref') is 'foo FOO'
+PASS element.getAttribute('itemref') is 'FOO'
+PASS element.getAttribute('itemref') is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

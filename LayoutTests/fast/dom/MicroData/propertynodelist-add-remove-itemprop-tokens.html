@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that adding or removing itemprop tokens must update its PropertyNodeList.");
+var item = createElement('div', {itemscope: 'itemscope'}, '<div itemprop="foo"></div><div></div>');
+var PNLfoo = item.properties.namedItem('foo');
+PNLbar = item.properties.namedItem('bar');
+
+shouldBe("PNLfoo.length", "1");
+shouldBe("PNLbar.length", "0");
+shouldBe("PNLfoo[0]", "item.firstChild");
+
+item.lastChild.itemProp.toggle('bar');
+shouldBe("PNLfoo.length", "1");
+shouldBe("PNLbar.length", "1");
+shouldBe("PNLfoo[0]", "item.firstChild");
+shouldBe("PNLbar[0]", "item.lastChild");
+
+item.lastChild.itemProp.add('foo');
+shouldBe("PNLfoo.length", "2");
+shouldBe("PNLbar.length", "1");
+shouldBe("PNLfoo[0]", "item.firstChild");
+shouldBe("PNLfoo[1]", "item.lastChild");
+shouldBe("PNLbar[0]", "item.lastChild");
+
+item.lastChild.removeAttribute('itemprop');
+shouldBe("PNLfoo.length", "1");
+shouldBe("PNLbar.length", "0");
+shouldBe("PNLfoo[0]", "item.firstChild");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

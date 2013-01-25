@@ -3528,6 +3528,8 @@ webcore_sources += \
 	Source/WebCore/html/MediaKeyEvent.h \
 	Source/WebCore/html/MediaFragmentURIParser.cpp \
 	Source/WebCore/html/MediaFragmentURIParser.h \
+	Source/WebCore/html/MicroDataAttributeTokenList.cpp \
+	Source/WebCore/html/MicroDataAttributeTokenList.h \
 	Source/WebCore/html/MicroDataItemValue.cpp \
 	Source/WebCore/html/MicroDataItemValue.h \
 	Source/WebCore/html/MonthInputType.cpp \

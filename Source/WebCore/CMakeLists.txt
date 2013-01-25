@@ -1468,6 +1468,7 @@ set(WebCore_SOURCES
     html/MediaController.cpp
     html/MediaDocument.cpp
     html/MediaFragmentURIParser.cpp
+    html/MicroDataAttributeTokenList.cpp
     html/MicroDataItemValue.cpp
     html/MonthInputType.cpp
     html/NumberInputType.cpp

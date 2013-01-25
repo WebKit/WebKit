@@ -1,0 +1,26 @@
+Test to ensure that adding or removing itemprop tokens must update its PropertyNodeList.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS PNLfoo.length is 1
+PASS PNLbar.length is 0
+PASS PNLfoo[0] is item.firstChild
+PASS PNLfoo.length is 1
+PASS PNLbar.length is 1
+PASS PNLfoo[0] is item.firstChild
+PASS PNLbar[0] is item.lastChild
+PASS PNLfoo.length is 2
+PASS PNLbar.length is 1
+PASS PNLfoo[0] is item.firstChild
+PASS PNLfoo[1] is item.lastChild
+PASS PNLbar[0] is item.lastChild
+PASS PNLfoo.length is 1
+PASS PNLbar.length is 0
+PASS PNLfoo[0] is item.firstChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

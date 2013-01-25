@@ -3216,6 +3216,8 @@
             'html/MediaKeyError.h',
             'html/MediaKeyEvent.cpp',
             'html/MediaKeyEvent.h',
+            'html/MicroDataAttributeTokenList.cpp',
+            'html/MicroDataAttributeTokenList.h',
             'html/MicroDataItemValue.cpp',
             'html/MicroDataItemValue.h',
             'html/MonthInputType.cpp',

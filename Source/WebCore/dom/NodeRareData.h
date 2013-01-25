@@ -24,6 +24,7 @@
 
 #include "ChildNodeList.h"
 #include "DOMSettableTokenList.h"
+#include "HTMLNames.h"
 #include "LiveNodeList.h"
 #include "MutationObserver.h"
 #include "MutationObserverRegistration.h"
@@ -41,6 +42,7 @@
 
 #if ENABLE(MICRODATA)
 #include "HTMLPropertiesCollection.h"
+#include "MicroDataAttributeTokenList.h"
 #include "MicroDataItemList.h"
 #endif
 
@@ -260,33 +262,33 @@ class NodeMicroDataTokenLists {
 public:
     static PassOwnPtr<NodeMicroDataTokenLists> create() { return adoptPtr(new NodeMicroDataTokenLists); }
 
-    DOMSettableTokenList* itemProp() const
+    MicroDataAttributeTokenList* itemProp(Node* node) const
     {
         if (!m_itemProp)
-            m_itemProp = DOMSettableTokenList::create();
+            m_itemProp = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itempropAttr);
         return m_itemProp.get();
     }
 
-    DOMSettableTokenList* itemRef() const
+    MicroDataAttributeTokenList* itemRef(Node* node) const
     {
         if (!m_itemRef)
-            m_itemRef = DOMSettableTokenList::create();
+            m_itemRef = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itemrefAttr);
         return m_itemRef.get();
     }
 
-    DOMSettableTokenList* itemType() const
+    MicroDataAttributeTokenList* itemType(Node* node) const
     {
         if (!m_itemType)
-            m_itemType = DOMSettableTokenList::create();
+            m_itemType = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itemtypeAttr);
         return m_itemType.get();
     }
 
 private:
     NodeMicroDataTokenLists() { }
 
-    mutable RefPtr<DOMSettableTokenList> m_itemProp;
-    mutable RefPtr<DOMSettableTokenList> m_itemRef;
-    mutable RefPtr<DOMSettableTokenList> m_itemType;
+    mutable RefPtr<MicroDataAttributeTokenList> m_itemProp;
+    mutable RefPtr<MicroDataAttributeTokenList> m_itemRef;
+    mutable RefPtr<MicroDataAttributeTokenList> m_itemType;
 };
 #endif
 
