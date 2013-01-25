@@ -1,3 +1,29 @@
+2013-01-25  Sam Weinig  <sam@webkit.org>
+
+        Move the WebContentServices to WebProcess/EntryPoint/mac/XPCService/.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebContentService.Development.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint: Added.
+        * WebProcess/EntryPoint/mac: Added.
+        * WebProcess/EntryPoint/mac/LegacyProcess: Added.
+        * WebProcess/EntryPoint/mac/XPCService: Added.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService: Copied from WebProcessService.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development: Copied from WebProcessServiceForWebKitDevelopment.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm: Copied from WebProcessServiceForWebKitDevelopment/WebProcessServiceForWebKitDevelopmentMain.mm.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebProcessServiceForWebKitDevelopmentMain.mm: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm: Copied from WebProcessService/WebProcessServiceMain.mm.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebProcessServiceMain.mm: Removed.
+        * WebProcessService: Removed.
+        * WebProcessService/Info.plist: Removed.
+        * WebProcessService/WebProcessServiceMain.mm: Removed.
+        * WebProcessServiceForWebKitDevelopment: Removed.
+        * WebProcessServiceForWebKitDevelopment/Info.plist: Removed.
+        * WebProcessServiceForWebKitDevelopment/WebProcessServiceForWebKitDevelopmentMain.mm: Removed.
+
 2013-01-25  Ivan Krstić  <ike@apple.com>
 
         Prepend common plugin sandbox profile to specific per-plugin one.

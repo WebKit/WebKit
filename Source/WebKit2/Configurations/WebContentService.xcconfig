@@ -24,4 +24,4 @@
 #include "BaseXPCService.xcconfig"
 
 PRODUCT_NAME = com.apple.WebKit.WebContent;
-INFOPLIST_FILE = WebProcessService/Info.plist;
+INFOPLIST_FILE = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist;

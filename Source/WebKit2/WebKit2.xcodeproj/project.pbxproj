@@ -858,9 +858,11 @@
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
 		BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */; };
 		BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */; };
+		BCACC44516B24CAA00B6E092 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCACC44016B24CAA00B6E092 /* Info.plist */; };
+		BCACC44716B24CAA00B6E092 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCACC44316B24CAA00B6E092 /* Info.plist */; };
+		BCACC44916B24D3200B6E092 /* WebContentServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */; };
+		BCACC44A16B24D3600B6E092 /* WebContentServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */; };
 		BCAE9DFB160C0AA100A33217 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
-		BCAE9E05160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAE9E04160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm */; };
-		BCAE9E07160C139A00A33217 /* WebProcessServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAE9E06160C139A00A33217 /* WebProcessServiceMain.mm */; };
 		BCAE9E08160C1C0700A33217 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BCAE9E09160C233B00A33217 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8049D122F0D6B00103529 /* MutableArray.cpp */; };
@@ -2157,11 +2159,11 @@
 		BCACC40D16B0B7BE00B6E092 /* BaseXPCService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseXPCService.xcconfig; sourceTree = "<group>"; };
 		BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.xcconfig; sourceTree = "<group>"; };
 		BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.Development.xcconfig; sourceTree = "<group>"; };
-		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContentForDevelopment.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = com.apple.WebKit.WebContentForDevelopment.xpc; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCAE9DEF160C097500A33217 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAE9E01160C12DA00A33217 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = WebProcessService/Info.plist; sourceTree = "<group>"; };
-		BCAE9E04160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessServiceForWebKitDevelopmentMain.mm; sourceTree = "<group>"; };
-		BCAE9E06160C139A00A33217 /* WebProcessServiceMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebProcessServiceMain.mm; path = WebProcessService/WebProcessServiceMain.mm; sourceTree = "<group>"; };
+		BCACC44016B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceMain.mm; sourceTree = "<group>"; };
+		BCACC44316B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceMain.Development.mm; sourceTree = "<group>"; };
+		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB0AEE7122F53E300B1341E /* MutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableDictionary.h; sourceTree = "<group>"; };
 		BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableDictionary.cpp; sourceTree = "<group>"; };
 		BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextUserMessageCoders.h; sourceTree = "<group>"; };
@@ -2498,7 +2500,7 @@
 			isa = PBXGroup;
 			children = (
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
-				BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContentForDevelopment.xpc */,
+				BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */,
 				510CC80E1613C79900D03ED3 /* NetworkProcess.app */,
 				BCDE094213272496001259FB /* PluginProcess.app */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
@@ -2556,8 +2558,6 @@
 				E1EDFD9716287AEC0039ECDA /* SharedWorkerProcess */,
 				BC8A500E11765AD400757573 /* WebKit2 */,
 				BC8A500F11765AE300757573 /* WebProcess */,
-				BC3DE47815A917C6008D26FC /* WebProcessService */,
-				BCAE9DED160C097400A33217 /* WebProcessServiceForWebKitDevelopment */,
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
 				1CBC945D16515ED200D68AAE /* Dock.pdf */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
@@ -3416,6 +3416,7 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
+				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
 				512E352A130B559900ABD19A /* ApplicationCache */,
 				3309344B1315B93A0097A7BC /* Cookies */,
 				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
@@ -4037,15 +4038,6 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
-		BC3DE47815A917C6008D26FC /* WebProcessService */ = {
-			isa = PBXGroup;
-			children = (
-				BCAE9E01160C12DA00A33217 /* Info.plist */,
-				BCAE9E06160C139A00A33217 /* WebProcessServiceMain.mm */,
-			);
-			name = WebProcessService;
-			sourceTree = "<group>";
-		};
 		BC4075D5124FEFFA0068F20A /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -4143,13 +4135,49 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
-		BCAE9DED160C097400A33217 /* WebProcessServiceForWebKitDevelopment */ = {
+		BCACC43B16B24C5D00B6E092 /* EntryPoint */ = {
 			isa = PBXGroup;
 			children = (
-				BCAE9DEF160C097500A33217 /* Info.plist */,
-				BCAE9E04160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm */,
+				BCACC43D16B24C7D00B6E092 /* LegacyProcess */,
+				BCACC43E16B24C8B00B6E092 /* XPCService */,
 			);
-			path = WebProcessServiceForWebKitDevelopment;
+			path = EntryPoint;
+			sourceTree = "<group>";
+		};
+		BCACC43D16B24C7D00B6E092 /* LegacyProcess */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = LegacyProcess;
+			path = mac/LegacyProcess;
+			sourceTree = "<group>";
+		};
+		BCACC43E16B24C8B00B6E092 /* XPCService */ = {
+			isa = PBXGroup;
+			children = (
+				BCACC43F16B24CAA00B6E092 /* WebContentService */,
+				BCACC44216B24CAA00B6E092 /* WebContentService.Development */,
+			);
+			name = XPCService;
+			path = mac/XPCService;
+			sourceTree = "<group>";
+		};
+		BCACC43F16B24CAA00B6E092 /* WebContentService */ = {
+			isa = PBXGroup;
+			children = (
+				BCACC44016B24CAA00B6E092 /* Info.plist */,
+				BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */,
+			);
+			path = WebContentService;
+			sourceTree = "<group>";
+		};
+		BCACC44216B24CAA00B6E092 /* WebContentService.Development */ = {
+			isa = PBXGroup;
+			children = (
+				BCACC44316B24CAA00B6E092 /* Info.plist */,
+				BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */,
+			);
+			path = WebContentService.Development;
 			sourceTree = "<group>";
 		};
 		BCBAAC58144E38B90053F82F /* WKView Details */ = {
@@ -5216,7 +5244,7 @@
 			);
 			name = WebContent.Development;
 			productName = WebProcessServiceForWebKitDevelopment;
-			productReference = BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContentForDevelopment.xpc */;
+			productReference = BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */;
 			productType = "com.apple.product-type.bundle";
 		};
 		BCDE093313272496001259FB /* PluginProcess */ = {
@@ -5321,6 +5349,8 @@
 				BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */,
 				1CBC945E16515ED200D68AAE /* Dock.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				BCACC44516B24CAA00B6E092 /* Info.plist in Resources */,
+				BCACC44716B24CAA00B6E092 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6070,7 +6100,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCAE9E07160C139A00A33217 /* WebProcessServiceMain.mm in Sources */,
+				BCACC44916B24D3200B6E092 /* WebContentServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6078,7 +6108,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCAE9E05160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm in Sources */,
+				BCACC44A16B24D3600B6E092 /* WebContentServiceMain.Development.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
