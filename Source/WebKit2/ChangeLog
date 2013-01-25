@@ -1,3 +1,14 @@
+2013-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        Fix NetworkProcess loading after r140730.
+
+        Reviewed by Sam Weinig.
+
+        If a process' sandbox profile path is empty, don't try to initialize the sandbox.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2013-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r140752.

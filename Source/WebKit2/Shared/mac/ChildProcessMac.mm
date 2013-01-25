@@ -118,13 +118,15 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:
     case SandboxInitializationParameters::UseOverrideSandboxProfilePath: {
         String sandboxProfilePath = sandboxParameters.mode() == SandboxInitializationParameters::UseDefaultSandboxProfilePath ? defaultProfilePath : sandboxParameters.overrideSandboxProfilePath();
-        CString profilePath = fileSystemRepresentation(sandboxProfilePath);
-        char* errorBuf;
-        if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
-            WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);
-            for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
-                WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
-            exit(EX_NOPERM);
+        if (!sandboxProfilePath.isEmpty()) {
+            CString profilePath = fileSystemRepresentation(sandboxProfilePath);
+            char* errorBuf;
+            if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
+                WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);
+                for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
+                    WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
+                exit(EX_NOPERM);
+            }
         }
 
         break;
