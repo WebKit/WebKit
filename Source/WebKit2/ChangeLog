@@ -1,3 +1,36 @@
+2013-01-24  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Page overlays should do their own animation, instead of relying on implicit animation
+        https://bugs.webkit.org/show_bug.cgi?id=107896
+        <rdar://problem/12900058>
+
+        Reviewed by Sam Weinig.
+
+        Use PageOverlay's animation instead of CA implicit animations for uninstallPageOverlay.
+
+        Make WKBundlePageInstallPageOverlay/WKBundlePageUninstallPageOverlay default to no animation.
+
+        Add WKBundlePageInstallPageOverlayWithAnimation/WKBundlePageUninstallPageOverlayWithAnimation.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageUninstallPageOverlay): The default for shouldFadeOut is now false, so we don't need to pass it.
+        (WKBundlePageInstallPageOverlayWithAnimation): Add a version of WKBundlePageInstallPageOverlay that fades in.
+        (WKBundlePageUninstallPageOverlayWithAnimation): Add a version of WKBundlePageUninstallPageOverlay that fades out.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight): installPageOverlay used to animate by default, now we need to ask for it.
+        (WebKit::WebInspectorClient::hideHighlight): uninstallPageOverlay used to implicitly animate accidentally, now we need to ask for it.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll): Ditto.
+        (WebKit::FindController::hideFindUI): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay): Add shouldFadeIn parameter.
+        (WebKit::WebPage::uninstallPageOverlay):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add shouldFadeIn to installPageOverlay; make both it and uninstallPageOverlay's shouldFade out default to false.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::destroyPageOverlayLayer): Disable implicit animations when removing a page overlay.
+
 2013-01-24  Huang Dongsung  <luxtella@company100.net>
 
         [EFL] Unreviewed build fix after r140752.

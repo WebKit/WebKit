@@ -295,7 +295,17 @@ void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlay
 
 void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), false);
+    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef));
+}
+
+void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+{
+    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef), true);
+}
+
+void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+{
+    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), true);
 }
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)

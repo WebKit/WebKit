@@ -1347,10 +1347,8 @@ void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::Mess
     injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());
 }
 
-void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
+void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, bool shouldFadeIn)
 {
-    bool shouldFadeIn = true;
-    
     if (m_pageOverlay) {
         m_pageOverlay->setPage(0);
 
@@ -1371,12 +1369,12 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
     m_pageOverlay->setNeedsDisplay();
 }
 
-void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool fadeOut)
+void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
 {
     if (pageOverlay != m_pageOverlay)
         return;
 
-    if (fadeOut) {
+    if (shouldFadeOut) {
         m_pageOverlay->startFadeOutAnimation();
         return;
     }

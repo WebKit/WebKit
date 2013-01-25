@@ -490,7 +490,13 @@ void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer()
 {
     ASSERT(m_pageOverlayLayer);
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     [m_pageOverlayLayer->platformLayer() removeFromSuperlayer];
+
+    [CATransaction commit];
+
     m_pageOverlayLayer = nullptr;
 }
 
