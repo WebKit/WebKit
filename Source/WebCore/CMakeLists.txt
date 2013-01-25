@@ -2663,6 +2663,53 @@ if (ENABLE_VIDEO_TRACK)
     )
 endif ()
 
+if (WTF_USE_LEVELDB)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/leveldb/include"
+        "${THIRDPARTY_DIR}/leveldb"
+    )
+    list(APPEND LEVELDB_SOURCES
+        ${THIRDPARTY_DIR}/leveldb/db/builder.cc
+        ${THIRDPARTY_DIR}/leveldb/db/c.cc
+        ${THIRDPARTY_DIR}/leveldb/db/dbformat.cc
+        ${THIRDPARTY_DIR}/leveldb/db/db_impl.cc
+        ${THIRDPARTY_DIR}/leveldb/db/db_iter.cc
+        ${THIRDPARTY_DIR}/leveldb/db/filename.cc
+        ${THIRDPARTY_DIR}/leveldb/db/log_reader.cc
+        ${THIRDPARTY_DIR}/leveldb/db/log_writer.cc
+        ${THIRDPARTY_DIR}/leveldb/db/memtable.cc
+        ${THIRDPARTY_DIR}/leveldb/db/repair.cc
+        ${THIRDPARTY_DIR}/leveldb/db/table_cache.cc
+        ${THIRDPARTY_DIR}/leveldb/db/version_edit.cc
+        ${THIRDPARTY_DIR}/leveldb/db/version_set.cc
+        ${THIRDPARTY_DIR}/leveldb/db/write_batch.cc
+        ${THIRDPARTY_DIR}/leveldb/helpers/memenv/memenv.cc
+        ${THIRDPARTY_DIR}/leveldb/port/port_posix.cc
+        ${THIRDPARTY_DIR}/leveldb/table/block_builder.cc
+        ${THIRDPARTY_DIR}/leveldb/table/block.cc
+        ${THIRDPARTY_DIR}/leveldb/table/filter_block.cc
+        ${THIRDPARTY_DIR}/leveldb/table/format.cc
+        ${THIRDPARTY_DIR}/leveldb/table/iterator.cc
+        ${THIRDPARTY_DIR}/leveldb/table/merger.cc
+        ${THIRDPARTY_DIR}/leveldb/table/table_builder.cc
+        ${THIRDPARTY_DIR}/leveldb/table/table.cc
+        ${THIRDPARTY_DIR}/leveldb/table/two_level_iterator.cc
+        ${THIRDPARTY_DIR}/leveldb/util/arena.cc
+        ${THIRDPARTY_DIR}/leveldb/util/bloom.cc
+        ${THIRDPARTY_DIR}/leveldb/util/cache.cc
+        ${THIRDPARTY_DIR}/leveldb/util/coding.cc
+        ${THIRDPARTY_DIR}/leveldb/util/comparator.cc
+        ${THIRDPARTY_DIR}/leveldb/util/crc32c.cc
+        ${THIRDPARTY_DIR}/leveldb/util/env.cc
+        ${THIRDPARTY_DIR}/leveldb/util/env_posix.cc
+        ${THIRDPARTY_DIR}/leveldb/util/filter_policy.cc
+        ${THIRDPARTY_DIR}/leveldb/util/hash.cc
+        ${THIRDPARTY_DIR}/leveldb/util/histogram.cc
+        ${THIRDPARTY_DIR}/leveldb/util/logging.cc
+        ${THIRDPARTY_DIR}/leveldb/util/options.cc
+        ${THIRDPARTY_DIR}/leveldb/util/status.cc
+    )
+endif ()
 
 if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -3017,6 +3064,15 @@ set_target_properties(${WebCoreTestSupport_LIBRARY_NAME} PROPERTIES FOLDER "WebC
 
 add_dependencies(${WebCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_NAME})
 add_dependencies(${WebCoreTestSupport_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
+
+if (WTF_USE_LEVELDB)
+    set(LEVELDB_LIBRARY_NAME leveldb)
+    add_library(${LEVELDB_LIBRARY_NAME} STATIC ${LEVELDB_SOURCES})
+    target_link_libraries(${LEVELDB_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
+    set_target_properties(${LEVELDB_LIBRARY_NAME} PROPERTIES COMPILE_DEFINITIONS "LEVELDB_PLATFORM_POSIX=1 OS_LINUX=1")
+    list(APPEND WebCore_LIBRARIES ${LEVELDB_LIBRARY_NAME})
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${LEVELDB_LIBRARY_NAME} IGNORECXX_WARNINGS)
+endif ()
 
 if (WTF_USE_3D_GRAPHICS)
     set(ANGLESupport_LIBRARY_NAME ANGLESupport)
