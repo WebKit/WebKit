@@ -45,7 +45,7 @@ PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* co
 }
 
 IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
-    : IDBRequest(context, IDBAny::createNull(), IDBTransactionBackendInterface::NormalTask, 0)
+    : IDBRequest(context, IDBAny::createNull(), IDBDatabaseBackendInterface::NormalTask, 0)
     , m_databaseCallbacks(callbacks)
     , m_transactionId(transactionId)
     , m_version(version)
