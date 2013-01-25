@@ -32,7 +32,6 @@
 
 namespace WebKit {
 
-class GeolocationPermissionRequestProxy;
 class WebPageProxy;
 
 class NotificationPermissionRequestManagerProxy {
