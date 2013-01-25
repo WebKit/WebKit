@@ -143,7 +143,6 @@ public:
     virtual void didEnterFullScreen();
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
-    virtual void setCompositorSurfaceReady();
     virtual void animate(double);
     virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
     virtual void enterForceCompositingMode(bool enable) OVERRIDE;
@@ -152,7 +151,6 @@ public:
     virtual void themeChanged();
     virtual void composite(bool finish);
     virtual void setNeedsRedraw();
-    virtual bool isInputThrottled() const;
     virtual bool handleInputEvent(const WebInputEvent&);
     virtual bool hasTouchEventHandlersAt(const WebPoint&);
     virtual void mouseCaptureLost();
@@ -184,7 +182,6 @@ public:
     virtual void didChangeWindowResizerRect();
     virtual void instrumentBeginFrame();
     virtual void instrumentCancelFrame();
-    virtual void renderingStats(WebRenderingStats&) const;
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
@@ -842,7 +839,6 @@ private:
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
     WebLayerTreeView* m_layerTreeView;
-    bool m_ownsLayerTreeView;
     WebLayer* m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
@@ -850,7 +846,6 @@ private:
     bool m_compositorCreationFailed;
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
-    bool m_compositorSurfaceReady;
     int m_inputHandlerIdentifier;
 #endif
     static const WebInputEvent* m_currentInputEvent;

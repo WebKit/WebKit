@@ -1,5 +1,24 @@
 2013-01-24  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove dead transitional code from WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=107889
+
+        Reviewed by Adrienne Walker.
+
+        The chromium side of this landed at r178256 and seems stable.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::setCompositorSurfaceReady):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit):
+        (WebKit::WebViewImpl::setIsTransparent):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
+2013-01-24  James Robinson  <jamesr@chromium.org>
+
         [chromium] Null check WebLayerTreeView before dereffing in WebViewImpl::invalidateRect
         https://bugs.webkit.org/show_bug.cgi?id=107855
 
