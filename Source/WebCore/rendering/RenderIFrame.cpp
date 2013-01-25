@@ -83,6 +83,11 @@ bool RenderIFrame::isSeamless() const
     return node() && node()->hasTagName(iframeTag) && static_cast<HTMLIFrameElement*>(node())->shouldDisplaySeamlessly();
 }
 
+bool RenderIFrame::requiresLayer() const
+{
+    return RenderFrameBase::requiresLayer() || style()->resize() != RESIZE_NONE;
+}
+
 RenderView* RenderIFrame::contentRootRenderer() const
 {
     // FIXME: Is this always a valid cast? What about plugins?

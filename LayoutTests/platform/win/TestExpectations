@@ -2528,3 +2528,7 @@ proximity/no-page-cache.html
 proximity/optional-event-properties.html
 proximity/updates.html
 proximity/window-property.html
+
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
+webkit.org/b/9221 fast/css/resize-corner-tracking.html [ Failure ]
+webkit.org/b/9221 fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]

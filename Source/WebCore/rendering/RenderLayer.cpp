@@ -2326,19 +2326,25 @@ void RenderLayer::autoscroll(const IntPoint& position)
     scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
+bool RenderLayer::canResize() const
+{
+    if (!renderer())
+        return false;
+    // We need a special case for <iframe> because they never have
+    // hasOverflowClip(). However, they do "implicitly" clip their contents, so
+    // we want to allow resizing them also.
+    return (renderer()->hasOverflowClip() || renderer()->isRenderIFrame()) && renderer()->style()->resize() != RESIZE_NONE;
+}
+
 void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOffset)
 {
     // FIXME: This should be possible on generated content but is not right now.
-    if (!inResizeMode() || !renderer()->hasOverflowClip() || !renderer()->node())
+    if (!inResizeMode() || !canResize() || !renderer()->node())
         return;
 
     ASSERT(renderer()->node()->isElementNode());
     Element* element = static_cast<Element*>(renderer()->node());
     RenderBox* renderer = toRenderBox(element->renderer());
-
-    EResize resize = renderer->style()->resize();
-    if (resize == RESIZE_NONE)
-        return;
 
     Document* document = element->document();
     if (!document->frame()->eventHandler()->mousePressed())
@@ -2366,6 +2372,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     StyledElement* styledElement = static_cast<StyledElement*>(element);
     bool isBoxSizingBorder = renderer->style()->boxSizing() == BORDER_BOX;
 
+    EResize resize = renderer->style()->resize();
     if (resize != RESIZE_VERTICAL && difference.width()) {
         if (element->isFormControlElement()) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
@@ -2853,7 +2860,7 @@ bool RenderLayer::hasOverflowControls() const
 
 void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
 {
-    if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
+    if (!m_hBar && !m_vBar && !canResize())
         return;
     
     RenderBox* box = renderBox();
@@ -3267,7 +3274,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
 
 bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
 {
-    if (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE)
+    if (!canResize())
         return false;
     
     RenderBox* box = renderBox();
@@ -3278,10 +3285,10 @@ bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
     IntRect localBounds(0, 0, box->pixelSnappedWidth(), box->pixelSnappedHeight());
     return resizerCornerRect(this, localBounds).contains(localPoint);
 }
-    
+
 bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint& localPoint)
 {
-    if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
+    if (!m_hBar && !m_vBar && !canResize())
         return false;
 
     RenderBox* box = renderBox();
@@ -4243,6 +4250,12 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         if (!depthSortDescendants)
             return hitLayer;
         candidateLayer = hitLayer;
+    }
+
+    // Check for the resizer
+    if (canResize() && resizerCornerRect(this, pixelSnappedIntRect(layerBounds)).contains(hitTestLocation.roundedPoint())) {
+        renderer()->updateHitTestResult(result, hitTestLocation.point());
+        return this;
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.

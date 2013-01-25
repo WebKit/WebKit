@@ -4668,3 +4668,7 @@ webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ]
 webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
+
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
+webkit.org/b/9221 [ Win ] fast/css/resize-corner-tracking.html [ Failure ]
+webkit.org/b/9221 [ Win ] fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]
