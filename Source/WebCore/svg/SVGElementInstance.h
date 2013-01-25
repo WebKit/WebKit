@@ -161,7 +161,7 @@ private:
     friend void appendChildToContainer(GenericNode* child, GenericNodeContainer* container);
 
     template<class GenericNode, class GenericNodeContainer>
-    friend void removeAllChildrenInContainer(GenericNodeContainer* container);
+    friend void removeDetachedChildrenInContainer(GenericNodeContainer*);
 
     template<class GenericNode, class GenericNodeContainer>
     friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);

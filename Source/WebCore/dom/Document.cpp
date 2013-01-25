@@ -656,7 +656,7 @@ void Document::removedLastRef()
     if (m_guardRefCount) {
         // If removing a child removes the last self-only ref, we don't
         // want the scope to be destructed until after
-        // removeAllChildren returns, so we guard ourselves with an
+        // removeDetachedChildren returns, so we guard ourselves with an
         // extra self-only ref.
         guardRef();
 
@@ -677,10 +677,10 @@ void Document::removedLastRef()
 
         detachParser();
 
-        // removeAllChildren() doesn't always unregister IDs,
+        // removeDetachedChildren() doesn't always unregister IDs,
         // so tear down scope information upfront to avoid having stale references in the map.
         destroyTreeScopeData();
-        removeAllChildren();
+        removeDetachedChildren();
 
         m_markers->detach();
 

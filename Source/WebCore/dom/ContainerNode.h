@@ -101,11 +101,7 @@ public:
     void parserRemoveChild(Node*);
     void parserInsertBefore(PassRefPtr<Node> newChild, Node* refChild);
 
-    // FIXME: It's not good to have two functions with such similar names, especially public functions.
-    // How do removeChildren and removeAllChildren differ?
     void removeChildren();
-    void removeAllChildren();
-
     void takeAllChildrenFrom(ContainerNode*);
 
     void cloneChildNodes(ContainerNode* clone);
@@ -154,6 +150,7 @@ protected:
     template<class GenericNode, class GenericNodeContainer>
     friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer*);
 
+    void removeDetachedChildren();
     void setFirstChild(Node* child) { m_firstChild = child; }
     void setLastChild(Node* child) { m_lastChild = child; }
 

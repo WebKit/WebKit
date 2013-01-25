@@ -78,7 +78,7 @@ namespace Private {
 // Helper functions for TreeShared-derived classes, which have a 'Node' style interface
 // This applies to 'ContainerNode' and 'SVGElementInstance'
 template<class GenericNode, class GenericNodeContainer>
-inline void removeAllChildrenInContainer(GenericNodeContainer* container)
+inline void removeDetachedChildrenInContainer(GenericNodeContainer* container)
 {
     // List of nodes to be deleted.
     GenericNode* head = 0;
@@ -120,7 +120,7 @@ inline void appendChildToContainer(GenericNode* child, GenericNodeContainer* con
     container->setLastChild(child);
 }
 
-// Helper methods for removeAllChildrenInContainer, hidden from WebCore namespace
+// Helper methods for removeDetachedChildrenInContainer, hidden from WebCore namespace
 namespace Private {
 
     template<class GenericNode, class GenericNodeContainer, bool dispatchRemovalNotification>

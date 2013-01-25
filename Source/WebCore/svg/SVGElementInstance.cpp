@@ -101,7 +101,7 @@ void SVGElementInstance::detach()
     m_directUseElement = 0;
     m_correspondingUseElement = 0;
 
-    removeAllChildrenInContainer<SVGElementInstance, SVGElementInstance>(this);
+    removeDetachedChildrenInContainer<SVGElementInstance, SVGElementInstance>(this);
 }
 
 PassRefPtr<SVGElementInstanceList> SVGElementInstance::childNodes()
