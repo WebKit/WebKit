@@ -851,6 +851,13 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     [dataSource(loader) _finishedLoading];
 }
 
+static inline NSString *nilOrNSString(const String& string)
+{
+    if (string.isNull())
+        return nil;
+    return string;
+}
+
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     WebView* view = getWebView(m_webFrame.get());
@@ -860,7 +867,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
         if (implementations->navigatedFunc) {
             WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->urlForHistory()
-                                                                             title:loader->title().string()
+                                                                             title:nilOrNSString(loader->title().string())
                                                                    originalRequest:loader->originalRequestCopy().nsURLRequest()
                                                                           response:loader->response().nsURLResponse()
                                                                  hasSubstituteData:loader->substituteData().isValid()
