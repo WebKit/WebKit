@@ -78,6 +78,42 @@ class DiffParserTest(unittest.TestCase):
         self.assertEqual(1, len(diff.lines))
         self.assertEqual((0, 1), diff.lines[0][0:2])
 
+    def test_diff_converter(self):
+        comment_lines = [
+            "Hey guys,\n",
+            "\n",
+            "See my awesome patch below!\n",
+            "\n",
+            " - Cool Hacker\n",
+            "\n",
+            ]
+
+        revision_lines = [
+            "Subversion Revision 289799\n",
+            ]
+
+        svn_diff_lines = [
+            "Index: Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "===================================================================\n",
+            "--- Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "+++ Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "@@ -59,6 +59,7 @@ def git_diff_to_svn_diff(line):\n",
+            ]
+        self.assertEqual(diff_parser.get_diff_converter(svn_diff_lines), diff_parser.svn_diff_to_svn_diff)
+        self.assertEqual(diff_parser.get_diff_converter(comment_lines + svn_diff_lines), diff_parser.svn_diff_to_svn_diff)
+        self.assertEqual(diff_parser.get_diff_converter(revision_lines + svn_diff_lines), diff_parser.svn_diff_to_svn_diff)
+
+        git_diff_lines = [
+            "diff --git a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "index 3c5b45b..0197ead 100644\n",
+            "--- a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "+++ b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py\n",
+            "@@ -59,6 +59,7 @@ def git_diff_to_svn_diff(line):\n",
+            ]
+        self.assertEqual(diff_parser.get_diff_converter(git_diff_lines), diff_parser.git_diff_to_svn_diff)
+        self.assertEqual(diff_parser.get_diff_converter(comment_lines + git_diff_lines), diff_parser.git_diff_to_svn_diff)
+        self.assertEqual(diff_parser.get_diff_converter(revision_lines + git_diff_lines), diff_parser.git_diff_to_svn_diff)
+
     def test_git_mnemonicprefix(self):
         p = re.compile(r' ([a|b])/')
 

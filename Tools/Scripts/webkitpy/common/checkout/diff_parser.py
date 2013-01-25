@@ -69,19 +69,27 @@ def git_diff_to_svn_diff(line):
     return line
 
 
+# This function exists so we can unittest get_diff_converter function
+def svn_diff_to_svn_diff(line):
+    return line
+
+
 # FIXME: This method belongs on DiffParser
-def get_diff_converter(first_diff_line):
+def get_diff_converter(lines):
     """Gets a converter function of diff lines.
 
     Args:
-      first_diff_line: The first filename line of a diff file.
-                       If this line is git formatted, we'll return a
-                       converter from git to SVN.
+      lines: The lines of a diff file.
+             If this line is git formatted, we'll return a
+             converter from git to SVN.
     """
-    if match(r"^diff --git \w/", first_diff_line):
-        return git_diff_to_svn_diff
-    return lambda input: input
-
+    for i, line in enumerate(lines[:-1]):
+        # Stop when we find the first patch
+        if line[:3] == "+++" and lines[i + 1] == "---":
+            break
+        if match(r"^diff --git \w/", line):
+            return git_diff_to_svn_diff
+    return svn_diff_to_svn_diff
 
 _INITIAL_STATE = 1
 _DECLARED_FILE_PATH = 2
@@ -142,10 +150,9 @@ class DiffParser(object):
         current_file = None
         old_diff_line = None
         new_diff_line = None
+        transform_line = get_diff_converter(diff_input)
         for line in diff_input:
             line = line.rstrip("\n")
-            if state == _INITIAL_STATE:
-                transform_line = get_diff_converter(line)
             line = transform_line(line)
 
             file_declaration = match(r"^Index: (?P<FilePath>.+)", line)

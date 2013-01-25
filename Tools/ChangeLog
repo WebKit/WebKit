@@ -1,3 +1,14 @@
+2013-01-24  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Fixing the diff_parser to correctly identify git diffs even with leading comments.
+        https://bugs.webkit.org/show_bug.cgi?id=107871
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py:
+        * Scripts/webkitpy/tool/steps/haslanded.py:
+
 2013-01-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove dead transitional code from WebViewImpl

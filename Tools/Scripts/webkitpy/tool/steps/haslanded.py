@@ -46,7 +46,7 @@ class HasLanded(confirmdiff.ConfirmDiff):
     @classmethod
     def convert_to_svn(cls, diff):
         lines = StringIO.StringIO(diff).readlines()
-        convert = diff_parser.get_diff_converter(lines[0])
+        convert = diff_parser.get_diff_converter(lines)
         return "".join(convert(x) for x in lines)
 
     @classmethod
