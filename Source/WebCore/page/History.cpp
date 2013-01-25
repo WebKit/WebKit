@@ -55,13 +55,13 @@ unsigned History::length() const
     return m_frame->page()->backForward()->count();
 }
 
-SerializedScriptValue* History::state()
+PassRefPtr<SerializedScriptValue> History::state()
 {
     m_lastStateObjectRequested = stateInternal();
     return m_lastStateObjectRequested;
 }
 
-SerializedScriptValue* History::stateInternal() const
+PassRefPtr<SerializedScriptValue> History::stateInternal() const
 {
     if (!m_frame)
         return 0;

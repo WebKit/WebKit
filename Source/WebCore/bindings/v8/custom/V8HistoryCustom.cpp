@@ -50,7 +50,7 @@ v8::Handle<v8::Value> V8History::stateAccessorGetter(v8::Local<v8::String> name,
     if (!value.IsEmpty() && !history->stateChanged())
         return value;
 
-    SerializedScriptValue* serialized = history->state();
+    RefPtr<SerializedScriptValue> serialized = history->state();
     value = serialized ? serialized->deserialize(info.GetIsolate()) : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
     info.Holder()->SetHiddenValue(V8HiddenPropertyName::state(), value);
 
