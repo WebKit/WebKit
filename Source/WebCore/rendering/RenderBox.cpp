@@ -232,6 +232,14 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }
 
+static bool borderWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+{
+    return oldStyle->borderLeftWidth() != newStyle->borderLeftWidth()
+        || oldStyle->borderTopWidth() != newStyle->borderTopWidth()
+        || oldStyle->borderRightWidth() != newStyle->borderRightWidth()
+        || oldStyle->borderBottomWidth() != newStyle->borderBottomWidth();
+}
+
 void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
@@ -305,6 +313,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_EXCLUSIONS)
     updateExclusionShapeOutsideInfoAfterStyleChange(style()->shapeOutside(), oldStyle ? oldStyle->shapeOutside() : 0);
 #endif
+
+    if (oldStyle && (newStyle->boxSizing() == BORDER_BOX || oldStyle->boxSizing() == BORDER_BOX) && diff == StyleDifferenceLayout
+        && (newStyle->paddingBox() != oldStyle->paddingBox() || borderWidthChanged(oldStyle, newStyle))) {
+        ASSERT(needsLayout());
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+            child->setChildNeedsLayout(true, MarkOnlyThis);
+    }
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
