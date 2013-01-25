@@ -72,7 +72,8 @@ class DisplaySleepDisabler;
 class InbandTextTrackPrivate;
 
 typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
-typedef Vector<CueIntervalTree::IntervalType> CueList;
+typedef CueIntervalTree::IntervalType CueInterval;
+typedef Vector<CueInterval> CueList;
 #endif
 
 // FIXME: The inheritance from MediaPlayerClient here should be private inheritance.

@@ -1,0 +1,15 @@
+Tests that removing an active cue does not crash the browser.
+
+** Add a text track to the video element **
+** Add a cue to the track with enter event listener. **
+
+** Play the video and remove cue when it becomes active. **
+RUN(video.play())
+EXPECTED (video.textTracks[0].activeCues.length == '1') OK
+
+** Remove the cue while it is active **
+
+No crash. PASS.
+
+END OF TEST
+

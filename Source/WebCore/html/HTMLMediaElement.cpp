@@ -1100,16 +1100,15 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // media element (not the disabled ones) whose start times are less than or
     // equal to the current playback position and whose end times are greater
     // than the current playback position.
-    Vector<CueIntervalTree::IntervalType> currentCues;
+    CueList currentCues;
 
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
     if (m_readyState != HAVE_NOTHING && m_player)
         currentCues = m_cueTree.allOverlaps(m_cueTree.createInterval(movieTime, movieTime));
 
-    Vector<CueIntervalTree::IntervalType> affectedCues;
-    Vector<CueIntervalTree::IntervalType> previousCues;
-    Vector<CueIntervalTree::IntervalType> missedCues;
+    CueList previousCues;
+    CueList missedCues;
 
     // 2 - Let other cues be a list of cues, initialized to contain all the cues
     // of hidden, showing, and showing by default text tracks of the media
@@ -1128,7 +1127,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // end times are less than or equal to the current playback position.
     // Otherwise, let missed cues be an empty list.
     if (lastTime >= 0 && m_lastSeekTime < movieTime) {
-        Vector<CueIntervalTree::IntervalType> potentiallySkippedCues =
+        CueList potentiallySkippedCues =
             m_cueTree.allOverlaps(m_cueTree.createInterval(lastTime, movieTime));
 
         for (size_t i = 0; i < potentiallySkippedCues.size(); ++i) {
@@ -1419,7 +1418,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
     // zero-length cues.
     double endTime = max(cue->startTime(), cue->endTime());
 
-    CueIntervalTree::IntervalType interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
+    CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
     if (!m_cueTree.contains(interval))
         m_cueTree.add(interval);
     updateActiveTextTrackCues(currentTime());
@@ -1431,7 +1430,13 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> c
     // zero-length cues.
     double endTime = max(cue->startTime(), cue->endTime());
 
-    m_cueTree.remove(m_cueTree.createInterval(cue->startTime(), endTime, cue.get()));
+    CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
+    m_cueTree.remove(interval);
+
+    size_t index = m_currentlyActiveCues.find(interval);
+    if (index != notFound)
+        m_currentlyActiveCues.remove(index);
+
     updateActiveTextTrackCues(currentTime());
 }
 
