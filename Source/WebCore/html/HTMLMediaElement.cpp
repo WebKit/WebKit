@@ -1178,9 +1178,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
         // Even though the active set has not changed, it is possible that the
         // the mode of a track has changed from 'hidden' to 'showing' and the
         // cues have not yet been rendered.
+        // Note: don't call updateTextTrackDisplay() unless we have controls because it will
+        // create them.
         if (hasMediaControls())
-            mediaControls()->updateTextTrackDisplay();
-
+            updateTextTrackDisplay();
         return;
     }
 
@@ -1318,8 +1319,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // Update the current active cues.
     m_currentlyActiveCues = currentCues;
 
-    if (activeSetChanged && hasMediaControls())
-        mediaControls()->updateTextTrackDisplay();
+    if (activeSetChanged)
+        updateTextTrackDisplay();
 }
 
 bool HTMLMediaElement::textTracksAreReady() const
@@ -4149,6 +4150,16 @@ bool HTMLMediaElement::closedCaptionsVisible() const
     return m_closedCaptionsVisible;
 }
 
+#if ENABLE(VIDEO_TRACK)
+void HTMLMediaElement::updateTextTrackDisplay()
+{
+    if (!hasMediaControls() && !createMediaControls())
+        return;
+    
+    mediaControls()->updateTextTrackDisplay();
+}
+#endif
+
 void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 {
     LOG(Media, "HTMLMediaElement::setClosedCaptionsVisible(%s)", boolString(closedCaptionVisible));
@@ -4164,7 +4175,8 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
         m_disableCaptions = !m_closedCaptionsVisible;
 
         markCaptionAndSubtitleTracksAsUnconfigured();
-        mediaControls()->updateTextTrackDisplay();
+
+        updateTextTrackDisplay();
     }
 #else
     if (hasMediaControls())
@@ -4285,21 +4297,24 @@ bool HTMLMediaElement::createMediaControls()
     if (hasMediaControls())
         return true;
 
-    ExceptionCode ec;
-    RefPtr<MediaControls> controls = MediaControls::create(document());
-    if (!controls)
+    RefPtr<MediaControls> mediaControls = MediaControls::create(document());
+    if (!mediaControls)
         return false;
 
-    controls->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
-    controls->reset();
+    mediaControls->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
+    mediaControls->reset();
     if (isFullscreen())
-        controls->enteredFullscreen();
+        mediaControls->enteredFullscreen();
 
     if (!shadow())
         createShadowSubtree();
 
     ASSERT(userAgentShadowRoot());
-    userAgentShadowRoot()->appendChild(controls, ec);
+    userAgentShadowRoot()->appendChild(mediaControls, ASSERT_NO_EXCEPTION);
+
+    if (!controls() || !inDocument())
+        mediaControls->hide();
+
     return true;
 }
 
@@ -4348,17 +4363,10 @@ void HTMLMediaElement::configureTextTrackDisplay()
     if (!hasMediaControls() && !createMediaControls())
         return;
 
-    updateClosedCaptionsControls();
-}
-
-void HTMLMediaElement::updateClosedCaptionsControls()
-{
-    if (hasMediaControls()) {
-        mediaControls()->changedClosedCaptionsVisibility();
-
-        if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
-            mediaControls()->updateTextTrackDisplay();
-    }
+    mediaControls()->changedClosedCaptionsVisibility();
+    
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        updateTextTrackDisplay();
 }
 
 void HTMLMediaElement::captionPreferencesChanged()

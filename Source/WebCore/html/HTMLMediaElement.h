@@ -258,7 +258,7 @@ public:
     bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
-    void updateClosedCaptionsControls();
+    void updateTextTrackDisplay();
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
