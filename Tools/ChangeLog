@@ -1,3 +1,17 @@
+2013-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140774.
+        http://trac.webkit.org/changeset/140774
+        https://bugs.webkit.org/show_bug.cgi?id=107932
+
+         Tests ScrollingCoordinatorChromiumTest.fastScrollingByDefault
+        and fastScrollingForFixedPosition are failing (Requested by
+        keishi on #webkit).
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::initializeLayerTreeView):
+        (WebViewHost::setWebWidget):
+
 2013-01-25  Alan Cutter  <alancutter@chromium.org>
 
         Quick fix for Chromium EWS bots running out of space due to a tmp file leak

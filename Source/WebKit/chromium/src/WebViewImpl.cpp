@@ -418,12 +418,14 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_benchmarkSupport(this)
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerTreeView(0)
+    , m_ownsLayerTreeView(false)
     , m_rootLayer(0)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
     , m_layerTreeViewCommitsDeferred(false)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
+    , m_compositorSurfaceReady(false)
     , m_inputHandlerIdentifier(-1)
 #endif
 #if ENABLE(INPUT_SPEECH)
@@ -509,6 +511,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
 WebViewImpl::~WebViewImpl()
 {
+    if (m_ownsLayerTreeView)
+        delete m_layerTreeView;
     ASSERT(!m_page);
 }
 
@@ -832,6 +836,12 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
     OwnPtr<WebGestureCurve> curve = adoptPtr(Platform::current()->createFlingAnimationCurve(parameters.sourceDevice, WebFloatPoint(parameters.delta), parameters.cumulativeScroll));
     m_gestureAnimation = WebActiveGestureAnimation::createWithTimeOffset(curve.release(), this, parameters.startTime);
     scheduleAnimation();
+}
+
+void WebViewImpl::renderingStats(WebRenderingStats& stats) const
+{
+    if (m_layerTreeView)
+        m_layerTreeView->renderingStats(stats);
 }
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds)
@@ -1764,6 +1774,13 @@ void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
 }
 #endif
 
+void WebViewImpl::setCompositorSurfaceReady()
+{
+    m_compositorSurfaceReady = true;
+    if (m_layerTreeView)
+        m_layerTreeView->setSurfaceReady();
+}
+
 void WebViewImpl::animate(double)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -1941,6 +1958,15 @@ void WebViewImpl::setNeedsRedraw()
     if (m_layerTreeView && isAcceleratedCompositingActive())
         m_layerTreeView->setNeedsRedraw();
 #endif
+}
+
+bool WebViewImpl::isInputThrottled() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeView && isAcceleratedCompositingActive())
+        return m_layerTreeView->commitRequested();
+#endif
+    return false;
 }
 
 void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
@@ -3579,6 +3605,9 @@ void WebViewImpl::setIsTransparent(bool isTransparent)
 
     if (m_nonCompositedContentHost)
         m_nonCompositedContentHost->setOpaque(!isTransparent);
+
+    if (m_layerTreeView)
+        m_layerTreeView->setHasTransparentBackground(isTransparent);
 }
 
 bool WebViewImpl::isTransparent() const
@@ -4062,6 +4091,10 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_client->initializeLayerTreeView(this, *m_rootLayer, layerTreeViewSettings);
         m_layerTreeView = m_client->layerTreeView();
+        if (!m_layerTreeView) {
+            m_layerTreeView = Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings);
+            m_ownsLayerTreeView = true;
+        }
         if (m_layerTreeView) {
             if (m_webSettings->applyDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1)
                 setDeviceScaleFactor(page()->deviceScaleFactor());
@@ -4069,6 +4102,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             bool visible = page()->visibilityState() == PageVisibilityStateVisible;
             m_layerTreeView->setVisible(visible);
             m_layerTreeView->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+            if (m_compositorSurfaceReady)
+                m_layerTreeView->setSurfaceReady();
             m_layerTreeView->setHasTransparentBackground(isTransparent());
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_inputHandlerIdentifier);
