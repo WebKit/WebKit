@@ -29,7 +29,8 @@
 #include "EwkView.h"
 #include "WKFrame.h"
 #include "WKFramePolicyListener.h"
-#include "WebFrameProxy.h"
+#include "WKString.h"
+#include "WKURLResponse.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_navigation_policy_decision_private.h"
 #include <WebCore/HTTPStatusCodes.h>
@@ -62,25 +63,21 @@ void PagePolicyClientEfl::decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, 
 
 void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
 {
-    using namespace WebCore;
-
-    const ResourceResponse resourceResponse = toImpl(response)->resourceResponse();
-
     // Ignore responses with an HTTP status code of 204 (No Content)
-    if (resourceResponse.httpStatusCode() == HTTPNoContent) {
+    if (WKURLResponseHTTPStatusCode(response) == WebCore::HTTPNoContent) {
         WKFramePolicyListenerIgnore(listener);
         return;
     }
 
     // If the URL Response has "Content-Disposition: attachment;" header, then
     // we should download it.
-    if (resourceResponse.isAttachment()) {
+    if (WKURLResponseIsAttachment(response)) {
         WKFramePolicyListenerDownload(listener);
         return;
     }
 
-    String mimeType = toImpl(response)->resourceResponse().mimeType().lower();
-    bool canShowMIMEType = toImpl(frame)->canShowMIMEType(mimeType);
+    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKURLResponseCopyMIMEType(response));
+    bool canShowMIMEType = WKFrameCanShowMIMEType(frame, mimeType.get());
     if (WKFrameIsMainFrame(frame)) {
         if (canShowMIMEType) {
             WKFramePolicyListenerUse(listener);
@@ -94,7 +91,8 @@ void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef 
 
     // We should ignore downloadable top-level content for subframes, with an exception for text/xml and application/xml so we can still support Acid3 test.
     // It makes the browser intentionally behave differently when it comes to text(application)/xml content in subframes vs. mainframe.
-    if (!canShowMIMEType && !(mimeType == "text/xml" || mimeType == "application/xml")) {
+    bool isXMLType = WKStringIsEqualToUTF8CString(mimeType.get(), "text/xml") || WKStringIsEqualToUTF8CString(mimeType.get(), "application/xml");
+    if (!canShowMIMEType && !isXMLType) {
         WKFramePolicyListenerIgnore(listener);
         return;
     }
