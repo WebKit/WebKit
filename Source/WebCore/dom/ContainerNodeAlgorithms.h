@@ -277,23 +277,7 @@ private:
     void collectFrameOwners(ElementShadow*);
     void disconnectCollectedFrameOwners();
 
-    class Target {
-    public:
-        Target(HTMLFrameOwnerElement* element)
-            : m_owner(element)
-            , m_ownerParent(element->parentNode())
-        {
-        }
-
-        bool isValid() const { return m_owner->parentNode() == m_ownerParent; }
-        void disconnect();
-
-    private:
-        RefPtr<HTMLFrameOwnerElement> m_owner;
-        ContainerNode* m_ownerParent;
-    };
-
-    Vector<Target, 10> m_list;
+    Vector<RefPtr<HTMLFrameOwnerElement>, 10> m_frameOwners;
     Node* m_root;
 };
 
@@ -309,7 +293,7 @@ inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
     // FIXME: This should just check isElementNode() to avoid the virtual call
     // and we should not depend on hasCustomCallbacks().
     if (root->hasCustomCallbacks() && root->isFrameOwnerElement())
-        m_list.append(toFrameOwnerElement(root));
+        m_frameOwners.append(toFrameOwnerElement(root));
 
     for (Node* child = root->firstChild(); child; child = child->nextSibling())
         collectFrameOwners(child);
@@ -324,11 +308,13 @@ inline void ChildFrameDisconnector::disconnectCollectedFrameOwners()
     // Must disable frame loading in the subtree so an unload handler cannot
     // insert more frames and create loaded frames in detached subtrees.
     SubframeLoadingDisabler disabler(m_root);
-    unsigned size = m_list.size();
-    for (unsigned i = 0; i < size; ++i) {
-        Target& target = m_list[i];
-        if (target.isValid())
-            target.disconnect();
+
+    for (unsigned i = 0; i < m_frameOwners.size(); ++i) {
+        HTMLFrameOwnerElement* owner = m_frameOwners[i].get();
+        // Don't need to traverse up the tree for the first owner since no
+        // script could have moved it.
+        if (!i || m_root->containsIncludingShadowDOM(owner))
+            owner->disconnectContentFrame();
     }
 }
 

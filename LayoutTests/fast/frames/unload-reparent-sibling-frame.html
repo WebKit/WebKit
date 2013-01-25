@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<div id="container">
+    <div id="inside">
+    </div>
+</div>
+
+<script>
+description('Reparented sibling frames from unload handlers should load.');
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+function onframeload(text)
+{
+    this.contentDocument.body.innerHTML = this.id;
+}
+
+function runTest()
+{    
+}
+
+var container = document.getElementById('container');
+var inside = document.getElementById('inside');
+
+var frame1 = document.createElement('iframe');
+frame1.id = 'frame1';
+frame1.onload = onframeload;
+
+var frame2 = document.createElement('iframe');
+frame2.id = 'frame2';
+frame2.onload = onframeload;
+
+onload = function() {
+    inside.appendChild(frame1);
+    inside.appendChild(frame2);
+
+    frame1.contentWindow.onunload = function() {
+        document.body.appendChild(inside);
+    };
+
+    container.parentNode.removeChild(container);
+    shouldNotBe('frame1.contentDocument', 'null');
+    shouldNotBe('frame2.contentDocument', 'null');
+    isSuccessfullyParsed();
+};
+</script>

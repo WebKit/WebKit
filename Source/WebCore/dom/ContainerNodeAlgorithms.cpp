@@ -115,12 +115,6 @@ void ChildFrameDisconnector::collectFrameOwners(ElementShadow* shadow)
         collectFrameOwners(root);
 }
 
-void ChildFrameDisconnector::Target::disconnect()
-{
-    ASSERT(isValid());
-    toFrameOwnerElement(m_owner.get())->disconnectContentFrame();
-}
-
 #ifndef NDEBUG
 unsigned assertConnectedSubrameCountIsConsistent(Node* node)
 {
