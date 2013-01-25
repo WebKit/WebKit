@@ -153,7 +153,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (290,283) size 64x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x9
             chunk 1 text run 1 at (290.00,290.00) startOffset 0 endOffset 19 width 64.00: "letter-spacing=\"10\""
-      RenderSVGText {text} at (171,311) size 107x11 contains 1 chunk(s)
+      RenderSVGText {text} at (171,311) size 108x11 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 107x11
           chunk 1 (middle anchor) text run 1 at (171.50,320.00) startOffset 0 endOffset 23 width 107.00: "Word Spacing Adjustment"
       RenderSVGContainer {g} at (40,337) size 350x30

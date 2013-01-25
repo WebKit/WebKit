@@ -7,7 +7,7 @@ layer at (0,0) size 450x500
         [feGaussianBlur stdDeviation="2.00, 2.00"]
           [SourceGraphic]
     RenderSVGContainer {g} at (45,36) size 405x453
-      RenderSVGText {text} at (150,36) size 149x17 contains 1 chunk(s)
+      RenderSVGText {text} at (150,36) size 150x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 149x17
           chunk 1 (middle anchor) text run 1 at (150.50,50.00) startOffset 0 endOffset 21 width 149.00: "Text Element Features"
       RenderSVGContainer {g} at (45,73) size 405x416
@@ -93,7 +93,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (169,3) size 132x16
             chunk 1 text run 1 at (214.00,300.00) startOffset 0 endOffset 9 width 49.00: "-scripts "
             chunk 1 text run 1 at (263.00,300.00) startOffset 0 endOffset 14 width 83.00: "are available."
-        RenderSVGText {text} at (45,309) size 342x23 contains 1 chunk(s)
+        RenderSVGText {text} at (45,309) size 342x24 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,2) size 177x16
             chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 29 width 177.00: "Baseline can also be shifted "
           RenderSVGTSpan {tspan} at (0,0) size 12x12
@@ -145,7 +145,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 154x16
             chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 154.00: "filtered and transformed."
         RenderSVGContainer {g} at (171,389) size 279x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,475.00)}]
-          RenderSVGText {text} at (0,-37) size 132x45 contains 1 chunk(s)
+          RenderSVGText {text} at (0,-37) size 132x46 contains 1 chunk(s)
             [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100
             RenderSVGInlineText {#text} at (0,0) size 132x45
               [filter="blur"] RenderSVGResourceFilter {filter} at (0,-80) size 200x100

@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
-    RenderSVGContainer {g} at (28,16) size 395x387
-      RenderSVGText {text} at (136,16) size 177x17 contains 1 chunk(s)
+    RenderSVGContainer {g} at (28,16) size 394x387
+      RenderSVGText {text} at (136,16) size 178x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 177x17
           chunk 1 (middle anchor) text run 1 at (136.50,30.00) startOffset 0 endOffset 27 width 177.00: "Gradient and filter on text"
       RenderSVGText {text} at (106,36) size 238x17 contains 1 chunk(s)
@@ -39,14 +39,14 @@ layer at (0,0) size 450x500
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (28.80,306.10) size 182.40x70.80
           chunk 1 (middle anchor) text run 1 at (44.00,360.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
       RenderSVGText {text} at (253,312) size 154x60 contains 1 chunk(s)
-        [filter="dropShadow"] RenderSVGResourceFilter {filter} at (237.60,306) size 184.80x72
+        [filter="dropShadow"] RenderSVGResourceFilter {filter} at (238.11,306.09) size 183.79x71.06
         RenderSVGInlineText {#text} at (0,0) size 154x60
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (238.11,306.10) size 183.78x71.05
           chunk 1 (middle anchor) text run 1 at (253.42,360.00) startOffset 0 endOffset 5 width 153.15: "BATIK"
-      RenderSVGText {text} at (87,389) size 65x14 contains 1 chunk(s)
+      RenderSVGText {text} at (87,389) size 66x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 65x14
           chunk 1 (middle anchor) text run 1 at (87.50,400.00) startOffset 0 endOffset 13 width 65.00: "(System font)"
-      RenderSVGText {text} at (302,389) size 55x14 contains 1 chunk(s)
+      RenderSVGText {text} at (302,389) size 56x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 55x14
           chunk 1 (middle anchor) text run 1 at (302.50,400.00) startOffset 0 endOffset 10 width 55.00: "(SVG font)"
     RenderSVGContainer {use} at (0,0) size 448x498

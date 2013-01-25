@@ -30,7 +30,7 @@ layer at (0,0) size 450x500
               RenderSVGContainer {g} at (200,33) size 50x24
                 RenderSVGRect {rect} at (200,35) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [x=200.00] [y=5.00] [width=50.00] [height=20.00]
                 RenderSVGPath {line} at (224,33) size 2x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=3.00] [x2=225.00] [y2=27.00]
-        RenderSVGText {text} at (202,8) size 45x14 contains 1 chunk(s)
+        RenderSVGText {text} at (202,8) size 46x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 45x14
             chunk 1 (middle anchor) text run 1 at (202.50,19.00) startOffset 0 endOffset 9 width 45.00: "xml-batik"
         RenderSVGText {text} at (191,29) size 68x14 contains 1 chunk(s)
@@ -86,7 +86,7 @@ layer at (0,0) size 450x500
               RenderSVGContainer {g} at (200,213) size 50x24
                 RenderSVGRect {rect} at (200,215) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [x=200.00] [y=5.00] [width=50.00] [height=20.00]
                 RenderSVGPath {line} at (224,213) size 2x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=3.00] [x2=225.00] [y2=27.00]
-        RenderSVGText {text} at (202,8) size 45x14 contains 1 chunk(s)
+        RenderSVGText {text} at (202,8) size 46x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 45x14
             chunk 1 (middle anchor) text run 1 at (202.50,19.00) startOffset 0 endOffset 1 width 8.00: "B"
             chunk 1 (middle anchor) text run 2 at (215.50,19.00) startOffset 1 endOffset 2 width 5.00: "a"
@@ -147,7 +147,7 @@ layer at (0,0) size 450x500
         RenderSVGRect {rect} at (49,389) size 352x97 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.00] [y=0.00] [width=350.00] [height=95.00]
         RenderSVGRect {rect} at (112,395) size 26x80 [fill={[type=SOLID] [color=#DDE8FF]}] [x=112.50] [y=5.00] [width=25.00] [height=80.00]
         RenderSVGPath {line} at (124,393) size 2x84 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=3.00] [x2=125.00] [y2=87.00]
-        RenderSVGText {text} at (112,-10) size 25x111 contains 1 chunk(s)
+        RenderSVGText {text} at (112,-10) size 26x111 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 25x111
             chunk 1 (middle anchor) text run 1 at (-33.50,79.00) startOffset 0 endOffset 9 width 317.00: "B a t i k"
         RenderSVGText {text} at (160,29) size 173x43 contains 1 chunk(s)

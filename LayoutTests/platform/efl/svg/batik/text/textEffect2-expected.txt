@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGContainer {g} at (100,16) size 265x289
-      RenderSVGText {text} at (158,16) size 133x17 contains 1 chunk(s)
+      RenderSVGText {text} at (158,16) size 134x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 133x17
           chunk 1 (middle anchor) text run 1 at (158.50,30.00) startOffset 0 endOffset 20 width 133.00: "clip-path using text"
       RenderSVGText {text} at (106,36) size 238x17 contains 1 chunk(s)

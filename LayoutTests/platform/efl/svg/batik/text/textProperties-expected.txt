@@ -25,7 +25,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 114x16
             chunk 1 (end anchor) text run 1 at (111.00,130.00) startOffset 0 endOffset 17 width 114.00: "text-anchor=\"end\""
       RenderSVGContainer {g} at (45,146) size 110x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,180.00)}]
-        RenderSVGText {text} at (-55,-34) size 109x42 contains 1 chunk(s)
+        RenderSVGText {text} at (-55,-34) size 110x42 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 109x42
             chunk 1 (middle anchor) text run 1 at (-54.50,0.00) startOffset 0 endOffset 6 width 109.00: "sample"
         RenderSVGText {text} at (-52,1) size 104x17 contains 1 chunk(s)
@@ -42,7 +42,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-57,-36) size 114x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 114x45
             chunk 1 (middle anchor) text run 1 at (-57.00,0.00) startOffset 0 endOffset 6 width 114.00: "sample"
-        RenderSVGText {text} at (-47,1) size 93x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-47,1) size 94x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 93x17
             chunk 1 (middle anchor) text run 1 at (-46.50,15.00) startOffset 0 endOffset 14 width 93.00: "font-size=\"28\""
       RenderSVGContainer {g} at (20,198) size 160x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,225.00)}]
@@ -50,7 +50,7 @@ layer at (0,0) size 450x500
           RenderSVGInline {tref} at (0,0) size 84x33
             RenderSVGInlineText {#text} at (0,0) size 84x33
               chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
-        RenderSVGText {text} at (-80,1) size 159x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-80,1) size 160x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 159x17
             chunk 1 (middle anchor) text run 1 at (-79.50,15.00) startOffset 0 endOffset 26 width 159.00: "referenced text via <tref>"
       RenderSVGContainer {g} at (178,198) size 94x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,225.00)}]
@@ -62,7 +62,7 @@ layer at (0,0) size 450x500
               chunk 1 (middle anchor) text run 1 at (-18.00,0.00) startOffset 0 endOffset 1 width 25.00: "m"
           RenderSVGInlineText {#text} at (50,0) size 36x33
             chunk 1 (middle anchor) text run 1 at (7.00,0.00) startOffset 0 endOffset 3 width 36.00: "ple"
-        RenderSVGText {text} at (-47,1) size 93x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-47,1) size 94x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 93x17
             chunk 1 (middle anchor) text run 1 at (-46.50,15.00) startOffset 0 endOffset 14 width 93.00: "use of <tspan>"
       RenderSVGContainer {g} at (270,198) size 160x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,225.00)}]
@@ -74,7 +74,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-80,1) size 160x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 160x17
             chunk 1 (middle anchor) text run 1 at (-80.00,15.00) startOffset 0 endOffset 25 width 160.00: "predefined text via <use>"
-      RenderSVGText {text} at (143,267) size 163x16 contains 1 chunk(s)
+      RenderSVGText {text} at (143,267) size 164x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 163x16
           chunk 1 (middle anchor) text run 1 at (143.50,280.00) startOffset 0 endOffset 25 width 163.00: "Text Rendering Properties"
       RenderSVGContainer {g} at (24,299) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,305.00)}]
@@ -92,7 +92,7 @@ layer at (0,0) size 450x500
             RenderSVGText {text} at (-42,-27) size 84x33 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 84x33
                 chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
-        RenderSVGText {text} at (-45,1) size 89x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-45,1) size 90x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 89x17
             chunk 1 (middle anchor) text run 1 at (-44.50,15.00) startOffset 0 endOffset 13 width 89.00: "opacity=\"0.5\""
       RenderSVGContainer {g} at (301,293) size 98x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,320.00)}]
@@ -111,7 +111,7 @@ layer at (0,0) size 450x500
             RenderSVGText {text} at (-42,-27) size 84x33 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 84x33
                 chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
-        RenderSVGText {text} at (-85,1) size 169x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-85,1) size 170x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 169x17
             chunk 1 (middle anchor) text run 1 at (-84.50,15.00) startOffset 0 endOffset 27 width 169.00: "filter=\"url(#gaussianBlur)\""
       RenderSVGContainer {g} at (150,342) size 150x56 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,370.00)}]
@@ -120,10 +120,10 @@ layer at (0,0) size 450x500
             RenderSVGText {text} at (-42,-27) size 84x33 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 84x33
                 chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
-        RenderSVGText {text} at (-44,1) size 87x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-44,1) size 88x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 87x17
             chunk 1 (middle anchor) text run 1 at (-43.50,15.00) startOffset 0 endOffset 14 width 87.00: "fill=\"yellow\";"
-        RenderSVGText {text} at (-75,11) size 149x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-75,11) size 150x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 149x17
             chunk 1 (middle anchor) text run 1 at (-74.50,25.00) startOffset 0 endOffset 21 width 149.00: "stroke=\"MidnightBlue\""
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -137,19 +137,19 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (300,345) size 100x43 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,370.00)}]
         RenderSVGRect {rect} at (308,345) size 84x31 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
           [clipPath="textClip"] RenderSVGResourceClipper {clipPath} at (-42,-27) size 84x33
-        RenderSVGText {text} at (-50,1) size 99x17 contains 1 chunk(s)
+        RenderSVGText {text} at (-50,1) size 100x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 99x17
             chunk 1 (middle anchor) text run 1 at (-49.50,15.00) startOffset 0 endOffset 17 width 99.00: "text as clip-path"
-      RenderSVGText {text} at (136,387) size 27x66 contains 1 chunk(s)
+      RenderSVGText {text} at (136,387) size 28x66 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x66
           chunk 1 (middle anchor) text run 1 at (136.50,440.00) startOffset 0 endOffset 1 width 27.00: "a"
-      RenderSVGText {text} at (77,441) size 145x17 contains 1 chunk(s)
+      RenderSVGText {text} at (77,441) size 146x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 145x17
           chunk 1 (middle anchor) text run 1 at (77.50,455.00) startOffset 0 endOffset 23 width 145.00: "stroke-linejoin=\"miter\""
       RenderSVGText {text} at (74,451) size 152x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 152x17
           chunk 1 (middle anchor) text run 1 at (74.00,465.00) startOffset 0 endOffset 23 width 152.00: "stroke-linecap=\"square\""
-      RenderSVGText {text} at (286,387) size 27x66 contains 1 chunk(s)
+      RenderSVGText {text} at (286,387) size 28x66 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x66
           chunk 1 (middle anchor) text run 1 at (286.50,440.00) startOffset 0 endOffset 1 width 27.00: "a"
       RenderSVGText {text} at (225,441) size 150x17 contains 1 chunk(s)

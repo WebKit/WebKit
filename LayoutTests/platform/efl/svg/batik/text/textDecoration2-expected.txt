@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (31,26) size 327x402
-    RenderSVGText {text} at (110,26) size 229x17 contains 1 chunk(s)
+    RenderSVGText {text} at (110,26) size 230x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 229x17
         chunk 1 (middle anchor) text run 1 at (110.50,40.00) startOffset 0 endOffset 33 width 229.00: "Text Decoration with dx, dy tests"
     RenderSVGContainer {g} at (31,60) size 327x368 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]

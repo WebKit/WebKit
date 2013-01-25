@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x498
-    RenderSVGText {text} at (109,36) size 231x17 contains 1 chunk(s)
+    RenderSVGText {text} at (109,36) size 232x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 231x17
         chunk 1 (middle anchor) text run 1 at (109.50,50.00) startOffset 0 endOffset 34 width 231.00: "patternRegion, x, y, width, height"
     RenderSVGContainer {g} at (24,71) size 426x390
