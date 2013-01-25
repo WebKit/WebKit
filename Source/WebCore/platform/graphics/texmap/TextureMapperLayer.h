@@ -83,6 +83,11 @@ public:
         , m_contentsLayer(0)
         , m_currentOpacity(1)
         , m_centerZ(0)
+        , m_shouldUpdateCurrentTransformFromGraphicsLayer(true)
+        , m_shouldUpdateCurrentOpacityFromGraphicsLayer(true)
+#if ENABLE(CSS_FILTERS)
+        , m_shouldUpdateCurrentFiltersFromGraphicsLayer(true)
+#endif
         , m_textureMapper(0)
     { }
 
@@ -127,10 +132,10 @@ private:
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
 
     // GraphicsLayerAnimation::Client
-    virtual void setAnimatedTransform(const TransformationMatrix& matrix) OVERRIDE { m_currentTransform.setLocalTransform(matrix); }
-    virtual void setAnimatedOpacity(float opacity) OVERRIDE { m_currentOpacity = opacity; }
+    virtual void setAnimatedTransform(const TransformationMatrix&) OVERRIDE;
+    virtual void setAnimatedOpacity(float) OVERRIDE;
 #if ENABLE(CSS_FILTERS)
-    virtual void setAnimatedFilters(const FilterOperations& filters) OVERRIDE { m_currentFilters = filters; }
+    virtual void setAnimatedFilters(const FilterOperations&) OVERRIDE;
 #endif
 
     void syncAnimations();
@@ -160,6 +165,12 @@ private:
     FilterOperations m_currentFilters;
 #endif
     float m_centerZ;
+    
+    bool m_shouldUpdateCurrentTransformFromGraphicsLayer;
+    bool m_shouldUpdateCurrentOpacityFromGraphicsLayer;
+#if ENABLE(CSS_FILTERS)
+    bool m_shouldUpdateCurrentFiltersFromGraphicsLayer;
+#endif
 
     struct State {
         FloatPoint pos;

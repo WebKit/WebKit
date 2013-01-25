@@ -296,7 +296,25 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
     paintSelfAndChildren(options);
 }
 
+void TextureMapperLayer::setAnimatedTransform(const TransformationMatrix& matrix)
+{
+    m_shouldUpdateCurrentTransformFromGraphicsLayer = false;
+    m_currentTransform.setLocalTransform(matrix);
+}
+
+void TextureMapperLayer::setAnimatedOpacity(float opacity)
+{
+    m_shouldUpdateCurrentOpacityFromGraphicsLayer = false;
+    m_currentOpacity = opacity;
+}
+
 #if ENABLE(CSS_FILTERS)
+void TextureMapperLayer::setAnimatedFilters(const FilterOperations& filters)
+{
+    m_shouldUpdateCurrentFiltersFromGraphicsLayer = false;
+    m_currentFilters = filters;
+}
+
 static bool shouldKeepContentTexture(const FilterOperations& filters)
 {
     for (size_t i = 0; i < filters.size(); ++i) {
@@ -407,6 +425,17 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
 
     if (changeMask & AnimationChange)
         m_animations = graphicsLayer->m_animations;
+    
+    if (changeMask & TransformChange)
+        m_shouldUpdateCurrentTransformFromGraphicsLayer = true;
+
+    if (changeMask & OpacityChange)
+        m_shouldUpdateCurrentOpacityFromGraphicsLayer = true;
+
+#if ENABLE(CSS_FILTERS)
+    if (changeMask & FilterChange)
+        m_shouldUpdateCurrentFiltersFromGraphicsLayer = true;
+#endif
 
     if (changeMask & RepaintCountChange)
         m_state.repaintCount = graphicsLayer->repaintCount();
@@ -444,7 +473,6 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
     m_currentTransform.setAnchorPoint(m_state.anchorPoint);
     m_currentTransform.setSize(m_state.size);
     m_currentTransform.setFlattening(!m_state.preserves3D);
-    m_currentTransform.setLocalTransform(m_state.transform);
     m_currentTransform.setChildrenTransform(m_state.childrenTransform);
 
     syncAnimations();
@@ -519,13 +547,14 @@ void TextureMapperLayer::applyAnimationsRecursively()
 void TextureMapperLayer::syncAnimations()
 {
     m_animations.apply(this);
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
-        setAnimatedTransform(m_state.transform);
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity))
-        setAnimatedOpacity(m_state.opacity);
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform) && m_shouldUpdateCurrentTransformFromGraphicsLayer)
+        m_currentTransform.setLocalTransform(m_state.transform);
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity) && m_shouldUpdateCurrentOpacityFromGraphicsLayer)
+        m_currentOpacity = m_state.opacity;
+
 #if ENABLE(CSS_FILTERS)
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter))
-        setAnimatedFilters(m_state.filters);
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter) && m_shouldUpdateCurrentFiltersFromGraphicsLayer)
+        m_currentFilters = m_state.filters;
 #endif
 }
 
