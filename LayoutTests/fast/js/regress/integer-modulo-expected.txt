@@ -1,0 +1,6010 @@
+Tests that modulo of various values do the right thing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 2
+PASS myMod(w, t) is 4
+PASS myModByPos2(v) is 0
+PASS myModByPos2(w) is 0
+PASS myModByPos5(v) is 2
+PASS myModByPos5(w) is 4
+PASS myModByPos8(v) is 2
+PASS myModByPos8(w) is 4
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is 0
+PASS myModByNeg4(v) is 2
+PASS myModByNeg4(w) is 0
+PASS myModByNeg81(v) is 2
+PASS myModByNeg81(w) is 4
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS myMod(x, t) is 5
+PASS myMod(y, t) is -1
+PASS myMod(x, z) is 0
+PASS myMod(y, z) is -1
+PASS myModByPos2(x) is 1
+PASS myModByPos2(y) is -1
+PASS myModByPos5(x) is 0
+PASS myModByPos5(y) is -1
+PASS myModByPos8(x) is 7
+PASS myModByPos8(y) is -7
+PASS myModByNeg1(x) is 0
+PASS myModByNeg1(y) is -0
+PASS myModByNeg4(x) is 3
+PASS myModByNeg4(y) is -3
+PASS myModByNeg81(x) is 6
+PASS myModByNeg81(y) is -13
+PASS myMod(v, t) is 5
+PASS myMod(w, t) is -1
+PASS myModByPos2(v) is 1
+PASS myModByPos2(w) is -1
+PASS myModByPos5(v) is 0
+PASS myModByPos5(w) is -1
+PASS myModByPos8(v) is 7
+PASS myModByPos8(w) is -7
+PASS myModByNeg1(v) is 0
+PASS myModByNeg1(w) is -0
+PASS myModByNeg4(v) is 3
+PASS myModByNeg4(w) is -3
+PASS myModByNeg81(v) is 6
+PASS myModByNeg81(w) is -13
+PASS no exception thrown
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
