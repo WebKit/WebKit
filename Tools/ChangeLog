@@ -1,3 +1,15 @@
+2013-01-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140653.
+        http://trac.webkit.org/changeset/140653
+        https://bugs.webkit.org/show_bug.cgi?id=107916
+
+        Causes a temp file leak on the bots (Requested by abarth on
+        #webkit).
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+
 2013-01-24  Eric Seidel  <eric@webkit.org>
 
         Skip haslanded_unittest.py on systems which do not have interdiff installed

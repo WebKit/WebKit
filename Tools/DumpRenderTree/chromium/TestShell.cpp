@@ -334,6 +334,9 @@ void TestShell::resetTestController()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
 #endif
+#if OS(ANDROID)
+    webkit_support::ReleaseMediaResources();
+#endif
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
@@ -343,8 +346,6 @@ void TestShell::resetTestController()
     webView()->mainFrame()->clearOpener();
     WebTestingSupport::resetInternalsObject(webView()->mainFrame());
     WebCache::clear();
-
-    webkit_support::ResetTestEnvironment();
 }
 
 void TestShell::loadURL(const WebURL& url)
