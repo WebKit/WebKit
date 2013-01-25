@@ -1324,8 +1324,10 @@ void RenderLayerBacking::updateRootLayerConfiguration()
 
     if (!viewIsTransparent) {
         backgroundColor = frameView->documentBackgroundColor();
-        if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+        if (!backgroundColor.isValid())
             backgroundColor = Color::white;
+
+        viewIsTransparent = backgroundColor.hasAlpha();
     }
 
     if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
