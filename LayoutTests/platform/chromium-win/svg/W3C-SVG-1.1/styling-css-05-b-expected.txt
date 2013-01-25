@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (128,73) size 224x134
       RenderSVGContainer {g} at (128,73) size 224x134
-        RenderSVGText {text} at (148,73) size 183x34 contains 1 chunk(s)
+        RenderSVGText {text} at (148,73) size 184x34 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 183x34
             chunk 1 (middle anchor) text run 1 at (148.50,100.00) startOffset 0 endOffset 13 width 183.00: "Good morning!"
         RenderSVGText {text} at (128,172) size 224x35 contains 1 chunk(s)

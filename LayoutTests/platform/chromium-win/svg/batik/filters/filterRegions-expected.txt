@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
-    RenderSVGText {text} at (176,25) size 97x18 contains 1 chunk(s)
+    RenderSVGText {text} at (176,25) size 98x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 97x18
         chunk 1 (middle anchor) text run 1 at (176.50,40.00) startOffset 0 endOffset 14 width 97.00: "Filter Regions"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -45,41 +45,41 @@ layer at (0,0) size 450x500
         RenderSVGRect {rect} at (260,140) size 120x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           [filter="filterRegion_0"] RenderSVGResourceFilter {filter} at (-10,-5) size 120x60
         RenderSVGRect {rect} at (259,139) size 122x62 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-10.00] [y=-5.00] [width=120.00] [height=60.00]
-        RenderSVGText {text} at (6,-20) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,-20) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,-10.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_0"
       RenderSVGRect {rect} at (50,80) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
         [filter="filterRegion_1"] RenderSVGResourceFilter {filter} at (20,30) size 50x40
       RenderSVGRect {rect} at (49,79) size 52x42 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-      RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+      RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 77x12
           chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_1"
       RenderSVGContainer {g} at (136,65) size 78x56 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
         RenderSVGRect {rect} at (150,80) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
           [filter="filterRegion_2"] RenderSVGResourceFilter {filter} at (20,30) size 50x40
         RenderSVGRect {rect} at (154,84) size 47x37 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=25.00] [y=35.00] [width=45.00] [height=35.00]
-        RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_2"
       RenderSVGContainer {g} at (236,65) size 78x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
         RenderSVGRect {rect} at (250,80) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
           [filter="filterRegion_3"] RenderSVGResourceFilter {filter} at (20,30) size 50x40
         RenderSVGRect {rect} at (249,79) size 52x22 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
-        RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_3"
       RenderSVGContainer {g} at (336,65) size 78x56 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
         RenderSVGRect {rect} at (350,80) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
           [filter="filterRegion_4"] RenderSVGResourceFilter {filter} at (20,30) size 50x40
         RenderSVGRect {rect} at (349,79) size 27x42 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=25.00] [height=40.00]
-        RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_4"
       RenderSVGContainer {g} at (36,140) size 78x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,75.00)}]
         RenderSVGRect {rect} at (50,155) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
           [filter="filterRegion_5"] RenderSVGResourceFilter {filter} at (20,30) size 50x40
         RenderSVGRect {rect} at (49,154) size 52x22 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
-        RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_5"
       RenderSVGContainer {g} at (150,155) size 50x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,75.00)}]
@@ -87,7 +87,7 @@ layer at (0,0) size 450x500
         RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=3000.00] [width=20000000.00] [height=25.00]
       RenderSVGContainer {g} at (136,140) size 78x56 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,75.00)}]
         RenderSVGRect {rect} at (149,154) size 42x42 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=40.00] [height=40.00]
-        RenderSVGText {text} at (6,15) size 77x12 contains 1 chunk(s)
+        RenderSVGText {text} at (6,15) size 78x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 77x12
             chunk 1 (middle anchor) text run 1 at (6.50,25.00) startOffset 0 endOffset 14 width 77.00: "filterRegion_6"
       RenderSVGContainer {g} at (130,300) size 90x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,280.00)}]

@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (75,15) size 239x193
-      RenderSVGText {text} at (75,15) size 239x12 contains 1 chunk(s)
+      RenderSVGText {text} at (75,15) size 239x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 239x12
           chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 1 width 7.33: "T"
           chunk 1 text run 2 at (81.19,25.00) startOffset 1 endOffset 3 width 12.67: "es"
@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
           chunk 1 text run 7 at (252.66,25.00) startOffset 36 endOffset 37 width 6.67: "e"
           chunk 1 text run 8 at (259.01,25.00) startOffset 37 endOffset 43 width 34.68: "xtCont"
           chunk 1 text run 9 at (293.52,25.00) startOffset 43 endOffset 47 width 20.02: "ent."
-      RenderSVGText {text} at (75,171) size 150x36 contains 1 chunk(s)
+      RenderSVGText {text} at (75,171) size 150x37 contains 1 chunk(s)
         RenderSVGInline {tref} at (0,0) size 150x36
           RenderSVGInlineText {#text} at (0,0) size 150x36
             chunk 1 text run 1 at (75.00,200.00) startOffset 0 endOffset 5 width 70.02: "Flatt"
@@ -50,7 +50,7 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (160,65) size 11x18
               chunk 1 text run 1 at (160.63,0.00) startOffset 0 endOffset 1 width 10.01: "d"
     RenderSVGContainer {g} at (10,314) size 227x33
-      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"

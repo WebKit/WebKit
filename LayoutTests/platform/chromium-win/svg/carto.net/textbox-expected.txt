@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
               RenderSVGInlineText {#text} at (0,0) size 436x20
                 chunk 1 text run 1 at (5.00,22.00) startOffset 0 endOffset 66 width 435.20: "This is a transformed textbox with a very, very, very long content"
             RenderSVGPath {line} at (77,241) size 2x13 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=25.00] [x2=0.00] [y2=8.50]
-    RenderSVGContainer {g} at (78,26) size 663x260
+    RenderSVGContainer {g} at (78,27) size 663x259
       RenderSVGText {text} at (100,214) size 68x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 68x20
           chunk 1 text run 1 at (100.00,230.00) startOffset 0 endOffset 10 width 67.84: "ResultText"

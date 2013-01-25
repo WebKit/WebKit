@@ -2,11 +2,11 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (25,3) size 709x504
-      RenderSVGText {text} at (15,2) size 425x39 contains 1 chunk(s)
+    RenderSVGContainer {g} at (25,4) size 709x503
+      RenderSVGText {text} at (15,2) size 425x40 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 425x39
           chunk 1 text run 1 at (15.00,35.00) startOffset 0 endOffset 26 width 424.80: "Basic: xml:space attribute"
-      RenderSVGText {text} at (35,27) size 375x39 contains 1 chunk(s)
+      RenderSVGText {text} at (35,27) size 375x40 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 375x39
           chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 22 width 374.40: "& whitespace handling."
       RenderSVGText {text} at (15,69) size 420x45 contains 1 chunk(s)

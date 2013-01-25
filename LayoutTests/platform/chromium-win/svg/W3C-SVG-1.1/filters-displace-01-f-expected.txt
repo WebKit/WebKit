@@ -63,7 +63,7 @@ layer at (0,0) size 480x360
         RenderSVGRect {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=158.00] [width=128.00] [height=128.00]
           [filter="SphereMap"] RenderSVGResourceFilter {filter} at (158,158) size 128x128
         RenderSVGRect {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
-        RenderSVGText {text} at (165,256) size 113x30 contains 1 chunk(s)
+        RenderSVGText {text} at (165,256) size 114x30 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 104x15
             RenderSVGInlineText {#text} at (3,0) size 103x15
               chunk 1 (middle anchor) text run 1 at (169.00,268.00) startOffset 0 endOffset 16 width 103.00: "Displacement Map"

@@ -1,9 +1,9 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (3,0) size 474x357
-    RenderSVGContainer {g} at (18,0) size 438x306
-      RenderSVGContainer {g} at (18,0) size 438x306
+  RenderSVGRoot {svg} at (3,3) size 474x354
+    RenderSVGContainer {g} at (18,3) size 437x302
+      RenderSVGContainer {g} at (18,3) size 437x302
         RenderSVGText {text} at (3,0) size 55x10 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 55x10
             chunk 1 text run 1 at (3.00,8.00) startOffset 0 endOffset 16 width 54.67: "letter-spacing:0"
@@ -44,7 +44,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 2 at (24.33,49.00) startOffset 5 endOffset 7 width 4.83: "- "
             chunk 1 text run 3 at (32.17,49.00) startOffset 7 endOffset 11 width 16.83: "Two "
             chunk 1 text run 4 at (52.00,49.00) startOffset 11 endOffset 16 width 23.67: "Words"
-    RenderSVGText {text} at (5,51) size 39x7 contains 1 chunk(s)
+    RenderSVGText {text} at (5,51) size 39x8 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 39x7
         chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 38.50: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

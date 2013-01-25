@@ -77,7 +77,7 @@ layer at (0,0) size 480x360
           RenderSVGRect {rect} at (355,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(355.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
             [filter="spotLightH"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
     RenderSVGContainer {g} at (10,314) size 227x33
-      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"

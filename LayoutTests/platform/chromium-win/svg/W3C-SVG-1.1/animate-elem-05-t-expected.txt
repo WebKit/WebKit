@@ -1,15 +1,15 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (3,0) size 474x357
-    RenderSVGContainer {g} at (42,0) size 402x312
+  RenderSVGRoot {svg} at (3,3) size 474x354
+    RenderSVGContainer {g} at (42,3) size 402x308
       RenderSVGText {text} at (8,0) size 66x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x10
           chunk 1 text run 1 at (8.00,8.00) startOffset 0 endOffset 18 width 66.00: "Test a motion path"
       RenderSVGText {text} at (11,10) size 60x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 60x10
           chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 19 width 59.50: "'values' attribute."
-      RenderSVGContainer {g} at (42,117) size 381x195
+      RenderSVGContainer {g} at (42,117) size 381x194
         RenderSVGPath {path} at (88,177) size 302x84 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 L 40 30 L 65 30"]
         RenderSVGRect {rect} at (57,195) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
         RenderSVGText {text} at (7,42) size 22x10 contains 1 chunk(s)
@@ -24,7 +24,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 10x10
             chunk 1 text run 1 at (60.00,37.00) startOffset 0 endOffset 2 width 9.17: "6+"
         RenderSVGPath {path} at (55,191) size 70x70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,43.00)}] [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -5 0 L 0 -10 L 5 0 Z"]
-    RenderSVGText {text} at (5,51) size 39x7 contains 1 chunk(s)
+    RenderSVGText {text} at (5,51) size 39x8 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 39x7
         chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 38.50: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

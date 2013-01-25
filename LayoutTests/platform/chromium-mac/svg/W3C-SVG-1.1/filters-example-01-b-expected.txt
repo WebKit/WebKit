@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
           RenderSVGContainer {g} at (80,147) size 300x106
             RenderSVGPath {path} at (80,147) size 300x106 [stroke={[type=SOLID] [color=#D90000] [stroke width=10.00]}] [data="M 50 90 C 0 90 0 30 50 30 L 150 30 C 200 30 200 90 150 90 Z"]
             RenderSVGPath {path} at (125,170) size 210x60 [fill={[type=SOLID] [color=#D90000]}] [data="M 60 80 C 30 80 30 40 60 40 L 140 40 C 170 40 170 80 140 80 Z"]
-            RenderSVGContainer {g} at (156,153) size 149x88
+            RenderSVGContainer {g} at (156,154) size 149x86
               RenderSVGText {text} at (52,30) size 97x56 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 97x56
                   chunk 1 text run 1 at (52.00,76.00) startOffset 0 endOffset 3 width 96.67: "SVG"

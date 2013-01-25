@@ -10,11 +10,11 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-41,-15) size 82x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x19
             chunk 1 (middle anchor) text run 1 at (-41.00,0.00) startOffset 0 endOffset 10 width 82.00: "CDATA only"
-        RenderSVGText {text} at (-92,5) size 183x19 contains 1 chunk(s)
+        RenderSVGText {text} at (-92,5) size 184x19 contains 1 chunk(s)
           RenderSVGInlineText {#cdata-section} at (0,0) size 183x19
             chunk 1 (middle anchor) text run 1 at (-91.50,20.00) startOffset 0 endOffset 27 width 183.00: "<text> with a CDATA section"
       RenderSVGContainer {g} at (69,165) size 312x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,180.00)}]
-        RenderSVGText {text} at (-57,-15) size 113x19 contains 1 chunk(s)
+        RenderSVGText {text} at (-57,-15) size 114x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 113x19
             chunk 1 (middle anchor) text run 1 at (-56.50,0.00) startOffset 0 endOffset 17 width 113.00: "text, CDATA, text"
         RenderSVGText {text} at (-156,5) size 312x19 contains 1 chunk(s)

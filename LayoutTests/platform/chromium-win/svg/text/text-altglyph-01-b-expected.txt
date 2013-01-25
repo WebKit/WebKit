@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (8,23) size 771x461
+    RenderSVGContainer {g} at (8,23) size 770x461
       RenderSVGText {text} at (5,14) size 408x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 408x45
           chunk 1 text run 1 at (5.00,50.00) startOffset 0 endOffset 26 width 408.00: "Test 'altGlyph' facilities"
@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 462x35
           chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 32 width 461.40: "and many-to-many chars to glyphs"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (75,208) size 664x276
+      RenderSVGContainer {g} at (75,208) size 663x276
         RenderSVGText {text} at (140,130) size 188x75 contains 1 chunk(s)
           RenderSVGTSpan {altGlyph} at (0,0) size 38x75
             RenderSVGInlineText {#text} at (0,0) size 38x75

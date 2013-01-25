@@ -2,12 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (8,13) size 754x466
-      RenderSVGText {text} at (5,8) size 444x39 contains 1 chunk(s)
+    RenderSVGContainer {g} at (8,14) size 753x464
+      RenderSVGText {text} at (5,8) size 444x40 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 444x39
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 444.00: "Test 'text-anchor' (horizontal)"
-      RenderSVGContainer {g} at (33,170) size 729x309
-        RenderSVGContainer {g} at (378,170) size 384x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
+      RenderSVGContainer {g} at (34,170) size 727x308
+        RenderSVGContainer {g} at (378,170) size 383x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
           RenderSVGPath {line} at (383,215) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
           RenderSVGEllipse {circle} at (378,211) size 11x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (0,-28) size 227x35 contains 1 chunk(s)
@@ -19,13 +19,13 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (0,-28) size 218x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 218x35
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 17 width 217.80: "text-anchor:start"
-        RenderSVGContainer {g} at (176,336) size 414x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,230.00)}]
+        RenderSVGContainer {g} at (176,337) size 414x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,230.00)}]
           RenderSVGPath {line} at (341,382) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=0.00] [x2=25.00] [y2=0.00]
           RenderSVGEllipse {circle} at (378,378) size 11x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (-124,-28) size 248x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 248x35
               chunk 1 (middle anchor) text run 1 at (-123.90,0.00) startOffset 0 endOffset 18 width 247.80: "text-anchor:middle"
-        RenderSVGContainer {g} at (33,420) size 356x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]
+        RenderSVGContainer {g} at (34,420) size 355x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]
           RenderSVGPath {line} at (300,465) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-50.00] [y1=0.00] [x2=0.00] [y2=0.00]
           RenderSVGEllipse {circle} at (378,461) size 11x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
           RenderSVGText {text} at (-210,-28) size 210x35 contains 1 chunk(s)

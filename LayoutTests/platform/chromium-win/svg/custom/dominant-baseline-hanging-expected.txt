@@ -18,7 +18,7 @@ layer at (0,0) size 400x400
       RenderSVGContainer {g} at (9,9) size 381x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-0.50,-0.50)}]
         RenderSVGPath {line} at (9,9) size 381x1 [stroke={[type=LINEAR-GRADIENT] [id="h_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=380.00] [y2=0.00]
         RenderSVGPath {line} at (9,9) size 1x26 [stroke={[type=LINEAR-GRADIENT] [id="v_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-0.50] [x2=0.00] [y2=25.00]
-      RenderSVGText {text} at (2,-4) size 308x22 contains 1 chunk(s)
+      RenderSVGText {text} at (2,-4) size 308x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 308x22
           chunk 1 text run 1 at (2.00,13.60) startOffset 0 endOffset 40 width 308.00: "This is hanging from the top-left corner"
     RenderSVGForeignObject {foreignObject} at (10,45) size 380x150

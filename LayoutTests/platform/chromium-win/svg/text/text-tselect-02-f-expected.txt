@@ -2,13 +2,13 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (16,191) size 718x209
+    RenderSVGContainer {g} at (16,192) size 718x208
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (16,191) size 718x209 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
-        RenderSVGText {text} at (10,55) size 179x19 contains 1 chunk(s)
+      RenderSVGContainer {g} at (16,192) size 718x208 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+        RenderSVGText {text} at (10,55) size 179x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 179x19
             chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 26 width 178.20: "StartIndex: 0. NumChars: 9"
-        RenderSVGText {text} at (10,85) size 367x54 contains 1 chunk(s)
+        RenderSVGText {text} at (10,85) size 367x55 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 367x54
             chunk 1 text run 1 at (10.00,128.00) startOffset 0 endOffset 4 width 79.20: "abc "
             chunk 1 text run 1 at (89.20,128.00) startOffset 0 endOffset 4 width 68.40 RTL: " \x{5D3}\x{5D4}\x{5D5}"
@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (302.80,128.00) startOffset 0 endOffset 4 width 73.80: " def"
         RenderSVGContainer {g} at (16,366) size 718x34
           RenderSVGRect {rect} at (16,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=160.00] [width=100.00] [height=20.00]
-          RenderSVGText {text} at (18,160) size 83x19 contains 1 chunk(s)
+          RenderSVGText {text} at (18,160) size 84x20 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 83x19
               chunk 1 (middle anchor) text run 1 at (18.60,175.00) startOffset 0 endOffset 12 width 82.80: "startIndex++"
           RenderSVGRect {rect} at (200,366) size 167x34 [fill={[type=SOLID] [color=#0000FF]}] [x=120.00] [y=160.00] [width=100.00] [height=20.00]
-          RenderSVGText {text} at (132,160) size 76x19 contains 1 chunk(s)
+          RenderSVGText {text} at (132,160) size 76x20 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 76x19
               chunk 1 (middle anchor) text run 1 at (132.20,175.00) startOffset 0 endOffset 12 width 75.60: "startIndex--"
           RenderSVGRect {rect} at (383,366) size 167x34 [fill={[type=SOLID] [color=#0000FF]}] [x=230.00] [y=160.00] [width=100.00] [height=20.00]
-          RenderSVGText {text} at (237,160) size 85x19 contains 1 chunk(s)
+          RenderSVGText {text} at (237,160) size 86x20 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 85x19
               chunk 1 (middle anchor) text run 1 at (237.70,175.00) startOffset 0 endOffset 10 width 84.60: "numChars++"
           RenderSVGRect {rect} at (566,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=340.00] [y=160.00] [width=100.00] [height=20.00]
-          RenderSVGText {text} at (351,160) size 78x19 contains 1 chunk(s)
+          RenderSVGText {text} at (351,160) size 78x20 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 78x19
               chunk 1 (middle anchor) text run 1 at (351.30,175.00) startOffset 0 endOffset 10 width 77.40: "numChars--"
     RenderSVGText {text} at (10,304) size 266x46 contains 1 chunk(s)

@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (29,25) size 421x456
-    RenderSVGText {text} at (111,25) size 227x18 contains 1 chunk(s)
+    RenderSVGText {text} at (111,25) size 228x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 227x18
         chunk 1 (middle anchor) text run 1 at (111.50,40.00) startOffset 0 endOffset 34 width 227.00: "Text on Path with trailing <tspan>"
     RenderSVGRect {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=50.00] [width=390.00] [height=20.00]

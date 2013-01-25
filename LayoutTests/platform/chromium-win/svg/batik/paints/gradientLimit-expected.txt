@@ -39,7 +39,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (15,120) size 120x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 120x18
             chunk 1 (middle anchor) text run 1 at (15.00,135.00) startOffset 0 endOffset 17 width 120.00: "Two close offsets"
-        RenderSVGText {text} at (16,135) size 117x18 contains 1 chunk(s)
+        RenderSVGText {text} at (16,135) size 118x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 117x18
             chunk 1 (middle anchor) text run 1 at (16.50,150.00) startOffset 0 endOffset 16 width 117.00: "<radialGradient>"
       RenderSVGContainer {g} at (149,180) size 152x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,100.00)}]
@@ -51,7 +51,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-1,120) size 152x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 152x18
             chunk 1 (middle anchor) text run 1 at (-1.00,135.00) startOffset 0 endOffset 22 width 152.00: "Two very close offsets"
-        RenderSVGText {text} at (16,135) size 117x18 contains 1 chunk(s)
+        RenderSVGText {text} at (16,135) size 118x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 117x18
             chunk 1 (middle anchor) text run 1 at (16.50,150.00) startOffset 0 endOffset 16 width 117.00: "<radialGradient>"
       RenderSVGContainer {g} at (306,80) size 138x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
@@ -59,7 +59,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (335,80) size 80x41 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="closeControlsLinearGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
-        RenderSVGText {text} at (6,120) size 137x18 contains 1 chunk(s)
+        RenderSVGText {text} at (6,120) size 138x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 137x18
             chunk 1 (middle anchor) text run 1 at (6.50,135.00) startOffset 0 endOffset 20 width 137.00: "Close control points"
         RenderSVGText {text} at (17,135) size 116x18 contains 1 chunk(s)
@@ -73,7 +73,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (29,120) size 92x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 92x18
             chunk 1 (middle anchor) text run 1 at (29.00,135.00) startOffset 0 endOffset 12 width 92.00: "Small Radius"
-        RenderSVGText {text} at (16,135) size 117x18 contains 1 chunk(s)
+        RenderSVGText {text} at (16,135) size 118x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 117x18
             chunk 1 (middle anchor) text run 1 at (16.50,150.00) startOffset 0 endOffset 16 width 117.00: "<radialGradient>"
     RenderSVGContainer {use} at (0,0) size 448x498

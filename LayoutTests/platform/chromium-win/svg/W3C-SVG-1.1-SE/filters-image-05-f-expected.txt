@@ -47,7 +47,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (67,-15) size 346x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 346x18
             chunk 1 (middle anchor) text run 1 at (67.00,0.00) startOffset 0 endOffset 47 width 346.00: "Test preserveAspectRatio on an feImage element."
-        RenderSVGText {text} at (14,21) size 51x12 contains 1 chunk(s)
+        RenderSVGText {text} at (14,21) size 52x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 51x12
             chunk 1 (middle anchor) text run 1 at (14.50,30.00) startOffset 0 endOffset 13 width 51.00: "Raster to fit"
         RenderSVGContainer {g} at (20,70) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]

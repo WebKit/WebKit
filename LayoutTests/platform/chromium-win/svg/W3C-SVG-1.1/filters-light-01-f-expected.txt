@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (70,8) size 410x267
-      RenderSVGText {text} at (112,8) size 255x15 contains 1 chunk(s)
+      RenderSVGText {text} at (112,8) size 256x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 255x15
           chunk 1 (middle anchor) text run 1 at (112.50,20.00) startOffset 0 endOffset 50 width 255.00: "Filters: feDistantLight, fePointLight, feSpotLight"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

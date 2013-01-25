@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (129,10) size 221x19 contains 1 chunk(s)
+    RenderSVGText {text} at (129,10) size 222x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 221x19
         chunk 1 (middle anchor) text run 1 at (129.50,25.00) startOffset 0 endOffset 33 width 221.00: "<animateTransform> shape elements"
     RenderSVGContainer {g} at (24,59) size 437x225
@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 1 at (-22.00,60.00) startOffset 0 endOffset 6 width 44.00: "<path>"
       RenderSVGContainer {g} at (149,69) size 62x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
         RenderSVGRect {rect} at (149,69) size 62x42 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-30.00] [y=-20.00] [width=60.00] [height=40.00]
-        RenderSVGText {text} at (-21,45) size 41x19 contains 1 chunk(s)
+        RenderSVGText {text} at (-21,45) size 42x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x19
             chunk 1 (middle anchor) text run 1 at (-20.50,60.00) startOffset 0 endOffset 6 width 41.00: "<rect>"
       RenderSVGContainer {g} at (269,59) size 62x95 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
@@ -27,7 +27,7 @@ layer at (0,0) size 480x360
             chunk 1 (middle anchor) text run 1 at (-25.00,60.00) startOffset 0 endOffset 8 width 50.00: "<circle>"
       RenderSVGContainer {g} at (379,69) size 82x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
         RenderSVGEllipse {ellipse} at (379,69) size 82x42 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [cx=0.00] [cy=0.00] [rx=40.00] [ry=20.00]
-        RenderSVGText {text} at (-28,45) size 55x19 contains 1 chunk(s)
+        RenderSVGText {text} at (-28,45) size 56x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 55x19
             chunk 1 (middle anchor) text run 1 at (-27.50,60.00) startOffset 0 endOffset 9 width 55.00: "<ellipse>"
       RenderSVGContainer {g} at (24,194) size 72x90 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,220.00)}]

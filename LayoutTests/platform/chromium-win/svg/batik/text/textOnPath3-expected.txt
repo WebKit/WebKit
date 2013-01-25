@@ -15,7 +15,7 @@ layer at (0,0) size 450x500
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 39 width 227.00: "Text with one textPath child and x=\"10\""
       RenderSVGContainer {use} at (139,60) size 142x125
         RenderSVGPath {path} at (139,60) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (96,-109) size 154x77 contains 1 chunk(s)
+      RenderSVGText {text} at (96,-109) size 155x77 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 154x77
           RenderSVGInlineText {#text} at (0,0) size 154x77
             chunk 1 (middle anchor) text run 1 at (112.33,-56.03) startOffset 0 endOffset 1 width 9.00: "T"
@@ -88,7 +88,7 @@ layer at (0,0) size 450x500
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 48 width 282.00: "Text with one textPath child and x=\"-100\" y=\"10\""
       RenderSVGContainer {use} at (139,350) size 142x125
         RenderSVGPath {path} at (139,350) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (84,-109) size 158x109 contains 1 chunk(s)
+      RenderSVGText {text} at (84,-109) size 159x109 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 158x109
           RenderSVGInlineText {#text} at (0,104) size 20x5
             chunk 1 (middle anchor) text run 1 at (100.02,-2.44) startOffset 9 endOffset 10 width 4.00: " "

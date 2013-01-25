@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (16,40) size 318x173
-    RenderSVGContainer {g} at (16,40) size 318x173 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
-      RenderSVGText {text} at (10,16) size 528x68 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (16,42) size 318x170
+    RenderSVGContainer {g} at (16,42) size 318x170 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (10,16) size 528x69 contains 1 chunk(s)
         [clipPath="dynClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 200x200
         RenderSVGInlineText {#text} at (0,0) size 528x68
           [clipPath="dynClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 200x200

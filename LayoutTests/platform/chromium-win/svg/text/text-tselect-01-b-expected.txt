@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,4) size 311x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 311x20
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 310.20: "Test single line and multiline text selection."
-      RenderSVGContainer {g} at (41,81) size 616x368
+      RenderSVGContainer {g} at (41,82) size 615x366
         RenderSVGText {text} at (25,49) size 260x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 260x20
             chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 37 width 259.20: "Here is a stand-alone 'text' element."
