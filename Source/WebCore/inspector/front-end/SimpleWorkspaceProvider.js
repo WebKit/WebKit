@@ -38,6 +38,7 @@ WebInspector.SimpleWorkspaceProvider = function(workspace)
     this._workspace = workspace;
     /** @type {Object.<string, WebInspector.ContentProvider>} */
     this._contentProviders = {};
+    this._lastUniqueSuffix = 0;
 }
 
 /**
@@ -129,8 +130,8 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
     uniqueURI: function(uri)
     {
         var uniqueURI = uri;
-        for (var i = 1; this._contentProviders[uniqueURI]; ++i)
-            uniqueURI = uri + " (" + i + ")";
+        while (this._contentProviders[uniqueURI])
+            uniqueURI = uri + " (" + (++this._lastUniqueSuffix) + ")";
         return uniqueURI;
     },
 
