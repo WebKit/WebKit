@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (199,12) size 81x22 contains 1 chunk(s)
+    RenderSVGText {text} at (199,12) size 82x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 81x22
         chunk 1 (middle anchor) text run 1 at (199.50,30.00) startOffset 0 endOffset 9 width 81.00: "repeatDur"
     RenderSVGContainer {g} at (83,93) size 322x160 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
@@ -33,7 +33,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-12,-12) size 24x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 24x15
             chunk 1 (middle anchor) text run 1 at (-12.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 5s"
-        RenderSVGText {text} at (65,-12) size 29x15 contains 1 chunk(s)
+        RenderSVGText {text} at (65,-12) size 30x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 29x15
             chunk 1 (middle anchor) text run 1 at (65.50,0.00) startOffset 0 endOffset 5 width 29.00: "0s-5s"
       RenderSVGContainer {g} at (303,113) size 94x139 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]

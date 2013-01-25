@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (105,203) size 250x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,230.00)}]
           RenderSVGPath {line} at (205,229) size 50x2 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=0.00] [x2=25.00] [y2=0.00]
           RenderSVGEllipse {circle} at (227,227) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-          RenderSVGText {text} at (-125,-27) size 249x33 contains 1 chunk(s)
+          RenderSVGText {text} at (-125,-27) size 250x33 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 249x33
               chunk 1 (middle anchor) text run 1 at (-124.50,0.00) startOffset 0 endOffset 18 width 249.00: "text-anchor:middle"
         RenderSVGContainer {g} at (20,253) size 213x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]

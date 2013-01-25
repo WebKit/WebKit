@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (135,10) size 209x22 contains 1 chunk(s)
+    RenderSVGText {text} at (135,10) size 210x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 209x22
         chunk 1 (middle anchor) text run 1 at (135.50,28.00) startOffset 0 endOffset 25 width 209.00: "<svg> 'viewBox' attribute"
     RenderSVGContainer {g} at (16,59) size 452x244
@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (16,273) size 138x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 138x15
           chunk 1 (middle anchor) text run 1 at (16.00,285.00) startOffset 0 endOffset 21 width 138.00: "viewBox=\"0 0 200 200\""
-      RenderSVGText {text} at (30,288) size 109x15 contains 1 chunk(s)
+      RenderSVGText {text} at (30,288) size 110x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 109x15
           chunk 1 (middle anchor) text run 1 at (30.50,300.00) startOffset 0 endOffset 17 width 109.00: "overflow=\"hidden\""
       RenderSVGViewportContainer {svg} at (199,59) size 82x82
@@ -35,7 +35,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (171,273) size 138x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 138x15
           chunk 1 (middle anchor) text run 1 at (171.00,285.00) startOffset 0 endOffset 21 width 138.00: "viewBox=\"0,0,200,200\""
-      RenderSVGText {text} at (185,288) size 109x15 contains 1 chunk(s)
+      RenderSVGText {text} at (185,288) size 110x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 109x15
           chunk 1 (middle anchor) text run 1 at (185.50,300.00) startOffset 0 endOffset 17 width 109.00: "overflow=\"hidden\""
       RenderSVGViewportContainer {svg} at (354,59) size 82x82
@@ -53,7 +53,7 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 146x15
           chunk 1 (middle anchor) text run 1 at (322.00,285.00) startOffset 0 endOffset 14 width 90.00: "viewBox=\"0,0, "
           chunk 1 (middle anchor) text run 1 at (412.00,285.00) startOffset 0 endOffset 9 width 56.00: "200, 200\""
-      RenderSVGText {text} at (340,288) size 109x15 contains 1 chunk(s)
+      RenderSVGText {text} at (340,288) size 110x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 109x15
           chunk 1 (middle anchor) text run 1 at (340.50,300.00) startOffset 0 endOffset 17 width 109.00: "overflow=\"hidden\""
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)

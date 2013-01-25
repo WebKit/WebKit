@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (254,20) size 152x114
         RenderSVGEllipse {circle} at (300,30) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=60.00] [r=30.00]
         RenderSVGEllipse {circle} at (290,20) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=330.00] [cy=60.00] [r=40.00]
-        RenderSVGText {text} at (254,112) size 151x22 contains 1 chunk(s)
+        RenderSVGText {text} at (254,112) size 152x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 151x22
             chunk 1 (middle anchor) text run 1 at (254.50,130.00) startOffset 0 endOffset 19 width 151.00: "Non-existant filter"
       RenderSVGContainer {g} at (215,180) size 230x104

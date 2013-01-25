@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (100,258) size 280x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 280x27
           chunk 1 (middle anchor) text run 1 at (100.20,280.00) startOffset 0 endOffset 28 width 279.60: "This text should be visible."
-    RenderSVGContainer {g} at (16,518) size 381x61
+    RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 228x36
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"

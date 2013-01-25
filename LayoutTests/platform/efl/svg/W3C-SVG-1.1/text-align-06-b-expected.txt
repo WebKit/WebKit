@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 481.00: "Test 'baseline-shift' (vertic.)"
       RenderSVGContainer {g} at (81,60) size 294x297
         RenderSVGContainer {g} at (81,60) size 294x297 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
-          RenderSVGText {text} at (-9,0) size 24x165 contains 1 chunk(s)
+          RenderSVGText {text} at (-9,0) size 25x165 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 17x66
               chunk 1 (vertical) text run 1 at (-10.50,0.00) startOffset 0 endOffset 1 height 33.00: "t"
               chunk 1 (vertical) text run 2 at (-10.50,33.00) startOffset 1 endOffset 2 height 33.00: "e"
@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (1,99) size 15x66
               chunk 1 (vertical) text run 1 at (-10.50,99.00) startOffset 0 endOffset 1 height 33.00: "x"
               chunk 1 (vertical) text run 2 at (-10.50,132.00) startOffset 1 endOffset 2 height 33.00: "t"
-          RenderSVGText {text} at (45,0) size 43x264 contains 1 chunk(s)
+          RenderSVGText {text} at (45,0) size 44x264 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (26,0) size 17x66
               chunk 1 (vertical) text run 1 at (69.50,0.00) startOffset 0 endOffset 1 height 33.00: "t"
               chunk 1 (vertical) text run 2 at (69.50,33.00) startOffset 1 endOffset 2 height 33.00: "e"

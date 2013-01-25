@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (147,73) size 186x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 186x33
             chunk 1 (middle anchor) text run 1 at (147.00,100.00) startOffset 0 endOffset 13 width 186.00: "Good morning!"
-        RenderSVGText {text} at (127,173) size 225x33 contains 1 chunk(s)
+        RenderSVGText {text} at (127,173) size 226x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 86x33
             chunk 1 (middle anchor) text run 1 at (127.50,200.00) startOffset 0 endOffset 6 width 86.00: "Bonne "
           RenderSVGTSpan {tspan} at (0,0) size 129x33

@@ -27,7 +27,7 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (91.00,228.00) startOffset 0 endOffset 4 width 28.00: "gray"
       RenderSVGContainer {g} at (90,235) size 36x36 [transform={m=((0.20,0.00)(0.00,0.20)) t=(90.00,235.00)}]
         RenderSVGPath {path} at (90,235) size 36x36 [fill={[type=SOLID] [color=#808080]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
-      RenderSVGText {text} at (179,214) size 51x17 contains 1 chunk(s)
+      RenderSVGText {text} at (179,214) size 52x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 51x17
           chunk 1 (middle anchor) text run 1 at (179.50,228.00) startOffset 0 endOffset 8 width 51.00: "outlined"
       RenderSVGContainer {g} at (189,234) size 38x38 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]

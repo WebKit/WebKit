@@ -8,10 +8,10 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,176) size 113x33 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,203.00) startOffset 0 endOffset 9 width 113.00: "at 0 sec."
-          RenderSVGText {text} at (0,109) size 113x33 contains 1 chunk(s)
+          RenderSVGText {text} at (0,109) size 113x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,136.33) startOffset 0 endOffset 9 width 113.00: "at 3 sec."
-          RenderSVGText {text} at (0,42) size 113x33 contains 1 chunk(s)
+          RenderSVGText {text} at (0,42) size 113x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,69.66) startOffset 0 endOffset 9 width 113.00: "at 6 sec."
           RenderSVGText {text} at (3,-24) size 98x33 contains 1 chunk(s)
@@ -27,10 +27,10 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,176) size 113x33 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,203.00) startOffset 0 endOffset 9 width 113.00: "at 0 sec."
-          RenderSVGText {text} at (0,109) size 113x33 contains 1 chunk(s)
+          RenderSVGText {text} at (0,109) size 113x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,136.33) startOffset 0 endOffset 9 width 113.00: "at 3 sec."
-          RenderSVGText {text} at (0,42) size 113x33 contains 1 chunk(s)
+          RenderSVGText {text} at (0,42) size 113x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x33
               chunk 1 text run 1 at (0.00,69.66) startOffset 0 endOffset 9 width 113.00: "at 6 sec."
           RenderSVGText {text} at (3,-24) size 98x33 contains 1 chunk(s)
