@@ -39,8 +39,6 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-// Fixme: should get the height from runtime.
-#define URL_BAR_HEIGHT 70
 #define PADDING 80
 
 using namespace BlackBerry::Platform::Graphics;
@@ -52,7 +50,7 @@ PagePopupBlackBerry::PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate* web
     , m_client(adoptPtr(client))
     , m_sharedClientPointer(adoptRef(new PagePopupBlackBerry::SharedClientPointer(client)))
 {
-    m_rect = IntRect(rect.x(), rect.y() - URL_BAR_HEIGHT, client->contentSize().width(), client->contentSize().height());
+    m_rect = IntRect(rect.x(), rect.y(), client->contentSize().width(), client->contentSize().height());
 }
 
 PagePopupBlackBerry::~PagePopupBlackBerry()
@@ -67,12 +65,17 @@ bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
 
 bool PagePopupBlackBerry::init(WebPage* webpage)
 {
+    // Don't use backing store for the pop-up web page.
+    webpage->settings()->setBackingStoreEnabled(false);
+
     webpage->d->setLoadState(WebPagePrivate::Committed);
 
     generateHTML(webpage);
     installDOMFunction(webpage->d->mainFrame());
 
     webpage->d->setLoadState(WebPagePrivate::Finished);
+    webpage->client()->notifyLoadFinished(0);
+
     return true;
 }
 

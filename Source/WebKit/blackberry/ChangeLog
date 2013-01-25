@@ -1,3 +1,28 @@
+2013-01-25  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Pop-up WebViews should not take ownership of the backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=107957
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        Internal PR 274581.
+        Add web setting for whether a WebPage should take the backing store.
+        Prevent pop-up WebView from taking ownership of the backing
+        store when it becomes visible.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setVisible):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::isBackingStoreEnabled):
+        (BlackBerry::WebKit::WebSettings::setBackingStoreEnabled):
+        * Api/WebSettings.h:
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::PagePopupBlackBerry):
+        (WebCore::PagePopupBlackBerry::init):
+
 2013-01-25  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] AC layers appear in the wrong place on RTL page
