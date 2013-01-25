@@ -1406,16 +1406,6 @@ webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html 
 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
-webkit.org/b/107832 accessibility/aria-slider-value.html [ Failure ]
-webkit.org/b/107832 accessibility/aria-tables.html [ Failure ]
-webkit.org/b/107832 accessibility/document-attributes.html [ Failure ]
-webkit.org/b/107832 accessibility/language-attribute.html [ Failure ]
-webkit.org/b/107832 accessibility/spinbutton-value.html [ Failure ]
-webkit.org/b/107832 platform/gtk/accessibility/aria-slider-required-attributes.html [ Failure ]
-webkit.org/b/107832 platform/gtk/accessibility/entry-and-password.html [ Failure ]
-webkit.org/b/107832 platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
-webkit.org/b/107832 platform/gtk/accessibility/table-hierarchy.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
