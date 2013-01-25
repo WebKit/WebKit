@@ -34,6 +34,9 @@ void main()
 }
 </script>
 <script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("example");
 var gl = wtu.create3DContext(canvas);

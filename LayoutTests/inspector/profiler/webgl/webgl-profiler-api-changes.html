@@ -200,6 +200,8 @@ function runTest()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
+    if (window.internals)
+        window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
     try {
         test();
     } finally {

@@ -15,6 +15,9 @@ description("This test ensures WebGL implementations correctly implement compres
 
 debug("");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.createElement("canvas");
 var gl = wtu.create3DContext(canvas);

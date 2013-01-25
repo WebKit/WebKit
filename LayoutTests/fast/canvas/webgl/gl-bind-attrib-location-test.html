@@ -34,6 +34,9 @@ void main()
 <script>
 description("This test ensures WebGL implementations don't allow names that start with 'gl_' when calling bindAttribLocation.");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 debug("");
 debug("Canvas.getContext");
 

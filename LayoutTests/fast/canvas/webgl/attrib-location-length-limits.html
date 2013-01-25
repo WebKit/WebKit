@@ -51,6 +51,8 @@ void main() {
 if (window.initNonKhronosFramework) {
     window.initNonKhronosFramework(false);
 }
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
 var wtu = WebGLTestUtils;
 var gl = wtu.create3DContext(document.getElementById("example"));

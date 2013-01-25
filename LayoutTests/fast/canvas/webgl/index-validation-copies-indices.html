@@ -10,6 +10,9 @@
 <script>
 description('Test that client data is always copied during bufferData and bufferSubData calls, because otherwise the data the GL uses to draw may differ from that checked by the index validation code.')
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = create3DContext();
 var program = loadStandardProgram(context);
 

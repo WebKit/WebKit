@@ -11,6 +11,9 @@
 <script>
 description("Test for invalid passed parameters");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = create3DContext();
 
 debug("");

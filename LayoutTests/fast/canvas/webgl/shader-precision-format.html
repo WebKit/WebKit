@@ -17,6 +17,9 @@ if (window.initNonKhronosFramework) {
     window.initNonKhronosFramework(true);
 }
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 description(document.title);
 debug("Tests that WebGLShaderPrecisionFormat class and getShaderPrecisionFormat work.");

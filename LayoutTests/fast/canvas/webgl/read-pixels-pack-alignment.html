@@ -31,6 +31,8 @@ void main()
 <div id="description"></div>
 <div id="console"></div>
 <script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
 // The below declarations need to be global for "shouldBe" to see them
 var gl = null;

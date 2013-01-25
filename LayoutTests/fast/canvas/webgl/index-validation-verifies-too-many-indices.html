@@ -10,6 +10,9 @@
 <script>
 description('Tests that index validation for drawElements does not examine too many indices');
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = create3DContext();
 var program = loadStandardProgram(context);
 

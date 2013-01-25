@@ -3,6 +3,8 @@
     <script src="../../../http/tests/inspector/inspector-test.js"></script>
     <script src="../canvas-profiler-test.js"></script>
 <script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
 /**
  * @constructor

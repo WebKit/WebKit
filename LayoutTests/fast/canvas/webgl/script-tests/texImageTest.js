@@ -1,5 +1,8 @@
 description("Test of texImage2d and texSubImage2d");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = create3DContext();
 var image = document.createElement("img");
 var video = document.createElement("video");

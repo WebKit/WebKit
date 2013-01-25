@@ -12,6 +12,9 @@ description("Test bufferData/bufferSubData with ArrayBuffer input");
 
 debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=41884">https://bugs.webkit.org/show_bug.cgi?id=41884</a> : <code>Implement bufferData and bufferSubData with ArrayBuffer as input</code>');
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var gl = create3DContext();
 shouldBeNonNull("gl");
 

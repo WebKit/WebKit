@@ -464,7 +464,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_contextLost(false)
     , m_contextLostMode(SyntheticLostContext)
     , m_attributes(attributes)
-    , m_synthesizedErrorsToConsole(false)
+    , m_synthesizedErrorsToConsole(true)
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
 {
     ASSERT(m_context);
@@ -566,8 +566,8 @@ void WebGLRenderingContext::setupFlags()
     ASSERT(m_context);
 
     Page* p = canvas()->document()->page();
-    if (p && p->settings()->webGLErrorsToConsoleEnabled())
-        m_synthesizedErrorsToConsole = true;
+    if (p)
+        m_synthesizedErrorsToConsole = p->settings()->webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
     m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->isEnabled("GL_CHROMIUM_strict_attribs");
@@ -4546,7 +4546,8 @@ void WebGLRenderingContext::loseContextImpl(WebGLRenderingContext::LostContextMo
         if (m_context->getError() == GraphicsContext3D::NO_ERROR)
             break;
     }
-    synthesizeGLError(GraphicsContext3D::CONTEXT_LOST_WEBGL, "loseContext", "context lost");
+    ConsoleDisplayPreference display = (mode == RealLostContext) ? DisplayInConsole: DontDisplayInConsole;
+    synthesizeGLError(GraphicsContext3D::CONTEXT_LOST_WEBGL, "loseContext", "context lost", display);
 
     // Don't allow restoration unless the context lost event has both been
     // dispatched and its default behavior prevented.
@@ -5786,9 +5787,9 @@ namespace {
 
 } // namespace anonymous
 
-void WebGLRenderingContext::synthesizeGLError(GC3Denum error, const char* functionName, const char* description)
+void WebGLRenderingContext::synthesizeGLError(GC3Denum error, const char* functionName, const char* description, ConsoleDisplayPreference display)
 {
-    if (m_synthesizedErrorsToConsole) {
+    if (m_synthesizedErrorsToConsole && display == DisplayInConsole) {
       String str = String("WebGL: ") + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
       printGLErrorToConsole(str);
     }

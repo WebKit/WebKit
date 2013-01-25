@@ -12,6 +12,9 @@
 var wtu = WebGLTestUtils;
 description("Tests calling WebGL APIs with various types");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = wtu.create3DContext();
 var program = wtu.loadStandardProgram(context);
 var shader = wtu.loadStandardVertexShader(context);

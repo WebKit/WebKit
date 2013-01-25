@@ -48,6 +48,9 @@ function init()
         window.initNonKhronosFramework(true);
     }
 
+    if (window.internals)
+        window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
     description('Verify WebGLContextAttributes are working as specified, including alpha, depth, stencil, antialias, but not premultipliedAlpha');
 
     runTest();

@@ -10,6 +10,9 @@
 <script>
 description("Tests calling WebGL APIs with objects from other contexts");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var contextA = create3DContext();
 var contextB = create3DContext();
 var programA = loadStandardProgram(contextA);

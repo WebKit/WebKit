@@ -44,6 +44,9 @@ function init()
     window.initNonKhronosFramework(false);
   }
 
+  if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
   debug("Checks that a texture that is not -texture-complete- does not draw if"+
         " filtering needs mips");
   debug("");

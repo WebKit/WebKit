@@ -13,6 +13,9 @@
 <script>
 description("Tests deletion behavior for texture, renderbuffer, shader, and program");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var gl = wtu.create3DContext();
 var shouldGenerateGLError = wtu.shouldGenerateGLError;

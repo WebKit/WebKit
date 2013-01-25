@@ -17,6 +17,9 @@ function go() {
     debug("");
     debug("Canvas.getContext");
 
+    if (window.internals)
+        window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
     var gl = create3DContext(document.getElementById("canvas"));
     if (!gl) {
         testFailed("context does not exist");

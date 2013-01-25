@@ -17,6 +17,9 @@ description("This tests framebuffer/renderbuffer-related functions");
 debug("");
 debug("Canvas.getContext");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var canvas = document.getElementById("canvas");
 var gl = create3DContext(canvas);
 if (!gl) {

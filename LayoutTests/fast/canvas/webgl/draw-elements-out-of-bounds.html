@@ -10,6 +10,9 @@
 <script>
 description("Test of drawElements with out-of-bounds parameters");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var context = create3DContext();
 var program = loadStandardProgram(context);
 

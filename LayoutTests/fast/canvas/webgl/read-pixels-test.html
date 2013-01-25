@@ -14,6 +14,9 @@
 <script>
 description("Checks that ReadPixels works as expected.");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("example");
 var gl = create3DContext(canvas);

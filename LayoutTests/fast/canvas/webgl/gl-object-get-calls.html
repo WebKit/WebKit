@@ -12,6 +12,9 @@
 <script>
 description("Test of get calls against GL objects like getBufferParameter, etc.");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 function sizeInBytes(type) {
   switch (type) {
   case gl.BYTE:

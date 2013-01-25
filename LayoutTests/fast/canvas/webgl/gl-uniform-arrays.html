@@ -81,6 +81,9 @@ description("This test ensures WebGL implementations handle uniform arrays corre
 
 debug("");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var gl = create3DContext(document.getElementById("example"));
 
 var vSrc = document.getElementById("vshader").text;

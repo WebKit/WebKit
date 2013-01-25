@@ -12,6 +12,9 @@
 
 description("Verifies that WebGLRenderingContext::getAttachedShaders doesn't crash when an accessor property is defined on Array.prototype.");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 context = create3DContext();
 program = context.createProgram();
 

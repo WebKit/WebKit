@@ -711,9 +711,14 @@ public:
     // a Safari or Chrome extension.
     bool allowPrivilegedExtensions() const;
 
+    enum ConsoleDisplayPreference {
+        DisplayInConsole,
+        DontDisplayInConsole
+    };
+
     // Wrapper for GraphicsContext3D::synthesizeGLError that sends a message
     // to the JavaScript console.
-    void synthesizeGLError(GC3Denum, const char* functionName, const char* description);
+    void synthesizeGLError(GC3Denum, const char* functionName, const char* description, ConsoleDisplayPreference = DisplayInConsole);
 
     String ensureNotNull(const String&) const;
 

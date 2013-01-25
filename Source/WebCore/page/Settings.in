@@ -97,7 +97,7 @@ compositedScrollingForFramesEnabled initial=false
 
 experimentalNotificationsEnabled initial=false
 webGLEnabled initial=false
-webGLErrorsToConsoleEnabled initial=false
+webGLErrorsToConsoleEnabled initial=true
 openGLMultisamplingEnabled initial=true
 privilegedWebGLExtensionsEnabled initial=false
 accelerated2dCanvasEnabled initial=false

@@ -37,6 +37,9 @@ description("This test verifies the functionality of the WEBGL_depth_texture ext
 
 debug("");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = wtu.create3DContext(canvas, {antialias: false});

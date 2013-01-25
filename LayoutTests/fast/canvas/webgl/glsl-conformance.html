@@ -221,6 +221,9 @@ description("This test ensures WebGL implementations allow proper GLES2 shaders 
 debug("");
 debug("Canvas.getContext");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 wtu.loggingOff();
 var gl = wtu.create3DContext(document.getElementById("canvas"));

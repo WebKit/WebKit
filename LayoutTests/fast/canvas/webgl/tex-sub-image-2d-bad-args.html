@@ -12,6 +12,9 @@
 <script>
 description('Tests texSubImage2D with bad arguments');
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("testbed");
 var c = document.getElementById("c");

@@ -13,6 +13,9 @@
 <script>
 description("Tests that index validation verifies the correct number of indices");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 function sizeInBytes(type) {
   switch (type) {
   case gl.BYTE:
