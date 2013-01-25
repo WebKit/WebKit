@@ -1,3 +1,13 @@
+2013-01-25  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: System directory prefix doesn't have a "+"
+        https://bugs.webkit.org/show_bug.cgi?id=107971
+
+        Reviewed by Brady Eidson.
+
+        * Shared/mac/ChildProcessMac.mm: (WebKit::ChildProcess::initializeSandbox):
+        Re-added the "+".
+
 2013-01-25  Brady Eidson  <beidson@apple.com>
 
         New NetworkProcess can ASSERT after old NetworkProcess crashes
