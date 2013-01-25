@@ -1,3 +1,10 @@
+2013-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix release build.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::length):
+
 2013-01-24  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/9971916> [WK2] Update sandbox extension usage

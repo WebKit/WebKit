@@ -50,6 +50,7 @@ unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame) const
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
+    return 0;
 }
 
 String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame) const
