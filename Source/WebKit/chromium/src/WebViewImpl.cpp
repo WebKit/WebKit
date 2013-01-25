@@ -873,6 +873,15 @@ void WebViewImpl::setShowPaintRects(bool show)
     m_showPaintRects = show;
 }
 
+void WebViewImpl::setContinuousPaintingEnabled(bool enabled)
+{
+    if (isAcceleratedCompositingActive()) {
+        TRACE_EVENT0("webkit", "WebViewImpl::setContinuousPaintingEnabled");
+        m_layerTreeView->setContinuousPaintingEnabled(enabled);
+    }
+    m_continuousPaintingEnabled = enabled;
+}
+
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
 {
     ASSERT((event.type == WebInputEvent::RawKeyDown)
@@ -4069,6 +4078,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 m_pageOverlays->update();
             m_layerTreeView->setShowFPSCounter(m_showFPSCounter);
             m_layerTreeView->setShowPaintRects(m_showPaintRects);
+            m_layerTreeView->setContinuousPaintingEnabled(m_continuousPaintingEnabled);
         } else {
             m_nonCompositedContentHost.clear();
             m_isAcceleratedCompositingActive = false;

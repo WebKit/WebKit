@@ -172,6 +172,16 @@ void InspectorClientImpl::setShowFPSCounter(bool show)
     m_inspectedWebView->setShowFPSCounter(show);
 }
 
+bool InspectorClientImpl::canContinuouslyPaint()
+{
+    return true;
+}
+
+void InspectorClientImpl::setContinuousPaintingEnabled(bool enabled)
+{
+    m_inspectedWebView->setContinuousPaintingEnabled(enabled);
+}
+
 bool InspectorClientImpl::supportsFrameInstrumentation()
 {
     return true;

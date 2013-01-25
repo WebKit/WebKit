@@ -111,6 +111,8 @@ public:
     virtual void setShowPaintRects(ErrorString*, bool show);
     virtual void canShowFPSCounter(ErrorString*, bool*);
     virtual void setShowFPSCounter(ErrorString*, bool show);
+    virtual void canContinuouslyPaint(ErrorString*, bool*);
+    virtual void setContinuousPaintingEnabled(ErrorString*, bool enabled);
     virtual void getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum*);
     virtual void setScriptExecutionDisabled(ErrorString*, bool);
     virtual void setGeolocationOverride(ErrorString*, const double*, const double*, const double*);

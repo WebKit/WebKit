@@ -296,6 +296,10 @@ WebInspector.GenericSettingsTab = function()
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show FPS meter"), WebInspector.settings.showFPSCounter));
         WebInspector.settings.showFPSCounter.addChangeListener(this._showFPSCounterChanged, this);
     }
+    if (Capabilities.canContinuouslyPaint) {
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable continuous page repainting"), WebInspector.settings.continuousPainting));
+        WebInspector.settings.continuousPainting.addChangeListener(this._continuousPaintingChanged, this);
+    }
 
     p = this._appendSection(WebInspector.UIString("Sources"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show folders"), WebInspector.settings.showScriptFolders));
@@ -342,6 +346,11 @@ WebInspector.GenericSettingsTab.prototype = {
     _showFPSCounterChanged: function()
     {
         PageAgent.setShowFPSCounter(WebInspector.settings.showFPSCounter.get());
+    },
+
+    _continuousPaintingChanged: function()
+    {
+        PageAgent.setContinuousPaintingEnabled(WebInspector.settings.continuousPainting.get());
     },
 
     _updateScriptDisabledCheckbox: function()

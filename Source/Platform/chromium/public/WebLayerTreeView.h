@@ -183,6 +183,9 @@ public:
     // Toggles the paint rects in the HUD layer
     virtual void setShowPaintRects(bool) { }
 
+    // Toggles continuous painting
+    virtual void setContinuousPaintingEnabled(bool) { }
+
     // FIXME: Remove this.
     virtual void loseCompositorContext(int numTimes) { }
 };

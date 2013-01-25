@@ -366,6 +366,22 @@
                 "hidden": true
             },
             {
+                "name": "canContinuouslyPaint",
+                "description": "Tells if backend supports continuous painting",
+                "returns": [
+                    { "name": "value", "type": "boolean", "description": "True if continuous painting is available" }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "setContinuousPaintingEnabled",
+                "description": "Requests that backend enables continuous painting",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "True for enabling cointinuous painting" }
+                ],
+                "hidden": true
+            },
+            {
                 "name": "getScriptExecutionStatus",
                 "description": "Determines if scripts can be executed in the page.",
                 "returns": [

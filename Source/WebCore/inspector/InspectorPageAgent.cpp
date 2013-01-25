@@ -93,6 +93,7 @@ static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverri
 static const char pageAgentFontScaleFactorOverride[] = "pageAgentFontScaleFactorOverride";
 static const char pageAgentFitWindow[] = "pageAgentFitWindow";
 static const char pageAgentShowFPSCounter[] = "pageAgentShowFPSCounter";
+static const char pageAgentContinuousPaintingEnabled[] = "pageAgentContinuousPaintingEnabled";
 static const char pageAgentShowPaintRects[] = "pageAgentShowPaintRects";
 #if ENABLE(TOUCH_EVENTS)
 static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
@@ -366,6 +367,8 @@ void InspectorPageAgent::restore()
         setShowFPSCounter(0, showFPSCounter);
         String emulatedMedia = m_state->getString(PageAgentState::pageAgentEmulatedMedia);
         setEmulatedMedia(0, emulatedMedia);
+        bool continuousPaintingEnabled = m_state->getBoolean(PageAgentState::pageAgentContinuousPaintingEnabled);
+        setContinuousPaintingEnabled(0, continuousPaintingEnabled);
 
         int currentWidth = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
         int currentHeight = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
@@ -401,6 +404,7 @@ void InspectorPageAgent::disable(ErrorString*)
     setShowPaintRects(0, false);
     setShowFPSCounter(0, false);
     setEmulatedMedia(0, "");
+    setContinuousPaintingEnabled(0, false);
 
     // When disabling the agent, reset the override values.
     m_state->setLong(PageAgentState::pageAgentScreenWidthOverride, 0);
@@ -746,6 +750,20 @@ void InspectorPageAgent::setShowFPSCounter(ErrorString*, bool show)
     m_client->setShowFPSCounter(show);
 
     if (mainFrame() && mainFrame()->view())
+        mainFrame()->view()->invalidate();
+}
+
+void InspectorPageAgent::canContinuouslyPaint(ErrorString*, bool* outParam)
+{
+    *outParam = m_client->canContinuouslyPaint();
+}
+
+void InspectorPageAgent::setContinuousPaintingEnabled(ErrorString*, bool enabled)
+{
+    m_state->setBoolean(PageAgentState::pageAgentContinuousPaintingEnabled, enabled);
+    m_client->setContinuousPaintingEnabled(enabled);
+
+    if (!enabled && mainFrame() && mainFrame()->view())
         mainFrame()->view()->invalidate();
 }
 

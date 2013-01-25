@@ -311,6 +311,7 @@ public:
     virtual WebViewBenchmarkSupport* benchmarkSupport();
     virtual void setShowPaintRects(bool);
     virtual void setShowFPSCounter(bool);
+    virtual void setContinuousPaintingEnabled(bool);
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();

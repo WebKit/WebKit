@@ -1,3 +1,18 @@
+2013-01-25  Eberhard Graether  <egraether@google.com>
+
+        Web Inspector: add checkbox for continuous painting to the inspector's settings
+        https://bugs.webkit.org/show_bug.cgi?id=107352
+
+        Reviewed by Pavel Feldman.
+
+        This change adds a checkbox to activate continuous painting to the WebInspector's
+        rendering settings and plumbs the setting to Chromium's WebLayerTreeView. The
+        setting is visible if InspectorClient::canContinuouslyPaint() returns true.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::setContinuousPaintingEnabled):
+
 2013-01-22  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add WebDiscardableMemory to platform

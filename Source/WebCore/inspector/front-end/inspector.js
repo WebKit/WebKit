@@ -372,6 +372,7 @@ WebInspector.doLoadedDone = function()
     TimelineAgent.supportsFrameInstrumentation(WebInspector._initializeCapability.bind(WebInspector, "timelineSupportsFrameInstrumentation", null));
     TimelineAgent.canMonitorMainThread(WebInspector._initializeCapability.bind(WebInspector, "timelineCanMonitorMainThread", null));
     PageAgent.canShowFPSCounter(WebInspector._initializeCapability.bind(WebInspector, "canShowFPSCounter", null));
+    PageAgent.canContinuouslyPaint(WebInspector._initializeCapability.bind(WebInspector, "canContinuouslyPaint", null));
     PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", null));
     PageAgent.canOverrideGeolocation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideGeolocation", null));
     PageAgent.canOverrideDeviceOrientation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceOrientation", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
@@ -490,6 +491,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     if (WebInspector.settings.showPaintRects.get())
         PageAgent.setShowPaintRects(true);
+
+    if (WebInspector.settings.continuousPainting.get())
+        PageAgent.setContinuousPaintingEnabled(true);
 
     if (WebInspector.settings.javaScriptDisabled.get())
         PageAgent.setScriptExecutionDisabled(true);

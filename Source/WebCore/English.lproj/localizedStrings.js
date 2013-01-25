@@ -180,6 +180,7 @@ localizedStrings["Emulate CSS media"] = "Emulate CSS media";
 localizedStrings["Emulate touch events"] = "Emulate touch events";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable breakpoint"] = "Enable breakpoint";
+localizedStrings["Enable continuous page repainting"] = "Enable continuous page repainting";
 localizedStrings["Enable Debugging"] = "Enable Debugging";
 localizedStrings["Enable Profiling"] = "Enable Profiling";
 localizedStrings["Enabling debugging will make scripts run slower."] = "Enabling debugging will make scripts run slower.";

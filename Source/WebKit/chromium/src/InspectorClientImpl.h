@@ -79,6 +79,9 @@ public:
     virtual bool canShowFPSCounter();
     virtual void setShowFPSCounter(bool);
 
+    virtual bool canContinuouslyPaint();
+    virtual void setContinuousPaintingEnabled(bool);
+
     virtual bool supportsFrameInstrumentation();
 
     virtual void getAllocatedObjects(HashSet<const void*>&);

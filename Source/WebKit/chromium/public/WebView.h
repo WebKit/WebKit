@@ -472,6 +472,7 @@ public:
 
     virtual void setShowPaintRects(bool) = 0;
     virtual void setShowFPSCounter(bool) = 0;
+    virtual void setContinuousPaintingEnabled(bool) = 0;
 
     // Benchmarking support -------------------------------------------------
 
