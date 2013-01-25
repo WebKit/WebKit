@@ -13,6 +13,8 @@
     </svg>
 <script>
     
+    var hasSubpixelPrecision = false;
+    
     function measureText(testElement)
     {
         var measureElement = document.getElementById('measure');
@@ -28,6 +30,7 @@
                 measureElement.firstChild.nodeValue = c;
                 w = measureElement.getBoundingClientRect().width;
                 characterWidths[c] = w;
+                hasSubpixelPrecision = hasSubpixelPrecision || w.toFixed(2) != Math.round(w);
             }
             width += w;
         }
@@ -37,10 +40,11 @@
     var el = document.getElementById('test');
     var elementWidth = el.getBoundingClientRect().width;
     var textWidth = measureText(el);
-    if (Math.abs(elementWidth - textWidth) <= 0.1)
+    var tolerance = hasSubpixelPrecision ? 0.1 : 2; // enclosing may expand up to one pixel in each direction.
+    if (Math.abs(elementWidth - textWidth) <= tolerance)
         testPassed('Width of text element is the sum of the width of all characters.');
     else
-        testPassed('Width of text element is ' + elementWidth + ', expected ' + textWidth);
+        testFailed('Width of text element is ' + elementWidth + ', expected ' + textWidth);
 </script>
 </body>
 </html>

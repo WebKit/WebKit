@@ -1,3 +1,0 @@
-PASS Width of text element is 391, expected 393
-Sphinx of black quartz, judge my vow.
-.
