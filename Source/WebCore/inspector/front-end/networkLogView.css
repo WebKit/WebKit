@@ -86,11 +86,6 @@
     text-decoration: underline;
 }
 
-.network-log-grid.data-grid td.size-column,
-.network-log-grid.data-grid td.time-column {
-    text-align: right;
-}
-
 .network-log-grid.data-grid.small .network-graph-side {
     height: 14px;
 }

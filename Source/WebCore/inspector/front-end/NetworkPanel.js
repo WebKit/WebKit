@@ -2015,10 +2015,8 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     _createDivInTD: function(columnIdentifier)
     {
-        var td = document.createElement("td");
-        td.className = columnIdentifier + "-column";
-        var div = document.createElement("div");
-        td.appendChild(div);
+        var td = this.createTD(columnIdentifier);
+        var div = td.createChild("div");
         this._element.appendChild(td);
         return div;
     },
