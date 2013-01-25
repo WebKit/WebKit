@@ -858,8 +858,6 @@
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
 		BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */; };
 		BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */; };
-		BCACC44516B24CAA00B6E092 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCACC44016B24CAA00B6E092 /* Info.plist */; };
-		BCACC44716B24CAA00B6E092 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCACC44316B24CAA00B6E092 /* Info.plist */; };
 		BCACC44916B24D3200B6E092 /* WebContentServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */; };
 		BCACC44A16B24D3600B6E092 /* WebContentServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */; };
 		BCAE9DFB160C0AA100A33217 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
@@ -5349,8 +5347,6 @@
 				BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */,
 				1CBC945E16515ED200D68AAE /* Dock.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				BCACC44516B24CAA00B6E092 /* Info.plist in Resources */,
-				BCACC44716B24CAA00B6E092 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

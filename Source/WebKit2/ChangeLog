@@ -1,5 +1,11 @@
 2013-01-25  Sam Weinig  <sam@webkit.org>
 
+        Try to fix the debug build.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-01-25  Sam Weinig  <sam@webkit.org>
+
         Move the WebContentServices to WebProcess/EntryPoint/mac/XPCService/.
 
         Reviewed by Anders Carlsson.
