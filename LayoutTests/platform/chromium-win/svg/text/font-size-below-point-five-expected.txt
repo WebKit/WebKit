@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (32,124) size 567x183
-    RenderSVGText {text} at (10,-5) size 30x18 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (32,127) size 564x179
+    RenderSVGText {text} at (10,-5) size 30x19 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 5x12
         RenderSVGInlineText {#text} at (0,5) size 5x12
           chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 5.00: "1"
@@ -31,6 +31,6 @@ layer at (0,0) size 800x600
       RenderSVGTSpan {tspan} at (0,0) size 0x1
         RenderSVGInlineText {#text} at (-10,4) size 0x0
       RenderSVGInlineText {#text} at (0,0) size 0x0
-    RenderSVGText {text} at (63,42) size 123x10 contains 1 chunk(s)
+    RenderSVGText {text} at (63,42) size 124x10 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 123x10
         chunk 1 (middle anchor) text run 1 at (63.75,50.00) startOffset 0 endOffset 36 width 122.50: "Font size should decrease monotonic."
