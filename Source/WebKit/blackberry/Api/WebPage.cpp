@@ -5427,9 +5427,7 @@ void WebPagePrivate::setCompositorBackgroundColor(const Color& backgroundColor)
         m_compositor->setBackgroundColor(backgroundColor);
 }
 
-void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
-                                     const IntSize& contentsSizeForCompositing,
-                                     bool drawsRootLayer)
+void WebPagePrivate::commitRootLayer(const IntRect& layoutRect, const IntRect& documentRect, bool drawsRootLayer)
 {
 #if DEBUG_AC_COMMIT
     Platform::logAlways(Platform::LogLevelCritical,
@@ -5456,8 +5454,8 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
     if (overlayLayer && overlayLayer->layerCompositingThread() != m_compositor->overlayLayer())
         m_compositor->setOverlayLayer(overlayLayer->layerCompositingThread());
 
-    m_compositor->setLayoutRectForCompositing(layoutRectForCompositing);
-    m_compositor->setContentsSizeForCompositing(contentsSizeForCompositing);
+    m_compositor->setLayoutRect(layoutRect);
+    m_compositor->setDocumentRect(documentRect);
     m_compositor->setDrawsRootLayer(drawsRootLayer);
 
     if (rootLayer)
@@ -5530,8 +5528,8 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     // Stash the visible content rect according to webkit thread
     // This is the rectangle used to layout fixed positioned elements,
     // and that's what the layer renderer wants.
-    IntRect layoutRectForCompositing(scrollPosition(), actualVisibleSize());
-    IntSize contentsSizeForCompositing = contentsSize();
+    IntRect layoutRect(scrollPosition(), actualVisibleSize());
+    IntRect documentRect(view->minimumScrollPosition(), view->contentsSize());
     bool drawsRootLayer = compositorDrawsRootLayer();
 
     // Commit changes made to the layers synchronously with the compositing thread.
@@ -5539,8 +5537,8 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
         Platform::createMethodCallMessage(
             &WebPagePrivate::commitRootLayer,
             this,
-            layoutRectForCompositing,
-            contentsSizeForCompositing,
+            layoutRect,
+            documentRect,
             drawsRootLayer));
 
     didComposite();

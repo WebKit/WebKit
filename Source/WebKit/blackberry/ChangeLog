@@ -1,3 +1,42 @@
+2013-01-25  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] AC layers appear in the wrong place on RTL page
+        https://bugs.webkit.org/show_bug.cgi?id=107930
+
+        Reviewed by George Staikos.
+
+        The public API of the BlackBerry port always reports a minimum scroll
+        position of (0, 0), even on RTL pages with left overflow. We
+        accomplish this by translating the WebCore scroll position by an
+        amount equal in size to the minimum scroll position, to obtain the API
+        scroll position reported to the API client.
+
+        This means the API client will ask us to render a rect that needs to
+        be corrected for the minimum scroll position, or we'll render the wrong
+        part. This is done for BackingStore, but not for WebPageCompositor.
+
+        WebPageCompositor was rendering the wrong part of the web page when
+        the minimum scroll position was non-zero. Fixed by communicating the
+        minimum scroll position to the WebPageCompositor, and accounting for it
+        when interpreting the requested content rectangle to render.
+
+        PR 280229.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::layoutRect):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setLayoutRect):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::documentRect):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setDocumentRect):
+        (WebPageCompositorPrivate):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-01-24  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Fix crash in SpellingHandler

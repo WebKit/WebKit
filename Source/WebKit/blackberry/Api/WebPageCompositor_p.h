@@ -75,11 +75,11 @@ public:
     // Render everything but the root layer, or everything if drawsRootLayer() is true.
     bool drawLayers(const WebCore::IntRect& dstRect, const WebCore::FloatRect& contents);
 
-    WebCore::IntRect layoutRectForCompositing() const { return m_layoutRectForCompositing; }
-    void setLayoutRectForCompositing(const WebCore::IntRect& rect) { m_layoutRectForCompositing = rect; }
+    WebCore::IntRect layoutRect() const { return m_layoutRect; }
+    void setLayoutRect(const WebCore::IntRect& rect) { m_layoutRect = rect; }
 
-    WebCore::IntSize contentsSizeForCompositing() const { return m_contentsSizeForCompositing; }
-    void setContentsSizeForCompositing(const WebCore::IntSize& size) { m_contentsSizeForCompositing = size; }
+    WebCore::IntRect documentRect() const { return m_documentRect; }
+    void setDocumentRect(const WebCore::IntRect& rect) { m_documentRect = rect; }
 
     WebCore::LayerRenderingResults lastCompositingResults() const { return m_lastCompositingResults; }
     void setLastCompositingResults(const WebCore::LayerRenderingResults& results) { m_lastCompositingResults = results; }
@@ -112,8 +112,8 @@ private:
     RefPtr<WebCore::LayerCompositingThread> m_rootLayer;
     RefPtr<WebCore::LayerCompositingThread> m_overlayLayer;
     RefPtr<WebCore::LayerCompositingThread> m_compositingThreadOverlayLayer;
-    WebCore::IntRect m_layoutRectForCompositing;
-    WebCore::IntSize m_contentsSizeForCompositing;
+    WebCore::IntRect m_layoutRect;
+    WebCore::IntRect m_documentRect;
     WebCore::LayerRenderingResults m_lastCompositingResults;
     WebCore::Color m_backgroundColor;
     bool m_drawsRootLayer;

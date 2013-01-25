@@ -140,10 +140,11 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
 
     FloatRect contents = m_webPage->mapFromTransformedFloatRect(transformedContents);
 
-    m_layerRenderer->setViewport(targetRect, clipRect, contents, m_layoutRectForCompositing, m_contentsSizeForCompositing);
+    m_layerRenderer->setViewport(targetRect, clipRect, contents, m_layoutRect, m_documentRect.size());
 
     TransformationMatrix transform(transformIn);
     transform *= *m_webPage->m_transformationMatrix;
+    transform.translate(-m_documentRect.x(), -m_documentRect.y());
 
     if (!drawsRootLayer())
         m_webPage->m_backingStore->d->compositeContents(m_layerRenderer.get(), transform, contents, !m_backgroundColor.hasAlpha());
@@ -196,14 +197,14 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     int viewportY = std::max(0, m_context->surfaceSize().height() - dstRect.maxY());
     IntRect viewport = IntRect(dstRect.x(), viewportY, dstRect.width(), dstRect.height());
 
-    m_layerRenderer->setViewport(viewport, viewport, contents, m_layoutRectForCompositing, m_contentsSizeForCompositing);
+    m_layerRenderer->setViewport(viewport, viewport, contents, m_layoutRect, m_documentRect.size());
 
     // WebKit uses row vectors which are multiplied by the matrix on the left (i.e. v*M)
     // Transformations are composed on the left so that M1.xform(M2) means M2*M1
     // We therefore start with our (othogonal) projection matrix, which will be applied
     // as the last transformation.
     TransformationMatrix transform = LayerRenderer::orthoMatrix(0, contents.width(), contents.height(), 0, -1000, 1000);
-    transform.translate3d(-contents.x(), -contents.y(), 0);
+    transform.translate3d(-contents.x() - m_documentRect.x(), -contents.y() - m_documentRect.y(), 0);
     compositeLayers(transform);
 
     return true;
