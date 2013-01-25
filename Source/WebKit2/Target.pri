@@ -70,12 +70,16 @@ HEADERS += \
     Shared/API/c/WKUserContentURLPattern.h \
     Shared/API/c/qt/WKImageQt.h \
     Shared/APIClientTraits.h \
+    Shared/Authentication/AuthenticationManager.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/ChildProcessProxy.h \
     Shared/ConnectionStack.h \
     Shared/DictionaryPopupInfo.h \
+    Shared/Downloads/Download.h \
+    Shared/Downloads/DownloadManager.h \
+    Shared/Downloads/qt/QtFileDownloader.h \
     Shared/EditorState.h \
     Shared/FontInfo.h \
     Shared/ImageOptions.h \
@@ -290,12 +294,8 @@ HEADERS += \
     UIProcess/WebVibrationProvider.h \
     UIProcess/WebVibrationProxy.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
-    WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Battery/WebBatteryManager.h \
     WebProcess/Cookies/WebCookieManager.h \
-    WebProcess/Downloads/Download.h \
-    WebProcess/Downloads/DownloadManager.h \
-    WebProcess/Downloads/qt/QtFileDownloader.h \
     WebProcess/FullScreen/WebFullScreenManager.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
@@ -444,6 +444,7 @@ SOURCES += \
     Shared/API/c/qt/WKImageQt.cpp \
     Shared/APIClientTraits.cpp \
     Shared/APIObject.cpp \
+    Shared/Authentication/AuthenticationManager.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
@@ -460,6 +461,10 @@ SOURCES += \
     Shared/ChildProcessProxy.cpp \
     Shared/ConnectionStack.cpp \
     Shared/DictionaryPopupInfo.cpp \
+    Shared/Downloads/Download.cpp \
+    Shared/Downloads/DownloadManager.cpp \
+    Shared/Downloads/qt/DownloadQt.cpp \
+    Shared/Downloads/qt/QtFileDownloader.cpp \
     Shared/EditorState.cpp \
     Shared/FontInfo.cpp \
     Shared/ImmutableArray.cpp \
@@ -661,14 +666,9 @@ SOURCES += \
     UIProcess/qt/WebPreferencesQt.cpp \
     UIProcess/qt/WebProcessProxyQt.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
-    WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Battery/WebBatteryManager.cpp \
     WebProcess/Cookies/WebCookieManager.cpp \
     WebProcess/Cookies/qt/WebCookieManagerQt.cpp \
-    WebProcess/Downloads/Download.cpp \
-    WebProcess/Downloads/DownloadManager.cpp \
-    WebProcess/Downloads/qt/DownloadQt.cpp \
-    WebProcess/Downloads/qt/QtFileDownloader.cpp \
     WebProcess/FullScreen/WebFullScreenManager.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \

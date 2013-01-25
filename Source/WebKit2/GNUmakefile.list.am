@@ -369,6 +369,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKUserContentURLPattern.h \
 	Source/WebKit2/Shared/APIObject.cpp \
 	Source/WebKit2/Shared/APIObject.h \
+	Source/WebKit2/Shared/Authentication/AuthenticationManager.cpp \
+	Source/WebKit2/Shared/Authentication/AuthenticationManager.h \
 	Source/WebKit2/Shared/BlockingResponseMap.h \
 	Source/WebKit2/Shared/ShareableBitmap.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.h \
@@ -384,6 +386,14 @@ webkit2_sources += \
 	Source/WebKit2/Shared/CoreIPCSupport/WebConnectionMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
+	Source/WebKit2/Shared/Downloads/Download.cpp \
+	Source/WebKit2/Shared/Downloads/Download.h \
+	Source/WebKit2/Shared/Downloads/DownloadAuthenticationClient.h \
+	Source/WebKit2/Shared/Downloads/DownloadManager.cpp \
+	Source/WebKit2/Shared/Downloads/DownloadManager.h \
+	Source/WebKit2/Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp \
+	Source/WebKit2/Shared/Downloads/soup/DownloadSoup.cpp \
+	Source/WebKit2/Shared/Downloads/soup/DownloadSoupErrors.h \
 	Source/WebKit2/Shared/EditorState.cpp \
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
@@ -969,8 +979,6 @@ webkit2_sources += \
 	Source/WebKit2/WebKit2Prefix.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
-	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp \
-	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
 	Source/WebKit2/WebProcess/Battery/WebBatteryManager.cpp \
 	Source/WebKit2/WebProcess/Battery/WebBatteryManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
@@ -978,14 +986,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Cookies/soup/WebCookieManagerSoup.cpp \
 	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp \
 	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h \
-	Source/WebKit2/WebProcess/Downloads/Download.cpp \
-	Source/WebKit2/WebProcess/Downloads/Download.h \
-	Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.h \
-	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
-	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
-	Source/WebKit2/WebProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp \
-	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp \
-	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoupErrors.h \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \

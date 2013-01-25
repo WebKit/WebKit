@@ -140,11 +140,6 @@
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
-		1A61614F127798B5003ACD86 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A61614D127798B5003ACD86 /* DownloadManager.cpp */; };
-		1A616150127798B5003ACD86 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A61614E127798B5003ACD86 /* DownloadManager.h */; };
-		1A6161D41278981C003ACD86 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6161D21278981C003ACD86 /* Download.h */; };
-		1A6161D51278981C003ACD86 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6161D31278981C003ACD86 /* Download.cpp */; };
-		1A61639612789B2F003ACD86 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A61639512789B2F003ACD86 /* DownloadMac.mm */; };
 		1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */; };
 		1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */; };
 		1A64218612DCF49200CAAE2C /* DrawingAreaProxyImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64218412DCF49200CAAE2C /* DrawingAreaProxyImpl.h */; };
@@ -428,8 +423,6 @@
 		512E356B130B57F000ABD19A /* WebApplicationCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */; };
 		512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */; };
 		512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */; };
-		512F588A12A8836600629530 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F588712A8836600629530 /* AuthenticationManager.cpp */; };
-		512F588B12A8836600629530 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588812A8836600629530 /* AuthenticationManager.h */; };
 		512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
 		512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */; };
@@ -491,6 +484,16 @@
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
 		518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518D2CC812D51DFB003BB93B /* SessionState.cpp */; };
 		518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CC912D51DFB003BB93B /* SessionState.h */; };
+		518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */; };
+		518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EF416B2091C00E91429 /* AuthenticationManager.h */; };
+		518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */; };
+		518E8F0716B2093700E91429 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EFE16B2093700E91429 /* Download.cpp */; };
+		518E8F0816B2093700E91429 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EFF16B2093700E91429 /* Download.h */; };
+		518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */; };
+		518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */; };
+		518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0216B2093700E91429 /* DownloadManager.cpp */; };
+		518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0316B2093700E91429 /* DownloadManager.h */; };
+		518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0516B2093700E91429 /* DownloadMac.mm */; };
 		519B4FF416A9EA970066874D /* SchedulableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519B4FF216A9EA970066874D /* SchedulableLoader.cpp */; };
 		519B4FF516A9EA970066874D /* SchedulableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 519B4FF316A9EA970066874D /* SchedulableLoader.h */; };
 		51A555F5128C6C47009ABCEC /* WKContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */; };
@@ -514,7 +517,6 @@
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
-		51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */; };
 		51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */; };
 		51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */; };
 		51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */; };
@@ -1370,11 +1372,6 @@
 		1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUIClient.cpp; sourceTree = "<group>"; };
 		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
-		1A61614D127798B5003ACD86 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadManager.cpp; sourceTree = "<group>"; };
-		1A61614E127798B5003ACD86 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadManager.h; sourceTree = "<group>"; };
-		1A6161D21278981C003ACD86 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Download.h; sourceTree = "<group>"; };
-		1A6161D31278981C003ACD86 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Download.cpp; sourceTree = "<group>"; };
-		1A61639512789B2F003ACD86 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
 		1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmap.cpp; sourceTree = "<group>"; };
 		1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmap.h; sourceTree = "<group>"; };
 		1A64218412DCF49200CAAE2C /* DrawingAreaProxyImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyImpl.h; sourceTree = "<group>"; };
@@ -1704,9 +1701,6 @@
 		512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebApplicationCacheManagerProxy.messages.in; sourceTree = "<group>"; };
 		512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxyMessages.h; sourceTree = "<group>"; };
-		512F588712A8836600629530 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationManager.cpp; sourceTree = "<group>"; };
-		512F588812A8836600629530 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationManager.h; sourceTree = "<group>"; };
-		512F588912A8836600629530 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuthenticationManager.messages.in; sourceTree = "<group>"; };
 		512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeProxy.cpp; sourceTree = "<group>"; };
 		512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeProxy.h; sourceTree = "<group>"; };
 		512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationDecisionListener.cpp; sourceTree = "<group>"; };
@@ -1761,6 +1755,17 @@
 		518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListItem.h; sourceTree = "<group>"; };
 		518D2CC812D51DFB003BB93B /* SessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionState.cpp; sourceTree = "<group>"; };
 		518D2CC912D51DFB003BB93B /* SessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionState.h; sourceTree = "<group>"; };
+		518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuthenticationManager.cpp; path = Authentication/AuthenticationManager.cpp; sourceTree = "<group>"; };
+		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationManager.h; path = Authentication/AuthenticationManager.h; sourceTree = "<group>"; };
+		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AuthenticationManager.messages.in; path = Authentication/AuthenticationManager.messages.in; sourceTree = "<group>"; };
+		518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManager.mac.mm; sourceTree = "<group>"; };
+		518E8EFE16B2093700E91429 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Download.cpp; path = Downloads/Download.cpp; sourceTree = "<group>"; };
+		518E8EFF16B2093700E91429 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Download.h; path = Downloads/Download.h; sourceTree = "<group>"; };
+		518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadAuthenticationClient.cpp; path = Downloads/DownloadAuthenticationClient.cpp; sourceTree = "<group>"; };
+		518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadAuthenticationClient.h; path = Downloads/DownloadAuthenticationClient.h; sourceTree = "<group>"; };
+		518E8F0216B2093700E91429 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
+		518E8F0316B2093700E91429 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = Downloads/DownloadManager.h; sourceTree = "<group>"; };
+		518E8F0516B2093700E91429 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
 		519B4FF216A9EA970066874D /* SchedulableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SchedulableLoader.cpp; path = NetworkProcess/SchedulableLoader.cpp; sourceTree = "<group>"; };
 		519B4FF316A9EA970066874D /* SchedulableLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SchedulableLoader.h; path = NetworkProcess/SchedulableLoader.h; sourceTree = "<group>"; };
 		51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuItem.cpp; sourceTree = "<group>"; };
@@ -1793,7 +1798,6 @@
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebBackForwardListCF.cpp; path = cf/WebBackForwardListCF.cpp; sourceTree = "<group>"; };
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
-		51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManager.mac.mm; path = mac/AuthenticationManager.mac.mm; sourceTree = "<group>"; };
 		51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadParameters.cpp; path = Network/NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
 		51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = Network/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
 		51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -2667,26 +2671,6 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
-		1A61614C127798B5003ACD86 /* Downloads */ = {
-			isa = PBXGroup;
-			children = (
-				1A61639412789B2F003ACD86 /* mac */,
-				1A6161D31278981C003ACD86 /* Download.cpp */,
-				1A6161D21278981C003ACD86 /* Download.h */,
-				1A61614D127798B5003ACD86 /* DownloadManager.cpp */,
-				1A61614E127798B5003ACD86 /* DownloadManager.h */,
-			);
-			path = Downloads;
-			sourceTree = "<group>";
-		};
-		1A61639412789B2F003ACD86 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				1A61639512789B2F003ACD86 /* DownloadMac.mm */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
 		1A6FA01C11E1526300DB1371 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -2807,9 +2791,11 @@
 			isa = PBXGroup;
 			children = (
 				BCDDB314124EBCEF0048D13C /* API */,
+				518E8EF116B208F000E91429 /* Authentication */,
 				1AAF0C4712B16328008E49E2 /* cf */,
 				C01A25FF12662F2100C9ED55 /* cg */,
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
+				518E8EF216B208F800E91429 /* Downloads */,
 				BC111B5A112F628200337BAB /* mac */,
 				51A8A60D1627F2AC000D90E9 /* Network */,
 				1AAE058C1279DCD400852418 /* Plugins */,
@@ -3277,17 +3263,6 @@
 			name = ApplicationCache;
 			sourceTree = "<group>";
 		};
-		512F588612A8834700629530 /* Authentication */ = {
-			isa = PBXGroup;
-			children = (
-				51C4032A136749C400DC972D /* mac */,
-				512F588712A8836600629530 /* AuthenticationManager.cpp */,
-				512F588812A8836600629530 /* AuthenticationManager.h */,
-				512F588912A8836600629530 /* AuthenticationManager.messages.in */,
-			);
-			path = Authentication;
-			sourceTree = "<group>";
-		};
 		512F588D12A8836F00629530 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -3309,6 +3284,49 @@
 				516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */,
 			);
 			name = mac;
+			sourceTree = "<group>";
+		};
+		518E8EF116B208F000E91429 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */,
+				518E8EF416B2091C00E91429 /* AuthenticationManager.h */,
+				518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */,
+				518E8EF616B2091C00E91429 /* mac */,
+			);
+			name = Authentication;
+			sourceTree = "<group>";
+		};
+		518E8EF216B208F800E91429 /* Downloads */ = {
+			isa = PBXGroup;
+			children = (
+				518E8F0416B2093700E91429 /* mac */,
+				518E8EFE16B2093700E91429 /* Download.cpp */,
+				518E8EFF16B2093700E91429 /* Download.h */,
+				518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */,
+				518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */,
+				518E8F0216B2093700E91429 /* DownloadManager.cpp */,
+				518E8F0316B2093700E91429 /* DownloadManager.h */,
+			);
+			name = Downloads;
+			sourceTree = "<group>";
+		};
+		518E8EF616B2091C00E91429 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */,
+			);
+			name = mac;
+			path = Authentication/mac;
+			sourceTree = "<group>";
+		};
+		518E8F0416B2093700E91429 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				518E8F0516B2093700E91429 /* DownloadMac.mm */,
+			);
+			name = mac;
+			path = Downloads/mac;
 			sourceTree = "<group>";
 		};
 		51A8A60D1627F2AC000D90E9 /* Network */ = {
@@ -3341,14 +3359,6 @@
 				BC2DFBA212A761A500E732A3 /* WebPreferencesCF.cpp */,
 			);
 			name = cf;
-			sourceTree = "<group>";
-		};
-		51C4032A136749C400DC972D /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */,
-			);
-			name = mac;
 			sourceTree = "<group>";
 		};
 		51FBB9C1132E079200F327B4 /* IconDatabase */ = {
@@ -3407,9 +3417,7 @@
 			isa = PBXGroup;
 			children = (
 				512E352A130B559900ABD19A /* ApplicationCache */,
-				512F588612A8834700629530 /* Authentication */,
 				3309344B1315B93A0097A7BC /* Cookies */,
-				1A61614C127798B5003ACD86 /* Downloads */,
 				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				51FBB9C1132E079200F327B4 /* IconDatabase */,
@@ -4572,7 +4580,6 @@
 				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
-				512F588B12A8836600629530 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
 				1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */,
 				1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */,
@@ -4594,8 +4601,6 @@
 				1A8EFDFA1253CAA200F7067F /* DataReference.h in Headers */,
 				93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
-				1A6161D41278981C003ACD86 /* Download.h in Headers */,
-				1A616150127798B5003ACD86 /* DownloadManager.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
@@ -5072,6 +5077,10 @@
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				1AAC4DE716B1CBF6009425E3 /* WebKeyValueStorageManager.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaProxy.h in Headers */,
+				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
+				518E8F0816B2093700E91429 /* Download.h in Headers */,
+				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
+				518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5550,8 +5559,6 @@
 				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
-				512F588A12A8836600629530 /* AuthenticationManager.cpp in Sources */,
-				51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */,
 				1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */,
@@ -5575,9 +5582,6 @@
 				1A8EFDFE1253CB6E00F7067F /* DataReference.cpp in Sources */,
 				93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */,
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
-				1A6161D51278981C003ACD86 /* Download.cpp in Sources */,
-				1A61639612789B2F003ACD86 /* DownloadMac.mm in Sources */,
-				1A61614F127798B5003ACD86 /* DownloadManager.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,
 				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
@@ -6053,6 +6057,12 @@
 				E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */,
 				1AAC4DE616B1CBF6009425E3 /* WebKeyValueStorageManager.cpp in Sources */,
 				1AD3306E16B1D991004F60E7 /* StorageAreaProxy.cpp in Sources */,
+				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
+				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
+				518E8F0716B2093700E91429 /* Download.cpp in Sources */,
+				518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */,
+				518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */,
+				518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

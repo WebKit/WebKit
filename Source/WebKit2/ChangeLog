@@ -1,3 +1,36 @@
+2013-01-24  Brady Eidson  <beidson@apple.com>
+
+        Move Authentication and Downloads from WebProcess to Shared.
+        https://bugs.webkit.org/show_bug.cgi?id=107879
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Authentication/AuthenticationManager.cpp: Renamed from Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp.
+        * Shared/Authentication/AuthenticationManager.h: Renamed from Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h.
+        * Shared/Authentication/AuthenticationManager.messages.in: Renamed from Source/WebKit2/WebProcess/Authentication/AuthenticationManager.messages.in.
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm: Renamed from Source/WebKit2/WebProcess/Authentication/mac/AuthenticationManager.mac.mm.
+        * Shared/Downloads/Download.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/Download.cpp.
+        * Shared/Downloads/Download.h: Renamed from Source/WebKit2/WebProcess/Downloads/Download.h.
+        * Shared/Downloads/DownloadAuthenticationClient.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.cpp.
+        * Shared/Downloads/DownloadAuthenticationClient.h: Renamed from Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.h.
+        * Shared/Downloads/DownloadManager.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp.
+        * Shared/Downloads/DownloadManager.h: Renamed from Source/WebKit2/WebProcess/Downloads/DownloadManager.h.
+        * Shared/Downloads/cfnet/DownloadCFNet.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/cfnet/DownloadCFNet.cpp.
+        * Shared/Downloads/curl/DownloadCurl.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/curl/DownloadCurl.cpp.
+        * Shared/Downloads/efl/DownloadSoupErrorsEfl.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp.
+        * Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp.
+        * Shared/Downloads/mac/DownloadMac.mm: Renamed from Source/WebKit2/WebProcess/Downloads/mac/DownloadMac.mm.
+        * Shared/Downloads/qt/DownloadQt.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/qt/DownloadQt.cpp.
+        * Shared/Downloads/qt/QtFileDownloader.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/qt/QtFileDownloader.cpp.
+        * Shared/Downloads/qt/QtFileDownloader.h: Renamed from Source/WebKit2/WebProcess/Downloads/qt/QtFileDownloader.h.
+        * Shared/Downloads/soup/DownloadSoup.cpp: Renamed from Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp.
+        * Shared/Downloads/soup/DownloadSoupErrors.h: Renamed from Source/WebKit2/WebProcess/Downloads/soup/DownloadSoupErrors.h.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Unreviewed build fix after r140711
