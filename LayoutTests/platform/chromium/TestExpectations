@@ -3819,7 +3819,6 @@ webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/vis
 webkit.org/b/98087 [ Linux ] fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Failure Pass ]
 
 webkit.org/b/96833 svg/carto.net/selectionlist.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/96549 [ Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96628 [ Lion Debug ] fast/frames/calculate-order.html [ Failure ]
@@ -4325,9 +4324,9 @@ webkit.org/b/107567 tables/mozilla/bugs/bug113235-3.html [ Failure ]
 webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ] 
 webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
-webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
+webkit.org/b/107567 svg/carto.net/combobox.svg [ Pass Failure ] 
 
-webkit.org/b/107899 fast/repaint/selection-clear.html [ Failure ]
+webkit.org/b/107899 [ Win ] fast/repaint/selection-clear.html [ Failure ]
 
 webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-first-fit-001.html [ Failure ] 
 
