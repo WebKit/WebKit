@@ -4106,12 +4106,12 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #endif
         ASSERT_NOT_REACHED();
         return;
-#if ENABLE(SVG)
     default:
+#if ENABLE(SVG)
         // Try the SVG properties
         applySVGProperty(id, value);
-        return;
 #endif
+        return;
     }
 }
 

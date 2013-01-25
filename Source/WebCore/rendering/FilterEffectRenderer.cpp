@@ -182,6 +182,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
     }
     return effect;
 #else
+    UNUSED_PARAM(renderer);
     UNUSED_PARAM(previousEffect);
     UNUSED_PARAM(filterOperation);
     return 0;
