@@ -29,6 +29,7 @@
 #include "DOMWindowProperty.h"
 #include "KURL.h"
 #include "ScriptWrappable.h"
+#include "SerializedScriptValue.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 
 class Frame;
 class ScriptExecutionContext;
-class SerializedScriptValue;
 typedef int ExceptionCode;
 
 class History : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
