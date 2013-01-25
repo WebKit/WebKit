@@ -1,3 +1,12 @@
+2013-01-25  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13089261> Crash in WKSandboxExtensionGetSerializedFormat when opening Web Inspector
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Should be able to issue extensions for
+        Inspector files.
+
 2013-01-25  Sam Weinig  <sam@webkit.org>
 
         Try to fix the debug build.

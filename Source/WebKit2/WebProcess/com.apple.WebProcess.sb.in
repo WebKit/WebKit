@@ -18,6 +18,12 @@
 (define (home-literal home-relative-literal)
   (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+
 ;; Read-only preferences and data
 (allow file-read*
        ;; Basic system paths
@@ -58,10 +64,6 @@
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-regex #"/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
 
-       ;; On-disk WebKit2 framework location, to account for debug installations
-       ;; outside of /System/Library/Frameworks
-       (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
-
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
        (home-subpath "/Library/Fonts")
 
@@ -75,6 +77,10 @@
        (subpath "/Library/QuickTime")
 
        (home-subpath "/Library/Dictionaries"))
+
+;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
+;; and to allow issuing extensions.
+(allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
