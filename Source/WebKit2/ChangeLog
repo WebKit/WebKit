@@ -1,3 +1,11 @@
+2013-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix.
+        Adjusting the build targets after WebKeyValueStorageManager.cpp was moved
+        to a different directory.
+
+        * GNUmakefile.list.am:
+
 2013-01-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] PagePolicyClientEfl should be based on C WK2 API

@@ -1088,8 +1088,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
-	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
 	Source/WebKit2/WebProcess/NetworkInfo/WebNetworkInfoManager.cpp \
@@ -1130,6 +1128,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Plugins/PluginView.h \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.h \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
+	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.cpp \
+	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.cpp \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.h \
 	Source/WebKit2/WebProcess/soup/WebProcessSoup.cpp \
