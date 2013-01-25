@@ -8205,6 +8205,7 @@
 		316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyframeAnimation.cpp; path = animation/KeyframeAnimation.cpp; sourceTree = "<group>"; };
 		316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyframeAnimation.h; path = animation/KeyframeAnimation.h; sourceTree = "<group>"; };
 		31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimulatedClickOptions.h; sourceTree = "<group>"; };
+		3189E6DB16B2103500386EA3 /* plugIns.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = plugIns.css; sourceTree = "<group>"; };
 		319AE061142D6B24006563A1 /* StyleFilterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFilterData.cpp; path = style/StyleFilterData.cpp; sourceTree = "<group>"; };
 		319AE062142D6B24006563A1 /* StyleFilterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFilterData.h; path = style/StyleFilterData.h; sourceTree = "<group>"; };
 		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
@@ -21807,6 +21808,7 @@
 				D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */,
 				D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */,
 				A80E6CD10A1989CA007FB8C5 /* Pair.h */,
+				3189E6DB16B2103500386EA3 /* plugIns.css */,
 				E4BBED0C14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp */,
 				E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,

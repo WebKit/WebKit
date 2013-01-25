@@ -86,14 +86,15 @@ public:
     // RenderThemeMac.cpp for Mac OS X.
 
     // These methods return the theme's extra style sheets rules, to let each platform
-    // adjust the default CSS rules in html.css, quirks.css, or mediaControls.css
+    // adjust the default CSS rules in html.css, quirks.css, mediaControls.css, or plugIns.css
     virtual String extraDefaultStyleSheet() { return String(); }
     virtual String extraQuirksStyleSheet() { return String(); }
+    virtual String extraPlugInsStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
-    virtual String extraMediaControlsStyleSheet() { return String(); };
+    virtual String extraMediaControlsStyleSheet() { return String(); }
 #endif
 #if ENABLE(FULLSCREEN_API)
-    virtual String extraFullScreenStyleSheet() { return String(); };
+    virtual String extraFullScreenStyleSheet() { return String(); }
 #endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline

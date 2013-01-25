@@ -924,6 +924,7 @@
               '../css/mediaControlsChromium.css',
               '../css/mediaControlsChromiumAndroid.css',
               '../css/fullscreen.css',
+              '../css/plugIns.css',
               # Skip fullscreenQuickTime.
             ],
           },

@@ -374,6 +374,9 @@ public:
     virtual bool isEmptyChromeClient() const { return false; }
 
     virtual PassRefPtr<Image> plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize) const { return 0; }
+    virtual String plugInStartLabelTitle() const { return String(); }
+    virtual String plugInStartLabelSubtitle() const { return String(); }
+    virtual String plugInExtraStyleSheet() const { return String(); }
 
     // FIXME: Port should return true using heuristic based on scrollable(RenderBox).
     virtual bool shouldAutoscrollForDragAndDrop(RenderBox*) const { return false; }

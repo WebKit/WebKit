@@ -38270,6 +38270,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\plugIns.css"
+				>
+			</File>
+			<File
 				RelativePath="..\css\PropertySetCSSStyleDeclaration.cpp"
 				>
 			</File>

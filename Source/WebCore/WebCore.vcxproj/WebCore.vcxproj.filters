@@ -14267,6 +14267,9 @@
     <None Include="..\css\mediaControls.css">
       <Filter>css</Filter>
     </None>
+    <None Include="..\css\plugIns.css">
+      <Filter>css</Filter>
+    </None>
     <None Include="..\css\quirks.css">
       <Filter>css</Filter>
     </None>

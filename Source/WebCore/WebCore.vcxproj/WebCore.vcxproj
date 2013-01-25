@@ -8403,6 +8403,7 @@
     <None Include="..\css\fullscreenQuickTime.css" />
     <None Include="..\css\html.css" />
     <None Include="..\css\mediaControls.css" />
+    <None Include="..\css\plugIns.css" />
     <None Include="..\css\quirks.css" />
     <None Include="..\xml\XPathGrammar.y" />
     <None Include="..\bindings\scripts\CodeGenerator.pm" />

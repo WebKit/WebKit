@@ -2549,6 +2549,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/mediaControls.css
+    ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/view-source.css

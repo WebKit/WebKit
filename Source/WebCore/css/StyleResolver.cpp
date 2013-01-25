@@ -57,6 +57,8 @@
 #endif
 #include "CachedImage.h"
 #include "CalculationValue.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContentData.h"
 #include "ContextFeatures.h"
 #include "Counter.h"
@@ -220,6 +222,7 @@ static StyleSheetContents* svgStyleSheet;
 static StyleSheetContents* mathMLStyleSheet;
 static StyleSheetContents* mediaControlsStyleSheet;
 static StyleSheetContents* fullscreenStyleSheet;
+static StyleSheetContents* plugInsStyleSheet;
 
 RenderStyle* StyleResolver::s_styleNotYetAvailable;
 
@@ -592,6 +595,12 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
         defaultQuirksStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
     }
 #endif
+
+    if (!plugInsStyleSheet && (element->hasTagName(objectTag) || element->hasTagName(embedTag))) {
+        String plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome()->client()->plugInExtraStyleSheet();
+        plugInsStyleSheet = parseUASheet(plugInsRules);
+        defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
+    }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());

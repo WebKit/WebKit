@@ -1,3 +1,19 @@
+2013-01-25  Dean Jackson  <dino@apple.com>
+
+        Add a user agent stylesheet for plugins
+        https://bugs.webkit.org/show_bug.cgi?id=107890
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Rename client callbacks
+        to have a "create" prefix, making it clear that these generate new Strings.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Actually call into
+        the injected bundle to retrieve any custom stylesheet for plugins.
+        (WebKit::InjectedBundlePageUIClient::plugInExtraStyleSheet):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient): Add override keyword onto virtual functions now
+        that the base class has implementations.
+
 2013-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         NetworkProcess cannot load files with non-ASCII names
