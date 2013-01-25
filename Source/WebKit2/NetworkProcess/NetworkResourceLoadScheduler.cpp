@@ -41,8 +41,8 @@ void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer<NetworkResou
 
 void NetworkResourceLoadScheduler::scheduleLoader(PassRefPtr<SchedulableLoader> loader)
 {
-    ResourceLoadPriority priority = loader->loadParameters().priority();
-    const ResourceRequest& resourceRequest = loader->loadParameters().request();
+    ResourceLoadPriority priority = loader->priority();
+    const ResourceRequest& resourceRequest = loader->request();
         
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleLoader resource '%s'", resourceRequest.url().string().utf8().data());
 
@@ -82,7 +82,7 @@ void NetworkResourceLoadScheduler::removeLoader(SchedulableLoader* loader)
     ASSERT(isMainThread());
     ASSERT(loader);
 
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoadIdentifier removing loader %s", loader->loadParameters().request().url().string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoadIdentifier removing loader %s", loader->request().url().string().utf8().data());
 
     HostRecord* host = loader->hostRecord();
     
@@ -98,7 +98,7 @@ void NetworkResourceLoadScheduler::removeLoader(SchedulableLoader* loader)
 void NetworkResourceLoadScheduler::receivedRedirect(SchedulableLoader* loader, const WebCore::KURL& redirectURL)
 {
     ASSERT(isMainThread());
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect loader originally for '%s' redirected to '%s'", loader->loadParameters().request().url().string().utf8().data(), redirectURL.string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect loader originally for '%s' redirected to '%s'", loader->request().url().string().utf8().data(), redirectURL.string().utf8().data());
 
     HostRecord* oldHost = loader->hostRecord();
 

@@ -65,7 +65,7 @@ void HostRecord::scheduleResourceLoader(PassRefPtr<SchedulableLoader> loader)
     if (loader->isSynchronous())
         m_syncLoadersPending.append(loader);
     else
-        m_loadersPending[loader->loadParameters().priority()].append(loader);
+        m_loadersPending[loader->priority()].append(loader);
 }
 
 void HostRecord::addLoaderInProgress(SchedulableLoader* loader)

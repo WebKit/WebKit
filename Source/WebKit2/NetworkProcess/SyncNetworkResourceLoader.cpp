@@ -58,12 +58,14 @@ void SyncNetworkResourceLoader::start()
     ResourceResponse response;
     Vector<char> data;
     
-    const NetworkResourceLoadParameters& parameters = loadParameters();
-
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, parameters.inPrivateBrowsingMode());
-    
-    ResourceHandle::loadResourceSynchronously(networkingContext.get(), parameters.request(), parameters.allowStoredCredentials(), error, response, data);
+    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode());
+
+    consumeSandboxExtensions();
+
+    ResourceHandle::loadResourceSynchronously(networkingContext.get(), request(), allowStoredCredentials(), error, response, data);
+
+    invalidateSandboxExtensions();
 
     m_delayedReply->send(error, response, CoreIPC::DataReference((uint8_t*)data.data(), data.size()));
     

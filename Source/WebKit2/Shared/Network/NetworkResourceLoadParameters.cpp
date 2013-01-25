@@ -65,6 +65,31 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
         EncoderAdapter httpBodyEncoderAdapter;
         m_request.httpBody()->encode(httpBodyEncoderAdapter);
         encoder.encode(httpBodyEncoderAdapter.dataReference());
+
+        const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
+        size_t fileCount = 0;
+        for (size_t i = 0, count = elements.size(); i < count; ++i) {
+            if (elements[i].m_type == FormDataElement::encodedFile)
+                ++fileCount;
+        }
+
+        SandboxExtension::HandleArray requestBodySandboxExtensions;
+        requestBodySandboxExtensions.allocate(fileCount);
+        size_t extensionIndex = 0;
+        for (size_t i = 0, count = elements.size(); i < count; ++i) {
+            const FormDataElement& element = elements[i];
+            if (element.m_type == FormDataElement::encodedFile) {
+                const String& path = element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename;
+                SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
+            }
+        }
+        encoder.encode(requestBodySandboxExtensions);
+    }
+
+    if (m_request.url().isLocalFile()) {
+        SandboxExtension::Handle requestSandboxExtension;
+        SandboxExtension::createHandle(m_request.url().path(), SandboxExtension::ReadOnly, requestSandboxExtension);
+        encoder.encode(requestSandboxExtension);
     }
 
     encoder.encodeEnum(m_priority);
@@ -91,6 +116,14 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, Ne
             return false;
         DecoderAdapter httpBodyDecoderAdapter(formData.data(), formData.size());
         result.m_request.setHTTPBody(FormData::decode(httpBodyDecoderAdapter));
+
+        if (!decoder->decode(result.m_requestBodySandboxExtensions))
+            return false;
+    }
+
+    if (result.m_request.url().isLocalFile()) {
+        if (!decoder->decode(result.m_resourceSandboxExtension))
+            return false;
     }
 
     if (!decoder->decodeEnum(result.m_priority))

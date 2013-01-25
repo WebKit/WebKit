@@ -31,9 +31,19 @@
 namespace WebKit {
 
 SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
-    : m_networkResourceLoadParameters(parameters)
+    : m_identifier(parameters.identifier())
+    , m_request(parameters.request())
+    , m_priority(parameters.priority())
+    , m_contentSniffingPolicy(parameters.contentSniffingPolicy())
+    , m_allowStoredCredentials(parameters.allowStoredCredentials())
+    , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode())
     , m_connection(connection)
 {
+    for (size_t i = 0, count = parameters.requestBodySandboxExtensions().size(); i < count; ++i) {
+        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(parameters.requestBodySandboxExtensions()[i]))
+            m_requestBodySandboxExtensions.append(extension);
+    }
+    m_resourceSandboxExtension = SandboxExtension::create(parameters.resourceSandboxExtension());
 }
 
 SchedulableLoader::~SchedulableLoader()
@@ -46,6 +56,24 @@ void SchedulableLoader::connectionToWebProcessDidClose()
     m_connection = 0;
 
     // FIXME (NetworkProcess): Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
+}
+
+void SchedulableLoader::consumeSandboxExtensions()
+{
+    for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
+        m_requestBodySandboxExtensions[i]->consume();
+
+    if (m_resourceSandboxExtension)
+        m_resourceSandboxExtension->consume();
+}
+
+void SchedulableLoader::invalidateSandboxExtensions()
+{
+    for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
+        m_requestBodySandboxExtensions[i]->invalidate();
+
+    if (m_resourceSandboxExtension)
+        m_resourceSandboxExtension->invalidate();
 }
 
 } // namespace WebKit
