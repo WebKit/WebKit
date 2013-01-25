@@ -329,6 +329,14 @@ static void initializeSandbox(const String& pluginPath, const String& sandboxPro
     if (!profileString)
         return;
 
+    sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, CFSTR("com.apple.WebKit.plugin-common.sb"), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
+
+    RetainPtr<NSString> commonProfileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
+    if (!commonProfileString)
+        return;
+
+    profileString = [commonProfileString.get() stringByAppendingString:profileString.get()];
+
     enterSandbox([profileString.get() UTF8String]);
 }
 

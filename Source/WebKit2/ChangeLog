@@ -1,3 +1,13 @@
+2013-01-25  Ivan Krstić  <ike@apple.com>
+
+        Prepend common plugin sandbox profile to specific per-plugin one.
+        <rdar://problem/13044349>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeSandbox):
+
 2013-01-25  Dean Jackson  <dino@apple.com>
 
         Add a user agent stylesheet for plugins
