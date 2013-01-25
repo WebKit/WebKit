@@ -1283,11 +1283,6 @@ webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html
 webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
 webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html [ Failure ]
 
-# Rebaseline required after https://webkit.org/b/107208
-webkit.org/b/107208 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/107208 fast/regions/overflow-size-change-in-variable-width-regions.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/107208 fast/regions/overflow-size-change-with-stacking-context.html [ Pass Failure ImageOnlyFailure ]
-
 # Rebaseline required after https://webkit.org/b/31397
 webkit.org/b/107567 svg/batik/text/xmlSpace.svg [ Failure ] 
 webkit.org/b/107567 fast/text/capitalize-empty-generated-string.html [ Failure ] 
