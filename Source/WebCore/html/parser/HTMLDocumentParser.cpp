@@ -498,7 +498,8 @@ void HTMLDocumentParser::append(const SegmentedString& source)
             startBackgroundParser();
 
         ParserIdentifier identifier = ParserMap::identifierForParser(this);
-        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::appendPartial, identifier, source.toString().isolatedCopy()));
+        const Closure& appendPartial = bind(&BackgroundHTMLParser::appendPartial, identifier, source.toString().isolatedCopy());
+        HTMLParserThread::shared()->postTask(appendPartial);
         return;
     }
 #endif
