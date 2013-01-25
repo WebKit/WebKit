@@ -41,6 +41,13 @@ QUEUE_PARAMS="$@"
 cd /mnt/git/webkit-$QUEUE_NAME
 while :
 do
+    # This clears any temporary file leaks after running tests.
+    # Not the nicest solution but it will keep the queues running instead of
+    # filling up all remaining disk space.
+    # NOTE: This will clear any Chromium browser temporary files running on the
+    # machine as well. Not advised to run this while using Chrome.
+    find /tmp -name ".org.chromium.Chromium.*" | xargs rm -rf
+
     # This somewhat quirky sequence of steps seems to clear up all the broken
     # git situations we've gotten ourself into in the past.
     git clean -f # Remove any left-over layout test results, added files, etc.

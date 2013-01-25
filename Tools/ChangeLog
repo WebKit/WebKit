@@ -1,3 +1,15 @@
+2013-01-25  Alan Cutter  <alancutter@chromium.org>
+
+        Quick fix for Chromium EWS bots running out of space due to a tmp file leak
+        https://bugs.webkit.org/show_bug.cgi?id=107905
+
+        Reviewed by Eric Seidel.
+
+        Added line to EWS loop to clear /tmp of known Chromium test leak.
+        Directories named ".org.chromium.Chromium.XXXXXX" not getting cleaned up.
+
+        * EWSTools/start-queue.sh:
+
 2013-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Anne's email address
