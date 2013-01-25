@@ -1,3 +1,17 @@
+2013-01-25  Eric Seidel  <eric@webkit.org>
+
+        Support 4 and 5 argument bound static functions
+        https://bugs.webkit.org/show_bug.cgi?id=107973
+
+        Reviewed by Anders Carlsson.
+
+        Yummy copy/paste template code!
+        I'm about to use this in a BackgroundHTMLParser patch, but figured this should be landed separately.
+
+        * wtf/Functional.h:
+        (WTF):
+        (WTF::R):
+
 2013-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Abstract the logic for appending a UChar32 onto StringBuilder
