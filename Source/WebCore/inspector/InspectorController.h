@@ -56,6 +56,7 @@ class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorFrontendClient;
+class InspectorMemoryAgent;
 class InspectorOverlay;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
@@ -124,6 +125,8 @@ public:
     void willProcessTask();
     void didProcessTask();
 
+    HashMap<String, size_t> processMemoryDistribution() const;
+
 private:
     InspectorController(Page*, InspectorClient*);
 
@@ -139,6 +142,7 @@ private:
     InspectorDOMAgent* m_domAgent;
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;
+    InspectorMemoryAgent* m_memoryAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;

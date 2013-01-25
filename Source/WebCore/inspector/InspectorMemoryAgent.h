@@ -63,6 +63,8 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void getProcessMemoryDistributionAsMap(bool reportGraph, RefPtr<InspectorObject>& graph, HashMap<String, size_t>* memoryInfo);
+
 private:
     InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorCompositeState*, Page*);
 

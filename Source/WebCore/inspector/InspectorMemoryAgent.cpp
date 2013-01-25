@@ -81,11 +81,11 @@ namespace {
 
 class MemoryUsageStatsGenerator {
 public:
-    MemoryUsageStatsGenerator(MemoryInstrumentationClientImpl* client) : m_client(client) { }
+    MemoryUsageStatsGenerator() { }
 
-    void dump(InspectorMemoryBlocks* children)
+    void dump(const TypeNameToSizeMap& sizesMap, InspectorMemoryBlocks* children)
     {
-        m_sizesMap = m_client->sizesMap();
+        m_sizesMap = sizesMap;
 
         // FIXME: We filter out Rendering type because the coverage is not good enough at the moment
         // and report RenderArena size instead.
@@ -109,7 +109,6 @@ public:
         while (index < objectTypes.size())
             index = buildObjectForIndex(index, objectTypes, children);
 
-        addMemoryInstrumentationDebugData(children);
     }
 
 private:
@@ -147,21 +146,6 @@ private:
         return index;
     }
 
-    void addMemoryInstrumentationDebugData(InspectorMemoryBlocks* children)
-    {
-        if (m_client->checkInstrumentedObjects()) {
-            RefPtr<InspectorMemoryBlock> totalInstrumented = InspectorMemoryBlock::create().setName("InstrumentedObjectsCount");
-            totalInstrumented->setSize(m_client->totalCountedObjects());
-
-            RefPtr<InspectorMemoryBlock> incorrectlyInstrumented = InspectorMemoryBlock::create().setName("InstrumentedButNotAllocatedObjectsCount");
-            incorrectlyInstrumented->setSize(m_client->totalObjectsNotInAllocatedSet());
-
-            children->addItem(totalInstrumented);
-            children->addItem(incorrectlyInstrumented);
-        }
-    }
-
-    MemoryInstrumentationClientImpl* m_client;
     TypeNameToSizeMap m_sizesMap;
 };
 
@@ -527,48 +511,30 @@ static void collectDomTreeInfo(MemoryInstrumentationImpl& memoryInstrumentation,
     domTreesIterator.visitMemoryCache();
 }
 
-static void addPlatformComponentsInfo(PassRefPtr<InspectorMemoryBlocks> children)
+static void addPlatformComponentsInfo(TypeNameToSizeMap* memoryInfo)
 {
     Vector<MemoryUsageSupport::ComponentInfo> components;
     MemoryUsageSupport::memoryUsageByComponents(components);
-    for (Vector<MemoryUsageSupport::ComponentInfo>::iterator it = components.begin(); it != components.end(); ++it) {
-        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(it->m_name);
-        block->setSize(it->m_sizeInBytes);
-        children->addItem(block);
+    for (Vector<MemoryUsageSupport::ComponentInfo>::iterator it = components.begin(); it != components.end(); ++it)
+        memoryInfo->add(it->m_name, it->m_sizeInBytes);
+}
+
+static void addMemoryInstrumentationDebugData(MemoryInstrumentationClientImpl* client, TypeNameToSizeMap* memoryInfo)
+{
+    if (client->checkInstrumentedObjects()) {
+        memoryInfo->add("InstrumentedObjectsCount", client->totalCountedObjects());
+        memoryInfo->add("InstrumentedButNotAllocatedObjectsCount", client->totalObjectsNotInAllocatedSet());
     }
 }
 
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory, RefPtr<InspectorObject>& graph)
 {
-    OwnPtr<HeapGraphSerializer> graphSerializer;
-    if (reportGraph && *reportGraph)
-        graphSerializer = adoptPtr(new HeapGraphSerializer());
-    MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
-    m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
-    MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
+    TypeNameToSizeMap memoryInfo;
+    getProcessMemoryDistributionAsMap(reportGraph && *reportGraph, graph, &memoryInfo);
 
-    reportJSHeapInfo(memoryInstrumentationClient);
-    reportRenderTreeInfo(memoryInstrumentationClient, m_page);
-    collectDomTreeInfo(memoryInstrumentation, m_page); // FIXME: collect for all pages?
-
-    PlatformMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
-    WebCoreMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
-
+    MemoryUsageStatsGenerator statsGenerator;
     RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
-    addPlatformComponentsInfo(children);
-
-    memoryInstrumentation.addRootObject(this);
-    memoryInstrumentation.addRootObject(memoryInstrumentation);
-    memoryInstrumentation.addRootObject(memoryInstrumentationClient);
-    if (graphSerializer) {
-        memoryInstrumentation.addRootObject(graphSerializer.get());
-        graph = graphSerializer->serialize();
-    }
-
-    m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
-
-    MemoryUsageStatsGenerator statsGenerator(&memoryInstrumentationClient);
-    statsGenerator.dump(children.get());
+    statsGenerator.dump(memoryInfo, children.get());
 
     processMemory = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::ProcessPrivateMemory);
     processMemory->setChildren(children);
@@ -585,6 +551,37 @@ void InspectorMemoryAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     InspectorBaseAgent<InspectorMemoryAgent>::reportMemoryUsage(memoryObjectInfo);
     info.addWeakPointer(m_inspectorClient);
     info.addMember(m_page);
+}
+
+void InspectorMemoryAgent::getProcessMemoryDistributionAsMap(bool reportGraph, RefPtr<InspectorObject>& graph, TypeNameToSizeMap* memoryInfo)
+{
+    OwnPtr<HeapGraphSerializer> graphSerializer;
+    if (reportGraph)
+        graphSerializer = adoptPtr(new HeapGraphSerializer());
+    MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
+    m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
+    MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
+
+    reportJSHeapInfo(memoryInstrumentationClient);
+    reportRenderTreeInfo(memoryInstrumentationClient, m_page);
+    collectDomTreeInfo(memoryInstrumentation, m_page); // FIXME: collect for all pages?
+
+    PlatformMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
+    WebCoreMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
+
+    memoryInstrumentation.addRootObject(this);
+    memoryInstrumentation.addRootObject(memoryInstrumentation);
+    memoryInstrumentation.addRootObject(memoryInstrumentationClient);
+    if (graphSerializer) {
+        memoryInstrumentation.addRootObject(graphSerializer.get());
+        graph = graphSerializer->serialize();
+    }
+
+    m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
+
+    *memoryInfo = memoryInstrumentationClient.sizesMap();
+    addPlatformComponentsInfo(memoryInfo);
+    addMemoryInstrumentationDebugData(&memoryInstrumentationClient, memoryInfo);
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)
