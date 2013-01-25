@@ -28,18 +28,12 @@
 
 import re
 
-from google.appengine.api import memcache
-
 from model.queues import Queue
 from model.queuestatus import QueueStatus
 from model.workitems import WorkItems
 
 
 class Attachment(object):
-    @classmethod
-    def dirty(cls, attachment_id):
-        memcache.delete(str(attachment_id), namespace="attachment-summary")
-
     @classmethod
     def recent(cls, limit=1):
         statuses = QueueStatus.all().order("-date")
@@ -66,11 +60,7 @@ class Attachment(object):
     def summary(self):
         if self._summary:
             return self._summary
-        self._summary = memcache.get(str(self.id), namespace="attachment-summary")
-        if self._summary:
-            return self._summary
         self._summary = self._fetch_summary()
-        memcache.set(str(self.id), self._summary, namespace="attachment-summary")
         return self._summary
 
     def state_from_queue_status(self, status):

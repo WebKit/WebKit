@@ -67,5 +67,4 @@ class UpdateStatus(UpdateBase):
         RecordBotEvent.record_activity(queue_status.queue_name, queue_status.bot_id)
         if queue_status.active_patch_id:
             RecordPatchEvent.updated(queue_status.active_patch_id, queue_status.queue_name, queue_status.bot_id)
-        Attachment.dirty(queue_status.active_patch_id)
         self.response.out.write(queue_status.key().id())
