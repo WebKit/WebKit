@@ -2,6 +2,16 @@
 
         Unreviewed.
 
+        Now searching for *.messages.in in Source/WebKit2/WebProcess/Storage
+        instead of Source/WebKit2/WebProcess/KeyValueStorage after the
+        WebKeyValueStorageManager.messages.in was moved there.
+
+        * GNUmakefile.am:
+
+2013-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
         Reincluding the input file for WebKeyValueStorageManager IPC messages
         into the extra distribution list after the file was moved.
 
