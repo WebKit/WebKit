@@ -1,3 +1,13 @@
+2013-01-24  Eric Seidel  <eric@webkit.org>
+
+        Skip haslanded_unittest.py on systems which do not have interdiff installed
+        https://bugs.webkit.org/show_bug.cgi?id=106402
+
+        Unreviewed.
+
+        * Scripts/webkitpy/tool/steps/haslanded_unittest.py:
+        (HasLandedTest):
+
 2013-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable the failing webkitpy test for now.
