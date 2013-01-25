@@ -3,7 +3,7 @@ layer at (0,0) size 933x1037
 layer at (0,0) size 933x1037
   RenderSVGRoot {svg} at (186,74) size 551x764
     RenderSVGContainer {g} at (186,74) size 551x764
-      RenderSVGText {text} at (178,36) size 93x18 contains 1 chunk(s)
+      RenderSVGText {text} at (178,36) size 94x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 93x18
           chunk 1 (middle anchor) text run 1 at (178.70,50.00) startOffset 0 endOffset 12 width 92.59: "Mask Regions"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

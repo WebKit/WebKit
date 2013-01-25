@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,5) size 250x60
+  RenderSVGRoot {svg} at (50,5) size 250x57
     RenderSVGContainer {g} at (124,5) size 34x56
       RenderSVGPath {svg:line} at (124,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=25.30] [y1=1.00] [x2=25.30] [y2=12.20]
       RenderSVGPath {svg:line} at (152,5) size 6x56 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=31.04] [y1=1.00] [x2=31.04] [y2=12.20]

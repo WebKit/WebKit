@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (264,77) size 103x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=339.00] [y=99.00] [width=130.00] [height=30.00]
         RenderSVGRect {rect} at (266,78) size 102x25 [fill={[type=SOLID] [color=#000080]}] [x=341.00] [y=101.00] [width=130.00] [height=30.00]
         RenderSVGRect {rect} at (265,78) size 103x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=340.00] [y=100.00] [width=130.00] [height=30.00]
-        RenderSVGText {text} at (351,110) size 107x13 contains 1 chunk(s)
+        RenderSVGText {text} at (351,110) size 108x13 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 107x13
             RenderSVGInlineText {#text} at (0,0) size 107x13
               chunk 1 (middle anchor) text run 1 at (351.88,120.40) startOffset 0 endOffset 19 width 106.24: "Deactivate Button 2"
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (382,77) size 94x24 [fill={[type=SOLID] [color=#FFFFFF]}] [x=489.00] [y=99.00] [width=120.00] [height=30.00]
         RenderSVGRect {rect} at (383,78) size 95x25 [fill={[type=SOLID] [color=#000080]}] [x=491.00] [y=101.00] [width=120.00] [height=30.00]
         RenderSVGRect {rect} at (382,78) size 95x24 [fill={[type=SOLID] [color=#B0C4DE]}] [x=490.00] [y=100.00] [width=120.00] [height=30.00]
-        RenderSVGText {text} at (504,110) size 91x13 contains 1 chunk(s)
+        RenderSVGText {text} at (504,110) size 92x13 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 91x13
             RenderSVGInlineText {#text} at (0,0) size 91x13
               chunk 1 (middle anchor) text run 1 at (504.56,120.40) startOffset 0 endOffset 16 width 90.88: "Switch Button on"
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (155,233) size 118x48 [fill={[type=SOLID] [color=#FFFFFF]}] [x=199.00] [y=299.00] [width=150.00] [height=60.00]
         RenderSVGRect {rect} at (157,235) size 118x48 [fill={[type=SOLID] [color=#000080]}] [x=201.00] [y=301.00] [width=150.00] [height=60.00]
         RenderSVGRect {rect} at (156,234) size 118x48 [fill={[type=SOLID] [color=#B0C4DE]}] [x=200.00] [y=300.00] [width=150.00] [height=60.00]
-        RenderSVGText {text} at (228,311) size 94x40 contains 1 chunk(s)
+        RenderSVGText {text} at (228,311) size 94x41 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 94x13
             RenderSVGInlineText {#text} at (0,0) size 94x13
               chunk 1 (middle anchor) text run 1 at (228.28,322.20) startOffset 0 endOffset 19 width 93.44: "This is a multiline"

@@ -16,28 +16,28 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (410,75) size 92x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 92x18
               chunk 1 (middle anchor) text run 1 at (410.38,88.80) startOffset 0 endOffset 13 width 91.25: "Furggeltihorn"
-          RenderSVGText {text} at (569,85) size 49x18 contains 1 chunk(s)
+          RenderSVGText {text} at (569,85) size 50x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 49x18
               chunk 1 (middle anchor) text run 1 at (569.42,98.80) startOffset 0 endOffset 6 width 48.75: "P 2821"
           RenderSVGText {text} at (589,66) size 92x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 92x18
               chunk 1 (middle anchor) text run 1 at (589.38,79.80) startOffset 0 endOffset 13 width 91.25: "Zervreilahorn"
-          RenderSVGText {text} at (765,99) size 79x18 contains 1 chunk(s)
+          RenderSVGText {text} at (765,99) size 80x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 79x18
               chunk 1 (middle anchor) text run 1 at (765.63,112.80) startOffset 0 endOffset 11 width 78.75: "Plattenberg"
           RenderSVGText {text} at (2192,165) size 58x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 58x18
               chunk 1 (middle anchor) text run 1 at (2192.15,178.80) startOffset 0 endOffset 8 width 57.50: "Piz Fess"
-          RenderSVGText {text} at (2250,148) size 82x18 contains 1 chunk(s)
+          RenderSVGText {text} at (2250,148) size 83x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 82x18
               chunk 1 (middle anchor) text run 1 at (2250.77,162.60) startOffset 0 endOffset 11 width 81.25: "Crap Grisch"
-          RenderSVGText {text} at (2378,135) size 68x18 contains 1 chunk(s)
+          RenderSVGText {text} at (2378,135) size 69x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 68x18
               chunk 1 (middle anchor) text run 1 at (2378.95,149.60) startOffset 0 endOffset 9 width 67.50: "Piz Tom\x{FC}l"
-          RenderSVGText {text} at (1734,98) size 57x18 contains 1 chunk(s)
+          RenderSVGText {text} at (1734,98) size 57x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 57x18
               chunk 1 (middle anchor) text run 1 at (1734.47,112.60) startOffset 0 endOffset 8 width 56.25: "Fruntalp"
-          RenderSVGText {text} at (961,372) size 85x18 contains 1 chunk(s)
+          RenderSVGText {text} at (961,372) size 86x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 85x18
               chunk 1 (middle anchor) text run 1 at (961.30,386.50) startOffset 0 endOffset 12 width 85.00: "Zervreilasee"
     RenderSVGContainer {g} at (40,60) size 733x173
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (760,207) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=234.50] [width=15.00] [height=15.00]
         RenderSVGPath {path} at (763,63) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M 958 54.5 L 962.5 62.5 L 954.5 62.5 Z"]
         RenderSVGPath {path} at (763,210) size 7x8 [fill={[type=SOLID] [color=#696969]}] [data="M 958 246.5 L 954.5 238.5 L 962.5 238.5 Z"]
-    RenderSVGText {text} at (396,268) size 554x14 contains 1 chunk(s)
+    RenderSVGText {text} at (396,268) size 554x15 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 554x14
         chunk 1 (end anchor) text run 1 at (396.25,280.00) startOffset 0 endOffset 89 width 553.75: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
     RenderSVGViewportContainer {svg} at (40,300) size 760x300
@@ -76,7 +76,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (760,451) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=539.50] [width=10.00] [height=10.00]
         RenderSVGPath {path} at (762,446) size 6x5 [fill={[type=SOLID] [color=#696969]}] [data="M 955.5 532.5 L 959.5 538.5 L 953.5 538.5 Z"]
         RenderSVGPath {path} at (762,454) size 6x5 [fill={[type=SOLID] [color=#696969]}] [data="M 955.5 548.5 L 953.5 542.5 L 959.5 542.5 Z"]
-    RenderSVGText {text} at (403,563) size 547x14 contains 1 chunk(s)
+    RenderSVGText {text} at (403,563) size 547x15 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 547x14
         chunk 1 (end anchor) text run 1 at (403.75,575.00) startOffset 0 endOffset 94 width 546.25: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
     RenderSVGContainer {g} at (39,483) size 186x18
