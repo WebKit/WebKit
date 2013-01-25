@@ -1,3 +1,9 @@
+2013-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable the failing webkitpy test for now.
+
+        * Scripts/webkitpy/tool/steps/haslanded_unittest.py:
+
 2013-01-24  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Fixing the diff_parser to correctly identify git diffs even with leading comments.

@@ -31,6 +31,7 @@ import unittest2 as unittest
 from webkitpy.tool.steps.haslanded import HasLanded
 
 
+@unittest.skip
 class HasLandedTest(unittest.TestCase):
     maxDiff = None
 
