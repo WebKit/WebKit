@@ -304,6 +304,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
         var section = new WebInspector.ObjectPropertiesSection(obj, titleElement);
         section.enableContextMenu();
         elem.appendChild(section.element);
+
+        var note = section.titleElement.createChild("span", "object-info-state-note");
+        note.title = WebInspector.UIString("Object state below is captured upon first expansion");
     },
 
     /**

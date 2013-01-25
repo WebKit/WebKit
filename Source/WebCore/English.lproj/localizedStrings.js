@@ -847,3 +847,4 @@ localizedStrings["Add file system"] = "Add file system";
 localizedStrings["File systems"] = "File systems";
 localizedStrings["Mappings"] = "Mappings";
 localizedStrings["Add"] = "Add";
+localizedStrings["Object state below is captured upon first expansion"] = "Object state below is captured upon first expansion";
