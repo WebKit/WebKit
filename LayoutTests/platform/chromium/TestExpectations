@@ -2862,8 +2862,6 @@ webkit.org/b/54322 webkit.org/b/68437 [ SnowLeopard ] platform/chromium/virtual/
 # Failures introduced by USE_NEW_BUILDER in Skia.
 crbug.com/33287 [ Mac ] fast/canvas/set-colors.html [ Failure ]
 
-webkit.org/b/69060 [ Android ] fast/repaint/selection-clear.html [ Failure ]
-
 webkit.org/b/69103 [ Android Linux Win ] fast/text/line-initial-and-final-swashes.html [ Failure ]
 
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-rotation-hit.html [ ImageOnlyFailure ]
@@ -4326,7 +4324,7 @@ webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ]
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Pass Failure ] 
 
-webkit.org/b/107899 [ Win ] fast/repaint/selection-clear.html [ Failure ]
+webkit.org/b/107899 fast/repaint/selection-clear.html [ Failure ]
 
 webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-first-fit-001.html [ Failure ] 
 
