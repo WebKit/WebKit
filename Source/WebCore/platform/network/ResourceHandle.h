@@ -166,6 +166,7 @@ public:
     void continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage);
     void sendPendingRequest();
     bool shouldUseCredentialStorage();
+    bool cancelledOrClientless();
     static SoupSession* defaultSession();
     static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
