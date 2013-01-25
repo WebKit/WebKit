@@ -71,7 +71,7 @@ protected:
     virtual int maximum() const OVERRIDE FINAL;
     virtual void setEmptyValue(EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE;
-    virtual int valueAsInteger() const OVERRIDE;
+    virtual int valueAsInteger() const OVERRIDE FINAL;
     virtual String visibleValue() const OVERRIDE FINAL;
 
 private:

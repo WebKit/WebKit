@@ -85,7 +85,6 @@ private:
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-    virtual int valueAsInteger() const OVERRIDE FINAL;
 
     const int m_alignment;
 };

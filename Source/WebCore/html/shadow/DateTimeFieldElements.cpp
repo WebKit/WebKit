@@ -139,7 +139,7 @@ void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& 
         return;
     }
 
-    const int value = DateTimeNumericFieldElement::valueAsInteger();
+    const int value = valueAsInteger();
 
     switch (maximum()) {
     case 11:
@@ -213,11 +213,6 @@ void DateTimeHourFieldElement::setValueAsInteger(int valueAsHour23, EventBehavio
 {
     const int value = Range(0, 23).clampValue(valueAsHour23) % m_alignment;
     DateTimeNumericFieldElement::setValueAsInteger(range().minimum && !value ? m_alignment : value, eventBehavior);
-}
-
-int DateTimeHourFieldElement::valueAsInteger() const
-{
-    return hasValue() ? DateTimeNumericFieldElement::valueAsInteger() % m_alignment : -1;
 }
 
 // ----------------------------
