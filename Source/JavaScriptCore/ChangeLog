@@ -1,5 +1,42 @@
 2013-01-24  Roger Fong  <roger_fong@apple.com>
 
+        VS2010 JavascriptCore: Clean up property sheets, add a JSC solution, add testRegExp and testAPI projects.
+        https://bugs.webkit.org/show_bug.cgi?id=106987
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCF.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCorePreLink.cmd:
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscDebug.props:
+        * JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcxproj/jsc/jscPreLink.cmd:
+        * JavaScriptCore.vcxproj/testRegExp: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj.filters: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpDebug.props: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpRelease.props: Added.
+        * JavaScriptCore.vcxproj/testapi: Added.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Added.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters: Added.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.user: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiDebug.props: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiPostBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiPreBuild.cmd: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiPreLink.cmd: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiRelease.props: Added.
+
+2013-01-24  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:

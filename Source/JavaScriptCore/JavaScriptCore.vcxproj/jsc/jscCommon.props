@@ -11,7 +11,7 @@
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>JavaScriptCore$(WebKitDLLConfigSuffix).lib;winmm.lib;libicuin$(LibraryConfigSuffix).lib;libicuuc$(LibraryConfigSuffix).lib;pthreadVC2$(LibraryConfigSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>JavaScriptCore.lib;winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>

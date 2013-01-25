@@ -20,6 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -218,6 +219,7 @@
     <ClCompile Include="..\runtime\JSArray.cpp" />
     <ClCompile Include="..\runtime\JSBoundFunction.cpp" />
     <ClCompile Include="..\runtime\JSCell.cpp" />
+    <ClCompile Include="..\runtime\JSCJSValue.cpp" />
     <ClCompile Include="..\runtime\JSDateMath.cpp" />
     <ClCompile Include="..\runtime\JSFunction.cpp" />
     <ClCompile Include="..\runtime\JSGlobalData.cpp" />
@@ -235,7 +237,6 @@
     <ClCompile Include="..\runtime\JSString.cpp" />
     <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
-    <ClCompile Include="..\runtime\JSValue.cpp" />
     <ClCompile Include="..\runtime\JSVariableObject.cpp" />
     <ClCompile Include="..\runtime\JSWithScope.cpp" />
     <ClCompile Include="..\runtime\JSWrapperObject.cpp" />
@@ -327,6 +328,7 @@
     <ClInclude Include="..\API\JSStringRef.h" />
     <ClInclude Include="..\API\JSStringRefBSTR.h" />
     <ClInclude Include="..\API\JSStringRefCF.h" />
+    <ClInclude Include="..\API\JSValue.h" />
     <ClInclude Include="..\API\JSValueInternal.h" />
     <ClInclude Include="..\API\JSValueRef.h" />
     <ClInclude Include="..\API\JSWeakObjectMapRefInternal.h" />
@@ -574,6 +576,8 @@
     <ClInclude Include="..\runtime\JSArray.h" />
     <ClInclude Include="..\runtime\JSBoundFunction.h" />
     <ClInclude Include="..\runtime\JSCell.h" />
+    <ClInclude Include="..\runtime\JSCJSValue.h" />
+    <ClInclude Include="..\runtime\JSCJSValueInlines.h" />
     <ClInclude Include="..\runtime\JSDateMath.h" />
     <ClInclude Include="..\runtime\JSDestructibleObject.h" />
     <ClInclude Include="..\runtime\JSExportMacros.h" />
@@ -596,8 +600,6 @@
     <ClInclude Include="..\runtime\JSSymbolTableObject.h" />
     <ClInclude Include="..\runtime\JSType.h" />
     <ClInclude Include="..\runtime\JSTypeInfo.h" />
-    <ClInclude Include="..\runtime\JSValue.h" />
-    <ClInclude Include="..\runtime\JSValueInlines.h" />
     <ClInclude Include="..\runtime\JSVariableObject.h" />
     <ClInclude Include="..\runtime\JSWithScope.h" />
     <ClInclude Include="..\runtime\JSWrapperObject.h" />

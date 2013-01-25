@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\AtomicString.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringBuilder.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\StringImpl.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\testRegExp.cpp" />
+    <ClCompile Include="$(WebKit_Source)\WTF\wtf\text\WTFString.cpp">
+      <Filter>wtf/text</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="wtf/text">
+      <UniqueIdentifier>{aff6b899-9fb0-445b-bdb9-fa60579dd138}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testRegExpPostBuild.cmd" />
+    <None Include="testRegExpPreBuild.cmd" />
+    <None Include="testRegExpPreLink.cmd" />
+  </ItemGroup>
+</Project>

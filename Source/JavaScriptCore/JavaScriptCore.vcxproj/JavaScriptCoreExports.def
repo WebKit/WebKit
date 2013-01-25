@@ -114,7 +114,7 @@ EXPORTS
     ?className@JSObject@JSC@@SA?AVString@WTF@@PBV12@@Z
     ?className@JSProxy@JSC@@KA?AVString@WTF@@PBVJSObject@2@@Z
     ?clear@SourceProviderCache@JSC@@QAEXXZ
-    ?clearRareData@JSGlobalObject@JSC@@CAXPAVJSCell@2@@Z
+    ?clearAll@BitVector@WTF@@QAEXXZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
     ?computeHash@SHA1@WTF@@QAEXAAV?$Vector@E$0BE@@2@@Z
@@ -345,6 +345,7 @@ EXPORTS
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
+    ?s_segmentCapacity@MarkStackArray@JSC@@0IB
     ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setCustomAllocation@MemoryClassInfo@WTF@@QAEX_N@Z

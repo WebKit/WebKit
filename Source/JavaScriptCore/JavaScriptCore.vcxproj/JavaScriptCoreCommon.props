@@ -9,7 +9,7 @@
       <PreprocessorDefinitions>STATICALLY_LINKED_WITH_WTF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;libicuin$(LibraryConfigSuffix).lib;libicuuc$(LibraryConfigSuffix).lib;pthreadVC2$(LibraryConfigSuffix).lib;WTF$(WebKitConfigSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>JavaScriptCoreExports.def</ModuleDefinitionFile>
       <ImportLibrary>$(ConfigurationBuildDir)\lib\$(TargetName).lib</ImportLibrary>
       <SubSystem>Console</SubSystem>

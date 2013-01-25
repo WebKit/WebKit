@@ -1,5 +1,7 @@
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
 
+echo "WOAHHHAHAHAHA"
+
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\bin"
 if exist "%WebKit_Libraries%\bin\icudt46.dll" xcopy /y /d "%WebKit_Libraries%\bin\icudt46.dll" "%CONFIGURATIONBUILDDIR%\bin"
 if exist "%WebKit_Libraries%\bin\icudt46.dll" xcopy /y /d "%WebKit_Libraries%\bin\icudt46.dll" "%CONFIGURATIONBUILDDIR%\bin"

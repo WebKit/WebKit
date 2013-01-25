@@ -594,9 +594,6 @@
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSValue.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\JSVariableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -739,6 +736,9 @@
       <Filter>yarr</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\PrototypeMap.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSCJSValue.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1613,12 +1613,6 @@
     <ClInclude Include="..\runtime\JSTypeInfo.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSValue.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\JSValueInlines.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\JSVariableObject.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -1885,6 +1879,15 @@
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\PrototypeMap.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\API\JSValue.h">
+      <Filter>API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSCJSValue.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSCJSValueInlines.h">
       <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
