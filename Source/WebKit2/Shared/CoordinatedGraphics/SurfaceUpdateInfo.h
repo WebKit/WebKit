@@ -17,33 +17,37 @@
  Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "SurfaceUpdateInfo.h"
+#ifndef SurfaceUpdateInfo_h
+#define SurfaceUpdateInfo_h
 
-#include "WebCoreArgumentCoders.h"
+#if USE(COORDINATED_GRAPHICS)
+
+#include <WebCore/IntRect.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
-void SurfaceUpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
-{
-    encoder.encode(updateRect);
-    encoder.encode(scaleFactor);
-    encoder.encode(atlasID);
-    encoder.encode(surfaceOffset);
-}
+class SurfaceUpdateInfo {
+    WTF_MAKE_NONCOPYABLE(SurfaceUpdateInfo);
 
-bool SurfaceUpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, SurfaceUpdateInfo& result)
-{
-    if (!decoder->decode(result.updateRect))
-        return false;
-    if (!decoder->decode(result.scaleFactor))
-        return false;
-    if (!decoder->decode(result.atlasID))
-        return false;
-    if (!decoder->decode(result.surfaceOffset))
-        return false;
+public:
+    SurfaceUpdateInfo() { }
 
-    return true;
-}
+    // The rect to be updated.
+    WebCore::IntRect updateRect;
+
+    // The page scale factor used to render this update.
+    float scaleFactor;
+
+    // The id of the update atlas including the shareable bitmap containing the updates.
+    uint32_t atlasID;
+
+    // The offset in the bitmap where the rendered contents are.
+    WebCore::IntPoint surfaceOffset;
+};
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS)
+
+#endif // SurfaceUpdateInfo_h

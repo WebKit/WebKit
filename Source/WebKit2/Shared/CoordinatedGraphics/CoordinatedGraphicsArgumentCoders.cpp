@@ -30,6 +30,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerInfo.h"
+#include "SurfaceUpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Animation.h>
 #include <WebCore/Color.h>
@@ -820,6 +821,16 @@ void ArgumentCoder<CoordinatedLayerInfo>::encode(ArgumentEncoder& encoder, const
 bool ArgumentCoder<CoordinatedLayerInfo>::decode(ArgumentDecoder* decoder, CoordinatedLayerInfo& coordinatedLayerInfo)
 {
     return SimpleArgumentCoder<CoordinatedLayerInfo>::decode(decoder, coordinatedLayerInfo);
+}
+
+void ArgumentCoder<SurfaceUpdateInfo>::encode(ArgumentEncoder& encoder, const SurfaceUpdateInfo& surfaceUpdateInfo)
+{
+    SimpleArgumentCoder<SurfaceUpdateInfo>::encode(encoder, surfaceUpdateInfo);
+}
+
+bool ArgumentCoder<SurfaceUpdateInfo>::decode(ArgumentDecoder* decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
+{
+    return SimpleArgumentCoder<SurfaceUpdateInfo>::decode(decoder, surfaceUpdateInfo);
 }
 
 } // namespace CoreIPC

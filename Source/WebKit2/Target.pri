@@ -99,7 +99,6 @@ HEADERS += \
     Shared/SessionState.h \
     Shared/StatisticsData.h \
     Shared/StringPairVector.h \
-    Shared/SurfaceUpdateInfo.h \
     Shared/UpdateInfo.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
@@ -137,6 +136,7 @@ HEADERS += \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h \
     Shared/CoordinatedGraphics/CoordinatedLayerInfo.h \
     Shared/CoordinatedGraphics/CoordinatedSurface.h \
+    Shared/CoordinatedGraphics/SurfaceUpdateInfo.h \
     Shared/CoordinatedGraphics/WebCoordinatedSurface.h \
     Shared/CoordinatedGraphics/WebCustomFilterProgram.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
@@ -474,7 +474,6 @@ SOURCES += \
     Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
     Shared/StatisticsData.cpp \
-    Shared/SurfaceUpdateInfo.cpp \
     Shared/UpdateInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \

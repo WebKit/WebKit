@@ -1,3 +1,32 @@
+2013-01-24  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics: remove SurfaceUpdateInfo::encode/decode
+        https://bugs.webkit.org/show_bug.cgi?id=107794
+
+        Reviewed by Anders Carlsson.
+
+        We want to remove the dependency on CoreIPC from SurfaceUpdateInfo
+        because we will extract Coordinated Graphics from WK2. Since
+        SurfaceUpdateInfo is only used in Coordinated Graphics, this patch
+        moves it to Shared/CoordinatedGraphics, and removes CoreIPC
+        dependency.
+
+        No new tests, no change in behavior.
+
+        * CMakeLists.txt:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC):
+        (CoreIPC::::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        (WebKit):
+        * Shared/CoordinatedGraphics/SurfaceUpdateInfo.h: Renamed from Source/WebKit2/Shared/SurfaceUpdateInfo.h.
+        (WebKit):
+        (SurfaceUpdateInfo):
+        (WebKit::SurfaceUpdateInfo::SurfaceUpdateInfo):
+        * Shared/SurfaceUpdateInfo.cpp: Removed.
+        * Target.pri:
+
 2013-01-24  Anders Carlsson  <andersca@apple.com>
 
         More StorageAreaProxy cleanup

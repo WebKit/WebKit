@@ -161,7 +161,6 @@ set(WebKit2_SOURCES
     Shared/SessionState.cpp
     Shared/ShareableBitmap.cpp
     Shared/StatisticsData.cpp
-    Shared/SurfaceUpdateInfo.cpp
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
