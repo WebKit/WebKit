@@ -1,3 +1,16 @@
+2013-01-24  Jae Hyun Park  <jae.park@company100.net>
+
+        Redundant LegacyReceiver attribute in WebPage.messages.in
+        https://bugs.webkit.org/show_bug.cgi?id=107875
+
+        Reviewed by Anders Carlsson.
+
+        To generate WebPageMessageReceiver with legacy, just one LegacyReceiver
+        attribute in WebPage.messages.in is enough. This patch removes this
+        redundant attribute.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-01-24  Anders Carlsson  <andersca@apple.com>
 
         Fix release build.
