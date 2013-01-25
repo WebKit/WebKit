@@ -28,10 +28,10 @@ VPATH = \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/Shared \
     $(WebKit2)/Shared/mac \
+    $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/Network/CustomProtocols \
     $(WebKit2)/SharedWorkerProcess \
     $(WebKit2)/WebProcess/ApplicationCache \
-    $(WebKit2)/WebProcess/Authentication \
     $(WebKit2)/WebProcess/Cookies \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
