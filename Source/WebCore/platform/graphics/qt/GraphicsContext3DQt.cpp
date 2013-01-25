@@ -34,6 +34,7 @@
 #include "OpenGLShims.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
+#include "TextureMapperPlatformLayer.h"
 #include <QWindow>
 #include <qpa/qplatformpixmap.h>
 #include <wtf/UnusedParam.h>

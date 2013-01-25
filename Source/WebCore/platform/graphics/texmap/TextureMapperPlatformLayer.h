@@ -24,18 +24,20 @@
 #include "GraphicsSurface.h"
 #endif
 
+#include "TextureMapper.h"
 #include "TransformationMatrix.h"
 
 namespace WebCore {
-
-class TextureMapper;
-class BitmapTexture;
 
 class TextureMapperPlatformLayer {
 public:
     virtual ~TextureMapperPlatformLayer() { }
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0, BitmapTexture* mask = 0) = 0;
     virtual void swapBuffers() { }
+    virtual void drawBorder(TextureMapper* textureMapper, const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
+    {
+        textureMapper->drawBorder(color, borderWidth, targetRect, transform);
+    }
 #if USE(GRAPHICS_SURFACE)
     virtual IntSize platformLayerSize() const { return IntSize(); }
     virtual uint32_t copyToGraphicsSurface() { return 0; }

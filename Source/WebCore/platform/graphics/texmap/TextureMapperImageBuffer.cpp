@@ -25,6 +25,7 @@
 #if PLATFORM(QT)
 #include "NativeImageQt.h"
 #endif
+#include "NotImplemented.h"
 
 
 #if USE(TEXTURE_MAPPER)
@@ -162,6 +163,16 @@ void TextureMapperImageBuffer::drawSolidColor(const FloatRect& rect, const Trans
 
     context->fillRect(rect, color, ColorSpaceDeviceRGB);
     context->restore();
+}
+
+void TextureMapperImageBuffer::drawBorder(const Color&, float /* borderWidth */, const FloatRect&, const TransformationMatrix&)
+{
+    notImplemented();
+}
+
+void TextureMapperImageBuffer::drawRepaintCounter(int /* repaintCount */, const Color&, const FloatPoint&, const TransformationMatrix&)
+{
+    notImplemented();
 }
 
 #if ENABLE(CSS_FILTERS)

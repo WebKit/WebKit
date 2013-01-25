@@ -20,7 +20,6 @@
 #ifndef GraphicsLayerTextureMapper_h
 #define GraphicsLayerTextureMapper_h
 
-#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "Image.h"
@@ -66,6 +65,9 @@ public:
     Color solidColor() const { return m_solidColor; }
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer* canvas) { setContentsToMedia(canvas); }
+    virtual void setShowDebugBorder(bool) OVERRIDE;
+    virtual void setDebugBorder(const Color&, float width) OVERRIDE;
+    virtual void setShowRepaintCounter(bool) OVERRIDE;
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
@@ -81,8 +83,6 @@ public:
 
     TextureMapperLayer* layer() const { return m_layer.get(); }
 
-    virtual void setDebugBorder(const Color&, float width);
-
 #if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&);
 #endif
@@ -93,11 +93,15 @@ public:
     void setFixedToViewport(bool fixed) { m_fixedToViewport = fixed; }
     bool fixedToViewport() const { return m_fixedToViewport; }
 
-    void drawRepaintCounter(GraphicsContext*);
+    Color debugBorderColor() const { return m_debugBorderColor; }
+    float debugBorderWidth() const { return m_debugBorderWidth; }
+    void setRepaintCount(int);
+
 private:
     virtual void willBeDestroyed();
     void didFlushCompositingState();
-    void updateBackingStore();
+    void updateDebugBorderAndRepaintCountIfNeeded();
+    void updateBackingStoreIfNeeded();
     void prepareBackingStore();
     bool shouldHaveBackingStore() const;
     void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);

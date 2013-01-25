@@ -40,7 +40,9 @@ class TextureMapperBackingStore : public TextureMapperPlatformLayer, public RefC
 public:
     virtual PassRefPtr<BitmapTexture> texture() const = 0;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) = 0;
+    virtual void drawRepaintCounter(TextureMapper*, int /* repaintCount */, const Color&, const FloatRect&, const TransformationMatrix&) { }
     virtual ~TextureMapperBackingStore() { }
+
 
 protected:
     static unsigned calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect);
@@ -94,26 +96,23 @@ public:
 
     virtual PassRefPtr<BitmapTexture> texture() const OVERRIDE;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) OVERRIDE;
+    virtual void drawBorder(TextureMapper*, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) OVERRIDE;
+    virtual void drawRepaintCounter(TextureMapper*, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) OVERRIDE;
     void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
     void updateContents(TextureMapper*, GraphicsLayer*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
 
     void setContentsToImage(Image* image) { m_image = image; }
-    void setShowDebugBorders(bool drawsDebugBorders) { m_drawsDebugBorders = drawsDebugBorders; }
-    void setDebugBorder(const Color&, float width);
 
 private:
     TextureMapperTiledBackingStore();
     void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
     void updateContentsFromImageIfNeeded(TextureMapper*);
+    TransformationMatrix adjustedTransformForRect(const FloatRect&);
     inline FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
 
     Vector<TextureMapperTile> m_tiles;
     FloatSize m_size;
     RefPtr<Image> m_image;
-
-    bool m_drawsDebugBorders;
-    Color m_debugBorderColor;
-    float m_debugBorderWidth;
 };
 
 }

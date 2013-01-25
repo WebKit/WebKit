@@ -24,13 +24,7 @@
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerFactory.h"
 #include "ImageBuffer.h"
-#include "NotImplemented.h"
 #include <wtf/CurrentTime.h>
-
-#if USE(CAIRO)
-#include "CairoUtilities.h"
-#include <wtf/text/CString.h>
-#endif
 
 namespace WebCore {
 
@@ -386,13 +380,55 @@ void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* 
     m_contentsLayer = media;
 }
 
+void GraphicsLayerTextureMapper::setShowDebugBorder(bool show)
+{
+    if (isShowingDebugBorder() == show)
+        return;
+
+    GraphicsLayer::setShowDebugBorder(show);
+    notifyChange(TextureMapperLayer::DebugVisualsChange);
+}
+
+void GraphicsLayerTextureMapper::setShowRepaintCounter(bool show)
+{
+    if (isShowingRepaintCounter() == show)
+        return;
+
+    GraphicsLayer::setShowRepaintCounter(show);
+    notifyChange(TextureMapperLayer::DebugVisualsChange);
+}
+
 /* \reimp (GraphicsLayer.h)
 */
 void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
+    updateDebugBorderAndRepaintCountIfNeeded();
     m_layer->flushCompositingStateForThisLayerOnly(this);
-    updateBackingStore();
+    updateBackingStoreIfNeeded();
     didFlushCompositingState();
+}
+
+void GraphicsLayerTextureMapper::updateDebugBorderAndRepaintCountIfNeeded()
+{
+    if (!m_hasOwnBackingStore)
+        return;
+
+    m_usingTiledLayer = shouldHaveBackingStore();
+    updateDebugIndicators();
+
+    // When this has its own backing store (e.g. Qt WK1), update the repaint count before calling TextureMapperLayer::flushCompositingStateForThisLayerOnly().
+    bool needsToRepaint = shouldHaveBackingStore() && (m_needsDisplay || !m_needsDisplayRect.isEmpty());
+    if (isShowingRepaintCounter() && needsToRepaint) {
+        incrementRepaintCount();
+        m_changeMask |= TextureMapperLayer::RepaintCountChange;
+    }
+}
+
+void GraphicsLayerTextureMapper::setDebugBorder(const Color& color, float width)
+{
+    m_debugBorderColor = color;
+    m_debugBorderWidth = width;
+    m_changeMask |= TextureMapperLayer::DebugVisualsChange;
 }
 
 /* \reimp (GraphicsLayer.h)
@@ -417,11 +453,10 @@ void GraphicsLayerTextureMapper::didFlushCompositingState()
     m_changeMask = 0;
 }
 
-void GraphicsLayerTextureMapper::updateBackingStore()
+void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
 {
     if (!m_hasOwnBackingStore)
         return;
-
     prepareBackingStore();
     m_layer->setBackingStore(m_backingStore);
 }
@@ -451,34 +486,7 @@ void GraphicsLayerTextureMapper::prepareBackingStore()
 #endif
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
 
-    if (isShowingRepaintCounter())
-        incrementRepaintCount();
-
-    // Paint into an intermediate buffer to avoid painting content more than once.
-    bool paintOnce = true;
-    const IntSize maxTextureSize = textureMapper->maxTextureSize();
-    // We need to paint directly if the dirty rect exceeds one of the maximum dimensions.
-    if (dirtyRect.width() > maxTextureSize.width() || dirtyRect.height() > maxTextureSize.height())
-        paintOnce = false;
-
-    if (paintOnce) {
-        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
-        GraphicsContext* context = imageBuffer->context();
-        context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
-        context->setTextDrawingMode(textureMapper->textDrawingMode());
-        context->translate(-dirtyRect.x(), -dirtyRect.y());
-        paintGraphicsLayerContents(*context, dirtyRect);
-
-        if (isShowingRepaintCounter())
-            drawRepaintCounter(context);
-
-        RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-        backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
-    } else
-        backingStore->updateContents(textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
-
-    backingStore->setShowDebugBorders(isShowingDebugBorder());
-    backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);
+    backingStore->updateContents(textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
     m_needsDisplay = false;
     m_needsDisplayRect = IntRect();
@@ -488,40 +496,6 @@ bool GraphicsLayerTextureMapper::shouldHaveBackingStore() const
 {
     return drawsContent() && contentsAreVisible() && !m_size.isEmpty();
 }
-
-#if USE(CAIRO)
-void GraphicsLayerTextureMapper::drawRepaintCounter(GraphicsContext* context)
-{
-    cairo_t* cr = context->platformContext()->cr();
-    cairo_save(cr);
-
-    CString repaintCount = String::format("%i", this->repaintCount()).utf8();
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 18);
-
-    cairo_text_extents_t repaintTextExtents;
-    cairo_text_extents(cr, repaintCount.data(), &repaintTextExtents);
-
-    static const int repaintCountBorderWidth = 10;
-    setSourceRGBAFromColor(cr, isShowingDebugBorder() ? m_debugBorderColor : Color(0, 255, 0, 127));
-    cairo_rectangle(cr, 0, 0,
-        repaintTextExtents.width + (repaintCountBorderWidth * 2),
-        repaintTextExtents.height + (repaintCountBorderWidth * 2));
-    cairo_fill(cr);
-
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_move_to(cr, repaintCountBorderWidth, repaintTextExtents.height + repaintCountBorderWidth);
-    cairo_show_text(cr, repaintCount.data());
-
-    cairo_restore(cr);
-}
-#else
-void GraphicsLayerTextureMapper::drawRepaintCounter(GraphicsContext* context)
-{
-    notImplemented();
-}
-
-#endif
 
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
@@ -564,14 +538,6 @@ void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerT
     client()->notifyAnimationStarted(this, /* DOM time */ WTF::currentTime());
 }
 
-void GraphicsLayerTextureMapper::setDebugBorder(const Color& color, float width)
-{
-    // The default values for GraphicsLayer debug borders are a little
-    // hard to see (some less than one pixel wide), so we double their size here.
-    m_debugBorderColor = color;
-    m_debugBorderWidth = width * 2;
-}
-
 #if ENABLE(CSS_FILTERS)
 bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
 {
@@ -579,5 +545,11 @@ bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
     return GraphicsLayer::setFilters(filters);
 }
 #endif
+
+void GraphicsLayerTextureMapper::setRepaintCount(int repaintCount)
+{
+    m_repaintCount = repaintCount;
+    notifyChange(TextureMapperLayer::RepaintCountChange);
+}
 
 }

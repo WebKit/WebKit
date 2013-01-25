@@ -106,7 +106,6 @@ void TextureMapperTile::paint(TextureMapper* textureMapper, const Transformation
 }
 
 TextureMapperTiledBackingStore::TextureMapperTiledBackingStore()
-    : m_drawsDebugBorders(false)
 {
 }
 
@@ -133,16 +132,31 @@ unsigned TextureMapperBackingStore::calculateExposedTileEdges(const FloatRect& t
     return exposedEdges;
 }
 
+TransformationMatrix TextureMapperTiledBackingStore::adjustedTransformForRect(const FloatRect& targetRect)
+{
+    return TransformationMatrix::rectToRect(rect(), targetRect);
+}
+
 void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     updateContentsFromImageIfNeeded(textureMapper);
-    TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(rect(), targetRect));
-    for (size_t i = 0; i < m_tiles.size(); ++i) {
+    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    for (size_t i = 0; i < m_tiles.size(); ++i)
         m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask, calculateExposedTileEdges(rect(), m_tiles[i].rect()));
-        if (m_drawsDebugBorders)
-            textureMapper->drawBorder(m_debugBorderColor, m_debugBorderWidth, m_tiles[i].rect(), adjustedTransform);
-    }
+}
+
+void TextureMapperTiledBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
+{
+    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    for (size_t i = 0; i < m_tiles.size(); ++i)
+        textureMapper->drawBorder(borderColor, borderWidth, m_tiles[i].rect(), adjustedTransform);
+}
+
+void TextureMapperTiledBackingStore::drawRepaintCounter(TextureMapper* textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
+{
+    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    for (size_t i = 0; i < m_tiles.size(); ++i)
+        textureMapper->drawRepaintCounter(repaintCount, borderColor, m_tiles[i].rect().location(), adjustedTransform);
 }
 
 void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)
@@ -232,12 +246,6 @@ PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
     }
 
     return PassRefPtr<BitmapTexture>();
-}
-
-void TextureMapperTiledBackingStore::setDebugBorder(const Color& color, float width)
-{
-    m_debugBorderColor = color;
-    m_debugBorderWidth = width;
 }
 
 }

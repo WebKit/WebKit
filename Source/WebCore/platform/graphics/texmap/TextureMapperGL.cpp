@@ -321,10 +321,11 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     draw(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha() ? ShouldBlend : 0);
 }
 
-void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
+void TextureMapperGL::drawRepaintCounter(int repaintCount, const Color& color, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
 {
+    int pointSize = 8;
 #if PLATFORM(QT)
-    QString counterString = QString::number(value);
+    QString counterString = QString::number(repaintCount);
 
     QFont font(QString::fromLatin1("Monospace"), pointSize, QFont::Bold);
     font.setStyleHint(QFont::TypeWriter);
@@ -339,7 +340,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
 
     QImage image(size, NativeImageQt::defaultFormatForAlphaEnabledImages());
     QPainter painter(&image);
-    painter.fillRect(sourceRect, Qt::blue); // Since we won't swap R+B for speed, this will paint red.
+    painter.fillRect(sourceRect, Color::createUnchecked(color.blue(), color.green(), color.red())); // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
     painter.setFont(font);
     painter.setPen(Qt::white);
     painter.drawText(2, height * 0.85, counterString);
@@ -350,7 +351,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
 
 #elif USE(CAIRO)
-    CString counterString = String::number(value).ascii();
+    CString counterString = String::number(repaintCount).ascii();
     // cairo_text_extents() requires a cairo_t, so dimensions need to be guesstimated.
     int width = counterString.length() * pointSize * 1.2;
     int height = pointSize * 1.5;
@@ -358,7 +359,9 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     cairo_t* cr = cairo_create(surface);
 
-    cairo_set_source_rgb(cr, 0, 0, 1); // Since we won't swap R+B for speed, this will paint red.
+    float r, g, b, a;
+    color.getRGBA(r, g, b, a);
+    cairo_set_source_rgba(cr, b, g, r, a); // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
@@ -382,7 +385,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     cairo_destroy(cr);
 
 #else
-    UNUSED_PARAM(value);
+    UNUSED_PARAM(repaintCount);
     UNUSED_PARAM(pointSize);
     UNUSED_PARAM(targetPoint);
     UNUSED_PARAM(modelViewMatrix);

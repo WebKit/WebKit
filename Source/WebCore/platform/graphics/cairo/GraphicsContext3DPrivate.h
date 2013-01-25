@@ -25,7 +25,7 @@
 #include <wtf/PassOwnPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-#include "TextureMapper.h"
+#include "TextureMapperPlatformLayer.h"
 #endif
 
 namespace WebCore {

@@ -36,7 +36,6 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapperPlatformLayer.h"
 #include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
@@ -130,8 +129,9 @@ public:
         AllEdges = LeftEdge | RightEdge | TopEdge | BottomEdge,
     };
 
-    virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) = 0;
-    virtual void drawRepaintCounter(int value, int pointSize, const FloatPoint&, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) = 0;
+    virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) = 0;
+    virtual void drawRepaintCounter(int repaintCount, const Color&, const FloatPoint&, const TransformationMatrix&) = 0;
+
     virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0, unsigned exposedEdges = AllEdges) = 0;
     virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) = 0;
 

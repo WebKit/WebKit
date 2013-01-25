@@ -71,7 +71,10 @@ public:
 
         ReplicaLayerChange =        (1L << 21),
         AnimationChange =           (1L << 22),
-        FilterChange =              (1L << 23)
+        FilterChange =              (1L << 23),
+
+        DebugVisualsChange =        (1L << 24),
+        RepaintCountChange =        (1L << 25)
     };
 
     TextureMapperLayer()
@@ -172,6 +175,9 @@ private:
 #if ENABLE(CSS_FILTERS)
         FilterOperations filters;
 #endif
+        Color debugBorderColor;
+        float debugBorderWidth;
+        int repaintCount;
 
         bool preserves3D : 1;
         bool masksToBounds : 1;
@@ -180,11 +186,15 @@ private:
         bool contentsOpaque : 1;
         bool backfaceVisibility : 1;
         bool visible : 1;
+        bool showDebugBorders : 1;
+        bool showRepaintCounter : 1;
 
         State()
             : opacity(1)
             , maskLayer(0)
             , replicaLayer(0)
+            , debugBorderWidth(0)
+            , repaintCount(0)
             , preserves3D(false)
             , masksToBounds(false)
             , drawsContent(false)
@@ -192,6 +202,8 @@ private:
             , contentsOpaque(false)
             , backfaceVisibility(false)
             , visible(true)
+            , showDebugBorders(false)
+            , showRepaintCounter(false)
         {
         }
     };

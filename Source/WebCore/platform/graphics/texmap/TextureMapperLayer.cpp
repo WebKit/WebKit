@@ -129,6 +129,8 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 
     if (m_state.solidColor.isValid() && !m_state.contentsRect.isEmpty()) {
         options.textureMapper->drawSolidColor(m_state.contentsRect, transform, blendWithOpacity(m_state.solidColor, opacity));
+        if (m_state.showDebugBorders)
+            options.textureMapper->drawBorder(m_state.debugBorderColor, m_state.debugBorderWidth, layerRect(), transform);
         return;
     }
 
@@ -136,11 +138,18 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
         ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty());
         ASSERT(!layerRect().isEmpty());
         m_backingStore->paintToTextureMapper(options.textureMapper, layerRect(), transform, opacity, mask.get());
+        if (m_state.showDebugBorders)
+            m_backingStore->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, layerRect(), transform);
+        // Only draw repaint count for the main backing store.
+        if (m_state.showRepaintCounter)
+            m_backingStore->drawRepaintCounter(options.textureMapper, m_state.repaintCount, m_state.debugBorderColor, layerRect(), transform);
     }
 
     if (m_contentsLayer) {
         ASSERT(!layerRect().isEmpty());
         m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, opacity, mask.get());
+        if (m_state.showDebugBorders)
+            m_contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
     }
 }
 
@@ -383,8 +392,6 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
     if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty())
         return;
 
-    graphicsLayer->updateDebugIndicators();
-
     if (changeMask & ChildrenChange)
         setChildren(graphicsLayer->children());
 
@@ -400,6 +407,9 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
 
     if (changeMask & AnimationChange)
         m_animations = graphicsLayer->m_animations;
+
+    if (changeMask & RepaintCountChange)
+        m_state.repaintCount = graphicsLayer->repaintCount();
 
     m_state.maskLayer = toTextureMapperLayer(graphicsLayer->maskLayer());
     m_state.replicaLayer = toTextureMapperLayer(graphicsLayer->replicaLayer());
@@ -422,6 +432,11 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
         m_state.filters = graphicsLayer->filters();
 #endif
     m_fixedToViewport = graphicsLayer->fixedToViewport();
+
+    m_state.showDebugBorders = graphicsLayer->isShowingDebugBorder();
+    m_state.debugBorderColor = toGraphicsLayerTextureMapper(graphicsLayer)->debugBorderColor();
+    m_state.debugBorderWidth = toGraphicsLayerTextureMapper(graphicsLayer)->debugBorderWidth();
+    m_state.showRepaintCounter = graphicsLayer->isShowingRepaintCounter();
 
     m_contentsLayer = graphicsLayer->platformLayer();
 
