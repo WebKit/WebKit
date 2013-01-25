@@ -31,7 +31,7 @@
 body {
     -webkit-user-select: none;
     background-color: white;
-    font: -webkit-small-control;
+    font: -webkit-control;
     margin: 0;
     overflow: hidden;
 }
@@ -41,11 +41,11 @@ body {
 }
 
 .calendar-picker {
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    position: absolute;
+    padding: 10px;
     background-color: white;
-    border: solid 1px #8899aa;
-    box-shadow: inset 2px 2px 2px white,
-        inset -2px -2px 1px rgba(0,0,0,0.1);
-    padding: 6px;
     white-space: nowrap;
     width: 500px;
 }
@@ -72,11 +72,11 @@ body {
     background-color: white;
     cursor: pointer;
     display: inline-block;
-    padding: 3px 6px 3px 6px;
+    padding: 4px 6px 4px 6px;
 }
-.month-selector:after {
-    content: " ▼";
-    font-size: smaller;
+
+.month-selector svg {
+    margin: 0 6px 2px 6px;
 }
 
 .month-selector-popup {
@@ -97,6 +97,9 @@ body {
 
 .month-selector-popup-contents {
     display: table;
+    text-align: left;
+    border: 1px solid #bfbfbf;
+    margin: -1px 0 0 -1px;
 }
 
 .month-selector-popup-entry {
@@ -137,15 +140,23 @@ body {
     display: inline-block;
 }
 
+.year-month-button-left .year-month-button {
+    margin-right: 4px;
+}
+
 .year-month-button-right {
     display: inline-block;
 }
 
+.year-month-button-right .year-month-button {
+    margin-left: 4px;
+}
+
 .days-area-container {
     background-color: white;
-    border: solid 1px black;
-    margin-bottom: 4px;
-    margin-top: 4px;
+    border: 1px solid #bfbfbf;
+    margin-bottom: 8px;
+    margin-top: 10px;
     overflow: hidden;
 }
 
@@ -153,19 +164,17 @@ body {
     background-color: white;
     border-collapse: separate;
     border-spacing: 0px;
-    font: -webkit-small-control;
+    font: -webkit-control;
     /* table-layout:fixed and width:100% are added in the JS code. */
 }
 
 .day-label { /* <th> */
     -webkit-box-sizing: border-box;
-    background-color: #e3e9ff;
-    border-left-color: #f0f4ff;
-    border-top-color: #f0f4ff;
-    border: solid 1px #d0d4f0;
-    color: #20c;
+    background-color: #f5f5f5;
     font-weight: normal;
     text-align: center;
+    border-bottom: 1px solid #bfbfbf;
+    height: 2.1em;
 }
 
 .day { /* <td> */
@@ -174,6 +183,7 @@ body {
     background-color: white;
     border: 1px solid white;
     -webkit-box-sizing: border-box;
+    line-height: 1.4em;
 }
 
 @media (pointer:coarse) {
@@ -185,10 +195,8 @@ body {
 
 .available {
     cursor: default;
-    font-weight: 700;
     background-color: white;
     border: 1px solid white;
-    border-radius: 5px;
     -webkit-transition: all 0.2s ease;
 }
 
@@ -228,19 +236,8 @@ body {
 .week-mode .day,
 .month-mode .day {
     -webkit-transition: none;
-    border-radius: 0;
     border: none;
     padding: 2px;
-}
-
-.week-mode .available.day-selected.monday {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.week-mode .available.day-selected.sunday {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 .week-mode .unavailable.day-selected {
@@ -272,4 +269,8 @@ body {
     display: table-cell;
     border-right: 1px solid #999;
     padding-right: 1px;
+}
+
+.today-clear-area .today-button {
+    margin-right: 8px;
 }

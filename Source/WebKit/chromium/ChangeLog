@@ -1,3 +1,13 @@
+2013-01-24  Keishi Hattori  <keishi@webkit.org>
+
+        Adjust design of the Calendar Picker
+        https://bugs.webkit.org/show_bug.cgi?id=107507
+
+        Reviewed by Kent Tamura.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument):  Include pickerCommonChromium.css and calendarPickerChromium.css.
+
 2013-01-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove dead transitional code from WebViewImpl

@@ -98,7 +98,7 @@ function test2() {
     eventSender.keyDown('\t');
     shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
     eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".year-month-button[value=<<]"');
+    shouldBe('focusedElement()', '".year-month-button"');
     eventSender.keyDown('\t', ['shiftKey']);
     shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
 

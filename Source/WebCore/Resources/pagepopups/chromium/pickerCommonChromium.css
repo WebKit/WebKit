@@ -1,0 +1,46 @@
+input[type='button'],
+button {
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+    background-image: -webkit-linear-gradient(#ededed, #ededed 38%, #dedede);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.75);
+    color: #444;
+    font: inherit;
+    text-shadow: 0 1px 0 rgb(240, 240, 240);
+    min-height: 2em;
+    min-width: 4em;
+    -webkit-padding-end: 10px;
+    -webkit-padding-start: 10px;
+    margin: 0;
+}
+
+:enabled:hover:-webkit-any(button, input[type='button']) {
+    background-image: -webkit-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+    color: black;
+}
+
+:enabled:active:-webkit-any(button, input[type='button']) {
+    background-image: -webkit-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
+    box-shadow: none;
+    text-shadow: none;
+}
+
+:disabled:-webkit-any(button, input[type='button']) {
+    background-image: -webkit-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
+    border-color: rgba(80, 80, 80, 0.2);
+    box-shadow: 0 1px 0 rgba(80, 80, 80, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.75);
+    color: #aaa;
+}
+
+:enabled:focus:-webkit-any(button, input[type='button']) {
+    -webkit-transition: border-color 200ms;
+    /* We use border color because it follows the border radius (unlike outline).
+    * This is particularly noticeable on mac. */
+    border-color: -webkit-focus-ring-color;
+    outline: none;
+}

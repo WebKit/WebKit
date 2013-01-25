@@ -971,6 +971,8 @@
           'inputs': [
             '../Resources/pagepopups/calendarPicker.css',
             '../Resources/pagepopups/calendarPicker.js',
+            '../Resources/pagepopups/chromium/calendarPickerChromium.css',
+            '../Resources/pagepopups/chromium/pickerCommonChromium.css',
             '../Resources/pagepopups/suggestionPicker.css',
             '../Resources/pagepopups/suggestionPicker.js',
           ],
@@ -984,24 +986,6 @@
             '--condition=ENABLE(CALENDAR_PICKER)',
             '--out-h=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.h',
             '--out-cpp=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.cpp',
-            '<@(_inputs)',
-          ],
-        },
-        {
-          'action_name': 'CalendarPickerMac',
-          'inputs': [
-            '../Resources/pagepopups/calendarPickerMac.css',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
-          ],
-          'action': [
-            'python',
-            '../make-file-arrays.py',
-            '--condition=ENABLE(CALENDAR_PICKER)',
-            '--out-h=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.h',
-            '--out-cpp=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
             '<@(_inputs)',
           ],
         },
@@ -1347,9 +1331,6 @@
         ['OS=="mac"', {
           'include_dirs': [
             '<(chromium_src_dir)/third_party/apple_webkit',
-          ],
-          'sources': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
           ],
         }],
         ['OS=="win"', {

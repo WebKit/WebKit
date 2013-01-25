@@ -20,7 +20,6 @@
 
 #import "config.h"
 
-#import "CalendarPickerMac.h"
 #import "LayoutTestSupport.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderThemeChromiumMac.h"
@@ -179,13 +178,6 @@ String RenderThemeChromiumMac::extraDefaultStyleSheet()
 LayoutUnit RenderThemeChromiumMac::sliderTickSnappingThreshold() const
 {
     return RenderThemeChromiumCommon::sliderTickSnappingThreshold();
-}
-#endif
-
-#if ENABLE(CALENDAR_PICKER)
-CString RenderThemeChromiumMac::extraCalendarPickerStyleSheet()
-{
-    return CString(calendarPickerMacCss, WTF_ARRAY_LENGTH(calendarPickerMacCss));
 }
 #endif
 

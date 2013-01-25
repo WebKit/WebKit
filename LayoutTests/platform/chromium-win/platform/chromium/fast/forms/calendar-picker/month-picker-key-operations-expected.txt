@@ -45,7 +45,7 @@ Check if tabbing works.
 PASS focusedElement() is ".days-area-container"
 PASS focusedElement() is ".today-button[value=<<ThisMonthLabel>>]"
 PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
-PASS focusedElement() is ".year-month-button[value=<<]"
+PASS focusedElement() is ".year-month-button"
 PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
 PASS document.getElementById("mock-page-popup") is null
 PASS document.getElementById("month").value is "2000-02"

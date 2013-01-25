@@ -95,9 +95,6 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); };
 #endif
-#if ENABLE(CALENDAR_PICKER)
-    virtual CString extraCalendarPickerStyleSheet();
-#endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of

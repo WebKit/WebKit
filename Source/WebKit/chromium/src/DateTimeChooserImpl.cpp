@@ -120,11 +120,10 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));
+    writer.addData(WebCore::pickerCommonChromiumCss, sizeof(WebCore::pickerCommonChromiumCss));
     writer.addData(WebCore::suggestionPickerCss, sizeof(WebCore::suggestionPickerCss));
     writer.addData(WebCore::calendarPickerCss, sizeof(WebCore::calendarPickerCss));
-    CString extraStyle = WebCore::RenderTheme::defaultTheme()->extraCalendarPickerStyleSheet();
-    if (extraStyle.length())
-        writer.addData(extraStyle.data(), extraStyle.length());
+    writer.addData(WebCore::calendarPickerChromiumCss, sizeof(WebCore::calendarPickerChromiumCss));
     addString("</style></head><body><div id=main>Loading...</div><script>\n"
                "window.dialogArguments = {\n", writer);
     addProperty("anchorRectInScreen", anchorRectInScreen, writer);

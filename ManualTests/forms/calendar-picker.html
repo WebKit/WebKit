@@ -262,6 +262,10 @@ function openCalendar(args) {
     commonCssLink.rel = 'stylesheet';
     commonCssLink.href = '../../Source/WebCore/Resources/pagepopups/pickerCommon.css?' + (new Date()).getTime();
     doc.head.appendChild(commonCssLink);
+    var commonChromiumCssLink = doc.createElement('link');
+    commonChromiumCssLink.rel = 'stylesheet';
+    commonChromiumCssLink.href = '../../Source/WebCore/Resources/pagepopups/chromium/pickerCommonChromium.css?' + (new Date()).getTime();
+    doc.head.appendChild(commonChromiumCssLink);
     var suggestionPickerCssLink = doc.createElement('link');
     suggestionPickerCssLink.rel = 'stylesheet';
     suggestionPickerCssLink.href = '../../Source/WebCore/Resources/pagepopups/suggestionPicker.css?' + (new Date()).getTime();
@@ -270,6 +274,10 @@ function openCalendar(args) {
     link.rel = 'stylesheet';
     link.href = '../../Source/WebCore/Resources/pagepopups/calendarPicker.css?' + (new Date()).getTime();
     doc.head.appendChild(link);
+    var calendarPickerChromiumCssLink = doc.createElement('link');
+    calendarPickerChromiumCssLink.rel = 'stylesheet';
+    calendarPickerChromiumCssLink.href = '../../Source/WebCore/Resources/pagepopups/chromium/calendarPickerChromium.css?' + (new Date()).getTime();
+    doc.head.appendChild(calendarPickerChromiumCssLink);
     var commonJsScript = doc.createElement('script');
     commonJsScript.src = '../../Source/WebCore/Resources/pagepopups/pickerCommon.js?' + (new Date()).getTime();
     doc.body.appendChild(commonJsScript);
@@ -291,6 +299,7 @@ function openCalendar(args) {
                 return numString.toLocaleString();
             return numString.toString();
         },
+        histogramEnumeration: function() {},
         formatMonth: function(year, zeroBaseMonth) {
             var monthLabels = ['<January>', '<February>', '<March>', '<April>', '<May>', '<June>',
                                '<July>', '<August>', '<September>', '<October>', '<November>', '<December>'];

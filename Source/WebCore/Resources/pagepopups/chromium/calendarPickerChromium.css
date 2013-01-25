@@ -1,0 +1,14 @@
+.year-month-button {
+    width: 24px;
+    height: 24px;
+    min-width: 0;
+    padding: 0;
+}
+
+.days-area-container:focus {
+    -webkit-transition: border-color 200ms;
+    /* We use border color because it follows the border radius (unlike outline).
+    * This is particularly noticeable on mac. */
+    border-color: -webkit-focus-ring-color;
+    outline: none;
+}

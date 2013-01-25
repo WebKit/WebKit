@@ -760,6 +760,7 @@ CalendarPicker.prototype.handleClear = function() {
 CalendarPicker.prototype.fixWindowSize = function() {
     var yearMonthRightElement = this._element.getElementsByClassName(ClassNames.YearMonthButtonRight)[0];
     var daysAreaElement = this._element.getElementsByClassName(ClassNames.DaysArea)[0];
+    var clearButton = this._element.getElementsByClassName(ClassNames.ClearButton)[0];
     var headers = daysAreaElement.getElementsByClassName(ClassNames.DayLabel);
     var maxCellWidth = 0;
     for (var i = 1; i < headers.length; ++i) {
@@ -773,18 +774,21 @@ CalendarPicker.prototype.fixWindowSize = function() {
     var DaysAreaContainerBorder = 1;
     var yearMonthEnd;
     var daysAreaEnd;
+    var todayClearAreaEnd;
     if (global.params.isLocaleRTL) {
         var startOffset = this._element.offsetLeft + this._element.offsetWidth;
         yearMonthEnd = startOffset - yearMonthRightElement.offsetLeft;
         daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
+        todayClearAreaEnd = startOffset - clearButton.offsetLeft;
     } else {
         yearMonthEnd = yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth;
         daysAreaEnd = daysAreaElement.offsetLeft + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
+        todayClearAreaEnd = clearButton.offsetLeft + clearButton.offsetWidth;
     }
-    var maxEnd = Math.max(yearMonthEnd, daysAreaEnd);
-    var MainPadding = 6; // FIXME: Fix name.
+    var maxEnd = Math.max(yearMonthEnd, daysAreaEnd, todayClearAreaEnd);
+    var MainPadding = 10; // FIXME: Fix name.
     var MainBorder = 1;
-    var desiredBodyWidth = maxEnd + MainPadding + MainBorder;
+    var desiredBodyWidth = maxEnd + MainPadding + MainBorder * 2;
 
     var elementHeight = this._element.offsetHeight;
     this._element.style.width = "auto";
@@ -881,6 +885,11 @@ YearMonthController.prototype.attachTo = function(element) {
     this._monthPopup.appendChild(this._monthPopupContents);
     box.appendChild(this._monthPopup);
     this._month = createElement("div", ClassNames.MonthSelector);
+    this._monthLabel = createElement("span");
+    this._month.appendChild(this._monthLabel);
+    var disclosureTriangle = createElement("span");
+    disclosureTriangle.innerHTML = "<svg width='7' height='5'><polygon points='0,1 7,1 3.5,5' style='fill:#000000;' /></svg>";
+    this._month.appendChild(disclosureTriangle);
     this._month.addEventListener("click", this._showPopup.bind(this), false);
     box.appendChild(this._month);
 
@@ -894,13 +903,13 @@ YearMonthController.prototype.attachTo = function(element) {
     var month = this.picker.maximumMonth;
     var maxWidth = 0;
     for (var m = 0; m < 12; ++m) {
-        this._month.textContent = month.toLocaleString();
+        this._monthLabel.textContent = month.toLocaleString();
         maxWidth = Math.max(maxWidth, this._month.offsetWidth);
         month = month.previous();
     }
     if (getLanguage() == "ja" && ImperialEraLimit < this.picker.maximumMonth.year) {
         for (var m = 0; m < 12; ++m) {
-            this._month.textContent = new Month(ImperialEraLimit, m).toLocaleString();
+            this._monthLabel.textContent = new Month(ImperialEraLimit, m).toLocaleString();
             maxWidth = Math.max(maxWidth, this._month.offsetWidth);
         }
     }
@@ -919,22 +928,19 @@ YearMonthController.prototype._attachLeftButtonsTo = function(parent) {
     parent.appendChild(container);
 
     if (YearMonthController.addTenYearsButtons) {
-        this._left3 = createElement("input", ClassNames.YearMonthButton);
-        this._left3.type = "button";
-        this._left3.value = "<<<";
+        this._left3 = createElement("button", ClassNames.YearMonthButton);
+        this._left3.textContent = "<<<";
         this._left3.addEventListener("click", this._handleButtonClick.bind(this), false);
         container.appendChild(this._left3);
     }
 
-    this._left2 = createElement("input", ClassNames.YearMonthButton);
-    this._left2.type = "button";
-    this._left2.value = "<<";
+    this._left2 = createElement("button", ClassNames.YearMonthButton);
+    this._left2.innerHTML = "<svg width='9' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /><polygon points='5,3.5 9,7 9,0' style='fill:#6e6e6e;' /></svg>";
     this._left2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left2);
 
-    this._left1 = createElement("input", ClassNames.YearMonthButton);
-    this._left1.type = "button";
-    this._left1.value = "<";
+    this._left1 = createElement("button", ClassNames.YearMonthButton);
+    this._left1.innerHTML = "<svg width='4' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /></svg>";
     this._left1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left1);
 };
@@ -945,22 +951,19 @@ YearMonthController.prototype._attachLeftButtonsTo = function(parent) {
 YearMonthController.prototype._attachRightButtonsTo = function(parent) {
     var container = createElement("div", ClassNames.YearMonthButtonRight);
     parent.appendChild(container);
-    this._right1 = createElement("input", ClassNames.YearMonthButton);
-    this._right1.type = "button";
-    this._right1.value = ">";
+    this._right1 = createElement("button", ClassNames.YearMonthButton);
+    this._right1.innerHTML = "<svg width='4' height='7'><polygon points='0,7 0,0, 4,3.5' style='fill:#6e6e6e;' /></svg>";
     this._right1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right1);
 
-    this._right2 = createElement("input", ClassNames.YearMonthButton);
-    this._right2.type = "button";
-    this._right2.value = ">>";
+    this._right2 = createElement("button", ClassNames.YearMonthButton);
+    this._right2.innerHTML = "<svg width='9' height='7'><polygon points='4,3.5 0,7 0,0' style='fill:#6e6e6e;' /><polygon points='9,3.5 5,7 5,0' style='fill:#6e6e6e;' /></svg>";
     this._right2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right2);
 
     if (YearMonthController.addTenYearsButtons) {
-        this._right3 = createElement("input", ClassNames.YearMonthButton);
-        this._right3.type = "button";
-        this._right3.value = ">>>";
+        this._right3 = createElement("button", ClassNames.YearMonthButton);
+        this._right3.textContent = ">>>";
         this._right3.addEventListener("click", this._handleButtonClick.bind(this), false);
         container.appendChild(this._right3);
     }
@@ -979,7 +982,7 @@ YearMonthController.prototype.setMonth = function(month) {
     this._right2.disabled = !this.picker.shouldShowMonth(new Month(monthValue + 2));
     if (this._right3)
         this._left3.disabled = !this.picker.shouldShowMonth(new Month(monthValue + 13));
-    this._month.innerText = month.toLocaleString();
+    this._monthLabel.innerText = month.toLocaleString();
     while (this._monthPopupContents.hasChildNodes())
         this._monthPopupContents.removeChild(this._monthPopupContents.firstChild);
 
@@ -1149,21 +1152,22 @@ YearMonthController.NextTenYears = 120;
  * @param {Event} event
  */
 YearMonthController.prototype._handleButtonClick = function(event) {
-    if (event.target == this._left3)
+    var button = enclosingNodeOrSelfWithClass(event.target, ClassNames.YearMonthButton);
+    if (button == this._left3)
         this.moveRelatively(YearMonthController.PreviousTenYears);
-    else if (event.target == this._left2) {
+    else if (button == this._left2) {
         this.picker.recordAction(CalendarPicker.Action.ClickedBackwardYearButton);
         this.moveRelatively(YearMonthController.PreviousYear);
-    } else if (event.target == this._left1) {
+    } else if (button == this._left1) {
         this.picker.recordAction(CalendarPicker.Action.ClickedBackwardMonthButton);
         this.moveRelatively(YearMonthController.PreviousMonth);
-    } else if (event.target == this._right1) {
+    } else if (button == this._right1) {
         this.picker.recordAction(CalendarPicker.Action.ClickedForwardMonthButton);
         this.moveRelatively(YearMonthController.NextMonth)
-    } else if (event.target == this._right2) {
+    } else if (button == this._right2) {
         this.picker.recordAction(CalendarPicker.Action.ClickedForwardYearButton);
         this.moveRelatively(YearMonthController.NextYear);
-    } else if (event.target == this._right3)
+    } else if (button == this._right3)
         this.moveRelatively(YearMonthController.NextTenYears);
     else
         return;
