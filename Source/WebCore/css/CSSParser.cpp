@@ -176,6 +176,13 @@ static bool equalIgnoringCase(const CSSParserString& a, const char (&b)[N])
     return a.is8Bit() ? WTF::equalIgnoringCase(b, a.characters8(), length) : WTF::equalIgnoringCase(b, a.characters16(), length);
 }
 
+template <unsigned N>
+static bool equalIgnoringCase(CSSParserValue* value, const char (&b)[N])
+{
+    ASSERT(value->unit == CSSPrimitiveValue::CSS_IDENT || value->unit == CSSPrimitiveValue::CSS_STRING);
+    return equalIgnoringCase(value->string, b);
+}
+
 static bool hasPrefix(const char* string, unsigned length, const char* prefix)
 {
     for (unsigned i = 0; i < length; ++i) {
@@ -4293,7 +4300,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationName()
 {
     CSSParserValue* value = m_valueList->current();
     if (value->unit == CSSPrimitiveValue::CSS_STRING || value->unit == CSSPrimitiveValue::CSS_IDENT) {
-        if (value->id == CSSValueNone || (value->unit == CSSPrimitiveValue::CSS_STRING && equalIgnoringCase(value->string, "none"))) {
+        if (value->id == CSSValueNone || (value->unit == CSSPrimitiveValue::CSS_STRING && equalIgnoringCase(value, "none"))) {
             return cssValuePool().createIdentifierValue(CSSValueNone);
         } else {
             return createPrimitiveStringValue(value);
@@ -4318,9 +4325,9 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty(bool& allowAnimationPrope
     int result = cssPropertyID(value->string);
     if (result)
         return cssValuePool().createIdentifierValue(result);
-    if (equalIgnoringCase(value->string, "all"))
+    if (equalIgnoringCase(value, "all"))
         return cssValuePool().createIdentifierValue(CSSValueAll);
-    if (equalIgnoringCase(value->string, "none")) {
+    if (equalIgnoringCase(value, "none")) {
         allowAnimationProperty = false;
         return cssValuePool().createIdentifierValue(CSSValueNone);
     }
@@ -4693,9 +4700,9 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
             break;
         }
 
-        if (equalIgnoringCase(arg->string, "circle"))
+        if (equalIgnoringCase(arg, "circle"))
             region->m_isCircle = true;
-        else if (equalIgnoringCase(arg->string, "rectangle"))
+        else if (equalIgnoringCase(arg, "rectangle"))
             region->m_isRectangle = true;
         else {
             valid = false;
@@ -6907,13 +6914,13 @@ static PassRefPtr<CSSPrimitiveValue> parseDeprecatedGradientPoint(CSSParserValue
 {
     RefPtr<CSSPrimitiveValue> result;
     if (a->unit == CSSPrimitiveValue::CSS_IDENT) {
-        if ((equalIgnoringCase(a->string, "left") && horizontal)
-            || (equalIgnoringCase(a->string, "top") && !horizontal))
+        if ((equalIgnoringCase(a, "left") && horizontal)
+            || (equalIgnoringCase(a, "top") && !horizontal))
             result = cssValuePool().createValue(0., CSSPrimitiveValue::CSS_PERCENTAGE);
-        else if ((equalIgnoringCase(a->string, "right") && horizontal)
-                 || (equalIgnoringCase(a->string, "bottom") && !horizontal))
+        else if ((equalIgnoringCase(a, "right") && horizontal)
+                 || (equalIgnoringCase(a, "bottom") && !horizontal))
             result = cssValuePool().createValue(100., CSSPrimitiveValue::CSS_PERCENTAGE);
-        else if (equalIgnoringCase(a->string, "center"))
+        else if (equalIgnoringCase(a, "center"))
             result = cssValuePool().createValue(50., CSSPrimitiveValue::CSS_PERCENTAGE);
     } else if (a->unit == CSSPrimitiveValue::CSS_NUMBER || a->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
         result = cssValuePool().createValue(a->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(a->unit));
@@ -6996,9 +7003,9 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
     CSSParserValue* a = args->current();
     if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
         return false;
-    if (equalIgnoringCase(a->string, "linear"))
+    if (equalIgnoringCase(a, "linear"))
         gradientType = CSSDeprecatedLinearGradient;
-    else if (equalIgnoringCase(a->string, "radial"))
+    else if (equalIgnoringCase(a, "radial"))
         gradientType = CSSDeprecatedRadialGradient;
     else
         return false;
@@ -7352,7 +7359,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSVal
 
         args->next();
         expectComma = true;
-    } else if (a->unit == CSSPrimitiveValue::CSS_IDENT && equalIgnoringCase(a->string, "to")) {
+    } else if (a->unit == CSSPrimitiveValue::CSS_IDENT && equalIgnoringCase(a, "to")) {
         // to [ [left | right] || [top | bottom] ]
         a = args->next();
         if (!a)
@@ -7499,7 +7506,7 @@ bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSVal
     // at <position>
     RefPtr<CSSValue> centerX;
     RefPtr<CSSValue> centerY;
-    if (equalIgnoringCase(a->string, "at")) {
+    if (a->unit == CSSPrimitiveValue::CSS_IDENT && equalIgnoringCase(a, "at")) {
         a = args->next();
         if (!a)
             return false;
