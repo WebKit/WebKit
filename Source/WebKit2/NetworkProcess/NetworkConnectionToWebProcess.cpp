@@ -124,6 +124,10 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     if (!loader)
         loader = m_syncNetworkResourceLoaders.take(identifier);
 
+    // It's possible we have no loader for this identifier if the NetworkProcess crashed and this was a respawned NetworkProcess.
+    if (!loader)
+        return;
+
     NetworkProcess::shared().networkResourceLoadScheduler().removeLoader(loader.get());
 }
 
