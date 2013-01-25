@@ -27,8 +27,8 @@ info console-tests.html:11 console-message console-log-level
 warn console-tests.html:12 console-message console-warning-level
 error console-tests.html:13 console-message console-error-level
 5repeated console-tests.html:15 console-message console-log-level repeated-message
-count: 1 console-tests.html:17 console-message console-log-level
-count: 2 console-tests.html:17 console-message console-log-level
+count: 1 console-tests.html:17 console-message console-debug-level
+count: 2 console-tests.html:17 console-message console-debug-level
 group console-tests.html:18 console-message console-log-level console-group-title
  console-message console-log-level
 1 2 3 console-tests.html:20 console-message console-log-level
