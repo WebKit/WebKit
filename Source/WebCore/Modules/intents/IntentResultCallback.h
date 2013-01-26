@@ -41,7 +41,7 @@ class SerializedScriptValue;
 class IntentResultCallback : public RefCounted<IntentResultCallback> {
 public:
     virtual ~IntentResultCallback() { }
-    virtual bool handleEvent(SerializedScriptValue* result) = 0;
+    virtual bool handleEvent(PassRefPtr<SerializedScriptValue> result) = 0;
 };
 
 }

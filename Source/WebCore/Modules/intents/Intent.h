@@ -36,6 +36,7 @@
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
 #include "ScriptState.h"
+#include "SerializedScriptValue.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,8 +45,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class SerializedScriptValue;
 
 typedef int ExceptionCode;
 
@@ -58,7 +57,7 @@ public:
 
     const String& action() const { return m_action; }
     const String& type() const { return m_type; }
-    SerializedScriptValue* data() const { return m_data.get(); }
+    PassRefPtr<SerializedScriptValue> data() const { return m_data; }
 
     MessagePortChannelArray* messagePorts() const { return m_ports.get(); }
     const KURL& service() const { return m_service; }

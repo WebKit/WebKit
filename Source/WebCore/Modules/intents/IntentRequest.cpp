@@ -69,7 +69,7 @@ void IntentRequest::stop()
     m_stopped = true;
 }
 
-void IntentRequest::postResult(SerializedScriptValue* data)
+void IntentRequest::postResult(PassRefPtr<SerializedScriptValue> data)
 {
     if (m_stopped)
         return;
@@ -86,7 +86,7 @@ void IntentRequest::postResult(SerializedScriptValue* data)
     m_errorCallback.clear();
 }
 
-void IntentRequest::postFailure(SerializedScriptValue* data)
+void IntentRequest::postFailure(PassRefPtr<SerializedScriptValue> data)
 {
     if (m_stopped)
         return;

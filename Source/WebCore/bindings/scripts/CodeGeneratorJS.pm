@@ -3092,7 +3092,7 @@ sub GetNativeVectorInnerType
 sub GetNativeTypeForCallbacks
 {
     my $type = shift;
-    return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
+    return "PassRefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
     return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList";
 
     return GetNativeType($type);
