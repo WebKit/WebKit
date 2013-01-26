@@ -1,3 +1,9 @@
+2013-01-26  Andras Becsi  <andras.becsi@digia.com>
+
+        Unreviewed fix after r140451 to make GIT-SVN repositories happy.
+
+        * WTF.vcproj/WTF.sln:
+
 2013-01-26  Justin Schuh  <jschuh@chromium.org>
 
         [CHROMIUM] Suppress more c4267 build warnings for Win64 targets
