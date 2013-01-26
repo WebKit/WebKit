@@ -55,7 +55,7 @@ public:
     void go(ScriptExecutionContext*, int distance);
 
     bool stateChanged() const;
-    bool isSameAsCurrentState(SerializedScriptValue*) const;
+    bool isSameAsCurrentState(PassRefPtr<SerializedScriptValue>) const;
 
     enum StateObjectType {
         StateObjectPush,
