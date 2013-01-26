@@ -732,8 +732,7 @@ sub GetVisibleInterfaceName
     return $interfaceName ? $interfaceName : $interface->name;
 }
 
-# FIXME: Rename to InheritsInterface
-sub IsSubType
+sub InheritsInterface
 {
     my $object = shift;
     my $interface = shift;

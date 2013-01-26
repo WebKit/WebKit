@@ -272,7 +272,7 @@ sub GenerateHeader
     $codeGenerator->LinkOverloadedFunctions($interface);
 
     # Ensure the IsDOMNodeType function is in sync.
-    die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != $codeGenerator->IsSubType($interface, "Node");
+    die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != $codeGenerator->InheritsInterface($interface, "Node");
 
     my $hasDependentLifetime = $interface->extendedAttributes->{"V8DependentLifetime"} || $interface->extendedAttributes->{"ActiveDOMObject"}
          || GetGenerateIsReachable($interface) || $v8InterfaceName =~ /SVG/;
@@ -621,11 +621,11 @@ sub GetInternalFields
     # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
     # FIXME: Simplify this when all EventTargets are subtypes of EventTarget.
-    if (!$codeGenerator->IsSubType($interface, "Node")
+    if (!$codeGenerator->InheritsInterface($interface, "Node")
         && ($interface->extendedAttributes->{"EventTarget"}
             || $interface->extendedAttributes->{"IsWorkerContext"}
-            || $codeGenerator->IsSubType($interface, "AbstractWorker")
-            || $codeGenerator->IsSubType($interface, "EventTarget"))) {
+            || $codeGenerator->InheritsInterface($interface, "AbstractWorker")
+            || $codeGenerator->InheritsInterface($interface, "EventTarget"))) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
@@ -928,7 +928,7 @@ END
     } else {
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $url = $attribute->signature->extendedAttributes->{"URL"};
-        if ($getterStringUsesImp && $reflect && !$url && $codeGenerator->IsSubType($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
+        if ($getterStringUsesImp && $reflect && !$url && $codeGenerator->InheritsInterface($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
             push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
@@ -1018,7 +1018,7 @@ END
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get
     # garbage-collected prematurely when their lifetime is strongly tied to their owner. We accomplish this by inserting a reference to
     # the newly created wrapper into an internal field of the holder object.
-    if ((!$codeGenerator->IsSubType($interface, "Node") && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
+    if ((!$codeGenerator->InheritsInterface($interface, "Node") && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
          && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow"
          && $returnType ne "MessagePortArray"
          && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))
@@ -1206,7 +1206,7 @@ END
     } else {
         my $attrType = $attribute->signature->type;
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        if ($reflect && $codeGenerator->IsSubType($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
+        if ($reflect && $codeGenerator->InheritsInterface($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
             my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
@@ -1265,7 +1265,7 @@ END
         if ($attribute->signature->type eq "EventListener") {
             my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
             AddToImplIncludes("V8AbstractEventListener.h");
-            if (!$codeGenerator->IsSubType($interface, "Node")) {
+            if (!$codeGenerator->InheritsInterface($interface, "Node")) {
                 push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, ${v8InterfaceName}::eventListenerCacheIndex);\n");
             }
             AddToImplIncludes("V8EventListenerList.h");
@@ -1507,10 +1507,10 @@ sub GenerateFunctionCallback
     # but they are extremely consistent across the various interfaces that take event listeners,
     # so we can generate them as a "special case".
     if ($name eq "addEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->IsSubType($interface, "Node"), "add");
+        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), "add");
         return;
     } elsif ($name eq "removeEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->IsSubType($interface, "Node"), "remove");
+        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), "remove");
         return;
     }
 
@@ -2458,7 +2458,7 @@ sub GenerateImplementationIndexer
         }
     }
 
-    my $hasEnumerator = !$isSpecialCase && $codeGenerator->IsSubType($interface, "Node");
+    my $hasEnumerator = !$isSpecialCase && $codeGenerator->InheritsInterface($interface, "Node");
 
     # FIXME: Find a way to not have to special-case HTMLOptionsCollection.
     if ($interfaceName eq "HTMLOptionsCollection") {
@@ -3485,7 +3485,7 @@ END
 
     AddToImplIncludes("Frame.h");
 
-    if ($codeGenerator->IsSubType($interface, "Document")) {
+    if ($codeGenerator->InheritsInterface($interface, "Document")) {
         push(@implContent, <<END);
     if (Frame* frame = impl->frame()) {
         if (frame->script()->initializeMainWorld()) {

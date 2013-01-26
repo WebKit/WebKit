@@ -1040,7 +1040,7 @@ sub GenerateHeader
         GetCustomIsReachable($interface) ||
         $interface->extendedAttributes->{"JSCustomFinalize"} ||
         $interface->extendedAttributes->{"ActiveDOMObject"}) {
-        if ($interfaceName ne "Node" && $codeGenerator->IsSubType($interface, "Node")) {
+        if ($interfaceName ne "Node" && $codeGenerator->InheritsInterface($interface, "Node")) {
             $headerIncludes{"JSNode.h"} = 1;
             push(@headerContent, "class JS${interfaceName}Owner : public JSNodeOwner {\n");
         } else {
@@ -1413,7 +1413,7 @@ sub GenerateImplementation
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($interface);
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-    my $eventTarget = $interface->extendedAttributes->{"EventTarget"} || ($codeGenerator->IsSubType($interface, "EventTarget") && $interface->name ne "EventTarget");
+    my $eventTarget = $interface->extendedAttributes->{"EventTarget"} || ($codeGenerator->InheritsInterface($interface, "EventTarget") && $interface->name ne "EventTarget");
     my $needsMarkChildren = $interface->extendedAttributes->{"JSCustomMarkFunction"} || $interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget";
 
     # - Add default header template
@@ -2492,7 +2492,7 @@ sub GenerateImplementation
             push(@implContent, "    if (js${interfaceName}->impl()->hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
-        if ($codeGenerator->IsSubType($interface, "Node")) {
+        if ($codeGenerator->InheritsInterface($interface, "Node")) {
             push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
             push(@implContent, "        return true;\n");
         }
