@@ -62,7 +62,7 @@
 #endif
 
 #if USE(CONTENT_FILTERING)
-#include "WebCoreSystemInterface.h"
+#include "ContentFilter.h"
 #endif
 
 namespace WebCore {
@@ -74,18 +74,12 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
     , m_substituteDataLoadIdentifier(0)
-#if USE(CONTENT_FILTERING)
-    , m_filter(0)
-#endif
 {
 }
 
 MainResourceLoader::~MainResourceLoader()
 {
     clearResource();
-#if USE(CONTENT_FILTERING)
-    ASSERT(!m_filter);
-#endif
 }
 
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(DocumentLoader* documentLoader)
@@ -135,13 +129,6 @@ void MainResourceLoader::cancel(const ResourceError& error)
 
     clearResource();
     receivedError(resourceError);
-
-#if USE(CONTENT_FILTERING)
-    if (m_filter) {
-        wkFilterRelease(m_filter);
-        m_filter = 0;
-    }
-#endif
 }
 
 void MainResourceLoader::clearResource()
@@ -454,8 +441,8 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
 #endif
 
 #if USE(CONTENT_FILTERING)
-    if (r.url().protocolIs("https") && wkFilterIsManagedSession())
-        m_filter = wkFilterCreateInstance(r.nsURLResponse());
+    if (r.url().protocolIs("https") && ContentFilter::isEnabled())
+        m_contentFilter = ContentFilter::create(r);
 #endif
 
     frameLoader()->policyChecker()->checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
@@ -484,17 +471,20 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
 #endif
 
 #if USE(CONTENT_FILTERING)
-    if (m_filter) {
-        ASSERT(!wkFilterWasBlocked(m_filter));
-        const char* blockedData = wkFilterAddData(m_filter, data, &length);
-        // If we don't have blockedData, that means we're still accumulating data
-        if (!blockedData) {
-            // Transition to committed state.
+    bool loadWasBlockedBeforeFinishing = false;
+    if (m_contentFilter && m_contentFilter->needsMoreData()) {
+        m_contentFilter->addData(data, length);
+
+        if (m_contentFilter->needsMoreData()) {
+            // Since the filter still needs more data to make a decision,
+            // transition back to the committed state so that we don't partially
+            // load content that might later be blocked.
             documentLoader()->receivedData(0, 0);
             return;
         }
 
-        data = blockedData;
+        data = m_contentFilter->getReplacementData(length);
+        loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
     }
 #endif
 
@@ -512,16 +502,8 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
     documentLoader()->receivedData(data, length);
 
 #if USE(CONTENT_FILTERING)
-    if (WebFilterEvaluator *filter = m_filter) {
-        // If we got here, it means we know if we were blocked or not. If we were blocked, we're
-        // done loading the page altogether. Either way, we don't need the filter anymore.
-
-        // Remove this->m_filter early so didFinishLoading doesn't see it.
-        m_filter = 0;
-        if (wkFilterWasBlocked(filter))
-            cancel();
-        wkFilterRelease(filter);
-    }
+    if (loadWasBlockedBeforeFinishing)
+        cancel();
 #endif
 }
 
@@ -544,15 +526,13 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     }
 
 #if USE(CONTENT_FILTERING)
-    if (m_filter) {
+    if (m_contentFilter && m_contentFilter->needsMoreData()) {
+        m_contentFilter->finishedAddingData();
+
         int length;
-        const char* data = wkFilterDataComplete(m_filter, &length);
-        WebFilterEvaluator *filter = m_filter;
-        // Remove this->m_filter early so didReceiveData doesn't see it.
-        m_filter = 0;
+        const char* data = m_contentFilter->getReplacementData(length);
         if (data)
             dataReceived(m_resource.get(), data, length);
-        wkFilterRelease(filter);
     }
 #endif
 
@@ -578,13 +558,6 @@ void MainResourceLoader::notifyFinished(CachedResource* resource)
         frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
         return;
     }
-
-#if USE(CONTENT_FILTERING)
-    if (m_filter) {
-        wkFilterRelease(m_filter);
-        m_filter = 0;
-    }
-#endif
 
     const ResourceError& error = m_resource->resourceError();
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))

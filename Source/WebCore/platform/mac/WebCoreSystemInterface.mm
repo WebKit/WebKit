@@ -211,10 +211,10 @@ void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 #if USE(CONTENT_FILTERING)
 BOOL (*wkFilterIsManagedSession)(void);
 WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
-void (*wkFilterRelease)(WebFilterEvaluator *);
 BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
-const char* (*wkFilterAddData)(WebFilterEvaluator *, const char* data, int* length);
-const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
+BOOL (*wkFilterIsBuffering)(WebFilterEvaluator *);
+NSData *(*wkFilterAddData)(WebFilterEvaluator *, NSData *);
+NSData *(*wkFilterDataComplete)(WebFilterEvaluator *);
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)

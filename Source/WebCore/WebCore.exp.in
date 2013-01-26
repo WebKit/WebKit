@@ -2157,8 +2157,8 @@ _wkRecommendedScrollerStyle
 _wkFilterAddData
 _wkFilterCreateInstance
 _wkFilterDataComplete
+_wkFilterIsBuffering
 _wkFilterIsManagedSession
-_wkFilterRelease
 _wkFilterWasBlocked
 #endif
 

@@ -208,8 +208,8 @@ void InitWebCoreSystemInterface(void)
 #if USE(CONTENT_FILTERING)
     INIT(FilterIsManagedSession);
     INIT(FilterCreateInstance);
-    INIT(FilterRelease);
     INIT(FilterWasBlocked);
+    INIT(FilterIsBuffering);
     INIT(FilterAddData);
     INIT(FilterDataComplete);
 #endif
