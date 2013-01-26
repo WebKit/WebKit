@@ -28,20 +28,21 @@
 
 #include "WKAPICast.h"
 #include "WKArray.h"
-#include "WebKeyValueStorageManagerProxy.h"
 #include "ewk_error_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_storage_manager_private.h"
 
 using namespace WebKit;
 
-EwkStorageManager::EwkStorageManager(WebKeyValueStorageManagerProxy* storageManagerProxy)
-    : m_storageManager(storageManagerProxy)
-{ }
+EwkStorageManager::EwkStorageManager(WKKeyValueStorageManagerRef storageManager)
+    : m_storageManager(storageManager)
+{
+    ASSERT(storageManager);
+}
 
 void EwkStorageManager::getStorageOrigins(void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback) const
 {
-    WKKeyValueStorageManagerGetKeyValueStorageOrigins(toAPI(m_storageManager.get()), context, callback);
+    WKKeyValueStorageManagerGetKeyValueStorageOrigins(m_storageManager.get(), context, callback);
 }
 
 Eina_List* EwkStorageManager::createOriginList(WKArrayRef origins) const

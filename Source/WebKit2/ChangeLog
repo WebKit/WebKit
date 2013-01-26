@@ -1,3 +1,29 @@
+2013-01-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_database_manager and ewk_storage_manager
+        https://bugs.webkit.org/show_bug.cgi?id=107920
+
+        Reviewed by Benjamin Poulain.
+
+        Use C API inside ewk_database_manager and ewk_storage_manager instead
+        of accessing internal C++ classes directly, to avoid violating API
+        layering.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseManager::EwkDatabaseManager):
+        (EwkDatabaseManager::getDatabaseOrigins):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        (EwkDatabaseManager::create):
+        (EwkDatabaseManager):
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (EwkStorageManager::EwkStorageManager):
+        (EwkStorageManager::getStorageOrigins):
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (EwkStorageManager::create):
+        (EwkStorageManager):
+
 2013-01-25  Andreas Kling  <akling@apple.com>
 
         [Mac] Defer loading the Web Inspector bundle until it's necessary.

@@ -27,8 +27,7 @@
 #define ewk_database_manager_private_h
 
 #include "WKDatabaseManager.h"
-#include "WebContext.h"
-#include "WebDatabaseManagerProxy.h"
+#include "WKRetainPtr.h"
 #include "ewk_security_origin_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -37,19 +36,19 @@ using namespace WebKit;
 
 class EwkDatabaseManager {
 public:
-    static PassOwnPtr<EwkDatabaseManager> create(PassRefPtr<WebContext> context)
+    static PassOwnPtr<EwkDatabaseManager> create(WKDatabaseManagerRef databaseManager)
     {
-        ASSERT(context);
-        return adoptPtr(new EwkDatabaseManager(context->supplement<WebDatabaseManagerProxy>()));
+        ASSERT(databaseManager);
+        return adoptPtr(new EwkDatabaseManager(databaseManager));
     }
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
     void getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const;
 
 private:
-    explicit EwkDatabaseManager(WebDatabaseManagerProxy*);
+    explicit EwkDatabaseManager(WKDatabaseManagerRef);
 
-    RefPtr<WebDatabaseManagerProxy> m_databaseManager;
+    WKRetainPtr<WKDatabaseManagerRef> m_databaseManager;
     mutable HashMap<WKSecurityOriginRef, RefPtr<EwkSecurityOrigin> > m_wrapperCache;
 };
 #endif // ewk_database_manager_private_h

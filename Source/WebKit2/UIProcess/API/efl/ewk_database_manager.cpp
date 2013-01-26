@@ -28,21 +28,21 @@
 
 #include "WKAPICast.h"
 #include "WKArray.h"
-#include "WKDatabaseManager.h"
-#include "WebDatabaseManagerProxy.h"
 #include "ewk_database_manager_private.h"
 #include "ewk_error_private.h"
 #include "ewk_security_origin_private.h"
 
 using namespace WebKit;
 
-EwkDatabaseManager::EwkDatabaseManager(WebDatabaseManagerProxy* databaseManager)
+EwkDatabaseManager::EwkDatabaseManager(WKDatabaseManagerRef databaseManager)
     : m_databaseManager(databaseManager)
-{ }
+{
+    ASSERT(databaseManager);
+}
 
 void EwkDatabaseManager::getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const
 {
-    WKDatabaseManagerGetDatabaseOrigins(toAPI(m_databaseManager.get()), context, callback);
+    WKDatabaseManagerGetDatabaseOrigins(m_databaseManager.get(), context, callback);
 }
 
 Eina_List* EwkDatabaseManager::createOriginList(WKArrayRef origins) const
