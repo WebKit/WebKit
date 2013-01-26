@@ -122,6 +122,7 @@
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebReferrerPolicy.h>
 #include <public/WebScrollbar.h>
+#include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
@@ -624,3 +625,10 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFormElement::AutocompleteResultErrorDisabled, HT
 COMPILE_ASSERT_MATCHING_ENUM(WebFormElement::AutocompleteResultErrorCancel, HTMLFormElement::AutocompleteResultErrorCancel);
 COMPILE_ASSERT_MATCHING_ENUM(WebFormElement::AutocompleteResultErrorInvalid, HTMLFormElement::AutocompleteResultErrorInvalid);
 #endif
+
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityUnresolved, ResourceLoadPriorityUnresolved);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityVeryLow, ResourceLoadPriorityVeryLow);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityLow, ResourceLoadPriorityLow);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityMedium, ResourceLoadPriorityMedium);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityHigh, ResourceLoadPriorityHigh);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLRequest::PriorityVeryHigh, ResourceLoadPriorityVeryHigh);

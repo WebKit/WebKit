@@ -1,3 +1,13 @@
+2013-01-26  James Simonsen  <simonjam@chromium.org>
+
+        [chromium] Export ResourceRequest's priority through WebURLRequest
+        https://bugs.webkit.org/show_bug.cgi?id=107985
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebURLRequest.h:
+        (WebURLRequest):
+
 2013-01-25  Eberhard Graether  <egraether@google.com>
 
         Web Inspector: add checkbox for continuous painting to the inspector's settings

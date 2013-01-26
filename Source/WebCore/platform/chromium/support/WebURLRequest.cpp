@@ -324,6 +324,12 @@ ResourceRequest& WebURLRequest::toMutableResourceRequest()
     return *m_private->m_resourceRequest;
 }
 
+WebURLRequest::Priority WebURLRequest::priority() const
+{
+    return static_cast<WebURLRequest::Priority>(
+        m_private->m_resourceRequest->priority());
+}
+
 const ResourceRequest& WebURLRequest::toResourceRequest() const
 {
     ASSERT(m_private);

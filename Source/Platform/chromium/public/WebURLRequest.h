@@ -56,6 +56,15 @@ public:
         ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
     };
 
+    enum Priority {
+        PriorityUnresolved = -1,
+        PriorityVeryLow,
+        PriorityLow,
+        PriorityMedium,
+        PriorityHigh,
+        PriorityVeryHigh,
+    };
+
     enum TargetType {
         TargetIsMainFrame = 0,
         TargetIsSubframe = 1,
@@ -180,6 +189,8 @@ public:
     // dissociated from any existing non-null extra data pointer.
     WEBKIT_EXPORT ExtraData* extraData() const;
     WEBKIT_EXPORT void setExtraData(ExtraData*);
+
+    WEBKIT_EXPORT Priority priority() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebCore::ResourceRequest& toMutableResourceRequest();
