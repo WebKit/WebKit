@@ -38,7 +38,7 @@ class WebSerializedScriptValue : public APIObject {
 public:
     static const Type APIType = TypeSerializedScriptValue;
     
-    static PassRefPtr<WebSerializedScriptValue> create(WebCore::SerializedScriptValue* serializedValue)
+    static PassRefPtr<WebSerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
     {
         return adoptRef(new WebSerializedScriptValue(serializedValue));
     }
