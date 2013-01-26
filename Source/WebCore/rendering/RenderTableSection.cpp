@@ -318,22 +318,21 @@ int RenderTableSection::calcRowLogicalHeight()
                 int cellLogicalHeight = cell->logicalHeightForRowSizing();
                 m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
 
-                // find out the baseline
+                // Find out the baseline. The baseline is set on the first row in a rowspan.
                 EVerticalAlign va = cell->style()->verticalAlign();
                 if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH) {
                     LayoutUnit baselinePosition = cell->cellBaselinePosition();
                     if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
-                        m_grid[cellStartRow].baseline = max(m_grid[cellStartRow].baseline, baselinePosition - cell->intrinsicPaddingBefore());
-                        baselineDescent = max(baselineDescent, m_rowPos[cellStartRow] + cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
+                        m_grid[cellStartRow].baseline = max(m_grid[cellStartRow].baseline, baselinePosition);
+                        // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
+                        // become the baseline descent applied to the rest of the row. 
+                        if (cell->rowSpan() == 1)
+                            baselineDescent = max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
+                        m_rowPos[cellStartRow + 1] = max<int>(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + baselineDescent);
                     }
                 }
             }
         }
-
-        // do we have baseline aligned elements?
-        if (m_grid[r].baseline)
-            // increase rowheight if baseline requires
-            m_rowPos[r + 1] = max<int>(m_rowPos[r + 1], m_grid[r].baseline + baselineDescent);
 
         // Add the border-spacing to our final position.
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
