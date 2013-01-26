@@ -114,7 +114,7 @@ public:
     virtual void print(WebCore::Frame*);
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName, DatabaseDetails);
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName, WebCore::DatabaseDetails);
 #endif
 
     // Callback invoked when the application cache fails to save a cache object
