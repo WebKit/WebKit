@@ -23,4 +23,4 @@
  */
 
 /* plug-ins */
-object{} /*Needed by Windows because it doesn't like empty files*/
+p{} /*Needed by Windows because it doesn't like empty files*/
