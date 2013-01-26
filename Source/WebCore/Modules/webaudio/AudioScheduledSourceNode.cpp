@@ -117,7 +117,11 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize,
         ASSERT(isSafe);
 
         if (isSafe) {
-            nonSilentFramesToProcess -= framesToZero;
+            if (framesToZero > nonSilentFramesToProcess)
+                nonSilentFramesToProcess = 0;
+            else
+                nonSilentFramesToProcess -= framesToZero;
+
             for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
                 memset(outputBus->channel(i)->mutableData() + zeroStartFrame, 0, sizeof(float) * framesToZero);
         }
