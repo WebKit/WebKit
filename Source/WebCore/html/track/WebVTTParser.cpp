@@ -251,6 +251,7 @@ PassRefPtr<DocumentFragment>  WebVTTParser::createDocumentFragmentFromCueText(co
     m_tokenizer->reset();
     m_token.clear();
     
+    m_languageStack.clear();
     SegmentedString content(text);
     while (m_tokenizer->nextToken(content, m_token))
         constructTreeFromToken(document);
@@ -341,6 +342,11 @@ double WebVTTParser::collectTimeStamp(const String& line, unsigned* position)
     return (value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3 + (value4 * secondsPerMillisecond);
 }
 
+static inline bool isLangToken(WebVTTToken& token)
+{
+    return token.name().size() == 4 && token.name()[0] == 'l' && token.name()[1] == 'a' && token.name()[2] == 'n' && token.name()[3] == 'g';
+}
+
 void WebVTTParser::constructTreeFromToken(Document* document)
 {
     AtomicString tokenTagName(m_token.name().data(), m_token.name().size());
@@ -363,12 +369,18 @@ void WebVTTParser::constructTreeFromToken(Document* document)
             child = WebVTTElement::create(TextTrackCue::classElementTagName(), document);
         else if (m_token.name().size() == 1 && m_token.name()[0] == 'v')
             child = WebVTTElement::create(TextTrackCue::voiceElementTagName(), document);
+        else if (isLangToken(m_token))
+            child = WebVTTElement::create(TextTrackCue::langElementTagName(), document);
 
         if (child) {
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
             if (child->hasTagName(TextTrackCue::voiceElementTagName()))
                 child->setAttribute(TextTrackCue::voiceAttributeName(), AtomicString(m_token.annotation().data(), m_token.annotation().size()));
+            if (child->hasTagName(TextTrackCue::langElementTagName()))
+                m_languageStack.append(AtomicString(m_token.annotation().data(), m_token.annotation().size()));
+            if (!m_languageStack.isEmpty())
+                child->setAttribute(TextTrackCue::langAttributeName(), m_languageStack.last());
             m_currentNode->parserAppendChild(child);
             m_currentNode = child;
         }
@@ -378,6 +390,12 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         if (isRecognizedTag(tokenTagName)
             || (m_token.name().size() == 1 && m_token.name()[0] == 'c')
             || (m_token.name().size() == 1 && m_token.name()[0] == 'v')) {
+            if (m_currentNode->parentNode())
+                m_currentNode = m_currentNode->parentNode();
+        }
+        if (isLangToken(m_token)) {
+            if (m_currentNode->hasTagName(TextTrackCue::langElementTagName()))
+                m_languageStack.removeLast();
             if (m_currentNode->parentNode())
                 m_currentNode = m_currentNode->parentNode();
         }

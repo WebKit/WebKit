@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+        ::cue(c[lang="ru"]) { color: red; }
+        ::cue(c[lang="en"]) { color: green; }
+        </style>
+
+        <script>
+
+        var cueNode;
+        var seekedCount = 0;
+        var seekTimes = [0.1];
+
+        var info = [["rgb(0, 128, 0)", "rgb(255, 0, 0)", "rgb(0, 128, 0)"]];
+
+        function seeked()
+        {
+            if (testEnded)
+                return;
+
+            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild.firstElementChild;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][0]);
+            cueNode = cueNode.firstElementChild.firstElementChild;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][1]);
+            cueNode = cueNode.firstElementChild.firstElementChild;
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][2]);
+
+            if (++seekedCount == info.length)
+                endTest();
+            else {
+                consoleWrite("");
+                run("video.currentTime = " + seekTimes[seekedCount]);
+            }
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that cues are being matched properly by the lang attribute.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = seekTimes[0]; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling-lang.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

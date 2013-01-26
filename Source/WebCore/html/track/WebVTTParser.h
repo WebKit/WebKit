@@ -133,6 +133,7 @@ private:
 
     WebVTTParserClient* m_client;
 
+    Vector<AtomicString> m_languageStack;
     Vector<RefPtr<TextTrackCue> > m_cuelist;
 };
 

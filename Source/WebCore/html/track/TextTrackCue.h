@@ -85,6 +85,12 @@ public:
         return cue;
     }
 
+    static const QualifiedName& langElementTagName()
+    {
+        DEFINE_STATIC_LOCAL(QualifiedName, langTag, (nullAtom, "lang", nullAtom));
+        return langTag;
+    }
+
     static const QualifiedName& voiceElementTagName()
     {
         DEFINE_STATIC_LOCAL(QualifiedName, vTag, (nullAtom, "v", nullAtom));
@@ -96,10 +102,16 @@ public:
         DEFINE_STATIC_LOCAL(QualifiedName, cTag, (nullAtom, "c", nullAtom));
         return cTag;
     }
-    
+
     static const QualifiedName& voiceAttributeName()
     {
         DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "voice", nullAtom));
+        return voiceAttr;
+    }
+
+    static const QualifiedName& langAttributeName()
+    {
+        DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "lang", nullAtom));
         return voiceAttr;
     }
 
