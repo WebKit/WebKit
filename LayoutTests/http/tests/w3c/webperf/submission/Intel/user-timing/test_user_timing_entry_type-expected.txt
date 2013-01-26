@@ -1,0 +1,8 @@
+Description
+
+This test validates the user timing entry type, PerformanceMark and PerformanceMeasure.
+
+
+PASS Class name of mark entry should be PerformanceMark. 
+PASS Class name of measure entry should be PerformanceMeasure. 
+
