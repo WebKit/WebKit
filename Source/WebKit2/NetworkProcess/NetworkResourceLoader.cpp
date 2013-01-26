@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -230,7 +231,7 @@ void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, c
     ASSERT(!m_currentAuthenticationChallenge);
     m_currentAuthenticationChallenge = adoptPtr(new AuthenticationChallenge(challenge));
 
-    send(Messages::WebResourceLoader::DidReceiveAuthenticationChallenge(*m_currentAuthenticationChallenge));
+    NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(webPageID(), webFrameID(), *m_currentAuthenticationChallenge);
 }
 
 void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)

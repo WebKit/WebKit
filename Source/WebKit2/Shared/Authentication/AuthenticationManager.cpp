@@ -36,6 +36,11 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationClient.h>
+#include <wtf/Atomics.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessProxyMessages.h"
+#endif
 
 using namespace WebCore;
 
@@ -43,8 +48,8 @@ namespace WebKit {
 
 static uint64_t generateAuthenticationChallengeID()
 {
-    static uint64_t uniqueAuthenticationChallengeID = 1;
-    return uniqueAuthenticationChallengeID++;
+    static int64_t uniqueAuthenticationChallengeID;
+    return atomicIncrement(&uniqueAuthenticationChallengeID);
 }
 
 const AtomicString& AuthenticationManager::supplementName()
@@ -64,23 +69,34 @@ void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, C
     didReceiveAuthenticationManagerMessage(connection, messageID, decoder);
 }
 
+uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)
+{
+    uint64_t challengeID = generateAuthenticationChallengeID();
+    m_challenges.set(challengeID, authenticationChallenge);
+    return challengeID;
+}
+
 void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const AuthenticationChallenge& authenticationChallenge)
 {
     ASSERT(frame);
     ASSERT(frame->page());
-
-    uint64_t challengeID = generateAuthenticationChallengeID();
-    m_challenges.set(challengeID, authenticationChallenge);    
     
-    m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
+    m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)), frame->page()->pageID());
 }
+
+#if ENABLE(NETWORK_PROCESS)
+void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge)
+{
+    ASSERT(pageID);
+    ASSERT(frameID);
+    
+    m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)));
+}
+#endif
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)
 {
-    uint64_t challengeID = generateAuthenticationChallengeID();
-    m_challenges.set(challengeID, authenticationChallenge);
-
-    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
+    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)));
 }
 
 // Currently, only Mac knows how to respond to authentication challenges with certificate info.

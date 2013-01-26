@@ -52,7 +52,11 @@ public:
 
     static const AtomicString& supplementName();
 
+    // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
+    // Called for resources in the NetworkProcess (NetworkProcess enabled)
+    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&);
+    // Called for downloads with or without the NetworkProcess
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const PlatformCertificateInfo&);
@@ -65,6 +69,8 @@ private:
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
+
+    uint64_t establishIdentifierForChallenge(const WebCore::AuthenticationChallenge&);
 
     ChildProcess* m_process;
 

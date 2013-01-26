@@ -77,6 +77,13 @@ static uint64_t generatePageID()
     return uniquePageID++;
 }
 
+static WebProcessProxy::WebPageProxyMap& globalPageMap()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(WebProcessProxy::WebPageProxyMap, pageMap, ());
+    return pageMap;
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 static WorkQueue& pluginWorkQueue()
 {
@@ -153,9 +160,9 @@ void WebProcessProxy::removeMessageReceiver(CoreIPC::StringReference messageRece
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
-WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
+WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 {
-    return m_pageMap.get(pageID);
+    return globalPageMap().get(pageID);
 }
 
 PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebContext*, WebPageGroup* pageGroup)
@@ -163,17 +170,21 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, 
     uint64_t pageID = generatePageID();
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
     m_pageMap.set(pageID, webPage.get());
+    globalPageMap().set(pageID, webPage.get());
     return webPage.release();
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
 {
     m_pageMap.set(pageID, webPage);
+    globalPageMap().set(pageID, webPage);
 }
 
 void WebProcessProxy::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
+    globalPageMap().remove(pageID);
+
 }
 
 Vector<WebPageProxy*> WebProcessProxy::pages() const

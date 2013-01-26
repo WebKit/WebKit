@@ -41,6 +41,8 @@ public:
     virtual ~SchedulableLoader();
 
     ResourceLoadIdentifier identifier() const { return m_identifier; }
+    uint64_t webPageID() const { return m_webPageID; }
+    uint64_t webFrameID() const { return m_webFrameID; }
     const WebCore::ResourceRequest& request() const { return m_request; }
     WebCore::ResourceLoadPriority priority() const { return m_priority; }
     WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
@@ -65,6 +67,8 @@ protected:
 
 private:
     ResourceLoadIdentifier m_identifier;
+    uint64_t m_webPageID;
+    uint64_t m_webFrameID;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;

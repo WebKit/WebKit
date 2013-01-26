@@ -38,15 +38,20 @@ using namespace WebCore;
 
 namespace WebKit {
 NetworkResourceLoadParameters::NetworkResourceLoadParameters()
-    : m_priority(ResourceLoadPriorityVeryLow)
+    : m_identifier(0)
+    , m_webPageID(0)
+    , m_webFrameID(0)
+    , m_priority(ResourceLoadPriorityVeryLow)
     , m_contentSniffingPolicy(SniffContent)
     , m_allowStoredCredentials(DoNotAllowStoredCredentials)
     , m_inPrivateBrowsingMode(false)
 {
 }
 
-NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentifier identifier, const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
+NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentifier identifier, uint64_t webPageID, uint64_t webFrameID, const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
     : m_identifier(identifier)
+    , m_webPageID(webPageID)
+    , m_webFrameID(webFrameID)
     , m_request(request)
     , m_priority(priority)
     , m_contentSniffingPolicy(contentSniffingPolicy)
@@ -58,6 +63,8 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentif
 void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encode(m_identifier);
+    encoder.encode(m_webPageID);
+    encoder.encode(m_webFrameID);
     encoder.encode(m_request);
 
     encoder.encode(static_cast<bool>(m_request.httpBody()));
@@ -101,6 +108,12 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkResourceLoadParameters& result)
 {
     if (!decoder->decode(result.m_identifier))
+        return false;
+
+    if (!decoder->decode(result.m_webPageID))
+        return false;
+
+    if (!decoder->decode(result.m_webFrameID))
         return false;
 
     if (!decoder->decode(result.m_request))

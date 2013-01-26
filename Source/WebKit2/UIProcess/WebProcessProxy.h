@@ -59,8 +59,9 @@ struct WebNavigationDataStore;
 
 class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, public ChildProcessProxy, ResponsivenessTimer::Client, CoreIPC::Connection::QueueClient {
 public:
-    typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
+    typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
+    typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
 
     static PassRefPtr<WebProcessProxy> create(PassRefPtr<WebContext>);
     ~WebProcessProxy();
@@ -78,7 +79,7 @@ public:
 
     WebContext* context() const { return m_context.get(); }
 
-    WebPageProxy* webPage(uint64_t pageID) const;
+    static WebPageProxy* webPage(uint64_t pageID);
     PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
@@ -187,7 +188,7 @@ private:
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
 
-    HashMap<uint64_t, WebPageProxy*> m_pageMap;
+    WebPageProxyMap m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 

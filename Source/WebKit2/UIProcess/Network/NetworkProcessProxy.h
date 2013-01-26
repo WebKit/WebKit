@@ -39,6 +39,10 @@
 #include "CustomProtocolManagerProxy.h"
 #endif
 
+namespace WebCore {
+class AuthenticationChallenge;
+}
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -75,7 +79,8 @@ private:
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didCreateNetworkConnectionToWebProcess(const CoreIPC::Attachment&);
-    
+    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
+
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
 

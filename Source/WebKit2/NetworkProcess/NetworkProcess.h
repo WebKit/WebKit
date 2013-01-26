@@ -68,6 +68,7 @@ public:
 
     NetworkResourceLoadScheduler& networkResourceLoadScheduler() { return m_networkResourceLoadScheduler; }
 
+    AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
 
 private:

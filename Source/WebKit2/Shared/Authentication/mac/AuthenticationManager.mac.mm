@@ -38,9 +38,6 @@ namespace WebKit {
 
 bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const PlatformCertificateInfo& certificateInfo)
 {
-    // FIXME (NetworkProcess): This occurs in the WebProcess and therefore won't work.
-    // We need this to happen in the NetworkProcess.
-
     CFArrayRef chain = certificateInfo.certificateChain();
     if (!chain)
         return false;

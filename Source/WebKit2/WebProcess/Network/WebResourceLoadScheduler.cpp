@@ -32,6 +32,9 @@
 #include "NetworkResourceLoadParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
 #include <WebCore/DocumentLoader.h>
@@ -97,7 +100,10 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     bool privateBrowsingEnabled = resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled();
 
-    NetworkResourceLoadParameters loadParameters(identifier, resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled);
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
+    WebPage* webPage = webFrame->page();
+
+    NetworkResourceLoadParameters loadParameters(identifier, webPage->pageID(), webFrame->frameID(), resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled);
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.

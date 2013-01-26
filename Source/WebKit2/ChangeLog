@@ -1,3 +1,75 @@
+2013-01-25  Brady Eidson  <beidson@apple.com>
+
+        HTTP Authentication should be directly between the NetworkProcess and the UIProcess
+        <rdar://problem/13074829> and https://bugs.webkit.org/show_bug.cgi?id=107974
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some of this patch is refactoring to enable more flexibility in the authentication mechanism
+        and the rest is actually implementing Network->UI process authentication.
+
+        Expose the same AuthenticationManager to anyone in the NetworkProcess asking for it:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::authenticationManager):
+        (WebKit::NetworkProcess::downloadsAuthenticationManager):
+        * NetworkProcess/NetworkProcess.h:
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge): Instead of messaging to
+          the WebProcess, tell the NetworkProcess AuthenticationManager.
+
+        Add WebPageID and WebFrameID members to SchedulableLoader that they receive from 
+        * NetworkProcess/SchedulableLoader.cpp:
+        * NetworkProcess/SchedulableLoader.h:
+        (WebKit::SchedulableLoader::webPageID):
+        (WebKit::SchedulableLoader::webFrameID):
+
+        Add a 3rd form of "didReceiveAuthenticationChallenge" for NetworkProcess use:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::mapChallengeToIdentifier):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge): Remove a now obsolete comment
+
+        Include the WebPage and WebFrame ID for the originator of this request in case it results in a challenge:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::webPageID):
+        (WebKit::NetworkResourceLoadParameters::webFrameID):
+
+        Create a AuthenticationChallengeProxy pointing back to the NetworkProcess (instead of a WebProcess),
+        and send the challenge to the appropriate WebPageProxy:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
+        Refactor didReceiveAuthenticationChallenge so an outsider can directly hand over an AuthenticationChallengeProxy:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        * UIProcess/WebPageProxy.h:
+
+        Add a global WebPageID -> WebPageProxy map so parties with an ID don't need to know which process it belongs to:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::globalPageMap):
+        (WebKit::WebProcessProxy::webPage):
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously): Pass 0 for WebFrameID and WebPageID since synchronous
+          loads don't go through "normal" authentication channels and don't need them. Yet.
+
 2013-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13089261> Crash in WKSandboxExtensionGetSerializedFormat when opening Web Inspector

@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "AuthenticationChallengeProxy.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -38,6 +39,8 @@
 #if USE(SECURITY_FRAMEWORK)
 #include "SecItemShimProxy.h"
 #endif
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 using namespace WebCore;
 
@@ -163,6 +166,15 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::
 #else
     notImplemented();
 #endif
+}
+
+void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge& coreChallenge, uint64_t challengeID)
+{
+    WebPageProxy* page = WebProcessProxy::webPage(pageID);
+    MESSAGE_CHECK(page);
+
+    RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
+    page->didReceiveAuthenticationChallengeProxy(frameID, authenticationChallenge.release());
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
