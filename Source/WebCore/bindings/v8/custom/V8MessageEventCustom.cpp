@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
     }
 
     case MessageEvent::DataTypeSerializedScriptValue:
-        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
+        if (RefPtr<SerializedScriptValue> serializedValue = event->dataAsSerializedScriptValue())
             result = serializedValue->deserialize(info.GetIsolate(), event->ports());
         else
             result = v8Null(info.GetIsolate());
