@@ -142,6 +142,8 @@
           # Don't complain about using "this" in an initializer list
           # (e.g. in StringImpl.h).
           4355,
+          # Disable c4267 warnings until we fix size_t to int truncations.
+          4267,
         ],
       },
       'export_dependent_settings': [

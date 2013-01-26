@@ -1609,6 +1609,8 @@
 
         ['exclude', 'AllInOne\\.cpp$'],
       ],
+      # Disable c4267 warnings until we fix size_t to int truncations.
+      'msvs_disabled_warnings': [ 4267, ],
     },
     {
       'target_name': 'webcore_html',
@@ -1649,6 +1651,8 @@
       'dependencies': [
         'webcore_prerequisites',
       ],
+      # Disable c4267 warnings until we fix size_t to int truncations.
+      'msvs_disabled_warnings': [ 4267, 4334 ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,
@@ -2170,6 +2174,8 @@
           }
         }],
       ],
+      # Disable c4267 warnings until we fix size_t to int truncations.
+      'msvs_disabled_warnings': [ 4267, 4334, ],
     },
     {
       'target_name': 'webcore',
