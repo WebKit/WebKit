@@ -58,8 +58,12 @@ protected:
 };
 
 template<typename ChildProcessType, typename ChildProcessMainDelegateType>
-int ChildProcessMain(const CommandLine& commandLine)
+int ChildProcessMain(int argc, char** argv)
 {
+    CommandLine commandLine;
+    if (!commandLine.parse(argc, argv))
+        return EXIT_FAILURE;
+
     ChildProcessMainDelegateType delegate(commandLine);
 
     @autoreleasepool {

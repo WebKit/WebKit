@@ -37,11 +37,7 @@ extern "C" WK_EXPORT int NetworkProcessMain(int argc, char** argv);
 
 int NetworkProcessMain(int argc, char** argv)
 {
-    CommandLine commandLine;
-    if (!commandLine.parse(argc, argv))
-        return EXIT_FAILURE;
-
-    return ChildProcessMain<NetworkProcess, ChildProcessMainDelegate>(commandLine);
+    return ChildProcessMain<NetworkProcess, ChildProcessMainDelegate>(argc, argv);
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

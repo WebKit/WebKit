@@ -1,5 +1,23 @@
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
+        Hoist command line parsing into ChildProcessMain
+        https://bugs.webkit.org/show_bug.cgi?id=108010
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMain.mm:
+        (NetworkProcessMain):
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        (PluginProcessMain):
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.h:
+        (WebKit::ChildProcessMain):
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/SharedWorkerProcessMain.mm:
+        (SharedWorkerProcessMain):
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebContentProcessMain):
+
+2013-01-26  Sam Weinig  <sam@webkit.org>
+
         Move LegacyProcess entry points into new EntryPoint directories
         https://bugs.webkit.org/show_bug.cgi?id=108008
 

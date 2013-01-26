@@ -176,9 +176,5 @@ extern "C" WK_EXPORT int WebContentProcessMain(int argc, char** argv);
 
 int WebContentProcessMain(int argc, char** argv)
 {
-    CommandLine commandLine;
-    if (!commandLine.parse(argc, argv))
-        return EXIT_FAILURE;
-
-    return ChildProcessMain<WebProcess, WebContentProcessMainDelegate>(commandLine);
+    return ChildProcessMain<WebProcess, WebContentProcessMainDelegate>(argc, argv);
 }

@@ -37,11 +37,7 @@ extern "C" WK_EXPORT int SharedWorkerProcessMain(int argc, char** argv);
 
 int SharedWorkerProcessMain(int argc, char** argv)
 {
-    CommandLine commandLine;
-    if (!commandLine.parse(argc, argv))
-        return EXIT_FAILURE;
-
-    return ChildProcessMain<SharedWorkerProcess, ChildProcessMainDelegate>(commandLine);
+    return ChildProcessMain<SharedWorkerProcess, ChildProcessMainDelegate>(argc, argv);
 }
 
 #endif // ENABLE(SHARED_WORKER_PROCESS)

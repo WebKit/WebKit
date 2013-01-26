@@ -103,11 +103,7 @@ extern "C" WK_EXPORT int PluginProcessMain(int argc, char** argv);
 
 int PluginProcessMain(int argc, char** argv)
 {
-    CommandLine commandLine;
-    if (!commandLine.parse(argc, argv))
-        return EXIT_FAILURE;
-
-    return ChildProcessMain<PluginProcess, PluginProcessMainDelegate>(commandLine);
+    return ChildProcessMain<PluginProcess, PluginProcessMainDelegate>(argc, argv);
 }
 
 #endif // ENABLE(PLUGIN_PROCESS)
