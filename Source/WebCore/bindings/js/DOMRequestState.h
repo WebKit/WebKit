@@ -51,8 +51,10 @@ public:
             Document* document = static_cast<Document*>(m_scriptExecutionContext);
             m_exec = scriptStateFromPage(mainThreadNormalWorld(), document->page());
         } else {
+#if ENABLE(WORKERS)
             WorkerContext* workerContext = static_cast<WorkerContext*>(m_scriptExecutionContext);
             m_exec = scriptStateFromWorkerContext(workerContext);
+#endif
         }
     }
 
