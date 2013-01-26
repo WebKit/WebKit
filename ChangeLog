@@ -1,3 +1,17 @@
+2013-01-26  David Farler  <dfarler@apple.com>
+
+        Allow building with arbitrary SDK and ARCHS with make + Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=107863
+
+        Reviewed by David Kilzer.
+
+        * Makefile:
+        Removed references to legacy Xcode configurations.
+        * Makefile.shared:
+        Added default ARCHS + SDK settings and parameterized xcodebuild calls.
+        * Source/Makefile:
+        iOS does not build WebKit2.
+
 2013-01-25  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [CMake][EFL] Build ThirdParty/leveldb when IndexedDB is enabled

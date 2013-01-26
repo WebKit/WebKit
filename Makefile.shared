@@ -1,6 +1,18 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
+SDK = /
+
+ifneq (,$(findstring iphoneos,$(SDK)))
+	ARCHS = armv7
+else ifneq (,$(findstring iphonesimulator,$(SDK)))
+	ARCHS = i386
+else ifneq (,$(findstring macosx,$(SDK)))
+	ARCHS = x86_64
+else
+	ARCHS = x86_64
+endif
+
+ARCH_FLAGS=$(addprefix --arch ,$(ARCHS))
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 
@@ -14,18 +26,22 @@ OUTPUT_FILTER = $(SCRIPTS_PATH)/filter-build-webkit
 endif
 endif
 
+define xcode-options
+	 $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- --sdk $(SDK) $1 $(ARCH_FLAGS) $(ARGS))
+endef
+
 all:
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	xcodebuild $(OTHER_OPTIONS) $(call xcode-options,) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]}
 
-debug d development dev develop: force
+debug d: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --debug
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	xcodebuild $(OTHER_OPTIONS) $(call xcode-options, --configuration Debug) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]}
 
-release r deployment dep deploy: force
+release r: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	xcodebuild $(OTHER_OPTIONS) $(call xcode-options, --configuration Release) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]}
 
 clean:
-	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+	xcodebuild $(OTHER_OPTIONS) -alltargets clean $(call xcode-options,) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]}
 
 force: ;

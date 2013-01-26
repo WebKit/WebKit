@@ -80,6 +80,8 @@ my $numberOfCPUs;
 my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
+my $xcodeSDK;
+my $xcodeSDKVersion;
 my $configurationForVisualStudio;
 my $configurationProductDir;
 my $sourceDir;
@@ -273,6 +275,17 @@ sub setBaseProductDir($)
 sub determineConfiguration
 {
     return if defined $configuration;
+
+    # Look for explicit setting first
+    for (my $i = 0; $i <= $#ARGV; $i++) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--config(uration)$/) {
+            splice(@ARGV, $i, 1);
+            $configuration = splice(@ARGV, $i, 1);
+            return;
+        }
+    }
+
     determineBaseProductDir();
     if (open CONFIGURATION, "$baseProductDir/Configuration") {
         $configuration = <CONFIGURATION>;
@@ -301,6 +314,30 @@ sub determineArchitecture
     $architecture = "";
 
     determineBaseProductDir();
+
+    # Look for explicit setting first
+    my @explicitArchs;
+    for (my $i = 0; $i <= $#ARGV; $i++) {
+        my $opt = $ARGV[$i];
+
+        if ($opt =~ /^--arch(itecture)?$/) {
+            splice(@ARGV, $i, 1);
+            push @explicitArchs, splice(@ARGV, $i--, 1);
+        } elsif ($opt =~ /^ARCHS=(.*)$/) {
+            push @explicitArchs, split(/\w/, $1);
+            splice(@ARGV, $i--, 1);
+        }
+    }
+
+    # Make explicit arch settings forgiving – remove duplicate settings
+    # and allow for specifying architectures with both --arch and appending
+    # Xcode-style ARCHS=(.*)
+    @explicitArchs = sort keys %{{ map { $_ => 1 } @explicitArchs }};
+
+    if (scalar(@explicitArchs)) {
+        $architecture = join(' ', @explicitArchs) if @explicitArchs;
+        return;
+    }
 
     if (isGtk()) {
         determineConfigurationProductDir();
@@ -383,6 +420,7 @@ sub argumentsForConfiguration()
     push(@args, '--debug') if $configuration eq "Debug";
     push(@args, '--release') if $configuration eq "Release";
     push(@args, '--32-bit') if $architecture ne "x86_64";
+    push(@args, '--sdk', $xcodeSDK) if defined $xcodeSDK;
     push(@args, '--qt') if isQt();
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
@@ -394,6 +432,33 @@ sub argumentsForConfiguration()
     push(@args, '--chromium-android') if isChromiumAndroid();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
     return @args;
+}
+
+sub determineXcodeSDK
+{
+    return if defined $xcodeSDK;
+    for (my $i = 0; $i <= $#ARGV; $i++) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--sdk$/i) {
+            splice(@ARGV, $i, 1);
+            $xcodeSDK = splice(@ARGV, $i, 1);
+        } elsif ($opt =~ /^--device$/i) {
+            splice(@ARGV, $i, 1);
+            $xcodeSDK = 'iphoneos.internal';
+        } elsif ($opt =~ /^--sim(ulator)?/i) {
+            splice(@ARGV, $i, 1);
+            $xcodeSDK = 'iphonesimulator';
+        }
+    }
+    $xcodeSDK ||= '/';
+
+    chomp $xcodeSDK;
+}
+
+sub xcodeSDK
+{
+    determineXcodeSDK();
+    return $xcodeSDK;
 }
 
 sub determineConfigurationForVisualStudio
@@ -520,7 +585,9 @@ sub XcodeOptions
     determineBaseProductDir();
     determineConfiguration();
     determineArchitecture();
-    return (@baseProductDirOption, "-configuration", $configuration, "ARCHS=$architecture", argumentsForXcode());
+    determineXcodeSDK();
+    my @archFlags = map { ('-arch', $_) } split(/ /, $architecture);
+    return (@baseProductDirOption, "-configuration", $configuration, "-sdk", $xcodeSDK, @archFlags, argumentsForXcode());
 }
 
 sub XcodeOptionString
