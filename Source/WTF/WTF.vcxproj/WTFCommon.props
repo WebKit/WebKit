@@ -17,7 +17,7 @@
     </ClCompile>
     <Lib>
       <AdditionalDependencies>user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).lib</OutputFile>
+      <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <UseUnicodeResponseFiles>true</UseUnicodeResponseFiles>
       <SubSystem>Windows</SubSystem>

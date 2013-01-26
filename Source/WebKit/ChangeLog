@@ -1,3 +1,9 @@
+2013-01-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rename LLInt projects folder and make appropriate changes to solutions.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2013-01-23  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add svn:eol-style to solution file, not eol-style.

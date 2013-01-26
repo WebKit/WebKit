@@ -1,3 +1,27 @@
+2013-01-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rename LLInt projects folder and make appropriate changes to solutions.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcxproj/LLInt: Copied from JavaScriptCore.vcxproj/LLInt.vcproj.
+        * JavaScriptCore.vcxproj/LLInt.vcproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.make: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/LLIntAssembly.vcxproj.user: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntAssembly/build-LLIntAssembly.sh: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.make: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj.user: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj.user: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props: Removed.
+        * JavaScriptCore.vcxproj/LLInt.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props: Removed.
+
 2013-01-24  Roger Fong  <roger_fong@apple.com>
 
         VS2010 JavascriptCore: Clean up property sheets, add a JSC solution, add testRegExp and testAPI projects.
