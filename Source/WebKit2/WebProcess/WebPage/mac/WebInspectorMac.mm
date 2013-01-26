@@ -50,16 +50,24 @@ static bool inspectorReallyUsesWebKitUserInterface(bool preference)
 
 void WebInspector::setInspectorUsesWebKitUserInterface(bool flag)
 {
-    NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(flag) ? @"com.apple.WebCore" : @"com.apple.WebInspector";
-    NSString *path = [[NSBundle bundleWithIdentifier:bundleIdentifier] pathForResource:@"localizedStrings" ofType:@"js"];
-    if ([path length])
-        m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];
-    else
-        m_localizedStringsURL = String();
+    if (m_usesWebKitUserInterface == flag)
+        return;
+
+    m_usesWebKitUserInterface = flag;
+    m_hasLocalizedStringsURL = false;
 }
 
 String WebInspector::localizedStringsURL() const
 {
+    if (!m_hasLocalizedStringsURL) {
+        NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(m_usesWebKitUserInterface) ? @"com.apple.WebCore" : @"com.apple.WebInspector";
+        NSString *path = [[NSBundle bundleWithIdentifier:bundleIdentifier] pathForResource:@"localizedStrings" ofType:@"js"];
+        if ([path length])
+            m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];
+        else
+            m_localizedStringsURL = String();
+        m_hasLocalizedStringsURL = true;
+    }
     return m_localizedStringsURL;
 }
 

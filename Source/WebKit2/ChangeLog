@@ -1,3 +1,22 @@
+2013-01-25  Andreas Kling  <akling@apple.com>
+
+        [Mac] Defer loading the Web Inspector bundle until it's necessary.
+        <http://webkit.org/b/107999>
+        <rdar://problem/13091861>
+
+        Reviewed by Anders Carlsson.
+
+        Don't instantiate an NSBundle for the Web Inspector before it's needed.
+        1.51MB progression on Membuster3.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::WebInspector):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::WebInspector::setInspectorUsesWebKitUserInterface):
+        (WebKit::WebInspector::localizedStringsURL):
+
 2013-01-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Fix build break after r140891.
