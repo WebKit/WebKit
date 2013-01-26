@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,67 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CommandLine.h"
-
-#include "PluginProcessMain.h"
-#include "ProcessLauncher.h"
-#include "WebProcessMain.h"
-#include <wtf/text/CString.h>
+#import "config.h"
 
 #if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessMain.h"
-#endif
 
-#if ENABLE(SHARED_WORKER_PROCESS)
-#include "SharedWorkerProcessMain.h"
-#endif
-
-#if PLATFORM(MAC)
-#include <objc/objc-auto.h>
-#endif
+#import "ChildProcessMain.h"
+#import "NetworkProcess.h"
+#import "WKBase.h"
 
 using namespace WebKit;
 
-static int WebKitMain(const CommandLine& commandLine)
+extern "C" WK_EXPORT int NetworkProcessMain(int argc, char** argv);
+
+int NetworkProcessMain(int argc, char** argv)
 {
-    ProcessLauncher::ProcessType processType;    
-    if (!ProcessLauncher::getProcessTypeFromString(commandLine["type"].utf8().data(), processType))
-        return EXIT_FAILURE;
-
-    switch (processType) {
-        case ProcessLauncher::WebProcess:
-            return WebProcessMain(commandLine);
-#if ENABLE(PLUGIN_PROCESS)
-        case ProcessLauncher::PluginProcess:
-            return PluginProcessMain(commandLine);
-#endif
-#if ENABLE(NETWORK_PROCESS)
-        case ProcessLauncher::NetworkProcess:
-            return NetworkProcessMain(commandLine);
-#endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-        case ProcessLauncher::SharedWorkerProcess:
-            return SharedWorkerProcessMain(commandLine);
-#endif
-    }
-
-    return EXIT_FAILURE;
-}
-
-#if PLATFORM(MAC)
-
-extern "C" WK_EXPORT int WebKitMain(int argc, char** argv);
-
-int WebKitMain(int argc, char** argv)
-{
-    ASSERT(!objc_collectingEnabled());
-    
     CommandLine commandLine;
     if (!commandLine.parse(argc, argv))
         return EXIT_FAILURE;
-    
-    return WebKitMain(commandLine);
+
+    return ChildProcessMain<NetworkProcess, ChildProcessMainDelegate>(commandLine);
 }
 
-#endif
+#endif // ENABLE(NETWORK_PROCESS)

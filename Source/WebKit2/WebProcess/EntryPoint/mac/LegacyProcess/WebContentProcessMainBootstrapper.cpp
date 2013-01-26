@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SharedWorkerProcessMain_h
-#define SharedWorkerProcessMain_h
+#include "ChildProcessMainBootstrapper.h"
 
-namespace WebKit {
-    
-class CommandLine;
-
-int SharedWorkerProcessMain(const CommandLine&);
-    
-} // namespace WebKit
-
-#endif // SharedWorkerProcessMain_h
+int main(int argc, char** argv)
+{
+    WebKitMainFunction mainFunction = getBootstrapMainFunction(argc, argv, "WebContentProcessMain");
+    return mainFunction(argc, argv);
+}

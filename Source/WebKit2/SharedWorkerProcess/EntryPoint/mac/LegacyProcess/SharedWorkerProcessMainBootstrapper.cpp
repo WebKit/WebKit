@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NetworkProcessMain.h"
+#include "ChildProcessMainBootstrapper.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
-#import "ChildProcessMain.h"
-#import "NetworkProcess.h"
-
-namespace WebKit {
-
-int NetworkProcessMain(const CommandLine& commandLine)
+int main(int argc, char** argv)
 {
-    return ChildProcessMain<NetworkProcess, ChildProcessMainDelegate>(commandLine);
+    WebKitMainFunction mainFunction = getBootstrapMainFunction(argc, argv, "SharedWorkerProcessMain");
+    return mainFunction(argc, argv);
 }
-
-} // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

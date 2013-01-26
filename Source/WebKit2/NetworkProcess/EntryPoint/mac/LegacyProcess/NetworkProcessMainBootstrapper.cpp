@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessMain_h
-#define PluginProcessMain_h
+#include "ChildProcessMainBootstrapper.h"
 
-#if ENABLE(PLUGIN_PROCESS)
-
-namespace WebKit {
-    
-class CommandLine;
-
-int PluginProcessMain(const CommandLine&);
-    
-} // namespace WebKit
-
-#endif // ENABLE(PLUGIN_PROCESS)
-
-#endif // PluginProcessMain_h
+int main(int argc, char** argv)
+{
+    WebKitMainFunction mainFunction = getBootstrapMainFunction(argc, argv, "NetworkProcessMain");
+    return mainFunction(argc, argv);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef ChildProcessMainBootstrapper_h
+#define ChildProcessMainBootstrapper_h
+
 #include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,25 +48,28 @@ static void closeUnusedFileDescriptors()
     }
 }
 
-int main(int argc, char** argv)
+typedef int (*WebKitMainFunction)(int argc, char** argv);
+
+static WebKitMainFunction getBootstrapMainFunction(int argc, char** argv, const char* processMainName)
 {
     closeUnusedFileDescriptors();
 
     if (argc < 2)
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
 
     static void* frameworkLibrary = dlopen(argv[1], RTLD_NOW);
     if (!frameworkLibrary) {
         fprintf(stderr, "Unable to load WebKit2.framework: %s\n", dlerror());
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
-    typedef int (*WebKitMainFunction)(int argc, char** argv);
-    WebKitMainFunction webKitMain = reinterpret_cast<WebKitMainFunction>(dlsym(frameworkLibrary, "WebKitMain"));
+    WebKitMainFunction webKitMain = reinterpret_cast<WebKitMainFunction>(dlsym(frameworkLibrary, processMainName));
     if (!webKitMain) {
-        fprintf(stderr, "Unable to find entry point in WebKit2.framework: %s\n", dlerror());
-        return EXIT_FAILURE;
+        fprintf(stderr, "Unable to find entry point '%s' in WebKit2.framework: %s\n", processMainName, dlerror());
+        exit(EXIT_FAILURE);
     }
 
-    return webKitMain(argc, argv);
+    return webKitMain;
 }
+
+#endif // ChildProcessMainBootstrapper_h

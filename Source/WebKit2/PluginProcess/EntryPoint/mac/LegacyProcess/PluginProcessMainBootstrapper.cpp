@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "SharedWorkerProcessMain.h"
+#include "ChildProcessMainBootstrapper.h"
 
-#if ENABLE(SHARED_WORKER_PROCESS)
-
-#import "ChildProcessMain.h"
-#import "SharedWorkerProcess.h"
-
-namespace WebKit {
-
-int SharedWorkerProcessMain(const CommandLine& commandLine)
+int main(int argc, char** argv)
 {
-    return ChildProcessMain<SharedWorkerProcess, ChildProcessMainDelegate>(commandLine);
+    WebKitMainFunction mainFunction = getBootstrapMainFunction(argc, argv, "PluginProcessMain");
+    return mainFunction(argc, argv);
 }
-
-} // namespace WebKit
-
-#endif // ENABLE(SHARED_WORKER_PROCESS)

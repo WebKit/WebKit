@@ -24,13 +24,12 @@
  */
 
 #import "config.h"
-#import "WebProcessMain.h"
 
 #import "ChildProcessMain.h"
-#import "CommandLine.h"
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
 #import "StringUtilities.h"
+#import "WKBase.h"
 #import "WebProcess.h"
 #import <WebCore/RunLoop.h>
 #import <mach/mach_error.h>
@@ -53,9 +52,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class WebProcessMainDelegate : public ChildProcessMainDelegate {
+class WebContentProcessMainDelegate : public ChildProcessMainDelegate {
 public:
-    WebProcessMainDelegate(const CommandLine& commandLine)
+    WebContentProcessMainDelegate(const CommandLine& commandLine)
         : ChildProcessMainDelegate(commandLine)
     {
     }
@@ -169,10 +168,17 @@ public:
     }
 };
 
-int WebProcessMain(const CommandLine& commandLine)
-{
-    return ChildProcessMain<WebProcess, WebProcessMainDelegate>(commandLine);
-}
-
 } // namespace WebKit
 
+using namespace WebKit;
+
+extern "C" WK_EXPORT int WebContentProcessMain(int argc, char** argv);
+
+int WebContentProcessMain(int argc, char** argv)
+{
+    CommandLine commandLine;
+    if (!commandLine.parse(argc, argv))
+        return EXIT_FAILURE;
+
+    return ChildProcessMain<WebProcess, WebContentProcessMainDelegate>(commandLine);
+}

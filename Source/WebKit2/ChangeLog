@@ -1,3 +1,75 @@
+2013-01-26  Sam Weinig  <sam@webkit.org>
+
+        Move LegacyProcess entry points into new EntryPoint directories
+        https://bugs.webkit.org/show_bug.cgi?id=108008
+
+        Reviewed by Anders Carlsson.
+
+        Also refactors to remove the need for the overly general WebKitMain, by putting the
+        framework lazy loading into a helper function each legacy process can call (in ChildProcessMainBootstrapper.h)
+
+        * Configurations/NetworkProcess.xcconfig:
+        * Configurations/PluginProcess.xcconfig:
+        * Configurations/SharedWorkerProcess.xcconfig:
+        * Configurations/WebProcess.xcconfig:
+        * NetworkProcess/EntryPoint: Added.
+        * NetworkProcess/EntryPoint/mac: Added.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess: Added.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist: Copied from Source/WebKit2/NetworkProcess/Info.plist.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMain.mm: Copied from Source/WebKit2/NetworkProcess/mac/NetworkProcessMainMac.mm.
+        (NetworkProcessMain):
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMainBootstrapper.cpp: Added.
+        (main):
+        * NetworkProcess/Info.plist: Removed.
+        * NetworkProcess/NetworkProcessMain.h: Removed.
+        * NetworkProcess/mac/NetworkProcessMainMac.mm: Removed.
+        * PluginProcess/EntryPoint: Added.
+        * PluginProcess/EntryPoint/mac: Added.
+        * PluginProcess/EntryPoint/mac/LegacyProcess: Added.
+        * PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist: Copied from Source/WebKit2/PluginProcess/Info.plist.
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm: Copied from Source/WebKit2/PluginProcess/mac/PluginProcessMainMac.mm.
+        (PluginProcessMain):
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMainBootstrapper.cpp: Added.
+        (main):
+        * PluginProcess/Info.plist: Removed.
+        * PluginProcess/PluginProcessMain.h: Removed.
+        * PluginProcess/mac/PluginProcessMainMac.mm: Removed.
+        * Shared/EntryPointUtilities: Added.
+        * Shared/EntryPointUtilities/mac: Added.
+        * Shared/EntryPointUtilities/mac/LegacyProcess: Added.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.h: Copied from Source/WebKit2/Shared/mac/ChildProcessMain.h.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm: Copied from Source/WebKit2/Shared/mac/ChildProcessMain.mm.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMainBootstrapper.h: Added.
+        (closeUnusedFileDescriptors):
+        (getBootstrapMainFunction):
+        * Shared/EntryPointUtilities/mac/XPCService: Added.
+        * Shared/mac/ChildProcessMain.h: Removed.
+        * Shared/mac/ChildProcessMain.mm: Removed.
+        * SharedWorkerProcess/EntryPoint: Added.
+        * SharedWorkerProcess/EntryPoint/mac: Added.
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess: Added.
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/Info.plist: Copied from Source/WebKit2/SharedWorkerProcess/Info.plist.
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/SharedWorkerProcessMain.mm: Copied from Source/WebKit2/SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm.
+        (SharedWorkerProcessMain):
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/SharedWorkerProcessMainBootstrapper.cpp: Added.
+        (main):
+        * SharedWorkerProcess/Info.plist: Removed.
+        * SharedWorkerProcess/SharedWorkerProcessMain.h: Removed.
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist: Copied from Source/WebKit2/WebProcess/Info.plist.
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm: Copied from Source/WebKit2/WebProcess/mac/WebProcessMainMac.mm.
+        (WebKit::WebContentProcessMainDelegate::WebContentProcessMainDelegate):
+        (WebKit):
+        (WebContentProcessMain):
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMainBootstrapper.cpp: Added.
+        (main):
+        * WebProcess/Info.plist: Removed.
+        * WebProcess/WebKitMain.cpp: Removed.
+        * WebProcess/WebProcessMain.h: Removed.
+        * WebProcess/mac/WebProcessMainMac.mm: Removed.
+        * mac/MainMacProcess.cpp: Removed.
+
 2013-01-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_database_manager and ewk_storage_manager

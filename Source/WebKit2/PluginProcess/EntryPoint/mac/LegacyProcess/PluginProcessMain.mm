@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "PluginProcessMain.h"
 
 #if ENABLE(PLUGIN_PROCESS)
 
@@ -32,6 +31,7 @@
 #import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
+#import "WKBase.h"
 #import <WebCore/RunLoop.h>
 
 #if USE(APPKIT)
@@ -95,11 +95,19 @@ public:
     }
 };
 
-int PluginProcessMain(const CommandLine& commandLine)
-{
-    return ChildProcessMain<PluginProcess, PluginProcessMainDelegate>(commandLine);
-}
+} // namespace WebKit
 
+using namespace WebKit;
+
+extern "C" WK_EXPORT int PluginProcessMain(int argc, char** argv);
+
+int PluginProcessMain(int argc, char** argv)
+{
+    CommandLine commandLine;
+    if (!commandLine.parse(argc, argv))
+        return EXIT_FAILURE;
+
+    return ChildProcessMain<PluginProcess, PluginProcessMainDelegate>(commandLine);
 }
 
 #endif // ENABLE(PLUGIN_PROCESS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMain_h
-#define WebProcessMain_h
+#import "config.h"
 
-#include "WKBase.h"
+#if ENABLE(SHARED_WORKER_PROCESS)
 
-namespace WebKit {
+#import "ChildProcessMain.h"
+#import "SharedWorkerProcess.h"
+#import "WKBase.h"
 
-class CommandLine;
+using namespace WebKit;
 
-int WebProcessMain(const CommandLine&);
+extern "C" WK_EXPORT int SharedWorkerProcessMain(int argc, char** argv);
 
-} // namespace WebKit
+int SharedWorkerProcessMain(int argc, char** argv)
+{
+    CommandLine commandLine;
+    if (!commandLine.parse(argc, argv))
+        return EXIT_FAILURE;
 
-#endif // WebProcessMain_h
+    return ChildProcessMain<SharedWorkerProcess, ChildProcessMainDelegate>(commandLine);
+}
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)
