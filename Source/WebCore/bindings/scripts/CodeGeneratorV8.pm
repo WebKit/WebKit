@@ -379,7 +379,7 @@ END
 
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, <<END);
-    static v8::Persistent<v8::ObjectTemplate> GetShadowObjectTemplate();
+    static v8::Persistent<v8::ObjectTemplate> GetShadowObjectTemplate(v8::Isolate*);
 END
     }
 
@@ -780,7 +780,7 @@ sub GenerateDomainSafeFunctionGetter
     my $v8InterfaceName = "V8" . $interfaceName;
     my $funcName = $function->signature->name;
 
-    my $signature = "v8::Signature::New(" . $v8InterfaceName . "::GetRawTemplate())";
+    my $signature = "v8::Signature::New(" . $v8InterfaceName . "::GetRawTemplate(info.GetIsolate()))";
     if ($function->signature->extendedAttributes->{"V8DoNotCheckSignature"}) {
         $signature = "v8::Local<v8::Signature>()";
     }
@@ -2897,7 +2897,7 @@ END
     # configuration method.
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, <<END);
-static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Persistent<v8::ObjectTemplate> templ)
+static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Persistent<v8::ObjectTemplate> templ, v8::Isolate* isolate)
 {
     V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
 
@@ -2915,7 +2915,7 @@ END
 
     # Generate the template configuration method
     push(@implContent,  <<END);
-static v8::Persistent<v8::FunctionTemplate> Configure${v8InterfaceName}Template(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> Configure${v8InterfaceName}Template(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -3094,7 +3094,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        Configure${v8InterfaceName}Template(GetRawTemplate());
+        Configure${v8InterfaceName}Template(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }
@@ -3194,12 +3194,12 @@ END
 
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, <<END);
-v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate()
+v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate(v8::Isolate* isolate)
 {
     static v8::Persistent<v8::ObjectTemplate> V8DOMWindowShadowObjectCache;
     if (V8DOMWindowShadowObjectCache.IsEmpty()) {
         V8DOMWindowShadowObjectCache = v8::Persistent<v8::ObjectTemplate>::New(v8::ObjectTemplate::New());
-        ConfigureShadowObjectTemplate(V8DOMWindowShadowObjectCache);
+        ConfigureShadowObjectTemplate(V8DOMWindowShadowObjectCache, isolate);
     }
     return V8DOMWindowShadowObjectCache;
 }
@@ -3901,7 +3901,7 @@ sub CreateCustomSignature
                 } else {
                     AddToImplIncludes(GetV8HeaderName($type));
                 }
-                $result .= "V8${type}::GetRawTemplate()";
+                $result .= "V8${type}::GetRawTemplate(isolate)";
             }
         } else {
             $result .= "v8::Handle<v8::FunctionTemplate>()";

@@ -113,7 +113,7 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8
     return throwTypeError(0, args.GetIsolate());
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestOverloadedConstructorsTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestOverloadedConstructorsTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -156,7 +156,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestOverloadedConstructors::GetTemplate(v
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestOverloadedConstructorsTemplate(GetRawTemplate());
+        ConfigureV8TestOverloadedConstructorsTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

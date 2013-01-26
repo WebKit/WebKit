@@ -107,7 +107,7 @@ static const V8DOMConfiguration::BatchedCallback V8TestEventTargetCallbacks[] = 
     {"removeEventListener", TestEventTargetV8Internal::removeEventListenerCallback},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -127,7 +127,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
 
     // Custom Signature 'dispatchEvent'
     const int dispatchEventArgc = 1;
-    v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate() };
+    v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> dispatchEventSignature = v8::Signature::New(desc, dispatchEventArgc, dispatchEventArgv);
     proto->Set(v8::String::NewSymbol("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8Undefined(), dispatchEventSignature));
 
@@ -162,7 +162,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestEventTarget::GetTemplate(v8::Isolate*
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestEventTargetTemplate(GetRawTemplate());
+        ConfigureV8TestEventTargetTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

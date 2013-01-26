@@ -82,7 +82,7 @@ v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& a
     return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &info, v8::kExternalDoubleArray);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -100,7 +100,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
 
     // Custom Signature 'foo'
     const int fooArgc = 1;
-    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate() };
+    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
     proto->Set(v8::String::NewSymbol("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooCallback, v8Undefined(), fooSignature));
 
@@ -135,7 +135,7 @@ v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetTemplate(v8::Isolate* is
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8Float64ArrayTemplate(GetRawTemplate());
+        ConfigureV8Float64ArrayTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

@@ -50,7 +50,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestExceptionAttrs[] = {
     {"name", TestExceptionV8Internal::nameAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -92,7 +92,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestException::GetTemplate(v8::Isolate* i
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestExceptionTemplate(GetRawTemplate());
+        ConfigureV8TestExceptionTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

@@ -55,7 +55,7 @@ static const V8DOMConfiguration::BatchedCallback V8TestMediaQueryListListenerCal
     {"method", TestMediaQueryListListenerV8Internal::methodCallback},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -101,7 +101,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetTemplate(v
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestMediaQueryListListenerTemplate(GetRawTemplate());
+        ConfigureV8TestMediaQueryListListenerTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

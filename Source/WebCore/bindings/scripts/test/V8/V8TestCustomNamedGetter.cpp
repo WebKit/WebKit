@@ -54,7 +54,7 @@ static const V8DOMConfiguration::BatchedCallback V8TestCustomNamedGetterCallback
     {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionCallback},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -101,7 +101,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestCustomNamedGetter::GetTemplate(v8::Is
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestCustomNamedGetterTemplate(GetRawTemplate());
+        ConfigureV8TestCustomNamedGetterTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

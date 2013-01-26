@@ -276,7 +276,7 @@ void V8DOMWindowShell::createContext()
 
     // Create a new environment using an empty template for the shadow
     // object. Reuse the global object if one has been created earlier.
-    v8::Persistent<v8::ObjectTemplate> globalTemplate = V8DOMWindow::GetShadowObjectTemplate();
+    v8::Persistent<v8::ObjectTemplate> globalTemplate = V8DOMWindow::GetShadowObjectTemplate(m_isolate);
     if (globalTemplate.IsEmpty())
         return;
 

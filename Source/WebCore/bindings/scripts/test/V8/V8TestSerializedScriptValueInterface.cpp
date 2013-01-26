@@ -227,7 +227,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     return wrapper;
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -274,7 +274,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetTe
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestSerializedScriptValueInterfaceTemplate(GetRawTemplate());
+        ConfigureV8TestSerializedScriptValueInterfaceTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

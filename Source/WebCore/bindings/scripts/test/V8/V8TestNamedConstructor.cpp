@@ -95,7 +95,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTempl
     return cachedTemplate;
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -137,7 +137,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate(v8::Iso
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestNamedConstructorTemplate(GetRawTemplate());
+        ConfigureV8TestNamedConstructorTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

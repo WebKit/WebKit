@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8TestNode::constructorCallback(const v8::Arguments& args)
     return wrapper;
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNodeTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNodeTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -99,7 +99,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNode::GetTemplate(v8::Isolate* isolat
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestNodeTemplate(GetRawTemplate());
+        ConfigureV8TestNodeTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }

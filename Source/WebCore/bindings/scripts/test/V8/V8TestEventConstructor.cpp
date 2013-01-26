@@ -90,7 +90,7 @@ bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dic
     return true;
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
 {
     desc->ReadOnlyPrototype();
 
@@ -133,7 +133,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestEventConstructor::GetTemplate(v8::Iso
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestEventConstructorTemplate(GetRawTemplate());
+        ConfigureV8TestEventConstructorTemplate(GetRawTemplate(isolate), isolate);
     data->templateMap().add(&info, templ);
     return templ;
 }
