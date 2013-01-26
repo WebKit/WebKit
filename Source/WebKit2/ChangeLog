@@ -1,3 +1,13 @@
+2013-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Don't crash when the WKBundlePageUIClient doesn't implement createPlugInExtraStyleSheet.
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::plugInExtraStyleSheet): Check that createPlugInExtraStyleSheet
+        is provided before calling it.
+
 2013-01-25  Andy Estes  <aestes@apple.com>
 
         Wrap content filtering code in an object

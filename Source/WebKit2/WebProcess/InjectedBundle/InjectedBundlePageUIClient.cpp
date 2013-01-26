@@ -195,6 +195,9 @@ String InjectedBundlePageUIClient::plugInStartLabelSubtitle() const
 
 String InjectedBundlePageUIClient::plugInExtraStyleSheet() const
 {
+    if (!m_client.createPlugInExtraStyleSheet)
+        return String();
+
     RefPtr<WebString> styleSheet = adoptRef(toImpl(m_client.createPlugInExtraStyleSheet(m_client.clientInfo)));
     return styleSheet ? styleSheet->string() : String();
 }
