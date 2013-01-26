@@ -43,6 +43,20 @@ public:
     {
     }
 
+    void growUsedBreadth(LayoutUnit growth)
+    {
+        ASSERT(growth >= 0);
+        m_usedBreadth += growth;
+    }
+    LayoutUnit usedBreadth() const { return m_usedBreadth; }
+
+    void growMaxBreadth(LayoutUnit growth)
+    {
+        if (m_maxBreadth == infinity)
+            m_maxBreadth = m_usedBreadth + growth;
+        else
+            m_maxBreadth += growth;
+    }
     LayoutUnit maxBreadthIfNotInfinite() const
     {
         return (m_maxBreadth == infinity) ? m_usedBreadth : m_maxBreadth;
@@ -272,65 +286,43 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection di
         GridTrack& track = tracks[i];
         const Length& minTrackBreadth = trackStyles[i].minTrackBreadth();
         if (minTrackBreadth.isMinContent() || minTrackBreadth.isMaxContent()) {
-            // FIXME: The specification factors this logic into resolveContentBasedTrackSizingFunctionsForItems
-            // to reuse code between the branches and also calls distributeSpaceToTracks.
-            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                size_t cellIndex = resolveGridPosition(direction, child);
-                if (cellIndex != i)
-                    continue;
-
-                LayoutUnit additionalBreadthSpace = minContentForChild(child, direction, columnTracks) - track.m_usedBreadth;
-                ASSERT(additionalBreadthSpace >= 0);
-                track.m_usedBreadth += additionalBreadthSpace;
-                availableLogicalSpace -= additionalBreadthSpace;
-            }
+            LayoutUnit oldUsedBreadth = track.m_usedBreadth;
+            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::minContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
+            availableLogicalSpace -= (track.m_usedBreadth - oldUsedBreadth);
         }
-        if (minTrackBreadth.isMaxContent()) {
-            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                size_t cellIndex = resolveGridPosition((direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow());
-                if (cellIndex != i)
-                    continue;
 
-                LayoutUnit additionalBreadthSpace = maxContentForChild(child, direction, columnTracks) - track.m_usedBreadth;
-                ASSERT(additionalBreadthSpace >= 0);
-                track.m_usedBreadth += additionalBreadthSpace;
-                availableLogicalSpace -= additionalBreadthSpace;
-            }
+        if (minTrackBreadth.isMaxContent()) {
+            LayoutUnit oldUsedBreadth = track.m_usedBreadth;
+            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::maxContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
+            availableLogicalSpace -= (track.m_usedBreadth - oldUsedBreadth);
         }
 
         const Length& maxTrackBreadth = trackStyles[i].maxTrackBreadth();
-        if (maxTrackBreadth.isMinContent() || maxTrackBreadth.isMaxContent()) {
-            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                size_t cellIndex = resolveGridPosition(direction, child);
-                if (cellIndex != i)
-                    continue;
+        if (maxTrackBreadth.isMinContent() || maxTrackBreadth.isMaxContent())
+            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::minContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
 
-                LayoutUnit additionalBreadthSpace = minContentForChild(child, direction, columnTracks) - track.maxBreadthIfNotInfinite();
-                LayoutUnit share = std::min(additionalBreadthSpace, tracks[i].m_maxBreadth - track.maxBreadthIfNotInfinite());
-                if (track.m_maxBreadth == infinity)
-                    track.m_maxBreadth = track.m_usedBreadth + share;
-                else
-                    track.m_maxBreadth += share;
-            }
-        }
-
-        if (maxTrackBreadth.isMaxContent()) {
-            for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                size_t cellIndex = resolveGridPosition((direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow());
-                if (cellIndex != i)
-                    continue;
-
-                LayoutUnit additionalBreadthSpace = maxContentForChild(child, direction, columnTracks) - track.maxBreadthIfNotInfinite();
-                LayoutUnit share = std::min(additionalBreadthSpace, tracks[i].m_maxBreadth - track.maxBreadthIfNotInfinite());
-                if (track.m_maxBreadth == infinity)
-                    track.m_maxBreadth = track.m_usedBreadth + share;
-                else
-                    track.m_maxBreadth += share;
-            }
-        }
+        if (maxTrackBreadth.isMaxContent())
+            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::maxContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
     }
 
     // FIXME: The spec says to update maxBreadth if it is Infinity.
+}
+
+void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, size_t i, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
+{
+    // FIXME: The specification re-uses distributeSpaceToTrack, which we should probably do.
+    GridTrack& track = (direction == ForColumns) ? columnTracks[i] : rowTracks[i];
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        size_t cellIndex = resolveGridPosition(direction, child);
+        if (cellIndex != i)
+            continue;
+
+        LayoutUnit contentSize = (this->*sizingFunction)(child, direction, columnTracks);
+        LayoutUnit additionalBreadthSpace = contentSize - (track.*trackGetter)();
+        LayoutUnit share = additionalBreadthSpace;
+        std::min(additionalBreadthSpace, track.m_maxBreadth - (track.*trackGetter)());
+        (track.*trackGrowthFunction)(share);
+    }
 }
 
 void RenderGrid::distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>& tracks, LayoutUnit availableLogicalSpace)

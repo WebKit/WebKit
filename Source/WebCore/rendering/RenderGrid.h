@@ -57,6 +57,11 @@ private:
     void distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>&, LayoutUnit availableLogicalSpace);
     void layoutGridItems();
 
+    typedef LayoutUnit (RenderGrid::* SizingFunction)(RenderBox*, TrackSizingDirection, Vector<GridTrack>&);
+    typedef LayoutUnit (GridTrack::* AccumulatorGetter)() const;
+    typedef void (GridTrack::* AccumulatorGrowFunction)(LayoutUnit);
+    void resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, size_t, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction);
+
     LayoutUnit minContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);
