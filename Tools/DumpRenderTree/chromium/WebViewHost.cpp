@@ -688,27 +688,6 @@ void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
         ds->setDeferMainResourceDataLoad(false);
 }
 
-void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
-{
-    if (!m_topLoadingFrame)
-        m_topLoadingFrame = frame;
-
-    updateAddressBar(frame->view());
-}
-
-void WebViewHost::didReceiveServerRedirectForProvisionalLoad(WebFrame* frame)
-{
-    updateAddressBar(frame->view());
-}
-
-void WebViewHost::didFailProvisionalLoad(WebFrame* frame, const WebURLError& error)
-{
-    locationChangeDone(frame);
-
-    // Don't display an error page if we're running layout tests, because
-    // DumpRenderTree doesn't.
-}
-
 void WebViewHost::didCommitProvisionalLoad(WebFrame* frame, bool isNewNavigation)
 {
     updateForCommittedLoad(frame, isNewNavigation);
@@ -722,17 +701,6 @@ void WebViewHost::didClearWindowObject(WebFrame* frame)
 void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
 {
     setPageTitle(title);
-}
-
-void WebViewHost::didFailLoad(WebFrame* frame, const WebURLError& error)
-{
-    locationChangeDone(frame);
-}
-
-void WebViewHost::didFinishLoad(WebFrame* frame)
-{
-    updateAddressBar(frame->view());
-    locationChangeDone(frame);
 }
 
 void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
@@ -1154,7 +1122,6 @@ void WebViewHost::reset()
     m_policyDelegateEnabled = false;
     m_policyDelegateIsPermissive = false;
     m_policyDelegateShouldNotifyDone = false;
-    m_topLoadingFrame = 0;
     m_pageId = -1;
     m_lastPageIdUpdated = -1;
     m_hasWindow = false;
@@ -1288,26 +1255,6 @@ DRTTestRunner* WebViewHost::testRunner() const
     return m_shell->testRunner();
 }
 
-void WebViewHost::updateAddressBar(WebView* webView)
-{
-    WebFrame* mainFrame = webView->mainFrame();
-    WebDataSource* dataSource = mainFrame->dataSource();
-    if (!dataSource)
-        dataSource = mainFrame->provisionalDataSource();
-    if (!dataSource)
-        return;
-
-    setAddressBarURL(dataSource->request().url());
-}
-
-void WebViewHost::locationChangeDone(WebFrame* frame)
-{
-    if (frame != m_topLoadingFrame)
-        return;
-    m_topLoadingFrame = 0;
-    testRunner()->locationChangeDone();
-}
-
 void WebViewHost::updateForCommittedLoad(WebFrame* frame, bool isNewNavigation)
 {
     // Code duplicated from RenderView::DidCommitLoadForFrame.
@@ -1352,7 +1299,6 @@ void WebViewHost::updateURL(WebFrame* frame)
         entry->setContentState(historyItem);
 
     navigationController()->didNavigateToEntry(entry.get());
-    updateAddressBar(frame->view());
     m_lastPageIdUpdated = max(m_lastPageIdUpdated, m_pageId);
 }
 
@@ -1399,11 +1345,6 @@ void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
 }
 
 void WebViewHost::setPageTitle(const WebString&)
-{
-    // Nothing to do in layout test.
-}
-
-void WebViewHost::setAddressBarURL(const WebURL&)
 {
     // Nothing to do in layout test.
 }

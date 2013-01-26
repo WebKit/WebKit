@@ -106,6 +106,7 @@ TestRunner::TestRunner()
     : m_testIsRunning(false)
     , m_delegate(0)
     , m_webView(0)
+    , m_topLoadingFrame(0)
     , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
     , m_webPermissions(adoptPtr(new WebPermissions))
 {
@@ -301,6 +302,7 @@ void TestRunner::reset()
         m_webView->removeAllUserContent();
         m_webView->disableAutoResizeMode();
     }
+    m_topLoadingFrame = 0;
     WebSecurityPolicy::resetOriginAccessWhitelists();
 #if OS(LINUX) || OS(ANDROID)
     WebFontRendering::setSubpixelPositioning(false);
@@ -520,6 +522,22 @@ bool TestRunner::shouldBlockRedirects() const
 bool TestRunner::willSendRequestShouldReturnNull() const
 {
     return m_willSendRequestShouldReturnNull;
+}
+
+void TestRunner::setTopLoadingFrame(WebFrame* frame, bool clear)
+{
+    if (frame->top()->view() != m_webView)
+        return;
+    if (clear) {
+        m_topLoadingFrame = 0;
+        locationChangeDone();
+    } else if (!m_topLoadingFrame)
+        m_topLoadingFrame = frame;
+}
+
+WebFrame* TestRunner::topLoadingFrame() const
+{
+    return m_topLoadingFrame;
 }
 
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)

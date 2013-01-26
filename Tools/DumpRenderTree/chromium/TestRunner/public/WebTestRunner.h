@@ -80,6 +80,8 @@ public:
     virtual const std::set<std::string>* httpHeadersToClear() const { return 0; }
     virtual bool shouldBlockRedirects() const { return false; }
     virtual bool willSendRequestShouldReturnNull() const { return false; }
+    virtual void setTopLoadingFrame(WebKit::WebFrame*, bool) { }
+    virtual WebKit::WebFrame* topLoadingFrame() const { return 0; }
 };
 
 }

@@ -148,6 +148,8 @@ protected:
     bool runModalBeforeUnloadDialog(WebKit::WebFrame*, const WebKit::WebString&);
 
 private:
+    void locationChangeDone(WebKit::WebFrame*);
+
     WebTestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
 

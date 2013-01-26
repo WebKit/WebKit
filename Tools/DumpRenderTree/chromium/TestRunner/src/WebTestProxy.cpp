@@ -587,6 +587,9 @@ void WebTestProxyBase::didCancelClientRedirect(WebFrame* frame)
 
 void WebTestProxyBase::didStartProvisionalLoad(WebFrame* frame)
 {
+    if (m_testInterfaces->testRunner() && !m_testInterfaces->testRunner()->topLoadingFrame())
+        m_testInterfaces->testRunner()->setTopLoadingFrame(frame, false);
+
     if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(m_delegate, frame);
         m_delegate->printMessage(" - didStartProvisionalLoadForFrame\n");
@@ -616,6 +619,7 @@ void WebTestProxyBase::didFailProvisionalLoad(WebFrame* frame, const WebURLError
         printFrameDescription(m_delegate, frame);
         m_delegate->printMessage(" - didFailProvisionalLoadWithError\n");
     }
+    locationChangeDone(frame);
 }
 
 void WebTestProxyBase::didCommitProvisionalLoad(WebFrame* frame, bool)
@@ -672,6 +676,7 @@ void WebTestProxyBase::didFailLoad(WebFrame* frame, const WebURLError&)
         printFrameDescription(m_delegate, frame);
         m_delegate->printMessage(" - didFailLoadWithError\n");
     }
+    locationChangeDone(frame);
 }
 
 void WebTestProxyBase::didFinishLoad(WebFrame* frame)
@@ -680,6 +685,7 @@ void WebTestProxyBase::didFinishLoad(WebFrame* frame)
         printFrameDescription(m_delegate, frame);
         m_delegate->printMessage(" - didFinishLoadForFrame\n");
     }
+    locationChangeDone(frame);
 }
 
 void WebTestProxyBase::didChangeLocationWithinPage(WebFrame* frame)
@@ -877,6 +883,15 @@ bool WebTestProxyBase::runModalBeforeUnloadDialog(WebFrame*, const WebString& me
 {
     m_delegate->printMessage(string("CONFIRM NAVIGATION: ") + message.utf8().data() + "\n");
     return true;
+}
+
+void WebTestProxyBase::locationChangeDone(WebFrame* frame)
+{
+    if (!m_testInterfaces->testRunner())
+        return;
+    if (frame != m_testInterfaces->testRunner()->topLoadingFrame())
+        return;
+    m_testInterfaces->testRunner()->setTopLoadingFrame(frame, true);
 }
 
 }

@@ -98,6 +98,8 @@ public:
     virtual const std::set<std::string>* httpHeadersToClear() const OVERRIDE;
     virtual bool shouldBlockRedirects() const OVERRIDE;
     virtual bool willSendRequestShouldReturnNull() const OVERRIDE;
+    virtual void setTopLoadingFrame(WebKit::WebFrame*, bool) OVERRIDE;
+    virtual WebKit::WebFrame* topLoadingFrame() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -107,6 +109,11 @@ protected:
     WebKit::WebString cppVariantToWebString(const CppVariant&);
 
     void printErrorMessage(const std::string&);
+
+    // In the Mac code, this is called to trigger the end of a test after the
+    // page has finished loading. From here, we can generate the dump for the
+    // test.
+    virtual void locationChangeDone() { }
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -549,6 +556,9 @@ private:
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
+
+    // This is non-0 IFF a load is in progress.
+    WebKit::WebFrame* m_topLoadingFrame;
 
     // Mock object for testing delivering web intents.
     OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;

@@ -110,7 +110,7 @@ public:
     }
 
     // Called by the webview delegate when the toplevel frame load is done.
-    void locationChangeDone();
+    virtual void locationChangeDone();
 
     // Called by the webview delegate when the policy delegate runs if the
     // waitForPolicyDelegate was called.

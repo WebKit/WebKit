@@ -120,7 +120,7 @@ DRTTestRunner::WorkQueue::~WorkQueue()
 
 void DRTTestRunner::WorkQueue::processWorkSoon()
 {
-    if (m_controller->m_shell->webViewHost()->topLoadingFrame())
+    if (m_controller->topLoadingFrame())
         return;
 
     if (!m_queue.isEmpty()) {
@@ -141,7 +141,7 @@ void DRTTestRunner::WorkQueue::processWork()
             return;
     }
 
-    if (!m_controller->m_waitUntilDone && !shell->webViewHost()->topLoadingFrame())
+    if (!m_controller->m_waitUntilDone && !m_controller->topLoadingFrame())
         shell->testFinished();
 }
 
@@ -180,7 +180,7 @@ void DRTTestRunner::notifyDone(const CppArgumentList&, CppVariant* result)
 
 void DRTTestRunner::completeNotifyDone(bool isTimeout)
 {
-    if (m_waitUntilDone && !m_shell->webViewHost()->topLoadingFrame() && m_workQueue.isEmpty()) {
+    if (m_waitUntilDone && !topLoadingFrame() && m_workQueue.isEmpty()) {
         if (isTimeout)
             m_shell->testTimedOut();
         else
