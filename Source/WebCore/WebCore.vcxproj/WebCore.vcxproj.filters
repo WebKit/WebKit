@@ -13481,9 +13481,6 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\JSString.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\runtime\JSValue.h">
-      <Filter>ForwardingHeaders\runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\Lookup.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
@@ -14240,6 +14237,9 @@
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSDOMWrapper.h">
       <Filter>bindings\js</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSCJSValue.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -15062,6 +15062,9 @@
     <None Include="..\inspector\front-end\cm\xml.js">
       <Filter>inspector\front-end</Filter>
     </None>
+    <None Include="WebCorePostBuild.cmd" />
+    <None Include="WebCorePreBuild.cmd" />
+    <None Include="WebCorePreLink.cmd" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h">

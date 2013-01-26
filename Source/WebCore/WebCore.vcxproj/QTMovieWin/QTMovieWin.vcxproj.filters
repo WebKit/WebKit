@@ -68,4 +68,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="QTMovieWinPostBuild.cmd" />
+    <None Include="QTMovieWinPreBuild.cmd" />
+    <None Include="QTMovieWinPreLink.cmd" />
+  </ItemGroup>
 </Project>

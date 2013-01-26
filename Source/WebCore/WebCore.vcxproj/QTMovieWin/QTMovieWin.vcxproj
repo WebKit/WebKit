@@ -63,6 +63,11 @@
     <ClInclude Include="..\..\platform\graphics\win\QTPixelBuffer.h" />
     <ClInclude Include="..\..\platform\graphics\win\QTTrack.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="QTMovieWinPostBuild.cmd" />
+    <None Include="QTMovieWinPreBuild.cmd" />
+    <None Include="QTMovieWinPreLink.cmd" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

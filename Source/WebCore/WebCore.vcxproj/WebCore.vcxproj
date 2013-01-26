@@ -6293,6 +6293,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\JSAPIValueWrapper.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSArray.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSCell.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSCJSValue.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSDestructibleObject.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSExportMacros.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSFunction.h" />
@@ -8265,7 +8266,6 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\JSLock.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSObject.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSString.h" />
-    <ClInclude Include="..\ForwardingHeaders\runtime\JSValue.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Lookup.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Operations.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\Protect.h" />
@@ -8668,6 +8668,9 @@
     <None Include="..\inspector\front-end\WorkersSidebarPane.js" />
     <None Include="..\inspector\front-end\Workspace.js" />
     <None Include="..\inspector\front-end\cm\xml.js" />
+    <None Include="WebCorePostBuild.cmd" />
+    <None Include="WebCorePreBuild.cmd" />
+    <None Include="WebCorePreLink.cmd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
