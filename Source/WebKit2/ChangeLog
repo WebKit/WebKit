@@ -1,3 +1,15 @@
+2013-01-26  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [Qt]Qt build fix
+        https://bugs.webkit.org/show_bug.cgi?id=108013
+
+        Changes on process initialization classes broke webkit building with Qt5. This
+        patch fix it.
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
         Hoist command line parsing into ChildProcessMain

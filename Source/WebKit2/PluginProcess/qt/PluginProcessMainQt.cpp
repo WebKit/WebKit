@@ -27,7 +27,6 @@
 #include "config.h"
 
 #if ENABLE(PLUGIN_PROCESS)
-#include "PluginProcessMain.h"
 
 #include "NetscapePluginModule.h"
 #include "PluginProcess.h"
