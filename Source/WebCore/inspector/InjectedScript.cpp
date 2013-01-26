@@ -222,12 +222,6 @@ PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapNode(Node* no
     return wrapObject(nodeAsScriptValue(node), groupName);
 }
 
-PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapSerializedObject(SerializedScriptValue* serializedScriptValue, const String& groupName) const
-{
-    ScriptValue scriptValue = serializedScriptValue->deserializeForInspector(scriptState());
-    return scriptValue.hasNoValue() ? 0 : wrapObject(scriptValue, groupName);
-}
-
 ScriptValue InjectedScript::findObjectById(const String& objectId) const
 {
     ASSERT(!hasNoValue());
