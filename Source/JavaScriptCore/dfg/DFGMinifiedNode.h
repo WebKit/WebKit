@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "DFGMinifiedID.h"
 #include "DFGNodeType.h"
 
 namespace JSC { namespace DFG {
@@ -59,15 +60,15 @@ public:
     
     static MinifiedNode fromNode(NodeIndex, Node&);
     
-    NodeIndex index() const { return m_index; }
+    MinifiedID id() const { return m_id; }
     NodeType op() const { return m_op; }
     
     bool hasChild1() const { return hasChild(m_op); }
     
-    NodeIndex child1() const
+    MinifiedID child1() const
     {
         ASSERT(hasChild(m_op));
-        return m_childOrInfo;
+        return MinifiedID::fromBits(m_childOrInfo);
     }
     
     bool hasConstant() const { return hasConstantNumber() || hasWeakConstant(); }
@@ -88,10 +89,10 @@ public:
         return bitwise_cast<JSCell*>(m_childOrInfo);
     }
     
-    static NodeIndex getIndex(MinifiedNode* node) { return node->index(); }
+    static MinifiedID getID(MinifiedNode* node) { return node->id(); }
     static bool compareByNodeIndex(const MinifiedNode& a, const MinifiedNode& b)
     {
-        return a.m_index < b.m_index;
+        return a.m_id < b.m_id;
     }
     
 private:
@@ -116,9 +117,9 @@ private:
         return type == WeakJSConstant;
     }
     
-    NodeIndex m_index;
-    NodeType m_op;
+    MinifiedID m_id;
     uintptr_t m_childOrInfo; // Nodes in the minified graph have only one child each.
+    NodeType m_op;
 };
 
 } } // namespace JSC::DFG

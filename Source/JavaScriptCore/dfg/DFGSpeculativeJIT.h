@@ -2246,7 +2246,7 @@ public:
     
     void setNodeIndexForOperand(NodeIndex nodeIndex, int operand)
     {
-        valueSourceReferenceForOperand(operand) = ValueSource(nodeIndex);
+        valueSourceReferenceForOperand(operand) = ValueSource(MinifiedID(nodeIndex));
     }
     
     // Call this with care, since it both returns a reference into an array

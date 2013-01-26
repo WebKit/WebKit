@@ -53,6 +53,8 @@ public:
         unsigned index, Operands<ValueRecovery>&) const;
 
 private:
+    bool tryToSetConstantRecovery(ValueRecovery&, CodeBlock*, MinifiedNode*) const;
+    
     void logEvent(const VariableEvent&);
 };
 

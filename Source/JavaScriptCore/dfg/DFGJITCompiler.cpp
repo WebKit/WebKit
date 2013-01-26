@@ -237,7 +237,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     codeBlock()->saveCompilation(m_graph.m_compilation);
     
-    codeBlock()->minifiedDFG().setOriginalGraphSize(m_graph.size());
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "DFGValueSource.h"
 #include "Operations.h"
 #include <wtf/DataLog.h>
+#include <wtf/HashMap.h>
 
 namespace JSC { namespace DFG {
 
@@ -41,6 +42,8 @@ void VariableEventStream::logEvent(const VariableEvent& event)
     event.dump(WTF::dataFile());
     dataLogF(" ");
 }
+
+namespace {
 
 struct MinifiedGenerationInfo {
     bool filled; // true -> in gpr/fpr/pair, false -> spilled
@@ -74,6 +77,33 @@ struct MinifiedGenerationInfo {
         format = event.dataFormat();
     }
 };
+
+} // namespace
+
+bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, CodeBlock* codeBlock, MinifiedNode* node) const
+{
+    if (!node)
+        return false;
+    
+    if (node->hasConstantNumber()) {
+        recovery = ValueRecovery::constant(
+            codeBlock->constantRegister(
+                FirstConstantRegisterIndex + node->constantNumber()).get());
+        return true;
+    }
+    
+    if (node->hasWeakConstant()) {
+        recovery = ValueRecovery::constant(node->weakConstant());
+        return true;
+    }
+    
+    if (node->op() == PhantomArguments) {
+        recovery = ValueRecovery::argumentsThatWereNotCreated();
+        return true;
+    }
+    
+    return false;
+}
 
 void VariableEventStream::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
@@ -109,7 +139,7 @@ void VariableEventStream::reconstruct(
 
     // Step 2: Create a mock-up of the DFG's state and execute the events.
     Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables);
-    Vector<MinifiedGenerationInfo, 32> generationInfos(graph.originalGraphSize());
+    HashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
     for (unsigned i = startIndex; i < index; ++i) {
         const VariableEvent& event = at(i);
         switch (event.kind()) {
@@ -117,15 +147,23 @@ void VariableEventStream::reconstruct(
             // nothing to do.
             break;
         case BirthToFill:
-        case BirthToSpill:
+        case BirthToSpill: {
+            MinifiedGenerationInfo info;
+            info.update(event);
+            generationInfos.add(event.id(), info);
+            break;
+        }
         case Fill:
         case Spill:
-        case Death:
-            generationInfos[event.nodeIndex()].update(event);
+        case Death: {
+            HashMap<MinifiedID, MinifiedGenerationInfo>::iterator iter = generationInfos.find(event.id());
+            ASSERT(iter != generationInfos.end());
+            iter->value.update(event);
             break;
+        }
         case MovHint:
             if (operandSources.hasOperand(event.operand()))
-                operandSources.setOperand(event.operand(), ValueSource(event.nodeIndex()));
+                operandSources.setOperand(event.operand(), ValueSource(event.id()));
             break;
         case SetLocalEvent:
             if (operandSources.hasOperand(event.operand()))
@@ -137,14 +175,7 @@ void VariableEventStream::reconstruct(
         }
     }
     
-    // Step 3: Record the things that are live, so we can get to them more quickly.
-    Vector<unsigned, 16> indicesOfLiveThings;
-    for (unsigned i = 0; i < generationInfos.size(); ++i) {
-        if (generationInfos[i].format != DataFormatNone)
-            indicesOfLiveThings.append(i);
-    }
-    
-    // Step 4: Compute value recoveries!
+    // Step 3: Compute value recoveries!
     valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
     for (unsigned i = 0; i < operandSources.size(); ++i) {
         ValueSource& source = operandSources[i];
@@ -154,26 +185,12 @@ void VariableEventStream::reconstruct(
         }
         
         ASSERT(source.kind() == HaveNode);
-        MinifiedNode* node = graph.at(source.nodeIndex());
-        if (node) {
-            if (node->hasConstantNumber()) {
-                valueRecoveries[i] = ValueRecovery::constant(
-                    codeBlock->constantRegister(
-                        FirstConstantRegisterIndex + node->constantNumber()).get());
-                continue;
-            }
-            if (node->hasWeakConstant()) {
-                valueRecoveries[i] = ValueRecovery::constant(node->weakConstant());
-                continue;
-            }
-            if (node->op() == PhantomArguments) {
-                valueRecoveries[i] = ValueRecovery::argumentsThatWereNotCreated();
-                continue;
-            }
-        }
+        MinifiedNode* node = graph.at(source.id());
+        if (tryToSetConstantRecovery(valueRecoveries[i], codeBlock, node))
+            continue;
         
-        MinifiedGenerationInfo* info = &generationInfos[source.nodeIndex()];
-        if (info->format == DataFormatNone) {
+        MinifiedGenerationInfo info = generationInfos.get(source.id());
+        if (info.format == DataFormatNone) {
             // Try to see if there is an alternate node that would contain the value we want.
             // There are four possibilities:
             //
@@ -197,62 +214,64 @@ void VariableEventStream::reconstruct(
             bool found = false;
             
             if (node && node->op() == UInt32ToNumber) {
-                NodeIndex nodeIndex = node->child1();
-                node = graph.at(nodeIndex);
-                info = &generationInfos[nodeIndex];
-                if (info->format != DataFormatNone)
+                MinifiedID id = node->child1();
+                if (tryToSetConstantRecovery(valueRecoveries[i], codeBlock, graph.at(id)))
+                    continue;
+                info = generationInfos.get(id);
+                if (info.format != DataFormatNone)
                     found = true;
             }
             
             if (!found) {
-                NodeIndex int32ToDoubleIndex = NoNode;
-                NodeIndex valueToInt32Index = NoNode;
-                NodeIndex uint32ToNumberIndex = NoNode;
-                NodeIndex doubleAsInt32Index = NoNode;
+                MinifiedID int32ToDoubleID;
+                MinifiedID valueToInt32ID;
+                MinifiedID uint32ToNumberID;
+                MinifiedID doubleAsInt32ID;
                 
-                for (unsigned i = 0; i < indicesOfLiveThings.size(); ++i) {
-                    NodeIndex nodeIndex = indicesOfLiveThings[i];
-                    node = graph.at(nodeIndex);
+                HashMap<MinifiedID, MinifiedGenerationInfo>::iterator iter = generationInfos.begin();
+                HashMap<MinifiedID, MinifiedGenerationInfo>::iterator end = generationInfos.end();
+                for (; iter != end; ++iter) {
+                    MinifiedID id = iter->key;
+                    node = graph.at(id);
                     if (!node)
                         continue;
                     if (!node->hasChild1())
                         continue;
-                    if (node->child1() != source.nodeIndex())
+                    if (node->child1() != source.id())
                         continue;
-                    ASSERT(generationInfos[nodeIndex].format != DataFormatNone);
+                    if (iter->value.format == DataFormatNone)
+                        continue;
                     switch (node->op()) {
                     case Int32ToDouble:
-                        int32ToDoubleIndex = nodeIndex;
+                        int32ToDoubleID = id;
                         break;
                     case ValueToInt32:
-                        valueToInt32Index = nodeIndex;
+                        valueToInt32ID = id;
                         break;
                     case UInt32ToNumber:
-                        uint32ToNumberIndex = nodeIndex;
+                        uint32ToNumberID = id;
                         break;
                     case DoubleAsInt32:
-                        doubleAsInt32Index = nodeIndex;
+                        doubleAsInt32ID = id;
                         break;
                     default:
                         break;
                     }
                 }
                 
-                NodeIndex nodeIndexToUse;
-                if (doubleAsInt32Index != NoNode)
-                    nodeIndexToUse = doubleAsInt32Index;
-                else if (int32ToDoubleIndex != NoNode)
-                    nodeIndexToUse = int32ToDoubleIndex;
-                else if (valueToInt32Index != NoNode)
-                    nodeIndexToUse = valueToInt32Index;
-                else if (uint32ToNumberIndex != NoNode)
-                    nodeIndexToUse = uint32ToNumberIndex;
-                else
-                    nodeIndexToUse = NoNode;
+                MinifiedID idToUse;
+                if (!!doubleAsInt32ID)
+                    idToUse = doubleAsInt32ID;
+                else if (!!int32ToDoubleID)
+                    idToUse = int32ToDoubleID;
+                else if (!!valueToInt32ID)
+                    idToUse = valueToInt32ID;
+                else if (!!uint32ToNumberID)
+                    idToUse = uint32ToNumberID;
                 
-                if (nodeIndexToUse != NoNode) {
-                    info = &generationInfos[nodeIndexToUse];
-                    ASSERT(info->format != DataFormatNone);
+                if (!!idToUse) {
+                    info = generationInfos.get(idToUse);
+                    ASSERT(info.format != DataFormatNone);
                     found = true;
                 }
             }
@@ -263,28 +282,28 @@ void VariableEventStream::reconstruct(
             }
         }
         
-        ASSERT(info->format != DataFormatNone);
+        ASSERT(info.format != DataFormatNone);
         
-        if (info->filled) {
-            if (info->format == DataFormatDouble) {
-                valueRecoveries[i] = ValueRecovery::inFPR(info->u.fpr);
+        if (info.filled) {
+            if (info.format == DataFormatDouble) {
+                valueRecoveries[i] = ValueRecovery::inFPR(info.u.fpr);
                 continue;
             }
 #if USE(JSVALUE32_64)
-            if (info->format & DataFormatJS) {
-                valueRecoveries[i] = ValueRecovery::inPair(info->u.pair.tagGPR, info->u.pair.payloadGPR);
+            if (info.format & DataFormatJS) {
+                valueRecoveries[i] = ValueRecovery::inPair(info.u.pair.tagGPR, info.u.pair.payloadGPR);
                 continue;
             }
 #endif
-            valueRecoveries[i] = ValueRecovery::inGPR(info->u.gpr, info->format);
+            valueRecoveries[i] = ValueRecovery::inGPR(info.u.gpr, info.format);
             continue;
         }
         
         valueRecoveries[i] =
-            ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info->u.virtualReg), info->format);
+            ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info.u.virtualReg), info.format);
     }
     
-    // Step 5: Make sure that for locals that coincide with true call frame headers, the exit compiler knows
+    // Step 4: Make sure that for locals that coincide with true call frame headers, the exit compiler knows
     // that those values don't have to be recovered. Signal this by using ValueRecovery::alreadyInJSStack()
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
         for (unsigned i = JSStack::CallFrameHeaderSize; i--;)

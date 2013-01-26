@@ -1076,6 +1076,7 @@
 		0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExit.h; path = profiler/ProfilerOSRExit.h; sourceTree = "<group>"; };
 		0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOSRExitSite.cpp; path = profiler/ProfilerOSRExitSite.cpp; sourceTree = "<group>"; };
 		0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExitSite.h; path = profiler/ProfilerOSRExitSite.h; sourceTree = "<group>"; };
+		0FB4B51016B3A964003F696B /* DFGMinifiedID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedID.h; path = dfg/DFGMinifiedID.h; sourceTree = "<group>"; };
 		0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyOperandValueProfile.h; sourceTree = "<group>"; };
 		0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazyOperandValueProfile.cpp; sourceTree = "<group>"; };
 		0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodOfGettingAValueProfile.h; sourceTree = "<group>"; };
@@ -2587,6 +2588,7 @@
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
 				0F2BDC3D1522801700CD8910 /* DFGMinifiedGraph.h */,
+				0FB4B51016B3A964003F696B /* DFGMinifiedID.h */,
 				0F2BDC4C1522818300CD8910 /* DFGMinifiedNode.cpp */,
 				0F2BDC3E1522801700CD8910 /* DFGMinifiedNode.h */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,

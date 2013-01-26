@@ -41,10 +41,10 @@ class MinifiedGraph {
 public:
     MinifiedGraph() { }
 
-    MinifiedNode* at(NodeIndex nodeIndex)
+    MinifiedNode* at(MinifiedID id)
     {
-        return tryBinarySearch<MinifiedNode, NodeIndex>(
-            m_list, m_list.size(), nodeIndex, MinifiedNode::getIndex);
+        return tryBinarySearch<MinifiedNode, MinifiedID>(
+            m_list, m_list.size(), id, MinifiedNode::getID);
     }
     
     void append(const MinifiedNode& node)
@@ -58,13 +58,8 @@ public:
         m_list.shrinkToFit();
     }
     
-    void setOriginalGraphSize(size_t size) { m_size = size; }
-    
-    size_t originalGraphSize() const { return m_size; }
-
 private:
     Vector<MinifiedNode> m_list;
-    size_t m_size;
 };
 
 } } // namespace JSC::DFG

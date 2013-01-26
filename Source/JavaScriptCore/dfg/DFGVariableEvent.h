@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "DFGMinifiedID.h"
 #include "DataFormat.h"
 #include "MacroAssembler.h"
 #include <stdio.h>
@@ -95,7 +96,7 @@ public:
         return event;
     }
     
-    static VariableEvent fillGPR(VariableEventKind kind, NodeIndex nodeIndex, MacroAssembler::RegisterID gpr, DataFormat dataFormat)
+    static VariableEvent fillGPR(VariableEventKind kind, MinifiedID id, MacroAssembler::RegisterID gpr, DataFormat dataFormat)
     {
         ASSERT(kind == BirthToFill || kind == Fill);
         ASSERT(dataFormat != DataFormatDouble);
@@ -103,7 +104,7 @@ public:
         ASSERT(!(dataFormat & DataFormatJS));
 #endif
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.u.gpr = gpr;
         event.m_kind = kind;
         event.m_dataFormat = dataFormat;
@@ -111,11 +112,11 @@ public:
     }
     
 #if USE(JSVALUE32_64)
-    static VariableEvent fillPair(VariableEventKind kind, NodeIndex nodeIndex, MacroAssembler::RegisterID tagGPR, MacroAssembler::RegisterID payloadGPR)
+    static VariableEvent fillPair(VariableEventKind kind, MinifiedID id, MacroAssembler::RegisterID tagGPR, MacroAssembler::RegisterID payloadGPR)
     {
         ASSERT(kind == BirthToFill || kind == Fill);
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.u.pair.tagGPR = tagGPR;
         event.u.pair.payloadGPR = payloadGPR;
         event.m_kind = kind;
@@ -124,32 +125,32 @@ public:
     }
 #endif // USE(JSVALUE32_64)
     
-    static VariableEvent fillFPR(VariableEventKind kind, NodeIndex nodeIndex, MacroAssembler::FPRegisterID fpr)
+    static VariableEvent fillFPR(VariableEventKind kind, MinifiedID id, MacroAssembler::FPRegisterID fpr)
     {
         ASSERT(kind == BirthToFill || kind == Fill);
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.u.fpr = fpr;
         event.m_kind = kind;
         event.m_dataFormat = DataFormatDouble;
         return event;
     }
     
-    static VariableEvent spill(VariableEventKind kind, NodeIndex nodeIndex, VirtualRegister virtualRegister, DataFormat format)
+    static VariableEvent spill(VariableEventKind kind, MinifiedID id, VirtualRegister virtualRegister, DataFormat format)
     {
         ASSERT(kind == BirthToSpill || kind == Spill);
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.u.virtualReg = virtualRegister;
         event.m_kind = kind;
         event.m_dataFormat = format;
         return event;
     }
     
-    static VariableEvent death(NodeIndex nodeIndex)
+    static VariableEvent death(MinifiedID id)
     {
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.m_kind = Death;
         return event;
     }
@@ -163,10 +164,10 @@ public:
         return event;
     }
     
-    static VariableEvent movHint(NodeIndex nodeIndex, int operand)
+    static VariableEvent movHint(MinifiedID id, int operand)
     {
         VariableEvent event;
-        event.m_index = nodeIndex;
+        event.m_id = id;
         event.u.virtualReg = operand;
         event.m_kind = MovHint;
         return event;
@@ -177,12 +178,12 @@ public:
         return static_cast<VariableEventKind>(m_kind);
     }
     
-    NodeIndex nodeIndex() const
+    MinifiedID id() const
     {
         ASSERT(m_kind == BirthToFill || m_kind == Fill
                || m_kind == BirthToSpill || m_kind == Spill
                || m_kind == Death || m_kind == MovHint);
-        return m_index;
+        return m_id;
     }
     
     DataFormat dataFormat() const
@@ -246,7 +247,7 @@ private:
     void dumpFillInfo(const char* name, PrintStream&) const;
     void dumpSpillInfo(const char* name, PrintStream&) const;
     
-    NodeIndex m_index;
+    MinifiedID m_id;
     
     // For BirthToFill, Fill:
     //   - The GPR or FPR, or a GPR pair.

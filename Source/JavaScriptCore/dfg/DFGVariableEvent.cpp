@@ -52,10 +52,10 @@ void VariableEvent::dump(PrintStream& out) const
         dumpSpillInfo("Spill", out);
         break;
     case Death:
-        out.printf("Death(@%u)", nodeIndex());
+        out.print("Death(", id(), ")");
         break;
     case MovHint:
-        out.printf("MovHint(@%u, r%d)", nodeIndex(), operand());
+        out.print("MovHint(", id(), ", r", operand(), ")");
         break;
     case SetLocalEvent:
         out.printf("SetLocal(r%d, %s)", operand(), dataFormatToString(dataFormat()));
@@ -68,7 +68,7 @@ void VariableEvent::dump(PrintStream& out) const
 
 void VariableEvent::dumpFillInfo(const char* name, PrintStream& out) const
 {
-    out.printf("%s(@%u, ", name, nodeIndex());
+    out.print(name, "(", id(), ", ");
     if (dataFormat() == DataFormatDouble)
         out.printf("%s", FPRInfo::debugName(fpr()));
 #if USE(JSVALUE32_64)
@@ -82,7 +82,7 @@ void VariableEvent::dumpFillInfo(const char* name, PrintStream& out) const
 
 void VariableEvent::dumpSpillInfo(const char* name, PrintStream& out) const
 {
-    out.printf("%s(@%u, r%d, %s)", name, nodeIndex(), virtualRegister(), dataFormatToString(dataFormat()));
+    out.print(name, "(", id(), ", r", virtualRegister(), ", ", dataFormatToString(dataFormat()), ")");
 }
 
 } } // namespace JSC::DFG

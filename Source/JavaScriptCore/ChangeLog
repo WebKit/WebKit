@@ -1,3 +1,113 @@
+2013-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG variable event stream shouldn't use NodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=107996
+
+        Reviewed by Oliver Hunt.
+        
+        Introduce the notion of a DFG::MinifiedID, which is just a unique ID of a DFG Node.
+        Internally it currently uses a NodeIndex, but we could change this without having
+        to recode all of the users of MinifiedID. This effectively decouples the OSR exit
+        compiler's way of identifying nodes from the speculative JIT's way of identifying
+        nodes, and should make it easier to make changes to the speculative JIT's internals
+        in the future.
+        
+        Also changed variable event stream logging to exclude information about births and
+        deaths of constants, since the OSR exit compiler never cares about which register
+        holds a constant; if a value is constant then the OSR exit compiler can reify it.
+        
+        Also changed the variable event stream's value recovery computation to use a
+        HashMap keyed by MinifiedID rather than a Vector indexed by NodeIndex.
+        
+        This appears to be performance-neutral. It's primarily meant as a small step
+        towards https://bugs.webkit.org/show_bug.cgi?id=106868.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::GenerationInfo):
+        (JSC::DFG::GenerationInfo::initConstant):
+        (JSC::DFG::GenerationInfo::initInteger):
+        (JSC::DFG::GenerationInfo::initJSValue):
+        (JSC::DFG::GenerationInfo::initCell):
+        (JSC::DFG::GenerationInfo::initBoolean):
+        (JSC::DFG::GenerationInfo::initDouble):
+        (JSC::DFG::GenerationInfo::initStorage):
+        (JSC::DFG::GenerationInfo::noticeOSRBirth):
+        (JSC::DFG::GenerationInfo::use):
+        (JSC::DFG::GenerationInfo::appendFill):
+        (JSC::DFG::GenerationInfo::appendSpill):
+        (GenerationInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGMinifiedGraph.h:
+        (JSC::DFG::MinifiedGraph::at):
+        (MinifiedGraph):
+        * dfg/DFGMinifiedID.h: Added.
+        (DFG):
+        (MinifiedID):
+        (JSC::DFG::MinifiedID::MinifiedID):
+        (JSC::DFG::MinifiedID::operator!):
+        (JSC::DFG::MinifiedID::nodeIndex):
+        (JSC::DFG::MinifiedID::operator==):
+        (JSC::DFG::MinifiedID::operator!=):
+        (JSC::DFG::MinifiedID::operator<):
+        (JSC::DFG::MinifiedID::operator>):
+        (JSC::DFG::MinifiedID::operator<=):
+        (JSC::DFG::MinifiedID::operator>=):
+        (JSC::DFG::MinifiedID::hash):
+        (JSC::DFG::MinifiedID::dump):
+        (JSC::DFG::MinifiedID::isHashTableDeletedValue):
+        (JSC::DFG::MinifiedID::invalidID):
+        (JSC::DFG::MinifiedID::otherInvalidID):
+        (JSC::DFG::MinifiedID::fromBits):
+        (JSC::DFG::MinifiedIDHash::hash):
+        (JSC::DFG::MinifiedIDHash::equal):
+        (MinifiedIDHash):
+        (WTF):
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::MinifiedNode::id):
+        (JSC::DFG::MinifiedNode::child1):
+        (JSC::DFG::MinifiedNode::getID):
+        (JSC::DFG::MinifiedNode::compareByNodeIndex):
+        (MinifiedNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::setNodeIndexForOperand):
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::isSet):
+        (JSC::DFG::ValueSource::kind):
+        (JSC::DFG::ValueSource::id):
+        (ValueSource):
+        (JSC::DFG::ValueSource::idFromKind):
+        (JSC::DFG::ValueSource::kindFromID):
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        (JSC::DFG::VariableEvent::dumpFillInfo):
+        (JSC::DFG::VariableEvent::dumpSpillInfo):
+        * dfg/DFGVariableEvent.h:
+        (JSC::DFG::VariableEvent::fillGPR):
+        (JSC::DFG::VariableEvent::fillPair):
+        (JSC::DFG::VariableEvent::fillFPR):
+        (JSC::DFG::VariableEvent::spill):
+        (JSC::DFG::VariableEvent::death):
+        (JSC::DFG::VariableEvent::movHint):
+        (JSC::DFG::VariableEvent::id):
+        (VariableEvent):
+        * dfg/DFGVariableEventStream.cpp:
+        (DFG):
+        (JSC::DFG::VariableEventStream::tryToSetConstantRecovery):
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVariableEventStream.h:
+        (VariableEventStream):
+
 2013-01-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Rename LLInt projects folder and make appropriate changes to solutions.

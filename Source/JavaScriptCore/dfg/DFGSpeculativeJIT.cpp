@@ -1750,7 +1750,7 @@ void SpeculativeJIT::compileMovHint(Node& node)
     if (child.op() == UInt32ToNumber)
         noticeOSRBirth(child.child1().index(), at(child.child1()));
     
-    m_stream->appendAndLog(VariableEvent::movHint(node.child1().index(), node.local()));
+    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(node.child1().index()), node.local()));
 }
 
 void SpeculativeJIT::compile(BasicBlock& block)
@@ -2071,8 +2071,9 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         return valueSource.valueRecovery();
         
     ASSERT(valueSource.kind() == HaveNode);
-    if (isConstant(valueSource.nodeIndex()))
-        return ValueRecovery::constant(valueOfJSConstant(valueSource.nodeIndex()));
+    NodeIndex nodeIndex = valueSource.id().nodeIndex(m_jit.graph());
+    if (isConstant(nodeIndex))
+        return ValueRecovery::constant(valueOfJSConstant(nodeIndex));
     
     return ValueRecovery();
 }

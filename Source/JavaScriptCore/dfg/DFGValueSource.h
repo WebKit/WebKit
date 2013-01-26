@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "DFGMinifiedID.h"
 #include "DataFormat.h"
 #include "SpeculatedType.h"
 #include "ValueRecovery.h"
@@ -108,21 +109,21 @@ static inline bool isTriviallyRecoverable(ValueSourceKind kind)
 class ValueSource {
 public:
     ValueSource()
-        : m_nodeIndex(nodeIndexFromKind(SourceNotSet))
+        : m_value(idFromKind(SourceNotSet))
     {
     }
     
     explicit ValueSource(ValueSourceKind valueSourceKind)
-        : m_nodeIndex(nodeIndexFromKind(valueSourceKind))
+        : m_value(idFromKind(valueSourceKind))
     {
         ASSERT(kind() != SourceNotSet);
         ASSERT(kind() != HaveNode);
     }
     
-    explicit ValueSource(NodeIndex nodeIndex)
-        : m_nodeIndex(nodeIndex)
+    explicit ValueSource(MinifiedID id)
+        : m_value(id.m_id)
     {
-        RELEASE_ASSERT(nodeIndex != NoNode);
+        ASSERT(!!id);
         ASSERT(kind() == HaveNode);
     }
     
@@ -144,12 +145,12 @@ public:
     
     bool isSet() const
     {
-        return kindFromNodeIndex(m_nodeIndex) != SourceNotSet;
+        return kindFromID(m_value) != SourceNotSet;
     }
     
     ValueSourceKind kind() const
     {
-        return kindFromNodeIndex(m_nodeIndex);
+        return kindFromID(m_value);
     }
     
     bool isInJSStack() const { return JSC::DFG::isInJSStack(kind()); }
@@ -191,30 +192,30 @@ public:
         }
     }
     
-    NodeIndex nodeIndex() const
+    MinifiedID id() const
     {
         ASSERT(kind() == HaveNode);
-        return m_nodeIndex;
+        return m_value;
     }
     
-    void dump(FILE* out) const;
+    void dump(PrintStream&) const;
     
 private:
-    static NodeIndex nodeIndexFromKind(ValueSourceKind kind)
+    static MinifiedID idFromKind(ValueSourceKind kind)
     {
         ASSERT(kind >= SourceNotSet && kind < HaveNode);
-        return NoNode - kind;
+        return MinifiedID::fromBits(MinifiedID::invalidID() - kind);
     }
     
-    static ValueSourceKind kindFromNodeIndex(NodeIndex nodeIndex)
+    static ValueSourceKind kindFromID(MinifiedID id)
     {
-        unsigned kind = static_cast<unsigned>(NoNode - nodeIndex);
-        if (kind >= static_cast<unsigned>(HaveNode))
+        uintptr_t kind = static_cast<uintptr_t>(MinifiedID::invalidID() - id.m_id);
+        if (kind >= static_cast<uintptr_t>(HaveNode))
             return HaveNode;
         return static_cast<ValueSourceKind>(kind);
     }
     
-    NodeIndex m_nodeIndex;
+    MinifiedID m_value;
 };
 
 } } // namespace JSC::DFG

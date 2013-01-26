@@ -1,6 +1,5 @@
-
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGJITCompiler.h"
+#include "DFGMinifiedID.h"
 #include "DFGVariableEvent.h"
 #include "DFGVariableEventStream.h"
 #include "DataFormat.h"
@@ -54,6 +54,7 @@ public:
         , m_spillFormat(DataFormatNone)
         , m_canFill(false)
         , m_bornForOSR(false)
+        , m_isConstant(false)
     {
     }
 
@@ -65,6 +66,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = true;
         m_bornForOSR = false;
+        m_isConstant = true;
         ASSERT(m_useCount);
     }
     void initInteger(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
@@ -76,6 +78,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
 #if USE(JSVALUE64)
@@ -90,6 +93,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
 #elif USE(JSVALUE32_64)
@@ -105,6 +109,7 @@ public:
         u.v.tagGPR = tagGPR;
         u.v.payloadGPR = payloadGPR;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
 #endif
@@ -117,6 +122,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
     void initBoolean(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
@@ -128,6 +134,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
     void initDouble(NodeIndex nodeIndex, uint32_t useCount, FPRReg fpr)
@@ -140,6 +147,7 @@ public:
         m_canFill = false;
         u.fpr = fpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
     void initStorage(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
@@ -151,6 +159,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
         m_bornForOSR = false;
+        m_isConstant = false;
         ASSERT(m_useCount);
     }
 
@@ -159,6 +168,8 @@ public:
     
     void noticeOSRBirth(VariableEventStream& stream, NodeIndex nodeIndex, VirtualRegister virtualRegister)
     {
+        if (m_isConstant)
+            return;
         if (m_nodeIndex != nodeIndex)
             return;
         if (!alive())
@@ -184,7 +195,7 @@ public:
         
         if (result && m_bornForOSR) {
             ASSERT(m_nodeIndex != NoNode);
-            stream.appendAndLog(VariableEvent::death(m_nodeIndex));
+            stream.appendAndLog(VariableEvent::death(MinifiedID(m_nodeIndex)));
         }
         
         return result;
@@ -368,22 +379,24 @@ public:
 private:
     void appendFill(VariableEventKind kind, VariableEventStream& stream)
     {
+        ASSERT(m_bornForOSR);
+        
         if (m_registerFormat == DataFormatDouble) {
-            stream.appendAndLog(VariableEvent::fillFPR(kind, m_nodeIndex, u.fpr));
+            stream.appendAndLog(VariableEvent::fillFPR(kind, MinifiedID(m_nodeIndex), u.fpr));
             return;
         }
 #if USE(JSVALUE32_64)
         if (m_registerFormat & DataFormatJS) {
-            stream.appendAndLog(VariableEvent::fillPair(kind, m_nodeIndex, u.v.tagGPR, u.v.payloadGPR));
+            stream.appendAndLog(VariableEvent::fillPair(kind, MinifiedID(m_nodeIndex), u.v.tagGPR, u.v.payloadGPR));
             return;
         }
 #endif
-        stream.appendAndLog(VariableEvent::fillGPR(kind, m_nodeIndex, u.gpr, m_registerFormat));
+        stream.appendAndLog(VariableEvent::fillGPR(kind, MinifiedID(m_nodeIndex), u.gpr, m_registerFormat));
     }
     
     void appendSpill(VariableEventKind kind, VariableEventStream& stream, VirtualRegister virtualRegister)
     {
-        stream.appendAndLog(VariableEvent::spill(kind, m_nodeIndex, virtualRegister, m_spillFormat));
+        stream.appendAndLog(VariableEvent::spill(kind, MinifiedID(m_nodeIndex), virtualRegister, m_spillFormat));
     }
     
     // The index of the node whose result is stored in this virtual register.
@@ -393,6 +406,7 @@ private:
     DataFormat m_spillFormat;
     bool m_canFill;
     bool m_bornForOSR;
+    bool m_isConstant;
     union {
         GPRReg gpr;
         FPRReg fpr;

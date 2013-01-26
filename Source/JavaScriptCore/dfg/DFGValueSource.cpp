@@ -30,35 +30,35 @@
 
 namespace JSC { namespace DFG {
 
-void ValueSource::dump(FILE* out) const
+void ValueSource::dump(PrintStream& out) const
 {
     switch (kind()) {
     case SourceNotSet:
-        fprintf(out, "NotSet");
+        out.print("NotSet");
         break;
     case SourceIsDead:
-        fprintf(out, "IsDead");
+        out.print("IsDead");
         break;
     case ValueInJSStack:
-        fprintf(out, "InStack");
+        out.print("InStack");
         break;
     case Int32InJSStack:
-        fprintf(out, "Int32");
+        out.print("Int32");
         break;
     case CellInJSStack:
-        fprintf(out, "Cell");
+        out.print("Cell");
         break;
     case BooleanInJSStack:
-        fprintf(out, "Bool");
+        out.print("Bool");
         break;
     case DoubleInJSStack:
-        fprintf(out, "Double");
+        out.print("Double");
         break;
     case ArgumentsSource:
-        fprintf(out, "Arguments");
+        out.print("Arguments");
         break;
     case HaveNode:
-        fprintf(out, "Node(%d)", m_nodeIndex);
+        out.print("Node(", m_value, ")");
         break;
     }
 }

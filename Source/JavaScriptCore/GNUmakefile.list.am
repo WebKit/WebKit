@@ -167,6 +167,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGAbstractValue.h \
+	Source/JavaScriptCore/dfg/DFGAdjacencyList.h \
 	Source/JavaScriptCore/dfg/DFGArgumentPosition.h \
 	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.h \
@@ -200,6 +201,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGDoubleFormatState.h \
 	Source/JavaScriptCore/dfg/DFGDriver.cpp \
 	Source/JavaScriptCore/dfg/DFGDriver.h \
+	Source/JavaScriptCore/dfg/DFGEdge.h \
 	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGFixupPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGFixupPhase.h \
@@ -211,14 +213,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGMinifiedGraph.h \
+	Source/JavaScriptCore/dfg/DFGMinifiedID.h \
 	Source/JavaScriptCore/dfg/DFGMinifiedNode.cpp \
 	Source/JavaScriptCore/dfg/DFGMinifiedNode.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.cpp \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.h \
-	Source/JavaScriptCore/dfg/DFGAdjacencyList.h \
 	Source/JavaScriptCore/dfg/DFGNodeType.h \
-	Source/JavaScriptCore/dfg/DFGEdge.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
 	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \
