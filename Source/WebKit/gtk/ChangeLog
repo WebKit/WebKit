@@ -1,3 +1,17 @@
+2013-01-25  Joone Hur  <joone.hur@intel.com>
+
+        [GTK][AC] Use new Clutter APIs instead of deprecated APIs
+        https://bugs.webkit.org/show_bug.cgi?id=105736
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use clutter_actor_set_background_color instead of clutter_stage_set_color.
+        Use clutter_actor_add_child instead of clutter_container_add_actor.
+        Remove clutter_actor_show_all because Actors are visible by default.
+
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer):
+
 2013-01-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] LDFLAGS are being incorrectly used at compile time (rather than linking)

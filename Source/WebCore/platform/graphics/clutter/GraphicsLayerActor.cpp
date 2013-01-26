@@ -31,7 +31,7 @@
 
 using namespace WebCore;
 
-G_DEFINE_TYPE(GraphicsLayerActor, graphics_layer_actor, CLUTTER_TYPE_RECTANGLE)
+G_DEFINE_TYPE(GraphicsLayerActor, graphics_layer_actor, CLUTTER_TYPE_ACTOR)
 
 #define GRAPHICS_LAYER_ACTOR_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), GRAPHICS_LAYER_TYPE_ACTOR, GraphicsLayerActorPrivate))
 
@@ -39,7 +39,6 @@ struct _GraphicsLayerActorPrivate {
     GraphicsLayerClutter::LayerType layerType;
     gboolean allocating;
 
-    ClutterActor* texture;
     RefPtr<cairo_surface_t> surface;
     CoglMatrix* matrix;
 
@@ -73,11 +72,10 @@ static void graphicsLayerActorDispose(GObject*);
 static void graphicsLayerActorGetProperty(GObject*, guint propID, GValue*, GParamSpec*);
 static void graphicsLayerActorSetProperty(GObject*, guint propID, const GValue*, GParamSpec*);
 static void graphicsLayerActorPaint(ClutterActor*);
-static void graphicsLayerActorPick(ClutterActor*, const ClutterColor*);
 
 static void graphicsLayerActorAdded(ClutterContainer*, ClutterActor*, gpointer data);
 static void graphicsLayerActorRemoved(ClutterContainer*, ClutterActor*, gpointer data);
-static gboolean graphicsLayerActorDraw(ClutterCairoTexture*, cairo_t*, GraphicsLayerActor*);
+static gboolean graphicsLayerActorDraw(ClutterCanvas*, cairo_t*, gint width, gint height, GraphicsLayerActor*);
 static void graphicsLayerActorUpdateTexture(GraphicsLayerActor*);
 static void drawLayerContents(ClutterActor*, GraphicsContext&);
 
@@ -104,7 +102,7 @@ static void graphics_layer_actor_class_init(GraphicsLayerActorClass* klass)
 
 static void graphics_layer_actor_init(GraphicsLayerActor* self)
 {
-    GraphicsLayerActorPrivate* priv = self->priv = GRAPHICS_LAYER_ACTOR_GET_PRIVATE(self);
+    self->priv = GRAPHICS_LAYER_ACTOR_GET_PRIVATE(self);
 
     clutter_actor_set_reactive(CLUTTER_ACTOR(self), FALSE);
 
@@ -153,11 +151,6 @@ static void graphicsLayerActorDispose(GObject* object)
     GraphicsLayerActor* layer = GRAPHICS_LAYER_ACTOR(object);
     GraphicsLayerActorPrivate* priv = layer->priv;
 
-    if (priv->texture) {
-        clutter_actor_destroy(priv->texture);
-        priv->texture = 0;
-    }
-
     priv->surface.clear();
 
     if (priv->matrix)
@@ -178,20 +171,9 @@ static void graphicsLayerActorAllocate(ClutterActor* self, const ClutterActorBox
 
     CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->allocate(self, box, flags);
 
-    if (priv->texture) {
-        // The texture occupies the whole area, but is positioned at 0,0
-        // relative to the layer actor.
-        ClutterActorBox textureBox = { 0.0, 0.0, box->x2 - box->x1, box->y2 - box->y1 };
-
-        // protect against 0x0
-        if (!textureBox.x2)
-            textureBox.x2 = 1;
-
-        if (!textureBox.y2)
-            textureBox.y2 = 1;
-
-        clutter_actor_allocate(priv->texture, &textureBox, flags);
-    }
+    ClutterContent* canvas = clutter_actor_get_content(self);
+    if (canvas)
+        clutter_canvas_set_size(CLUTTER_CANVAS(canvas), clutter_actor_get_width(self), clutter_actor_get_height(self));
 
     // FIXME: maybe we can cache children allocation and not call
     // allocate on them this often?
@@ -254,12 +236,6 @@ static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* ma
 static void graphicsLayerActorPaint(ClutterActor* actor)
 {
     GraphicsLayerActor* graphicsLayer = GRAPHICS_LAYER_ACTOR(actor);
-    GraphicsLayerActorPrivate* priv = GRAPHICS_LAYER_ACTOR(actor)->priv;
-
-    // Paint the texture in case we have a border. This will be the case when debugging borders
-    // are turned on that we want to see.
-    if (priv->texture)
-        clutter_actor_paint(priv->texture);
 
     GList* list;
     for (list = graphicsLayer->children; list; list = list->next) {
@@ -268,19 +244,16 @@ static void graphicsLayerActorPaint(ClutterActor* actor)
     }
 }
 
-static gboolean graphicsLayerActorDraw(ClutterCairoTexture* texture, cairo_t* cr, GraphicsLayerActor* layer)
+static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint width, gint height, GraphicsLayerActor* layer)
 {
     ClutterActor* actor = CLUTTER_ACTOR(layer);
-    float width = clutter_actor_get_width(actor);
-    float height = clutter_actor_get_height(actor);
 
     if (!width || !height)
         return FALSE;
 
     GraphicsLayerActorPrivate* priv = layer->priv;
     GraphicsContext context(cr);
-
-    clutter_cairo_texture_clear(texture);
+    context.clearRect(FloatRect(0, 0, width, height));
 
     if (priv->surface) {
         gint surfaceWidth = cairo_image_surface_get_width(priv->surface.get());
@@ -313,20 +286,21 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
 {
     GraphicsLayerActorPrivate* priv = layer->priv;
     ASSERT(priv->layerType != GraphicsLayerClutter::LayerTypeVideoLayer);
+    ClutterContent* canvas;
+    canvas = clutter_actor_get_content(CLUTTER_ACTOR(layer));
 
     // Nothing needs a texture, remove the one we have, if any.
     if (!priv->drawsContent && !priv->surface) {
-        if (!priv->texture)
+        if (!canvas)
             return;
 
-        g_signal_handlers_disconnect_by_func(priv->texture, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
-        clutter_actor_unparent(priv->texture);
-        priv->texture = 0;
+        g_signal_handlers_disconnect_by_func(canvas, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
+        g_object_unref(canvas);
         return;
     }
 
     // We need a texture, but already have one!
-    if (priv->texture)
+    if (canvas)
         return;
 
     // We need a texture, so create it.
@@ -334,11 +308,12 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
     int width = ceilf(clutter_actor_get_width(actor));
     int height = ceilf(clutter_actor_get_height(actor));
 
-    priv->texture = clutter_cairo_texture_new(width > 0 ? width : 1, height > 0 ? height : 1);
-    clutter_cairo_texture_set_auto_resize(CLUTTER_CAIRO_TEXTURE(priv->texture), TRUE);
-    clutter_actor_set_parent(priv->texture, actor);
-
-    g_signal_connect(priv->texture, "draw", G_CALLBACK(graphicsLayerActorDraw), layer);
+    canvas = clutter_canvas_new();
+    clutter_actor_set_content(actor, canvas);
+    clutter_canvas_set_size(CLUTTER_CANVAS(canvas), width > 0 ? width : 1, height > 0 ? height : 1);
+    g_object_unref(canvas);
+    
+    g_signal_connect(canvas, "draw", G_CALLBACK(graphicsLayerActorDraw), layer);
 }
 
 // Draw content into the layer.
@@ -364,12 +339,6 @@ GraphicsLayerActor* graphicsLayerActorNew(GraphicsLayerClutter::LayerType type)
     GraphicsLayerActorPrivate* priv = layer->priv;
 
     priv->layerType = type;
-
-    // For video layers we don't want the cairo texture, but a regular one.
-    if (priv->layerType == GraphicsLayerClutter::LayerTypeVideoLayer) {
-        priv->texture = clutter_texture_new();
-        clutter_actor_set_parent(priv->texture, CLUTTER_ACTOR(layer));
-    }
 
     return layer;
 }
@@ -397,13 +366,8 @@ void graphicsLayerActorRemoveAll(GraphicsLayerActor* layer)
     g_return_if_fail(GRAPHICS_LAYER_IS_ACTOR(layer));
 
     GList* children = clutter_actor_get_children(CLUTTER_ACTOR(layer));
-    for (; children; children = children->next) {
-        // We only want to remove sublayers, not our own composite actors.
-        if (children->data == layer->priv->texture)
-            continue;
-
+    for (; children; children = children->next)
         clutter_actor_remove_child(CLUTTER_ACTOR(layer), CLUTTER_ACTOR(children->data));
-    }
 }
 
 cairo_surface_t* graphicsLayerActorGetSurface(GraphicsLayerActor* layer)
@@ -422,13 +386,13 @@ void graphicsLayerActorSetSurface(GraphicsLayerActor* layer, cairo_surface_t* su
 
 void graphicsLayerActorInvalidateRectangle(GraphicsLayerActor* layer, const FloatRect& dirtyRect)
 {
-    GraphicsLayerActorPrivate* priv = layer->priv;
-
-    if (!priv->texture)
+    ClutterContent* canvas;
+    canvas = clutter_actor_get_content(CLUTTER_ACTOR(layer));
+    if (!canvas)
         return;
 
-    cairo_rectangle_int_t rect(enclosingIntRect(dirtyRect));
-    clutter_cairo_texture_invalidate_rectangle(CLUTTER_CAIRO_TEXTURE(priv->texture), &rect);
+    // FIXME: Need to invalidate a specific area?
+    clutter_content_invalidate(canvas);
 }
 
 void graphicsLayerActorSetTransform(GraphicsLayerActor* layer, const CoglMatrix* matrix) 
@@ -520,7 +484,7 @@ void graphicsLayerActorInsertSublayer(GraphicsLayerActor* layer, ClutterActor* c
 
     layer->children = g_list_insert(layer->children, childLayer, index);
     ASSERT(!clutter_actor_get_parent(childLayer));
-    clutter_actor_set_parent(childLayer, CLUTTER_ACTOR(layer));
+    clutter_actor_add_child(CLUTTER_ACTOR(layer), childLayer);
     clutter_actor_queue_relayout(CLUTTER_ACTOR(layer));
 
     g_object_unref(childLayer);
@@ -535,7 +499,7 @@ void graphicsLayerActorSetSublayers(GraphicsLayerActor* layer, GraphicsLayerActo
 
     for (size_t i = 0; i < subLayers.size(); ++i) {
         ClutterActor* layerActor = CLUTTER_ACTOR(subLayers[i].get());
-        clutter_container_add_actor(CLUTTER_CONTAINER(layer), layerActor);
+        clutter_actor_add_child(CLUTTER_ACTOR(layer), layerActor);
     }
 }
 
