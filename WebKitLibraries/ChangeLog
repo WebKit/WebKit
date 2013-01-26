@@ -1,3 +1,11 @@
+2013-01-25  Andy Estes  <aestes@apple.com>
+
+        Update WKSI header and libraries after r140875.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-01-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Get WTF compiling in VS2010 (32bit)
