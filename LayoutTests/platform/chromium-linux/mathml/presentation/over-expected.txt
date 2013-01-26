@@ -151,10 +151,10 @@ layer at (43,232) size 8x17
   RenderMathMLBlock (flex) {mo} at (0,31) size 8x17
     RenderBlock (anonymous) at (0,0) size 8x17
 layer at (43,217) size 8x17 backgroundClip at (43,218) size 8x14 clip at (43,218) size 8x14 outlineClip at (43,218) size 8x14
-  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
+  RenderBlock (generated) at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23AE}"
 layer at (43,231) size 8x17 backgroundClip at (43,232) size 8x17 clip at (43,232) size 8x17 outlineClip at (43,232) size 8x17
-  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
+  RenderBlock (generated) at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{2321}"

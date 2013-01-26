@@ -1766,6 +1766,21 @@ webkit.org/b/105297 webaudio/audiobuffersource-playbackrate.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]
 
+Bug(ojan) mathml/differentiable-manifold.html [ Failure ]
+Bug(ojan) mathml/presentation/fractions.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/sub.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/mo-stretch.html [ Failure ]
+Bug(ojan) mathml/presentation/tokenElements.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/attributes.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/row-alignment.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/fenced.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/style.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/subsup.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/fractions-vertical-alignment.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/fenced-mi.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/roots.xhtml [ Failure ]
+Bug(ojan) mathml/presentation/underover.xhtml [ Failure ]
+
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 

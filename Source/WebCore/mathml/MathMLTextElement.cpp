@@ -47,6 +47,20 @@ PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tag
     return adoptRef(new MathMLTextElement(tagName, document));
 }
 
+void MathMLTextElement::attach()
+{
+    MathMLElement::attach();
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
+void MathMLTextElement::childrenChanged(bool createdByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    MathMLElement::childrenChanged(createdByParser, beforeChange, afterChange, childCountDelta);
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 RenderObject* MathMLTextElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (hasLocalName(MathMLNames::moTag))

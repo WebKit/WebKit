@@ -36,15 +36,15 @@ layer at (0,0) size 800x126
       RenderBlock {p} at (0,73) size 784x21
         RenderText {#text} at (0,0) size 26x19
           text run at (0,0) width 26: "text "
-        RenderMathMLMath {math} at (26,0) size 20x22 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msub} at (1,0) size 18x22
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 10x22 [padding: 0 0 2 0]
-              RenderMathMLOperator {mo} at (0,0) size 10x20
-                RenderMathMLBlock (flex) {mo} at (0,0) size 10x20
-                  RenderBlock (anonymous) at (0,0) size 10x20
-                    RenderText {mo} at (0,-3) size 10x22
-                      text run at (0,-3) width 10: "\x{222B}"
-            RenderMathMLBlock (anonymous, flex) at (10,11) size 8x11
+        RenderMathMLMath {math} at (26,2) size 18x20 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msub} at (1,0) size 16x20
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 8x20 [padding: 0 0 3 0]
+              RenderMathMLOperator {mo} at (0,0) size 8x17
+                RenderMathMLBlock (flex) {mo} at (0,0) size 8x17
+                  RenderBlock (anonymous) at (0,0) size 8x17
+                    RenderText {mo} at (0,-2) size 8x19
+                      text run at (0,-2) width 8: "\x{222B}"
+            RenderMathMLBlock (anonymous, flex) at (8,9) size 8x11
               RenderBlock {mi} at (0,0) size 8x10
                 RenderText {#text} at (0,-3) size 6x15
                   text run at (0,-3) width 6: "Y"

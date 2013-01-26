@@ -53,19 +53,25 @@ public:
     OperatorType operatorType() const { return m_operatorType; }
     
 protected:
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
+
     PassRefPtr<RenderStyle> createStackableStyle(int maxHeightForRenderer);
     RenderBlock* createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative);
     
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
 
-    int glyphHeightForCharacter(UChar);
+    float glyphHeightForCharacter(UChar) const;
+    float widthForCharacter(UChar) const;
+
+    UChar firstTextCharacter() const;
+    int stretchyCharacterIndex() const;
+    bool stretchDisabledByMarkup() const;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     int m_stretchHeight;
-    bool m_isStacked;
+    bool m_isStretched;
     UChar m_operator;
     OperatorType m_operatorType;
 };

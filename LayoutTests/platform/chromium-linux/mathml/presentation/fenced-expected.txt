@@ -54,26 +54,26 @@ layer at (184,56) size 8x17
   RenderMathMLBlock (flex) {mfenced} at (0,40) size 8x17
     RenderBlock (anonymous) at (0,0) size 8x17
 layer at (11,33) size 8x18 backgroundClip at (11,34) size 8x17 clip at (11,34) size 8x17 outlineClip at (11,34) size 8x17
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+  RenderBlock (generated) at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239C}"
 layer at (11,50) size 8x18 backgroundClip at (11,51) size 8x5 clip at (11,51) size 8x5 outlineClip at (11,51) size 8x5
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+  RenderBlock (generated) at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239C}"
 layer at (11,55) size 8x17 backgroundClip at (11,56) size 8x17 clip at (11,56) size 8x17 outlineClip at (11,56) size 8x17
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
+  RenderBlock (generated) at (0,0) size 8x17
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239D}"
 layer at (184,33) size 8x18 backgroundClip at (184,34) size 8x17 clip at (184,34) size 8x17 outlineClip at (184,34) size 8x17
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+  RenderBlock (generated) at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239F}"
 layer at (184,50) size 8x18 backgroundClip at (184,51) size 8x5 clip at (184,51) size 8x5 outlineClip at (184,51) size 8x5
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+  RenderBlock (generated) at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239F}"
 layer at (184,55) size 8x17 backgroundClip at (184,56) size 8x17 clip at (184,56) size 8x17 outlineClip at (184,56) size 8x17
-  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
+  RenderBlock (generated) at (0,0) size 8x17
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A0}"
