@@ -60,7 +60,7 @@ public:
     virtual void requestPermission(WebCore::ScriptExecutionContext*, WTF::PassRefPtr<WebCore::VoidCallback> callback);
 #endif
 #if ENABLE(NOTIFICATIONS)
-    virtual void requestPermission(WebCore::ScriptExecutionContext*, WTF::PassRefPtr<WebCore::NotificationPermissionCallback> callback) { }
+    virtual void requestPermission(WebCore::ScriptExecutionContext*, WTF::PassRefPtr<WebCore::NotificationPermissionCallback>);
 #endif
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) {}
 

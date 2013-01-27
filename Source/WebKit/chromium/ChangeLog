@@ -1,3 +1,21 @@
+2013-01-27  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add missing plumbing for Notification.requestPermission
+        https://bugs.webkit.org/show_bug.cgi?id=108012
+
+        Reviewed by Adam Barth.
+
+        * src/NotificationPresenterImpl.cpp:
+        (WebKit):
+        (WebKit::VoidCallbackClient::VoidCallbackClient):
+        (NotificationPermissionCallbackClient):
+        (WebKit::NotificationPermissionCallbackClient::NotificationPermissionCallbackClient):
+        (WebKit::NotificationPermissionCallbackClient::permissionRequestComplete):
+        (WebKit::NotificationPermissionCallbackClient::~NotificationPermissionCallbackClient):
+        (WebKit::NotificationPresenterImpl::requestPermission):
+        * src/NotificationPresenterImpl.h:
+        (NotificationPresenterImpl):
+
 2013-01-26  James Simonsen  <simonjam@chromium.org>
 
         [chromium] Export ResourceRequest's priority through WebURLRequest
