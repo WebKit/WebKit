@@ -66,12 +66,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* conne
         return;
     }
     
-    if (messageID.is<CoreIPC::MessageClassNetworkResourceLoader>()) {
-        NetworkResourceLoader* loader = m_networkResourceLoaders.get(decoder.destinationID()).get();
-        if (loader)
-            loader->didReceiveNetworkResourceLoaderMessage(connection, messageID, decoder);
-        return;
-    }
     ASSERT_NOT_REACHED();
 }
 

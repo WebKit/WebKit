@@ -148,7 +148,7 @@ HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallenge::initWithProtectionSpace
     // construct the AuthenticationChallenge with that as obtained from the webSender
 #if USE(CFNETWORK)
     m_authenticationChallenge = AuthenticationChallenge(webSpace->protectionSpace(), webCredential->credential(),
-                                    previousFailureCount, webResponse->resourceResponse(), webError->resourceError(), 0);
+                                    previousFailureCount, webResponse->resourceResponse(), webError->resourceError());
 #endif
     return S_OK;
 }

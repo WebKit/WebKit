@@ -31,7 +31,6 @@
 #include "MessageSender.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "SchedulableLoader.h"
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -58,8 +57,6 @@ public:
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const;
     
-    void didReceiveNetworkResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     virtual void start();
         
     // ResourceHandleClient methods
@@ -75,7 +72,6 @@ public:
     virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) OVERRIDE;
     virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
     virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
-    virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) OVERRIDE;
@@ -102,10 +98,6 @@ public:
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
 
-    void receivedAuthenticationCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
-    void receivedRequestToContinueWithoutAuthenticationCredential(const WebCore::AuthenticationChallenge&);
-    void receivedAuthenticationCancellation(const WebCore::AuthenticationChallenge&);
-    
     void scheduleStopOnMainThread();
     static void performStops(void*);
 
@@ -113,8 +105,6 @@ private:
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;    
-    
-    OwnPtr<WebCore::AuthenticationChallenge> m_currentAuthenticationChallenge;
 };
 
 } // namespace WebKit

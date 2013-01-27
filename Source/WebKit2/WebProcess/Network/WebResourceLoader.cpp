@@ -30,14 +30,12 @@
 
 #include "DataReference.h"
 #include "Logging.h"
-#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
-#include "NetworkResourceLoaderMessages.h"
 #include "PlatformCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
-#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 
 using namespace WebCore;
@@ -128,52 +126,6 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace, bool& result)
 {
     result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
-}
-
-void WebResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    LOG(Network, "(WebProcess) WebResourceLoader::didReceiveAuthenticationChallenge for '%s'", m_coreLoader->url().string().utf8().data());
-
-    m_currentAuthenticationChallenge = adoptPtr(new AuthenticationChallenge(challenge));
-    m_currentAuthenticationChallenge->setAuthenticationClient(this);
-
-    m_coreLoader->didReceiveAuthenticationChallenge(*m_currentAuthenticationChallenge);
-}
-
-void WebResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
-        return;
-
-    LOG(Network, "(WebProcess) WebResourceLoader::didCancelAuthenticationChallenge for '%s'", m_coreLoader->url().string().utf8().data());
-
-    m_coreLoader->didCancelAuthenticationChallenge(*m_currentAuthenticationChallenge);
-    m_currentAuthenticationChallenge.clear();
-}
-
-// WebCore::AuthenticationClient
-void WebResourceLoader::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
-{
-    ASSERT(m_currentAuthenticationChallenge && challenge == *m_currentAuthenticationChallenge);
-    send(Messages::NetworkResourceLoader::ReceivedAuthenticationCredential(challenge, credential));
-
-    m_currentAuthenticationChallenge.clear();
-}
-
-void WebResourceLoader::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
-{
-    ASSERT(m_currentAuthenticationChallenge && challenge == *m_currentAuthenticationChallenge);
-    send(Messages::NetworkResourceLoader::ReceivedRequestToContinueWithoutAuthenticationCredential(challenge));
-
-    m_currentAuthenticationChallenge.clear();
-}
-
-void WebResourceLoader::receivedCancellation(const AuthenticationChallenge& challenge)
-{
-    ASSERT(m_currentAuthenticationChallenge && challenge == *m_currentAuthenticationChallenge);
-    send(Messages::NetworkResourceLoader::ReceivedAuthenticationCancellation(challenge));
-
-    m_currentAuthenticationChallenge.clear();
 }
 
 void WebResourceLoader::networkProcessCrashed()

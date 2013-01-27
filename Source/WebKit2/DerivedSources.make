@@ -80,7 +80,6 @@ MESSAGE_RECEIVERS = \
     WebCookieManagerProxy \
     WebConnection \
     NetworkConnectionToWebProcess \
-    NetworkResourceLoader \
     RemoteLayerTreeHost \
     SecItemShim \
     SecItemShimProxy \

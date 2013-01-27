@@ -170,25 +170,17 @@ NSURLCredential *mac(const Credential& coreCredential)
 NSString * const NSURLAuthenticationMethodNTLM = @"NSURLAuthenticationMethodNTLM";
 #endif
 
-static uint64_t generateUniqueIdentifier()
-{
-    static uint64_t uniqueIdentifier;
-    return ++uniqueIdentifier;
-}
-
 AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
                                                  const Credential& proposedCredential,
                                                  unsigned previousFailureCount,
                                                  const ResourceResponse& response,
-                                                 const ResourceError& error,
-                                                 uint64_t identifier)
+                                                 const ResourceError& error)
     : AuthenticationChallengeBase(protectionSpace,
                                   proposedCredential,
                                   previousFailureCount,
                                   response,
                                   error)
 {
-    m_identifier = identifier;
 }
 
 AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
@@ -200,7 +192,6 @@ AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *c
     , m_sender([challenge sender])
     , m_nsChallenge(challenge)
 {
-    m_identifier = generateUniqueIdentifier();
 }
 
 void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* client)

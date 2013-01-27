@@ -228,64 +228,12 @@ bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)
 
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    ASSERT(!m_currentAuthenticationChallenge);
-    m_currentAuthenticationChallenge = adoptPtr(new AuthenticationChallenge(challenge));
-
-    NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(webPageID(), webFrameID(), *m_currentAuthenticationChallenge);
+    NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(webPageID(), webFrameID(), challenge);
 }
 
 void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    ASSERT(m_currentAuthenticationChallenge);
-    ASSERT(m_currentAuthenticationChallenge->identifier() == challenge.identifier());
-
-    send(Messages::WebResourceLoader::DidCancelAuthenticationChallenge(*m_currentAuthenticationChallenge));
-
-    m_currentAuthenticationChallenge.clear();
-}
-
-void NetworkResourceLoader::receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge)
-{
-    receivedAuthenticationCancellation(challenge);
-}
-
-void NetworkResourceLoader::receivedAuthenticationCredential(const AuthenticationChallenge& challenge, const Credential& credential)
-{
-    ASSERT(m_currentAuthenticationChallenge);
-    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
-
-    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
-        return;
-    
-    m_currentAuthenticationChallenge->authenticationClient()->receivedCredential(*m_currentAuthenticationChallenge, credential);
-    m_currentAuthenticationChallenge.clear();
-}
-
-void NetworkResourceLoader::receivedRequestToContinueWithoutAuthenticationCredential(const AuthenticationChallenge& challenge)
-{
-    ASSERT(m_currentAuthenticationChallenge);
-    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
-
-    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
-        return;
-
-    m_currentAuthenticationChallenge->authenticationClient()->receivedRequestToContinueWithoutCredential(*m_currentAuthenticationChallenge);
-    m_currentAuthenticationChallenge.clear();
-}
-
-void NetworkResourceLoader::receivedAuthenticationCancellation(const AuthenticationChallenge& challenge)
-{
-    ASSERT(m_currentAuthenticationChallenge);
-    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
-
-    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
-        return;
-
-    m_handle->cancel();
-    m_currentAuthenticationChallenge.clear();
-
-    send(Messages::WebResourceLoader::CancelResourceLoader());
-    scheduleStopOnMainThread();
+    // FIXME (NetworkProcess): Tell AuthenticationManager.
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

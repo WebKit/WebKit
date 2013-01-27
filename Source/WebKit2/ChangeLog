@@ -1,3 +1,36 @@
+2013-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove code for handling NetworkProcess authentication challenges in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=108003
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * NetworkProcess/NetworkResourceLoader.messages.in: Removed. We no longer have
+        an messages to NetworkResourceLoader.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        There is no longer an identifier inside AuthenticationChallenge.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::didCancelAuthenticationChallenge):
+        * NetworkProcess/NetworkResourceLoader.h:
+        Removed code for receiving authentication responses from WebProcess. Removed
+        m_currentAuthenticationChallenge - AuthenticationMAnager now keeps track of that.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        Removed code for handling authentication challenges. They are now sent directly to
+        UI Process. The only thing WebProcess still does is decide whether is can authenticate
+        against a particular authentication space.
+
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
         Fix the development build.

@@ -32,8 +32,6 @@ messages -> WebResourceLoader LegacyReceiver {
     DidFailResourceLoad(WebCore::ResourceError error)
     
     CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace) -> (bool response)
-    DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
-    DidCancelAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
 
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)

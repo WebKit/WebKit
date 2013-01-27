@@ -196,7 +196,7 @@ bool ArgumentCoder<HTTPHeaderMap>::decode(ArgumentDecoder* decoder, HTTPHeaderMa
 
 void ArgumentCoder<AuthenticationChallenge>::encode(ArgumentEncoder& encoder, const AuthenticationChallenge& challenge)
 {
-    encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error() << challenge.identifier();
+    encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
 }
 
 bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder* decoder, AuthenticationChallenge& challenge)
@@ -221,11 +221,7 @@ bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder* decoder, Au
     if (!decoder->decode(error))
         return false;
     
-    uint64_t identifier;
-    if (!decoder->decode(identifier))
-        return false;
-    
-    challenge = AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error, identifier);
+    challenge = AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
     return true;
 }
 

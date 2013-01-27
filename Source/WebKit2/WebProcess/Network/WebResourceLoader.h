@@ -31,7 +31,6 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
-#include <WebCore/AuthenticationClient.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -41,7 +40,6 @@ class DataReference;
 }
 
 namespace WebCore {
-class AuthenticationChallenge;
 class ProtectionSpace;
 class ResourceBuffer;
 class ResourceError;
@@ -55,7 +53,7 @@ namespace WebKit {
 class PlatformCertificateInfo;
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader>, public WebCore::AuthenticationClient {
+class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader> {
 public:
     static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
@@ -67,13 +65,6 @@ public:
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-
-    using RefCounted<WebResourceLoader>::ref;
-    using RefCounted<WebResourceLoader>::deref;
-
-    virtual void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
-    virtual void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
-    virtual void receivedCancellation(const WebCore::AuthenticationChallenge&);
 
     void networkProcessCrashed();
 
@@ -90,14 +81,8 @@ private:
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&, bool& result);
-    void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
-    void didCancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
-
-    virtual void refAuthenticationClient() { ref(); }
-    virtual void derefAuthenticationClient() { deref(); }
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
-    OwnPtr<WebCore::AuthenticationChallenge> m_currentAuthenticationChallenge;
 };
 
 } // namespace WebKit
