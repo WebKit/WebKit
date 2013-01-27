@@ -1041,8 +1041,6 @@
 		E1790901169BB4F9006904C7 /* SecItemShim.dylib in Copy Sec Item Shim */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
-		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
-		E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */; };
 		E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E690A169B563F009B6670 /* SecItemShimProxy.h */; };
@@ -2386,8 +2384,6 @@
 		E1513C65166EABB200149FCB /* ChildProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessProxy.h; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
-		E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapeSandboxFunctions.h; sourceTree = "<group>"; };
-		E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapeSandboxFunctions.mm; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShimProxy.cpp; sourceTree = "<group>"; };
 		E18E690A169B563F009B6670 /* SecItemShimProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimProxy.h; sourceTree = "<group>"; };
@@ -2764,8 +2760,6 @@
 			isa = PBXGroup;
 			children = (
 				1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */,
-				E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */,
-				E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */,
 				1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */,
 			);
 			path = mac;
@@ -4794,7 +4788,6 @@
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
-				E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */,
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,
 				51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */,
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
@@ -5825,7 +5818,6 @@
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
-				E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */,
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */,

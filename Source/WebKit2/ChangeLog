@@ -1,3 +1,36 @@
+2013-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Use shared ChildProcess code to enter plug-in sandbox.
+
+        Reviewed by Sam Weinig.
+
+        There is one known behavior change from this refactoring: getpwuid_r is used
+        instead of NSHomeDirectory for home directory, mathcing other client processes.
+
+        * PluginProcess/PluginProcess.cpp: (WebKit::PluginProcess::enterSandbox):
+        * PluginProcess/PluginProcess.h:
+        PluginProcess prevents ChildProcess attempt to enter the sandbox immediately on
+        launch for now, because we don't have a sandbox profile directory path yet.
+        It now keeps a copy of ChildProcessInitializationParameters, so that
+        ChildProcess::initializeSandbox() could be called later.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess): Store a copy of ChildProcessInitializationParameters
+        for later.
+        (WebKit::loadSandboxProfile): Build a sandbox profile from a common prefix and
+        a plugin-specific part.
+        (WebKit::PluginProcess::platformInitializePluginProcess): We can enter the sandbox now.
+        (WebKit::PluginProcess::enterSandbox): Prepare SandboxInitializationParameters,
+        and call ChildProcess::initializeSandbox().
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox): Actually handle system directory suffix
+        from parameters.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.h: Removed.
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm: Removed.
+
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
         Add support for running the networking process as an XPCService

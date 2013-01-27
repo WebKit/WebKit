@@ -33,14 +33,14 @@
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
+#import "SandboxInitializationParameters.h"
 #import <CoreAudio/AudioHardware.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
+#import <sysexits.h>
 #import <wtf/HashSet.h>
-
-#import "NetscapeSandboxFunctions.h"
 
 using namespace WebCore;
 
@@ -270,8 +270,10 @@ static void initializeCocoaOverrides()
     CFRetain(orderOffScreenObserver);
 }
 
-void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
+void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
+    m_childProcessInitializationParameters = parameters;
+
     RunLoop::setUseApplicationRunLoopOnMainRunLoop();
 
 #if defined(__i386__)
@@ -303,22 +305,22 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
-static void initializeSandbox(const String& pluginPath, const String& sandboxProfileDirectoryPath)
+static String loadSandboxProfile(const String& pluginPath, const String& sandboxProfileDirectoryPath)
 {
     if (sandboxProfileDirectoryPath.isEmpty())
-        return;
+        return String();
 
     RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)
-        return;
+        return String();
 
     RetainPtr<CFBundleRef> pluginBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, pluginURL.get()));
     if (!pluginBundle)
-        return;
+        return String();
     
     CFStringRef bundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
     if (!bundleIdentifier)
-        return;
+        return String();
 
     RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, sandboxProfileDirectoryPath.createCFString().get(), kCFURLPOSIXPathStyle, TRUE));
 
@@ -327,17 +329,15 @@ static void initializeSandbox(const String& pluginPath, const String& sandboxPro
 
     RetainPtr<NSString> profileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
     if (!profileString)
-        return;
+        return String();
 
     sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, CFSTR("com.apple.WebKit.plugin-common.sb"), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
 
     RetainPtr<NSString> commonProfileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);
     if (!commonProfileString)
-        return;
+        return String();
 
-    profileString = [commonProfileString.get() stringByAppendingString:profileString.get()];
-
-    enterSandbox([profileString.get() UTF8String]);
+    return [commonProfileString.get() stringByAppendingString:profileString.get()];
 }
 
 static void muteAudio(void)
@@ -360,11 +360,50 @@ void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationP
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
-    // FIXME: Use ChildProcess::initializeSandbox.
-    WebKit::initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
+    // FIXME: PluginProcess initializes sandbox later than normal for ChildProcesses, because it needs
+    // to know profile directory path. Switch to normal initialization scheme once the path can be determined earlier.
+    enterSandbox(parameters.sandboxProfileDirectoryPath);
 
     if (parameters.processType == TypeSnapshotProcess)
         muteAudio();
+}
+
+void PluginProcess::enterSandbox(const String& sandboxProfileDirectoryPath)
+{
+    SandboxInitializationParameters sandboxParameters;
+
+    String sandboxProfile = loadSandboxProfile(m_pluginPath, sandboxProfileDirectoryPath);
+    if (sandboxProfile.isEmpty())
+        return;
+
+    sandboxParameters.setSandboxProfile(sandboxProfile);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    // Use private temporary and cache directories.
+    char temporaryDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+        WTFLogAlways("PluginProcess: couldn't retrieve system temporary directory path: %d\n", errno);
+        exit(EX_OSERR);
+    }
+
+    if (strlcpy(temporaryDirectory, [[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] stringByAppendingPathComponent:@"WebKitPlugin-XXXXXX"] fileSystemRepresentation], sizeof(temporaryDirectory)) >= sizeof(temporaryDirectory)
+        || !mkdtemp(temporaryDirectory)) {
+        WTFLogAlways("PluginProcess: couldn't create private temporary directory '%s'\n", temporaryDirectory);
+        exit(EX_OSERR);
+    }
+
+    sandboxParameters.setSystemDirectorySuffix([[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] lastPathComponent] fileSystemRepresentation]);
+#endif
+
+    sandboxParameters.addPathParameter("PLUGIN_PATH", m_pluginPath);
+
+    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    sandboxParameters.addPathParameter("NSURL_CACHE_DIR", (NSString *)cachePath.get());
+
+    RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults.get()];
+
+    ChildProcess::initializeSandbox(m_childProcessInitializationParameters, sandboxParameters);
 }
 
 } // namespace WebKit

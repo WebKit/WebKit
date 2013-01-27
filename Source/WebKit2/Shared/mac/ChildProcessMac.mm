@@ -85,8 +85,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
-    String defaultSystemDirectorySuffix = String([[NSBundle mainBundle] bundleIdentifier]) + "+" + parameters.clientIdentifier;
-    sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
+    if (sandboxParameters.systemDirectorySuffix().isNull()) {
+        String defaultSystemDirectorySuffix = String([[NSBundle mainBundle] bundleIdentifier]) + "+" + parameters.clientIdentifier;
+        sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
+    }
 
     sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);

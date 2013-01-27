@@ -90,6 +90,12 @@ void PluginProcess::initializeProcess(const ChildProcessInitializationParameters
     platformInitializeProcess(parameters);
 }
 
+#if !PLATFORM(MAC)
+void PluginProcess::enterSandbox(const String&)
+{
+}
+#endif
+
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
 {
     size_t vectorIndex = m_webProcessConnections.find(webProcessConnection);

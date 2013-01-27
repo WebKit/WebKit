@@ -72,11 +72,14 @@ private:
     PluginProcess();
     ~PluginProcess();
 
+    void enterSandbox(const String& sandboxProfileDirectoryPath);
+
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
 
-    // FIXME: PluginProcess should switch to common code for sandbox initialization.
+    // Prevent entering the sandbox during first stage of process initialization. We can't do enter the sandbox before receiving
+    // sandbox profile directory in initialization message.
     virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE { }
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
@@ -98,6 +101,9 @@ private:
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
 
+    // Stored for delayed sandbox initialization.
+    ChildProcessInitializationParameters m_childProcessInitializationParameters;
+
     // Our web process connections.
     Vector<RefPtr<WebProcessConnection> > m_webProcessConnections;
 
@@ -110,12 +116,11 @@ private:
     bool m_supportsAsynchronousPluginInitialization;
 
     WebCore::RunLoop::Timer<PluginProcess> m_minimumLifetimeTimer;
-    
+
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     // The Mach port used for accelerated compositing.
     mach_port_t m_compositingRenderServerPort;
 #endif
-
 };
 
 } // namespace WebKit
