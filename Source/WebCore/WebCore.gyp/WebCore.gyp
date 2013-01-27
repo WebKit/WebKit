@@ -239,8 +239,15 @@
         'perl_exe': 'perl',
         'gperf_exe': 'gperf',
         'bison_exe': 'bison',
-        # Without one specified, the scripts default to 'gcc'.
-        'preprocessor': '',
+
+        'conditions': [
+          # We specify a preprocess so it happens locally and won't get distributed to goma.
+          ['OS=="mac" or OS=="ios"', {
+            'preprocessor': '--preprocessor "/usr/bin/clang -E -P -x c++"'
+          },{
+            'preprocessor': '--preprocessor "/usr/bin/gcc -E -P -x c++"'
+          }]
+        ],
       }],
       ['use_x11==1 or OS=="android"', {
         'webcore_include_dirs': [
