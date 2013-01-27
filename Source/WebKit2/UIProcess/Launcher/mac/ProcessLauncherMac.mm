@@ -78,29 +78,6 @@ struct UUIDHolder : public RefCounted<UUIDHolder> {
 
 }
 
-static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment)
-{
-    switch (launchOptions.processType) {
-    case ProcessLauncher::WebProcess:
-        return forDevelopment ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
-#if ENABLE(NETWORK_PROCESS)
-    case ProcessLauncher::NetworkProcess:
-        return forDevelopment ? "com.apple.WebKit.Networking.Development" : "com.apple.WebKit.Networking";
-#endif
-#if ENABLE(PLUGIN_PROCESS)
-    case ProcessLauncher::PluginProcess:
-        ASSERT_NOT_REACHED();
-        return 0;
-#endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-    case ProcessLauncher::SharedWorkerProcess:
-        ASSERT_NOT_REACHED();
-        return 0;
-#endif
-    }
-}
-
-
 static void setUpTerminationNotificationHandler(pid_t pid)
 {
 #if HAVE(DISPATCH_H)
@@ -165,6 +142,42 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
 
 #if HAVE(XPC)
+
+static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment)
+{
+    switch (launchOptions.processType) {
+    case ProcessLauncher::WebProcess:
+        if (forDevelopment)
+            return "com.apple.WebKit.WebContent.Development";
+        return "com.apple.WebKit.WebContent";
+#if ENABLE(NETWORK_PROCESS)
+    case ProcessLauncher::NetworkProcess:
+        if (forDevelopment)
+            return "com.apple.WebKit.Networking.Development";
+        return "com.apple.WebKit.Networking";
+#endif
+#if ENABLE(PLUGIN_PROCESS)
+    case ProcessLauncher::PluginProcess:
+        if (forDevelopment)
+            return "com.apple.WebKit.Plugin.Development";
+
+        // FIXME: Support plugins that require an executable heap.
+        if (launchOptions.architecture == CPU_TYPE_X86)
+            return "com.apple.WebKit.Plugin.32";
+        if (launchOptions.architecture == CPU_TYPE_X86_64)
+            return "com.apple.WebKit.Plugin.64";
+
+        ASSERT_NOT_REACHED();
+        return 0;
+#endif
+#if ENABLE(SHARED_WORKER_PROCESS)
+    case ProcessLauncher::SharedWorkerProcess:
+        ASSERT_NOT_REACHED();
+        return 0;
+#endif
+    }
+}
+
 static void connectToServiceForDevelopment(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit2 XPC service.

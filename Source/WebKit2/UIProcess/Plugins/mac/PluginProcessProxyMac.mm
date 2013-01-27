@@ -117,12 +117,27 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     return true;
 }
 
+#if HAVE(XPC)
+static bool shouldUseXPC()
+{
+    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
+        return [value boolValue];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
 {
     launchOptions.architecture = pluginInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
+
 #if HAVE(XPC)
-    launchOptions.useXPC = false;
+    launchOptions.useXPC = shouldUseXPC();
 #endif
 }
 

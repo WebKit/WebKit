@@ -1,3 +1,42 @@
+2013-01-27  Sam Weinig  <sam@webkit.org>
+
+        Add support for launching WebKit2 plugins using XPC
+        https://bugs.webkit.org/show_bug.cgi?id=108040
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/PluginService.32.xcconfig: Copied from Source/WebKit2/Configurations/WebContentService.xcconfig.
+        * Configurations/PluginService.64.xcconfig: Copied from Source/WebKit2/Configurations/WebContentService.xcconfig.
+        * Configurations/PluginService.Development.xcconfig: Copied from Source/WebKit2/Configurations/WebContentService.xcconfig.
+        Add configurations.
+
+        * PluginProcess/EntryPoint/mac/XPCService: Added.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32: Added.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/Info.plist: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/PluginService.32.Main.mm: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64: Added.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/Info.plist: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/PluginService.64.Main.mm: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development: Added.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist: Added.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/PluginService.Development.Main.mm: Added.
+        (main):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm.
+        (initializePluginService):
+        Add entry points.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        Add plugin process service names and move into correct #ifdef.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        Opt into xpc using the same rules as the WebProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add files.
+
 2013-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         Use shared ChildProcess code to enter plug-in sandbox.
