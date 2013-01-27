@@ -169,9 +169,19 @@ const AtomicString& Notification::interfaceName() const
 void Notification::show() 
 {
     // prevent double-showing
-    if (m_state == Idle && m_notificationCenter->client() && m_notificationCenter->client()->show(this)) {
-        m_state = Showing;
-        setPendingActivity(this);
+    if (m_state == Idle && m_notificationCenter->client()) {
+#if ENABLE(NOTIFICATIONS)
+        if (!static_cast<Document*>(scriptExecutionContext())->page())
+            return;
+        if (NotificationController::from(static_cast<Document*>(scriptExecutionContext())->page())->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
+            dispatchErrorEvent();
+            return;
+        }
+#endif
+        if (m_notificationCenter->client()->show(this)) {
+            m_state = Showing;
+            setPendingActivity(this);
+        }
     }
 }
 
@@ -240,12 +250,7 @@ void Notification::dispatchErrorEvent()
 void Notification::taskTimerFired(Timer<Notification>* timer)
 {
     ASSERT(scriptExecutionContext()->isDocument());
-    ASSERT(static_cast<Document*>(scriptExecutionContext())->page());
     ASSERT_UNUSED(timer, timer == m_taskTimer.get());
-    if (NotificationController::from(static_cast<Document*>(scriptExecutionContext())->page())->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
-        dispatchErrorEvent();
-        return;
-    }
     show();
 }
 #endif

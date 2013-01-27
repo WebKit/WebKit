@@ -1,0 +1,5 @@
+DESKTOP NOTIFICATION: icon , title Hello world, text 
+Sending notifications with permission...
+
+PASS: show event fired.
+

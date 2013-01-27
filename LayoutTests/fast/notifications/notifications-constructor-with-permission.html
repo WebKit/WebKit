@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.grantWebNotificationPermission("file://");
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (!window.Notification) {
+                log("FAIL: No Notification constructor!");
+            }
+            
+            var N = new Notification("Hello world");
+            N.onshow = function() { log("PASS: show event fired."); }
+            N.onerror = function() { log("FAIL: error event fired."); }
+            setTimeout(function() { testRunner.notifyDone(); }, 100);
+        }
+    </script>
+</head>
+<body>
+<p>Sending notifications with permission...</p>
+<div id="result"></div>
+
+<script type="text/javascript">
+runTests();
+</script>
+</body>
+</html>
