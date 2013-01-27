@@ -1,5 +1,13 @@
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
+        Fix the development build.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.Development.h:
+        (WebKit::XPCServiceEventHandler):
+        Use the right stringizer.
+
+2013-01-26  Sam Weinig  <sam@webkit.org>
+
         Refactor XPCService initialization to make it easier to add more services
         https://bugs.webkit.org/show_bug.cgi?id=108015
 

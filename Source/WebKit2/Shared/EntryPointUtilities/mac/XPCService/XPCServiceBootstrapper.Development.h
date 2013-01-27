@@ -126,7 +126,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 }
 
                 typedef void (*InitializerFunction)(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
-                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(dlsym(frameworkLibrary, STRINGIZE(WEBKIT_XPC_SERVICE_INITIALIZER)));
+                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(dlsym(frameworkLibrary, STRINGIZE_VALUE_OF(WEBKIT_XPC_SERVICE_INITIALIZER)));
                 if (!initializerFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit2.framework loaded from path: %s (Error: %s)", xpc_dictionary_get_string(event, "framework-executable-path"), dlerror());
                     exit(EXIT_FAILURE);
