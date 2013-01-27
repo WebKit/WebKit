@@ -96,21 +96,13 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 xpc_object_t environmentArray = xpc_dictionary_get_value(event, "environment");
                 size_t numberOfEnvironmentVariables = xpc_array_get_count(environmentArray);
 
-                char** environment = (char**)malloc(numberOfEnvironmentVariables * sizeof(char*) + 1);
-                for (size_t i = 0; i < numberOfEnvironmentVariables; ++i) {
-                    const char* string =  xpc_array_get_string(environmentArray, i);
-                    size_t stringLength = strlen(string);
-
-                    char* environmentVariable = (char*)malloc(stringLength + 1);
-                    memcpy(environmentVariable, string, stringLength);
-                    environmentVariable[stringLength] = '\0';
-
-                    environment[i] = environmentVariable;
-                }
+                const char** environment = (const char**)malloc(numberOfEnvironmentVariables * sizeof(char*) + 1);
+                for (size_t i = 0; i < numberOfEnvironmentVariables; ++i)
+                    environment[i] = xpc_array_get_string(environmentArray, i);
                 environment[numberOfEnvironmentVariables] = 0;
 
                 pid_t processIdentifier = 0;
-                posix_spawn(&processIdentifier, path, 0, &attr, const_cast<char**>(args), environment);
+                posix_spawn(&processIdentifier, path, 0, &attr, const_cast<char**>(args), const_cast<char**>(environment));
 
                 posix_spawnattr_destroy(&attr);
 
