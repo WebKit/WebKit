@@ -278,98 +278,98 @@ layer at (90,307) size 36x51
   RenderMathMLBlock (flex) {mo} at (0,64) size 36x51
     RenderBlock (anonymous) at (0,0) size 36x51
 layer at (70,183) size 12x18 backgroundClip at (70,184) size 12x17 clip at (70,184) size 12x17 outlineClip at (70,184) size 12x17
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (70,200) size 12x18 backgroundClip at (70,201) size 12x8 clip at (70,201) size 12x8 outlineClip at (70,201) size 12x8
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (70,208) size 12x18 backgroundClip at (70,209) size 12x18 clip at (70,209) size 12x18 outlineClip at (70,209) size 12x18
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (86,182) size 8x17 backgroundClip at (86,183) size 8x16 clip at (86,183) size 8x16 outlineClip at (86,183) size 8x16
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23AE}"
 layer at (86,198) size 8x17 backgroundClip at (86,199) size 8x11 clip at (86,199) size 8x11 outlineClip at (86,199) size 8x11
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23AE}"
 layer at (86,209) size 8x17 backgroundClip at (86,210) size 8x17 clip at (86,210) size 8x17 outlineClip at (86,210) size 8x17
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{2321}"
 layer at (101,183) size 12x18 backgroundClip at (101,184) size 12x4 clip at (101,184) size 12x4 outlineClip at (101,184) size 12x4
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (101,187) size 12x18 backgroundClip at (101,188) size 12x17 clip at (101,188) size 12x17 outlineClip at (101,188) size 12x17
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23A8}"
 layer at (101,204) size 12x18 backgroundClip at (101,205) size 12x5 clip at (101,205) size 12x5 outlineClip at (101,205) size 12x5
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (101,209) size 12x17 backgroundClip at (101,210) size 12x17 clip at (101,210) size 12x17 outlineClip at (101,210) size 12x17
-  RenderBlock (generated) at (0,0) size 12x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x17
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23A9}"
 layer at (119,183) size 8x18 backgroundClip at (119,184) size 8x17 clip at (119,184) size 8x17 outlineClip at (119,184) size 8x17
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x18
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A2}"
 layer at (119,200) size 8x18 backgroundClip at (119,201) size 8x9 clip at (119,201) size 8x9 outlineClip at (119,201) size 8x9
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x18
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A2}"
 layer at (119,209) size 8x17 backgroundClip at (119,210) size 8x17 clip at (119,210) size 8x17 outlineClip at (119,210) size 8x17
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A3}"
 layer at (190,183) size 8x18 backgroundClip at (190,184) size 8x17 clip at (190,184) size 8x17 outlineClip at (190,184) size 8x17
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x18
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A5}"
 layer at (190,200) size 8x18 backgroundClip at (190,201) size 8x9 clip at (190,201) size 8x9 outlineClip at (190,201) size 8x9
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x18
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A5}"
 layer at (190,209) size 8x17 backgroundClip at (190,210) size 8x17 clip at (190,210) size 8x17 outlineClip at (190,210) size 8x17
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
     RenderText {mo} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A6}"
 layer at (202,183) size 12x18 backgroundClip at (202,184) size 12x4 clip at (202,184) size 12x4 outlineClip at (202,184) size 12x4
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (202,187) size 12x18 backgroundClip at (202,188) size 12x17 clip at (202,188) size 12x17 outlineClip at (202,188) size 12x17
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AC}"
 layer at (202,204) size 12x18 backgroundClip at (202,205) size 12x5 clip at (202,205) size 12x5 outlineClip at (202,205) size 12x5
-  RenderBlock (generated) at (0,0) size 12x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x18
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AA}"
 layer at (202,209) size 12x17 backgroundClip at (202,210) size 12x17 clip at (202,210) size 12x17 outlineClip at (202,210) size 12x17
-  RenderBlock (generated) at (0,0) size 12x17
+  RenderBlock (relative positioned) {mo} at (0,0) size 12x17
     RenderText {mo} at (0,-2) size 12x19
       text run at (0,-2) width 12: "\x{23AD}"
 layer at (14,293) size 36x51 backgroundClip at (14,294) size 36x13 clip at (14,294) size 36x13 outlineClip at (14,294) size 36x13
-  RenderBlock (generated) at (0,0) size 36x51
+  RenderBlock (relative positioned) {mo} at (0,0) size 36x51
     RenderText {mo} at (0,-7) size 36x56
       text run at (0,-7) width 36: "\x{23AA}"
 layer at (14,306) size 36x51 backgroundClip at (14,307) size 36x51 clip at (14,307) size 36x51 outlineClip at (14,307) size 36x51
-  RenderBlock (generated) at (0,0) size 36x51
+  RenderBlock (relative positioned) {mo} at (0,0) size 36x51
     RenderText {mo} at (0,-7) size 36x56
       text run at (0,-7) width 36: "\x{23AA}"
 layer at (90,293) size 36x51 backgroundClip at (90,294) size 36x13 clip at (90,294) size 36x13 outlineClip at (90,294) size 36x13
-  RenderBlock (generated) at (0,0) size 36x51
+  RenderBlock (relative positioned) {mo} at (0,0) size 36x51
     RenderText {mo} at (0,-7) size 36x56
       text run at (0,-7) width 36: "\x{23AA}"
 layer at (90,306) size 36x51 backgroundClip at (90,307) size 36x51 clip at (90,307) size 36x51 outlineClip at (90,307) size 36x51
-  RenderBlock (generated) at (0,0) size 36x51
+  RenderBlock (relative positioned) {mo} at (0,0) size 36x51
     RenderText {mo} at (0,-7) size 36x56
       text run at (0,-7) width 36: "\x{23AA}"

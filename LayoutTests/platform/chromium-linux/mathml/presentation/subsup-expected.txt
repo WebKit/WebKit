@@ -264,18 +264,18 @@ layer at (265,231) size 8x17
   RenderMathMLBlock (flex) {mfenced} at (0,20) size 8x17
     RenderBlock (anonymous) at (0,0) size 8x17
 layer at (242,228) size 8x18 backgroundClip at (242,229) size 8x2 clip at (242,229) size 8x2 outlineClip at (242,229) size 8x2
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239C}"
 layer at (242,230) size 8x17 backgroundClip at (242,231) size 8x17 clip at (242,231) size 8x17 outlineClip at (242,231) size 8x17
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239D}"
 layer at (265,228) size 8x18 backgroundClip at (265,229) size 8x2 clip at (265,229) size 8x2 outlineClip at (265,229) size 8x2
-  RenderBlock (generated) at (0,0) size 8x18
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{239F}"
 layer at (265,230) size 8x17 backgroundClip at (265,231) size 8x17 clip at (265,231) size 8x17 outlineClip at (265,231) size 8x17
-  RenderBlock (generated) at (0,0) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
     RenderText {mfenced} at (0,-2) size 8x19
       text run at (0,-2) width 8: "\x{23A0}"

@@ -34,8 +34,6 @@
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "RenderText.h"
-#include "ScaleTransformOperation.h"
-#include "TransformOperations.h"
 
 namespace WebCore {
     
@@ -82,6 +80,27 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
         updateFromElement();
 }
 
+void RenderMathMLOperator::computePreferredLogicalWidths() 
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+#ifndef NDEBUG
+    // FIXME: Remove the setNeedsLayoutIsForbidden calls once mathml stops modifying the render tree here.
+    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
+    setNeedsLayoutIsForbidden(false);
+#endif
+    
+    // Check for an uninitialized operator.
+    if (!firstChild())
+        updateFromElement();
+
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
+#endif
+
+    RenderMathMLBlock::computePreferredLogicalWidths();
+}
+
 // This is a table of stretchy characters.
 // FIXME: Should this be read from the unicode characteristics somehow?
 // table:  stretchy operator, top char, extension char, bottom char, middle char
@@ -107,82 +126,12 @@ static struct StretchyCharacter {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-float RenderMathMLOperator::glyphHeightForCharacter(UChar character) const
+// Note glyphHeightForCharacter truncates its result to an int.
+int RenderMathMLOperator::glyphHeightForCharacter(UChar character)
 {
     GlyphData data = style()->font().glyphDataForCharacter(character, false);
     FloatRect glyphBounds = data.fontData->boundsForGlyph(data.glyph);
     return glyphBounds.height();
-}
-
-float RenderMathMLOperator::widthForCharacter(UChar character) const
-{
-    TextRun textRun = constructTextRun(const_cast<RenderMathMLOperator*>(this), style()->font(), &character, 1, style());
-    textRun.disableRoundingHacks();
-    return style()->font().width(textRun);
-}
-
-void RenderMathMLOperator::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
-{
-    int stretchyIndex = stretchyCharacterIndex();
-    if (stretchyIndex < 0) {
-        RenderMathMLBlock::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
-        return;
-    }
-
-    // Use the max of all the possible characters used in the operator.
-    // This may sometimes give us widths that are a bit too large, but that's
-    // better than too small.
-    // FIXME: Don't have the width be affected by operator stretching. Then we can
-    // stop overriding computeIntrinsicLogicalWidths entirely.
-    struct StretchyCharacter* partsData = &stretchyCharacters[stretchyIndex];
-    float maxGlyphWidth = widthForCharacter(partsData->character);
-    maxGlyphWidth = std::max(maxGlyphWidth, widthForCharacter(partsData->topGlyph));
-    maxGlyphWidth = std::max(maxGlyphWidth, widthForCharacter(partsData->extensionGlyph));
-    maxGlyphWidth = std::max(maxGlyphWidth, widthForCharacter(partsData->bottomGlyph));
-    if (partsData->middleGlyph)
-        maxGlyphWidth = std::max(maxGlyphWidth, widthForCharacter(partsData->middleGlyph));
-
-    minLogicalWidth = maxLogicalWidth = maxGlyphWidth + borderAndPaddingLogicalWidth();
-}
-
-bool RenderMathMLOperator::stretchDisabledByMarkup() const
-{
-    if (!node()->isElementNode())
-        return false;
-    Element* mo = static_cast<Element*>(node());
-    AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
-    return equalIgnoringCase(stretchyAttr, "false");
-}
-
-UChar RenderMathMLOperator::firstTextCharacter() const
-{
-    if (!m_operator) {
-        String opText = node()->textContent();
-        for (unsigned i = 0; i < opText.length(); i++) {
-            if (!isSpaceOrNewline(opText[i]))
-                return opText[i];
-        }
-    }
-    return m_operator;
-}
-
-int RenderMathMLOperator::stretchyCharacterIndex() const
-{
-    bool stretchDisabled = stretchDisabledByMarkup();
-    if (stretchDisabled)
-        return -1;
-
-    // Check for a stretchable character.
-    UChar firstCharacater = firstTextCharacter();
-    if (firstCharacater) {
-        const int maxIndex = WTF_ARRAY_LENGTH(stretchyCharacters);
-        for (int index = 0; index < maxIndex; index++) {
-            if (stretchyCharacters[index].character == firstCharacater)
-                return index;
-        }
-    }
-
-    return -1;
 }
 
 // FIXME: It's cleaner to only call updateFromElement when an attribute has changed. The body of
@@ -200,18 +149,54 @@ void RenderMathMLOperator::updateFromElement()
     // renderer to 0, so we need to restore it.
     node()->setRenderer(savedRenderer);
     
-    int index = stretchyCharacterIndex();
-    bool isStretchy = index >= 0;
-
+    // If the operator is fixed, it will be contained in m_operator
+    UChar firstChar = m_operator;
+    
+    // This boolean indicates whether stretching is disabled via the markup.
+    bool stretchDisabled = false;
+    
+    // We may need the element later if we can't stretch.
+    if (node()->isElementNode()) {
+        if (Element* mo = static_cast<Element*>(node())) {
+            AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
+            stretchDisabled = equalIgnoringCase(stretchyAttr, "false");
+            
+            // If stretching isn't disabled, get the character from the text content.
+            if (!stretchDisabled && !firstChar) {
+                String opText = mo->textContent();
+                for (unsigned int i = 0; !firstChar && i < opText.length(); i++) {
+                    if (!isSpaceOrNewline(opText[i]))
+                        firstChar = opText[i];
+                }
+            }
+        }
+    }
+    
+    // The 'index' holds the stretchable character's glyph information
+    int index = -1;
+    
+    // isStretchy indicates whether the character is streatchable via a number of factors.
+    bool isStretchy = false;
+    
+    // Check for a stretchable character.
+    if (!stretchDisabled && firstChar) {
+        const int maxIndex = WTF_ARRAY_LENGTH(stretchyCharacters);
+        for (index++; index < maxIndex; index++) {
+            if (stretchyCharacters[index].character == firstChar) {
+                isStretchy = true;
+                break;
+            }
+        }
+    }
+    
     // We only stack glyphs if the stretch height is larger than a minimum size.
     bool shouldStack = isStretchy && m_stretchHeight > style()->fontSize();
-
     struct StretchyCharacter* partsData = 0;
-    float topGlyphHeight = 0;
-    float extensionGlyphHeight = 0;
-    float bottomGlyphHeight = 0;
-    float middleGlyphHeight = 0;
-    if (isStretchy) {
+    int topGlyphHeight = 0;
+    int extensionGlyphHeight = 0;
+    int bottomGlyphHeight = 0;
+    int middleGlyphHeight = 0;
+    if (shouldStack) {
         partsData = &stretchyCharacters[index];
         
         FontCachePurgePreventer fontCachePurgePreventer;
@@ -223,43 +208,31 @@ void RenderMathMLOperator::updateFromElement()
             middleGlyphHeight = glyphHeightForCharacter(partsData->middleGlyph) - 1;
         shouldStack = m_stretchHeight >= topGlyphHeight + middleGlyphHeight + bottomGlyphHeight && extensionGlyphHeight > 0;
     }
-
-    bool stretchDisabled = stretchDisabledByMarkup();
+    
     // Either stretch is disabled or we don't have a stretchable character over the minimum height
     if (stretchDisabled || !shouldStack) {
+        m_isStacked = false;
         RenderBlock* container = new (renderArena()) RenderMathMLBlock(toElement(node()));
+        // This container doesn't offer any useful information to accessibility.
         toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
         
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
         newStyle->setDisplay(FLEX);
-        newStyle->setJustifyContent(JustifyCenter);
-
-        UChar firstCharacter = firstTextCharacter();
-        m_isStretched = firstCharacter && isStretchy && m_stretchHeight > style()->fontMetrics().floatHeight();
-        if (m_isStretched)
-            newStyle->setHeight(Length(m_stretchHeight, Fixed));
-        container->setStyle(newStyle.release());
-        addChild(container);
-
-        if (m_isStretched) {
-            float scaleY = m_stretchHeight / glyphHeightForCharacter(firstCharacter);
-            TransformOperations transform;
-            transform.operations().append(ScaleTransformOperation::create(1.0, scaleY, ScaleTransformOperation::SCALE_X));
-
-            RefPtr<RenderStyle> innerStyle = RenderStyle::create();
-            innerStyle->inheritFrom(style());
-            innerStyle->setTransform(transform);
-            innerStyle->setTransformOriginY(Length(0, Fixed));
-
-            RenderBlock* innerContainer = new (renderArena()) RenderMathMLBlock(toElement(node()));
-            toRenderMathMLBlock(innerContainer)->setIgnoreInAccessibilityTree(true);
-            innerContainer->setStyle(innerStyle);
-            container->addChild(innerContainer);
-
-            container = innerContainer;
+        
+        // Check for a stretchable character that is under the minimum height.
+        if (!stretchDisabled && isStretchy && m_stretchHeight > style()->fontSize()) {
+            FontDescription desc = style()->fontDescription();
+            desc.setIsAbsoluteSize(true);
+            desc.setSpecifiedSize(m_stretchHeight);
+            desc.setComputedSize(m_stretchHeight);
+            newStyle->setFontDescription(desc);
+            newStyle->font().update(style()->font().fontSelector());
         }
 
+        container->setStyle(newStyle.release());
+        addChild(container);
+        
         // Build the text of the operator.
         RenderText* text = 0;
         if (m_operator) 
@@ -276,7 +249,7 @@ void RenderMathMLOperator::updateFromElement()
         }
     } else {
         // Build stretchable characters as a stack of glyphs.
-        m_isStretched = true;
+        m_isStacked = true;
         
         // To avoid gaps, we position glyphs after the top glyph upward by 1px. We also truncate
         // glyph heights to ints, and then reduce all but the top & bottom such heights by 1px.
@@ -339,7 +312,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRend
     addChild(container);
     RenderBlock* parent = container;
     if (charRelative) {
-        RenderBlock* charBlock = createAnonymous(document());
+        RenderBlock* charBlock = new (renderArena()) RenderBlock(node());
         RefPtr<RenderStyle> charStyle = RenderStyle::create();
         charStyle->inheritFrom(container->style());
         charStyle->setDisplay(INLINE_BLOCK);
@@ -358,7 +331,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRend
 
 int RenderMathMLOperator::firstLineBoxBaseline() const
 {
-    if (m_isStretched)
+    if (m_isStacked)
         return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;    
     return RenderMathMLBlock::firstLineBoxBaseline();
 }

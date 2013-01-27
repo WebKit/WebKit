@@ -40,8 +40,6 @@ private:
     MathMLTextElement(const QualifiedName& tagName, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void attach() OVERRIDE;
-    virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
 };
     
 }

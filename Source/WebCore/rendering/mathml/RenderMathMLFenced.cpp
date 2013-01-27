@@ -97,12 +97,9 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, Rend
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderMathMLOperator* openFence = createMathMLOperator(m_open, RenderMathMLOperator::Fence);
-    RenderMathMLRow::addChild(openFence, firstChild());
+    RenderMathMLRow::addChild(createMathMLOperator(m_open, RenderMathMLOperator::Fence), firstChild());
     m_closeFenceRenderer = createMathMLOperator(m_close, RenderMathMLOperator::Fence);
     RenderMathMLRow::addChild(m_closeFenceRenderer);
-    openFence->updateFromElement();
-    m_closeFenceRenderer->updateFromElement();
 }
 
 void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -164,13 +161,8 @@ void RenderMathMLFenced::styleDidChange(StyleDifference diff, const RenderStyle*
             child->style()->inheritFrom(style());
             bool isFence = child == firstChild() || child == lastChild();
             child->style()->setMarginEnd(Length((isFence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
-            if (isFence) {
-                ASSERT(child->isRenderMathMLBlock());
-                RenderMathMLBlock* block = toRenderMathMLBlock(child);
-                ASSERT(block->isRenderMathMLOperator());
-                toRenderMathMLOperator(block)->updateFromElement();
+            if (isFence)
                 child->style()->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
-            }
         }
     }
 }
