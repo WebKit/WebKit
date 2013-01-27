@@ -1,3 +1,31 @@
+2013-01-26  Sam Weinig  <sam@webkit.org>
+
+        Refactor XPCService initialization to make it easier to add more services
+        https://bugs.webkit.org/show_bug.cgi?id=108015
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.Development.h: Added.
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.h: Added.
+        (WebKit::XPCServiceEventHandler):
+        Move bootstrapping to Shared (like we have for the legacy process). For now, we use
+        a macro to define the actual initialization point function to use, in the future, we
+        could consider alternatives, such as getting the function name from the bundle.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update files.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm:
+        Simplify to use the new XPCServiceBootstrapper.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm: Copied from Source/WebKit2/WebProcess/mac/WebProcessServiceEntryPoints.mm.
+        (initializeWebContentService):
+        * WebProcess/mac/WebProcessServiceEntryPoints.h: Removed.
+        * WebProcess/mac/WebProcessServiceEntryPoints.mm: Removed.
+        Move the entry point to where it belongs and extract the bootstrapping parts.
+
 2013-01-26  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [Qt]Qt build fix

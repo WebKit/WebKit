@@ -23,9 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebProcessServiceEntryPoints.h"
+#define WEBKIT_XPC_SERVICE_INITIALIZER initializeWebContentService
+#include "XPCServiceBootstrapper.h"
+
+using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-    return webProcessServiceMain(argc, argv);
+    xpc_main(XPCServiceEventHandler);
+    return 0;
 }

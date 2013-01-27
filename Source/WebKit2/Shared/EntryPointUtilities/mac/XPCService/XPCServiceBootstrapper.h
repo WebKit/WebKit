@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessServiceEntryPoints.h"
+#ifndef XPCServiceBootstrapper_h
+#define XPCServiceBootstrapper_h
 
-#if HAVE(XPC)
+#if !defined(WEBKIT_XPC_SERVICE_INITIALIZER)
+#error WEBKIT_XPC_SERVICE_INITIALIZER must be defined.
+#endif
 
-#import "EnvironmentUtilities.h"
-#import "WebKit2Initialize.h"
-#import "WebProcess.h"
-#import <WebCore/RunLoop.h>
-#import <stdio.h>
-#import <stdlib.h>
 #import <xpc/xpc.h>
-
 extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
+
+// Forward declare the specified initializer.
+extern "C" void WEBKIT_XPC_SERVICE_INITIALIZER(const char* clientIdentifier, xpc_connection_t, mach_port_t serverPort, const char* uiProcessName);
 
 namespace WebKit {
 
-static void WebProcessServiceEventHandler(xpc_connection_t peer)
+static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
@@ -51,7 +49,7 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
                 exit(EXIT_FAILURE);
             }
         } else {
-            ASSERT(type == XPC_TYPE_DICTIONARY);
+            assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
                 xpc_object_t reply = xpc_dictionary_create_reply(event);
@@ -59,12 +57,12 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                ChildProcessInitializationParameters parameters;
-                parameters.uiProcessName = xpc_dictionary_get_string(event, "ui-process-name");
-                parameters.clientIdentifier = xpc_dictionary_get_string(event, "client-identifier");
-                parameters.connectionIdentifier = xpc_dictionary_copy_mach_send(event, "server-port");
-
-                WebProcess::shared().initialize(parameters);
+                WEBKIT_XPC_SERVICE_INITIALIZER(
+                    xpc_dictionary_get_string(event, "client-identifier"),
+                    peer,
+                    xpc_dictionary_copy_mach_send(event, "server-port"),
+                    xpc_dictionary_get_string(event, "ui-process-name")
+                );
             }
         }
     });
@@ -74,37 +72,4 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
 
 } // namespace WebKit
 
-using namespace WebCore;
-using namespace WebKit;
-
-int webProcessServiceMain(int argc, char** argv)
-{
-    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the WebProcess don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
-
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-    InitializeWebKit2();
-
-    xpc_main(WebProcessServiceEventHandler);
-    return 0;
-}
-
-void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
-{
-    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the WebProcess don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
-
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-    InitializeWebKit2();
-
-    ChildProcessInitializationParameters parameters;
-    parameters.uiProcessName = uiProcessName;
-    parameters.clientIdentifier = clientIdentifier;
-    parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
-
-    WebProcess::shared().initialize(parameters);
-}
-
-#endif // HAVE(XPC)
+#endif // XPCServiceBootstrapper_h

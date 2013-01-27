@@ -799,6 +799,7 @@
 		BC82838C16B45F0700A278FE /* PluginProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82838A16B45EF200A278FE /* PluginProcessMain.mm */; };
 		BC82839416B4608000A278FE /* SharedWorkerProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC82839216B4607B00A278FE /* SharedWorkerProcessMainBootstrapper.cpp */; };
 		BC82839516B4608300A278FE /* SharedWorkerProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839316B4607B00A278FE /* SharedWorkerProcessMain.mm */; };
+		BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */; };
 		BC82DF2215BDF42200FC2841 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */; };
 		BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8452A61162C80900CAB9B5 /* DrawingArea.h */; };
@@ -928,8 +929,6 @@
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };
 		BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */; };
 		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
-		BCDC308B15FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDC308915FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm */; };
-		BCDC308C15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDC308A15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h */; };
 		BCDDB317124EBD130048D13C /* WKBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB316124EBD130048D13C /* WKBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */; };
 		BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32C124EC2E10048D13C /* WKAPICast.h */; };
@@ -2098,6 +2097,9 @@
 		BC82839116B4600D00A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC82839216B4607B00A278FE /* SharedWorkerProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
 		BC82839316B4607B00A278FE /* SharedWorkerProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessMain.mm; sourceTree = "<group>"; };
+		BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCServiceBootstrapper.h; sourceTree = "<group>"; };
+		BC82839716B480F600A278FE /* XPCServiceBootstrapper.Development.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCServiceBootstrapper.Development.h; sourceTree = "<group>"; };
+		BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
 		BC84EB1712A7100C0083F2DA /* WebPreferencesMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesMac.mm; sourceTree = "<group>"; };
@@ -2228,8 +2230,6 @@
 		BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesStore.h; sourceTree = "<group>"; };
 		BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesStore.cpp; sourceTree = "<group>"; };
 		BCDB86C01200FB97007254BE /* WebURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURL.h; sourceTree = "<group>"; };
-		BCDC308915FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessServiceEntryPoints.mm; sourceTree = "<group>"; };
-		BCDC308A15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessServiceEntryPoints.h; sourceTree = "<group>"; };
 		BCDDB316124EBD130048D13C /* WKBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBase.h; sourceTree = "<group>"; };
 		BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharedAPICast.h; sourceTree = "<group>"; };
 		BCDDB32C124EC2E10048D13C /* WKAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAPICast.h; sourceTree = "<group>"; };
@@ -2662,8 +2662,6 @@
 			isa = PBXGroup;
 			children = (
 				BC3065C312592F8900E71278 /* WebProcessMac.mm */,
-				BCDC308A15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h */,
-				BCDC308915FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4054,6 +4052,8 @@
 		BC82836B16B3587900A278FE /* XPCService */ = {
 			isa = PBXGroup;
 			children = (
+				BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */,
+				BC82839716B480F600A278FE /* XPCServiceBootstrapper.Development.h */,
 			);
 			name = XPCService;
 			path = mac/XPCService;
@@ -4186,6 +4186,7 @@
 			children = (
 				BCACC43F16B24CAA00B6E092 /* WebContentService */,
 				BCACC44216B24CAA00B6E092 /* WebContentService.Development */,
+				BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */,
 			);
 			name = XPCService;
 			path = mac/XPCService;
@@ -4954,7 +4955,6 @@
 				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
-				BCDC308C15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h in Headers */,
 				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
@@ -5962,7 +5962,6 @@
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
 				51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */,
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
-				BCDC308B15FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm in Sources */,
 				512F589C12A8838800629530 /* WebProtectionSpace.cpp in Sources */,
 				37948403150C350600E52CE9 /* WebRenderLayer.cpp in Sources */,
 				3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */,
@@ -6107,6 +6106,7 @@
 				BC82838416B45DA500A278FE /* NetworkProcessMain.mm in Sources */,
 				BC82838C16B45F0700A278FE /* PluginProcessMain.mm in Sources */,
 				BC82839516B4608300A278FE /* SharedWorkerProcessMain.mm in Sources */,
+				BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
