@@ -1,5 +1,52 @@
 2013-01-26  Sam Weinig  <sam@webkit.org>
 
+        Add support for running the networking process as an XPCService
+        https://bugs.webkit.org/show_bug.cgi?id=108025
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/NetworkService.Development.xcconfig: Copied from Source/WebKit2/Configurations/WebContentService.Development.xcconfig.
+        * Configurations/NetworkService.xcconfig: Copied from Source/WebKit2/Configurations/WebContentService.xcconfig.
+        Add configurations.
+
+        * NetworkProcess/EntryPoint/mac/XPCService: Added.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService: Added.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development: Added.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/NetworkServiceMain.Development.mm: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm.
+        (initializeNetworkService):
+        Add entry points.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::connectToServiceForDevelopment):
+        (WebKit::createServiceForDevelopment):
+        (WebKit::createService):
+        (WebKit::createProcess):
+        (WebKit::ProcessLauncher::launchProcess):
+        Rework service creation to work for arbitrary services.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions):
+        Opt into xpc using the same rules as the WebProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update files.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (initializeWebContentService):
+        Fix the comment to refer to the shim correctly.
+
+2013-01-26  Sam Weinig  <sam@webkit.org>
+
         Simplify environment creation in XPC service re-exec
         https://bugs.webkit.org/show_bug.cgi?id=108017
 

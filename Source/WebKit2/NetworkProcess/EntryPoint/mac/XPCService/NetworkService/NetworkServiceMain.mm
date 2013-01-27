@@ -23,49 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NetworkProcessProxy.h"
+#define WEBKIT_XPC_SERVICE_INITIALIZER initializeNetworkService
+#include "XPCServiceBootstrapper.h"
 
-#import "NetworkProcessMessages.h"
+using namespace WebKit;
 
-#if ENABLE(NETWORK_PROCESS)
-
-using namespace WebCore;
-
-namespace WebKit {
-
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+int main(int argc, char** argv)
 {
-    if (!isValid())
-        return;
-    
-    connection()->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    xpc_main(XPCServiceEventHandler);
+    return 0;
 }
-
-#if HAVE(XPC)
-static bool shouldUseXPC()
-{
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
-
-void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-
-#if HAVE(XPC)
-    launchOptions.useXPC = shouldUseXPC();
-#endif
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

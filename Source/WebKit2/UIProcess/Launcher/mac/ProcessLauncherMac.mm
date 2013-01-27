@@ -78,6 +78,29 @@ struct UUIDHolder : public RefCounted<UUIDHolder> {
 
 }
 
+static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment)
+{
+    switch (launchOptions.processType) {
+    case ProcessLauncher::WebProcess:
+        return forDevelopment ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
+#if ENABLE(NETWORK_PROCESS)
+    case ProcessLauncher::NetworkProcess:
+        return forDevelopment ? "com.apple.WebKit.Networking.Development" : "com.apple.WebKit.Networking";
+#endif
+#if ENABLE(PLUGIN_PROCESS)
+    case ProcessLauncher::PluginProcess:
+        ASSERT_NOT_REACHED();
+        return 0;
+#endif
+#if ENABLE(SHARED_WORKER_PROCESS)
+    case ProcessLauncher::SharedWorkerProcess:
+        ASSERT_NOT_REACHED();
+        return 0;
+#endif
+    }
+}
+
+
 static void setUpTerminationNotificationHandler(pid_t pid)
 {
 #if HAVE(DISPATCH_H)
@@ -142,10 +165,10 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
 
 #if HAVE(XPC)
-static void connectToWebProcessServiceForWebKitDevelopment(const ProcessLauncher::LaunchOptions&, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
+static void connectToServiceForDevelopment(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit2 XPC service.
-    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit.WebContent.Development", 0);
+    xpc_connection_t connection = xpc_connection_create(serviceName(launchOptions, true), 0);
     xpc_connection_set_instance(connection, instanceUUID->uuid);
 
     // XPC requires having an event handler, even if it is not used.
@@ -199,16 +222,16 @@ static void connectToWebProcessServiceForWebKitDevelopment(const ProcessLauncher
     xpc_release(bootstrapMessage);
 }
 
-static void createWebProcessServiceForWebKitDevelopment(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
+static void createServiceForDevelopment(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
     EnvironmentVariables environmentVariables;
     addDYLDEnvironmentAdditions(launchOptions, true, environmentVariables);
 
     // Generate the uuid for the service instance we are about to create.
-    // FIXME: This UUID should be stored on the WebProcessProxy.
+    // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
-    xpc_connection_t reExecConnection = xpc_connection_create("com.apple.WebKit.WebContent.Development", 0);
+    xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
     xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);
 
     // Keep the ProcessLauncher alive while we do the re-execing (balanced in event handler).
@@ -220,7 +243,7 @@ static void createWebProcessServiceForWebKitDevelopment(const ProcessLauncher::L
     xpc_connection_set_event_handler(reExecConnection, ^(xpc_object_t event) {
         ASSERT(xpc_get_type(event) == XPC_TYPE_ERROR);
 
-        connectToWebProcessServiceForWebKitDevelopment(launchOptions, that, didFinishLaunchingProcessFunction, instanceUUID.get());
+        connectToServiceForDevelopment(launchOptions, that, didFinishLaunchingProcessFunction, instanceUUID.get());
 
         // Release the connection.
         xpc_release(reExecConnection);
@@ -254,14 +277,14 @@ static void createWebProcessServiceForWebKitDevelopment(const ProcessLauncher::L
     xpc_release(reExecMessage);
 }
 
-static void createWebProcessService(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
+static void createService(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
     // Generate the uuid for the service instance we are about to create.
-    // FIXME: This UUID should be stored on the WebProcessProxy.
+    // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
     // Create a connection to the WebKit2 XPC service.
-    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit.WebContent", 0);
+    xpc_connection_t connection = xpc_connection_create(serviceName(launchOptions, false), 0);
     xpc_connection_set_instance(connection, instanceUUID->uuid);
 
     // XPC requires having an event handler, even if it is not used.
@@ -377,7 +400,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
 
     NSString *processPath = nil;
-    switch(launchOptions.processType) {
+    switch (launchOptions.processType) {
     case ProcessLauncher::WebProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         break;
@@ -477,13 +500,10 @@ void ProcessLauncher::launchProcess()
 
 #if HAVE(XPC)
     if (m_launchOptions.useXPC) {
-        if (m_launchOptions.processType == ProcessLauncher::WebProcess) {
-            if (isWebKitDevelopmentBuild)
-                createWebProcessServiceForWebKitDevelopment(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess);
-            else
-                createWebProcessService(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess);
-        } else
-            ASSERT_NOT_REACHED();
+        if (isWebKitDevelopmentBuild)
+            createServiceForDevelopment(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess);
+        else
+            createService(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess);
         return;
     }
 #endif

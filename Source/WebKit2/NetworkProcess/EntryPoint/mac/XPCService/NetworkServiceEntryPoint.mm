@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,48 +24,37 @@
  */
 
 #import "config.h"
-#import "NetworkProcessProxy.h"
 
-#import "NetworkProcessMessages.h"
+#if HAVE(XPC)
 
-#if ENABLE(NETWORK_PROCESS)
+#import "EnvironmentUtilities.h"
+#import "WKBase.h"
+#import "WebKit2Initialize.h"
+#import "NetworkProcess.h"
+#import <WebCore/RunLoop.h>
+#import <stdio.h>
+#import <stdlib.h>
+#import <xpc/xpc.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
+extern "C" WK_EXPORT void initializeNetworkService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
 
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void initializeNetworkService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
 {
-    if (!isValid())
-        return;
-    
-    connection()->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    // Remove the SecItemShim shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // the this process don't try to insert the shim and crash.
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
+
+    InitializeWebKit2();
+
+    ChildProcessInitializationParameters parameters;
+    parameters.uiProcessName = uiProcessName;
+    parameters.clientIdentifier = clientIdentifier;
+    parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
+
+    NetworkProcess::shared().initialize(parameters);
 }
 
-#if HAVE(XPC)
-static bool shouldUseXPC()
-{
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
-
-void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-
-#if HAVE(XPC)
-    launchOptions.useXPC = shouldUseXPC();
-#endif
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
+#endif // HAVE(XPC)

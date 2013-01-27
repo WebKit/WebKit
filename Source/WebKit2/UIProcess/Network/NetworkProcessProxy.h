@@ -67,6 +67,7 @@ private:
     NetworkProcessProxy(WebContext*);
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
+    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 
     void networkProcessCrashedOrFailedToLaunch();
 

@@ -43,8 +43,8 @@ extern "C" WK_EXPORT void initializeWebContentService(const char* clientIdentifi
 
 void initializeWebContentService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
 {
-    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the WebProcess don't try to insert the shim and crash.
+    // Remove the SecItemShim shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
     RunLoop::setUseApplicationRunLoopOnMainRunLoop();

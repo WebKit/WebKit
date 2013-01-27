@@ -61,21 +61,14 @@ NetworkProcessProxy::NetworkProcessProxy(WebContext* webContext)
     connect();
 }
 
+NetworkProcessProxy::~NetworkProcessProxy()
+{
+}
+
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::NetworkProcess;
-
-#if PLATFORM(MAC)
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-#if HAVE(XPC)
-    launchOptions.useXPC = false;
-#endif
-#endif
-}
-
-NetworkProcessProxy::~NetworkProcessProxy()
-{
+    platformGetLaunchOptions(launchOptions);
 }
 
 void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
