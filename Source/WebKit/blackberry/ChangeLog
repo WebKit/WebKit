@@ -1,3 +1,37 @@
+2013-01-28  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] SpellingHandler parses and creates spellcheck requests regardless of the system spell check status
+        https://bugs.webkit.org/show_bug.cgi?id=108085
+        PR 286165
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Nima Ghanavatian.
+
+        Adding a check for the system spell check status in InputHandler::shouldSpellCheckElement so
+        we won't bother sending a spellcheck request if system spell check is turned off.
+
+        However, on a fresh browser start up and on the first setElementFocus, the spellcheck value isn't defined yet.
+        The first spell check request is therefore necessary to connect to imf to determine whether spell check is turned on.
+        If spell check is turned off, we will turn spellinghandler off.
+
+        Tested the patch using a test site that contains editable text in text-areas and content-editable divs. Also tested on
+        an extreme test case where we try to edit a content-editable div with 30000 characters. Confirmed spell-check requests are
+        being canceled if system spell check is off.
+
+        In theory, this patch should also fix PR 284229 . However, because of issues with getting the system spell check values from IMF,
+        additional work needs to be done for that PR. 
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setSpellCheckingEnabled):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::shouldSpellCheckElement):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::stopPendingSpellCheckRequests):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        (BlackBerry::WebKit::InputHandler::setSystemSpellCheckStatus):
+
 2013-01-25  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Pop-up WebViews should not take ownership of the backing store.

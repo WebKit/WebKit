@@ -4392,6 +4392,11 @@ int32_t WebPage::commitText(spannable_string_t* spannableString, int32_t relativ
 void WebPage::setSpellCheckingEnabled(bool enabled)
 {
     static_cast<EditorClientBlackBerry*>(d->m_page->editorClient())->enableSpellChecking(enabled);
+
+    d->m_inputHandler->setSystemSpellCheckStatus(enabled);
+
+    if (!enabled)
+        d->m_inputHandler->stopPendingSpellCheckRequests();
 }
 
 void WebPage::spellCheckingRequestCancelled(int32_t transactionId)

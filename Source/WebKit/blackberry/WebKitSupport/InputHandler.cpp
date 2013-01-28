@@ -143,6 +143,8 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_expectedKeyUpChar(0)
     , m_didSpellCheckWord(false)
     , m_spellingHandler(new SpellingHandler(this))
+    , m_spellCheckStatusConfirmed(false)
+    , m_globalSpellCheckStatus(false)
 {
 }
 
@@ -981,7 +983,13 @@ bool InputHandler::shouldSpellCheckElement(const Element* element) const
     if (spellCheckAttr == DOMSupport::Default && (m_currentFocusElementTextEditMask & NO_AUTO_TEXT))
         return false;
 
-    return true;
+    // Check if the system spell check setting is off
+    return m_spellCheckStatusConfirmed ? m_globalSpellCheckStatus : true;
+}
+
+void InputHandler::stopPendingSpellCheckRequests()
+{
+    m_spellingHandler->setSpellCheckActive(false);
 }
 
 void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)

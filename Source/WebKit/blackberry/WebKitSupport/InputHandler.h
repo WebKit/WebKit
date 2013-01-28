@@ -144,11 +144,15 @@ public:
     void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>);
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t transactionId);
+    void stopPendingSpellCheckRequests();
 
     bool shouldRequestSpellCheckingOptionsForPoint(const Platform::IntPoint& documentContentPosition, const WebCore::Element*, imf_sp_text_t&);
     void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, const bool shouldMoveDialog = false);
     void clearDidSpellCheckState() { m_didSpellCheckWord = false; }
     void redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog = true);
+
+    void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
+    void setSystemSpellCheckStatus(bool enabled) { m_spellCheckStatusConfirmed = true; m_globalSpellCheckStatus = enabled; }
 
     void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
 
@@ -240,6 +244,8 @@ private:
     WebCore::IntSize m_screenOffset;
     bool m_didSpellCheckWord;
     SpellingHandler* m_spellingHandler;
+    bool m_spellCheckStatusConfirmed;
+    bool m_globalSpellCheckStatus;
 
     DISABLE_COPY(InputHandler);
 };
