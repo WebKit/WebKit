@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +22,6 @@
 #define SVGPathStringSource_h
 
 #if ENABLE(SVG)
-#include "FloatPoint.h"
 #include "SVGPathSource.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -54,9 +54,16 @@ private:
     virtual bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&);
 
     String m_string;
+    bool m_is8BitSource;
 
-    const UChar* m_current;
-    const UChar* m_end;
+    union {
+        const LChar* m_character8;
+        const UChar* m_character16;
+    } m_current;
+    union {
+        const LChar* m_character8;
+        const UChar* m_character16;
+    } m_end;
 };
 
 } // namespace WebCore

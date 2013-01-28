@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,31 +23,44 @@
 #if ENABLE(SVG)
 #include "SVGPathStringSource.h"
 
+#include "FloatPoint.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
 
 SVGPathStringSource::SVGPathStringSource(const String& string)
     : m_string(string)
-    , m_current(string.characters())
-    , m_end(m_current + string.length())
+    , m_is8BitSource(string.is8Bit())
 {
     ASSERT(!string.isEmpty());
+
+    if (m_is8BitSource) {
+        m_current.m_character8 = string.characters8();
+        m_end.m_character8 = m_current.m_character8 + string.length();
+    } else {
+        m_current.m_character16 = string.characters16();
+        m_end.m_character16 = m_current.m_character16 + string.length();
+    }
 }
 
 bool SVGPathStringSource::hasMoreData() const
 {
-    return m_current < m_end;
+    if (m_is8BitSource)
+        return m_current.m_character8 < m_end.m_character8;
+    return m_current.m_character16 < m_end.m_character16;
 }
 
 bool SVGPathStringSource::moveToNextToken()
 {
-    return skipOptionalSVGSpaces(m_current, m_end);
+    if (m_is8BitSource)
+        return skipOptionalSVGSpaces(m_current.m_character8, m_end.m_character8);
+    return skipOptionalSVGSpaces(m_current.m_character16, m_end.m_character16);
 }
 
-bool SVGPathStringSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
+template <typename CharacterType>
+static bool parseSVGSegmentTypeHelper(const CharacterType*& current, SVGPathSegType& pathSegType)
 {
-    switch (*(m_current++)) {
+    switch (*(current++)) {
     case 'Z':
     case 'z':
         pathSegType = PathSegClosePath;
@@ -111,111 +125,117 @@ bool SVGPathStringSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
     return true;
 }
 
-SVGPathSegType SVGPathStringSource::nextCommand(SVGPathSegType previousCommand)
+bool SVGPathStringSource::parseSVGSegmentType(SVGPathSegType& pathSegType)
+{
+    if (m_is8BitSource)
+        return parseSVGSegmentTypeHelper(m_current.m_character8, pathSegType);
+    return parseSVGSegmentTypeHelper(m_current.m_character16, pathSegType);
+}
+
+template <typename CharacterType>
+static bool nextCommandHelper(const CharacterType*& current, SVGPathSegType previousCommand, SVGPathSegType& nextCommand)
 {
     // Check for remaining coordinates in the current command.
-    if ((*m_current == '+' || *m_current == '-' || *m_current == '.' || (*m_current >= '0' && *m_current <= '9'))
+    if ((*current == '+' || *current == '-' || *current == '.' || (*current >= '0' && *current <= '9'))
         && previousCommand != PathSegClosePath) {
-        if (previousCommand == PathSegMoveToAbs)
-            return PathSegLineToAbs;
-        if (previousCommand == PathSegMoveToRel)
-            return PathSegLineToRel;
-        return previousCommand;
+        if (previousCommand == PathSegMoveToAbs) {
+            nextCommand = PathSegLineToAbs;
+            return true;
+        }
+        if (previousCommand == PathSegMoveToRel) {
+            nextCommand = PathSegLineToRel;
+            return true;
+        }
+        nextCommand = previousCommand;
+        return true;
     }
+
+    return false;
+}
+
+SVGPathSegType SVGPathStringSource::nextCommand(SVGPathSegType previousCommand)
+{
     SVGPathSegType nextCommand;
+    if (m_is8BitSource) {
+        if (nextCommandHelper(m_current.m_character8, previousCommand, nextCommand))
+            return nextCommand;
+    } else {
+        if (nextCommandHelper(m_current.m_character16, previousCommand, nextCommand))
+            return nextCommand;
+    }
+
     parseSVGSegmentType(nextCommand);
     return nextCommand;
 }
 
 bool SVGPathStringSource::parseMoveToSegment(FloatPoint& targetPoint)
 {
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, toX) || !parseNumber(m_current, m_end, toY))
-        return false;
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseFloatPoint(m_current.m_character8, m_end.m_character8, targetPoint);
+    return parseFloatPoint(m_current.m_character16, m_end.m_character16, targetPoint);
 }
 
 bool SVGPathStringSource::parseLineToSegment(FloatPoint& targetPoint)
 {
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, toX) || !parseNumber(m_current, m_end, toY))
-        return false;
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseFloatPoint(m_current.m_character8, m_end.m_character8, targetPoint);
+    return parseFloatPoint(m_current.m_character16, m_end.m_character16, targetPoint);
 }
 
 bool SVGPathStringSource::parseLineToHorizontalSegment(float& x)
 {
-    return parseNumber(m_current, m_end, x);
+    if (m_is8BitSource)
+        return parseNumber(m_current.m_character8, m_end.m_character8, x);
+    return parseNumber(m_current.m_character16, m_end.m_character16, x);
 }
 
 bool SVGPathStringSource::parseLineToVerticalSegment(float& y)
 {
-    return parseNumber(m_current, m_end, y);
+    if (m_is8BitSource)
+        return parseNumber(m_current.m_character8, m_end.m_character8, y);
+    return parseNumber(m_current.m_character16, m_end.m_character16, y);
 }
 
 bool SVGPathStringSource::parseCurveToCubicSegment(FloatPoint& point1, FloatPoint& point2, FloatPoint& targetPoint)
 {
-    float x1;
-    float y1;
-    float x2;
-    float y2;
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, x1)
-        || !parseNumber(m_current, m_end, y1)
-        || !parseNumber(m_current, m_end, x2)
-        || !parseNumber(m_current, m_end, y2)
-        || !parseNumber(m_current, m_end, toX)
-        || !parseNumber(m_current, m_end, toY))
-        return false;
-    point1 = FloatPoint(x1, y1);
-    point2 = FloatPoint(x2, y2);
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseFloatPoint3(m_current.m_character8, m_end.m_character8, point1, point2, targetPoint);
+    return parseFloatPoint3(m_current.m_character16, m_end.m_character16, point1, point2, targetPoint);
 }
 
 bool SVGPathStringSource::parseCurveToCubicSmoothSegment(FloatPoint& point1, FloatPoint& targetPoint)
 {
-    float x1;
-    float y1;
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, x1)
-        || !parseNumber(m_current, m_end, y1)
-        || !parseNumber(m_current, m_end, toX)
-        || !parseNumber(m_current, m_end, toY))
-        return false;
-    point1 = FloatPoint(x1, y1);
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseFloatPoint2(m_current.m_character8, m_end.m_character8, point1, targetPoint);
+    return parseFloatPoint2(m_current.m_character16, m_end.m_character16, point1, targetPoint);
 }
 
 bool SVGPathStringSource::parseCurveToQuadraticSegment(FloatPoint& point2, FloatPoint& targetPoint)
 {
-    float x2;
-    float y2;
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, x2)
-        || !parseNumber(m_current, m_end, y2)
-        || !parseNumber(m_current, m_end, toX)
-        || !parseNumber(m_current, m_end, toY))
-        return false;
-    point2 = FloatPoint(x2, y2);
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseFloatPoint2(m_current.m_character8, m_end.m_character8, point2, targetPoint);
+    return parseFloatPoint2(m_current.m_character16, m_end.m_character16, point2, targetPoint);
 }
 
 bool SVGPathStringSource::parseCurveToQuadraticSmoothSegment(FloatPoint& targetPoint)
 {
+    if (m_is8BitSource)
+        return parseFloatPoint(m_current.m_character8, m_end.m_character8, targetPoint);
+    return parseFloatPoint(m_current.m_character16, m_end.m_character16, targetPoint);
+}
+
+template <typename CharacterType>
+static bool parseArcToSegmentHelper(const CharacterType*& current, const CharacterType* end, float& rx, float& ry, float& angle, bool& largeArc, bool& sweep, FloatPoint& targetPoint)
+{
     float toX;
     float toY;
-    if (!parseNumber(m_current, m_end, toX)
-        || !parseNumber(m_current, m_end, toY))
+    if (!parseNumber(current, end, rx)
+        || !parseNumber(current, end, ry)
+        || !parseNumber(current, end, angle)
+        || !parseArcFlag(current, end, largeArc)
+        || !parseArcFlag(current, end, sweep)
+        || !parseNumber(current, end, toX)
+        || !parseNumber(current, end, toY))
         return false;
     targetPoint = FloatPoint(toX, toY);
     return true;
@@ -223,21 +243,11 @@ bool SVGPathStringSource::parseCurveToQuadraticSmoothSegment(FloatPoint& targetP
 
 bool SVGPathStringSource::parseArcToSegment(float& rx, float& ry, float& angle, bool& largeArc, bool& sweep, FloatPoint& targetPoint)
 {
-    float toX;
-    float toY;
-    if (!parseNumber(m_current, m_end, rx)
-        || !parseNumber(m_current, m_end, ry)
-        || !parseNumber(m_current, m_end, angle)
-        || !parseArcFlag(m_current, m_end, largeArc)
-        || !parseArcFlag(m_current, m_end, sweep)
-        || !parseNumber(m_current, m_end, toX)
-        || !parseNumber(m_current, m_end, toY))
-        return false;
-    targetPoint = FloatPoint(toX, toY);
-    return true;
+    if (m_is8BitSource)
+        return parseArcToSegmentHelper(m_current.m_character8, m_end.m_character8, rx, ry, angle, largeArc, sweep, targetPoint);
+    return parseArcToSegmentHelper(m_current.m_character16, m_end.m_character16, rx, ry, angle, largeArc, sweep, targetPoint);
 }
 
-
-}
+} // namespace WebKit
 
 #endif // ENABLE(SVG)

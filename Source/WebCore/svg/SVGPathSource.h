@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+class FloatPoint;
+
 class SVGPathSource {
     WTF_MAKE_NONCOPYABLE(SVGPathSource); WTF_MAKE_FAST_ALLOCATED;
 public:
