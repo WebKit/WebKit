@@ -2515,6 +2515,10 @@ media/video-controls-captions-trackmenu-sorted.html
 media/video-controls-captions-trackmenu.html
 media/video-controls-visible-exiting-fullscreen.html
 
+# Fails on JSC platforms due to gc timing issues
+# https://bugs.webkit.org/show_bug.cgi?id=106957
+svg/dom/SVGViewSpec-invalid-ref-crash.html
+
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 

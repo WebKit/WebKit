@@ -1370,6 +1370,8 @@ webkit.org/b/105437 svg/filters/feImage-target-reappend-to-document.svg [ ImageO
 webkit.org/b/105437 svg/filters/feImage-target-remove-from-document.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-target-style-change.svg [ ImageOnlyFailure Pass ]
 
+webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
+
 
 # ============================================================================= #
 # Failing CSS Tests

@@ -1392,6 +1392,9 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 webkit.org/b/107257 [ Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
 webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
 
+# Test fails on JSC platforms due to GC timing issues
+webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
+
 webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics.html [ Failure ]

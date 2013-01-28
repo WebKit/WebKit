@@ -133,13 +133,6 @@ String SVGViewSpec::viewBoxString() const
     return SVGPropertyTraits<FloatRect>::toString(viewBoxBaseValue());
 }
 
-void SVGViewSpec::setPreserveAspectRatioString(const String& preserve)
-{
-    SVGPreserveAspectRatio preserveAspectRatio;
-    preserveAspectRatio.parse(preserve);
-    setPreserveAspectRatioBaseValue(preserveAspectRatio);
-}
-
 String SVGViewSpec::preserveAspectRatioString() const
 {
     return SVGPropertyTraits<SVGPreserveAspectRatio>::toString(preserveAspectRatioBaseValue());
@@ -154,14 +147,31 @@ SVGElement* SVGViewSpec::viewTarget() const
 
 SVGTransformListPropertyTearOff* SVGViewSpec::transform()
 {
+    if (!m_contextElement)
+        return 0;
     // Return the animVal here, as its readonly by default - which is exactly what we want here.
     return static_cast<SVGTransformListPropertyTearOff*>(static_pointer_cast<SVGAnimatedTransformList>(lookupOrCreateTransformWrapper(this))->animVal());
+}
+
+PassRefPtr<SVGAnimatedRect> SVGViewSpec::viewBoxAnimated()
+{
+    if (!m_contextElement)
+        return 0;
+    return static_pointer_cast<SVGAnimatedRect>(lookupOrCreateViewBoxWrapper(this));
+}
+
+PassRefPtr<SVGAnimatedPreserveAspectRatio> SVGViewSpec::preserveAspectRatioAnimated()
+{
+    if (!m_contextElement)
+        return 0;
+    return static_pointer_cast<SVGAnimatedPreserveAspectRatio>(lookupOrCreatePreserveAspectRatioWrapper(this));
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateViewBoxWrapper(void* maskedOwnerType)
 {
     ASSERT(maskedOwnerType);
     SVGViewSpec* ownerType = static_cast<SVGViewSpec*>(maskedOwnerType);
+    ASSERT(ownerType->contextElement());
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedRect, FloatRect>(ownerType->contextElement(), viewBoxPropertyInfo(), ownerType->m_viewBox);
 }
 
@@ -169,6 +179,7 @@ PassRefPtr<SVGAnimatedProperty> SVGViewSpec::lookupOrCreatePreserveAspectRatioWr
 {
     ASSERT(maskedOwnerType);
     SVGViewSpec* ownerType = static_cast<SVGViewSpec*>(maskedOwnerType);
+    ASSERT(ownerType->contextElement());
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatio>(ownerType->contextElement(), preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
 }
 
@@ -176,6 +187,7 @@ PassRefPtr<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateTransformWrapper(void
 {
     ASSERT(maskedOwnerType);
     SVGViewSpec* ownerType = static_cast<SVGViewSpec*>(maskedOwnerType);
+    ASSERT(ownerType->contextElement());
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformList>(ownerType->contextElement(), transformPropertyInfo(), ownerType->m_transform);
 }
 
