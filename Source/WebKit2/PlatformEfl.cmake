@@ -35,6 +35,8 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
+    UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
+
     UIProcess/API/C/efl/WKView.cpp
 
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
@@ -163,6 +165,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
+    "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/cpp/efl"

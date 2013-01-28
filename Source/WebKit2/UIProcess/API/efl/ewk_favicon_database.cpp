@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WKIconDatabase.h"
+#include "WKIconDatabaseCairo.h"
 #include "WKURL.h"
 #include "WebIconDatabase.h"
 #include "ewk_favicon_database_private.h"
@@ -134,7 +135,7 @@ void EwkFaviconDatabase::didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pag
     if (ewkIconDatabase->m_changeListeners.isEmpty())
         return;
 
-    CString pageURL = toImpl(pageURLRef)->string().utf8();
+    CString pageURL = toWTFString(pageURLRef).utf8();
 
     ChangeListenerMap::const_iterator it = ewkIconDatabase->m_changeListeners.begin();
     ChangeListenerMap::const_iterator end = ewkIconDatabase->m_changeListeners.end();
@@ -146,13 +147,11 @@ PassRefPtr<cairo_surface_t> EwkFaviconDatabase::getIconSurfaceSynchronously(WKUR
 {
     WKIconDatabaseRetainIconForURL(m_iconDatabase.get(), pageURL);
 
-    WebCore::NativeImagePtr icon = toImpl(m_iconDatabase.get())->nativeImageForPageURL(toWTFString(pageURL));
-    if (!icon) {
+    RefPtr<cairo_surface_t> surface = WKIconDatabaseTryGetCairoSurfaceForURL(m_iconDatabase.get(), pageURL);
+    if (!surface) {
         WKIconDatabaseReleaseIconForURL(m_iconDatabase.get(), pageURL);
         return 0;
     }
-
-    RefPtr<cairo_surface_t> surface = icon->surface();
 
     return surface.release();
 }
@@ -161,7 +160,7 @@ void EwkFaviconDatabase::iconDataReadyForPageURL(WKIconDatabaseRef, WKURLRef pag
 {
     EwkFaviconDatabase* ewkIconDatabase = const_cast<EwkFaviconDatabase*>(static_cast<const EwkFaviconDatabase*>(clientInfo));
 
-    String urlString = toImpl(pageURL)->string();
+    String urlString = toWTFString(pageURL);
     if (!ewkIconDatabase->m_iconRequests.contains(urlString))
         return;
 

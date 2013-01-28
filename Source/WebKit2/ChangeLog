@@ -1,3 +1,23 @@
+2013-01-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Rely more on C API in ewk_favicon_database
+        https://bugs.webkit.org/show_bug.cgi?id=108035
+
+        Reviewed by Benjamin Poulain.
+
+        Rely less on internal C++ API in ewk_favicon_database and use C API
+        instead of avoid breaking API layering.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp: Added.
+        (WKIconDatabaseTryGetCairoSurfaceForURL): Add C API for getting the
+        favicon for a given page URL as a cairo_surface_t*.
+        * UIProcess/API/C/cairo/WKIconDatabaseCairo.h: Added.
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::didChangeIconForPageURL):
+        (EwkFaviconDatabase::getIconSurfaceSynchronously):
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+
 2013-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Fix location of sandbox profiles in built products
