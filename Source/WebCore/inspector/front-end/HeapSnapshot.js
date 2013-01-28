@@ -316,11 +316,6 @@ WebInspector.HeapSnapshotNode = function(snapshot, nodeIndex)
 }
 
 WebInspector.HeapSnapshotNode.prototype = {
-    isUserObject: function()
-    {
-        return true;
-    },
-
     distance: function()
     {
         return this._snapshot._nodeDistances[this.nodeIndex / this._snapshot._nodeFieldCount];
@@ -1365,16 +1360,34 @@ WebInspector.HeapSnapshot.prototype = {
         return parsedFilter.bind(this);
     },
 
-    createEdgesProvider: function(nodeIndex, filter)
+    createEdgesProvider: function(nodeIndex, showHiddenData)
     {
         var node = this.createNode(nodeIndex);
-        return new WebInspector.HeapSnapshotEdgesProvider(this, this._parseFilter(filter), node.edges());
+        var filter = this.containmentEdgesFilter(showHiddenData);
+        return new WebInspector.HeapSnapshotEdgesProvider(this, filter, node.edges());
     },
 
-    createRetainingEdgesProvider: function(nodeIndex, filter)
+    createEdgesProviderForTest: function(nodeIndex, filter)
     {
         var node = this.createNode(nodeIndex);
-        return new WebInspector.HeapSnapshotEdgesProvider(this, this._parseFilter(filter), node.retainers());
+        return new WebInspector.HeapSnapshotEdgesProvider(this, filter, node.edges());
+    },
+
+    retainingEdgesFilter: function(showHiddenData)
+    {
+        return null;
+    },
+
+    containmentEdgesFilter: function(showHiddenData)
+    {
+        return null;
+    },
+
+    createRetainingEdgesProvider: function(nodeIndex, showHiddenData)
+    {
+        var node = this.createNode(nodeIndex);
+        var filter = this.retainingEdgesFilter(showHiddenData);
+        return new WebInspector.HeapSnapshotEdgesProvider(this, filter, node.retainers());
     },
 
     createAddedNodesProvider: function(baseSnapshotId, className)
@@ -1389,12 +1402,14 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNodesProvider(this, null, nodeIndexes);
     },
 
+    classNodesFilter: function()
+    {
+        return null;
+    },
+
     createNodesProviderForClass: function(className, aggregatesKey)
     {
-        function filter(node) {
-            return node.isUserObject();
-        }
-        return new WebInspector.HeapSnapshotNodesProvider(this, filter, this.aggregates(false, aggregatesKey)[className].idxs);
+        return new WebInspector.HeapSnapshotNodesProvider(this, this.classNodesFilter(), this.aggregates(false, aggregatesKey)[className].idxs);
     },
 
     createNodesProviderForDominator: function(nodeIndex)

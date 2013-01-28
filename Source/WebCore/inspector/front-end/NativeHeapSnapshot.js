@@ -61,11 +61,6 @@ WebInspector.NativeHeapSnapshot.prototype = {
     {
     },
 
-    canHaveDistanceOne: function(node)
-    {
-        return true;
-    },
-
     userObjectsMapAndFlag: function()
     {
         return null;
@@ -86,16 +81,6 @@ WebInspector.NativeHeapSnapshotNode = function(snapshot, nodeIndex)
 }
 
 WebInspector.NativeHeapSnapshotNode.prototype = {
-    canBeQueried: function()
-    {
-        return false;
-    },
-
-    isUserObject: function()
-    {
-        return true;
-    },
-
     className: function()
     {
         return this._snapshot._strings[this.classIndex()];
@@ -128,21 +113,6 @@ WebInspector.NativeHeapSnapshotNode.prototype = {
         return false;
     },
 
-    isWindow: function()
-    {
-        return false;
-    },
-
-    isDetachedDOMTreesRoot: function()
-    {
-        return false;
-    },
-
-    isDetachedDOMTree: function()
-    {
-        return false;
-    },
-
     __proto__: WebInspector.HeapSnapshotNode.prototype
 };
 
@@ -167,11 +137,6 @@ WebInspector.NativeHeapSnapshotEdge.prototype = {
     hasStringName: function()
     {
         return true;
-    },
-
-    isElement: function()
-    {
-        return false;
     },
 
     isHidden: function()
@@ -232,11 +197,6 @@ WebInspector.NativeHeapSnapshotRetainerEdge.prototype = {
     clone: function()
     {
         return new WebInspector.NativeHeapSnapshotRetainerEdge(this._snapshot, this._retainedNodeIndex, this.retainerIndex());
-    },
-
-    isElement: function()
-    {
-        return this._edge().isElement();
     },
 
     isHidden: function()

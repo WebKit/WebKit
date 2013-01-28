@@ -358,7 +358,7 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     this.snapshotNodeIndex = node.nodeIndex;
     if (this._type === "string")
         this._reachableFromWindow = true;
-    else if (this._type === "object" && this.isWindow(this._name)) {
+    else if (this._type === "object" && this._name.startsWith("Window")) {
         this._name = this.shortenWindowURL(this._name, false);
         this._reachableFromWindow = true;
     } else if (node.canBeQueried)
@@ -488,11 +488,6 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         this._provider().isEmpty(isEmptyCallback.bind(this));
     },
 
-    isWindow: function(fullName)
-    {
-        return fullName.substr(0, 9) === "Window";
-    },
-
     shortenWindowURL: function(fullName, hasObjectId)
     {
         var startPos = fullName.indexOf("/");
@@ -539,16 +534,11 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
     {
         var tree = this._dataGrid;
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
-        var filter = "function(edge) {\n" +
-                     "    return !edge.isInvisible()\n" +
-                     "        && (" + !tree.showRetainingEdges + " || (edge.node().id() !== 1 && !edge.node().isSynthetic() && !edge.isWeak()))\n" +
-                     "        && (" + showHiddenData + " || (!edge.isHidden() && !edge.node().isHidden()));\n" +
-                     "}\n";
         var snapshot = this._isFromBaseSnapshot ? tree.baseSnapshot : tree.snapshot;
         if (this.showRetainingEdges)
-            return snapshot.createRetainingEdgesProvider(this.snapshotNodeIndex, filter);
+            return snapshot.createRetainingEdgesProvider(this.snapshotNodeIndex, showHiddenData);
         else
-            return snapshot.createEdgesProvider(this.snapshotNodeIndex, filter);
+            return snapshot.createEdgesProvider(this.snapshotNodeIndex, showHiddenData);
     },
 
     _findAncestorWithSameSnapshotNodeId: function()
@@ -658,10 +648,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
         return this._baseSnapshotOrSnapshot.createEdgesProvider(
             this.snapshotNodeIndex,
-            "function(edge) {" +
-            "    return !edge.isInvisible()" +
-            "        && (" + showHiddenData + " || (!edge.isHidden() && !edge.node().isHidden()));" +
-            "}");
+            showHiddenData);
     },
 
     _createChildNode: function(item)

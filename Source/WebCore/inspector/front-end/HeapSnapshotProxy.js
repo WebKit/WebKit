@@ -443,14 +443,14 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this.callMethod(callback, "dominatorIdsForNode", nodeIndex);
     },
 
-    createEdgesProvider: function(nodeIndex, filter)
+    createEdgesProvider: function(nodeIndex, showHiddenData)
     {
-        return this.callFactoryMethod(null, "createEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
+        return this.callFactoryMethod(null, "createEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, showHiddenData);
     },
 
-    createRetainingEdgesProvider: function(nodeIndex, filter)
+    createRetainingEdgesProvider: function(nodeIndex, showHiddenData)
     {
-        return this.callFactoryMethod(null, "createRetainingEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
+        return this.callFactoryMethod(null, "createRetainingEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, showHiddenData);
     },
 
     createAddedNodesProvider: function(baseSnapshotId, className)

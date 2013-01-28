@@ -61,6 +61,38 @@ WebInspector.JSHeapSnapshot.prototype = {
         return new WebInspector.JSHeapSnapshotRetainerEdge(this, retainedNodeIndex, retainerIndex);
     },
 
+    classNodesFilter: function()
+    {
+        function filter(node)
+        {
+            return node.isUserObject();
+        }
+        return filter;
+    },
+
+    containmentEdgesFilter: function(showHiddenData)
+    {
+        function filter(edge) {
+            if (edge.isInvisible())
+                return false;
+            if (showHiddenData)
+                return true;
+            return !edge.isHidden() && !edge.node().isHidden();
+        }
+        return filter;
+    },
+
+    retainingEdgesFilter: function(showHiddenData)
+    {
+        var containmentEdgesFilter = this.containmentEdgesFilter(showHiddenData);
+        function filter(edge) {
+            if (!containmentEdgesFilter(edge))
+                return false;
+            return edge.node().id() !== 1 && !edge.node().isSynthetic() && !edge.isWeak();
+        }
+        return filter;
+    },
+
     dispose: function()
     {
         WebInspector.HeapSnapshot.prototype.dispose.call(this);
@@ -130,7 +162,7 @@ WebInspector.JSHeapSnapshot.prototype = {
         var detachedDOMTreesRoot;
         for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
             var node = iter.edge.node();
-            if (node.isDetachedDOMTreesRoot()) {
+            if (node.name() === "(Detached DOM trees)") {
                 detachedDOMTreesRoot = node;
                 break;
             }
@@ -139,9 +171,10 @@ WebInspector.JSHeapSnapshot.prototype = {
         if (!detachedDOMTreesRoot)
             return;
 
+        var detachedDOMTreeRE = /^Detached DOM tree/;
         for (var iter = detachedDOMTreesRoot.edges(); iter.hasNext(); iter.next()) {
             var node = iter.edge.node();
-            if (node.isDetachedDOMTree()) {
+            if (detachedDOMTreeRE.test(node.className())) {
                 for (var edgesIter = node.edges(); edgesIter.hasNext(); edgesIter.next())
                     this._flags[edgesIter.edge.node().nodeIndex / this._nodeFieldCount] |= flag;
             }
@@ -332,20 +365,9 @@ WebInspector.JSHeapSnapshotNode.prototype = {
         return windowRE.test(this.name());
     },
 
-    isDetachedDOMTreesRoot: function()
-    {
-        return this.name() === "(Detached DOM trees)";
-    },
-
     isDocumentDOMTreesRoot: function()
     {
         return this.isSynthetic() && this.name() === "(Document DOM trees)";
-    },
-
-    isDetachedDOMTree: function()
-    {
-        const detachedDOMTreeRE = /^Detached DOM tree/;
-        return detachedDOMTreeRE.test(this.className());
     },
 
     serialize: function()
@@ -485,11 +507,6 @@ WebInspector.JSHeapSnapshotRetainerEdge.prototype = {
     clone: function()
     {
         return new WebInspector.JSHeapSnapshotRetainerEdge(this._snapshot, this._retainedNodeIndex, this.retainerIndex());
-    },
-
-    isElement: function()
-    {
-        return this._edge().isElement();
     },
 
     isHidden: function()
