@@ -98,6 +98,8 @@ webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-rele
 webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/clip-text-in-hidpi.html [ Pass Slow ]
 webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/device-scale-factor-paint.html [ Pass Slow ]
 webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ Pass Slow ]
+crbug.com/24182 [ Mac Debug ] fast/frames/remove-frame-with-scrollbars-crash.html [ Pass Slow ]
+crbug.com/24182 [ Mac Debug ] fast/forms/post-popup-no-multiple-windows.html [ Pass Slow ]
 
 # Crashing after r140231, see bug https://bugs.webkit.org/show_bug.cgi?id=107579
 webkit.org/b/106853 [ Debug ] media/track/track-css-cue-lifetime.html [ Pass Timeout Crash ]
