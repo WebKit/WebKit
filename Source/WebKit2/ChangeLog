@@ -1,3 +1,20 @@
+2013-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] WKView's intrinsicContentSize should only report a flexible width if the content width is less than the minimum width
+        https://bugs.webkit.org/show_bug.cgi?id=108056
+
+        Reviewed by Simon Fraser.
+
+        We're currently reporting a flexible width if the intrinsic
+        content size is less than *or equal* to the minimum layout
+        width. This is wrong and causes ping-ponging between flexible
+        and inflexible width in cases where autolayout fits our
+        view to exactly the intrinsic content size. It should be strictly
+        less than instead.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setIntrinsicContentSize:]):
+
 2013-01-28  Anders Carlsson  <andersca@apple.com>
 
         Add StorageStrategy member functions to WebKit2
