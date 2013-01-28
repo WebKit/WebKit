@@ -328,31 +328,28 @@ struct Scope {
                 continue;
             vector.append(*it);
         }
-        vector.shrinkToFit();
     }
 
-    void saveFunctionInfo(SourceProviderCacheItem* info)
+    void fillParametersForSourceProviderCache(SourceProviderCacheItemCreationParameters& parameters)
     {
         ASSERT(m_isFunction);
-        info->usesEval = m_usesEval;
-        info->strictMode = m_strictMode;
-        info->needsFullActivation = m_needsFullActivation;
-        copyCapturedVariablesToVector(m_writtenVariables, info->writtenVariables);
-        copyCapturedVariablesToVector(m_usedVariables, info->usedVariables);
+        parameters.usesEval = m_usesEval;
+        parameters.strictMode = m_strictMode;
+        parameters.needsFullActivation = m_needsFullActivation;
+        copyCapturedVariablesToVector(m_writtenVariables, parameters.writtenVariables);
+        copyCapturedVariablesToVector(m_usedVariables, parameters.usedVariables);
     }
 
-    void restoreFunctionInfo(const SourceProviderCacheItem* info)
+    void restoreFromSourceProviderCache(const SourceProviderCacheItem* info)
     {
         ASSERT(m_isFunction);
         m_usesEval = info->usesEval;
         m_strictMode = info->strictMode;
         m_needsFullActivation = info->needsFullActivation;
-        unsigned size = info->usedVariables.size();
-        for (unsigned i = 0; i < size; ++i)
-            m_usedVariables.add(info->usedVariables[i]);
-        size = info->writtenVariables.size();
-        for (unsigned i = 0; i < size; ++i)
-            m_writtenVariables.add(info->writtenVariables[i]);
+        for (unsigned i = 0; i < info->usedVariablesCount; ++i)
+            m_usedVariables.add(info->usedVariables()[i]);
+        for (unsigned i = 0; i < info->writtenVariablesCount; ++i)
+            m_writtenVariables.add(info->writtenVariables()[i]);
     }
 
 private:

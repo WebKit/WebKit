@@ -838,7 +838,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
         ASSERT(!strictMode() || cachedInfo->strictMode);
         body = context.createFunctionBody(location, cachedInfo->strictMode);
         
-        functionScope->restoreFunctionInfo(cachedInfo);
+        functionScope->restoreFromSourceProviderCache(cachedInfo);
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
         
         closeBracePos = cachedInfo->closeBracePos;
@@ -867,8 +867,12 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     OwnPtr<SourceProviderCacheItem> newInfo;
     int functionLength = closeBracePos - openBracePos;
     if (TreeBuilder::CanUseFunctionCache && m_functionCache && functionLength > minimumFunctionLengthToCache) {
-        newInfo = adoptPtr(new SourceProviderCacheItem(functionStart, m_token.m_location.line, closeBracePos));
-        functionScope->saveFunctionInfo(newInfo.get());
+        SourceProviderCacheItemCreationParameters parameters;
+        parameters.functionStart = functionStart;
+        parameters.closeBraceLine = m_token.m_location.line;
+        parameters.closeBracePos = closeBracePos;
+        functionScope->fillParametersForSourceProviderCache(parameters);
+        newInfo = SourceProviderCacheItem::create(parameters);
     }
     context.setFunctionStart(body, functionStart);
     

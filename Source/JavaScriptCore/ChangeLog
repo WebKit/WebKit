@@ -1,3 +1,33 @@
+2013-01-27  Andreas Kling  <akling@apple.com>
+
+        JSC: SourceProviderCache is memory hungry.
+        <http://webkit.org/b/108029>
+        <rdar://problem/13094806>
+
+        Reviewed by Sam Weinig.
+
+        Use fixed-size arrays for SourceProviderCacheItem's lists of captured variables.
+        Since the lists never change after the object is created, there's no need to keep them in Vectors
+        and we can instead create the whole cache item in a single allocation.
+
+        13.37 MB progression on Membuster3.
+
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::copyCapturedVariablesToVector):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        * parser/SourceProviderCacheItem.h:
+        (SourceProviderCacheItemCreationParameters):
+        (SourceProviderCacheItem):
+        (JSC::SourceProviderCacheItem::approximateByteSize):
+        (JSC::SourceProviderCacheItem::usedVariables):
+        (JSC::SourceProviderCacheItem::writtenVariables):
+        (JSC::SourceProviderCacheItem::~SourceProviderCacheItem):
+        (JSC::SourceProviderCacheItem::create):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+
 2013-01-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Fixing atomicIncrement implementation for Windows by dropping support before XP SP2.

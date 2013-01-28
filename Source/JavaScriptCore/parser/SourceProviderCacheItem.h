@@ -27,27 +27,41 @@
 #define SourceProviderCacheItem_h
 
 #include "ParserTokens.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
+struct SourceProviderCacheItemCreationParameters {
+    unsigned functionStart;
+    unsigned closeBraceLine;
+    unsigned closeBracePos;
+    bool needsFullActivation;
+    bool usesEval;
+    bool strictMode;
+    Vector<RefPtr<StringImpl> > usedVariables;
+    Vector<RefPtr<StringImpl> > writtenVariables;
+};
+
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
+#endif
+
 class SourceProviderCacheItem {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProviderCacheItem(unsigned functionStart, unsigned closeBraceLine, unsigned closeBracePos)
-        : functionStart(functionStart)
-        , closeBraceLine(closeBraceLine)
-        , closeBracePos(closeBracePos)
-    {
-    }
+    static PassOwnPtr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
+    ~SourceProviderCacheItem();
+
     unsigned approximateByteSize() const
     {
         // The identifiers are uniqued strings so most likely there are few names that actually use any additional memory.
-        static const unsigned assummedAverageIdentifierSize = sizeof(RefPtr<StringImpl>) + 2;
+        static const unsigned assumedAverageIdentifierSize = sizeof(StringImpl*) + 2;
         unsigned size = sizeof(*this);
-        size += usedVariables.size() * assummedAverageIdentifierSize;
-        size += writtenVariables.size() * assummedAverageIdentifierSize;
+        size += usedVariablesCount * assumedAverageIdentifierSize;
+        size += writtenVariablesCount * assumedAverageIdentifierSize;
         return size;
     }
     JSToken closeBraceToken() const 
@@ -70,9 +84,56 @@ public:
     unsigned closeBracePos : 31;
     bool strictMode : 1;
 
-    Vector<RefPtr<StringImpl> > usedVariables;
-    Vector<RefPtr<StringImpl> > writtenVariables;
+    unsigned usedVariablesCount;
+    unsigned writtenVariablesCount;
+
+    StringImpl** usedVariables() const { return const_cast<StringImpl**>(m_variables); }
+    StringImpl** writtenVariables() const { return const_cast<StringImpl**>(&m_variables[usedVariablesCount]); }
+
+private:
+    SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
+
+    StringImpl* m_variables[0];
 };
+
+inline SourceProviderCacheItem::~SourceProviderCacheItem()
+{
+    for (unsigned i = 0; i < usedVariablesCount + writtenVariablesCount; ++i)
+        m_variables[i]->deref();
+}
+
+inline PassOwnPtr<SourceProviderCacheItem> SourceProviderCacheItem::create(const SourceProviderCacheItemCreationParameters& parameters)
+{
+    size_t variableCount = parameters.writtenVariables.size() + parameters.usedVariables.size();
+    size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(StringImpl*) * variableCount;
+    void* slot = fastMalloc(objectSize);
+    return adoptPtr(new (slot) SourceProviderCacheItem(parameters));
+}
+
+inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters& parameters)
+    : functionStart(parameters.functionStart)
+    , needsFullActivation(parameters.needsFullActivation)
+    , closeBraceLine(parameters.closeBraceLine)
+    , usesEval(parameters.usesEval)
+    , closeBracePos(parameters.closeBracePos)
+    , strictMode(parameters.strictMode)
+    , usedVariablesCount(parameters.usedVariables.size())
+    , writtenVariablesCount(parameters.writtenVariables.size())
+{
+    unsigned j = 0;
+    for (unsigned i = 0; i < usedVariablesCount; ++i, ++j) {
+        m_variables[j] = parameters.usedVariables[i].get();
+        m_variables[j]->ref();
+    }
+    for (unsigned i = 0; i < writtenVariablesCount; ++i, ++j) {
+        m_variables[j] = parameters.writtenVariables[i].get();
+        m_variables[j]->ref();
+    }
+}
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 }
 
