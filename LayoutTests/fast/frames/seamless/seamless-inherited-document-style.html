@@ -17,10 +17,12 @@ window.onload = function () {
     window.iframe = document.getElementById("iframe");
     window.rootElement = iframe.contentDocument.documentElement;
     shouldBeEqualToString("window.getComputedStyle(rootElement)['-webkit-rtl-ordering']", "visual");
-    shouldBeEqualToString("window.getComputedStyle(rootElement)['-webkit-user-modify']", "read-write");
     shouldBeEqualToString("window.getComputedStyle(rootElement)['-webkit-locale']", "en_US");
     shouldBeEqualToString("window.getComputedStyle(rootElement)['writing-mode']", "lr");
     shouldBeEqualToString("window.getComputedStyle(rootElement)['direction']", "rtl");
     shouldBeEqualToString("window.getComputedStyle(rootElement)['font']", "normal normal normal 18px/normal Ahem");
+
+    debug("'-webkit-user-modify', on the other hand, should not be inherited.");
+    shouldBeEqualToString("window.getComputedStyle(rootElement)['-webkit-user-modify']", "read-only");
 }
 </script>
