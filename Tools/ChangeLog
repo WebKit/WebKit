@@ -1,3 +1,12 @@
+2013-01-28  Raymond Toy  <rtoy@google.com>
+
+        Add myself to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=107992
+
+        Reviewed by kbr@google.com.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Update PageVisibilityState when WebView is hidden / visible
