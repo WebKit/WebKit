@@ -108,7 +108,7 @@ void InspectorCanvasAgent::disable(ErrorString*)
 
 void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
 {
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.dropTraceLog(errorString, traceLogId);
 }
@@ -122,128 +122,116 @@ void InspectorCanvasAgent::hasUninstrumentedCanvases(ErrorString* errorString, b
 
 void InspectorCanvasAgent::captureFrame(ErrorString* errorString, String* traceLogId)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
-    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
-    if (module.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
-        return;
-    }
-    module.captureFrame(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldScriptState(m_inspectedPage->mainFrame()));
+    if (!module.hasNoValue())
+        module.captureFrame(errorString, traceLogId);
 }
 
 void InspectorCanvasAgent::startCapturing(ErrorString* errorString, String* traceLogId)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
-    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
-    if (module.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
-        return;
-    }
-    module.startCapturing(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldScriptState(m_inspectedPage->mainFrame()));
+    if (!module.hasNoValue())
+        module.startCapturing(errorString, traceLogId);
 }
 
 void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String& traceLogId)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.stopCapturing(errorString, traceLogId);
 }
 
 void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.traceLog(errorString, traceLogId, startOffset, maxLength, &traceLog);
 }
 
 void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, RefPtr<TypeBuilder::Canvas::ResourceState>& result)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.replayTraceLog(errorString, traceLogId, stepNo, &result);
 }
 
 void InspectorCanvasAgent::getResourceInfo(ErrorString* errorString, const String& resourceId, RefPtr<TypeBuilder::Canvas::ResourceInfo>& result)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, resourceId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, resourceId);
     if (!module.hasNoValue())
         module.resourceInfo(errorString, resourceId, &result);
 }
 
 void InspectorCanvasAgent::getResourceState(ErrorString* errorString, const String& traceLogId, const String& resourceId, RefPtr<TypeBuilder::Canvas::ResourceState>& result)
 {
-    if (!checkIsEnabled(errorString))
-        return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.resourceState(errorString, traceLogId, resourceId, &result);
 }
 
 ScriptObject InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject& context)
 {
-    if (context.hasNoValue()) {
-        ASSERT_NOT_REACHED();
+    ErrorString error;
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, context);
+    if (module.hasNoValue())
         return ScriptObject();
-    }
-    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, context.scriptState());
-    if (module.hasNoValue()) {
-        ASSERT_NOT_REACHED();
-        return ScriptObject();
-    }
     return module.wrapCanvas2DContext(context);
 }
 
 #if ENABLE(WEBGL)
 ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
-    if (glContext.hasNoValue()) {
-        ASSERT_NOT_REACHED();
+    ErrorString error;
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, glContext);
+    if (module.hasNoValue())
         return ScriptObject();
-    }
-    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, glContext.scriptState());
-    if (module.hasNoValue()) {
-        ASSERT_NOT_REACHED();
-        return ScriptObject();
-    }
     return module.wrapWebGLContext(glContext);
 }
 #endif
 
-InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModuleForTraceLogId(ErrorString* errorString, const String& traceLogId)
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, ScriptState* scriptState)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(traceLogId);
+    if (!checkIsEnabled(errorString))
+        return InjectedScriptCanvasModule();
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
+    if (module.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        *errorString = "Internal error: no Canvas module";
+    }
+    return module;
+}
+
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, const ScriptObject& scriptObject)
+{
+    if (!checkIsEnabled(errorString))
+        return InjectedScriptCanvasModule();
+    if (scriptObject.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        *errorString = "Internal error: original ScriptObject has no value";
+        return InjectedScriptCanvasModule();
+    }
+    return injectedScriptCanvasModule(errorString, scriptObject.scriptState());
+}
+
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, const String& objectId)
+{
+    if (!checkIsEnabled(errorString))
+        return InjectedScriptCanvasModule();
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return InjectedScriptCanvasModule();
     }
-    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, injectedScript.scriptState());
-    if (module.hasNoValue()) {
-        ASSERT_NOT_REACHED();
-        *errorString = "Internal error: no Canvas module";
-        return InjectedScriptCanvasModule();
-    }
-    return module;
+    return injectedScriptCanvasModule(errorString, injectedScript.scriptState());
 }
 
 void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 {
     class NodeVisitor : public WrappedNodeVisitor {
     public:
-        NodeVisitor(Page* page, FramesWithUninstrumentedCanvases& hasUninstrumentedCanvasesResults)
+        NodeVisitor(Page* page, HashSet<Frame*>& result)
             : m_page(page)
-            , m_framesWithUninstrumentedCanvases(hasUninstrumentedCanvasesResults)
+            , m_framesWithUninstrumentedCanvases(result)
         {
         }
 
@@ -263,7 +251,7 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 
     private:
         Page* m_page;
-        FramesWithUninstrumentedCanvases& m_framesWithUninstrumentedCanvases;
+        HashSet<Frame*>& m_framesWithUninstrumentedCanvases;
     } nodeVisitor(m_inspectedPage, m_framesWithUninstrumentedCanvases);
 
     ScriptProfiler::visitNodeWrappers(&nodeVisitor);

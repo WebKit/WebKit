@@ -891,12 +891,11 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
     return identifier;
 }
 
-Frame* InspectorPageAgent::assertFrame(ErrorString* errorString, String frameId)
+Frame* InspectorPageAgent::assertFrame(ErrorString* errorString, const String& frameId)
 {
     Frame* frame = frameForId(frameId);
     if (!frame)
         *errorString = "No frame for given id found";
-
     return frame;
 }
 
@@ -907,7 +906,6 @@ DocumentLoader* InspectorPageAgent::assertDocumentLoader(ErrorString* errorStrin
     DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
     if (!documentLoader)
         *errorString = "No documentLoader for given frame found";
-
     return documentLoader;
 }
 

@@ -91,7 +91,10 @@ public:
 private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, Page*, InjectedScriptManager*);
 
-    InjectedScriptCanvasModule injectedScriptCanvasModuleForTraceLogId(ErrorString*, const String&);
+    InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, ScriptState*);
+    InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const ScriptObject&);
+    InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const String&);
+
     void findFramesWithUninstrumentedCanvases();
     bool checkIsEnabled(ErrorString*) const;
 
@@ -99,8 +102,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Canvas* m_frontend;
     bool m_enabled;
-    typedef HashSet<Frame*> FramesWithUninstrumentedCanvases;
-    FramesWithUninstrumentedCanvases m_framesWithUninstrumentedCanvases;
+    HashSet<Frame*> m_framesWithUninstrumentedCanvases;
 };
 
 } // namespace WebCore

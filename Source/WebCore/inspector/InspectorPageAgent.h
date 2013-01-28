@@ -166,7 +166,7 @@ public:
     Frame* frameForId(const String& frameId);
     String frameId(Frame*);
     String loaderId(DocumentLoader*);
-    Frame* assertFrame(ErrorString*, String frameId);
+    Frame* assertFrame(ErrorString*, const String& frameId);
     String scriptPreprocessor() { return m_scriptPreprocessor; }
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
