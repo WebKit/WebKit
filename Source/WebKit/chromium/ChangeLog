@@ -1,3 +1,15 @@
+2013-01-28  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Collapse OS(UNIX)||OS(ANDROID) to OS(UNIX)
+        https://bugs.webkit.org/show_bug.cgi?id=108091
+
+        Reviewed by Adam Barth.
+
+        OS(UNIX) is defined when OS(ANDROID) is defined.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleMouseDown):
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification

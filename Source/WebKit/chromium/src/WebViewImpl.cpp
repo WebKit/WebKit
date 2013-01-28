@@ -603,7 +603,7 @@ void WebViewImpl::handleMouseDown(Frame& mainFrame, const WebMouseEvent& event)
         || (event.button == WebMouseEvent::ButtonLeft
             && event.modifiers & WebMouseEvent::ControlKey))
         mouseContextMenu(event);
-#elif OS(UNIX) || OS(ANDROID)
+#elif OS(UNIX)
     if (event.button == WebMouseEvent::ButtonRight)
         mouseContextMenu(event);
 #endif
