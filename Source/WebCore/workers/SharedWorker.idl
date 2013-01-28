@@ -31,7 +31,6 @@
 
 [
     Conditional=SHARED_WORKERS,
-    ActiveDOMObject,
     JSCustomConstructor,
     Constructor(in DOMString scriptURL, in [Optional=DefaultIsNullString] DOMString name),
     CallWith=ScriptExecutionContext,

@@ -25,7 +25,6 @@
 
 [
     Conditional=INDEXED_DATABASE,
-    ActiveDOMObject,
     EventTarget,
     JSNoStaticTables,
     JSGenerateToJSObject

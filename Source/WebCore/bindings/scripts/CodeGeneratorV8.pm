@@ -274,8 +274,7 @@ sub GenerateHeader
     # Ensure the IsDOMNodeType function is in sync.
     die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != $codeGenerator->InheritsInterface($interface, "Node");
 
-    my $hasDependentLifetime = $interface->extendedAttributes->{"V8DependentLifetime"} || $interface->extendedAttributes->{"ActiveDOMObject"}
-         || GetGenerateIsReachable($interface) || $v8InterfaceName =~ /SVG/;
+    my $hasDependentLifetime = $interface->extendedAttributes->{"V8DependentLifetime"} || $codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject") || GetGenerateIsReachable($interface) || $v8InterfaceName =~ /SVG/;
     if (!$hasDependentLifetime) {
         foreach (@{$interface->parents}) {
             my $parent = $_;
@@ -369,7 +368,7 @@ END
         push(@headerContent, "    static void* opaqueRootForGC(void*, v8::Persistent<v8::Object>);\n");
     }
 
-    if ($interface->extendedAttributes->{"ActiveDOMObject"}) {
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
         push(@headerContent, "    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);\n");
     }
 
@@ -2096,7 +2095,7 @@ sub GenerateNamedConstructorCallback
     my @afterArgumentList;
 
     my $toActiveDOMObject = "0";
-    if ($interface->extendedAttributes->{"ActiveDOMObject"}) {
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
         $toActiveDOMObject = "${v8InterfaceName}::toActiveDOMObject";
     }
 
@@ -2627,7 +2626,7 @@ sub GenerateImplementation
 
     AddIncludesForType($interfaceName);
 
-    my $toActiveDOMObject = $interface->extendedAttributes->{"ActiveDOMObject"} ? "${v8InterfaceName}::toActiveDOMObject" : "0";
+    my $toActiveDOMObject = $codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject") ? "${v8InterfaceName}::toActiveDOMObject" : "0";
     my $toEventTarget = $codeGenerator->InheritsExtendedAttribute($interface, "EventTarget") ? "${v8InterfaceName}::toEventTarget" : "0";
     my $rootForGC = NeedsCustomOpaqueRootForGC($interface) ? "${v8InterfaceName}::opaqueRootForGC" : "0";
 
@@ -3169,7 +3168,7 @@ END
 END
     }
 
-    if ($interface->extendedAttributes->{"ActiveDOMObject"}) {
+    if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
         # MessagePort is handled like an active dom object even though it doesn't inherit
         # from ActiveDOMObject, so don't try to cast it to ActiveDOMObject.
         my $returnValue = $interfaceName eq "MessagePort" ? "0" : "toNative(object)";

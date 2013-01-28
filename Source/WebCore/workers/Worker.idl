@@ -27,7 +27,6 @@
 
 [
     Conditional=WORKERS,
-    ActiveDOMObject,
     JSCustomConstructor,
     Constructor(in DOMString scriptUrl),
     CallWith=ScriptExecutionContext,
