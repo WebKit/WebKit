@@ -914,7 +914,7 @@ void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t obje
     if (transaction->isFinished())
         return;
 
-    if (!transaction->scheduleTask(IDBDatabaseBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size())))
+    if (!transaction->scheduleTask(IDBTransactionBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size())))
         ASSERT_NOT_REACHED();
 }
 
@@ -963,7 +963,7 @@ void OpenCursorOperation::perform(IDBTransactionBackendImpl* transaction)
         return;
     }
 
-    IDBDatabaseBackendInterface::TaskType taskType(static_cast<IDBDatabaseBackendInterface::TaskType>(m_taskType));
+    IDBTransactionBackendInterface::TaskType taskType(static_cast<IDBTransactionBackendInterface::TaskType>(m_taskType));
     RefPtr<IDBCursorBackendImpl> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), m_cursorType, taskType, transaction, m_objectStoreId);
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }

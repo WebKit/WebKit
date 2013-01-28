@@ -70,12 +70,12 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
     ASSERT(m_state == Finished);
 }
 
-bool IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
+bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
 {
     if (m_state == Finished)
         return false;
 
-    if (type == IDBDatabaseBackendInterface::NormalTask)
+    if (type == NormalTask)
         m_taskQueue.append(task);
     else
         m_preemptiveTaskQueue.append(task);

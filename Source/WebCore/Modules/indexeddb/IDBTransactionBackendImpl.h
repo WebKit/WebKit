@@ -67,8 +67,8 @@ public:
     IDBTransaction::Mode mode() const { return m_mode; }
     const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
     bool isFinished() const { return m_state == Finished; }
-    bool scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { return scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
-    bool scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
+    bool scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
+    bool scheduleTask(TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendImpl*);
     void unregisterOpenCursor(IDBCursorBackendImpl*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }

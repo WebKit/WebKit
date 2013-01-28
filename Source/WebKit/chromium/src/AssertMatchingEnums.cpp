@@ -502,8 +502,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::NextNoDuplicate, IDBCursor::NEXT_NO_D
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Prev, IDBCursor::PREV);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::PrevNoDuplicate, IDBCursor::PREV_NO_DUPLICATE);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::PreemptiveTask, IDBDatabaseBackendInterface::PreemptiveTask);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::NormalTask, IDBDatabaseBackendInterface::NormalTask);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::PreemptiveTask, IDBTransactionBackendInterface::PreemptiveTask);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::NormalTask, IDBTransactionBackendInterface::NormalTask);
 #endif
 
 #if ENABLE(FILE_SYSTEM)

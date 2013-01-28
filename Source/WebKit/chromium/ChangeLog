@@ -1,3 +1,13 @@
+2013-01-27  Keishi Hattori  <keishi@webkit.org>
+
+        Unreviewed, rolling out r140850.
+        http://trac.webkit.org/changeset/140850
+        https://bugs.webkit.org/show_bug.cgi?id=107960
+
+        r14602 caused 8 indexed tests to crash.
+
+        * src/AssertMatchingEnums.cpp:
+
 2013-01-27  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add missing plumbing for Notification.requestPermission
