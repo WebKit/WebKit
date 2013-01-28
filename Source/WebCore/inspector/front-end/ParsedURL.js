@@ -108,6 +108,8 @@ WebInspector.ParsedURL.completeURL = function(baseURL, href)
 
     var parsedURL = baseURL.asParsedURL();
     if (parsedURL) {
+        if (parsedURL.isDataURL())
+            return href;
         var path = href;
         if (path.charAt(0) !== "/") {
             var basePath = parsedURL.path;

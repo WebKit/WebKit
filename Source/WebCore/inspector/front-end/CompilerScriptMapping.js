@@ -94,6 +94,8 @@ WebInspector.CompilerScriptMapping.prototype = {
     addScript: function(script)
     {
         var sourceMap = this.loadSourceMapForScript(script);
+        if (!sourceMap)
+            return;
 
         if (this._scriptForSourceMap.get(sourceMap)) {
             this._sourceMapForScriptId[script.scriptId] = sourceMap;
@@ -150,11 +152,21 @@ WebInspector.CompilerScriptMapping.prototype = {
 
     /**
      * @param {WebInspector.Script} script
-     * @return {WebInspector.PositionBasedSourceMap}
+     * @return {?WebInspector.PositionBasedSourceMap}
      */
     loadSourceMapForScript: function(script)
     {
-        var sourceMapURL = WebInspector.PositionBasedSourceMap.prototype._canonicalizeURL(script.sourceMapURL, script.sourceURL);
+        // script.sourceURL can be a random string, but is generally an absolute path -> complete it to inspected page url for
+        // relative links.
+        if (!script.sourceMapURL)
+            return null;
+        var scriptURL = WebInspector.ParsedURL.completeURL(WebInspector.inspectedPageURL, script.sourceURL);
+        if (!scriptURL)
+            return null;
+        var sourceMapURL = WebInspector.ParsedURL.completeURL(scriptURL, script.sourceMapURL);
+        if (!sourceMapURL)
+            return null;
+
         var sourceMap = this._sourceMapForSourceMapURL[sourceMapURL];
         if (sourceMap)
             return sourceMap;
@@ -165,7 +177,8 @@ WebInspector.CompilerScriptMapping.prototype = {
             if (response.slice(0, 3) === ")]}")
                 response = response.substring(response.indexOf('\n'));
             var payload = /** @type {SourceMapV3} */ (JSON.parse(response));
-            sourceMap = new WebInspector.PositionBasedSourceMap(sourceMapURL, payload);
+            var baseURL = sourceMapURL.startsWith("data:") ? scriptURL : sourceMapURL;
+            sourceMap = new WebInspector.PositionBasedSourceMap(baseURL, payload);
         } catch(e) {
             console.error(e.message);
             return null;

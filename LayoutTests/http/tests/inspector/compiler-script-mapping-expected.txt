@@ -2,20 +2,75 @@ Tests PositionBasedSourceMap and CompilerScriptMapping.
 
 
 Running: testSimpleMap
+example.js === example.js
+0 === 0
+9 === 9
+example.js === example.js
+0 === 0
+13 === 13
+example.js === example.js
+0 === 0
+25 === 25
+example.js === example.js
+2 === 2
+4 === 4
+example.js === example.js
+2 === 2
+11 === 11
+example.js === example.js
+2 === 2
+24 === 24
+0 === 0
+0 === 0
+0 === 0
+17 === 17
+0 === 0
+18 === 18
+0 === 0
+29 === 29
+0 === 0
+29 === 29
 
 Running: testNoMappingEntry
+example.js === example.js
+0 === 0
+0 === 0
+example.js === example.js
+0 === 0
+2 === 2
 
 Running: testEmptyLine
+example.js === example.js
+0 === 0
+0 === 0
+3 === 3
+1 === 1
 
 Running: testSections
+source1.js === source1.js
+0 === 0
+0 === 0
+source1.js === source1.js
+2 === 2
+1 === 1
+source2.js === source2.js
+0 === 0
+0 === 0
+source2.js === source2.js
+2 === 2
+1 === 1
 
 Running: testResolveSourceMapURL
+http://example.com/map.json === http://example.com/map.json
+http://example.com/map.json === http://example.com/map.json
+http://example.com/scripts/../maps/map.json === http://example.com/scripts/../maps/map.json
 
 Running: testCompilerScriptMapping
 
 Running: testCompilerScriptMappingWhenResourceWasLoadedAfterSource
 
 Running: testInlinedSourceMap
+<source content> === <source content>
 
 Running: testSourceMapCouldNotBeLoaded
 compiled.js

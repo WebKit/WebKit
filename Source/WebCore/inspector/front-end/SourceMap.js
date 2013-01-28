@@ -107,7 +107,8 @@ WebInspector.SourceMap.prototype = {
         var originalToCanonicalURLMap = {};
         for (var i = 0; i < map.sources.length; ++i) {
             var originalSourceURL = map.sources[i];
-            var url = this._canonicalizeURL((map.sourceRoot ? map.sourceRoot + "/" : "") + originalSourceURL, this._sourceMappingURL);
+            var href = (map.sourceRoot ? map.sourceRoot + "/" : "") + originalSourceURL;
+            var url = WebInspector.ParsedURL.completeURL(this._sourceMappingURL, href) || href;
             originalToCanonicalURLMap[originalSourceURL] = url;
             sources.push(url);
             this._sources[url] = true;
@@ -180,25 +181,6 @@ WebInspector.SourceMap.prototype = {
         var negative = result & 1;
         result >>= 1;
         return negative ? -result : result;
-    },
-
-    /**
-     * @param {string} url
-     * @param {string} baseURL
-     */
-    _canonicalizeURL: function(url, baseURL)
-    {
-        if (!url || !baseURL || url.asParsedURL() || url.substring(0, 5) === "data:")
-            return url;
-
-        var base = baseURL.asParsedURL();
-        if (!base)
-            return url;
-
-        var baseHost = base.scheme + "://" + base.host + (base.port ? ":" + base.port : "");
-        if (url[0] === "/")
-            return baseHost + url;
-        return baseHost + base.folderPathComponents + "/" + url;
     },
 
     _VLQ_BASE_SHIFT: 5,

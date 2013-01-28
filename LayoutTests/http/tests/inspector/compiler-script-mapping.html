@@ -23,16 +23,16 @@ function test()
     function checkMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, sourceColumnNumber, mapping)
     {
         var entry = mapping.findEntry(compiledLineNumber, compiledColumnNumber);
-        InspectorTest.assertEquals(sourceURL, entry[2]);
-        InspectorTest.assertEquals(sourceLineNumber, entry[3]);
-        InspectorTest.assertEquals(sourceColumnNumber, entry[4]);
+        InspectorTest.addResult(sourceURL + " === " + entry[2]);
+        InspectorTest.addResult(sourceLineNumber + " === " + entry[3]);
+        InspectorTest.addResult(sourceColumnNumber + " === " + entry[4]);
     }
 
     function checkReverseMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, mapping)
     {
         var entry = mapping.findEntryReversed(sourceURL, sourceLineNumber);
-        InspectorTest.assertEquals(compiledLineNumber, entry[0]);
-        InspectorTest.assertEquals(compiledColumnNumber, entry[1]);
+        InspectorTest.addResult(compiledLineNumber + " === " + entry[0]);
+        InspectorTest.addResult(compiledColumnNumber + " === " + entry[1]);
     }
 
     InspectorTest.runTestSuite([
@@ -130,10 +130,10 @@ function test()
 
         function testResolveSourceMapURL(next)
         {
-            var func = WebInspector.PositionBasedSourceMap.prototype._canonicalizeURL;
-            InspectorTest.assertEquals("http://example.com/map.json", func("http://example.com/map.json", "http://example.com/script.js"));
-            InspectorTest.assertEquals("http://example.com/map.json", func("/map.json", "http://example.com/script.js"));
-            InspectorTest.assertEquals("http://example.com/scripts/../maps/map.json", func("../maps/map.json", "http://example.com/scripts/script.js"));
+            var func = WebInspector.ParsedURL.completeURL;
+            InspectorTest.addResult("http://example.com/map.json === " + func("http://example.com/script.js", "http://example.com/map.json"));
+            InspectorTest.addResult("http://example.com/map.json === " + func("http://example.com/script.js", "/map.json"));
+            InspectorTest.addResult("http://example.com/scripts/../maps/map.json === " + func("http://example.com/scripts/script.js", "../maps/map.json"));
             next();
         },
 
@@ -291,7 +291,7 @@ function test()
             resourceScriptMapping.addScript(script);
             mapping.addScript(script);
 
-            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("source.js");
+            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://example.com/source.js");
 
             InspectorTest.checkUILocation(uiSourceCode, 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
             InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCode, 2, 4));
@@ -300,7 +300,7 @@ function test()
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("<source content>", content);
+                InspectorTest.addResult("<source content> === " + content);
                 next();
             }
         },
