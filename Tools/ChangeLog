@@ -1,5 +1,16 @@
 2013-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [GTK][WTR] Update layoutTestController.pathToLocalResource
+        https://bugs.webkit.org/show_bug.cgi?id=107538
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::pathToLocalResource): Update implementation based on
+        DRT code.
+
+2013-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [GTK][WTR] Move getTopLevelPath() to utilities file
         https://bugs.webkit.org/show_bug.cgi?id=107541
 
