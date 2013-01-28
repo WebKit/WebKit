@@ -100,7 +100,7 @@ TEST(WebKit2, PageVisibilityState)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 
     // Pass the PlatformWebView webView on as the context of the evals, so we can continue to eval on it.
-    PlatformWebView webView(context.get());    
+    PlatformWebView webView(context.get());
     setPageVisibilityStateWithEvalContinuation(&webView, kWKPageVisibilityStateVisible, didRunStep1StateChangeVisibleToHidden);
 
     Util::run(&testDone);

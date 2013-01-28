@@ -322,6 +322,10 @@ Could be worth adding to the API.
 // Indicates if the WebView is in the midst of a user gesture.
 - (BOOL)_isProcessingUserGesture;
 
+// Determining and updating page visibility state.
+- (BOOL)_isViewVisible;
+- (void)_updateVisibilityState;
+
 // SPI for DumpRenderTree
 - (void)_updateActiveState;
 
@@ -647,9 +651,6 @@ Could be worth adding to the API.
     @param enabled The new HTTP pipelining status.
  */
 + (void)_setHTTPPipeliningEnabled:(BOOL)enabled;
-
-// SPI for DumpRenderTree
-- (void)_setVisibilityState:(int)visibilityState isInitialState:(BOOL)isInitialState;
 
 @end
 

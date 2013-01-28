@@ -91,6 +91,7 @@ void WebKitAgnosticTest::runWebKit1Test()
     loadURL(webView.get(), url());
     waitForLoadToFinish();
     didLoadURL(webView.get());
+    teardownView(webView.get());
 }
 
 void WebKitAgnosticTest::runWebKit2Test()
@@ -104,6 +105,7 @@ void WebKitAgnosticTest::runWebKit2Test()
     loadURL(view.get(), url());
     waitForLoadToFinish();
     didLoadURL(view.get());
+    teardownView(view.get());
 }
 
 void WebKitAgnosticTest::loadURL(WebView *webView, NSURL *url)

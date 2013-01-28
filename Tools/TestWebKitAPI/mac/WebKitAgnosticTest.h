@@ -58,6 +58,9 @@ private:
     virtual void initializeView(WebView *) { }
     virtual void initializeView(WKView *) { }
 
+    virtual void teardownView(WebView *) { }
+    virtual void teardownView(WKView *) { }
+
     bool didFinishLoad;
 };
 

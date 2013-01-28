@@ -1,5 +1,36 @@
 2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        [Mac] Update PageVisibilityState when WebView is hidden / visible
+        https://bugs.webkit.org/show_bug.cgi?id=107509
+
+        Reviewed by Sam Weinig.
+
+        Add a test that PageVisibility of WK1 WebViews and WK2 WKViews
+        automatically changes between hidden and visible as the view is added
+        and removed from window, or when it is in a window that changes
+        visibility, for instance by minimizing / deminimizing.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.html: Added.
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm: Added.
+        (-[PageVisibilityStateDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        (runJavaScriptAlert):
+        (PageVisibilityStateWithWindowChanges):
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::initializeView):
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::teardownView):
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+        (TestWebKitAPI::TEST_F):
+        Test visibility state of a page in a WebView/WKView with different window states.
+
+        * TestWebKitAPI/mac/WebKitAgnosticTest.h:
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::teardownView):
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit1Test):
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test):
+        Add a WK1 and WK2 teardownView to balance initializeView.
+
+2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Improve PageVisibility API with enums
         https://bugs.webkit.org/show_bug.cgi?id=107364
 
