@@ -331,6 +331,7 @@ set(WebCore_IDL_FILES
     css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl
+    css/WebKitCSSFilterRule.idl
     css/WebKitCSSFilterValue.idl
     css/WebKitCSSKeyframeRule.idl
     css/WebKitCSSKeyframesRule.idl
@@ -1105,6 +1106,7 @@ set(WebCore_SOURCES
     css/SVGCSSParser.cpp
     css/SVGCSSStyleSelector.cpp
     css/ViewportStyleResolver.cpp
+    css/WebKitCSSFilterRule.cpp
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSKeyframeRule.cpp
     css/WebKitCSSKeyframesRule.cpp

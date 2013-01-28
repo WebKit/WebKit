@@ -3856,6 +3856,13 @@
 		A29532CF15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */; };
 		A29532D015DD5E1700469EBC /* CustomFilterValidatedProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = A29532CE15DD5E1700469EBC /* CustomFilterValidatedProgram.h */; };
 		A2B2AE7C16375EE500CFA50B /* CustomFilterConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B2AE7B16375EE500CFA50B /* CustomFilterConstants.h */; };
+		A2E8AE3016A48E1C006BB3AA /* WebKitCSSFilterRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2E8AE2E16A48E1C006BB3AA /* WebKitCSSFilterRule.cpp */; };
+		A2E8AE3116A48E1C006BB3AA /* WebKitCSSFilterRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A2E8AE2F16A48E1C006BB3AA /* WebKitCSSFilterRule.h */; };
+		A2E8AE3716A49840006BB3AA /* JSWebKitCSSFilterRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2E8AE3516A49840006BB3AA /* JSWebKitCSSFilterRule.cpp */; };
+		A2E8AE3816A49840006BB3AA /* JSWebKitCSSFilterRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A2E8AE3616A49840006BB3AA /* JSWebKitCSSFilterRule.h */; };
+		A2E8AE4016A498CF006BB3AA /* DOMWebKitCSSFilterRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A2E8AE3D16A498CF006BB3AA /* DOMWebKitCSSFilterRule.h */; };
+		A2E8AE4116A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = A2E8AE3E16A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm */; };
+		A2E8AE4216A498CF006BB3AA /* DOMWebKitCSSFilterRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A2E8AE3F16A498CF006BB3AA /* DOMWebKitCSSFilterRuleInternal.h */; };
 		A3BB59F31457A40D00AC56FE /* DocumentEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */; };
 		A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */; };
@@ -11286,6 +11293,13 @@
 		A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterValidatedProgram.cpp; path = filters/CustomFilterValidatedProgram.cpp; sourceTree = "<group>"; };
 		A29532CE15DD5E1700469EBC /* CustomFilterValidatedProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterValidatedProgram.h; path = filters/CustomFilterValidatedProgram.h; sourceTree = "<group>"; };
 		A2B2AE7B16375EE500CFA50B /* CustomFilterConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterConstants.h; path = filters/CustomFilterConstants.h; sourceTree = "<group>"; };
+		A2E8AE2E16A48E1C006BB3AA /* WebKitCSSFilterRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSFilterRule.cpp; sourceTree = "<group>"; };
+		A2E8AE2F16A48E1C006BB3AA /* WebKitCSSFilterRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSFilterRule.h; sourceTree = "<group>"; };
+		A2E8AE3516A49840006BB3AA /* JSWebKitCSSFilterRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSFilterRule.cpp; sourceTree = "<group>"; };
+		A2E8AE3616A49840006BB3AA /* JSWebKitCSSFilterRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSFilterRule.h; sourceTree = "<group>"; };
+		A2E8AE3D16A498CF006BB3AA /* DOMWebKitCSSFilterRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSFilterRule.h; sourceTree = "<group>"; };
+		A2E8AE3E16A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSFilterRule.mm; sourceTree = "<group>"; };
+		A2E8AE3F16A498CF006BB3AA /* DOMWebKitCSSFilterRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSFilterRuleInternal.h; sourceTree = "<group>"; };
 		A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentEventQueue.cpp; sourceTree = "<group>"; };
 		A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentEventQueue.h; sourceTree = "<group>"; };
 		A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerEventQueue.cpp; path = workers/WorkerEventQueue.cpp; sourceTree = "<group>"; };
@@ -16540,6 +16554,9 @@
 				858C38A40AA8F20400B187A4 /* DOMRect.mm */,
 				855D35890AD707310019AAC7 /* DOMRGBColor.h */,
 				BCAEFCAD1016CE4A0040D34E /* DOMRGBColor.mm */,
+				A2E8AE3D16A498CF006BB3AA /* DOMWebKitCSSFilterRule.h */,
+				A2E8AE3E16A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm */,
+				A2E8AE3F16A498CF006BB3AA /* DOMWebKitCSSFilterRuleInternal.h */,
 				31060376143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h */,
 				31060377143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm */,
 				31060378143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h */,
@@ -19387,6 +19404,8 @@
 				BCE013990C0BEF180043860A /* JSStyleSheet.h */,
 				A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */,
 				A84EBD810CB8C97700079609 /* JSStyleSheetList.h */,
+				A2E8AE3516A49840006BB3AA /* JSWebKitCSSFilterRule.cpp */,
+				A2E8AE3616A49840006BB3AA /* JSWebKitCSSFilterRule.h */,
 				310603721432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp */,
 				310603731432819C00ABF4BA /* JSWebKitCSSFilterValue.h */,
 				316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */,
@@ -21890,6 +21909,8 @@
 				3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */,
 				150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */,
 				150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */,
+				A2E8AE2E16A48E1C006BB3AA /* WebKitCSSFilterRule.cpp */,
+				A2E8AE2F16A48E1C006BB3AA /* WebKitCSSFilterRule.h */,
 				3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */,
 				3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */,
 				3106036E14327D2E00ABF4BA /* WebKitCSSFilterValue.idl */,
@@ -23960,6 +23981,8 @@
 				BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */,
 				31C0FF490E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.h in Headers */,
 				31C0FF4B0E4CEFDD007D6FE5 /* DOMWebKitAnimationEventInternal.h in Headers */,
+				A2E8AE4016A498CF006BB3AA /* DOMWebKitCSSFilterRule.h in Headers */,
+				A2E8AE4216A498CF006BB3AA /* DOMWebKitCSSFilterRuleInternal.h in Headers */,
 				31060379143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h in Headers */,
 				3106037B143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h in Headers */,
 				316FE07D0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h in Headers */,
@@ -25025,6 +25048,7 @@
 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
 				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
+				A2E8AE3816A49840006BB3AA /* JSWebKitCSSFilterRule.h in Headers */,
 				310603751432819C00ABF4BA /* JSWebKitCSSFilterValue.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
 				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
@@ -26191,6 +26215,7 @@
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
 				976D6C7C122B8A3D001FD1F7 /* WebKitBlobBuilder.h in Headers */,
 				150B923A15F08DC400E10986 /* WebKitCSSArrayFunctionValue.h in Headers */,
+				A2E8AE3116A48E1C006BB3AA /* WebKitCSSFilterRule.h in Headers */,
 				3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */,
 				31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */,
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
@@ -27304,6 +27329,7 @@
 				BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */,
 				15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */,
 				31C0FF4A0E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.mm in Sources */,
+				A2E8AE4116A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm in Sources */,
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
@@ -28398,6 +28424,7 @@
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 				77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
+				A2E8AE3716A49840006BB3AA /* JSWebKitCSSFilterRule.cpp in Sources */,
 				310603741432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
 				E1AD14C51297354900ACA989 /* JSWebKitCSSKeyframeRuleCustom.cpp in Sources */,
@@ -29359,6 +29386,7 @@
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
 				150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */,
+				A2E8AE3016A48E1C006BB3AA /* WebKitCSSFilterRule.cpp in Sources */,
 				3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,

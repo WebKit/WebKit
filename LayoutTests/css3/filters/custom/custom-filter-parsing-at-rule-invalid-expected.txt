@@ -1,0 +1,44 @@
+Test at-rule parsing for @-webkit-filter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Unprefixed rule.
+@filter my-filter { }
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Missing filter name identifier.
+@-webkit-filter { }
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Filter name as string.
+@-webkit-filter 'my-filter' { }
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Filter name as number.
+@-webkit-filter 123 { }
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Missing rule body.
+@-webkit-filter my-filter
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Missing opening brace.
+@-webkit-filter my-filter }
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+
+Missing closing brace.
+@-webkit-filter my-filter {
+PASS insertRuleException instanceof DOMException is true
+PASS insertRuleException.code is 12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

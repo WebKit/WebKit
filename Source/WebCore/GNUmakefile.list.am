@@ -807,6 +807,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
+	DerivedSources/WebCore/JSWebKitCSSFilterRule.cpp \
+	DerivedSources/WebCore/JSWebKitCSSFilterRule.h \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
@@ -1349,6 +1351,7 @@ dom_binding_idls += \
 	$(WebCore)/css/StyleMedia.idl \
 	$(WebCore)/css/StyleSheet.idl \
 	$(WebCore)/css/StyleSheetList.idl \
+	$(WebCore)/css/WebKitCSSFilterRule.idl \
 	$(WebCore)/css/WebKitCSSFilterValue.idl \
 	$(WebCore)/css/WebKitCSSKeyframeRule.idl \
 	$(WebCore)/css/WebKitCSSKeyframesRule.idl \
@@ -2693,6 +2696,8 @@ webcore_sources += \
 	Source/WebCore/css/ViewportStyleResolver.h \
 	Source/WebCore/css/WebKitCSSArrayFunctionValue.cpp \
 	Source/WebCore/css/WebKitCSSArrayFunctionValue.h \
+	Source/WebCore/css/WebKitCSSFilterRule.cpp \
+	Source/WebCore/css/WebKitCSSFilterRule.h \
 	Source/WebCore/css/WebKitCSSFilterValue.cpp \
 	Source/WebCore/css/WebKitCSSFilterValue.h \
 	Source/WebCore/css/WebKitCSSKeyframeRule.cpp \

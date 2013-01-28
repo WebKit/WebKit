@@ -198,6 +198,7 @@ BINDING_IDLS = \
     $(WebCore)/css/StyleSheet.idl \
     $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/WebKitCSSFilterValue.idl \
+    $(WebCore)/css/WebKitCSSFilterRule.idl \
     $(WebCore)/css/WebKitCSSKeyframeRule.idl \
     $(WebCore)/css/WebKitCSSKeyframesRule.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \

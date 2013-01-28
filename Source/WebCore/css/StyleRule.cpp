@@ -33,6 +33,7 @@
 #include "CSSUnknownRule.h"
 #include "StyleRuleImport.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include "WebKitCSSFilterRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
@@ -96,6 +97,11 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         static_cast<const StyleRuleViewport*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #endif
+#if ENABLE(CSS_SHADERS)
+    case Filter:
+        static_cast<const StyleRuleFilter*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+#endif
     case Unknown:
     case Charset:
     case Keyframe:
@@ -149,6 +155,11 @@ void StyleRuleBase::destroy()
         delete static_cast<StyleRuleViewport*>(this);
         return;
 #endif
+#if ENABLE(CSS_SHADERS)
+    case Filter:
+        delete static_cast<StyleRuleFilter*>(this);
+        return;
+#endif
     case Unknown:
     case Charset:
     case Keyframe:
@@ -193,6 +204,10 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         return static_cast<const StyleRuleViewport*>(this)->copy();
+#endif
+#if ENABLE(CSS_SHADERS)
+    case Filter:
+        return static_cast<const StyleRuleFilter*>(this)->copy();
 #endif
     case Unknown:
     case Charset:
@@ -248,6 +263,11 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
 #if ENABLE(SHADOW_DOM)
     case HostInternal:
         rule = CSSHostRule::create(static_cast<StyleRuleHost*>(self), parentSheet);
+        break;
+#endif
+#if ENABLE(CSS_SHADERS)
+    case Filter:
+        rule = WebKitCSSFilterRule::create(static_cast<StyleRuleFilter*>(self), parentSheet);
         break;
 #endif
     case Unknown:
@@ -491,5 +511,43 @@ void StyleRuleViewport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObje
     info.addMember(m_properties);
 }
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
+
+#if ENABLE(CSS_SHADERS)
+StyleRuleFilter::StyleRuleFilter(const String& filterName)
+    : StyleRuleBase(Filter, 0)
+    , m_filterName(filterName)
+{
+}
+
+StyleRuleFilter::StyleRuleFilter(const StyleRuleFilter& o)
+    : StyleRuleBase(o)
+    , m_filterName(o.m_filterName)
+    , m_properties(o.m_properties->copy())
+{
+}
+
+StyleRuleFilter::~StyleRuleFilter()
+{
+}
+
+StylePropertySet* StyleRuleFilter::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
+}
+
+void StyleRuleFilter::setProperties(PassRefPtr<StylePropertySet> properties)
+{
+    m_properties = properties;
+}
+
+void StyleRuleFilter::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(m_filterName);
+    info.addMember(m_properties);
+}
+#endif // ENABLE(CSS_SHADERS)
 
 } // namespace WebCore

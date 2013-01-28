@@ -209,6 +209,7 @@ IDL_BINDINGS += \
     $$PWD/css/StyleMedia.idl \
     $$PWD/css/StyleSheet.idl \
     $$PWD/css/StyleSheetList.idl \
+    $$PWD/css/WebKitCSSFilterRule.idl \
     $$PWD/css/WebKitCSSFilterValue.idl \
     $$PWD/css/WebKitCSSKeyframeRule.idl \
     $$PWD/css/WebKitCSSKeyframesRule.idl \

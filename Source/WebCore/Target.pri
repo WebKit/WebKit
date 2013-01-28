@@ -327,6 +327,7 @@ SOURCES += \
     css/StyleSheetList.cpp \
     css/ViewportStyleResolver.cpp \
     css/WebKitCSSArrayFunctionValue.cpp \
+    css/WebKitCSSFilterRule.cpp \
     css/WebKitCSSFilterValue.cpp \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
@@ -1540,6 +1541,7 @@ HEADERS += \
     css/StyleSheetList.h \
     css/ViewportStyleResolver.h \
     css/WebKitCSSArrayFunctionValue.h \
+    css/WebKitCSSFilterRule.h \
     css/WebKitCSSFilterValue.h \
     css/WebKitCSSKeyframeRule.h \
     css/WebKitCSSKeyframesRule.h \

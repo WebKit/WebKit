@@ -8458,6 +8458,17 @@ PassRefPtr<CSSValueList> CSSParser::parseCustomFilterTransform(CSSParserValueLis
 
     return list.release();
 }
+
+StyleRuleBase* CSSParser::createFilterRule(const CSSParserString& filterName)
+{
+    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName);
+    rule->setProperties(createStylePropertySet());
+    clearProperties();
+    StyleRuleFilter* result = rule.get();
+    m_parsedRules.append(rule.release());
+    processAndAddNewRuleToSourceTreeIfNeeded();
+    return result;
+}
 #endif
 
 PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserValueList* args, WebKitCSSFilterValue::FilterOperationType filterType)
@@ -10091,9 +10102,20 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
             return;
 
         case 15:
+            if (hasEscape)
+                return;
+
 #if ENABLE(CSS_REGIONS)
-            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-region"))
+            if (isASCIIAlphaCaselessEqual(name[14], 'n') && isEqualToCSSIdentifier(name + 2, "webkit-regio")) {
                 m_token = WEBKIT_REGION_RULE_SYM;
+                return;
+            }
+#endif
+#if ENABLE(CSS_SHADERS)
+            if (isASCIIAlphaCaselessEqual(name[14], 'r') && isEqualToCSSIdentifier(name + 2, "webkit-filte")) {
+                m_token = WEBKIT_FILTER_RULE_SYM;
+                return;
+            }
 #endif
             return;
 

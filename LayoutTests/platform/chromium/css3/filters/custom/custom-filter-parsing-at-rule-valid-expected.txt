@@ -1,0 +1,84 @@
+Test at-rule parsing for @-webkit-filter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Empty rule, separated by single spaces.
+@-webkit-filter my-filter { }
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+PASS declaration.length is 0
+
+Empty rule, separated by multiple spaces.
+   @-webkit-filter   my-filter   {   }   
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+PASS declaration.length is 0
+
+Empty rule, no extra whitespace.
+@-webkit-filter my-filter{}
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+PASS declaration.length is 0
+
+Rule with arbitrary properties.
+@-webkit-filter my-filter { width: 100px; height: 100px; }
+PASS cssRule.cssText is "@-webkit-filter my-filter { width: 100px; height: 100px; }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+PASS declaration.getPropertyValue('width') is "100px"
+PASS declaration.getPropertyValue('height') is "100px"
+PASS declaration.length is 2
+
+Nested rule.
+@-webkit-filter parent-filter { @-webkit-filter child-filter { } }
+PASS cssRule.cssText is "@-webkit-filter parent-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+
+Twice nested rule.
+@-webkit-filter parent-filter { @-webkit-filter child-filter { @-webkit-filter grandchild-filter } }
+PASS cssRule.cssText is "@-webkit-filter parent-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+
+Nested rule inside arbitrary rule.
+@font-face { @-webkit-filter child-filter { } }
+PASS cssRule.cssText is "@font-face { }"
+PASS cssRule.type is 5
+PASS jsWrapperClass(cssRule) is 'CSSFontFaceRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be CSSFontFaceRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be CSSFontFaceRuleConstructor. Was Function.
+
+Nested rule inside media query.
+@media screen { @-webkit-filter child-filter { } }
+PASS cssRule.cssText is "@media screen { \n  @-webkit-filter child-filter { }\n}"
+PASS cssRule.type is 4
+PASS jsWrapperClass(cssRule) is 'CSSMediaRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be CSSMediaRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be CSSMediaRuleConstructor. Was Function.
+PASS cssRule.cssText is "@-webkit-filter child-filter { }"
+PASS cssRule.type is 17
+PASS jsWrapperClass(cssRule) is 'WebKitCSSFilterRule'
+FAIL jsWrapperClass(cssRule.__proto__) should be WebKitCSSFilterRulePrototype. Was Object.
+FAIL jsWrapperClass(cssRule.constructor) should be WebKitCSSFilterRuleConstructor. Was Function.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -301,6 +301,10 @@ public:
 #if ENABLE(SHADOW_DOM)
     StyleRuleBase* createHostRule(RuleList* rules);
 #endif
+#if ENABLE(CSS_SHADERS)
+    StyleRuleBase* createFilterRule(const CSSParserString&);
+#endif
+
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
 

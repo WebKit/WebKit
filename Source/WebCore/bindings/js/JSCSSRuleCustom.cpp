@@ -42,10 +42,12 @@
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
+#include "JSWebKitCSSFilterRule.h"
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"
 #include "JSWebKitCSSRegionRule.h"
 #include "JSWebKitCSSViewportRule.h"
+#include "WebKitCSSFilterRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
@@ -117,6 +119,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
 #if ENABLE(SHADOW_DOM)
         case CSSRule::HOST_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSHostRule, rule);
+            break;
+#endif
+#if ENABLE(CSS_SHADERS)
+        case CSSRule::WEBKIT_FILTER_RULE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSFilterRule, rule);
             break;
 #endif
         default:

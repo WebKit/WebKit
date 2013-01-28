@@ -487,6 +487,9 @@
 #include "JSValidityState.cpp"
 #include "JSVoidCallback.cpp"
 #include "JSWebKitAnimationEvent.cpp"
+#if ENABLE(CSS_SHADERS)
+#include "JSWebKitCSSFilterRule.cpp"
+#endif
 #if ENABLE(CSS_FILTERS)
 #include "JSWebKitCSSFilterValue.cpp"
 #endif

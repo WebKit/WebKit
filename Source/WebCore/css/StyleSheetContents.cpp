@@ -462,6 +462,9 @@ static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<Style
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case StyleRuleBase::Viewport:
 #endif
+#if ENABLE(CSS_SHADERS)
+        case StyleRuleBase::Filter:
+#endif
             break;
         }
     }

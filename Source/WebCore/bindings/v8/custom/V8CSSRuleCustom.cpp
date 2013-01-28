@@ -41,6 +41,9 @@
 #if ENABLE(CSS3_CONDITIONAL_RULES)
 #include "V8CSSSupportsRule.h"
 #endif
+#if ENABLE(CSS_SHADERS)
+#include "V8WebKitCSSFilterRule.h"
+#endif
 #include "V8WebKitCSSKeyframeRule.h"
 #include "V8WebKitCSSKeyframesRule.h"
 #include "V8WebKitCSSRegionRule.h"
@@ -89,6 +92,10 @@ v8::Handle<v8::Object> wrap(CSSRule* impl, v8::Handle<v8::Object> creationContex
 #if ENABLE(SHADOW_DOM)
     case CSSRule::HOST_RULE:
         return wrap(static_cast<CSSHostRule*>(impl), creationContext, isolate);
+#endif
+#if ENABLE(CSS_SHADERS)
+    case CSSRule::WEBKIT_FILTER_RULE:
+        return wrap(static_cast<WebKitCSSFilterRule*>(impl), creationContext, isolate);
 #endif
     }
     return V8CSSRule::createWrapper(impl, creationContext, isolate);

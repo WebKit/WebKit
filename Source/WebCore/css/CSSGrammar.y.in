@@ -111,6 +111,9 @@ static inline int cssyyerror(void*, const char*)
 %token WEBKIT_SELECTOR_SYM
 %token WEBKIT_REGION_RULE_SYM
 %token WEBKIT_VIEWPORT_RULE_SYM
+#if ENABLE_CSS_SHADERS
+%token WEBKIT_FILTER_RULE_SYM
+#endif
 %token <marginBox> TOPLEFTCORNER_SYM
 %token <marginBox> TOPLEFT_SYM
 %token <marginBox> TOPCENTER_SYM
@@ -214,6 +217,9 @@ static inline int cssyyerror(void*, const char*)
 #endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
 %type <rule> viewport
+#endif
+#if ENABLE_CSS_SHADERS
+%type <rule> filter
 #endif
 
 %type <string> maybe_ns_prefix
@@ -423,6 +429,9 @@ valid_rule:
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
 #endif
+#if ENABLE_CSS_SHADERS
+  | filter
+#endif
   ;
 
 rule:
@@ -469,6 +478,9 @@ block_valid_rule:
 #endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
+#endif
+#if ENABLE_CSS_SHADERS
+  | filter
 #endif
   ;
 
@@ -1019,6 +1031,21 @@ region:
         }
     }
 ;
+
+#if ENABLE_CSS_SHADERS
+before_filter_rule:
+    /* empty */ {
+        parser->markRuleHeaderStart(CSSRuleSourceData::FILTER_RULE);
+    }
+    ;
+
+filter:
+    before_filter_rule WEBKIT_FILTER_RULE_SYM WHITESPACE IDENT at_rule_header_end_maybe_space
+    '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
+        $$ = parser->createFilterRule($4);
+    }
+    ;
+#endif
 
 combinator:
     '+' maybe_space { $$ = CSSSelector::DirectAdjacent; }

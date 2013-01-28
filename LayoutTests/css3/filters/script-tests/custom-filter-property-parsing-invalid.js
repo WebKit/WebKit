@@ -1,15 +1,7 @@
 description("Test the parsing of custom() function of the -webkit-filter property.");
 
-if (window.testRunner) {
-    window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
-    window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
-}
-
 // These have to be global for the test helpers to see them.
-var stylesheet, cssRule, declaration;
-var styleElement = document.createElement("style");
-document.head.appendChild(styleElement);
-stylesheet = styleElement.sheet;
+var cssRule, declaration;
 
 function testInvalidFilterRule(description, rule)
 {
