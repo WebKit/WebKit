@@ -29,14 +29,14 @@
 /**
  * @constructor
  * @implements {WebInspector.SearchScope}
- * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.ScriptsSearchScope = function(uiSourceCodeProvider)
+WebInspector.ScriptsSearchScope = function(workspace)
 {
     // FIXME: Add title once it is used by search controller.
     WebInspector.SearchScope.call(this)
     this._searchId = 0;
-    this._uiSourceCodeProvider = uiSourceCodeProvider;
+    this._workspace = workspace;
 }
 
 WebInspector.ScriptsSearchScope.prototype = {
@@ -118,7 +118,13 @@ WebInspector.ScriptsSearchScope.prototype = {
             return a.originURL().compareTo(b.originURL());   
         }
         
-        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
+        var projects = this._workspace.projects();
+        var uiSourceCodes = [];
+        for (var i = 0; i < projects.length; ++i) {
+            if (projects[i].isServiceProject())
+                continue;
+            uiSourceCodes = this._uiSourceCodes.concat(projects[i].uiSourceCodes());
+        }
         
         uiSourceCodes = uiSourceCodes.filter(filterOutAnonymous);
         uiSourceCodes.sort(comparator);
