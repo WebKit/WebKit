@@ -41,6 +41,6 @@ button {
     -webkit-transition: border-color 200ms;
     /* We use border color because it follows the border radius (unlike outline).
     * This is particularly noticeable on mac. */
-    border-color: -webkit-focus-ring-color;
+    border-color: rgb(77, 144, 254);
     outline: none;
 }
