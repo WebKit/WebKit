@@ -1,3 +1,18 @@
+2013-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Platform.h:1212:22: error: '__MAC_OS_X_VERSION_MIN_REQUIRED' is not defined, evaluates to 0 [-Werror,-Wundef]
+
+        This fixes the following build error introduced in r140366 for
+        Bug 107098:
+
+            Platform.h:1212:22: error: '__MAC_OS_X_VERSION_MIN_REQUIRED' is not defined, evaluates to 0 [-Werror,-Wundef]
+            #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+                                 ^
+            1 error generated.
+
+        * wtf/Platform.h: Check !PLATFORM(IOS) first so that iOS builds
+        do not try to evaluate __MAC_OS_X_VERSION_MIN_REQUIRED.
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification
