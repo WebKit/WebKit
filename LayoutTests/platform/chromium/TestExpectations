@@ -101,6 +101,8 @@ webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/focu
 
 # Crashing after r140231, see bug https://bugs.webkit.org/show_bug.cgi?id=107579
 webkit.org/b/106853 [ Debug ] media/track/track-css-cue-lifetime.html [ Pass Timeout Crash ]
+webkit.org/b/108024 [ Debug ] media/track/track-css-matching-timestamps.html [ Crash ]
+webkit.org/b/108024 [ Debug ] media/track/track-css-matching-lang.html [ Crash ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
