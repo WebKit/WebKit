@@ -129,6 +129,7 @@ my (
     $sharedWorkersSupport,
     $sqlDatabaseSupport,
     $styleScopedSupport,
+    $suidLinuxSandbox,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
     $svgSupport,
@@ -404,6 +405,9 @@ my @features = (
 
     { option => "style-scoped", desc => "Toggle Style Scoped support",
       define => "ENABLE_STYLE_SCOPED", default => (isBlackBerry() || isGtk()), value => \$styleScopedSupport },
+
+    { option => "suid-linux-sandbox", desc => "Toggle suid sandbox for linux",
+      define => "ENABLE_SUID_SANDBOX_LINUX", default => 0, value => \$suidLinuxSandbox },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },

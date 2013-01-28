@@ -1,3 +1,59 @@
+2013-01-28  Renata Hodovan  <reni@webkit.org>
+
+        [WK2] Putting QtWebProcess into a chrooted sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=90005
+
+        Reviewed by Anders Carlsson and Zoltan Herczeg.
+
+        This new feature makes possible to run WebProcess inside a chroot. In this case UIProcess calls the
+        internal SandboxProcess binary what makes up an environment for WebProcess inside the sandbox and runs the WebProcess.
+        SandboxProcess first creates two needed device files (random and urandom), mounts filesystems (proc and shared memory),
+        then links run-time dependencies of WebProcess. After this, SandboxProcess moves to a new pid namespace (cloning with
+        CLONE_NEWPID flag). Then after an other cloning (with CLONE_FS flag) we share our filesystem with our children. This is
+        needed because we want to call chroot() function from here and jail our child (WebProcess) too. This will be performed
+        when WebProcess sends a request for it via an socketpair. If sandboxing is done, SandboxProcess exits.
+        Since chroot() system call needs sudoer rights SandboxProcess binary should have set its suid flag. However we can reduce
+        its capabilites. First we restrict the capabilities of the process and the number of its possible resources. Furthermore
+        we fallback to the nobody or the real user.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * SandboxProcess.pro: Added.
+        * Shared/linux/SandboxProcess/SandboxEnvironmentLinux.cpp: Added.
+        (launchChangeRootHelper):
+        (setEnvironmentVariablesForChangeRootHelper):
+        (prepareAndStartChangeRootHelper):
+        (setCapabilities):
+        (dropPrivileges):
+        (fileExists):
+        (directoryPermissions):
+        (createDirectory):
+        (createDirectoryPath):
+        (createDeviceFiles):
+        (mountFileSystems):
+        (linkFile):
+        (linkDirectory):
+        (collectRunTimeDependencies):
+        (setupXauthorityForNobodyUser):
+        (initSandbox):
+        (restrictCapabilities):
+        (moveToNewPidNamespace):
+        (run):
+        (main):
+        * Shared/linux/SandboxProcess/SandboxEnvironmentLinux.h: Added.
+        * Shared/linux/SandboxProcess/StringOperations.cpp: Added.
+        (stringCopy):
+        (stringConcat):
+        (stringAppend):
+        * Shared/linux/SandboxProcess/StringOperations.h: Added.
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebKit2.pri:
+        * WebProcess.pro:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit):
+        (WebKit::chrootMe):
+        (WebKit::WebProcessMainQt):
+
 2013-01-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Rely more on C API in ewk_favicon_database

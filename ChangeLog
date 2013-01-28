@@ -1,3 +1,14 @@
+2013-01-28  Renata Hodovan  <reni@webkit.org>
+
+        [WK2] Putting QtWebProcess into a chrooted sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=90005
+
+        Reviewed by Anders Carlsson and Zoltan Herczeg.
+
+        Make it possible to build WebKit2 with SandboxProcess.
+
+        * Source/QtWebKit.pro:
+
 2013-01-27  David Farler  <dfarler@apple.com>
 
         REGRESSION (r140912): Broke specifying non-trivial ARCHS value to make / build-webkit

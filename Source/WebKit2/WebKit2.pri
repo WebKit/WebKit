@@ -15,6 +15,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Platform/CoreIPC \
     $$SOURCE_DIR/Platform/qt \
     $$SOURCE_DIR/Shared \
+    $$SOURCE_DIR/Shared/linux/SandboxProcess \
     $$SOURCE_DIR/Shared/API/c \
     $$SOURCE_DIR/Shared/Authentication \
     $$SOURCE_DIR/Shared/CoordinatedGraphics \
@@ -63,7 +64,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/WebProcess/WebPage \
     $$SOURCE_DIR/WebProcess/WebPage/CoordinatedGraphics \
     $$SOURCE_DIR/WebProcess/qt \
-    $$SOURCE_DIR/PluginProcess
+    $$SOURCE_DIR/PluginProcess \
 
 # The WebKit2 Qt APIs depend on qwebkitglobal.h, which lives in WebKit
 INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api

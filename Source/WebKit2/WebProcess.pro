@@ -11,6 +11,10 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 SOURCES += qt/MainQt.cpp
 
+INCLUDEPATH = \
+    $$PWD/Shared/linux/SandboxProcess/ \
+    $$INCLUDEPATH
+
 QT += network webkit
 macx: QT += xml
 

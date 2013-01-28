@@ -22,6 +22,11 @@ build?(webkit2) {
         pluginprocess.file = WebKit2/PluginProcess.pro
         SUBDIRS += pluginprocess
     }
+
+    enable?(SUID_SANDBOX_LINUX) {
+        sandboxprocess.file = WebKit2/SandboxProcess.pro
+        SUBDIRS += sandboxprocess
+    }
 }
 
 declarative.file = WebKit/qt/declarative/declarative.pro
