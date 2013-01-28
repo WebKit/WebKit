@@ -1,3 +1,14 @@
+2013-01-27  David Farler  <dfarler@apple.com>
+
+        REGRESSION (r140912): Broke specifying non-trivial ARCHS value to make / build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=108028
+
+        Reviewed by Dan Bernstein.
+
+        * Makefile: Reverted.
+        * Makefile.shared: Reverted.
+        * Source/Makefile: Reverted.
+
 2013-01-26  David Farler  <dfarler@apple.com>
 
         Allow building with arbitrary SDK and ARCHS with make + Xcode

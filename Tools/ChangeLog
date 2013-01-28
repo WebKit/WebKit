@@ -1,3 +1,14 @@
+2013-01-27  David Farler  <dfarler@apple.com>
+
+        REGRESSION (r140912): Broke specifying non-trivial ARCHS value to make / build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=108028
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/Makefile: Reverted.
+        * Makefile: Reverted.
+        * Scripts/webkitdirs.pm: Reverted.
+
 2013-01-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Fixing atomicIncrement implementation for Windows by dropping support before XP SP2.
