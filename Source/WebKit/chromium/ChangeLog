@@ -1,3 +1,20 @@
+2013-01-28  Adam Barth  <abarth@webkit.org>
+
+        Remove webkitNotifications.createHTMLNotification
+        https://bugs.webkit.org/show_bug.cgi?id=107598
+
+        Reviewed by Benjamin Poulain.
+
+        We can remove these stubs once we've removed the Chromium-side code
+        that depends on them.
+
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::isHTML):
+        (WebKit::WebNotification::url):
+        (WebKit::WebNotification::iconURL):
+        (WebKit::WebNotification::title):
+        (WebKit::WebNotification::body):
+
 2013-01-28  James Craig  <james@cookiecrook.com>
 
         HTML5 promotes DL from specific 'definition list' to superset 'description list'; accessibility strings and accessors should be updated to match.

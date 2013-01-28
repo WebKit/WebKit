@@ -69,30 +69,26 @@ bool WebNotification::lessThan(const WebNotification& other) const
 
 bool WebNotification::isHTML() const
 {
-    return m_private->isHTML();
+    return false;
 }
 
 WebURL WebNotification::url() const
 {
-    ASSERT(isHTML());
-    return m_private->url();
+    return WebURL();
 }
 
 WebURL WebNotification::iconURL() const
 {
-    ASSERT(!isHTML());
     return m_private->iconURL();
 }
 
 WebString WebNotification::title() const
 {
-    ASSERT(!isHTML());
     return m_private->title();
 }
 
 WebString WebNotification::body() const
 {
-    ASSERT(!isHTML());
     return m_private->body();
 }
 

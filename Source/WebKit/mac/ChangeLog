@@ -1,3 +1,12 @@
+2013-01-28  Adam Barth  <abarth@webkit.org>
+
+        Remove webkitNotifications.createHTMLNotification
+        https://bugs.webkit.org/show_bug.cgi?id=107598
+
+        Reviewed by Benjamin Poulain.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-01-25  Andy Estes  <aestes@apple.com>
 
         Wrap content filtering code in an object

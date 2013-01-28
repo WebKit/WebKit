@@ -54,7 +54,7 @@ public:
         PrefixedContentSecurityPolicy,
         UnprefixedIndexedDB,
         OpenWebDatabase,
-        LegacyHTMLNotifications,
+        UnusedSlot02, // Prior to 1/2012, we used this slot for LegacyHTMLNotifications,
         LegacyTextNotifications,
         UnprefixedRequestAnimationFrame,
         PrefixedRequestAnimationFrame,

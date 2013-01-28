@@ -1,3 +1,12 @@
+2013-01-28  Adam Barth  <abarth@webkit.org>
+
+        Remove webkitNotifications.createHTMLNotification
+        https://bugs.webkit.org/show_bug.cgi?id=107598
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-01-28  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] SpellingHandler parses and creates spellcheck requests regardless of the system spell check status

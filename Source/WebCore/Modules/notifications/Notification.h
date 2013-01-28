@@ -68,7 +68,6 @@ class Notification : public RefCounted<Notification>, public ActiveDOMObject, pu
 public:
     Notification();
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    static PassRefPtr<Notification> create(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
     static PassRefPtr<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
 #endif
 #if ENABLE(NOTIFICATIONS)
@@ -82,14 +81,6 @@ public:
     void cancel() { close(); }
 #endif
     void close();
-
-    bool isHTML() const { return m_isHTML; }
-    void setHTML(bool isHTML) { m_isHTML = isHTML; }
-    
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    KURL url() const { return m_notificationURL; }
-    void setURL(KURL url) { m_notificationURL = url; }
-#endif
 
     KURL iconURL() const { return m_icon; }
     void setIconURL(const KURL& url) { m_icon = url; }
@@ -152,7 +143,6 @@ public:
 
 private:
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
     Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
 #endif
 #if ENABLE(NOTIFICATIONS)
@@ -173,17 +163,11 @@ private:
 #if ENABLE(NOTIFICATIONS)
     void taskTimerFired(Timer<Notification>*);
 #endif
-    
-    bool m_isHTML;
 
     // Text notifications.
     KURL m_icon;
     String m_title;
     String m_body;
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    KURL m_notificationURL;
-#endif
-
     String m_direction;
     String m_lang;
     String m_tag;
