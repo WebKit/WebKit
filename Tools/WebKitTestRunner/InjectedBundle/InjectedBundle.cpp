@@ -471,6 +471,22 @@ void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
+void InjectedBundle::setVisibilityState(WKPageVisibilityState visibilityState, bool isInitialState)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetVisibilityState"));
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> visibilityStateKeyWK(AdoptWK, WKStringCreateWithUTF8CString("visibilityState"));
+    WKRetainPtr<WKUInt64Ref> visibilityStateWK(AdoptWK, WKUInt64Create(visibilityState));
+    WKDictionaryAddItem(messageBody.get(), visibilityStateKeyWK.get(), visibilityStateWK.get());
+
+    WKRetainPtr<WKStringRef> isInitialKeyWK(AdoptWK, WKStringCreateWithUTF8CString("isInitialState"));
+    WKRetainPtr<WKBooleanRef> isInitialWK(AdoptWK, WKBooleanCreate(isInitialState));
+    WKDictionaryAddItem(messageBody.get(), isInitialKeyWK.get(), isInitialWK.get());
+
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
 bool InjectedBundle::shouldProcessWorkQueue() const
 {
     if (!m_useWorkQueue)

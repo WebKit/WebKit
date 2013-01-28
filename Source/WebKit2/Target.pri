@@ -56,6 +56,7 @@ HEADERS += \
     Shared/API/c/WKMutableDictionary.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
+    Shared/API/c/WKPageVisibilityTypes.h \
     Shared/API/c/WKRenderLayer.h \
     Shared/API/c/WKRenderObject.h \
     Shared/API/c/WKSecurityOrigin.h \

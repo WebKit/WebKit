@@ -1,3 +1,43 @@
+2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve PageVisibility API with enums
+        https://bugs.webkit.org/show_bug.cgi?id=107364
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKPageVisibilityTypes.h: Added.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toPageVisibilityState):
+        Create an enum for page visibility APIs and a conversion function
+        for the WK2 values to WebCore values.
+
+        * Target.pri:
+        * GNUmakefile.list.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add WKPageVisibilityTypes.h to the build as a private export.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetVisibilityState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setVisibilityState):
+        UIProcess API to set visibility state. WebPageProxy already
+        had m_visibilityState, so update that when setter is used.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Remove the old SPI for WebKitTestRunner. Tests now use the C API.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setVisibilityState):
+        * WebProcess/WebPage/WebPage.messages.in:
+        Update the existing WebPage API to use uint32_t, which matches
+        other enum message types.
+
 2013-01-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_download_job

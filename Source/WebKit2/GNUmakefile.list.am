@@ -20,6 +20,7 @@ webkit2_h_api += \
 	$(WebKit2)/Shared/API/c/WKMutableDictionary.h \
 	$(WebKit2)/Shared/API/c/WKNumber.h \
 	$(WebKit2)/Shared/API/c/WKPageLoadTypes.h \
+	$(WebKit2)/Shared/API/c/WKPageVisibilityTypes.h \
 	$(WebKit2)/Shared/API/c/WKRenderLayer.h \
 	$(WebKit2)/Shared/API/c/WKRenderObject.h \
 	$(WebKit2)/Shared/API/c/WKSecurityOrigin.h \
@@ -344,6 +345,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKNumber.cpp \
 	Source/WebKit2/Shared/API/c/WKNumber.h \
 	Source/WebKit2/Shared/API/c/WKPageLoadTypes.h \
+	Source/WebKit2/Shared/API/c/WKPageVisibilityTypes.h \
 	Source/WebKit2/Shared/API/c/WKRenderLayer.cpp \
 	Source/WebKit2/Shared/API/c/WKRenderLayer.h \
 	Source/WebKit2/Shared/API/c/WKRenderObject.cpp \

@@ -115,7 +115,13 @@ enum {
 };
 typedef NSUInteger WebLayoutMilestones;
 
-// This needs to be in sync with WebCore::NotificationClient::Permission
+typedef enum {
+    WebPageVisibilityStateVisible,
+    WebPageVisibilityStateHidden,
+    WebPageVisibilityStatePrerender,
+    WebPageVisibilityStatePreview
+} WebPageVisibilityState;
+
 typedef enum {
     WebNotificationPermissionAllowed,
     WebNotificationPermissionNotAllowed,
@@ -573,6 +579,8 @@ Could be worth adding to the API.
 
 - (void)_listenForLayoutMilestones:(WebLayoutMilestones)layoutMilestones;
 - (WebLayoutMilestones)_layoutMilestones;
+
+- (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState;
 
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.

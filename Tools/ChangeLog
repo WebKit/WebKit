@@ -1,3 +1,42 @@
+2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve PageVisibility API with enums
+        https://bugs.webkit.org/show_bug.cgi?id=107364
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::resetPageVisibility):
+        (TestRunner::setPageVisibility):
+        Update the WK1 test code to use the new WK1 enums.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setVisibilityState):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPageVisibility):
+        (WTR::TestRunner::resetPageVisibility):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setVisibilityState):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        Update the WK2 test code to use the new WK2 API and enums.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PageVisibilityState.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::setPageVisibilityStateWithEvalContinuation):
+        (TestWebKitAPI::assertSerializedScriptValueIsStringValue):
+        (TestWebKitAPI::didRunStep1StateChangeVisibleToHidden):
+        (TestWebKitAPI::didRunStep2StateChangeHiddenToPrerender):
+        (TestWebKitAPI::didRunStep3StateChangePrerenderToPreview):
+        (TestWebKitAPI::didRunStep4InStatePreview):
+        (TestWebKitAPI::TEST):
+        Test the new WK2 API with all enum types.
+
 2013-01-28  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove temporary define used for updating TestRunner API

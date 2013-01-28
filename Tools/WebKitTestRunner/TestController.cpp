@@ -1147,6 +1147,11 @@ void TestController::setCustomPolicyDelegate(bool enabled, bool permissive)
     m_policyDelegatePermissive = permissive;
 }
 
+void TestController::setVisibilityState(WKPageVisibilityState visibilityState, bool isInitialState)
+{
+    WKPageSetVisibilityState(m_mainWebView->page(), visibilityState, isInitialState);
+}
+
 void TestController::decidePolicyForGeolocationPermissionRequestIfPossible()
 {
     if (!m_isGeolocationPermissionSet)

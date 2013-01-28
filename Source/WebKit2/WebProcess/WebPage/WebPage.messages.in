@@ -301,7 +301,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    SetVisibilityState(int visibilityState, bool isInitialState)
+    SetVisibilityState(uint32_t visibilityState, bool isInitialState)
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

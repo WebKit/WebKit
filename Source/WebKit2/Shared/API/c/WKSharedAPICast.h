@@ -35,6 +35,7 @@
 #include "WKGeometry.h"
 #include "WKImage.h"
 #include "WKPageLoadTypes.h"
+#include "WKPageVisibilityTypes.h"
 #include "WebError.h"
 #include "WebEvent.h"
 #include "WebFindOptions.h"
@@ -49,6 +50,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestones.h>
+#include <WebCore/PageVisibilityState.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
@@ -786,6 +788,23 @@ inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilesto
         milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
     
     return milestones;
+}
+
+inline WebCore::PageVisibilityState toPageVisibilityState(WKPageVisibilityState wkPageVisibilityState)
+{
+    switch (wkPageVisibilityState) {
+    case kWKPageVisibilityStateVisible:
+        return WebCore::PageVisibilityStateVisible;
+    case kWKPageVisibilityStateHidden:
+        return WebCore::PageVisibilityStateHidden;
+    case kWKPageVisibilityStatePrerender:
+        return WebCore::PageVisibilityStatePrerender;
+    case kWKPageVisibilityStatePreview:
+        return WebCore::PageVisibilityStatePreview;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::PageVisibilityStateVisible;
 }
 
 inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)

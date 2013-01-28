@@ -33,6 +33,7 @@
 #include <WebKit2/WKGeometry.h>
 #include <WebKit2/WKNativeEvent.h>
 #include <WebKit2/WKPageLoadTypes.h>
+#include <WebKit2/WKPageVisibilityTypes.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -422,6 +423,8 @@ WK_EXPORT bool WKPageUseFixedLayout(WKPageRef page);
 WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef page);
 
 WK_EXPORT void WKPageListenForLayoutMilestones(WKPageRef page, WKLayoutMilestones milestones);
+
+WK_EXPORT void WKPageSetVisibilityState(WKPageRef page, WKPageVisibilityState state, bool isInitialState);
 
 WK_EXPORT bool WKPageHasHorizontalScrollbar(WKPageRef page);
 WK_EXPORT bool WKPageHasVerticalScrollbar(WKPageRef page);

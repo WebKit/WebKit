@@ -56,9 +56,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/Page.h>
-#if ENABLE(PAGE_VISIBILITY_API)
 #include <WebCore/PageVisibilityState.h>
-#endif
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
@@ -576,7 +574,7 @@ public:
     bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
 
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    void setVisibilityState(int visibilityState, bool isInitialState);
+    void setVisibilityState(uint32_t /* WebCore::PageVisibilityState */, bool isInitialState);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

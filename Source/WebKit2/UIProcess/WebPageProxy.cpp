@@ -1602,6 +1602,19 @@ void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestone
     m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
 }
 
+void WebPageProxy::setVisibilityState(WebCore::PageVisibilityState visibilityState, bool isInitialState)
+{
+    if (!isValid())
+        return;
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    if (visibilityState != m_visibilityState || isInitialState) {
+        m_visibilityState = visibilityState;
+        m_process->send(Messages::WebPage::SetVisibilityState(visibilityState, isInitialState), m_pageID);
+    }
+#endif
+}
+
 void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
 {
     if (!isValid())

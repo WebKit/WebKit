@@ -409,6 +409,23 @@ WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
         | (milestones & DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
 }
 
+static PageVisibilityState core(WebPageVisibilityState visibilityState)
+{
+    switch (visibilityState) {
+    case WebPageVisibilityStateVisible:
+        return PageVisibilityStateVisible;
+    case WebPageVisibilityStateHidden:
+        return PageVisibilityStateHidden;
+    case WebPageVisibilityStatePrerender:
+        return PageVisibilityStatePrerender;
+    case WebPageVisibilityStatePreview:
+        return PageVisibilityStatePreview;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PageVisibilityStateVisible;
+}
+
 @interface WebView (WebFileInternal)
 - (float)_deviceScaleFactor;
 - (BOOL)_isLoading;
@@ -2919,6 +2936,14 @@ static Vector<String> toStringVector(NSArray* patterns)
     return kitLayoutMilestones(page->layoutMilestones());
 }
 
+- (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState
+{
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (_private->page)
+        _private->page->setVisibilityState(core(visibilityState), isInitialState);
+#endif
+}
+
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
 {
     Page* page = core(self);
@@ -3045,15 +3070,6 @@ static Vector<String> toStringVector(NSArray* patterns)
 + (void)_setHTTPPipeliningEnabled:(BOOL)enabled
 {
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
-}
-
-- (void)_setVisibilityState:(int)visibilityState isInitialState:(BOOL)isInitialState
-{
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (_private->page) {
-        _private->page->setVisibilityState(static_cast<PageVisibilityState>(visibilityState), isInitialState);
-    }
-#endif
 }
 
 @end

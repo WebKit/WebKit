@@ -3630,7 +3630,7 @@ FrameView* WebPage::mainFrameView() const
 }
 
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
+void WebPage::setVisibilityState(uint32_t visibilityState, bool isInitialState)
 {
     if (!m_page)
         return;

@@ -32,13 +32,13 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
-#include <WebCore/PageVisibilityState.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundleBackForwardList.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundleInspector.h>
 #include <WebKit2/WKBundleNodeHandlePrivate.h>
+#include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKBundleScriptWorld.h>
@@ -551,21 +551,21 @@ void TestRunner::setDefersLoading(bool shouldDeferLoading)
 
 void TestRunner::setPageVisibility(JSStringRef state)
 {
-    WebCore::PageVisibilityState visibilityState = WebCore::PageVisibilityStateVisible;
+    WKPageVisibilityState visibilityState = kWKPageVisibilityStateVisible;
 
     if (JSStringIsEqualToUTF8CString(state, "hidden"))
-        visibilityState = WebCore::PageVisibilityStateHidden;
+        visibilityState = kWKPageVisibilityStateHidden;
     else if (JSStringIsEqualToUTF8CString(state, "prerender"))
-        visibilityState = WebCore::PageVisibilityStatePrerender;
+        visibilityState = kWKPageVisibilityStatePrerender;
     else if (JSStringIsEqualToUTF8CString(state, "preview"))
-        visibilityState = WebCore::PageVisibilityStatePreview;
+        visibilityState = kWKPageVisibilityStatePreview;
 
-    WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), visibilityState, /* isInitialState */ false);
+    InjectedBundle::shared().setVisibilityState(visibilityState, false);
 }
 
 void TestRunner::resetPageVisibility()
 {
-    WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), WebCore::PageVisibilityStateVisible, /* isInitialState */ true);
+    InjectedBundle::shared().setVisibilityState(kWKPageVisibilityStateVisible, true);
 }
 
 typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;

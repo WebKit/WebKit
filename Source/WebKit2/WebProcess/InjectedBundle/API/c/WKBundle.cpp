@@ -300,11 +300,6 @@ bool WKBundleIsProcessingUserGesture(WKBundleRef)
     return InjectedBundle::isProcessingUserGesture();
 }
 
-void WKBundleSetPageVisibilityState(WKBundleRef bundleRef, WKBundlePageRef pageRef, int state, bool isInitialState)
-{
-    toImpl(bundleRef)->setPageVisibilityState(toImpl(pageRef), state, isInitialState);
-}
-
 size_t WKBundleGetWorkerThreadCount(WKBundleRef)
 {
     // Actually do not need argument here, keeping it however for consistency.

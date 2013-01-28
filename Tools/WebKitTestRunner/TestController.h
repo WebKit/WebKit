@@ -81,6 +81,9 @@ public:
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
 
+    // Page Visibility.
+    void setVisibilityState(WKPageVisibilityState, bool isInitialState);
+
     bool resetStateToConsistentValues();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }

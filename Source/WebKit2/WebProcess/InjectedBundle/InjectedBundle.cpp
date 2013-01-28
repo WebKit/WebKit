@@ -61,7 +61,6 @@
 #include <WebCore/JSUint8Array.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
-#include <WebCore/PageVisibilityState.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoadScheduler.h>
@@ -578,13 +577,6 @@ void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* mes
 void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, APIObject* messageBody)
 {
     m_client.didReceiveMessageToPage(this, page, messageName, messageBody);
-}
-
-void InjectedBundle::setPageVisibilityState(WebPage* page, int state, bool isInitialState)
-{
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    page->corePage()->setVisibilityState(static_cast<PageVisibilityState>(state), isInitialState);
-#endif
 }
 
 size_t InjectedBundle::workerThreadCount()

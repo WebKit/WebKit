@@ -1,3 +1,16 @@
+2013-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Improve PageVisibility API with enums
+        https://bugs.webkit.org/show_bug.cgi?id=107364
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+        (core):
+        (-[WebView _setVisibilityState:isInitialState:]):
+        Switch the private API form int to a WebPageVisibilityState enum.
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification
