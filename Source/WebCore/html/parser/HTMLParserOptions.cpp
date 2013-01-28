@@ -41,7 +41,7 @@ HTMLParserOptions::HTMLParserOptions(Document* document)
     Settings* settings = document ? document->settings() : 0;
     usePreHTML5ParserQuirks = settings && settings->usePreHTML5ParserQuirks();
 #if ENABLE(THREADED_HTML_PARSER)
-    useThreading = settings && settings->threadedHTMLParser();
+    useThreading = settings && settings->threadedHTMLParser() && !document->url().isBlankURL();
 #else
     useThreading = false;
 #endif
