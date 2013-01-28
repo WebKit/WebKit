@@ -1,3 +1,18 @@
+2013-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Add StorageStrategy member functions to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=108105
+
+        Reviewed by Tim Horton.
+
+        Add default implementations that just chain up to the base class for now.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::localStorageNamespace):
+        (WebKit::WebPlatformStrategies::sessionStorageNamespace):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification

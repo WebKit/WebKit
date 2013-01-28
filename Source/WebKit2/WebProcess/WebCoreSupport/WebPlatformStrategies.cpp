@@ -47,6 +47,7 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/StorageNamespace.h>
 #include <wtf/Atomics.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -299,6 +300,18 @@ void WebPlatformStrategies::populatePluginCache()
     m_pluginCacheIsPopulated = true;
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+// StorageStrategy
+
+PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(const String& path, unsigned quota)
+{
+    return StorageStrategy::localStorageNamespace(path, quota);
+}
+
+PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page, unsigned quota)
+{
+    return sessionStorageNamespace(page, quota);
+}
 
 // VisitedLinkStrategy
 
