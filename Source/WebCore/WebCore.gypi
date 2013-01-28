@@ -3867,6 +3867,8 @@
             'platform/graphics/chromium/CrossProcessFontLoading.mm',
             'platform/graphics/chromium/DeferredImageDecoder.cpp',
             'platform/graphics/chromium/DeferredImageDecoder.h',
+            'platform/graphics/chromium/DiscardablePixelRef.cpp',
+            'platform/graphics/chromium/DiscardablePixelRef.h',
             'platform/graphics/chromium/DrawingBufferChromium.cpp',
             'platform/graphics/chromium/Extensions3DChromium.h',
             'platform/graphics/chromium/FontCacheAndroid.cpp',

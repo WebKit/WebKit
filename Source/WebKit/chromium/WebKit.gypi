@@ -83,6 +83,7 @@
             'tests/ImageDecodingStoreTest.cpp',
             'tests/ImageFrameGeneratorTest.cpp',
             'tests/ImageLayerChromiumTest.cpp',
+            'tests/MockDiscardablePixelRef.h',
             'tests/MockImageDecoder.h',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',

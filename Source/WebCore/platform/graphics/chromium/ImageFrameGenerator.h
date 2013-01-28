@@ -26,6 +26,7 @@
 #ifndef ImageFrameGenerator_h
 #define ImageFrameGenerator_h
 
+#include "DiscardablePixelRef.h"
 #include "SkTypes.h"
 #include "SkBitmap.h"
 #include "SkSize.h"
@@ -79,6 +80,7 @@ private:
     SkISize m_fullSize;
     ThreadSafeDataTransport m_data;
     bool m_decodeFailedAndEmpty;
+    DiscardablePixelRefAllocator m_allocator;
 
     OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
 

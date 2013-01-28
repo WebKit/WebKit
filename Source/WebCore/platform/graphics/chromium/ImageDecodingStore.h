@@ -26,6 +26,7 @@
 #ifndef ImageDecodingStore_h
 #define ImageDecodingStore_h
 
+#include "DiscardablePixelRef.h"
 #include "ImageDecoder.h"
 #include "ScaledImageFragment.h"
 #include "SkTypes.h"
@@ -92,6 +93,7 @@ private:
             , m_cachedImage(image)
             , m_cachedDecoder(decoder)
             , m_useCount(count)
+            , m_isDiscardable(DiscardablePixelRef::isDiscardable(m_cachedImage->bitmap().pixelRef()))
         {
         }
 
@@ -106,6 +108,7 @@ private:
         ImageDecoder* cachedDecoder() const { return m_cachedDecoder.get(); }
         PassOwnPtr<ImageDecoder> overwriteCachedImage(PassOwnPtr<ScaledImageFragment> image)
         {
+            m_isDiscardable = DiscardablePixelRef::isDiscardable(image->bitmap().pixelRef());
             m_cachedImage = image;
             if (m_cachedImage->isComplete())
                 return m_cachedDecoder.release();
@@ -114,6 +117,7 @@ private:
         int useCount() const { return m_useCount; }
         void incrementUseCount() { ++m_useCount; }
         void decrementUseCount() { --m_useCount; ASSERT(m_useCount >= 0); }
+        bool isDiscardable() const { return m_isDiscardable; }
 
         // FIXME: getSafeSize() returns size in bytes truncated to a 32-bits integer.
         //        Find a way to get the size in 64-bits.
@@ -126,6 +130,7 @@ private:
         OwnPtr<ScaledImageFragment> m_cachedImage;
         OwnPtr<ImageDecoder> m_cachedDecoder;
         int m_useCount;
+        bool m_isDiscardable;
     };
 
     ImageDecodingStore();

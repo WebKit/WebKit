@@ -112,8 +112,13 @@ const ScaledImageFragment* ImageFrameGenerator::tryToScale(const ScaledImageFrag
     if (!fullSizeImage && !ImageDecodingStore::instance()->lockCache(this, m_fullSize, ImageDecodingStore::CacheMustBeComplete, &fullSizeImage))
         return 0;
 
-    SkBitmap scaledBitmap = skia::ImageOperations::Resize(
-        fullSizeImage->bitmap(), resizeMethod(), scaledSize.width(), scaledSize.height());
+    DiscardablePixelRefAllocator allocator;
+    // This call allocates the DiscardablePixelRef and lock/unlocks it
+    // afterwards. So the memory allocated to the scaledBitmap can be
+    // discarded after this call. Need to lock the scaledBitmap and
+    // check the pixels before using it next time.
+    SkBitmap scaledBitmap = skia::ImageOperations::Resize(fullSizeImage->bitmap(), resizeMethod(), scaledSize.width(), scaledSize.height(), &allocator);
+
     OwnPtr<ScaledImageFragment> scaledImage = ScaledImageFragment::create(scaledSize, scaledBitmap, fullSizeImage->isComplete());
 
     ImageDecodingStore::instance()->unlockCache(this, fullSizeImage);
@@ -189,7 +194,15 @@ PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decod
             return nullptr;
     }
 
+    // TODO: this is very ugly. We need to refactor the way how we can pass a
+    // memory allocator to image decoders.
+    (*decoder)->setMemoryAllocator(&m_allocator);
     (*decoder)->setData(data, allDataReceived);
+    // If this call returns a newly allocated DiscardablePixelRef, then
+    // ImageFrame::m_bitmap and the contained DiscardablePixelRef are locked.
+    // They will be unlocked when ImageDecoder is destroyed since ImageDecoder
+    // owns the ImageFrame. Partially decoded SkBitmap is thus inserted into the
+    // ImageDecodingStore while locked.
     ImageFrame* frame = (*decoder)->frameBufferAtIndex(0);
     (*decoder)->setData(0, false); // Unref SharedBuffer from ImageDecoder.
 

@@ -1,3 +1,35 @@
+2013-01-28  Min Qin  <qinmin@chromium.org>
+
+        adding support for DiscardablePixelRef for caching lazily decoded images
+        https://bugs.webkit.org/show_bug.cgi?id=106842
+
+        Reviewed by Stephen White.
+
+        Adding new tests for ImageDecodingStore
+
+        * WebKit.gypi:
+        * tests/ImageDecodingStoreTest.cpp:
+        (WebCore::ImageDecodingStoreTest::createCompleteImage):
+        (WebCore::ImageDecodingStoreTest::createIncompleteImage):
+        (WebCore::TEST_F):
+        (WebCore):
+        * tests/MockDiscardablePixelRef.h: Added.
+        (WebCore):
+        (MockDiscardablePixelRef):
+        (WebCore::MockDiscardablePixelRef::MockDiscardablePixelRef):
+        (WebCore::MockDiscardablePixelRef::~MockDiscardablePixelRef):
+        (WebCore::MockDiscardablePixelRef::discard):
+        (WebCore::MockDiscardablePixelRef::onLockPixels):
+        (WebCore::MockDiscardablePixelRef::onUnlockPixels):
+
+2013-01-28  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Fix the build.
+
+        Unreviewed build fix.
+
+        * src/AssertMatchingEnums.cpp: Move the include to the right place and remove the bad directory prefix.
+
 2013-01-28  Dan Alcantara  <dfalcantara@chromium.org>
 
         [Chromium, Mobile] Do not show disambiguation pop up in mobile sites

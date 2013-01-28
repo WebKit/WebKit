@@ -32,7 +32,8 @@
 namespace WebCore {
 
 ImageFrame::ImageFrame()
-    : m_hasAlpha(false)
+    : m_allocator(0)
+    , m_hasAlpha(false)
     , m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
@@ -49,6 +50,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     // Keep the pixels locked since we will be writing directly into the
     // bitmap throughout this object's lifetime.
     m_bitmap.bitmap().lockPixels();
+    setMemoryAllocator(other.allocator());
     setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
@@ -93,7 +95,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     ASSERT(!width() && !height());
 
     m_bitmap.bitmap().setConfig(SkBitmap::kARGB_8888_Config, newWidth, newHeight);
-    if (!m_bitmap.bitmap().allocPixels())
+    if (!m_bitmap.bitmap().allocPixels(m_allocator, 0))
         return false;
 
     zeroFillPixelData();
