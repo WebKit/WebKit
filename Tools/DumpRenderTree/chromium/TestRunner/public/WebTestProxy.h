@@ -41,8 +41,6 @@
 #include <map>
 #include <string>
 
-#define TEST_RUNNER_MOVED_PRINTING 1
-
 namespace WebKit {
 class WebAccessibilityObject;
 class WebCachedURLRequest;

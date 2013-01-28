@@ -1,3 +1,11 @@
+2013-01-28  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove temporary define used for updating TestRunner API
+
+        Unreviewed. Clean-up change.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+
 2013-01-28  James Craig  <james@cookiecrook.com>
 
         HTML5 promotes DL from specific 'definition list' to superset 'description list'; accessibility strings and accessors should be updated to match.
