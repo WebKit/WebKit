@@ -432,8 +432,10 @@ public:
     bool isStackingContext() const { return isStackingContext(renderer()->style()); }
 
     // A stacking container can have z-order lists. All stacking contexts are
-    // stacking containers, but the converse is not true.
-    bool isStackingContainer() const { return isStackingContext(); }
+    // stacking containers, but the converse is not true. Layers that use
+    // composited scrolling are stacking containers, but they may not
+    // necessarily be stacking contexts.
+    bool isStackingContainer() const { return isStackingContext() || needsCompositedScrolling(); }
 
     // Gets the enclosing stacking container for this layer.
     RenderLayer* stackingContainer() const;
@@ -759,8 +761,11 @@ public:
 #endif
 
 private:
+    enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
+
     void updateZOrderLists();
     void rebuildZOrderLists();
+    void rebuildZOrderLists(CollectLayersBehavior, OwnPtr<Vector<RenderLayer*> >&, OwnPtr<Vector<RenderLayer*> >&);
     void clearZOrderLists();
 
     void updateNormalFlowList();
@@ -831,7 +836,7 @@ private:
     LayoutUnit renderBoxX() const { return renderBoxLocation().x(); }
     LayoutUnit renderBoxY() const { return renderBoxLocation().y(); }
 
-    void collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLayer*> >&, OwnPtr<Vector<RenderLayer*> >&);
+    void collectLayers(bool includeHiddenLayers, CollectLayersBehavior, OwnPtr<Vector<RenderLayer*> >&, OwnPtr<Vector<RenderLayer*> >&);
 
     void updateCompositingAndLayerListsIfNeeded();
 

@@ -607,25 +607,29 @@ void RenderLayer::updateDescendantsAreContiguousInStackingOrder()
     ASSERT(!m_normalFlowListDirty);
     ASSERT(!m_zOrderListsDirty);
 
+    OwnPtr<Vector<RenderLayer*> > posZOrderList;
+    OwnPtr<Vector<RenderLayer*> > negZOrderList;
+    rebuildZOrderLists(StopAtStackingContexts, posZOrderList, negZOrderList);
+
     // Create a reverse lookup.
     HashMap<const RenderLayer*, int> lookup;
 
-    if (m_negZOrderList) {
+    if (negZOrderList) {
         int stackingOrderIndex = -1;
-        size_t listSize = m_negZOrderList->size();
+        size_t listSize = negZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* currentLayer = m_negZOrderList->at(listSize - i - 1);
+            RenderLayer* currentLayer = negZOrderList->at(listSize - i - 1);
             if (!currentLayer->isStackingContext())
                 continue;
             lookup.set(currentLayer, stackingOrderIndex--);
         }
     }
 
-    if (m_posZOrderList) {
-        size_t listSize = m_posZOrderList->size();
+    if (posZOrderList) {
+        size_t listSize = posZOrderList->size();
         int stackingOrderIndex = 1;
         for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* currentLayer = m_posZOrderList->at(i);
+            RenderLayer* currentLayer = posZOrderList->at(i);
             if (!currentLayer->isStackingContext())
                 continue;
             lookup.set(currentLayer, stackingOrderIndex++);
@@ -1924,8 +1928,18 @@ void RenderLayer::updateNeedsCompositedScrolling()
 #endif
     }
 
-    if (oldNeedsCompositedScrolling != m_needsCompositedScrolling)
+    if (oldNeedsCompositedScrolling != m_needsCompositedScrolling) {
         updateSelfPaintingLayer();
+        if (isStackingContainer())
+            dirtyZOrderLists();
+        else
+            clearZOrderLists();
+
+        dirtyStackingContainerZOrderLists();
+
+        compositor()->setShouldReevaluateCompositingAfterLayout();
+        compositor()->setCompositingLayersNeedRebuild();
+    }
 }
 #endif
 
@@ -5160,7 +5174,12 @@ void RenderLayer::rebuildZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
     ASSERT(isDirtyStackingContainer());
+    rebuildZOrderLists(StopAtStackingContainers, m_posZOrderList, m_negZOrderList);
+    m_zOrderListsDirty = false;
+}
 
+void RenderLayer::rebuildZOrderLists(CollectLayersBehavior behavior, OwnPtr<Vector<RenderLayer*> >& posZOrderList, OwnPtr<Vector<RenderLayer*> >& negZOrderList)
+{
 #if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
 #else
@@ -5168,14 +5187,14 @@ void RenderLayer::rebuildZOrderLists()
 #endif
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         if (!m_reflection || reflectionLayer() != child)
-            child->collectLayers(includeHiddenLayers, m_posZOrderList, m_negZOrderList);
+            child->collectLayers(includeHiddenLayers, behavior, posZOrderList, negZOrderList);
 
     // Sort the two lists.
-    if (m_posZOrderList)
-        std::stable_sort(m_posZOrderList->begin(), m_posZOrderList->end(), compareZIndex);
+    if (posZOrderList)
+        std::stable_sort(posZOrderList->begin(), posZOrderList->end(), compareZIndex);
 
-    if (m_negZOrderList)
-        std::stable_sort(m_negZOrderList->begin(), m_negZOrderList->end(), compareZIndex);
+    if (negZOrderList)
+        std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
 
 #if ENABLE(DIALOG_ELEMENT)
     // Append layers for top layer elements after normal layer collection, to ensure they are on top regardless of z-indexes.
@@ -5186,13 +5205,12 @@ void RenderLayer::rebuildZOrderLists()
             Element* childElement = (child->node() && child->node()->isElementNode()) ? toElement(child->node()) : 0;
             if (childElement && childElement->isInTopLayer()) {
                 RenderLayer* layer = toRenderLayerModelObject(child)->layer();
-                m_posZOrderList->append(layer);
+                posZOrderList->append(layer);
             }
         }
     }
 #endif
 
-    m_zOrderListsDirty = false;
 }
 
 void RenderLayer::updateNormalFlowList()
@@ -5214,7 +5232,7 @@ void RenderLayer::updateNormalFlowList()
     m_normalFlowListDirty = false;
 }
 
-void RenderLayer::collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLayer*> >& posBuffer, OwnPtr<Vector<RenderLayer*> >& negBuffer)
+void RenderLayer::collectLayers(bool includeHiddenLayers, CollectLayersBehavior behavior, OwnPtr<Vector<RenderLayer*> >& posBuffer, OwnPtr<Vector<RenderLayer*> >& negBuffer)
 {
 #if ENABLE(DIALOG_ELEMENT)
     if (isInTopLayer())
@@ -5223,7 +5241,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLa
 
     updateDescendantDependentFlags();
 
-    bool isStacking = isStackingContainer();
+    bool isStacking = behavior == StopAtStackingContexts ? isStackingContext() : isStackingContainer();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     bool includeHiddenLayer = includeHiddenLayers || (m_hasVisibleContent || (m_hasVisibleDescendant && isStacking));
     if (includeHiddenLayer && !isNormalFlowOnly() && !renderer()->isRenderFlowThread()) {
@@ -5244,7 +5262,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLa
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
             if (!m_reflection || reflectionLayer() != child)
-                child->collectLayers(includeHiddenLayers, posBuffer, negBuffer);
+                child->collectLayers(includeHiddenLayers, behavior, posBuffer, negBuffer);
         }
     }
 }
@@ -5252,7 +5270,6 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLa
 void RenderLayer::updateLayerListsIfNeeded()
 {
     bool shouldUpdateDescendantsAreContiguousInStackingOrder = isStackingContext() && (m_zOrderListsDirty || m_normalFlowListDirty);
-
     updateZOrderLists();
     updateNormalFlowList();
 
@@ -5261,8 +5278,13 @@ void RenderLayer::updateLayerListsIfNeeded()
         reflectionLayer->updateNormalFlowList();
     }
 
-    if (shouldUpdateDescendantsAreContiguousInStackingOrder)
+    if (shouldUpdateDescendantsAreContiguousInStackingOrder) {
         updateDescendantsAreContiguousInStackingOrder();
+        // The above function can cause us to update m_needsCompositedScrolling
+        // and dirty our layer lists. Refresh them if necessary.
+        updateZOrderLists();
+        updateNormalFlowList();
+    }
 }
 
 void RenderLayer::updateCompositingAndLayerListsIfNeeded()

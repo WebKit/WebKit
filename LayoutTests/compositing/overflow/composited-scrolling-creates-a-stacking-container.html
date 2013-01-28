@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Composited scrolling creates a stacking context.</title>
+  <style type="text/css" media="screen">
+    .container {
+      width: 200px;
+      height: 200px;
+      overflow: scroll;
+      margin: 20px;
+      border: 1px solid black;
+    }
+
+    .composited {
+      width: 200px;
+      height: 150px;
+      -webkit-transform: translateZ(0);
+      background-color: green;
+    }
+
+    .not-composited {
+      width: 200px;
+      height: 150px;
+      background-color: blue;
+    }
+
+    .in-flow-positioned {
+      position: relative;
+      display: block;
+    }
+
+    .fixed {
+      z-index: -1;
+      position: absolute;
+      width: 200px;
+      height: 300px;
+      background-color: red;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    if (window.internals)
+      window.internals.settings.setAcceleratedCompositingForOverflowScrollEnabled(true);
+
+    function doTest()
+    {
+      document.body.offsetTop;
+
+      if (window.internals) {
+        var layerTree = window.internals.layerTreeAsText(document);
+        var pre = document.getElementById('console');
+        var text = document.createTextNode(layerTree + '\n');
+        pre.appendChild(text);
+      }
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="in-flow-positioned">
+      <div class="fixed"></div>
+    </div>
+    <div class="composited"></div>
+    <div class="not-composited"></div>
+  </div>
+  <pre id="console"></pre>
+</body>
+</html>
+

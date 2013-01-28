@@ -3607,6 +3607,9 @@ webkit.org/b/92968 http/tests/appcache/abort-cache-onprogress.html
 # Scrolling content draws beneath scrollbars in composited scrolling mode.
 webkit.org/b/103156 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/custom-scrollbar-with-incomplete-style.html [ ImageOnlyFailure ]
 
+# Requires an updated baseline after 106142.
+webkit.org/b/106820 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-scroll.html [ Failure ]
+
 # Fails due to Bug 85856.
 webkit.org/b/85856 [ Win Mac Android ] fast/block/float/028.html [ ImageOnlyFailure ]
 webkit.org/b/85856 [ Win Mac Android ] fast/block/float/026.html [ ImageOnlyFailure ]
