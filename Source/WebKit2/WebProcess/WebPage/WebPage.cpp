@@ -976,6 +976,11 @@ void WebPage::layoutIfNeeded()
     }
 }
 
+WebPage* WebPage::fromCorePage(Page* page)
+{
+    return static_cast<WebChromeClient*>(page->chrome()->client())->page();
+}
+
 void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
     FrameView* view = m_page->mainFrame()->view();

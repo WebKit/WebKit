@@ -31,14 +31,15 @@
 
 namespace WebKit {
 
+class WebPage;
+
 class StorageNamespaceProxy : public WebCore::StorageNamespace {
 public:
-    // FIXME: Figure out what else to pass here.
-    static PassRefPtr<StorageNamespaceProxy> create();
+    static PassRefPtr<StorageNamespaceProxy> createSessionStorageNamespace(WebPage*);
     virtual ~StorageNamespaceProxy();
 
 private:
-    StorageNamespaceProxy();
+    explicit StorageNamespaceProxy(WebPage*);
 
     virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) OVERRIDE;
     virtual PassRefPtr<WebCore::StorageNamespace> copy() OVERRIDE;
@@ -47,6 +48,8 @@ private:
     virtual void clearAllOriginsForDeletion() OVERRIDE;
     virtual void sync() OVERRIDE;
     virtual void closeIdleLocalStorageDatabases() OVERRIDE;
+
+    uint64_t m_storageNamespaceID;
 };
 
 } // namespace WebKit

@@ -179,6 +179,8 @@ public:
 
     void close();
 
+    static WebPage* fromCorePage(WebCore::Page*);
+
     WebCore::Page* corePage() const { return m_page.get(); }
     uint64_t pageID() const { return m_pageID; }
 

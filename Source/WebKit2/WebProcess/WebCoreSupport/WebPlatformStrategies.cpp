@@ -32,10 +32,12 @@
 #include "DataReference.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
+#include "StorageNamespaceProxy.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
@@ -55,6 +57,9 @@
 #include "NetworkProcessConnection.h"
 #include "WebResourceLoadScheduler.h"
 #endif
+
+// FIXME: Remove this once it works well enough to be the default.
+#define ENABLE_UI_PROCESS_STORAGE 0
 
 using namespace WebCore;
 
@@ -310,7 +315,11 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(const 
 
 PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page, unsigned quota)
 {
-    return sessionStorageNamespace(page, quota);
+#if ENABLE(UI_PROCESS_STORAGE)
+    return StorageNamespaceProxy::createSessionStorageNamespace(WebPage::fromCorePage(page));
+#else
+    return StorageStrategy::sessionStorageNamespace(page, quota);
+#endif
 }
 
 // VisitedLinkStrategy

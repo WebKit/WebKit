@@ -27,18 +27,20 @@
 #include "StorageNamespaceProxy.h"
 
 #include "StorageAreaProxy.h"
+#include "WebPage.h"
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<StorageNamespaceProxy> StorageNamespaceProxy::create()
+PassRefPtr<StorageNamespaceProxy> StorageNamespaceProxy::createSessionStorageNamespace(WebPage* webPage)
 {
-    return adoptRef(new StorageNamespaceProxy);
+    return adoptRef(new StorageNamespaceProxy(webPage));
 }
 
-StorageNamespaceProxy::StorageNamespaceProxy()
+StorageNamespaceProxy::StorageNamespaceProxy(WebPage* webPage)
+    : m_storageNamespaceID(webPage->pageID())
 {
 }
 
