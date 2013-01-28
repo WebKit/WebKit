@@ -759,7 +759,7 @@
 #elif OS(ANDROID)
 
 #define HAVE_ERRNO_H 1
-#define HAVE_NMAP 1
+#define HAVE_MMAP 1
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
