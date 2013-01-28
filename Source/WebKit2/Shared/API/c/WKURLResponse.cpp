@@ -61,3 +61,8 @@ bool WKURLResponseIsAttachment(WKURLResponseRef responseRef)
 {
     return toImpl(responseRef)->resourceResponse().isAttachment();
 }
+
+uint32_t WKURLResponseGetExpectedContentLength(WKURLResponseRef responseRef)
+{
+    return toImpl(responseRef)->resourceResponse().expectedContentLength();
+}

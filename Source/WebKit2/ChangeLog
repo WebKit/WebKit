@@ -1,5 +1,28 @@
 2013-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [EFL][WK2] Use C API inside ewk_url_response
+        https://bugs.webkit.org/show_bug.cgi?id=107826
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKURLResponse.cpp:
+        (WKURLResponseGetExpectedContentsLength):
+        * Shared/API/c/WKURLResponse.h:
+
+            Add new WK2 C API to get the expected contents length.
+
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (EwkUrlResponse::EwkUrlResponse):
+        (EwkUrlResponse::httpStatusCode):
+        (EwkUrlResponse::contentLength):
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (EwkUrlResponse::create):
+        (EwkUrlResponse):
+
+            Change the methods to not call WebCore methods.
+
+2013-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         [WK2][EFL] Remove unneeded private methods
         https://bugs.webkit.org/show_bug.cgi?id=107693
 

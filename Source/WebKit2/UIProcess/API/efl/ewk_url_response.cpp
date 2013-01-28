@@ -31,15 +31,15 @@
 
 using namespace WebKit;
 
-EwkUrlResponse::EwkUrlResponse(const WebCore::ResourceResponse& coreResponse)
-    : m_coreResponse(coreResponse)
-    , m_url(AdoptWK, WKURLResponseCopyURL(WebKit::toAPI(coreResponse)))
-    , m_mimeType(AdoptWK, WKURLResponseCopyMIMEType(WebKit::toAPI(coreResponse)))
+EwkUrlResponse::EwkUrlResponse(WKURLResponseRef response)
+    : m_response(response)
+    , m_url(AdoptWK, WKURLResponseCopyURL(response))
+    , m_mimeType(AdoptWK, WKURLResponseCopyMIMEType(response))
 { }
 
 int EwkUrlResponse::httpStatusCode() const
 {
-    return m_coreResponse.httpStatusCode();
+    return WKURLResponseHTTPStatusCode(m_response.get());
 }
 
 const char* EwkUrlResponse::url() const
@@ -54,7 +54,7 @@ const char* EwkUrlResponse::mimeType() const
 
 unsigned long EwkUrlResponse::contentLength() const
 {
-    return m_coreResponse.expectedContentLength();
+    return WKURLResponseGetExpectedContentLength(m_response.get());
 }
 
 const char* ewk_url_response_url_get(const Ewk_Url_Response* response)
