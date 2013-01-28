@@ -41,7 +41,9 @@ HTMLParserOptions::HTMLParserOptions(Document* document)
     Settings* settings = document ? document->settings() : 0;
     usePreHTML5ParserQuirks = settings && settings->usePreHTML5ParserQuirks();
 #if ENABLE(THREADED_HTML_PARSER)
-    useThreading = settings && settings->threadedHTMLParser() && !document->url().isBlankURL();
+    // We force the main-thread parser for about:blank, javascript: and data: urls for compatibility
+    // with historical synchronous loading/parsing behavior of those schemes.
+    useThreading = settings && settings->threadedHTMLParser() && !document->url().isBlankURL() && !document->url().protocolIsData();
 #else
     useThreading = false;
 #endif
