@@ -240,14 +240,9 @@
         'gperf_exe': 'gperf',
         'bison_exe': 'bison',
 
-        'conditions': [
-          # We specify a preprocess so it happens locally and won't get distributed to goma.
-          ['OS=="mac" or OS=="ios"', {
-            'preprocessor': '--preprocessor "/usr/bin/clang -E -P -x c++"'
-          },{
-            'preprocessor': '--preprocessor "/usr/bin/gcc -E -P -x c++"'
-          }]
-        ],
+        # We specify a preprocess so it happens locally and won't get distributed to goma.
+        # FIXME: /usr/bin/gcc won't exist on OSX forever. We want to use /usr/bin/clang once we require Xcode 4.x.
+        'preprocessor': '--preprocessor "/usr/bin/gcc -E -P -x c++"'
       }],
       ['use_x11==1 or OS=="android"', {
         'webcore_include_dirs': [
