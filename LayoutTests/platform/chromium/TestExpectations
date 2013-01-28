@@ -4328,15 +4328,6 @@ webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ]
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Pass Failure ] 
 
-webkit.org/b/108048 [ Debug ] storage/indexeddb/cursor-advance-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/factory-basics-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/index-basics-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/objectstore-basics-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/open-twice-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/pending-activity-workers.html [ Crash ]
-webkit.org/b/108048 [ Debug ] storage/indexeddb/transaction-complete-workers.html [ Crash ]
-
 webkit.org/b/107899 fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 
 webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-first-fit-001.html [ ImageOnlyFailure ] 
