@@ -82,6 +82,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
+#include "WebConsoleMessage.h"
 #include "WebContentSecurityPolicy.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
@@ -116,7 +117,6 @@
 #include "WebTextCheckingType.h"
 #include "WebView.h"
 #include <public/WebClipboard.h>
-#include <public/WebConsoleMessage.h>
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebMediaStreamSource.h>
