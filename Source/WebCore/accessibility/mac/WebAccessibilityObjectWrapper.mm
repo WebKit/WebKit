@@ -111,8 +111,8 @@ using namespace std;
 #define NSAccessibilityContentListSubrole @"AXContentList"
 #endif
 
-#ifndef NSAccessibilityDefinitionListSubrole
-#define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
+#ifndef NSAccessibilityDescriptionListSubrole
+#define NSAccessibilityDescriptionListSubrole @"AXDescriptionList"
 #endif
 
 // Miscellaneous
@@ -1600,8 +1600,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
 #endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { RowHeaderRole, NSAccessibilityGroupRole },
-        { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
-        { DefinitionListTermRole, NSAccessibilityGroupRole },
+        { DefinitionRole, NSAccessibilityGroupRole },
+        { DescriptionListDetailRole, NSAccessibilityGroupRole },
+        { DescriptionListTermRole, NSAccessibilityGroupRole },
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },
         { LandmarkApplicationRole, NSAccessibilityGroupRole },
         { LandmarkBannerRole, NSAccessibilityGroupRole },
@@ -1700,8 +1701,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         AccessibilityList* listObject = static_cast<AccessibilityList*>(m_object);
         if (listObject->isUnorderedList() || listObject->isOrderedList())
             return NSAccessibilityContentListSubrole;
-        if (listObject->isDefinitionList())
-            return NSAccessibilityDefinitionListSubrole;
+        if (listObject->isDescriptionList())
+            return NSAccessibilityDescriptionListSubrole;
     }
     
     // ARIA content subroles.
@@ -1750,10 +1751,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXUserInterfaceTooltip";
         case TabPanelRole:
             return @"AXTabPanel";
-        case DefinitionListTermRole:
-            return @"AXTerm";
-        case DefinitionListDefinitionRole:
+        case DefinitionRole:
             return @"AXDefinition";
+        case DescriptionListTermRole:
+            return @"AXTerm";
+        case DescriptionListDetailRole:
+            return @"AXDescription";
         // Default doesn't return anything, so roles defined below can be chosen.
         default:
             break;
@@ -1857,10 +1860,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
             case TabPanelRole:
                 return AXARIAContentGroupText(@"ARIATabPanel");
-            case DefinitionListTermRole:
-                return AXDefinitionListTermText();
-            case DefinitionListDefinitionRole:
-                return AXDefinitionListDefinitionText();
+            case DefinitionRole:
+                return AXDefinitionText();
+            case DescriptionListTermRole:
+                return AXDescriptionListTermText();
+            case DescriptionListDetailRole:
+                return AXDescriptionListDetailText();
             case FooterRole:
                 return AXFooterRoleDescriptionText();
         }

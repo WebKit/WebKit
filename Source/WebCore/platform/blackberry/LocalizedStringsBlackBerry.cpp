@@ -388,13 +388,19 @@ String AXCheckedCheckBoxActionVerb()
     return String();
 }
 
-String AXDefinitionListDefinitionText()
+String AXDefinitionText()
 {
     notImplemented();
     return String();
 }
 
-String AXDefinitionListTermText()
+String AXDescriptionListDetailText()
+{
+    notImplemented();
+    return String();
+}
+
+String AXDescriptionListTermText()
 {
     notImplemented();
     return String();

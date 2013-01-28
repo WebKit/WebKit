@@ -169,10 +169,12 @@ string roleToString(WebAccessibilityRole role)
         return result.append("ListBoxOption");
     case WebAccessibilityRoleTableHeaderContainer:
         return result.append("TableHeaderContainer");
-    case WebAccessibilityRoleDefinitionListTerm:
-        return result.append("DefinitionListTerm");
-    case WebAccessibilityRoleDefinitionListDefinition:
-        return result.append("DefinitionListDefinition");
+    case WebAccessibilityRoleDefinition:
+        return result.append("Definition");
+    case WebAccessibilityRoleDescriptionListTerm:
+        return result.append("DescriptionListTerm");
+    case WebAccessibilityRoleDescriptionListDetail:
+        return result.append("DescriptionListDetail");
     case WebAccessibilityRoleAnnotation:
         return result.append("Annotation");
     case WebAccessibilityRoleSliderThumb:

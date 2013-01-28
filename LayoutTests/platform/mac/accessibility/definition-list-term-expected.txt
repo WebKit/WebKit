@@ -10,11 +10,11 @@ PASS obj.childAtIndex(0).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(0).subrole is "AXSubrole: AXTerm"
 PASS obj.childAtIndex(0).roleDescription is "AXRoleDescription: term"
 PASS obj.childAtIndex(1).role is 'AXRole: AXGroup'
-PASS obj.childAtIndex(1).subrole is "AXSubrole: AXDefinition"
-PASS obj.childAtIndex(1).roleDescription is "AXRoleDescription: definition"
+PASS obj.childAtIndex(1).subrole is "AXSubrole: AXDescription"
+PASS obj.childAtIndex(1).roleDescription is "AXRoleDescription: description"
 PASS obj.childAtIndex(1).role is 'AXRole: AXGroup'
-PASS obj.childAtIndex(1).subrole is "AXSubrole: AXDefinition"
-PASS obj.childAtIndex(1).roleDescription is "AXRoleDescription: definition"
+PASS obj.childAtIndex(1).subrole is "AXSubrole: AXDescription"
+PASS obj.childAtIndex(1).roleDescription is "AXRoleDescription: description"
 PASS successfullyParsed is true
 
 TEST COMPLETE

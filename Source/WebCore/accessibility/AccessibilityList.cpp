@@ -98,7 +98,7 @@ bool AccessibilityList::isOrderedList() const
     return node && node->hasTagName(olTag);    
 }
 
-bool AccessibilityList::isDefinitionList() const
+bool AccessibilityList::isDescriptionList() const
 {
     if (!m_renderer)
         return false;

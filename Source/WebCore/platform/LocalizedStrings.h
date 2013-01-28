@@ -152,8 +152,9 @@ namespace WebCore {
     String AXListMarkerText();
     String AXImageMapText();
     String AXHeadingText();
-    String AXDefinitionListTermText();
-    String AXDefinitionListDefinitionText();
+    String AXDefinitionText();
+    String AXDescriptionListTermText();
+    String AXDescriptionListDetailText();
     String AXFooterRoleDescriptionText();
     String AXFileUploadButtonText();
 #if PLATFORM(MAC)

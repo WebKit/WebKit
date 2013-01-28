@@ -2497,10 +2497,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return MathElementRole;
     
     if (node && node->hasTagName(ddTag))
-        return DefinitionListDefinitionRole;
+        return DescriptionListDetailRole;
     
     if (node && node->hasTagName(dtTag))
-        return DefinitionListTermRole;
+        return DescriptionListTermRole;
 
     if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
         return AnnotationRole;

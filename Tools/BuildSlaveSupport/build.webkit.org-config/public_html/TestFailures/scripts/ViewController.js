@@ -176,7 +176,7 @@ ViewController.prototype = {
         ];
         if (passingBuildName)
             dlItems.push([document.createTextNode('Passed'), this._domForBuildName(builder, passingBuildName)]);
-        result.appendChild(createDefinitionList(dlItems));
+        result.appendChild(createDescriptionList(dlItems));
 
         if (!passingBuildName)
             return result;

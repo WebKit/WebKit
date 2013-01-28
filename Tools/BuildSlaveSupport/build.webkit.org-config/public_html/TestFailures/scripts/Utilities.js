@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function createDefinitionList(items) {
+function createDescriptionList(items) {
     var list = document.createElement('dl');
     items.forEach(function(pair) {
         var dt = document.createElement('dt');

@@ -1,3 +1,20 @@
+2013-01-28  James Craig  <james@cookiecrook.com>
+
+        HTML5 promotes DL from specific 'definition list' to superset 'description list'; accessibility strings and accessors should be updated to match.
+        https://bugs.webkit.org/show_bug.cgi?id=107650
+
+        Reviewed by Chris Fleizach.
+
+        Updating accessibility strings and accessors for DL/DT/DD; new one for [role="definition"] (previously it reused the role/desc for DD).
+
+        * public/WebAccessibilityRole.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/LocalizedStrings.cpp:
+        (WebCore::AXDefinitionText):
+        (WebCore):
+        (WebCore::AXDescriptionListTermText):
+        (WebCore::AXDescriptionListDetailText):
+
 2013-01-28  Mike West  <mkwst@chromium.org>
 
         [chromium] Unreviewed build fix, missing include in AssertMatchingEnums.cpp

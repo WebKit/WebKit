@@ -557,14 +557,19 @@ String AXHeadingText()
     return WEB_UI_STRING("heading", "accessibility role description for headings");
 }
 
-String AXDefinitionListTermText()
+String AXDefinitionText()
 {
-    return WEB_UI_STRING("term", "term word of a definition");
+    return WEB_UI_STRING("definition", "role description of ARIA definition role");
 }
 
-String AXDefinitionListDefinitionText()
+String AXDescriptionListTermText()
 {
-    return WEB_UI_STRING("definition", "definition phrase");
+    return WEB_UI_STRING("term", "term word of a description list");
+}
+
+String AXDescriptionListDetailText()
+{
+    return WEB_UI_STRING("description", "description detail");
 }
 
 String AXFooterRoleDescriptionText()

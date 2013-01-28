@@ -145,16 +145,22 @@ String AXHeadingText()
     return query(WebLocalizedString::AXHeadingText);
 }
 
-String AXDefinitionListTermText()
+String AXDefinitionText()
+{
+    notImplemented();
+    return String("definition");
+}
+
+String AXDescriptionListTermText()
 {
     notImplemented();
     return String("term");
 }
 
-String AXDefinitionListDefinitionText()
+String AXDescriptionListDetailText()
 {
     notImplemented();
-    return String("definition");
+    return String("description");
 }
 
 String AXFooterRoleDescriptionText()

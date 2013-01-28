@@ -1,3 +1,17 @@
+2013-01-28  James Craig  <james@cookiecrook.com>
+
+        HTML5 promotes DL from specific 'definition list' to superset 'description list'; accessibility strings and accessors should be updated to match.
+        https://bugs.webkit.org/show_bug.cgi?id=107650
+
+        Reviewed by Chris Fleizach.
+
+        Updating accessibility strings and accessors for DL/DT/DD.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Utilities.js:
+        (createDescriptionList):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ViewController.js:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+
 2013-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WTR] Update layoutTestController.pathToLocalResource

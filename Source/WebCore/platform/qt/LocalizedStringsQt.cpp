@@ -379,13 +379,19 @@ String AXHeadingText()
     return String();
 }
 
-String AXDefinitionListTermText()
+String AXDefinitionText()
 {
     notImplemented();
     return String();
 }
 
-String AXDefinitionListDefinitionText()
+String AXDescriptionListTermText()
+{
+    notImplemented();
+    return String();
+}
+
+String AXDescriptionListDetailText()
 {
     notImplemented();
     return String();

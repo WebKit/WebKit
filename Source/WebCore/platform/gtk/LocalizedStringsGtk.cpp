@@ -407,14 +407,19 @@ String searchMenuClearRecentSearchesText()
     return String::fromUTF8(_("_Clear recent searches"));
 }
 
-String AXDefinitionListTermText()
+String AXDefinitionText()
+{
+    return String::fromUTF8(_("definition"));
+}
+
+String AXDescriptionListTermText()
 {
     return String::fromUTF8(_("term"));
 }
 
-String AXDefinitionListDefinitionText()
+String AXDescriptionListDetailText()
 {
-    return String::fromUTF8(_("definition"));
+    return String::fromUTF8(_("description"));
 }
 
 String AXFooterRoleDescriptionText()

@@ -1393,7 +1393,7 @@ static ARIARoleMap* createARIARoleMap()
         { "gridcell", CellRole },
         { "columnheader", ColumnHeaderRole },
         { "combobox", ComboBoxRole },
-        { "definition", DefinitionListDefinitionRole },
+        { "definition", DefinitionRole },
         { "document", DocumentRole },
         { "rowheader", RowHeaderRole },
         { "group", GroupRole },
