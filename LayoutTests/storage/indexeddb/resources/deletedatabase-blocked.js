@@ -20,9 +20,8 @@ function test() {
 
         h.onversionchange = function onVersionChange(evt) {
             preamble(evt);
-            shouldBe("event.target.version", "1");
-            shouldBe("event.oldVersion", "1");
-            shouldBeNull("event.newVersion");
+            debug("old = " + JSON.stringify(event.target.version));
+            debug("new = " + JSON.stringify(event.version));
        };
 
         request = evalAndLog("indexedDB.deleteDatabase(dbname)");

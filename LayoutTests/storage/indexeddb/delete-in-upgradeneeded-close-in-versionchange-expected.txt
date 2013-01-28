@@ -21,8 +21,9 @@ deleteRequest = indexedDB.deleteDatabase(dbname)
 request2.onsuccess = deleteSuccessCallback
 
 versionChangeCallback():
-PASS event.oldVersion is 1
-PASS event.newVersion is null
+FIXME: These shouldn't be undefined. http://crbug.com/153122
+FAIL event.oldVersion should be 1 (of type number). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 sawVersionChange = true
 Closing the connection before the IDBOpenDBRequest's success fires will cause the open to fail.
 db.close()

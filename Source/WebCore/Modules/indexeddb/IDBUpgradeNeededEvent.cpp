@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBVersionChangeEvent_h
-#define IDBVersionChangeEvent_h
+#include "config.h"
+#include "IDBUpgradeNeededEvent.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "Event.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include "EventNames.h"
+#include "IDBAny.h"
 
 namespace WebCore {
 
-class IDBAny;
+PassRefPtr<IDBUpgradeNeededEvent> IDBUpgradeNeededEvent::create(int64_t oldVersion, int64_t newVersion, const AtomicString& eventType)
+{
+    return adoptRef(new IDBUpgradeNeededEvent(oldVersion, newVersion, eventType));
+}
 
-class IDBVersionChangeEvent : public Event {
-public:
-    static PassRefPtr<IDBVersionChangeEvent> create(const String& version = String(), const AtomicString& eventType = AtomicString());
-    virtual ~IDBVersionChangeEvent();
+IDBUpgradeNeededEvent::IDBUpgradeNeededEvent(int64_t oldVersion, int64_t newVersion, const AtomicString& eventType)
+    : Event(eventType, false /*canBubble*/, false /*cancelable*/)
+    , m_oldVersion(oldVersion)
+    , m_newVersion(newVersion)
+{
+}
 
-    virtual String version();
+IDBUpgradeNeededEvent::~IDBUpgradeNeededEvent()
+{
+}
 
-    virtual const AtomicString& interfaceName() const;
+int64_t IDBUpgradeNeededEvent::oldVersion()
+{
+    return m_oldVersion;
+}
 
-private:
-    IDBVersionChangeEvent(const String& version, const AtomicString& eventType);
+int64_t IDBUpgradeNeededEvent::newVersion()
+{
+    return m_newVersion;
+}
 
-    String m_version;
-};
+const AtomicString& IDBUpgradeNeededEvent::interfaceName() const
+{
+    return eventNames().interfaceForIDBUpgradeNeededEvent;
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBVersionChangeEvent_h
+#endif

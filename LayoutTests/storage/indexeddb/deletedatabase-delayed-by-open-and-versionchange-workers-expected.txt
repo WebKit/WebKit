@@ -16,9 +16,8 @@ Starting worker: resources/deletedatabase-delayed-by-open-and-versionchange.js
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] 
 [Worker] onVersionChange():
-PASS [Worker] event.target.version is 1
-PASS [Worker] event.oldVersion is 1
-PASS [Worker] event.newVersion is null
+[Worker] old = 1
+[Worker] new = ""
 [Worker] 
 [Worker] deleteDatabaseOnBlocked():
 [Worker] 

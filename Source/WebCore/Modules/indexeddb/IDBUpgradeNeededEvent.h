@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBVersionChangeEvent_h
-#define IDBVersionChangeEvent_h
+#ifndef IDBUpgradeNeededEvent_h
+#define IDBUpgradeNeededEvent_h
 
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
+#include "IDBMetadata.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -37,23 +38,25 @@ namespace WebCore {
 
 class IDBAny;
 
-class IDBVersionChangeEvent : public Event {
+class IDBUpgradeNeededEvent : public Event {
 public:
-    static PassRefPtr<IDBVersionChangeEvent> create(const String& version = String(), const AtomicString& eventType = AtomicString());
-    virtual ~IDBVersionChangeEvent();
+    static PassRefPtr<IDBUpgradeNeededEvent> create(int64_t oldVersion = IDBDatabaseMetadata::NoIntVersion, int64_t newVersion = IDBDatabaseMetadata::NoIntVersion, const AtomicString& eventType = AtomicString());
+    virtual ~IDBUpgradeNeededEvent();
 
-    virtual String version();
+    virtual int64_t oldVersion();
+    virtual int64_t newVersion();
 
     virtual const AtomicString& interfaceName() const;
 
 private:
-    IDBVersionChangeEvent(const String& version, const AtomicString& eventType);
+    IDBUpgradeNeededEvent(int64_t oldVersion, int64_t newVersion, const AtomicString& eventType);
 
-    String m_version;
+    int64_t m_oldVersion;
+    int64_t m_newVersion;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBVersionChangeEvent_h
+#endif // IDBUpgradeNeededEvent_h

@@ -31,6 +31,7 @@ function connection1VersionChangeCallback(evt)
     shouldBeEqualToString("event.type", "versionchange");
     shouldBe("event.oldVersion", "1");
     shouldBe("event.newVersion", "2");
+    shouldBeUndefined("event.version");
 }
 
 function connection2Blocked(evt)
@@ -51,15 +52,19 @@ function connection2Blocked(evt)
 function deleteDatabaseBlockedCallback(evt)
 {
     preamble(evt);
+    debug("FIXME: http://crbug.com/153122");
     shouldBe("event.oldVersion", "1");
     shouldBeNull("event.newVersion");
+    shouldBeUndefined("event.version");
 }
 
 function deleteDatabaseSuccessCallback(evt)
 {
     preamble(evt);
     shouldBeUndefined("event.target.result");
-    shouldBeEqualToString("event.type", "success");
+    debug("FIXME: http://crbug.com/153122");
+    shouldBe("event.oldVersion", "1");
+    shouldBeNull("event.newVersion");
 }
 
 function connection2UpgradeNeeded(evt)
@@ -93,6 +98,7 @@ function connection2VersionChangeEvent(evt)
     shouldBeEqualToString("event.type", "versionchange");
     shouldBe("event.oldVersion", "2");
     shouldBe("event.newVersion", "3");
+    shouldBeUndefined("event.version");
     evalAndLog("connection2.close()");
 }
 

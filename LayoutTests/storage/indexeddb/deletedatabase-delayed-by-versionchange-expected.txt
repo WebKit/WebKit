@@ -24,14 +24,12 @@ indexedDB.open(dbname, 2)
 indexedDB.deleteDatabase(dbname)
 
 h1OnVersionChange():
-PASS event.target.version is 1
-PASS event.oldVersion is 1
-PASS event.newVersion is 2
+old = 1
+new = 2
 
 h2OnVersionChange():
-PASS event.target.version is 1
-PASS event.oldVersion is 1
-PASS event.newVersion is 2
+old = 1
+new = 2
 
 h3Blocked():
 setVersionBlockedEventFired = true
@@ -39,10 +37,10 @@ Try to open h4:
 indexedDB.open(dbname)
 h2.close()
 
-h1SecondOnVersionChange():
-PASS event.target.version is 1
-PASS event.oldVersion is 1
-PASS event.newVersion is null
+h1OnVersionChange():
+FIXME: These shouldn't be undefined. http://crbug.com/153122
+old = undefined
+new = undefined
 
 deleteDatabaseOnBlocked():
 deleteDatabaseBlockedEventFired = true

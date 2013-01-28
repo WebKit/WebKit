@@ -147,7 +147,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* 
     if (!isContextValid(context))
         return 0;
 
-    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, IDBDatabaseMetadata::DefaultIntVersion);
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, 0);
     m_backend->deleteDatabase(name, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }

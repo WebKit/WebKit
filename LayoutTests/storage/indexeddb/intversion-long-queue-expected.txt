@@ -25,6 +25,7 @@ connection1VersionChangeCallback():
 PASS event.type is "versionchange"
 PASS event.oldVersion is 1
 PASS event.newVersion is 2
+PASS event.version is undefined.
 
 connection2Blocked():
 request = indexedDB.deleteDatabase(dbname)
@@ -36,12 +37,16 @@ request.onsuccess = connection3Success
 connection1.close()
 
 deleteDatabaseBlockedCallback():
+FIXME: http://crbug.com/153122
 PASS event.oldVersion is 1
-PASS event.newVersion is null
+FAIL event.newVersion should be null (of type object). Was 0 (of type number).
+PASS event.version is undefined.
 
 deleteDatabaseSuccessCallback():
 PASS event.target.result is undefined.
-PASS event.type is "success"
+FIXME: http://crbug.com/153122
+FAIL event.oldVersion should be 1 (of type number). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 
 connection2UpgradeNeeded():
 PASS event.oldVersion is 0
@@ -63,6 +68,7 @@ connection2VersionChangeEvent():
 PASS event.type is "versionchange"
 PASS event.oldVersion is 2
 PASS event.newVersion is 3
+PASS event.version is undefined.
 connection2.close()
 
 connection3UpgradeNeeded():
