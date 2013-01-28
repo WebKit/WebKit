@@ -26,9 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import logging
-import os
 import re
 import sys
 
@@ -55,7 +53,7 @@ class PrepareChangeLog(AbstractStep):
         bug_id = state.get("bug_id")
         changelogs = self.cached_lookup(state, "changelogs")
         for changelog_path in changelogs:
-            changelog = ChangeLog(changelog_path)
+            changelog = ChangeLog(changelog_path, self._tool.filesystem)
             if not changelog.latest_entry().bug_id():
                 changelog.set_short_description_and_bug_url(
                     self.cached_lookup(state, "bug_title"),
@@ -64,7 +62,7 @@ class PrepareChangeLog(AbstractStep):
     def _resolve_existing_entry(self, changelog_path):
         # When this is called, the top entry in the ChangeLog was just created
         # by prepare-ChangeLog, as an clean updated version of the one below it.
-        with codecs.open(changelog_path, "r", "utf-8") as changelog_file:
+        with self._tool.filesystem.open_text_file_for_reading(changelog_path) as changelog_file:
             entries_gen = ChangeLog.parse_entries_from_file(changelog_file)
             entries = zip(entries_gen, range(2))
 
@@ -78,7 +76,7 @@ class PrepareChangeLog(AbstractStep):
         (new_entry, _), (old_entry, _) = entries
         final_entry = self._merge_entries(old_entry, new_entry)
 
-        changelog = ChangeLog(changelog_path)
+        changelog = ChangeLog(changelog_path, self._tool.filesystem)
         changelog.delete_entries(2)
         changelog.prepend_text(final_entry)
 
@@ -129,7 +127,7 @@ class PrepareChangeLog(AbstractStep):
 
         # These are the ChangeLog entries added by prepare-Changelog
         changelogs = re.findall(r'Editing the (\S*/ChangeLog) file.', output)
-        changelogs = set(os.path.join(self._tool.scm().checkout_root, f) for f in changelogs)
+        changelogs = set(self._tool.filesystem.join(self._tool.scm().checkout_root, f) for f in changelogs)
         for changelog in changelogs & set(self.cached_lookup(state, "changelogs")):
             self._resolve_existing_entry(changelog)
 

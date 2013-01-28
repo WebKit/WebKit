@@ -1,3 +1,42 @@
+2013-01-28  Timothy Loh  <timloh@chromium.com>
+
+        Refactor ChangeLog and PrepareChangeLog to use FileSystem objects
+        https://bugs.webkit.org/show_bug.cgi?id=107903
+
+        Reviewed by Eric Seidel.
+
+        To make ChangeLog and PrepareChangeLog easier to test, we can use
+        FileSystem objects instead of just passing around paths.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLog.__init__):
+        (ChangeLog.parse_latest_entry_from_file):
+        (ChangeLog.parse_entries_from_file):
+        (ChangeLog.latest_entry):
+        (ChangeLog.update_with_unreviewed_message):
+        (ChangeLog.set_reviewer):
+        (ChangeLog.set_short_description_and_bug_url):
+        (ChangeLog.delete_entries):
+        (ChangeLog.prepend_text):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (ChangeLogTest):
+        (test_parse_log_entries_from_changelog):
+        (test_latest_entry_parse_single_entry):
+        (test_set_reviewer):
+        (test_set_short_description_and_bug_url):
+        (test_delete_entries):
+        (test_prepend_text):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (ReadableTextFileObject.__init__):
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog._ensure_bug_url):
+        (PrepareChangeLog._resolve_existing_entry):
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (test_ensure_bug_url):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        (_assert_message_for_revert_output):
+
 2013-01-28  Raymond Toy  <rtoy@google.com>
 
         Add myself to committers.py

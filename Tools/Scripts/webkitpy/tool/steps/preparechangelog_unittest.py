@@ -26,18 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import unittest2 as unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest
 
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
-
-# FIXME: These tests should use a MockFileSystem instead of a real file system,
-# once changelog.py and preparechangelog.py are FileSystem compatible.
 
 class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
     def test_resolve_existing_entry(self):
@@ -106,24 +103,27 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             final_entry = make_entry(final)
             end_file = final_entry + roll_over
 
-            path = self._write_tmp_file_with_contents(start_file.encode("utf-8"))
+            path = "ChangeLog"
+            step._tool.filesystem = MockFileSystem()
+            step._tool.filesystem.write_text_file(path, start_file)
             step._resolve_existing_entry(path)
-            actual_output = self._read_file_contents(path, "utf-8")
+            actual_output = step._tool.filesystem.read_text_file(path)
             self.assertEquals(actual_output, end_file)
 
     def test_ensure_bug_url(self):
         capture = OutputCapture()
         step = PrepareChangeLog(MockTool(), MockOptions())
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        changelog_path = "ChangeLog"
         state = {
             "bug_title": "Example title",
             "bug_id": 1234,
             "changelogs": [changelog_path],
         }
+        step._tool.filesystem = MockFileSystem()
+        step._tool.filesystem.write_text_file(changelog_path, changelog_contents)
         capture.assert_outputs(self, step._ensure_bug_url, [state])
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        actual_contents = step._tool.filesystem.read_text_file(changelog_path)
         expected_message = "Example title\n        http://example.com/1234"
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)
-        os.remove(changelog_path)
-        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents, expected_contents)

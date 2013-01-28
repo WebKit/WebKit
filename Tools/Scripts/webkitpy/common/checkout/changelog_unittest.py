@@ -26,17 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
-import os
-import tempfile
 import unittest2 as unittest
 
 from StringIO import StringIO
 
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.checkout.changelog import *
 
 
 class ChangeLogTest(unittest.TestCase):
+
+    _changelog_path = 'Tools/ChangeLog'
 
     _example_entry = u'''2009-08-17  Peter Kasting  <pkasting@google.com>
 
@@ -254,7 +254,7 @@ class ChangeLogTest(unittest.TestCase):
             "WebCoreSupport/ChromeClientEfl.cpp": ["WebCore::ChromeClientEfl::closeWindowSoon"], "ewk/ewk_private.h": [], "ewk/ewk_view.cpp": []})
         self.assertEqual(parsed_entries[3].bug_description(), "[Mac] ResourceRequest's nsURLRequest() does not differentiate null and empty URLs with CFNetwork")
         self.assertEqual(parsed_entries[4].reviewer_text(), "David Hyatt")
-        self.assertEqual(parsed_entries[4].bug_description(), None)
+        self.assertIsNone(parsed_entries[4].bug_description())
         self.assertEqual(parsed_entries[5].reviewer_text(), "Adam Roben")
         self.assertEqual(parsed_entries[6].reviewer_text(), "Tony Chang")
         self.assertIsNone(parsed_entries[7].reviewer_text())
@@ -486,19 +486,6 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(latest_entry.contents(), self._example_entry)
         self.assertEqual(latest_entry.author_name(), "Peter Kasting")
 
-    @staticmethod
-    def _write_tmp_file_with_contents(byte_array):
-        assert(isinstance(byte_array, str))
-        (file_descriptor, file_path) = tempfile.mkstemp() # NamedTemporaryFile always deletes the file on close in python < 2.6
-        with os.fdopen(file_descriptor, "w") as file:
-            file.write(byte_array)
-        return file_path
-
-    @staticmethod
-    def _read_file_contents(file_path, encoding):
-        with codecs.open(file_path, "r", encoding) as file:
-            return file.read()
-
     # FIXME: We really should be getting this from prepare-ChangeLog itself.
     _new_entry_boilerplate = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
@@ -549,58 +536,58 @@ class ChangeLogTest(unittest.TestCase):
 '''
 
     def test_set_reviewer(self):
+        fs = MockFileSystem()
+
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_bugurl, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
         reviewer_name = 'Test Reviewer'
-        ChangeLog(changelog_path).set_reviewer(reviewer_name)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        fs.write_text_file(self._changelog_path, changelog_contents)
+        ChangeLog(self._changelog_path, fs).set_reviewer(reviewer_name)
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
-        os.remove(changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents_without_reviewer_line = u"%s\n%s" % (self._new_entry_boilerplate_without_reviewer_line, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents_without_reviewer_line.encode("utf-8"))
-        ChangeLog(changelog_path).set_reviewer(reviewer_name)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
-        os.remove(changelog_path)
+        fs.write_text_file(self._changelog_path, changelog_contents_without_reviewer_line)
+        ChangeLog(self._changelog_path, fs).set_reviewer(reviewer_name)
+        actual_contents = fs.read_text_file(self._changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents_without_reviewer_line = u"%s\n%s" % (self._new_entry_boilerplate_without_reviewer_multiple_bugurl, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents_without_reviewer_line.encode("utf-8"))
-        ChangeLog(changelog_path).set_reviewer(reviewer_name)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        fs.write_text_file(self._changelog_path, changelog_contents_without_reviewer_line)
+        ChangeLog(self._changelog_path, fs).set_reviewer(reviewer_name)
+        actual_contents = fs.read_text_file(self._changelog_path)
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_multiple_bugurl, self._example_changelog)
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
-        os.remove(changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_set_short_description_and_bug_url(self):
+        fs = MockFileSystem()
+
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_bugurl, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        fs.write_text_file(self._changelog_path, changelog_contents)
         short_description = "A short description"
         bug_url = "http://example.com/b/2344"
-        ChangeLog(changelog_path).set_short_description_and_bug_url(short_description, bug_url)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        ChangeLog(self._changelog_path, fs).set_short_description_and_bug_url(short_description, bug_url)
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_message = "%s\n        %s" % (short_description, bug_url)
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).", expected_message)
-        os.remove(changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        fs.write_text_file(self._changelog_path, changelog_contents)
         short_description = "A short description 2"
         bug_url = "http://example.com/b/2345"
-        ChangeLog(changelog_path).set_short_description_and_bug_url(short_description, bug_url)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        ChangeLog(self._changelog_path, fs).set_short_description_and_bug_url(short_description, bug_url)
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_message = "%s\n        %s" % (short_description, bug_url)
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)
-        os.remove(changelog_path)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_delete_entries(self):
-        changelog_path = self._write_tmp_file_with_contents(self._example_changelog.encode("utf-8"))
-        ChangeLog(changelog_path).delete_entries(8)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        fs = MockFileSystem()
+        fs.write_text_file(self._changelog_path, self._example_changelog)
+        ChangeLog(self._changelog_path, fs).delete_entries(8)
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_contents = """2011-10-11  Antti Koivisto  <antti@apple.com>
 
        Resolve regular and visited link style in a single pass
@@ -616,17 +603,16 @@ class ChangeLogTest(unittest.TestCase):
 """
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
-        ChangeLog(changelog_path).delete_entries(2)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        ChangeLog(self._changelog_path, fs).delete_entries(2)
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_contents = "== Rolled over to ChangeLog-2009-06-16 ==\n"
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
-        os.remove(changelog_path)
 
     def test_prepend_text(self):
-        changelog_path = self._write_tmp_file_with_contents(self._example_changelog.encode("utf-8"))
-        ChangeLog(changelog_path).prepend_text(self._example_entry + "\n")
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        fs = MockFileSystem()
+        fs.write_text_file(self._changelog_path, self._example_changelog)
+        ChangeLog(self._changelog_path, fs).prepend_text(self._example_entry + "\n")
+        actual_contents = fs.read_text_file(self._changelog_path)
         expected_contents = self._example_entry + "\n" + self._example_changelog
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
-        os.remove(changelog_path)

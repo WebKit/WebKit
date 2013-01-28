@@ -26,27 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
-import os
-import tempfile
 import unittest2 as unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest
 
 from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.steps.preparechangelogforrevert import *
 
 
 class UpdateChangeLogsForRevertTest(unittest.TestCase):
-    @staticmethod
-    def _write_tmp_file_with_contents(byte_array):
-        assert(isinstance(byte_array, str))
-        (file_descriptor, file_path) = tempfile.mkstemp()  # NamedTemporaryFile always deletes the file on close in python < 2.6
-        with os.fdopen(file_descriptor, "w") as file:
-            file.write(byte_array)
-        return file_path
-
     _revert_entry_with_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345.
@@ -110,11 +100,11 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
 
     def _assert_message_for_revert_output(self, args, expected_entry):
         changelog_contents = u"%s\n%s" % (changelog_unittest.ChangeLogTest._new_entry_boilerplate, changelog_unittest.ChangeLogTest._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
-        changelog = ChangeLog(changelog_path)
+        changelog_path = "ChangeLog"
+        fs = MockFileSystem({changelog_path: changelog_contents.encode("utf-8")})
+        changelog = ChangeLog(changelog_path, fs)
         changelog.update_with_unreviewed_message(PrepareChangeLogForRevert._message_for_revert(*args))
         actual_entry = changelog.latest_entry()
-        os.remove(changelog_path)
         self.assertMultiLineEqual(actual_entry.contents(), expected_entry)
         self.assertIsNone(actual_entry.reviewer_text())
         # These checks could be removed to allow this to work on other entries:
