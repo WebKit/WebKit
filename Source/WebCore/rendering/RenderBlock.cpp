@@ -291,7 +291,7 @@ void RenderBlock::willBeDestroyed()
         lineGridBox()->destroy(renderArena());
 
 #if ENABLE(CSS_EXCLUSIONS)
-    ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(this);
+    ExclusionShapeInsideInfo::removeInfo(this);
 #endif
 
     if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
@@ -1371,7 +1371,7 @@ void RenderBlock::layout()
 #if ENABLE(CSS_EXCLUSIONS)
 ExclusionShapeInsideInfo* RenderBlock::exclusionShapeInsideInfo() const
 {
-    return style()->shapeInside() && ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock(this) ? ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(this) : 0;
+    return style()->shapeInside() && ExclusionShapeInsideInfo::isEnabledFor(this) ? ExclusionShapeInsideInfo::info(this) : 0;
 }
 
 void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue* shapeInside, const ExclusionShapeValue* oldShapeInside)
@@ -1381,10 +1381,10 @@ void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const Exclusion
         return;
 
     if (shapeInside) {
-        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ExclusionShapeInsideInfo::ensureExclusionShapeInsideInfoForRenderBlock(this);
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ExclusionShapeInsideInfo::ensureInfo(this);
         exclusionShapeInsideInfo->dirtyShapeSize();
     } else
-        ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(this);
+        ExclusionShapeInsideInfo::removeInfo(this);
 }
 #endif
 
@@ -1423,7 +1423,7 @@ void RenderBlock::computeExclusionShapeSize()
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = this->exclusionShapeInsideInfo();
     if (exclusionShapeInsideInfo) {
         bool percentageLogicalHeightResolvable = percentageLogicalHeightIsResolvableFromBlock(this, false);
-        exclusionShapeInsideInfo->computeShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : LayoutUnit());
+        exclusionShapeInsideInfo->setShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : LayoutUnit());
     }
 }
 #endif

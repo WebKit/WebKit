@@ -2271,6 +2271,8 @@
             'rendering/ExclusionRectangle.h',
             'rendering/ExclusionShape.cpp',
             'rendering/ExclusionShape.h',
+            'rendering/ExclusionShapeInfo.cpp',
+            'rendering/ExclusionShapeInfo.h',
             'rendering/ExclusionShapeInsideInfo.cpp',
             'rendering/ExclusionShapeInsideInfo.h',
             'rendering/ExclusionShapeOutsideInfo.cpp',

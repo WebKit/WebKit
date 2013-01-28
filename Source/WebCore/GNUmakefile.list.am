@@ -4300,6 +4300,8 @@ webcore_sources += \
 	Source/WebCore/rendering/ExclusionRectangle.h \
 	Source/WebCore/rendering/ExclusionShape.cpp \
 	Source/WebCore/rendering/ExclusionShape.h \
+	Source/WebCore/rendering/ExclusionShapeInfo.cpp \
+	Source/WebCore/rendering/ExclusionShapeInfo.h \
 	Source/WebCore/rendering/ExclusionShapeInsideInfo.cpp \
 	Source/WebCore/rendering/ExclusionShapeInsideInfo.h \
 	Source/WebCore/rendering/ExclusionShapeOutsideInfo.cpp \

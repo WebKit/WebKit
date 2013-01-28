@@ -1495,7 +1495,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
     LayoutUnit absoluteLogicalTop;
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
     if (exclusionShapeInsideInfo) {
-        ASSERT(exclusionShapeInsideInfo->ownerBlock() == this || allowsExclusionShapeInsideInfoSharing());
+        ASSERT(exclusionShapeInsideInfo->owner() == this || allowsExclusionShapeInsideInfoSharing());
         if (exclusionShapeInsideInfo != this->exclusionShapeInsideInfo()) {
             // FIXME Bug 100284: If subsequent LayoutStates are pushed, we will have to add
             // their offsets from the original shape-inside container.

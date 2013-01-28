@@ -39018,6 +39018,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\ExclusionShapeInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\ExclusionShapeInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\ExclusionShapeInsideInfo.cpp"
 				>
 			</File>

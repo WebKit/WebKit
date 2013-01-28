@@ -1145,6 +1145,7 @@ SOURCES += \
     rendering/ExclusionPolygon.cpp \
     rendering/ExclusionRectangle.cpp \
     rendering/ExclusionShape.cpp \
+    rendering/ExclusionShapeInfo.cpp \
     rendering/ExclusionShapeInsideInfo.cpp \
     rendering/ExclusionShapeOutsideInfo.cpp \
     rendering/FilterEffectRenderer.cpp \
@@ -2399,6 +2400,7 @@ HEADERS += \
     rendering/ExclusionPolygon.h \
     rendering/ExclusionRectangle.h \
     rendering/ExclusionShape.h \
+    rendering/ExclusionShapeInfo.h \
     rendering/ExclusionShapeInsideInfo.h \
     rendering/ExclusionShapeOutsideInfo.h \
     rendering/FilterEffectRenderer.h \

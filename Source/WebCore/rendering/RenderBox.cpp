@@ -160,7 +160,7 @@ void RenderBox::willBeDestroyed()
     RenderBlock::removePercentHeightDescendantIfNeeded(this);
 
 #if ENABLE(CSS_EXCLUSIONS)
-    ExclusionShapeOutsideInfo::removeInfoForRenderBox(this);
+    ExclusionShapeOutsideInfo::removeInfo(this);
 #endif
 
     RenderBoxModelObject::willBeDestroyed();
@@ -330,10 +330,10 @@ void RenderBox::updateExclusionShapeOutsideInfoAfterStyleChange(const ExclusionS
         return;
 
     if (shapeOutside) {
-        ExclusionShapeOutsideInfo* exclusionShapeOutsideInfo = ExclusionShapeOutsideInfo::ensureInfoForRenderBox(this);
+        ExclusionShapeOutsideInfo* exclusionShapeOutsideInfo = ExclusionShapeOutsideInfo::ensureInfo(this);
         exclusionShapeOutsideInfo->dirtyShapeSize();
     } else
-        ExclusionShapeOutsideInfo::removeInfoForRenderBox(this);
+        ExclusionShapeOutsideInfo::removeInfo(this);
 }
 #endif
 

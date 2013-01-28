@@ -32,72 +32,18 @@
 
 #if ENABLE(CSS_EXCLUSIONS)
 
-#include "ExclusionShape.h"
-#include "FloatRect.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include "ExclusionShapeInfo.h"
 
 namespace WebCore {
 
 class RenderBox;
 
-class ExclusionShapeOutsideInfo {
-    WTF_MAKE_NONCOPYABLE(ExclusionShapeOutsideInfo); WTF_MAKE_FAST_ALLOCATED;
+class ExclusionShapeOutsideInfo : public ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>, public MappedInfo<RenderBox, ExclusionShapeOutsideInfo> {
 public:
-    ~ExclusionShapeOutsideInfo();
-
-    static PassOwnPtr<ExclusionShapeOutsideInfo> create(RenderBox* box) { return adoptPtr(new ExclusionShapeOutsideInfo(box)); }
-    static ExclusionShapeOutsideInfo* infoForRenderBox(const RenderBox*);
-    static ExclusionShapeOutsideInfo* ensureInfoForRenderBox(RenderBox*);
-    static void removeInfoForRenderBox(const RenderBox*);
-    static bool isInfoEnabledForRenderBox(const RenderBox*);
-
-    LayoutUnit shapeLogicalLeft() const
-    { 
-        return computedShape()->shapeLogicalBoundingBox().x();
-    }
-    LayoutUnit shapeLogicalRight() const
-    { 
-        return computedShape()->shapeLogicalBoundingBox().maxX();
-    }
-    LayoutUnit shapeLogicalTop() const
-    { 
-        return LayoutUnit::fromFloatCeil(computedShape()->shapeLogicalBoundingBox().y());
-    }
-    LayoutUnit shapeLogicalBottom() const
-    {
-        return LayoutUnit::fromFloatFloor(computedShape()->shapeLogicalBoundingBox().maxY());
-    }
-    LayoutUnit shapeLogicalWidth() const
-    { 
-        return computedShape()->shapeLogicalBoundingBox().width();
-    }
-    LayoutUnit shapeLogicalHeight() const
-    {
-        return computedShape()->shapeLogicalBoundingBox().height();
-    }
-
-    void setShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
-    {
-        if (m_logicalWidth == logicalWidth && m_logicalHeight == logicalHeight)
-            return;
-
-        dirtyShapeSize();
-        m_logicalWidth = logicalWidth;
-        m_logicalHeight = logicalHeight;
-    }
-
-    void dirtyShapeSize() { m_computedShape.clear(); }
-
+    static PassOwnPtr<ExclusionShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ExclusionShapeOutsideInfo(renderer)); }
+    static bool isEnabledFor(const RenderBox*);
 private:
-    explicit ExclusionShapeOutsideInfo(RenderBox*);
-    const ExclusionShape* computedShape() const;
-
-    RenderBox* m_box;
-    mutable OwnPtr<ExclusionShape> m_computedShape;
-
-    LayoutUnit m_logicalWidth;
-    LayoutUnit m_logicalHeight;
+    ExclusionShapeOutsideInfo(const RenderBox* renderer) : ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>(renderer) { }
 };
 
 }

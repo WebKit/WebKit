@@ -2107,6 +2107,7 @@ set(WebCore_SOURCES
     rendering/ExclusionPolygon.cpp
     rendering/ExclusionRectangle.cpp
     rendering/ExclusionShape.cpp
+    rendering/ExclusionShapeInfo.cpp
     rendering/ExclusionShapeInsideInfo.cpp
     rendering/ExclusionShapeOutsideInfo.cpp
     rendering/FilterEffectRenderer.cpp

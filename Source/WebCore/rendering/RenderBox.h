@@ -584,7 +584,7 @@ public:
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeOutsideInfo* exclusionShapeOutsideInfo() const
     {
-        return style()->shapeOutside() && ExclusionShapeOutsideInfo::isInfoEnabledForRenderBox(this) ? ExclusionShapeOutsideInfo::infoForRenderBox(this) : 0;
+        return style()->shapeOutside() && ExclusionShapeOutsideInfo::isEnabledFor(this) ? ExclusionShapeOutsideInfo::info(this) : 0;
     }
 #endif
 
