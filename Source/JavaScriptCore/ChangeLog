@@ -1,5 +1,33 @@
 2013-01-27  Andreas Kling  <akling@apple.com>
 
+        JSC: FunctionParameters are memory hungry.
+        <http://webkit.org/b/108033>
+        <rdar://problem/13094803>
+
+        Reviewed by Sam Weinig.
+
+        Instead of inheriting from Vector<Identifier>, make FunctionParameters a simple fixed-size array
+        with a custom-allocating create() function. Removes one step of indirection and cuts memory usage
+        roughly in half.
+
+        2.73 MB progression on Membuster3.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::paramString):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::create):
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FunctionParameters::~FunctionParameters):
+        * parser/Nodes.h:
+        (FunctionParameters):
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::identifiers):
+
+2013-01-27  Andreas Kling  <akling@apple.com>
+
         JSC: SourceProviderCache is memory hungry.
         <http://webkit.org/b/108029>
         <rdar://problem/13094806>

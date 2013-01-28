@@ -360,7 +360,7 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, FunctionBodyNode*
         capturedArguments.resize(parameters.size());
         for (size_t i = 0; i < parameters.size(); ++i) {
             capturedArguments[i] = 0;
-            if (!functionBody->captures(parameters[i]) && !shouldCaptureAllTheThings)
+            if (!functionBody->captures(parameters.at(i)) && !shouldCaptureAllTheThings)
                 continue;
             capturesAnyArgumentByName = true;
             capturedArguments[i] = addVar();
@@ -461,12 +461,12 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, FunctionBodyNode*
     for (size_t i = 0; i < parameters.size(); ++i, --nextParameterIndex) {
         int index = nextParameterIndex;
         if (capturedArguments.size() && capturedArguments[i]) {
-            ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(parameters[i])) || shouldCaptureAllTheThings);
+            ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(parameters.at(i))) || shouldCaptureAllTheThings);
             index = capturedArguments[i]->index();
             RegisterID original(nextParameterIndex);
             emitMove(capturedArguments[i], &original);
         }
-        addParameter(parameters[i], index);
+        addParameter(parameters.at(i), index);
     }
     preserveLastVar();
 

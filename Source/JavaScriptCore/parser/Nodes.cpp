@@ -151,16 +151,29 @@ PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, const JSTokenLoc
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionParameters::FunctionParameters(ParameterNode* firstParameter)
+PassRefPtr<FunctionParameters> FunctionParameters::create(ParameterNode* firstParameter)
 {
     unsigned parameterCount = 0;
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
         ++parameterCount;
 
-    reserveInitialCapacity(parameterCount);
+    size_t objectSize = sizeof(FunctionParameters) - sizeof(void*) + sizeof(StringImpl*) * parameterCount;
+    void* slot = fastMalloc(objectSize);
+    return adoptRef(new (slot) FunctionParameters(firstParameter, parameterCount));
+}
 
+FunctionParameters::FunctionParameters(ParameterNode* firstParameter, unsigned size)
+    : m_size(size)
+{
+    unsigned i = 0;
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
-        uncheckedAppend(parameter->ident());
+        new (&identifiers()[i++]) Identifier(parameter->ident());
+}
+
+FunctionParameters::~FunctionParameters()
+{
+    for (unsigned i = 0; i < m_size; ++i)
+        identifiers()[i].~Identifier();
 }
 
 inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)

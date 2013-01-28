@@ -150,7 +150,7 @@ String UnlinkedFunctionExecutable::paramString() const
     for (size_t pos = 0; pos < parameters.size(); ++pos) {
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
-        builder.append(parameters[pos].string());
+        builder.append(parameters.at(pos).string());
     }
     return builder.toString();
 }
