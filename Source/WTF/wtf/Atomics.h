@@ -76,12 +76,21 @@ namespace WTF {
 #if OS(WINDOWS)
 #define WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED 1
 
-#if COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
+#if OS(WINCE)
 inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
+#elif COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER)
+inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
+inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
+
+inline int64_t atomicIncrement(int64_t* addend) { return InterlockedIncrement64(reinterpret_cast<long long*>(addend)); }
+inline int64_t atomicDecrement(int64_t* addend) { return InterlockedDecrement64(reinterpret_cast<long long*>(addend)); }
 #else
 inline int atomicIncrement(int volatile* addend) { return InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
+
+inline int64_t atomicIncrement(int64_t volatile* addend) { return InterlockedIncrement64(reinterpret_cast<long long volatile*>(addend)); }
+inline int64_t atomicDecrement(int64_t volatile* addend) { return InterlockedDecrement64(reinterpret_cast<long long volatile*>(addend)); }
 #endif
 
 #elif OS(QNX)

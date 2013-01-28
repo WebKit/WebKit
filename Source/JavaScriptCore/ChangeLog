@@ -1,3 +1,12 @@
+2013-01-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Fixing atomicIncrement implementation for Windows by dropping support before XP SP2.
+        https://bugs.webkit.org/show_bug.cgi?id=106740
+
+        Reviewed by Benjamin Poulain.
+
+        * config.h:
+
 2013-01-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG variable event stream shouldn't use NodeIndex

@@ -1,3 +1,23 @@
+2013-01-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Fixing atomicIncrement implementation for Windows by dropping support before XP SP2.
+        https://bugs.webkit.org/show_bug.cgi?id=106740
+
+        Reviewed by Benjamin Poulain.
+
+        Adding int64_t type atomicIncrement and atomicDecrement implementations for Windows
+        into Atomics.h required by WebKit2 after r139514. Separating WinCE implementation
+        that does not support WebKit2 and has no support for 64 bit interlocked methods.
+
+        Increasing WINVER and _WIN32_WINNT to XP SP2, because the 64 bit type interlocked methods
+        are not supported on previous versions on 32 bit target.
+
+        * config.h:
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+
 2013-01-26  Andras Becsi  <andras.becsi@digia.com>
 
         Unreviewed fix after r140451 to make GIT-SVN repositories happy.
