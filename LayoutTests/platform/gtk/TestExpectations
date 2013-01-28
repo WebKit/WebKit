@@ -1409,6 +1409,8 @@ webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html 
 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
+webkit.org/b/108100 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
