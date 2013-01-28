@@ -1830,9 +1830,6 @@ void FrameSelection::notifyRendererOfSelectionChange(EUserTriggered userTriggere
 {
     m_frame->document()->updateStyleIfNeeded();
 
-    if (!rootEditableElement())
-        return;
-
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(start()))
         textControl->selectionChanged(userTriggered == UserTriggered);
 }
