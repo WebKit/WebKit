@@ -34,6 +34,7 @@
 #include "Attr.h"
 #include "HTMLImageElement.h"
 #include "MemoryUsageSupport.h"
+#include "RetainedDOMInfo.h"
 #include "TraceEvent.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
@@ -51,15 +52,30 @@ public:
     ImplicitConnection(void* root, v8::Persistent<v8::Value> wrapper)
         : m_root(root)
         , m_wrapper(wrapper)
+        , m_rootNode(0)
+    {
+    }
+    ImplicitConnection(Node* root, v8::Persistent<v8::Value> wrapper)
+        : m_root(root)
+        , m_wrapper(wrapper)
+        , m_rootNode(root)
     {
     }
 
     void* root() const { return m_root; }
     v8::Persistent<v8::Value> wrapper() const { return m_wrapper; }
 
+    PassOwnPtr<RetainedObjectInfo> retainedObjectInfo()
+    {
+        if (!m_rootNode)
+            return nullptr;
+        return adoptPtr(new RetainedDOMInfo(m_rootNode));
+    }
+
 private:
     void* m_root;
     v8::Persistent<v8::Value> m_wrapper;
+    Node* m_rootNode;
 };
 
 bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
@@ -74,7 +90,12 @@ public:
         m_liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
     }
 
-    void addToGroup(void* root, v8::Persistent<v8::Value> wrapper)
+    void addObjectToGroup(void* root, v8::Persistent<v8::Value> wrapper)
+    {
+        m_connections.append(ImplicitConnection(root, wrapper));
+    }
+
+    void addNodeToGroup(Node* root, v8::Persistent<v8::Value> wrapper)
     {
         m_connections.append(ImplicitConnection(root, wrapper));
     }
@@ -94,13 +115,14 @@ public:
         size_t i = 0;
         while (i < m_connections.size()) {
             void* root = m_connections[i].root();
+            OwnPtr<RetainedObjectInfo> retainedObjectInfo = m_connections[i].retainedObjectInfo();
 
             do {
                 group.append(m_connections[i++].wrapper());
             } while (i < m_connections.size() && root == m_connections[i].root());
 
             if (group.size() > 1)
-                v8::V8::AddObjectGroup(group.data(), group.size(), 0);
+                v8::V8::AddObjectGroup(group.data(), group.size(), retainedObjectInfo.leakPtr());
 
             group.shrink(0);
         }
@@ -134,7 +156,7 @@ static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persi
     v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
 }
 
-void* V8GCController::opaqueRootForGC(Node* node)
+Node* V8GCController::opaqueRootForGC(Node* node)
 {
     // FIXME: Remove the special handling for image elements.
     // The same special handling is in V8GCController::gcTree().
@@ -186,7 +208,7 @@ public:
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
-                m_grouper.addToGroup(V8GCController::opaqueRootForGC(*it), wrapper);
+                m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(*it), wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
@@ -202,9 +224,9 @@ public:
             if (node->hasEventListeners())
                 addImplicitReferencesForNodeWithEventListeners(node, wrapper);
 
-            m_grouper.addToGroup(V8GCController::opaqueRootForGC(node), wrapper);
+            m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(node), wrapper);
         } else if (classId == v8DOMObjectClassId) {
-            m_grouper.addToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
+            m_grouper.addObjectToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
         } else {
             ASSERT_NOT_REACHED();
         }
