@@ -38,7 +38,6 @@
 #include <WebCore/RunLoop.h>
 #include <errno.h>
 #include <runtime/InitializeThreading.h>
-#include <sys/wait.h>
 #include <wtf/MainThread.h>
 
 #if USE(QTKIT)
@@ -63,6 +62,7 @@ extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port
 
 #if ENABLE(SUID_SANDBOX_LINUX)
 #include "SandboxEnvironmentLinux.h"
+#include <sys/wait.h>
 #endif
 
 using namespace WebCore;

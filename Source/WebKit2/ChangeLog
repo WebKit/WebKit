@@ -1,3 +1,13 @@
+2013-01-28  Renata Hodovan  <reni@webkit.org>
+
+        [Qt][Win][WK2] Build fix after r140957.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        <sys/wait.h> is only needed and available on linux therefore it's moved into an ifdef block.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+
 2013-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Use C API inside ewk_url_response
