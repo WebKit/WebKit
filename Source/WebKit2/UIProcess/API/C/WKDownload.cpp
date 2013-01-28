@@ -37,6 +37,11 @@ WKTypeID WKDownloadGetTypeID()
     return toAPI(DownloadProxy::APIType);
 }
 
+uint64_t WKDownloadGetID(WKDownloadRef download)
+{
+    return toImpl(download)->downloadID();
+}
+
 WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
 {
     return toAPI(WebURLRequest::create(toImpl(download)->request()).leakRef());

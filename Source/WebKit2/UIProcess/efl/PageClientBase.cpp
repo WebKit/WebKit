@@ -298,7 +298,7 @@ void PageClientBase::updateTextInputState()
 void PageClientBase::handleDownloadRequest(DownloadProxy* download)
 {
     EwkContext* context = m_view->ewkContext();
-    context->downloadManager()->registerDownload(download, m_view);
+    context->downloadManager()->registerDownloadJob(toAPI(download), m_view);
 }
 
 } // namespace WebKit

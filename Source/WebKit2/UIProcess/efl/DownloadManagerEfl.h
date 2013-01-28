@@ -45,13 +45,13 @@ public:
 
     ~DownloadManagerEfl();
 
-    void registerDownload(DownloadProxy*, EwkView*);
+    void registerDownloadJob(WKDownloadRef, EwkView*);
 
 private:
     explicit DownloadManagerEfl(EwkContext*);
 
-    EwkDownloadJob* downloadJob(uint64_t id) const;
-    void unregisterDownloadJob(uint64_t id);
+    EwkDownloadJob* ewkDownloadJob(WKDownloadRef);
+    void unregisterDownloadJob(WKDownloadRef);
 
     static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool* allowOverwrite, const void* clientInfo);
     static void didReceiveResponse(WKContextRef, WKDownloadRef, WKURLResponseRef, const void* clientInfo);

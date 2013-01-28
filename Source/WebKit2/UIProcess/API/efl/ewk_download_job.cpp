@@ -26,18 +26,17 @@
 #include "config.h"
 #include "ewk_download_job.h"
 
-#include "DownloadProxy.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
-#include "WebURLRequest.h"
+#include "WKURLRequest.h"
 #include "ewk_download_job_private.h"
 #include "ewk_url_response_private.h"
 #include <Ecore.h>
 
 using namespace WebKit;
 
-EwkDownloadJob::EwkDownloadJob(WebKit::DownloadProxy* download, EwkView* viewImpl)
-    : m_downloadProxy(download)
+EwkDownloadJob::EwkDownloadJob(WKDownloadRef download, EwkView* viewImpl)
+    : m_download(download)
     , m_viewImpl(viewImpl)
     , m_state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
     , m_startTime(-1)
@@ -51,7 +50,7 @@ EwkDownloadJob::EwkDownloadJob(WebKit::DownloadProxy* download, EwkView* viewImp
  */
 uint64_t EwkDownloadJob::id() const
 {
-    return m_downloadProxy->downloadID();
+    return WKDownloadGetID(m_download.get());
 }
 
 /**
@@ -86,7 +85,7 @@ Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
 EwkUrlRequest* EwkDownloadJob::request() const
 {
     if (!m_request) {
-        WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(m_downloadProxy->request()).leakRef()));
+        WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, WKDownloadCopyRequest(m_download.get()));
         m_request = EwkUrlRequest::create(wkURLRequest.get());
     }
 
@@ -157,7 +156,8 @@ bool EwkDownloadJob::cancel()
         return false;
 
     m_state = EWK_DOWNLOAD_JOB_STATE_CANCELLING;
-    m_downloadProxy->cancel();
+    WKDownloadCancel(m_download.get());
+
     return true;
 }
 

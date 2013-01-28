@@ -38,6 +38,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKDownloadGetTypeID();
 
+WK_EXPORT uint64_t WKDownloadGetID(WKDownloadRef download);
 WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
 WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
 WK_EXPORT void WKDownloadCancel(WKDownloadRef download);

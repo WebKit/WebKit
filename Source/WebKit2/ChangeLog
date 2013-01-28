@@ -1,3 +1,49 @@
+2013-01-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_download_job
+        https://bugs.webkit.org/show_bug.cgi?id=107810
+
+        Reviewed by Anders Carlsson.
+
+        Use C API inside ewk_download_job instead of accessing internal C++
+        classes directly, to avoid violating API layering.
+
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadGetID): Add C API to get the download ID as we need it to
+        support our public API and it seems like a useful addition.
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (EwkDownloadJob::EwkDownloadJob):
+        (EwkDownloadJob::id):
+        (EwkDownloadJob::request):
+        (EwkDownloadJob::cancel):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (EwkDownloadJob::create):
+        (EwkDownloadJob):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didReceiveResponse):
+        (WebKit::DownloadManagerEfl::didCreateDestination):
+        (WebKit::DownloadManagerEfl::didReceiveData):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        (WebKit::DownloadManagerEfl::registerDownloadJob): Rename
+        registerDownload() to registerDownloadJob() for consistency with
+        unregisterDownloadJob().
+        (WebKit::DownloadManagerEfl::ewkDownloadJob): Rename downloadJob() to
+        ewkDownloadJob() for clarity since it returns a EwkDownload object.
+        Also take a WKDownloadRef in argument instead of an identifier since
+        all the callers have a WKDownloadRef and it makes their code simpler.
+        Finally, make the getter non-const since it returns a non-const pointer.
+        (WebKit::DownloadManagerEfl::unregisterDownloadJob): Take a
+        WKDownloadRef in argument instead of an identifier since all the
+        callers have a WKDownloadRef and it makes their code simpler.
+        * UIProcess/efl/DownloadManagerEfl.h:
+        (DownloadManagerEfl):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::handleDownloadRequest):
+
 2013-01-28  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: getMainResourceDataOfFrame should return PDFPlugin's data so that Save... works

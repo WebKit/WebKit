@@ -27,16 +27,14 @@
 #define ewk_download_job_private_h
 
 #include "WKBase.h"
+#include "WKDownload.h"
 #include "WKEinaSharedString.h"
+#include "WKRetainPtr.h"
 #include "ewk_download_job.h"
 #include "ewk_url_request_private.h"
 #include "ewk_url_response_private.h"
 #include <Evas.h>
 #include <wtf/PassRefPtr.h>
-
-namespace WebKit {
-class DownloadProxy;
-}
 
 class EwkView;
 
@@ -44,7 +42,7 @@ class EwkDownloadJob : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkDownloadJob)
 
-    static PassRefPtr<EwkDownloadJob> create(WebKit::DownloadProxy* download, EwkView* viewImpl)
+    static PassRefPtr<EwkDownloadJob> create(WKDownloadRef download, EwkView* viewImpl)
     {
         return adoptRef(new EwkDownloadJob(download, viewImpl));
     }
@@ -72,9 +70,9 @@ public:
     void incrementReceivedData(uint64_t length);
 
 private:
-    EwkDownloadJob(WebKit::DownloadProxy* download, EwkView* view);
+    EwkDownloadJob(WKDownloadRef download, EwkView* view);
 
-    WebKit::DownloadProxy* m_downloadProxy;
+    WKRetainPtr<WKDownloadRef> m_download;
     EwkView* m_viewImpl;
     Ewk_Download_Job_State m_state;
     mutable RefPtr<EwkUrlRequest> m_request;
