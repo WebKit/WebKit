@@ -1929,6 +1929,39 @@ TEST_F(WebFrameTest, DisambiguationPopupNoContainer)
     EXPECT_FALSE(client.triggered());
 }
 
+TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
+{
+    registerMockedHttpURLLoad("disambiguation_popup_mobile_site.html");
+
+    DisambiguationPopupTestWebViewClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup.html", true, 0, &client));
+    webViewImpl->resize(WebSize(1000, 1000));
+    webViewImpl->layout();
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(0, 0));
+    EXPECT_FALSE(client.triggered());
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(200, 115));
+    EXPECT_FALSE(client.triggered());
+
+    for (int i = 0; i <= 46; i++) {
+        client.resetTriggered();
+        webViewImpl->handleInputEvent(fatTap(120, 230 + i * 5));
+        EXPECT_FALSE(client.triggered());
+    }
+
+    for (int i = 0; i <= 46; i++) {
+        client.resetTriggered();
+        webViewImpl->handleInputEvent(fatTap(10 + i * 5, 590));
+        EXPECT_FALSE(client.triggered());
+    }
+}
+
 class TestSubstituteDataWebFrameClient : public WebFrameClient {
 public:
     TestSubstituteDataWebFrameClient()

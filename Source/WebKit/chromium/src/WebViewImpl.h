@@ -601,6 +601,10 @@ public:
     virtual bool isPointerLocked();
 #endif
 
+    // Heuristic-based function for determining if we should disable workarounds
+    // for viewing websites that are not optimized for mobile devices.
+    bool shouldDisableDesktopWorkarounds();
+
 #if ENABLE(GESTURE_EVENTS)
     // Exposed for tests.
     LinkHighlight* linkHighlight() { return m_linkHighlight.get(); }

@@ -1,3 +1,32 @@
+2013-01-28  Dan Alcantara  <dfalcantara@chromium.org>
+
+        [Chromium, Mobile] Do not show disambiguation pop up in mobile sites
+        https://bugs.webkit.org/show_bug.cgi?id=107607
+
+        Reviewed by Adam Barth.
+
+        Add a check before showing the disambiguation popup to prevent it from appearing
+        on mobile sites.  Makes a similar test to the current disambiguation popup test
+        that expects the popup to never appear.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit):
+        (WebKit::WebViewImpl::isLikelyMobileSite):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+        * tests/data/disambiguation_popup_mobile_site.html: Added.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit):
+        (WebKit::WebViewImpl::shouldDisableDesktopWorkarounds):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+        * tests/data/disambiguation_popup_mobile_site.html: Added.
+
 2013-01-28  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Fix the build.

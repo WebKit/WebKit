@@ -753,7 +753,9 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         hideSelectPopup();
         ASSERT(!m_selectPopup);
 
-        if (event.data.tap.width > 0) {
+        // Don't trigger a disambiguation popup on sites designed for mobile devices.
+        // Instead, assume that the page has been designed with big enough buttons and links.
+        if (event.data.tap.width > 0 && !shouldDisableDesktopWorkarounds()) {
             IntRect boundingBox(event.x - event.data.tap.width / 2, event.y - event.data.tap.height / 2, event.data.tap.width, event.data.tap.height);
             Vector<IntRect> goodTargets;
             findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
@@ -4364,5 +4366,12 @@ void WebViewImpl::pointerLockMouseEvent(const WebInputEvent& event)
             eventType);
 }
 #endif
+
+bool WebViewImpl::shouldDisableDesktopWorkarounds()
+{
+    ViewportArguments arguments = mainFrameImpl()->frame()->document()->viewportArguments();
+    return arguments.width == ViewportArguments::ValueDeviceWidth || !arguments.userZoom
+        || (arguments.minZoom == arguments.maxZoom && arguments.minZoom != ViewportArguments::ValueAuto);
+}
 
 } // namespace WebKit
