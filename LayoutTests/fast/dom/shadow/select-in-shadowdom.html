@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html><body>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<p>When selecting from non-anchor Node to anchor node in ShadowDOM, client should not cause page jump.</p>
+
+<div id="host"></div>
+<pre id="console"></pre>
+
+<script>
+function mouseMoveTo(element)
+{
+    var x = element.offsetLeft + element.offsetWidth / 2;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+var shadowRoot = host.webkitCreateShadowRoot();
+shadowRoot.innerHTML = '<span>select form here</span><span>select to here</span>';
+
+var clickEventShouldNotBeFired = true;
+
+host.addEventListener('click', function(e) {
+    if (clickEventShouldNotBeFired)
+        debug('FAIL click should not be fired.');
+    else
+        debug('PASS click should be fired.');
+});
+
+debug('Selecting from a node to another node in ShadowDOM. This should not fire click event');
+mouseMoveTo(shadowRoot.firstChild);
+eventSender.mouseDown();
+mouseMoveTo(shadowRoot.firstChild.nextSibling);
+eventSender.mouseUp();
+debug('');
+
+debug('Clicking a node in ShadowDOM.');
+clickEventShouldNotBeFired = false;
+mouseMoveTo(shadowRoot.firstChild);
+eventSender.mouseDown();
+eventSender.mouseUp();
+debug('');
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body></body>
