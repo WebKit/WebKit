@@ -35,7 +35,6 @@ class FormDataList;
 class HTMLElement;
 class HTMLFormElement;
 class Node;
-class ShadowRoot;
 class ValidationMessage;
 class ValidityState;
 class VisibleSelection;
@@ -50,8 +49,6 @@ public:
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
     HTMLFormElement* form() const { return m_form; }
     ValidityState* validity();
-
-    ShadowRoot* ensureUserAgentShadowRoot();
 
     virtual bool isFormControlElement() const = 0;
     virtual bool isFormControlElementWithState() const;

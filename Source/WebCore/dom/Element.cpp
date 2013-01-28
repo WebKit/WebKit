@@ -1488,6 +1488,13 @@ ShadowRoot* Element::userAgentShadowRoot() const
     return 0;
 }
 
+ShadowRoot* Element::ensureUserAgentShadowRoot()
+{
+    if (ShadowRoot* shadowRoot = userAgentShadowRoot())
+        return shadowRoot;
+    return ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
+}
+
 const AtomicString& Element::shadowPseudoId() const
 {
     return pseudo();
