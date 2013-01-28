@@ -21,6 +21,7 @@
 #include "url_utils.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Ecore_Getopt.h>
 #include <Eina.h>
 #include <Elementary.h>
 #include <Evas.h>
