@@ -130,9 +130,14 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
 
     if (fontDescription.weight() >= FontWeightBold) {
         // The FC_EMBOLDEN property instructs us to fake the boldness of the font.
-        FcBool fontConfigEmbolden;
+        FcBool fontConfigEmbolden = FcFalse;
         if (FcPatternGetBool(pattern, FC_EMBOLDEN, 0, &fontConfigEmbolden) == FcResultMatch)
             m_syntheticBold = fontConfigEmbolden;
+
+        // Fallback fonts may not have FC_EMBOLDEN activated even though it's necessary.
+        int weight = 0;
+        if (!m_syntheticBold && FcPatternGetInteger(pattern, FC_WEIGHT, 0, &weight) == FcResultMatch)
+            m_syntheticBold = m_syntheticBold || weight < FC_WEIGHT_DEMIBOLD;
     }
 }
 
