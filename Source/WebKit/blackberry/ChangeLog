@@ -2,6 +2,17 @@
 
         [BlackBerry] SpellingHandler parses and creates spellcheck requests regardless of the system spell check status
         https://bugs.webkit.org/show_bug.cgi?id=108085
+
+        Reviewed by Rob Buis.
+
+        Fix a merge error that duplicated a function declaration in InputHandler.h.
+
+        * WebKitSupport/InputHandler.h:
+
+2013-01-28  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] SpellingHandler parses and creates spellcheck requests regardless of the system spell check status
+        https://bugs.webkit.org/show_bug.cgi?id=108085
         PR 286165
 
         Reviewed by Rob Buis.
