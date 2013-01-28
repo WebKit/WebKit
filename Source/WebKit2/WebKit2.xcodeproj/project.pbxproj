@@ -24,7 +24,6 @@
 				BCAE9DFD160C0AB000A33217 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				BC8283D716B4C02200A278FE /* PBXTargetDependency */,
-				BC82844216B4FF5D00A278FE /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
 				BC82844816B4FF6F00A278FE /* PBXTargetDependency */,
 			);
@@ -1168,13 +1167,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC8283C416B4BFA800A278FE;
 			remoteInfo = Networking.Development;
-		};
-		BC82844116B4FF5D00A278FE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BC8283F816B4FDDE00A278FE;
-			remoteInfo = Plugin.32;
 		};
 		BC82844516B4FF6600A278FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6541,11 +6533,6 @@
 			isa = PBXTargetDependency;
 			target = BC8283C416B4BFA800A278FE /* Networking.Development */;
 			targetProxy = BC8283D616B4C02200A278FE /* PBXContainerItemProxy */;
-		};
-		BC82844216B4FF5D00A278FE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BC8283F816B4FDDE00A278FE /* Plugin.32 */;
-			targetProxy = BC82844116B4FF5D00A278FE /* PBXContainerItemProxy */;
 		};
 		BC82844616B4FF6600A278FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

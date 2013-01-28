@@ -1,3 +1,9 @@
+2013-01-28  Andy Estes  <aestes@apple.com>
+
+        Fix non-fat builds by excluding PluginService.32 as a target dependency for WebKit2.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-28  Renata Hodovan  <reni@webkit.org>
 
         [Qt][Win][WK2] Build fix after r140957.
