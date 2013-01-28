@@ -36,8 +36,6 @@ public:
 
     static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*);
 
-    bool hasAuthorShadowRoot() const { return m_hasAuthorShadowRoot; }
-
     double value() const;
     void setValue(double, ExceptionCode&);
 
@@ -54,7 +52,6 @@ private:
     HTMLProgressElement(const QualifiedName&, Document*);
     virtual ~HTMLProgressElement();
 
-    virtual void willAddAuthorShadowRoot() OVERRIDE;
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool supportLabels() const OVERRIDE { return true; }
@@ -73,7 +70,6 @@ private:
     void createShadowSubtree();
 
     ProgressValueElement* m_value;
-    bool m_hasAuthorShadowRoot;
 };
 
 inline bool isHTMLProgressElement(Node* node)

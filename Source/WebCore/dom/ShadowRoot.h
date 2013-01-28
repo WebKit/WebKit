@@ -93,7 +93,6 @@ public:
     ScopeContentDistribution* ensureScopeDistribution();
 
     ShadowRootType type() const { return m_isAuthorShadowRoot ? AuthorShadowRoot : UserAgentShadowRoot; }
-    bool isAccessible() const { return type() == AuthorShadowRoot; }
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 

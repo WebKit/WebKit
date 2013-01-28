@@ -39,8 +39,6 @@ public:
         GaugeRegionEvenLessGood
     };
 
-    bool hasAuthorShadowRoot() const { return m_hasAuthorShadowRoot; }
-
     double min() const;
     void setMin(double, ExceptionCode&);
 
@@ -68,7 +66,6 @@ private:
     HTMLMeterElement(const QualifiedName&, Document*);
     virtual ~HTMLMeterElement();
 
-    virtual void willAddAuthorShadowRoot() OVERRIDE;
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
     RenderMeter* renderMeter() const;
 
@@ -85,7 +82,6 @@ private:
     void createShadowSubtree();
 
     RefPtr<MeterValueElement> m_value;
-    bool m_hasAuthorShadowRoot;
 };
 
 inline bool isHTMLMeterElement(Node* node)

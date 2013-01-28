@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document)
     : LabelableElement(tagName, document)
-    , m_hasAuthorShadowRoot(false)
 {
     ASSERT(hasTagName(meterTag));
 }
@@ -223,11 +222,6 @@ void HTMLMeterElement::didElementStateChange()
     m_value->updatePseudo();
     if (RenderMeter* render = renderMeter())
         render->updateFromElement();
-}
-
-void HTMLMeterElement::willAddAuthorShadowRoot()
-{
-    m_hasAuthorShadowRoot = true;
 }
 
 RenderMeter* HTMLMeterElement::renderMeter() const

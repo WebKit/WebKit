@@ -44,7 +44,6 @@ const double HTMLProgressElement::InvalidPosition = -2;
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document)
     : LabelableElement(tagName, document)
     , m_value(0)
-    , m_hasAuthorShadowRoot(false)
 {
     ASSERT(hasTagName(progressTag));
 }
@@ -81,11 +80,6 @@ RenderProgress* HTMLProgressElement::renderProgress() const
     RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
     ASSERT(!renderObject || renderObject->isProgress());
     return static_cast<RenderProgress*>(renderObject);
-}
-
-void HTMLProgressElement::willAddAuthorShadowRoot()
-{
-    m_hasAuthorShadowRoot = true;
 }
 
 bool HTMLProgressElement::supportsFocus() const
