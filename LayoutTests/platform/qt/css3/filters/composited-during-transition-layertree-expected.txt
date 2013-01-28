@@ -11,21 +11,25 @@
         (GraphicsLayer
           (position 18.00 18.00)
           (bounds 160.00 90.00)
+          (usingTiledLayer 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 18.00 132.00)
           (bounds 160.00 90.00)
+          (usingTiledLayer 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 18.00 246.00)
           (bounds 160.00 90.00)
+          (usingTiledLayer 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 18.00 360.00)
           (bounds 160.00 90.00)
+          (usingTiledLayer 1)
           (drawsContent 1)
         )
       )
