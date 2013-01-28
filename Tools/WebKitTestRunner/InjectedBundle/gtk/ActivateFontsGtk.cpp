@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ActivateFonts.h"
 
+#include "InjectedBundleUtilities.h"
 #include <fontconfig/fontconfig.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GlibUtilities.h>
@@ -52,27 +53,13 @@ void initializeGtkSettings()
                  "gtk-xft-rgba", "none", NULL);
 }
 
-static CString getTopLevelPath()
-{
-    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
-        return topLevelDirectory;
-
-    // If the environment variable wasn't provided then assume we were built into
-    // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
-    // directory is non-standard, but we can't do much more about this.
-    GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
-    GOwnPtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", NULL));
-    GOwnPtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
-    return absoluteTopLevelPath.get();
-}
-
 CString getOutputDir()
 {
     const char* webkitOutputDir = g_getenv("WEBKITOUTPUTDIR");
     if (webkitOutputDir)
         return webkitOutputDir;
 
-    CString topLevelPath = getTopLevelPath();
+    CString topLevelPath = WTR::topLevelPath();
     GOwnPtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", NULL));
     return outputDir.get();
 }

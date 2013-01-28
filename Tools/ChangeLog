@@ -1,3 +1,19 @@
+2013-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WTR] Move getTopLevelPath() to utilities file
+        https://bugs.webkit.org/show_bug.cgi?id=107541
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/GNUmakefile.am: Add new files.
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getOutputDir): Uses the moved method from InjectedBundleUtilities.
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.cpp: Added.
+        (WTR):
+        (WTR::topLevelPath): Implementation moved from ActivateFontsGtk.
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.h: Added.
+        (WTR): Add new method header and documentation.
+
 2013-01-28  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Include Ecore_Getopt.h in MiniBrowser.

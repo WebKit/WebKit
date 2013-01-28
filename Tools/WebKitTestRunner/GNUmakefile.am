@@ -105,6 +105,8 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/GCController.h \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.h \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.h \
