@@ -277,8 +277,6 @@ void ScrollView::setFixedLayoutSize(const IntSize& newSize)
         return;
     m_fixedLayoutSize = newSize;
     updateScrollbars(scrollOffset());
-    if (m_useFixedLayout)
-        contentsResized();
 }
 
 bool ScrollView::useFixedLayout() const
@@ -292,7 +290,6 @@ void ScrollView::setUseFixedLayout(bool enable)
         return;
     m_useFixedLayout = enable;
     updateScrollbars(scrollOffset());
-    contentsResized();
 }
 
 IntSize ScrollView::contentsSize() const

@@ -1664,6 +1664,11 @@ void WebViewImpl::resize(const WebSize& newSize)
 
 #if ENABLE(VIEWPORT)
     if (settings()->viewportEnabled()) {
+        if (!settingsImpl()->applyPageScaleFactorInCompositor()) {
+            // Relayout immediately to obtain the new content width, which is needed
+            // to calculate the minimum scale limit.
+            view->layout();
+        }
         computePageScaleFactorLimits();
 
         // When the device rotates:
@@ -3095,10 +3100,6 @@ bool WebViewImpl::computePageScaleFactorLimits()
         return false;
 
     FrameView* view = page()->mainFrame()->view();
-
-    // Layout to refresh to the latest contents width.
-    if (view->needsLayout())
-        view->layout();
 
     m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor);
     m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor);

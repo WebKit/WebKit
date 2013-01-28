@@ -1,5 +1,19 @@
 2013-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r140869.
+        http://trac.webkit.org/changeset/140869
+        https://bugs.webkit.org/show_bug.cgi?id=108120
+
+        "Crashes on http://en.wikipedia.org/wiki/Wikipedia" (Requested
+        by tonyg-cr on #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        * tests/WebFrameTest.cpp:
+
+2013-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r140934, r140935, and r140937.
         http://trac.webkit.org/changeset/140934
         http://trac.webkit.org/changeset/140935
