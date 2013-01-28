@@ -65,10 +65,9 @@ PassRefPtr<Event> DeviceProximityController::getLastEvent()
     return DeviceProximityEvent::create(eventNames().webkitdeviceproximityEvent, deviceProximityClient()->value(), deviceProximityClient()->min(), deviceProximityClient()->max());
 }
 
-const AtomicString& DeviceProximityController::supplementName()
+const char* DeviceProximityController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceProximityController"));
-    return name;
+    return "DeviceProximityController";
 }
 
 DeviceProximityController* DeviceProximityController::from(Page* page)

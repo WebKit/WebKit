@@ -46,7 +46,7 @@ public:
     virtual bool hasLastData();
     virtual PassRefPtr<Event> getLastEvent();
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
     static DeviceProximityController* from(Page*);
     static bool isActiveAt(Page*);
 
