@@ -49,6 +49,7 @@ namespace WebCore {
 // It should not be constructed as a renderer for the Document.
 RenderFlowThread::RenderFlowThread(Document* document)
     : RenderBlock(document)
+    , m_autoLogicalHeightRegionsCount(0)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
@@ -740,7 +741,7 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
 }
 
 #ifndef NDEBUG
-unsigned RenderFlowThread::autoLogicalHeightRegionsCount() const
+bool RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent() const
 {
     unsigned autoLogicalHeightRegions = 0;
     for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
@@ -749,7 +750,7 @@ unsigned RenderFlowThread::autoLogicalHeightRegionsCount() const
             autoLogicalHeightRegions++;
     }
 
-    return autoLogicalHeightRegions;
+    return autoLogicalHeightRegions == m_autoLogicalHeightRegionsCount;
 }
 #endif
 
@@ -758,8 +759,8 @@ void RenderFlowThread::resetRegionsOverrideLogicalContentHeight()
     ASSERT(view()->layoutState());
     ASSERT(view()->normalLayoutPhase());
 
-    // FIXME: optimize this to iterate the region chain only if the flow thread has auto logical height
-    // region.
+    if (!hasAutoLogicalHeightRegions())
+        return;
 
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -782,6 +783,9 @@ void RenderFlowThread::resetRegionsOverrideLogicalContentHeight()
 void RenderFlowThread::initializeRegionsOverrideLogicalContentHeight(RenderRegion* startRegion)
 {
     ASSERT(view()->normalLayoutPhase());
+    if (!hasAutoLogicalHeightRegions())
+        return;
+
     RenderRegionList::iterator regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin();
     for (; regionIter != m_regionList.end(); ++regionIter) {
         RenderRegion* region = *regionIter;
@@ -795,8 +799,8 @@ void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
     ASSERT(view()->layoutState());
     ASSERT(view()->constrainedFlowThreadsLayoutPhase());
 
-    // FIXME: optimize this to iterate the region chain only if the flow thread has auto logical height
-    // region.
+    if (!hasAutoLogicalHeightRegions())
+        return;
 
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -910,6 +914,21 @@ bool RenderFlowThread::addForcedRegionBreak(LayoutUnit offsetBreakInFlowThread, 
         *offsetBreakAdjustment = max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
 
     return overrideLogicalContentHeightComputed;
+}
+
+void RenderFlowThread::incrementAutoLogicalHeightRegions()
+{
+    if (!m_autoLogicalHeightRegionsCount)
+        view()->flowThreadController()->incrementFlowThreadsWithAutoLogicalHeightRegions();
+    ++m_autoLogicalHeightRegionsCount;
+}
+
+void RenderFlowThread::decrementAutoLogicalHeightRegions()
+{
+    ASSERT(m_autoLogicalHeightRegionsCount > 0);
+    --m_autoLogicalHeightRegionsCount;
+    if (!m_autoLogicalHeightRegionsCount)
+        view()->flowThreadController()->decrementFlowThreadsWithAutoLogicalHeightRegions();
 }
 
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)

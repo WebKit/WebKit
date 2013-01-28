@@ -168,6 +168,9 @@ private:
     void checkRegionStyle();
     void updateRegionHasAutoLogicalHeightFlag();
 
+    void incrementAutoLogicalHeightCount();
+    void decrementAutoLogicalHeightCount();
+
 protected:
     RenderFlowThread* m_flowThread;
 

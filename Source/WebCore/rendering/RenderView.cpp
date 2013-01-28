@@ -1047,7 +1047,7 @@ bool RenderView::hasRenderNamedFlowThreads() const
 
 bool RenderView::checkTwoPassLayoutForAutoHeightRegions() const
 {
-    return hasRenderNamedFlowThreads() && m_flowThreadController->hasAutoLogicalHeightRegions();
+    return hasRenderNamedFlowThreads() && m_flowThreadController->hasFlowThreadsWithAutoLogicalHeightRegions();
 }
 
 FlowThreadController* RenderView::flowThreadController()

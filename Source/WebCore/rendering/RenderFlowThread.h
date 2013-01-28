@@ -135,8 +135,12 @@ public:
 
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
+    bool hasAutoLogicalHeightRegions() const { ASSERT(isAutoLogicalHeightRegionsCountConsistent()); return m_autoLogicalHeightRegionsCount; }
+    void incrementAutoLogicalHeightRegions();
+    void decrementAutoLogicalHeightRegions();
+
 #ifndef NDEBUG
-    unsigned autoLogicalHeightRegionsCount() const;
+    bool isAutoLogicalHeightRegionsCountConsistent() const;
 #endif
 
 protected:
@@ -191,6 +195,8 @@ protected:
     typedef HashMap<RenderObject*, RenderRegion*> RenderObjectToRegionMap;
     RenderObjectToRegionMap m_breakBeforeToRegionMap;
     RenderObjectToRegionMap m_breakAfterToRegionMap;
+
+    unsigned m_autoLogicalHeightRegionsCount;
 
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;

@@ -50,7 +50,7 @@ FlowThreadController::FlowThreadController(RenderView* view)
     , m_currentRenderFlowThread(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
     , m_needsTwoPassLayoutForAutoHeightRegions(false)
-    , m_autoLogicalHeightRegionsCount(0)
+    , m_flowThreadsWithAutoLogicalHeightRegions(0)
 {
 }
 
@@ -99,8 +99,7 @@ void FlowThreadController::styleDidChange()
 void FlowThreadController::layoutRenderNamedFlowThreads()
 {
     ASSERT(m_renderNamedFlowThreadList);
-
-    ASSERT(isAutoLogicalHeightRegionsFlagConsistent());
+    ASSERT(isAutoLogicalHeightRegionsCountConsistent());
 
     // Remove the left-over flow threads.
     RenderNamedFlowThreadList toRemoveList;
@@ -161,19 +160,17 @@ void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
 }
 
 #ifndef NDEBUG
-bool FlowThreadController::isAutoLogicalHeightRegionsFlagConsistent() const
+bool FlowThreadController::isAutoLogicalHeightRegionsCountConsistent() const
 {
     if (!hasRenderNamedFlowThreads())
-        return !hasAutoLogicalHeightRegions();
+        return !hasFlowThreadsWithAutoLogicalHeightRegions();
 
-    // Count the number of auto height regions
-    unsigned autoLogicalHeightRegions = 0;
     for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
-        autoLogicalHeightRegions += flowRenderer->autoLogicalHeightRegionsCount();
+        if (!(*iter)->isAutoLogicalHeightRegionsCountConsistent())
+            return false;
     }
 
-    return autoLogicalHeightRegions == m_autoLogicalHeightRegionsCount;
+    return true;
 }
 #endif
 
@@ -189,6 +186,8 @@ bool FlowThreadController::hasRenderNamedFlowThreadsNeedingLayout() const
 void FlowThreadController::resetRegionsOverrideLogicalContentHeight()
 {
     ASSERT(m_view->normalLayoutPhase());
+    ASSERT(hasFlowThreadsWithAutoLogicalHeightRegions());
+
     for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
         (*iter)->resetRegionsOverrideLogicalContentHeight();
 }
@@ -196,6 +195,8 @@ void FlowThreadController::resetRegionsOverrideLogicalContentHeight()
 void FlowThreadController::markAutoLogicalHeightRegionsForLayout()
 {
     ASSERT(m_view->constrainedFlowThreadsLayoutPhase());
+    ASSERT(hasFlowThreadsWithAutoLogicalHeightRegions());
+
     for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
         (*iter)->markAutoLogicalHeightRegionsForLayout();
 }
