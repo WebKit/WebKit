@@ -55,6 +55,7 @@
 #include "WebDataSource.h"
 #include "WebDevToolsAgentClient.h"
 #include "WebFrameImpl.h"
+#include "WebMemoryUsageInfo.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <public/Platform.h>
@@ -633,6 +634,16 @@ void WebDevToolsAgentImpl::paintPageOverlay(WebCanvas* canvas)
         context.platformContext()->setDrawingToImageBuffer(true);
         ic->drawHighlight(context);
     }
+}
+
+WebVector<WebMemoryUsageInfo> WebDevToolsAgentImpl::processMemoryDistribution() const
+{
+    HashMap<String, size_t> memoryInfo = m_webViewImpl->page()->inspectorController()->processMemoryDistribution();
+    WebVector<WebMemoryUsageInfo> memoryInfoVector((size_t)memoryInfo.size());
+    size_t i = 0;
+    for (HashMap<String, size_t>::const_iterator it = memoryInfo.begin(); it != memoryInfo.end(); ++it)
+        memoryInfoVector[i++] = WebMemoryUsageInfo(it->key, it->value);
+    return memoryInfoVector;
 }
 
 void WebDevToolsAgentImpl::highlight()

@@ -32,6 +32,7 @@
 #define WebDevToolsAgent_h
 
 #include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebVector.h"
 
 namespace WebKit {
 class WebDevToolsAgentClient;
@@ -43,6 +44,7 @@ class WebURLResponse;
 class WebView;
 struct WebDevToolsMessageData;
 struct WebPoint;
+struct WebMemoryUsageInfo;
 struct WebURLError;
 
 class WebDevToolsAgent {
@@ -74,6 +76,8 @@ public:
 
     // Exposed for TestRunner.
     virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;
+
+    virtual WebVector<WebMemoryUsageInfo> processMemoryDistribution() const = 0;
 
     class MessageDescriptor {
     public:

@@ -61,6 +61,7 @@ class WebString;
 class WebURLRequest;
 class WebURLResponse;
 class WebViewImpl;
+struct WebMemoryUsageInfo;
 struct WebURLError;
 struct WebDevToolsMessageData;
 
@@ -116,6 +117,8 @@ public:
 
     // WebPageOverlay
     virtual void paintPageOverlay(WebCanvas*);
+
+    virtual WebVector<WebMemoryUsageInfo> processMemoryDistribution() const;
 
 private:
     // WebThread::TaskObserver

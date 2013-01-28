@@ -204,6 +204,7 @@
                 'public/WebMediaPlayerAction.h',
                 'public/WebMediaPlayerClient.h',
                 'public/WebMediaStreamRegistry.h',
+                'public/WebMemoryUsageInfo.h',
                 'public/WebMenuItemInfo.h',
                 'public/WebNavigationType.h',
                 'public/WebNetworkStateNotifier.h',
