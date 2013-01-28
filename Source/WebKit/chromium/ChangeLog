@@ -1,3 +1,27 @@
+2013-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140602.
+        http://trac.webkit.org/changeset/140602
+        https://bugs.webkit.org/show_bug.cgi?id=108045
+
+        Caused 8 indexed tests to crash. (Requested by keishi on
+        #webkit).
+
+        * public/WebIDBCallbacks.h:
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onBlocked):
+        (WebKit):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onBlocked):
+        (WebKit):
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (WebCore::MockIDBCallbacks::onBlocked):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-27  Keishi Hattori  <keishi@webkit.org>
 
         Unreviewed, rolling out r140850.

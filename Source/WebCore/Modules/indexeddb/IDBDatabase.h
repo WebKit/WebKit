@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+class IDBVersionChangeRequest;
 class ScriptExecutionContext;
 
 typedef int ExceptionCode;

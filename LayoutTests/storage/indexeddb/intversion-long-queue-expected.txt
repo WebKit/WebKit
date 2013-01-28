@@ -38,9 +38,9 @@ connection1.close()
 
 deleteDatabaseBlockedCallback():
 FIXME: http://crbug.com/153122
-PASS event.oldVersion is 1
-FAIL event.newVersion should be null (of type object). Was 0 (of type number).
-PASS event.version is undefined.
+FAIL event.oldVersion should be 1 (of type number). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
+FAIL event.version should be undefined. Was 
 
 deleteDatabaseSuccessCallback():
 PASS event.target.result is undefined.

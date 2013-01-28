@@ -199,6 +199,7 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBTransaction.idl
     Modules/indexeddb/IDBUpgradeNeededEvent.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
+    Modules/indexeddb/IDBVersionChangeRequest.idl
     Modules/indexeddb/WorkerContextIndexedDatabase.idl
 
     Modules/intents/DeliveredIntent.idl
@@ -843,6 +844,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBTransactionCoordinator.cpp
     Modules/indexeddb/IDBUpgradeNeededEvent.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
+    Modules/indexeddb/IDBVersionChangeRequest.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerContextIndexedDatabase.cpp
 

@@ -1278,7 +1278,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.
         // https://bugs.webkit.org/show_bug.cgi?id=71130
-        callbacks->onBlocked(m_metadata.intVersion);
+        callbacks->onBlocked();
         m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks.release()));
         return;
     }

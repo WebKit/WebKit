@@ -43,6 +43,7 @@ namespace WebCore {
 class IDBKey;
 class IDBKeyRange;
 class IDBFactoryBackendInterface;
+class IDBVersionChangeRequest;
 class ScriptExecutionContext;
 
 typedef int ExceptionCode;
@@ -59,7 +60,7 @@ public:
 
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, int64_t version, ExceptionCode&);
-    PassRefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
+    PassRefPtr<IDBVersionChangeRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
 
     short cmp(ScriptExecutionContext*, const ScriptValue& first, const ScriptValue& second, ExceptionCode&);
 

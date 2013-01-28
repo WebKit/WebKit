@@ -80,6 +80,7 @@ public:
     virtual void onSuccess() OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { };
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
+    virtual void onBlocked() OVERRIDE { }
 private:
     MockIDBCallbacks()
         : m_wasSuccessDBCalled(false) { }
