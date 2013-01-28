@@ -1,3 +1,15 @@
+2013-01-28  Michael Saboff  <msaboff@apple.com>
+
+        Cleanup ARM version of debugName() in DFGFPRInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=108090
+
+        Reviewed by David Kilzer.
+
+        Fixed debugName() so it will compile by adding static_cast<int> and missing commas.
+
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::debugName):
+
 2013-01-27  Andreas Kling  <akling@apple.com>
 
         JSC: FunctionParameters are memory hungry.
