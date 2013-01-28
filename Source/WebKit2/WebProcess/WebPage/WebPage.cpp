@@ -2158,9 +2158,19 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
 
     RefPtr<ResourceBuffer> buffer;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
-        if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
-            if ((buffer = loader->mainResourceData()))
-                dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame())) {
+            const unsigned char* bytes;
+            unsigned length;
+
+            if (pluginView->getResourceData(bytes, length))
+                dataReference = CoreIPC::DataReference(bytes, length);
+        }
+
+        if (dataReference.isEmpty()) {
+            if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
+                if ((buffer = loader->mainResourceData()))
+                    dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            }
         }
     }
 

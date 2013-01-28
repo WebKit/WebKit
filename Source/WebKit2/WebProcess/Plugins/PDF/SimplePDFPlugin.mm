@@ -672,6 +672,18 @@ void SimplePDFPlugin::manualStreamDidFinishLoading()
     pdfDocumentDidLoad();
 }
 
+bool SimplePDFPlugin::getResourceData(const unsigned char*& bytes, unsigned& length) const
+{
+    if (m_data && m_pdfDocument) {
+        bytes = CFDataGetBytePtr(m_data.get());
+        length = CFDataGetLength(m_data.get());
+
+        return length;
+    }
+
+    return false;
+}
+
 void SimplePDFPlugin::manualStreamDidFail(bool)
 {
     m_data.clear();

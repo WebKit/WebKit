@@ -263,6 +263,8 @@ public:
 
     virtual bool shouldAlwaysAutoStart() const { return false; }
 
+    virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const = 0;
+
 protected:
     Plugin();
 

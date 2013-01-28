@@ -177,6 +177,8 @@ protected:
     virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned) OVERRIDE { return 0; }
     virtual bool findString(const String&, WebCore::FindOptions, unsigned) OVERRIDE { return false; }
 
+    virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const OVERRIDE;
+
     WebCore::IntSize m_scrollOffset;
 
 private:

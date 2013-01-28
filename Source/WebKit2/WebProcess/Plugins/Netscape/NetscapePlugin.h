@@ -247,6 +247,8 @@ private:
     // converted (if the transformation matrix isn't invertible).
     bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
 
+    virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const OVERRIDE { return false; }
+
     void updateNPNPrivateMode();
 
 #if PLUGIN_ARCHITECTURE(WIN)

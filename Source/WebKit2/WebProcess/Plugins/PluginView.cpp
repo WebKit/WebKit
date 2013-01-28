@@ -879,6 +879,14 @@ bool PluginView::shouldAllowNavigationFromDrags() const
     return m_plugin->shouldAllowNavigationFromDrags();
 }
 
+bool PluginView::getResourceData(const unsigned char*& bytes, unsigned& length) const
+{
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
+    return m_plugin->getResourceData(bytes, length);
+}
+
 void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {

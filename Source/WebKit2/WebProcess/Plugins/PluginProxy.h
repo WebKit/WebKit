@@ -133,6 +133,8 @@ private:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const OVERRIDE;
 
+    virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const OVERRIDE { return false; }
+
     float contentsScaleFactor();
     bool needsBackingStore() const;
     bool updateBackingStore();

@@ -1,5 +1,28 @@
 2013-01-28  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: getMainResourceDataOfFrame should return PDFPlugin's data so that Save... works
+        https://bugs.webkit.org/show_bug.cgi?id=108060
+        <rdar://problem/13075454>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Implement getResourceData.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm: Implement getResourceData, returning the accumulated
+        data if it exists and has finished loading.
+        (WebKit::SimplePDFPlugin::getResourceData):
+        * WebProcess/Plugins/Plugin.h: Add getResourceData, which hands out a raw pointer/size pair
+        to the plugin's "main resource" data.
+        * WebProcess/Plugins/PluginProxy.h: Implement getResourceData.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::getResourceData): Forward getResourceData through to the plugin.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getMainResourceDataOfFrame): If the requested frame is backed by a PluginDocument,
+        attempt to ask the PluginView for its resource data.
+
+2013-01-28  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] WKView's intrinsicContentSize should only report a flexible width if the content width is less than the minimum width
         https://bugs.webkit.org/show_bug.cgi?id=108056
 
