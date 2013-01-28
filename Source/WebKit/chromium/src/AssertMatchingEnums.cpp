@@ -68,6 +68,7 @@
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include "ReferrerPolicy.h"
+#include "ResourceLoadPriority.h"
 #include "ResourceResponse.h"
 #include "Settings.h"
 #include "SpeechRecognitionError.h"

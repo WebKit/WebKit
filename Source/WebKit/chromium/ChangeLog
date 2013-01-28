@@ -1,3 +1,14 @@
+2013-01-28  Mike West  <mkwst@chromium.org>
+
+        [chromium] Unreviewed build fix, missing include in AssertMatchingEnums.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=108086
+
+        Disabling SVG exposed a missing include in AssertMatchingEnums. This
+        patch adds it in.
+
+        * src/AssertMatchingEnums.cpp:
+            Include 'ResourceLoadPriority.h'.
+
 2013-01-28  Marja Hölttä  <marja@chromium.org>
 
         Add an API for retrieving native memory information without going through the remote inspecting protocol
