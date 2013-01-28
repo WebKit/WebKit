@@ -1,3 +1,26 @@
+2013-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r140934, r140935, and r140937.
+        http://trac.webkit.org/changeset/140934
+        http://trac.webkit.org/changeset/140935
+        http://trac.webkit.org/changeset/140937
+        https://bugs.webkit.org/show_bug.cgi?id=108117
+
+        Re-land some speculative rollouts - see wkbug.com/108048 for
+        context (Requested by jsbell on #webkit).
+
+        * public/WebIDBCallbacks.h:
+        (WebIDBCallbacks):
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-28  Kevin Day  <kevinday@gmail.com>
 
         [chromium] WebConsoleMessage is missing LevelDebug (chromium bug 172416)

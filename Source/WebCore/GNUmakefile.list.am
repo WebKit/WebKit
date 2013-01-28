@@ -477,10 +477,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBTransaction.h \
 	DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp \
 	DerivedSources/WebCore/JSIDBVersionChangeEvent.h \
-	DerivedSources/WebCore/JSIDBUpgradeNeededEvent.cpp \
-	DerivedSources/WebCore/JSIDBUpgradeNeededEvent.h \
-	DerivedSources/WebCore/JSIDBVersionChangeRequest.cpp \
-	DerivedSources/WebCore/JSIDBVersionChangeRequest.h \
 	DerivedSources/WebCore/JSImageData.cpp \
 	DerivedSources/WebCore/JSImageData.h \
 	DerivedSources/WebCore/JSInjectedScriptHost.cpp \
@@ -1236,10 +1232,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBOpenDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
-	$(WebCore)/Modules/indexeddb/IDBUpgradeNeededEvent.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-	$(WebCore)/Modules/indexeddb/IDBUpgradeNeededEvent.idl \
-	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
 	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
@@ -1918,12 +1911,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.h \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
-	Source/WebCore/Modules/indexeddb/IDBUpgradeNeededEvent.cpp \
-	Source/WebCore/Modules/indexeddb/IDBUpgradeNeededEvent.h \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.cpp \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.h \
-	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.cpp \
-	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.h \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \

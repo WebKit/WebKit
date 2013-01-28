@@ -15,6 +15,11 @@ function test()
     shouldBeFalse("'errorCode' in indexedDB.open(dbname)");
     shouldBeFalse("'setVersion' in IDBDatabase.prototype");
 
+    if ('document' in self) {
+        shouldThrow("document.createEvent('IDBUpgradeNeededEvent')");
+        shouldBeFalse("'version' in document.createEvent('IDBVersionChangeEvent')");
+    }
+
     finishJSTest();
 }
 

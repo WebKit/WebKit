@@ -56,7 +56,6 @@ public:
     virtual void onSuccess(const WebIDBKey&, const WebIDBKey& primaryKey, const WebSerializedScriptValue&);
     virtual void onSuccess(long long);
     virtual void onSuccess();
-    virtual void onBlocked();
     virtual void onBlocked(long long oldVersion);
     virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*);
 

@@ -14,8 +14,9 @@ function prepareDatabase(evt)
 
     h.onversionchange = function onVersionChange(evt) {
         preamble(evt);
-        debug("old = " + JSON.stringify(event.target.version));
-        debug("new = " + JSON.stringify(event.version));
+        shouldBe("event.target.version", "1");
+        shouldBe("event.oldVersion", "1");
+        shouldBeNull("event.newVersion");
     };
 
     transaction = event.target.transaction;

@@ -914,7 +914,7 @@ void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t obje
     if (transaction->isFinished())
         return;
 
-    if (!transaction->scheduleTask(IDBTransactionBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size())))
+    if (!transaction->scheduleTask(IDBDatabaseBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size())))
         ASSERT_NOT_REACHED();
 }
 
@@ -963,7 +963,7 @@ void OpenCursorOperation::perform(IDBTransactionBackendImpl* transaction)
         return;
     }
 
-    IDBTransactionBackendInterface::TaskType taskType(static_cast<IDBTransactionBackendInterface::TaskType>(m_taskType));
+    IDBDatabaseBackendInterface::TaskType taskType(static_cast<IDBDatabaseBackendInterface::TaskType>(m_taskType));
     RefPtr<IDBCursorBackendImpl> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), m_cursorType, taskType, transaction, m_objectStoreId);
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }
@@ -1278,7 +1278,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.
         // https://bugs.webkit.org/show_bug.cgi?id=71130
-        callbacks->onBlocked();
+        callbacks->onBlocked(m_metadata.intVersion);
         m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks.release()));
         return;
     }

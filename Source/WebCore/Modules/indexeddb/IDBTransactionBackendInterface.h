@@ -46,12 +46,6 @@ typedef int ExceptionCode;
 class IDBTransactionBackendInterface : public RefCounted<IDBTransactionBackendInterface> {
 public:
     virtual ~IDBTransactionBackendInterface() { }
-
-    enum TaskType {
-        NormalTask = 0,
-        PreemptiveTask
-    };
-
     virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;

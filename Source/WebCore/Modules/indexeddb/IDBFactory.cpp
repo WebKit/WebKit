@@ -43,7 +43,6 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBOpenDBRequest.h"
-#include "IDBVersionChangeRequest.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
@@ -129,7 +128,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* co
 
     RefPtr<IDBDatabaseCallbacksImpl> databaseCallbacks = IDBDatabaseCallbacksImpl::create();
     int64_t transactionId = IDBDatabase::nextTransactionId();
-    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), databaseCallbacks, transactionId, version);
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, databaseCallbacks, transactionId, version);
     m_backend->open(name, version, transactionId, request, databaseCallbacks, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }
@@ -139,7 +138,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
     return openInternal(context, name, IDBDatabaseMetadata::NoIntVersion, ec);
 }
 
-PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     if (name.isNull()) {
         ec = TypeError;
@@ -148,7 +147,7 @@ PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionCo
     if (!isContextValid(context))
         return 0;
 
-    RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::createNull(), "");
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, IDBDatabaseMetadata::DefaultIntVersion);
     m_backend->deleteDatabase(name, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }

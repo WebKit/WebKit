@@ -47,9 +47,9 @@ class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
     static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBTransactionBackendInterface::NormalTask, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -69,13 +69,13 @@ public:
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
     class CursorPrefetchIterationOperation;
 
-    IDBTransactionBackendInterface::TaskType m_taskType;
+    IDBDatabaseBackendInterface::TaskType m_taskType;
     CursorType m_cursorType;
     const RefPtr<IDBDatabaseBackendImpl> m_database;
     const RefPtr<IDBTransactionBackendImpl> m_transaction;
