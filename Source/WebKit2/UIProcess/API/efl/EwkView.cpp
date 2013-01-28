@@ -379,13 +379,13 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
 
     if (m_pendingSurfaceResize) {
         // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
-        createGLSurface(IntSize(sd->view.w, sd->view.h));
-        if (!m_evasGLSurface)
+        if (!createGLSurface(IntSize(sd->view.w, sd->view.h)))
             return;
 
         m_pendingSurfaceResize = false;
-    } else
-        evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
+    }
+
+    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
 
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
@@ -676,10 +676,10 @@ bool EwkView::createGLSurface(const IntSize& viewSize)
         return false;
 
     Evas_Native_Surface nativeSurface;
-    evas_gl_native_surface_get(m_evasGL.get(), evasGLSurface(), &nativeSurface);
+    evas_gl_native_surface_get(m_evasGL.get(), m_evasGLSurface->surface(), &nativeSurface);
     evas_object_image_native_surface_set(sd->image, &nativeSurface);
 
-    evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
+    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
     gl->glViewport(0, 0, viewSize.width() + sd->view.x, viewSize.height() + sd->view.y);

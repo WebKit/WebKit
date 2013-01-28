@@ -1,3 +1,19 @@
+2013-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2][EFL] Remove unneeded private methods
+        https://bugs.webkit.org/show_bug.cgi?id=107693
+
+        Reviewed by Andreas Kling.
+
+        Care has been taken to verify that the wrappers can
+        never be null when called.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::createGLSurface):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+
 2013-01-28  Renata Hodovan  <reni@webkit.org>
 
         [WK2] Putting QtWebProcess into a chrooted sandbox

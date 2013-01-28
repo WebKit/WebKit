@@ -215,11 +215,6 @@ public:
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
 private:
-#if USE(ACCELERATED_COMPOSITING)
-    Evas_GL_Context* evasGLContext() { return m_evasGLContext ? m_evasGLContext->context() : 0; }
-    Evas_GL_Surface* evasGLSurface() { return m_evasGLSurface ? m_evasGLSurface->surface() : 0; }
-#endif
-
     inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkView>*);
 
