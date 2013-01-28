@@ -1,3 +1,12 @@
+2013-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix location of sandbox profiles in built products
+        https://bugs.webkit.org/show_bug.cgi?id=108026
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj: Sandbox profiles go into WebKit2 framework resources.
+
 2013-01-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Fixing atomicIncrement implementation for Windows by dropping support before XP SP2.
