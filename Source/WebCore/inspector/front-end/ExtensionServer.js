@@ -237,7 +237,7 @@ WebInspector.ExtensionServer.prototype = {
         var sidebar = new WebInspector.ExtensionSidebarPane(message.title, message.id);
         this._clientObjects[id] = sidebar;
         panel.sidebarPanes[id] = sidebar;
-        panel.sidebarElement.appendChild(sidebar.element);
+        sidebar.show(panel.sidebarElement);
 
         return this._status.OK();
     },

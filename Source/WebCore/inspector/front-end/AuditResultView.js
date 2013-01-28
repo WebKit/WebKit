@@ -43,7 +43,7 @@ WebInspector.AuditResultView = function(categoryResults)
     }
     categoryResults.sort(categorySorter);
     for (var i = 0; i < categoryResults.length; ++i)
-        this.element.appendChild(new WebInspector.AuditCategoryResultPane(categoryResults[i]).element);
+        new WebInspector.AuditCategoryResultPane(categoryResults[i]).show(this.element);
 }
 
 WebInspector.AuditResultView.prototype = {

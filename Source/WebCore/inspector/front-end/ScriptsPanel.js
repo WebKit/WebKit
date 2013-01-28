@@ -129,7 +129,7 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     for (var pane in this.sidebarPanes) {
         if (this.sidebarPanes[pane] === this.sidebarPanes.domBreakpoints)
             continue;
-        this._debugSidebarContentsElement.appendChild(this.sidebarPanes[pane].element);
+        this.sidebarPanes[pane].show(this._debugSidebarContentsElement);
     }
 
     this.sidebarPanes.callstack.expanded = true;
@@ -215,8 +215,7 @@ WebInspector.ScriptsPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        this._debugSidebarContentsElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
-        this.sidebarPanes.watchExpressions.show();
+        this.sidebarPanes.domBreakpoints.show(this._debugSidebarContentsElement, this.sidebarPanes.xhrBreakpoints.element);
 
         this._navigatorController.wasShown();
     },

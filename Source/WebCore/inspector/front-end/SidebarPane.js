@@ -28,11 +28,11 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
+ * @extends {WebInspector.View}
  */
 WebInspector.SidebarPane = function(title)
 {
-    this.element = document.createElement("div");
+    WebInspector.View.call(this);
     this.element.className = "pane";
 
     this.titleElement = document.createElement("div");
@@ -134,5 +134,5 @@ WebInspector.SidebarPane.prototype = {
             this.toggleExpanded();
     },
 
-    __proto__: WebInspector.Object.prototype
+    __proto__: WebInspector.View.prototype
 }

@@ -38,17 +38,13 @@ WebInspector.WatchExpressionsSidebarPane = function()
 }
 
 WebInspector.WatchExpressionsSidebarPane.prototype = {
-    show: function()
+    wasShown: function()
     {
-        this._visible = true;
-
         // Expand and update watches first time they are shown.
-        if (this._wasShown) {
+        if (this.section) {
             this._refreshExpressionsIfNeeded();
             return;
         }
-
-        this._wasShown = true;
 
         this.section = new WebInspector.WatchExpressionsSection();
         this.bodyElement.appendChild(this.section.element);
@@ -70,11 +66,6 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
             this.expanded = true;
     },
 
-    hide: function()
-    {
-        this._visible = false;
-    },
-
     reset: function()
     {
         this.refreshExpressions();
@@ -94,7 +85,7 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
 
     _refreshExpressionsIfNeeded: function()
     {
-        if (this._requiresUpdate && this._visible) {
+        if (this._requiresUpdate && this.isShowing()) {
             this.section.update();
             delete this._requiresUpdate;
         } else

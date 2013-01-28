@@ -98,11 +98,8 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
 
-    for (var pane in this.sidebarPanes) {
-        this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
-        if (this.sidebarPanes[pane].onattach)
-            this.sidebarPanes[pane].onattach();
-    }
+    for (var pane in this.sidebarPanes)
+        this.sidebarPanes[pane].show(this.sidebarElement);
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
@@ -148,7 +145,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!this.treeOutline.rootDOMNode)
             WebInspector.domAgent.requestDocument();
 
-        this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
+        this.sidebarPanes.domBreakpoints.show(this.sidebarElement, this.sidebarPanes.eventListeners.element);
     },
 
     willHide: function()
@@ -159,11 +156,6 @@ WebInspector.ElementsPanel.prototype = {
 
         // Detach heavy component on hide
         this.contentElement.removeChild(this.treeOutline.element);
-
-        for (var pane in this.sidebarPanes) {
-            if (this.sidebarPanes[pane].willHide)
-                this.sidebarPanes[pane].willHide();
-        }
 
         WebInspector.Panel.prototype.willHide.call(this);
     },
