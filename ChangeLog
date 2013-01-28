@@ -1,3 +1,18 @@
+2013-01-28  Halton Huo  <halton.huo@intel.com>
+
+        [EFL] Quit debug build without -DSHARED_CORE=ON
+        https://bugs.webkit.org/show_bug.cgi?id=104773
+
+        Reviewed by Laszlo Gombos.
+
+        Debug build without -DSHARED_CORE=ON will fail because libwebcore_efl.a
+        is too big (>4G) to archive. The solution is simply to abort cmake in
+        this condition and notify developer.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsCommon.cmake: 
+
 2013-01-28  Renata Hodovan  <reni@webkit.org>
 
         [WK2] Putting QtWebProcess into a chrooted sandbox

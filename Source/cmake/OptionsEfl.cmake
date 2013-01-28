@@ -9,6 +9,10 @@ if (NOT DEFINED ENABLE_WEBKIT2)
     set(ENABLE_WEBKIT2 ON)
 endif ()
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "debug" AND NOT SHARED_CORE)
+    message(FATAL_ERROR "Turn on the SHARED_CORE flag to make a debug build - e.g.\n build-webkit --efl --debug --cmakeargs=\"-DSHARED_CORE=ON\".\n")
+endif ()
+
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Sqlite REQUIRED)
@@ -215,7 +219,7 @@ endif ()
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
 # Optimize binary size for release builds by removing dead sections on unix/gcc
-if (CMAKE_BUILD_TYPE STREQUAL Release AND CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+if (CMAKE_BUILD_TYPE STREQUAL release AND CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
     set(CMAKE_C_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS}")
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS}")

@@ -7,6 +7,7 @@ project(WebKit)
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_C_FLAGS AND NOT CMAKE_CXX_FLAGS)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
 
 # -----------------------------------------------------------------------------
 # Default library type
