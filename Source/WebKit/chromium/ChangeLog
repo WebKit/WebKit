@@ -1,3 +1,17 @@
+2013-01-28  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Correct auto-zoom when using compositor scaling
+        https://bugs.webkit.org/show_bug.cgi?id=107592
+
+        Reviewed by Adam Barth.
+
+        1. The scale of auto-zoom should exclude deviceScaleFactor because the compositor will handle the scaling;
+        2. Scroll location needs to be calculated differently when pageScaleFactor is handled by the compositor.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        * tests/WebFrameTest.cpp: Updated tests DivAutoZoomParamsTest, DivAutoZoomMultipleDivsTest, DivAutoZoomScaleBoundsTest and DivAutoZoomScaleFontScaleFactorTest, to make two versions of them (WebKitScaling and CompositorScaling).
+
 2013-01-28  Laszlo Gombos  <l.gombos@samsung.com>
 
         Collapse OS(UNIX)||OS(ANDROID) to OS(UNIX)

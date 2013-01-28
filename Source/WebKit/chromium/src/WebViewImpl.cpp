@@ -1162,7 +1162,7 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         // (after double tap, find in page, etc), though the user should still
         // be allowed to manually pinch zoom in further if they desire.
         const float defaultScaleWhenAlreadyLegible = m_minimumPageScaleFactor * doubleTapZoomAlreadyLegibleRatio;
-        float legibleScale = deviceScaleFactor();
+        float legibleScale = settingsImpl()->applyDeviceScaleFactorInCompositor() ? 1 : deviceScaleFactor();
 #if ENABLE(TEXT_AUTOSIZING)
         if (page() && page()->settings())
             legibleScale *= page()->settings()->textAutosizingFontScaleFactor();
@@ -1170,8 +1170,12 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         if (legibleScale < defaultScaleWhenAlreadyLegible)
             legibleScale = (scale == m_minimumPageScaleFactor) ? defaultScaleWhenAlreadyLegible : m_minimumPageScaleFactor;
 
-        const float defaultMargin = doubleTapZoomContentDefaultMargin * deviceScaleFactor();
-        const float minimumMargin = doubleTapZoomContentMinimumMargin * deviceScaleFactor();
+        float defaultMargin = doubleTapZoomContentDefaultMargin;
+        float minimumMargin = doubleTapZoomContentMinimumMargin;
+        if (!settingsImpl()->applyDeviceScaleFactorInCompositor()) {
+            defaultMargin *= deviceScaleFactor();
+            minimumMargin *= deviceScaleFactor();
+        }
         // We want the margins to have the same physical size, which means we
         // need to express them in post-scale size. To do that we'd need to know
         // the scale we're scaling to, but that depends on the margins. Instead
@@ -1182,7 +1186,10 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
                 static_cast<int>(defaultMargin * rect.width / m_size.width),
                 static_cast<int>(minimumMargin * rect.width / m_size.width));
         // Fit block to screen, respecting limits.
-        scale *= static_cast<float>(m_size.width) / rect.width;
+        if (settingsImpl()->applyPageScaleFactorInCompositor())
+            scale = static_cast<float>(m_size.width) / rect.width;
+        else
+            scale *= static_cast<float>(m_size.width) / rect.width;
         scale = min(scale, legibleScale);
         scale = clampPageScaleFactorToLimits(scale);
 
@@ -1207,8 +1214,12 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         // double-tap zoom strategy (fitting the containing block to the screen)
         // though.
 
-        float screenHeight = m_size.height / scale * pageScaleFactor();
-        float screenWidth = m_size.width / scale * pageScaleFactor();
+        float screenHeight = m_size.height / scale;
+        float screenWidth = m_size.width / scale;
+        if (!settingsImpl()->applyPageScaleFactorInCompositor()) {
+            screenHeight *= pageScaleFactor();
+            screenWidth *= pageScaleFactor();
+        }
 
         // Scroll to vertically align the block.
         if (rect.height < screenHeight) {
@@ -1232,8 +1243,10 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
 
     scale = clampPageScaleFactorToLimits(scale);
     scroll = mainFrameImpl()->frameView()->windowToContents(scroll);
-    float scaleDelta = scale / pageScaleFactor();
-    scroll = WebPoint(scroll.x * scaleDelta, scroll.y * scaleDelta);
+    if (!settingsImpl()->applyPageScaleFactorInCompositor()) {
+        float scaleDelta = scale / pageScaleFactor();
+        scroll = WebPoint(scroll.x * scaleDelta, scroll.y * scaleDelta);
+    }
     if (!isAnchor)
         scroll = clampOffsetAtScale(scroll, scale);
 }
