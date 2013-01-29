@@ -8,8 +8,6 @@
             'chromium/DRTDevToolsClient.cpp',
             'chromium/DRTDevToolsClient.h',
             'chromium/DumpRenderTree.cpp',
-            'chromium/DRTTestRunner.cpp',
-            'chromium/DRTTestRunner.h',
             'chromium/MockConstraints.cpp',
             'chromium/MockConstraints.h',
             'chromium/MockWebKitPlatformSupport.cpp',

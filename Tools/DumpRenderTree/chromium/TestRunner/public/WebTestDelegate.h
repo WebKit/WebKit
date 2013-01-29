@@ -112,6 +112,18 @@ public:
     virtual bool wasMockSpeechRecognitionAborted() { return false; }
     virtual void display() { }
     virtual void displayInvalidatedRegion() { }
+    virtual void testFinished() { }
+    virtual void testTimedOut() { }
+    virtual bool isBeingDebugged() { return false; }
+    virtual int layoutTestTimeout() { return 30 * 1000; }
+    virtual void closeRemainingWindows() { }
+    virtual int navigationEntryCount() { return 0; }
+    virtual int windowCount() { return 0; }
+    virtual void setCustomPolicyDelegate(bool, bool) { }
+    virtual void waitForPolicyDelegate() { }
+    virtual void goToOffset(int) { }
+    virtual void reload() { }
+    virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }
 };
 
 }

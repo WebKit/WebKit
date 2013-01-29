@@ -1,3 +1,108 @@
+2013-01-29  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] delete DRTTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=108082
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp: Removed.
+        * DumpRenderTree/chromium/DRTTestRunner.h: Removed.
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::testFinished):
+        (WebTestRunner::WebTestDelegate::testTimedOut):
+        (WebTestRunner::WebTestDelegate::isBeingDebugged):
+        (WebTestRunner::WebTestDelegate::layoutTestTimeout):
+        (WebTestRunner::WebTestDelegate::closeRemainingWindows):
+        (WebTestRunner::WebTestDelegate::navigationEntryCount):
+        (WebTestRunner::WebTestDelegate::windowCount):
+        (WebTestRunner::WebTestDelegate::setCustomPolicyDelegate):
+        (WebTestRunner::WebTestDelegate::waitForPolicyDelegate):
+        (WebTestRunner::WebTestDelegate::goToOffset):
+        (WebTestRunner::WebTestDelegate::reload):
+        (WebTestRunner::WebTestDelegate::loadURLForFrame):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::policyDelegateDone):
+        (WebTestRunner::WebTestRunner::shouldInterceptPostMessage):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::WorkQueue::~WorkQueue):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::WorkQueue::processWorkSoon):
+        (WebTestRunner::TestRunner::WorkQueue::processWork):
+        (WebTestRunner::TestRunner::WorkQueue::reset):
+        (WebTestRunner::TestRunner::WorkQueue::addWork):
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::policyDelegateDone):
+        (WebTestRunner::TestRunner::shouldInterceptPostMessage):
+        (WebTestRunner::TestRunner::waitUntilDone):
+        (WebTestRunner::TestRunner::notifyDone):
+        (WebTestRunner::TestRunner::completeNotifyDone):
+        (WorkItemBackForward):
+        (WebTestRunner::WorkItemBackForward::WorkItemBackForward):
+        (WebTestRunner::WorkItemBackForward::run):
+        (WebTestRunner::TestRunner::queueBackNavigation):
+        (WebTestRunner::TestRunner::queueForwardNavigation):
+        (WorkItemReload):
+        (WebTestRunner::WorkItemReload::run):
+        (WebTestRunner::TestRunner::queueReload):
+        (WorkItemLoadingScript):
+        (WebTestRunner::WorkItemLoadingScript::WorkItemLoadingScript):
+        (WebTestRunner::WorkItemLoadingScript::run):
+        (WorkItemNonLoadingScript):
+        (WebTestRunner::WorkItemNonLoadingScript::WorkItemNonLoadingScript):
+        (WebTestRunner::WorkItemNonLoadingScript::run):
+        (WebTestRunner::TestRunner::queueLoadingScript):
+        (WebTestRunner::TestRunner::queueNonLoadingScript):
+        (WorkItemLoad):
+        (WebTestRunner::WorkItemLoad::WorkItemLoad):
+        (WebTestRunner::WorkItemLoad::run):
+        (WebTestRunner::TestRunner::queueLoad):
+        (WorkItemLoadHTMLString):
+        (WebTestRunner::WorkItemLoadHTMLString::WorkItemLoadHTMLString):
+        (WebTestRunner::WorkItemLoadHTMLString::run):
+        (WebTestRunner::TestRunner::queueLoadHTMLString):
+        (WebTestRunner::TestRunner::locationChangeDone):
+        (WebTestRunner::TestRunner::windowCount):
+        (WebTestRunner::TestRunner::setCloseRemainingWindowsWhenComplete):
+        (WebTestRunner::TestRunner::setCustomPolicyDelegate):
+        (WebTestRunner::TestRunner::waitForPolicyDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        (WorkItem):
+        (WebTestRunner::TestRunner::WorkItem::~WorkItem):
+        (WorkQueue):
+        (WebTestRunner::TestRunner::WorkQueue::WorkQueue):
+        (WebTestRunner::TestRunner::WorkQueue::setFrozen):
+        (WebTestRunner::TestRunner::WorkQueue::isEmpty):
+        (WebTestRunner::TestRunner::WorkQueue::taskList):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::runFileTest):
+        (TestShell::loadURL):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::testRunner):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::testFinished):
+        (WebViewHost::testTimedOut):
+        (WebViewHost::isBeingDebugged):
+        (WebViewHost::layoutTestTimeout):
+        (WebViewHost::closeRemainingWindows):
+        (WebViewHost::navigationEntryCount):
+        (WebViewHost::windowCount):
+        (WebViewHost::setCustomPolicyDelegate):
+        (WebViewHost::waitForPolicyDelegate):
+        (WebViewHost::goToOffset):
+        (WebViewHost::reload):
+        (WebViewHost::loadURLForFrame):
+        (WebViewHost::shutdown):
+        (WebViewHost::testRunner):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebTestRunner):
+        (WebViewHost):
+
 2013-01-28  Timothy Loh  <timloh@chromium.com>
 
         Refactor ChangeLog and PrepareChangeLog to use FileSystem objects

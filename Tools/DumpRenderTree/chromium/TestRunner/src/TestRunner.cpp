@@ -55,6 +55,7 @@
 #include "WebView.h"
 #include "WebWorkerInfo.h"
 #include "v8/include/v8.h"
+#include <public/WebData.h>
 #include <public/WebPoint.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
@@ -102,14 +103,83 @@ private:
 
 }
 
+TestRunner::WorkQueue::~WorkQueue()
+{
+    reset();
+}
+
+void TestRunner::WorkQueue::processWorkSoon()
+{
+    if (m_controller->topLoadingFrame())
+        return;
+
+    if (!m_queue.isEmpty()) {
+        // We delay processing queued work to avoid recursion problems.
+        m_controller->m_delegate->postTask(new WorkQueueTask(this));
+    } else if (!m_controller->m_waitUntilDone)
+        m_controller->m_delegate->testFinished();
+}
+
+void TestRunner::WorkQueue::processWork()
+{
+    // Quit doing work once a load is in progress.
+    while (!m_queue.isEmpty()) {
+        bool startedLoad = m_queue.first()->run(m_controller->m_delegate, m_controller->m_webView);
+        delete m_queue.takeFirst();
+        if (startedLoad)
+            return;
+    }
+
+    if (!m_controller->m_waitUntilDone && !m_controller->topLoadingFrame())
+        m_controller->m_delegate->testFinished();
+}
+
+void TestRunner::WorkQueue::reset()
+{
+    m_frozen = false;
+    while (!m_queue.isEmpty())
+        delete m_queue.takeFirst();
+}
+
+void TestRunner::WorkQueue::addWork(WorkItem* work)
+{
+    if (m_frozen) {
+        delete work;
+        return;
+    }
+    m_queue.append(work);
+}
+
+
 TestRunner::TestRunner()
     : m_testIsRunning(false)
+    , m_closeRemainingWindows(true)
+    , m_workQueue(this)
     , m_delegate(0)
     , m_webView(0)
     , m_topLoadingFrame(0)
     , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
     , m_webPermissions(adoptPtr(new WebPermissions))
 {
+    // Initialize the map that associates methods of this class with the names
+    // they will use when called by JavaScript. The actual binding of those
+    // names to their methods will be done by calling bindToJavaScript() (defined
+    // by CppBoundClass, the parent to TestRunner).
+
+    // Methods controlling test execution.
+    bindMethod("notifyDone", &TestRunner::notifyDone);
+    bindMethod("queueBackNavigation", &TestRunner::queueBackNavigation);
+    bindMethod("queueForwardNavigation", &TestRunner::queueForwardNavigation);
+    bindMethod("queueLoadingScript", &TestRunner::queueLoadingScript);
+    bindMethod("queueLoad", &TestRunner::queueLoad);
+    bindMethod("queueLoadHTMLString", &TestRunner::queueLoadHTMLString);
+    bindMethod("queueNonLoadingScript", &TestRunner::queueNonLoadingScript);
+    bindMethod("queueReload", &TestRunner::queueReload);
+    bindMethod("setCloseRemainingWindowsWhenComplete", &TestRunner::setCloseRemainingWindowsWhenComplete);
+    bindMethod("setCustomPolicyDelegate", &TestRunner::setCustomPolicyDelegate);
+    bindMethod("waitForPolicyDelegate", &TestRunner::waitForPolicyDelegate);
+    bindMethod("waitUntilDone", &TestRunner::waitUntilDone);
+    bindMethod("windowCount", &TestRunner::windowCount);
     // Methods implemented in terms of chromium's public WebKit API.
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
     bindMethod("execCommand", &TestRunner::execCommand);
@@ -246,6 +316,9 @@ TestRunner::TestRunner()
     bindProperty("globalFlag", &m_globalFlag);
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
+    // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
+    bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
+    bindProperty("interceptPostMessage", &m_interceptPostMessage);
 
     // The following are stubs.
     bindMethod("dumpDatabaseCallbacks", &TestRunner::notImplemented);
@@ -303,6 +376,8 @@ void TestRunner::reset()
         m_webView->disableAutoResizeMode();
     }
     m_topLoadingFrame = 0;
+    m_waitUntilDone = false;
+
     WebSecurityPolicy::resetOriginAccessWhitelists();
 #if OS(LINUX) || OS(ANDROID)
     WebFontRendering::setSubpixelPositioning(false);
@@ -345,6 +420,8 @@ void TestRunner::reset()
 
     m_globalFlag.set(false);
     m_titleTextDirection.set("ltr");
+    m_webHistoryItemCount.set(0);
+    m_interceptPostMessage.set(false);
     m_platformName.set("chromium");
 
     m_userStyleSheetLocation = WebURL();
@@ -352,7 +429,14 @@ void TestRunner::reset()
     m_webPermissions->reset();
 
     m_taskList.revokeAll();
+    m_workQueue.reset();
+
+    if (m_closeRemainingWindows)
+        m_delegate->closeRemainingWindows();
+    else
+        m_closeRemainingWindows = true;
 }
+
 
 void TestRunner::setTestIsRunning(bool running)
 {
@@ -538,6 +622,239 @@ void TestRunner::setTopLoadingFrame(WebFrame* frame, bool clear)
 WebFrame* TestRunner::topLoadingFrame() const
 {
     return m_topLoadingFrame;
+}
+
+void TestRunner::policyDelegateDone()
+{
+    ASSERT(m_waitUntilDone);
+    m_delegate->testFinished();
+    m_waitUntilDone = false;
+}
+
+bool TestRunner::shouldInterceptPostMessage() const
+{
+    return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
+}
+
+void TestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
+{
+    if (!m_delegate->isBeingDebugged())
+        m_delegate->postDelayedTask(new NotifyDoneTimedOutTask(this), m_delegate->layoutTestTimeout());
+    m_waitUntilDone = true;
+    result->setNull();
+}
+
+void TestRunner::notifyDone(const CppArgumentList&, CppVariant* result)
+{
+    // Test didn't timeout. Kill the timeout timer.
+    taskList()->revokeAll();
+
+    completeNotifyDone(false);
+    result->setNull();
+}
+
+void TestRunner::completeNotifyDone(bool isTimeout)
+{
+    if (m_waitUntilDone && !topLoadingFrame() && m_workQueue.isEmpty()) {
+        if (isTimeout)
+            m_delegate->testTimedOut();
+        else
+            m_delegate->testFinished();
+    }
+    m_waitUntilDone = false;
+}
+
+class WorkItemBackForward : public TestRunner::WorkItem {
+public:
+    WorkItemBackForward(int distance) : m_distance(distance) { }
+    bool run(WebTestDelegate* delegate, WebView*)
+    {
+        delegate->goToOffset(m_distance);
+        return true; // FIXME: Did it really start a navigation?
+    }
+
+private:
+    int m_distance;
+};
+
+void TestRunner::queueBackNavigation(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isNumber())
+        m_workQueue.addWork(new WorkItemBackForward(-arguments[0].toInt32()));
+    result->setNull();
+}
+
+void TestRunner::queueForwardNavigation(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isNumber())
+        m_workQueue.addWork(new WorkItemBackForward(arguments[0].toInt32()));
+    result->setNull();
+}
+
+class WorkItemReload : public TestRunner::WorkItem {
+public:
+    bool run(WebTestDelegate* delegate, WebView*)
+    {
+        delegate->reload();
+        return true;
+    }
+};
+
+void TestRunner::queueReload(const CppArgumentList&, CppVariant* result)
+{
+    m_workQueue.addWork(new WorkItemReload);
+    result->setNull();
+}
+
+class WorkItemLoadingScript : public TestRunner::WorkItem {
+public:
+    WorkItemLoadingScript(const string& script) : m_script(script) { }
+    bool run(WebTestDelegate*, WebView* webView)
+    {
+        webView->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8(m_script)));
+        return true; // FIXME: Did it really start a navigation?
+    }
+
+private:
+    string m_script;
+};
+
+class WorkItemNonLoadingScript : public TestRunner::WorkItem {
+public:
+    WorkItemNonLoadingScript(const string& script) : m_script(script) { }
+    bool run(WebTestDelegate*, WebView* webView)
+    {
+        webView->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8(m_script)));
+        return false;
+    }
+
+private:
+    string m_script;
+};
+
+void TestRunner::queueLoadingScript(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString())
+        m_workQueue.addWork(new WorkItemLoadingScript(arguments[0].toString()));
+    result->setNull();
+}
+
+void TestRunner::queueNonLoadingScript(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString())
+        m_workQueue.addWork(new WorkItemNonLoadingScript(arguments[0].toString()));
+    result->setNull();
+}
+
+class WorkItemLoad : public TestRunner::WorkItem {
+public:
+    WorkItemLoad(const WebURL& url, const string& target)
+        : m_url(url)
+        , m_target(target) { }
+    bool run(WebTestDelegate* delegate, WebView*)
+    {
+        delegate->loadURLForFrame(m_url, m_target);
+        return true; // FIXME: Did it really start a navigation?
+    }
+
+private:
+    WebURL m_url;
+    string m_target;
+};
+
+void TestRunner::queueLoad(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        // FIXME: Implement WebURL::resolve() and avoid GURL.
+        GURL currentURL = m_webView->mainFrame()->document().url();
+        GURL fullURL = currentURL.Resolve(arguments[0].toString());
+
+        string target = "";
+        if (arguments.size() > 1 && arguments[1].isString())
+            target = arguments[1].toString();
+
+        m_workQueue.addWork(new WorkItemLoad(fullURL, target));
+    }
+    result->setNull();
+}
+
+class WorkItemLoadHTMLString : public TestRunner::WorkItem  {
+public:
+    WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL)
+        : m_html(html)
+        , m_baseURL(baseURL) { }
+    WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL, const WebURL& unreachableURL)
+        : m_html(html)
+        , m_baseURL(baseURL)
+        , m_unreachableURL(unreachableURL) { }
+    bool run(WebTestDelegate*, WebView* webView)
+    {
+        webView->mainFrame()->loadHTMLString(
+            WebKit::WebData(m_html.data(), m_html.length()), m_baseURL, m_unreachableURL);
+        return true;
+    }
+
+private:
+    std::string m_html;
+    WebURL m_baseURL;
+    WebURL m_unreachableURL;
+};
+
+void TestRunner::queueLoadHTMLString(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isString()) {
+        string html = arguments[0].toString();
+        WebURL baseURL(GURL(""));
+        if (arguments.size() > 1 && arguments[1].isString())
+            baseURL = WebURL(GURL(arguments[1].toString()));
+        if (arguments.size() > 2 && arguments[2].isString())
+            m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL, WebURL(GURL(arguments[2].toString()))));
+        else
+            m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL));
+    }
+    result->setNull();
+}
+
+void TestRunner::locationChangeDone()
+{
+    m_webHistoryItemCount.set(m_delegate->navigationEntryCount());
+
+    // No more new work after the first complete load.
+    m_workQueue.setFrozen(true);
+
+    if (!m_waitUntilDone)
+        m_workQueue.processWorkSoon();
+}
+
+void TestRunner::windowCount(const CppArgumentList&, CppVariant* result)
+{
+    result->set(static_cast<int>(m_delegate->windowCount()));
+}
+
+void TestRunner::setCloseRemainingWindowsWhenComplete(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_closeRemainingWindows = arguments[0].value.boolValue;
+    result->setNull();
+}
+
+void TestRunner::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        bool enable = arguments[0].value.boolValue;
+        bool permissive = false;
+        if (arguments.size() > 1 && arguments[1].isBool())
+            permissive = arguments[1].value.boolValue;
+        m_delegate->setCustomPolicyDelegate(enable, permissive);
+    }
+    result->setNull();
+}
+
+void TestRunner::waitForPolicyDelegate(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->waitForPolicyDelegate();
+    m_waitUntilDone = true;
+    result->setNull();
 }
 
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)

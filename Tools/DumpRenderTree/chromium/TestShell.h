@@ -31,9 +31,9 @@
 #ifndef TestShell_h
 #define TestShell_h
 
-#include "DRTTestRunner.h"
 #include "NotificationPresenter.h"
 #include "TestEventPrinter.h"
+#include "TestRunner/src/TestRunner.h"
 #include "WebPreferences.h"
 #include "WebTestInterfaces.h"
 #include "WebViewHost.h"
@@ -84,7 +84,7 @@ public:
     WebKit::WebView* webView() const { return m_webView; }
     // Returns the host for the main WebView.
     WebViewHost* webViewHost() const { return m_webViewHost.get(); }
-    DRTTestRunner* testRunner() const { return m_testRunner.get(); }
+    WebTestRunner::WebTestRunner* testRunner() const { return m_testRunner.get(); }
     WebTestRunner::WebEventSender* eventSender() const { return m_testInterfaces->eventSender(); }
     WebTestRunner::WebAccessibilityController* accessibilityController() const { return m_testInterfaces->accessibilityController(); }
 #if ENABLE(NOTIFICATIONS)
@@ -211,7 +211,7 @@ private:
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<WebTestRunner::WebTestInterfaces> m_testInterfaces;
     OwnPtr<WebTestRunner::WebTestInterfaces> m_devToolsTestInterfaces;
-    OwnPtr<DRTTestRunner> m_testRunner;
+    OwnPtr<WebTestRunner::TestRunner> m_testRunner;
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<NotificationPresenter> m_notificationPresenter;
 #endif

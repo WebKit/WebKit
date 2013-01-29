@@ -46,7 +46,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-class DRTTestRunner;
 class MockWebSpeechInputController;
 class MockWebSpeechRecognizer;
 class SkCanvas;
@@ -75,6 +74,10 @@ class MediaStreamUtil;
 class TestMediaStreamClient;
 }
 
+namespace WebTestRunner {
+class WebTestRunner;
+}
+
 class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost, public WebKit::WebPrerendererClient, public WebTestRunner::WebTestDelegate {
  public:
     WebViewHost(TestShell*);
@@ -86,8 +89,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     WebTestRunner::WebTestProxyBase* proxy() const;
     void setProxy(WebTestRunner::WebTestProxyBase*);
     void reset();
-    void waitForPolicyDelegate();
-    void setCustomPolicyDelegate(bool, bool);
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
     void paintRect(const WebKit::WebRect&);
@@ -96,7 +97,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     SkCanvas* canvas();
     void displayRepaintMask();
 
-    void loadURLForFrame(const WebKit::WebURL&, const WebKit::WebString& frameName);
     TestNavigationController* navigationController() { return m_navigationController.get(); }
 
     void closeWidget();
@@ -169,6 +169,18 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 #endif
     virtual void display() OVERRIDE;
     virtual void displayInvalidatedRegion() OVERRIDE;
+    virtual void testFinished() OVERRIDE;
+    virtual void testTimedOut() OVERRIDE;
+    virtual bool isBeingDebugged() OVERRIDE;
+    virtual int layoutTestTimeout() OVERRIDE;
+    virtual void closeRemainingWindows() OVERRIDE;
+    virtual int navigationEntryCount() OVERRIDE;
+    virtual int windowCount() OVERRIDE;
+    virtual void setCustomPolicyDelegate(bool, bool) OVERRIDE;
+    virtual void waitForPolicyDelegate() OVERRIDE;
+    virtual void goToOffset(int) OVERRIDE;
+    virtual void reload() OVERRIDE;
+    void loadURLForFrame(const WebKit::WebURL&, const std::string& frameName) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -294,7 +306,7 @@ private:
         CallbackMethodType m_callback;
     };
 
-    DRTTestRunner* testRunner() const;
+    WebTestRunner::WebTestRunner* testRunner() const;
 
     // Called the title of the page changes.
     // Can be used to update the title of the window.

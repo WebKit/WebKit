@@ -33,7 +33,6 @@
 
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
-#include "DRTTestRunner.h"
 #include "MockWebPrerenderingSupport.h"
 #include "WebArrayBufferView.h"
 #include "WebCache.h"
@@ -162,7 +161,7 @@ void TestShell::initialize()
 {
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     m_devToolsTestInterfaces = adoptPtr(new WebTestInterfaces());
-    m_testRunner = adoptPtr(new DRTTestRunner(this));
+    m_testRunner = adoptPtr(new TestRunner());
     m_testInterfaces->setTestRunner(m_testRunner.get());
     m_devToolsTestInterfaces->setTestRunner(m_testRunner.get());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -292,9 +291,6 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
         || testUrl.find("\\inspector\\") != string::npos)
         showDevTools();
 
-    if (m_params.debugLayerTree)
-        m_testRunner->setShowDebugLayerTree(true);
-
     if (m_dumpWhenFinished)
         m_printer.handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
@@ -350,7 +346,7 @@ void TestShell::resetTestController()
 
 void TestShell::loadURL(const WebURL& url)
 {
-    m_webViewHost->loadURLForFrame(url, WebString());
+    m_webViewHost->loadURLForFrame(url, string());
 }
 
 void TestShell::reload()
@@ -781,7 +777,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAg
     m_prefs.applyTo(view);
     view->initializeMainFrame(host);
     m_windowList.append(host);
-    host->loadURLForFrame(url, WebString());
+    host->loadURLForFrame(url, string());
     return host;
 }
 
