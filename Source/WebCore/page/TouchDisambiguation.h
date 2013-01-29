@@ -38,7 +38,7 @@ namespace WebCore {
 class Frame;
 class IntRect;
 
-void findGoodTouchTargets(const IntRect& touchBox, Frame* mainFrame, float pageScaleFactor, Vector<IntRect>& goodTargets);
+void findGoodTouchTargets(const IntRect& touchBox, Frame* mainFrame, Vector<IntRect>& goodTargets);
 
 } // namespace WebCore
 

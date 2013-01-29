@@ -86,14 +86,14 @@ struct TouchTargetData {
     float score;
 };
 
-void findGoodTouchTargets(const IntRect& touchBox, Frame* mainFrame, float pageScaleFactor, Vector<IntRect>& goodTargets)
+void findGoodTouchTargets(const IntRect& touchBox, Frame* mainFrame, Vector<IntRect>& goodTargets)
 {
     goodTargets.clear();
 
     int touchPointPadding = ceil(max(touchBox.width(), touchBox.height()) * 0.5);
     // FIXME: Rect-based hit test doesn't transform the touch point size.
-    //        We have to pre-apply page scale factor here.
-    int padding = ceil(touchPointPadding / pageScaleFactor);
+    //        We have to pre-apply frame scale factor here.
+    int padding = ceil(touchPointPadding / mainFrame->frameScaleFactor());
 
     IntPoint touchPoint = touchBox.center();
     IntPoint contentsPoint = mainFrame->view()->windowToContents(touchPoint);

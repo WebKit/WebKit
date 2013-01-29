@@ -758,7 +758,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (event.data.tap.width > 0 && !shouldDisableDesktopWorkarounds()) {
             IntRect boundingBox(event.x - event.data.tap.width / 2, event.y - event.data.tap.height / 2, event.data.tap.width, event.data.tap.height);
             Vector<IntRect> goodTargets;
-            findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
+            findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), goodTargets);
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
             if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets)) {
@@ -2114,6 +2114,8 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
             gestureEvent = *static_cast<const WebGestureEvent*>(&inputEvent);
             gestureEvent.x = gestureEvent.x / pageScaleFactor();
             gestureEvent.y = gestureEvent.y / pageScaleFactor();
+            gestureEvent.data.tap.width /= pageScaleFactor();
+            gestureEvent.data.tap.height /= pageScaleFactor();
             inputEventTransformed = static_cast<const WebInputEvent*>(&gestureEvent);
         }
     }

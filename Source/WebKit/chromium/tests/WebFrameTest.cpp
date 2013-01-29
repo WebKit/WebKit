@@ -2067,6 +2067,40 @@ TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
     }
 }
 
+TEST_F(WebFrameTest, DisambiguationPopupPageScale)
+{
+    registerMockedHttpURLLoad("disambiguation_popup_page_scale.html");
+
+    DisambiguationPopupTestWebViewClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup_page_scale.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->resize(WebSize(1000, 1000));
+    webViewImpl->layout();
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(80, 80));
+    EXPECT_TRUE(client.triggered());
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(230, 190));
+    EXPECT_TRUE(client.triggered());
+
+    webViewImpl->setPageScaleFactor(3.0f, WebPoint(0, 0));
+    webViewImpl->layout();
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(240, 240));
+    EXPECT_TRUE(client.triggered());
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(690, 570));
+    EXPECT_FALSE(client.triggered());
+}
+
 class TestSubstituteDataWebFrameClient : public WebFrameClient {
 public:
     TestSubstituteDataWebFrameClient()
