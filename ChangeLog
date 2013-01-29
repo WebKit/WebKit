@@ -1,3 +1,17 @@
+2013-01-29  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Enable Workers for WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=108099
+
+        Reviewed by Gyuyoung Kim.
+
+        WORKERS are enabled for all CMake based ports except WinCE.
+        Turn on WORKERS for all CMake based ports.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2013-01-28  Halton Huo  <halton.huo@intel.com>
 
         [EFL] Quit debug build without -DSHARED_CORE=ON
