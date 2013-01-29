@@ -417,3 +417,16 @@ webkit.org/b/107286 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ Ima
 webkit.org/b/107286 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-side-margins.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
+
+# Broken after r141051.
+webkit.org/b/108182 fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
+webkit.org/b/108182 fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
+webkit.org/b/108182 fast/js/regress/integer-modulo.html [ Skip ]
+webkit.org/b/108182 fast/replaced/invalid-object-with-fallback.html [ Skip ]
+webkit.org/b/108182 http/tests/plugins [ Skip ]
+webkit.org/b/108182 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Skip ]
+webkit.org/b/108182 http/tests/security/cross-origin-plugin-allowed.html [ Skip ]
+webkit.org/b/108182 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+webkit.org/b/108182 http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
+webkit.org/b/108182 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+webkit.org/b/108182 plugins [ Skip ]
