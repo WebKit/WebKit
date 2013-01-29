@@ -1,3 +1,72 @@
+2013-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Force debug builds to do bounds checks on contiguous property storage
+        https://bugs.webkit.org/show_bug.cgi?id=108212
+
+        Reviewed by Mark Hahnenberg.
+
+        Add a ContiguousData type that we use to represent contiguous property
+        storage.  In release builds it is simply a pointer to the correct type,
+        but in debug builds it also carries the data length and performs bounds
+        checks.  This means we don't have to add as many manual bounds assertions
+        when performing operations over contiguous data.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/ArrayStorage.h:
+        (ArrayStorage):
+        (JSC::ArrayStorage::vector):
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::ContiguousData):
+        (ContiguousData):
+        (JSC::ContiguousData::operator[]):
+        (JSC::ContiguousData::data):
+        (JSC::ContiguousData::length):
+        (JSC):
+        (JSC::Butterfly::contiguousInt32):
+        (Butterfly):
+        (JSC::Butterfly::contiguousDouble):
+        (JSC::Butterfly::contiguous):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortNumericVector):
+        (ContiguousTypeAccessor):
+        (JSC::ContiguousTypeAccessor::getAsValue):
+        (JSC::ContiguousTypeAccessor::setWithValue):
+        (JSC::ContiguousTypeAccessor::replaceDataReference):
+        (JSC):
+        (JSC::JSArray::sortCompactedVector):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+        (JSArray):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::genericConvertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::rageConvertDoubleToContiguous):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::rageEnsureContiguousSlow):
+        (JSC::JSObject::ensureLengthSlow):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureInt32):
+        (JSC::JSObject::ensureDouble):
+        (JSC::JSObject::ensureContiguous):
+        (JSC::JSObject::rageEnsureContiguous):
+        (JSObject):
+        (JSC::JSObject::indexingData):
+        (JSC::JSObject::currentIndexingData):
+
 2013-01-29  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Unreviewed build fix after r141050

@@ -161,8 +161,8 @@ private:
     template<IndexingType indexingType>
     void sortNumericVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
         
-    template<IndexingType indexingType>
-    void sortCompactedVector(ExecState*, void* begin, unsigned relevantLength);
+    template<IndexingType indexingType, typename StorageType>
+    void sortCompactedVector(ExecState*, ContiguousData<StorageType>, unsigned relevantLength);
         
     template<IndexingType indexingType>
     void sortVector(ExecState*, JSValue compareFunction, CallType, const CallData&);

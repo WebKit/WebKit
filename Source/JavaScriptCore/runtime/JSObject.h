@@ -622,7 +622,7 @@ public:
     // indexing should be sparse, we're having a bad time, or because
     // we already have a more general form of storage (double,
     // contiguous, array storage).
-    WriteBarrier<Unknown>* ensureInt32(JSGlobalData& globalData)
+    ContiguousJSValues ensureInt32(JSGlobalData& globalData)
     {
         if (LIKELY(hasInt32(structure()->indexingType())))
             return m_butterfly->contiguousInt32();
@@ -634,7 +634,7 @@ public:
     // indexing should be sparse, we're having a bad time, or because
     // we already have a more general form of storage (contiguous,
     // or array storage).
-    double* ensureDouble(JSGlobalData& globalData)
+    ContiguousDoubles ensureDouble(JSGlobalData& globalData)
     {
         if (LIKELY(hasDouble(structure()->indexingType())))
             return m_butterfly->contiguousDouble();
@@ -644,7 +644,7 @@ public:
         
     // Returns 0 if contiguous storage cannot be created - either because
     // indexing should be sparse or because we're having a bad time.
-    WriteBarrier<Unknown>* ensureContiguous(JSGlobalData& globalData)
+    ContiguousJSValues ensureContiguous(JSGlobalData& globalData)
     {
         if (LIKELY(hasContiguous(structure()->indexingType())))
             return m_butterfly->contiguous();
@@ -655,7 +655,7 @@ public:
     // Same as ensureContiguous(), except that if the indexed storage is in
     // double mode, then it does a rage conversion to contiguous: it
     // attempts to convert each double to an int32.
-    WriteBarrier<Unknown>* rageEnsureContiguous(JSGlobalData& globalData)
+    ContiguousJSValues rageEnsureContiguous(JSGlobalData& globalData)
     {
         if (LIKELY(hasContiguous(structure()->indexingType())))
             return m_butterfly->contiguous();
@@ -735,9 +735,9 @@ protected:
     }
         
     Butterfly* createInitialUndecided(JSGlobalData&, unsigned length);
-    WriteBarrier<Unknown>* createInitialInt32(JSGlobalData&, unsigned length);
-    double* createInitialDouble(JSGlobalData&, unsigned length);
-    WriteBarrier<Unknown>* createInitialContiguous(JSGlobalData&, unsigned length);
+    ContiguousJSValues createInitialInt32(JSGlobalData&, unsigned length);
+    ContiguousDoubles createInitialDouble(JSGlobalData&, unsigned length);
+    ContiguousJSValues createInitialContiguous(JSGlobalData&, unsigned length);
         
     void convertUndecidedForValue(JSGlobalData&, JSValue);
     void convertInt32ForValue(JSGlobalData&, JSValue);
@@ -745,21 +745,21 @@ protected:
     ArrayStorage* createArrayStorage(JSGlobalData&, unsigned length, unsigned vectorLength);
     ArrayStorage* createInitialArrayStorage(JSGlobalData&);
         
-    WriteBarrier<Unknown>* convertUndecidedToInt32(JSGlobalData&);
-    double* convertUndecidedToDouble(JSGlobalData&);
-    WriteBarrier<Unknown>* convertUndecidedToContiguous(JSGlobalData&);
+    ContiguousJSValues convertUndecidedToInt32(JSGlobalData&);
+    ContiguousDoubles convertUndecidedToDouble(JSGlobalData&);
+    ContiguousJSValues convertUndecidedToContiguous(JSGlobalData&);
     ArrayStorage* convertUndecidedToArrayStorage(JSGlobalData&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertUndecidedToArrayStorage(JSGlobalData&, NonPropertyTransition);
     ArrayStorage* convertUndecidedToArrayStorage(JSGlobalData&);
         
-    double* convertInt32ToDouble(JSGlobalData&);
-    WriteBarrier<Unknown>* convertInt32ToContiguous(JSGlobalData&);
+    ContiguousDoubles convertInt32ToDouble(JSGlobalData&);
+    ContiguousJSValues convertInt32ToContiguous(JSGlobalData&);
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&, NonPropertyTransition);
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&);
     
-    WriteBarrier<Unknown>* convertDoubleToContiguous(JSGlobalData&);
-    WriteBarrier<Unknown>* rageConvertDoubleToContiguous(JSGlobalData&);
+    ContiguousJSValues convertDoubleToContiguous(JSGlobalData&);
+    ContiguousJSValues rageConvertDoubleToContiguous(JSGlobalData&);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&, NonPropertyTransition);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&);
@@ -810,7 +810,7 @@ protected:
     // as if it contained JSValues. But it won't always contain JSValues.
     // Make sure you cast this to the appropriate type before using.
     template<IndexingType indexingType>
-    WriteBarrier<Unknown>* indexingData()
+    ContiguousJSValues indexingData()
     {
         switch (indexingType) {
         case ALL_INT32_INDEXING_TYPES:
@@ -819,15 +819,15 @@ protected:
             return m_butterfly->contiguous();
                 
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly->arrayStorage()->m_vector;
-                
+            return m_butterfly->arrayStorage()->vector();
+
         default:
             CRASH();
-            return 0;
+            return ContiguousJSValues();
         }
     }
 
-    WriteBarrier<Unknown>* currentIndexingData()
+    ContiguousJSValues currentIndexingData()
     {
         switch (structure()->indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
@@ -835,11 +835,11 @@ protected:
             return m_butterfly->contiguous();
 
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly->arrayStorage()->m_vector;
+            return m_butterfly->arrayStorage()->vector();
 
         default:
             CRASH();
-            return 0;
+            return ContiguousJSValues();
         }
     }
         
@@ -945,16 +945,16 @@ private:
         
     void ensureLengthSlow(JSGlobalData&, unsigned length);
         
-    WriteBarrier<Unknown>* ensureInt32Slow(JSGlobalData&);
-    double* ensureDoubleSlow(JSGlobalData&);
-    WriteBarrier<Unknown>* ensureContiguousSlow(JSGlobalData&);
-    WriteBarrier<Unknown>* rageEnsureContiguousSlow(JSGlobalData&);
+    ContiguousJSValues ensureInt32Slow(JSGlobalData&);
+    ContiguousDoubles ensureDoubleSlow(JSGlobalData&);
+    ContiguousJSValues ensureContiguousSlow(JSGlobalData&);
+    ContiguousJSValues rageEnsureContiguousSlow(JSGlobalData&);
     ArrayStorage* ensureArrayStorageSlow(JSGlobalData&);
     
     enum DoubleToContiguousMode { EncodeValueAsDouble, RageConvertDoubleToValue };
     template<DoubleToContiguousMode mode>
-    WriteBarrier<Unknown>* genericConvertDoubleToContiguous(JSGlobalData&);
-    WriteBarrier<Unknown>* ensureContiguousSlow(JSGlobalData&, DoubleToContiguousMode);
+    ContiguousJSValues genericConvertDoubleToContiguous(JSGlobalData&);
+    ContiguousJSValues ensureContiguousSlow(JSGlobalData&, DoubleToContiguousMode);
     
 protected:
     Butterfly* m_butterfly;

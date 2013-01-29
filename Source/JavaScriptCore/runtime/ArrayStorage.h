@@ -72,7 +72,9 @@ public:
     {
         return m_sparseMap && m_sparseMap->sparseMode();
     }
-    
+
+    ContiguousJSValues vector() { return ContiguousJSValues(m_vector, vectorLength()); }
+
     WriteBarrier<SparseArrayValueMap> m_sparseMap;
     unsigned m_indexBias;
     unsigned m_numValuesInVector;

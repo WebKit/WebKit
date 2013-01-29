@@ -1492,7 +1492,7 @@ char* DFG_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
     
-    return reinterpret_cast<char*>(asObject(cell)->ensureInt32(globalData));
+    return reinterpret_cast<char*>(asObject(cell)->ensureInt32(globalData).data());
 }
 
 char* DFG_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
@@ -1503,7 +1503,7 @@ char* DFG_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
     
-    return reinterpret_cast<char*>(asObject(cell)->ensureDouble(globalData));
+    return reinterpret_cast<char*>(asObject(cell)->ensureDouble(globalData).data());
 }
 
 char* DFG_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
@@ -1514,7 +1514,7 @@ char* DFG_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
     
-    return reinterpret_cast<char*>(asObject(cell)->ensureContiguous(globalData));
+    return reinterpret_cast<char*>(asObject(cell)->ensureContiguous(globalData).data());
 }
 
 char* DFG_OPERATION operationRageEnsureContiguous(ExecState* exec, JSCell* cell)
@@ -1525,7 +1525,7 @@ char* DFG_OPERATION operationRageEnsureContiguous(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
     
-    return reinterpret_cast<char*>(asObject(cell)->rageEnsureContiguous(globalData));
+    return reinterpret_cast<char*>(asObject(cell)->rageEnsureContiguous(globalData).data());
 }
 
 char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)

@@ -38,6 +38,41 @@ class JSGlobalData;
 class CopyVisitor;
 struct ArrayStorage;
 
+template <typename T> struct ContiguousData {
+    ContiguousData()
+        : m_data(0)
+#if !ASSERT_DISABLED
+        , m_length(0)
+#endif
+    {
+    }
+    ContiguousData(T* data, size_t length)
+        : m_data(data)
+#if !ASSERT_DISABLED
+        , m_length(length)
+#endif
+    {
+        UNUSED_PARAM(length);
+    }
+
+    const T& operator[](size_t index) const { ASSERT(index < m_length); return m_data[index]; }
+    T& operator[](size_t index) { ASSERT(index < m_length); return m_data[index]; }
+
+    T* data() const { return m_data; }
+#if !ASSERT_DISABLED
+    size_t length() const { return m_length; }
+#endif
+
+private:
+    T* m_data;
+#if !ASSERT_DISABLED
+    size_t m_length;
+#endif
+};
+
+typedef ContiguousData<double> ContiguousDoubles;
+typedef ContiguousData<WriteBarrier<Unknown> > ContiguousJSValues;
+
 class Butterfly {
     WTF_MAKE_NONCOPYABLE(Butterfly);
 private:
@@ -88,9 +123,10 @@ public:
     template<typename T>
     T* indexingPayload() { return reinterpret_cast<T*>(this); }
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
-    WriteBarrier<Unknown>* contiguousInt32() { return indexingPayload<WriteBarrier<Unknown> >(); }
-    double* contiguousDouble() { return indexingPayload<double>(); }
-    WriteBarrier<Unknown>* contiguous() { return indexingPayload<WriteBarrier<Unknown> >(); }
+    ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown> >(), vectorLength()); }
+
+    ContiguousDoubles contiguousDouble() { return ContiguousDoubles(indexingPayload<double>(), vectorLength()); }
+    ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown> >(), vectorLength()); }
     
     static Butterfly* fromContiguous(WriteBarrier<Unknown>* contiguous)
     {
