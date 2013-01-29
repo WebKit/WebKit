@@ -115,7 +115,6 @@ list(APPEND WebCore_SOURCES
     bindings/v8/custom/V8HTMLInputElementConstructor.cpp
     bindings/v8/custom/V8HTMLLinkElementCustom.cpp
     bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp
-    bindings/v8/custom/V8HTMLOutputElementCustom.cpp
     bindings/v8/custom/V8HTMLPlugInElementCustom.cpp
     bindings/v8/custom/V8HTMLSelectElementCustom.cpp
     bindings/v8/custom/V8HistoryCustom.cpp

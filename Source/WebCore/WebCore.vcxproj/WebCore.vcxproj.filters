@@ -5973,9 +5973,6 @@
     <ClCompile Include="..\bindings\js\JSHTMLOptionsCollectionCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSHTMLOutputElementCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSHTMLSelectElementCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>

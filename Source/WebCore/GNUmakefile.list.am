@@ -2351,7 +2351,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLObjectElementCustom.h \
 	Source/WebCore/bindings/js/JSHTMLOptionsCollectionCustom.cpp \
-	Source/WebCore/bindings/js/JSHTMLOutputElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLSelectElementCustom.h \
 	Source/WebCore/bindings/js/JSHTMLStyleElementCustom.cpp \
