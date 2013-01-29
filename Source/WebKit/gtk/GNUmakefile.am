@@ -438,6 +438,7 @@ webkit_tests_cflags = \
 	$(global_cppflags) \
 	$(global_cflags) \
 	$(javascriptcore_cppflags) \
+	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
@@ -447,6 +448,7 @@ webkit_tests_cflags = \
 webkit_tests_ldadd = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(FREETYPE_LIBS) \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS)

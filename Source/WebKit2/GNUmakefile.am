@@ -445,6 +445,7 @@ Programs_WebKitWebProcess_CPPFLAGS = \
 Programs_WebKitWebProcess_CFLAGS = \
 	$(global_cflags) \
 	$(CAIRO_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GTK_UNIX_PRINTING_CFLAGS) \
@@ -457,6 +458,7 @@ Programs_WebKitWebProcess_SOURCES = \
 Programs_WebKitWebProcess_LDADD = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(FREETYPE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(GTK_UNIX_PRINTING_LIBS) \

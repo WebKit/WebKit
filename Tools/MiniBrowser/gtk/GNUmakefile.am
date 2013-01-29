@@ -12,6 +12,7 @@ Programs_MiniBrowser_CPPFLAGS = \
 	-DWEBKIT_INJECTED_BUNDLE_PATH=\"${shell pwd}/$(top_builddir)/.libs\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
+	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS)
 
@@ -34,6 +35,7 @@ nodist_Programs_MiniBrowser_SOURCES = \
 
 Programs_MiniBrowser_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(FREETYPE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(LIBSOUP_LIBS)

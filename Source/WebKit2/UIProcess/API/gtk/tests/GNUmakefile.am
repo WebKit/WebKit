@@ -46,6 +46,7 @@ webkit2_tests_cppflags = \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
 	$(global_cppflags) \
+	$(FREETYPE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
@@ -54,6 +55,7 @@ webkit2_tests_ldadd = \
 	Libraries/libWebKit2APITestCore.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(FREETYPE_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \

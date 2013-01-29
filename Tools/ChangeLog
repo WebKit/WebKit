@@ -1,3 +1,17 @@
+2013-01-29  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Missing build flags when building with Harfbuzz
+        https://bugs.webkit.org/show_bug.cgi?id=108174
+
+        Reviewed by Martin Robinson.
+
+        Add FREETYPE_CFLAGS and FREETYPE_LIBS to makefiles so -lharfbuzz
+        parameter will be added to linking lines when needed.
+
+        * GNUmakefile.am: Added FREETYPE_CFLAGS and FREETYPE_LIBS.
+        * MiniBrowser/gtk/GNUmakefile.am: Ditto.
+        * TestWebKitAPI/GNUmakefile.am: Ditto.
+
 2013-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement resources API using injected bundle
