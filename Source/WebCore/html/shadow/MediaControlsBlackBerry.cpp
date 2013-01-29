@@ -375,7 +375,7 @@ inline MediaControlFullscreenPlayButtonElement::MediaControlFullscreenPlayButton
 PassRefPtr<MediaControlFullscreenPlayButtonElement> MediaControlFullscreenPlayButtonElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenPlayButtonElement> button = adoptRef(new MediaControlFullscreenPlayButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -412,7 +412,7 @@ inline MediaControlFullscreenFullscreenButtonElement::MediaControlFullscreenFull
 PassRefPtr<MediaControlFullscreenFullscreenButtonElement> MediaControlFullscreenFullscreenButtonElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenFullscreenButtonElement> button = adoptRef(new MediaControlFullscreenFullscreenButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     button->hide();
     return button.release();
@@ -480,7 +480,7 @@ PassRefPtr<MediaControlFullscreenTimelineElement> MediaControlFullscreenTimeline
     ASSERT(controls);
 
     RefPtr<MediaControlFullscreenTimelineElement> timeline = adoptRef(new MediaControlFullscreenTimelineElement(document, controls));
-    timeline->createShadowSubtree();
+    timeline->ensureUserAgentShadowRoot();
     timeline->setType("range");
     timeline->setAttribute(precisionAttr, "float");
     return timeline.release();
@@ -584,7 +584,7 @@ PassRefPtr<MediaControlAudioMuteButtonElement> MediaControlAudioMuteButtonElemen
     ASSERT(controls);
 
     RefPtr<MediaControlAudioMuteButtonElement> button = adoptRef(new MediaControlAudioMuteButtonElement(document, controls));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }

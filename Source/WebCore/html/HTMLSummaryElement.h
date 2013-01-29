@@ -40,7 +40,7 @@ private:
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void defaultEventHandler(Event*);
 
-    void createShadowSubtree();
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
     HTMLDetailsElement* detailsElement() const;
 
     bool supportsFocus() const OVERRIDE;

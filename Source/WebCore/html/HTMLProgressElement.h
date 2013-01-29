@@ -67,7 +67,7 @@ private:
     virtual void attach();
 
     void didElementStateChange();
-    void createShadowSubtree();
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
     ProgressValueElement* m_value;
 };

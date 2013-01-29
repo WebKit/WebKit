@@ -39,10 +39,9 @@ private:
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
-    void createShadowSubtree();
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
     bool m_isOpen;
-
 };
 
 } // namespace WebCore

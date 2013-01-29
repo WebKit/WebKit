@@ -79,7 +79,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     void didElementStateChange();
-    void createShadowSubtree();
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
     RefPtr<MeterValueElement> m_value;
 };

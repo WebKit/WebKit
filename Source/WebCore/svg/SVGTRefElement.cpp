@@ -53,7 +53,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
 {
     RefPtr<SVGTRefElement> element = adoptRef(new SVGTRefElement(tagName, document));
-    element->createShadowSubtree();
+    element->ensureUserAgentShadowRoot();
     return element.release();
 }
 
@@ -141,11 +141,6 @@ inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* do
 SVGTRefElement::~SVGTRefElement()
 {
     m_targetListener->detach();
-}
-
-void SVGTRefElement::createShadowSubtree()
-{
-    ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
 }
 
 void SVGTRefElement::updateReferencedText(Element* target)

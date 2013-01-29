@@ -55,9 +55,9 @@ PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document* docume
 
 PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document* document)
 {
-    RefPtr<HTMLSummaryElement> result = adoptRef(new HTMLSummaryElement(tagName, document));
-    result->createShadowSubtree();
-    return result;
+    RefPtr<HTMLSummaryElement> summary = adoptRef(new HTMLSummaryElement(tagName, document));
+    summary->ensureUserAgentShadowRoot();
+    return summary.release();
 }
 
 HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* document)
@@ -76,10 +76,8 @@ bool HTMLSummaryElement::childShouldCreateRenderer(const NodeRenderingContext& c
     return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
-void HTMLSummaryElement::createShadowSubtree()
+void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    ASSERT(!shadow());
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
     root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, true);
     root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
 }

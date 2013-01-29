@@ -138,15 +138,12 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
 {
     RefPtr<HTMLInputElement> inputElement = adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
-    inputElement->createShadowSubtree();
+    inputElement->ensureUserAgentShadowRoot();
     return inputElement.release();
 }
 
-void HTMLInputElement::createShadowSubtree()
+void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot*)
 {
-    ASSERT(!shadow());
-    ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
-
     m_inputType->createShadowSubtree();
 }
 

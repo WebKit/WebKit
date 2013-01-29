@@ -54,7 +54,7 @@ HTMLMeterElement::~HTMLMeterElement()
 PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document* document)
 {
     RefPtr<HTMLMeterElement> meter = adoptRef(new HTMLMeterElement(tagName, document));
-    meter->createShadowSubtree();
+    meter->ensureUserAgentShadowRoot();
     return meter;
 }
 
@@ -234,11 +234,9 @@ RenderMeter* HTMLMeterElement::renderMeter() const
     return static_cast<RenderMeter*>(renderObject);
 }
 
-void HTMLMeterElement::createShadowSubtree()
+void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    ASSERT(!userAgentShadowRoot());
-           
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+    ASSERT(!m_value);
 
     RefPtr<MeterInnerElement> inner = MeterInnerElement::create(document());
     root->appendChild(inner);

@@ -301,14 +301,17 @@ public:
 
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
-    void createShadowSubtree();
+
     virtual void defaultEventHandler(Event*);
+
     // FIXME: Author shadows should be allowed
     // https://bugs.webkit.org/show_bug.cgi?id=92608
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
+
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
     virtual void willChangeForm() OVERRIDE;
     virtual void didChangeForm() OVERRIDE;

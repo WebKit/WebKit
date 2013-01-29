@@ -98,14 +98,12 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
 PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
     RefPtr<HTMLTextAreaElement> textArea = adoptRef(new HTMLTextAreaElement(tagName, document, form));
-    textArea->createShadowSubtree();
+    textArea->ensureUserAgentShadowRoot();
     return textArea.release();
 }
 
-void HTMLTextAreaElement::createShadowSubtree()
+void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    ASSERT(!shadow());
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
     root->appendChild(TextControlInnerTextElement::create(document()), ASSERT_NO_EXCEPTION);
 }
 

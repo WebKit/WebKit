@@ -88,7 +88,6 @@ class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public Me
 public:
     MediaPlayer* player() const { return m_player.get(); }
 
-    void createShadowSubtree();
     virtual void willAddAuthorShadowRoot() OVERRIDE;
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 

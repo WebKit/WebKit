@@ -530,6 +530,8 @@ private:
     PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
     void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
 
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }
+
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;
 

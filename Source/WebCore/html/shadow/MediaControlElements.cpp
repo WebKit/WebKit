@@ -425,7 +425,7 @@ PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElemen
     ASSERT(controls);
 
     RefPtr<MediaControlPanelMuteButtonElement> button = adoptRef(new MediaControlPanelMuteButtonElement(document, controls));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -454,7 +454,7 @@ MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonEle
 PassRefPtr<MediaControlVolumeSliderMuteButtonElement> MediaControlVolumeSliderMuteButtonElement::create(Document* document)
 {
     RefPtr<MediaControlVolumeSliderMuteButtonElement> button = adoptRef(new MediaControlVolumeSliderMuteButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -475,7 +475,7 @@ MediaControlPlayButtonElement::MediaControlPlayButtonElement(Document* document)
 PassRefPtr<MediaControlPlayButtonElement> MediaControlPlayButtonElement::create(Document* document)
 {
     RefPtr<MediaControlPlayButtonElement> button = adoptRef(new MediaControlPlayButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -514,7 +514,7 @@ MediaControlOverlayPlayButtonElement::MediaControlOverlayPlayButtonElement(Docum
 PassRefPtr<MediaControlOverlayPlayButtonElement> MediaControlOverlayPlayButtonElement::create(Document* document)
 {
     RefPtr<MediaControlOverlayPlayButtonElement> button = adoptRef(new MediaControlOverlayPlayButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -554,7 +554,7 @@ MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement(Docum
 PassRefPtr<MediaControlSeekForwardButtonElement> MediaControlSeekForwardButtonElement::create(Document* document)
 {
     RefPtr<MediaControlSeekForwardButtonElement> button = adoptRef(new MediaControlSeekForwardButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -575,7 +575,7 @@ MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement(Document* d
 PassRefPtr<MediaControlSeekBackButtonElement> MediaControlSeekBackButtonElement::create(Document* document)
 {
     RefPtr<MediaControlSeekBackButtonElement> button = adoptRef(new MediaControlSeekBackButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -596,7 +596,7 @@ MediaControlRewindButtonElement::MediaControlRewindButtonElement(Document* docum
 PassRefPtr<MediaControlRewindButtonElement> MediaControlRewindButtonElement::create(Document* document)
 {
     RefPtr<MediaControlRewindButtonElement> button = adoptRef(new MediaControlRewindButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -627,7 +627,7 @@ MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonEle
 PassRefPtr<MediaControlReturnToRealtimeButtonElement> MediaControlReturnToRealtimeButtonElement::create(Document* document)
 {
     RefPtr<MediaControlReturnToRealtimeButtonElement> button = adoptRef(new MediaControlReturnToRealtimeButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     button->hide();
     return button.release();
@@ -666,7 +666,7 @@ PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClos
     ASSERT(controls);
 
     RefPtr<MediaControlToggleClosedCaptionsButtonElement> button = adoptRef(new MediaControlToggleClosedCaptionsButtonElement(document, controls));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     button->hide();
     return button.release();
@@ -954,7 +954,7 @@ PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(Docu
     ASSERT(controls);
 
     RefPtr<MediaControlTimelineElement> timeline = adoptRef(new MediaControlTimelineElement(document, controls));
-    timeline->createShadowSubtree();
+    timeline->ensureUserAgentShadowRoot();
     timeline->setType("range");
     timeline->setAttribute(precisionAttr, "float");
     return timeline.release();
@@ -1026,7 +1026,7 @@ MediaControlPanelVolumeSliderElement::MediaControlPanelVolumeSliderElement(Docum
 PassRefPtr<MediaControlPanelVolumeSliderElement> MediaControlPanelVolumeSliderElement::create(Document* document)
 {
     RefPtr<MediaControlPanelVolumeSliderElement> slider = adoptRef(new MediaControlPanelVolumeSliderElement(document));
-    slider->createShadowSubtree();
+    slider->ensureUserAgentShadowRoot();
     slider->setType("range");
     slider->setAttribute(precisionAttr, "float");
     slider->setAttribute(maxAttr, "1");
@@ -1049,7 +1049,7 @@ MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderEle
 PassRefPtr<MediaControlFullscreenVolumeSliderElement> MediaControlFullscreenVolumeSliderElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenVolumeSliderElement> slider = adoptRef(new MediaControlFullscreenVolumeSliderElement(document));
-    slider->createShadowSubtree();
+    slider->ensureUserAgentShadowRoot();
     slider->setType("range");
     slider->setAttribute(precisionAttr, "float");
     slider->setAttribute(maxAttr, "1");
@@ -1072,7 +1072,7 @@ MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Documen
 PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenButtonElement> button = adoptRef(new MediaControlFullscreenButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     button->hide();
     return button.release();
@@ -1121,7 +1121,7 @@ MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinBut
 PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> MediaControlFullscreenVolumeMinButtonElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenVolumeMinButtonElement> button = adoptRef(new MediaControlFullscreenVolumeMinButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }
@@ -1152,7 +1152,7 @@ MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxBut
 PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> MediaControlFullscreenVolumeMaxButtonElement::create(Document* document)
 {
     RefPtr<MediaControlFullscreenVolumeMaxButtonElement> button = adoptRef(new MediaControlFullscreenVolumeMaxButtonElement(document));
-    button->createShadowSubtree();
+    button->ensureUserAgentShadowRoot();
     button->setType("button");
     return button.release();
 }

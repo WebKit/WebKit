@@ -83,20 +83,19 @@ private:
 
 PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document* document)
 {
-    RefPtr<HTMLSummaryElement> defaultSummary = HTMLSummaryElement::create(summaryTag, document);
-    defaultSummary->appendChild(Text::create(document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
+    RefPtr<HTMLSummaryElement> summary = HTMLSummaryElement::create(summaryTag, document);
+    summary->appendChild(Text::create(document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
 
-    RefPtr<DetailsSummaryElement> elem = adoptRef(new DetailsSummaryElement(document));
-    elem->appendChild(defaultSummary);
-    return elem.release();
+    RefPtr<DetailsSummaryElement> detailsSummary = adoptRef(new DetailsSummaryElement(document));
+    detailsSummary->appendChild(summary);
+    return detailsSummary.release();
 }
 
 PassRefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document* document)
 {
-    RefPtr<HTMLDetailsElement> elem = adoptRef(new HTMLDetailsElement(tagName, document));
-    elem->createShadowSubtree();
-
-    return elem.release();
+    RefPtr<HTMLDetailsElement> details = adoptRef(new HTMLDetailsElement(tagName, document));
+    details->ensureUserAgentShadowRoot();
+    return details.release();
 }
 
 HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document* document)
@@ -111,11 +110,8 @@ RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderBlock(this);
 }
 
-void HTMLDetailsElement::createShadowSubtree()
+void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    ASSERT(!shadow());
-
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
     root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, true);
     root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
 }

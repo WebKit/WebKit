@@ -65,7 +65,7 @@ private:
 
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
-    void createShadowSubtree();
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;

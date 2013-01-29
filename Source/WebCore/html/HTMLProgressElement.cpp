@@ -55,8 +55,8 @@ HTMLProgressElement::~HTMLProgressElement()
 PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagName, Document* document)
 {
     RefPtr<HTMLProgressElement> progress = adoptRef(new HTMLProgressElement(tagName, document));
-    progress->createShadowSubtree();
-    return progress;
+    progress->ensureUserAgentShadowRoot();
+    return progress.release();
 }
 
 RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -157,12 +157,9 @@ void HTMLProgressElement::didElementStateChange()
     }
 }
 
-void HTMLProgressElement::createShadowSubtree()
+void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    ASSERT(!userAgentShadowRoot());
     ASSERT(!m_value);
-           
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
 
     RefPtr<ProgressInnerElement> inner = ProgressInnerElement::create(document());
     root->appendChild(inner);
