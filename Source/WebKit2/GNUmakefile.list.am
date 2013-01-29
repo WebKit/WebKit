@@ -854,6 +854,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/ProcessModel.h \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.cpp \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.h \
+	Source/WebKit2/UIProcess/Storage/StorageManager.cpp \
+	Source/WebKit2/UIProcess/Storage/StorageManager.h \
 	Source/WebKit2/UIProcess/soup/WebCookieManagerProxySoup.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.h \

@@ -1,3 +1,11 @@
+2013-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix after r141024.
+        Adding new files to the build.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2013-01-29  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [WK2] Fix unused parameter build warning
