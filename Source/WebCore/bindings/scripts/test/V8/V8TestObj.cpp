@@ -72,7 +72,30 @@
 #include "V8TestObjectC.h"
 #endif
 
+#if ENABLE(BINDING_INTEGRITY)
+#if defined(OS_WIN)
+#pragma warning(disable: 4483)
+extern "C" { extern void (*const __identifier("??_7TestObj@WebCore@@6B@")[])(); }
+#else
+extern "C" { extern void* _ZTVN7WebCore7TestObjE[]; }
+#endif
+#endif // ENABLE(BINDING_INTEGRITY)
+
 namespace WebCore {
+
+#if ENABLE(BINDING_INTEGRITY)
+inline void checkTypeOrDieTrying(TestObj* object)
+{
+    void* actualVTablePointer = *(reinterpret_cast<void**>(object));
+#if defined(OS_WIN)
+    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestObj@WebCore@@6B@"));
+#else
+    void* expectedVTablePointer = &_ZTVN7WebCore7TestObjE[2];
+#endif
+    if (actualVTablePointer != expectedVTablePointer)
+        CRASH();
+}
+#endif // ENABLE(BINDING_INTEGRITY)
 
 WrapperTypeInfo V8TestObj::info = { V8TestObj::GetTemplate, V8TestObj::derefObject, 0, 0, 0, V8TestObj::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
@@ -2243,6 +2266,10 @@ v8::Handle<v8::Object> V8TestObj::createWrapper(PassRefPtr<TestObj> impl, v8::Ha
 {
     ASSERT(impl.get());
     ASSERT(DOMDataStore::getWrapper(impl.get(), isolate).IsEmpty());
+
+#if ENABLE(BINDING_INTEGRITY)
+    checkTypeOrDieTrying(impl.get());
+#endif
 
     v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
