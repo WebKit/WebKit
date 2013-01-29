@@ -845,6 +845,7 @@ protected:
         
     JSValue getHolyIndexQuickly(unsigned i)
     {
+        ASSERT(i < m_butterfly->vectorLength());
         switch (structure()->indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:

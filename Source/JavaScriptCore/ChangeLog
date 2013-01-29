@@ -1,3 +1,22 @@
+2013-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Add more assertions to the property storage use in arrays
+        https://bugs.webkit.org/show_bug.cgi?id=107728
+
+        Reviewed by Filip Pizlo.
+
+        Add a bunch of assertions to array and object butterfly
+        usage.  This should make debugging somewhat easier.
+
+        I also converted a couple of assertions to release asserts
+        as they were so low cost it seemed a sensible thing to do.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getHolyIndexQuickly):
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification
