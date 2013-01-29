@@ -1,3 +1,18 @@
+2013-01-28  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Small animated zoom level adjustments are unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=108104
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Fenton.
+
+        Internal PR 285861.
+        If the difference between the target scale and current scale is
+        less than a given threshold, don't perform a zoom animation.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2013-01-28  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Reduce the region that is spellchecked on keystroke
