@@ -183,6 +183,8 @@ public:
 
     virtual IntRect windowResizerRect() const;
 
+    virtual float visibleContentScaleFactor() const OVERRIDE;
+
     virtual void setFixedVisibleContentRect(const IntRect&) OVERRIDE;
     virtual void setScrollPosition(const IntPoint&) OVERRIDE;
     void scrollPositionChangedViaPlatformWidget();

@@ -725,7 +725,8 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
     if (scale == m_pageScaleFactor) {
         if (view && (view->scrollPosition() != origin || view->delegatesScrolling())) {
-            document->updateLayoutIgnorePendingStylesheets();
+            if (!m_settings->applyPageScaleFactorInCompositor())
+                document->updateLayoutIgnorePendingStylesheets();
             view->setScrollPosition(origin);
         }
         return;
@@ -733,20 +734,22 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
     m_pageScaleFactor = scale;
 
-    if (document->renderer())
-        document->renderer()->setNeedsLayout(true);
+    if (!m_settings->applyPageScaleFactorInCompositor()) {
+        if (document->renderer())
+            document->renderer()->setNeedsLayout(true);
 
-    document->recalcStyle(Node::Force);
+        document->recalcStyle(Node::Force);
 
-    // Transform change on RenderView doesn't trigger repaint on non-composited contents.
-    mainFrame()->view()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+        // Transform change on RenderView doesn't trigger repaint on non-composited contents.
+        mainFrame()->view()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     mainFrame()->deviceOrPageScaleFactorChanged();
 #endif
 
     if (view && view->scrollPosition() != origin) {
-        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+        if (!m_settings->applyPageScaleFactorInCompositor() && document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
             view->layout();
         view->setScrollPosition(origin);
     }

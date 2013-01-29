@@ -1,3 +1,62 @@
+2013-01-28  Alexandre Elias  <aelias@chromium.org>
+
+        Make page scale shrink FrameView in applyPageScaleInCompositor mode
+        https://bugs.webkit.org/show_bug.cgi?id=107424
+
+        Reviewed by Levi Weintraub.
+
+        If applyPageScaleFactorInCompositor is enabled (Chromium-only setting),
+        instead of the entire document expanding as the user pinch zooms, the
+        viewport shrinks instead. This patch applies the pageScaleFactor to
+        visibleContentRect to get this behavior, and simplifies Chromium's
+        resize logic to stop hiding the true viewport size from WebCore.
+
+        I verified that the scaling makes sense for all the callers of
+        visibleContentRect. The exceptions are clip-layer size,
+        layout size in non-fixed-layout mode, and text autosizing, which need
+        the original unscaled size. Therefore I added a new method
+        unscaledVisibleContentSize() to ScrollView/FrameView.
+
+        This patch also modifies Page::setPageScaleFactor to perform no
+        invalidates or layout when applyPageScaleFactorInCompositor is true,
+        and also writes pageScaleFactor into HistoryItems instead of using
+        frameScaleFactor.
+
+        Since all behavior changes are tied to applyPageScaleFactorInCompositor,
+        this patch should be a no-op for non-Chromium ports.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scaledSize): Returns the post page-scale size
+        similar to what visibleContentRect() now returns, except that it may
+        be at a different scale than the current one.
+        (WebKit::WebViewImpl::size): Back to returning density-independent
+        size without any tricks, not the "layoutSize()" fake viewport.
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::handleInputEvent): No need to apply
+        implTransform anymore as WebKit knows the true scroll offset; just
+        divide event coords by pageScaleFactor.
+        (WebKit::WebViewImpl::clampOffsetAtScale): Make this method support
+        applyPageScaleFactorInCompositor.  This is used to pre-clamp scroll
+        offsets at a given viewport size.
+        (WebKit::WebViewImpl::setPageScaleFactorPreservingScrollOffset): Make
+        this method support applyPageScaleFactorInCompositor (don't scale
+        scroll offsets as they are now scale-independent).
+        (WebKit::WebViewImpl::setPageScaleFactor): Make this method always use
+        clampOffsetAtScale instead of bypassing it, since it's now supported.
+        Also notify the compositor to update its state.
+        (WebKit::WebViewImpl::contentsSize): Convenience method, removed
+        difference between scaled and unscaled.
+        (WebKit::WebViewImpl::layoutSize): This method returned the "fake"
+        size we used to give FrameView.  Now no longer used for much.
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::didChangeContentsSize): Remove unnecessary
+        resize() now that we can give the true size to FrameView.
+        (WebKit::WebViewImpl::updateLayerTreeViewport): Use layoutSize()
+        directly now that FrameView no longer uses it.
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+
 2013-01-28  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Pass metadata in to IDBOpenDBRequest.onUpgradeNeeded/onSuccess

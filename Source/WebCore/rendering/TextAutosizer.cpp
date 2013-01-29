@@ -84,7 +84,7 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     windowInfo.windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
     if (windowInfo.windowSize.isEmpty()) {
         bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
-        windowInfo.windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size();
+        windowInfo.windowSize = mainFrame->view()->unscaledVisibleContentSize(includeScrollbars);
         if (!m_document->settings()->applyDeviceScaleFactorInCompositor())
             windowInfo.windowSize.scale(1 / m_document->page()->deviceScaleFactor());
     }

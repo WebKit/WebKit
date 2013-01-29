@@ -461,6 +461,7 @@ public:
 
     WebCore::IntSize dipSize() const;
     WebCore::IntSize layoutSize() const;
+    WebCore::IntSize scaledSize(float) const;
 
     // Set the disposition for how this webview is to be initially shown.
     void setInitialNavigationPolicy(WebNavigationPolicy policy)
@@ -615,7 +616,8 @@ public:
 private:
     bool computePageScaleFactorLimits();
     float clampPageScaleFactorToLimits(float scale);
-    WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
+    WebCore::IntPoint clampOffsetAtScale(const WebCore::IntPoint& offset, float scale) const;
+    WebCore::IntSize contentsSize() const;
 
     void resetSavedScrollAndScaleState();
 

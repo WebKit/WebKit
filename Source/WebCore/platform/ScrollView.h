@@ -151,11 +151,18 @@ public:
     virtual int visibleWidth() const OVERRIDE { return visibleContentRect().width(); }
     virtual int visibleHeight() const OVERRIDE { return visibleContentRect().height(); }
 
+    // visibleContentRect().size() is computed from unscaledVisibleContentSize() divided by the value of visibleContentScaleFactor.
+    // visibleContentScaleFactor is usually 1, except when the setting applyPageScaleFactorInCompositor is true and the
+    // ScrollView is the main frame; in that case, visibleContentScaleFactor is equal to the page's pageScaleFactor.
+    // Ports that don't use pageScaleFactor can treat unscaledVisibleContentSize and visibleContentRect().size() as equivalent.
+    IntSize unscaledVisibleContentSize(bool includeScrollbars) const;
+    virtual float visibleContentScaleFactor() const { return 1; }
+
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
     // content size. Explicitly setting a layout size value will cause webkit to layout the contents using this size instead.
     IntSize layoutSize() const;
-    int layoutWidth() const;
-    int layoutHeight() const;
+    int layoutWidth() const { return layoutSize().width(); }
+    int layoutHeight() const { return layoutSize().height(); }
     IntSize fixedLayoutSize() const;
     void setFixedLayoutSize(const IntSize&);
     bool useFixedLayout() const;

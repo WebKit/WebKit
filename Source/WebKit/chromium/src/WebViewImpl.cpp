@@ -1626,11 +1626,15 @@ void WebViewImpl::willStartLiveResize()
         pluginContainer->willStartLiveResize();
 }
 
+IntSize WebViewImpl::scaledSize(float pageScaleFactor) const
+{
+    FloatSize scaledSize = dipSize();
+    scaledSize.scale(1 / pageScaleFactor);
+    return expandedIntSize(scaledSize);
+}
+
 WebSize WebViewImpl::size()
 {
-    if (isFixedLayoutModeEnabled() && settingsImpl()->applyPageScaleFactorInCompositor())
-        return layoutSize();
-
     return m_size;
 }
 
@@ -1661,7 +1665,7 @@ void WebViewImpl::resize(const WebSize& newSize)
     if (!agentPrivate || !agentPrivate->metricsOverridden()) {
         WebFrameImpl* webFrame = mainFrameImpl();
         if (webFrame->frameView())
-            webFrame->frameView()->resize(size());
+            webFrame->frameView()->resize(m_size);
     }
 
 #if ENABLE(VIEWPORT)
@@ -2097,30 +2101,24 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         return true;
     }
 
-    if (!m_layerTreeView)
-        return PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
-
     const WebInputEvent* inputEventTransformed = &inputEvent;
-    WebMouseEvent mouseEvent;
-    WebGestureEvent gestureEvent;
-    if (WebInputEvent::isMouseEventType(inputEvent.type)) {
-        mouseEvent = *static_cast<const WebMouseEvent*>(&inputEvent);
-
-        IntPoint transformedLocation = roundedIntPoint(m_layerTreeView->adjustEventPointForPinchZoom(WebFloatPoint(mouseEvent.x, mouseEvent.y)));
-        mouseEvent.x = transformedLocation.x();
-        mouseEvent.y = transformedLocation.y();
-        inputEventTransformed = static_cast<const WebInputEvent*>(&mouseEvent);
-    } else if (WebInputEvent::isGestureEventType(inputEvent.type)) {
-        gestureEvent = *static_cast<const WebGestureEvent*>(&inputEvent);
-
-        IntPoint transformedLocation = roundedIntPoint(m_layerTreeView->adjustEventPointForPinchZoom(WebFloatPoint(gestureEvent.x, gestureEvent.y)));
-        gestureEvent.x = transformedLocation.x();
-        gestureEvent.y = transformedLocation.y();
-        inputEventTransformed = static_cast<const WebInputEvent*>(&gestureEvent);
+    if (m_page->settings()->applyPageScaleFactorInCompositor()) {
+        WebMouseEvent mouseEvent;
+        WebGestureEvent gestureEvent;
+        if (WebInputEvent::isMouseEventType(inputEvent.type)) {
+            mouseEvent = *static_cast<const WebMouseEvent*>(&inputEvent);
+            mouseEvent.x = mouseEvent.x / pageScaleFactor();
+            mouseEvent.y = mouseEvent.y / pageScaleFactor();
+            inputEventTransformed = static_cast<const WebInputEvent*>(&mouseEvent);
+        } else if (WebInputEvent::isGestureEventType(inputEvent.type)) {
+            gestureEvent = *static_cast<const WebGestureEvent*>(&inputEvent);
+            gestureEvent.x = gestureEvent.x / pageScaleFactor();
+            gestureEvent.y = gestureEvent.y / pageScaleFactor();
+            inputEventTransformed = static_cast<const WebInputEvent*>(&gestureEvent);
+        }
     }
 
-    bool handled = PageWidgetDelegate::handleInputEvent(m_page.get(), *this, *inputEventTransformed);
-    return handled;
+    return PageWidgetDelegate::handleInputEvent(m_page.get(), *this, *inputEventTransformed);
 }
 
 void WebViewImpl::mouseCaptureLost()
@@ -2935,34 +2933,40 @@ float WebViewImpl::clampPageScaleFactorToLimits(float scaleFactor)
     return min(max(scaleFactor, m_minimumPageScaleFactor), m_maximumPageScaleFactor);
 }
 
-WebPoint WebViewImpl::clampOffsetAtScale(const WebPoint& offset, float scale)
+IntPoint WebViewImpl::clampOffsetAtScale(const IntPoint& offset, float scale) const
 {
-    // This is the scaled content size. We need to convert it to the new scale factor.
-    WebSize contentSize = mainFrame()->contentsSize();
-    float deltaScale = scale / pageScaleFactor();
-    int docWidthAtNewScale = contentSize.width * deltaScale;
-    int docHeightAtNewScale = contentSize.height * deltaScale;
-    int viewWidth = m_size.width;
-    int viewHeight = m_size.height;
-
-    // Enforce the maximum and minimum scroll positions at the new scale.
     IntPoint clampedOffset = offset;
-    clampedOffset = clampedOffset.shrunkTo(IntPoint(docWidthAtNewScale - viewWidth, docHeightAtNewScale - viewHeight));
-    clampedOffset.clampNegativeToZero();
+    if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
+        // This is the scaled content size. We need to convert it to the new scale factor.
+        WebSize contentSize = contentsSize();
+        int docWidthAtNewScale = contentSize.width * scale;
+        int docHeightAtNewScale = contentSize.height * scale;
+        int viewWidth = m_size.width;
+        int viewHeight = m_size.height;
+
+        // Enforce the maximum and minimum scroll positions at the new scale.
+        clampedOffset = clampedOffset.shrunkTo(IntPoint(docWidthAtNewScale - viewWidth, docHeightAtNewScale - viewHeight));
+        clampedOffset.clampNegativeToZero();
+    } else {
+        clampedOffset = clampedOffset.shrunkTo(IntPoint(contentsSize() - scaledSize(scale)));
+        clampedOffset.clampNegativeToZero();
+    }
+
     return clampedOffset;
 }
 
 void WebViewImpl::setPageScaleFactorPreservingScrollOffset(float scaleFactor)
 {
-    // Pick a scale factor that is within the expected limits
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
 
-    IntPoint scrollOffsetAtNewScale(mainFrame()->scrollOffset().width, mainFrame()->scrollOffset().height);
-    float deltaScale = scaleFactor / pageScaleFactor();
-    scrollOffsetAtNewScale.scale(deltaScale, deltaScale);
+    IntPoint scrollOffset(mainFrame()->scrollOffset().width, mainFrame()->scrollOffset().height);
+    if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
+        float deltaScale = scaleFactor / pageScaleFactor();
+        scrollOffset.scale(deltaScale, deltaScale);
+    }
+    scrollOffset = clampOffsetAtScale(scrollOffset, scaleFactor);
 
-    WebPoint clampedOffsetAtNewScale = clampOffsetAtScale(scrollOffsetAtNewScale, scaleFactor);
-    setPageScaleFactor(scaleFactor, clampedOffsetAtNewScale);
+    setPageScaleFactor(scaleFactor, scrollOffset);
 }
 
 void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
@@ -2973,22 +2977,17 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     if (!scaleFactor)
         scaleFactor = 1;
 
+    IntPoint scrollOffset = origin;
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
-    WebPoint scrollOffset;
-    if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
-        // If page scale is not applied in the compositor, then the scroll offsets should
-        // be modified by the scale factor.
-        scrollOffset = clampOffsetAtScale(origin, scaleFactor);
-    } else {
-        IntPoint offset = origin;
-        WebSize contentSize = mainFrame()->contentsSize();
-        offset.shrunkTo(IntPoint(contentSize.width - m_size.width, contentSize.height - m_size.height));
-        offset.clampNegativeToZero();
-        scrollOffset = offset;
-    }
+    scrollOffset = clampOffsetAtScale(scrollOffset, scaleFactor);
 
-    page()->setPageScaleFactor(scaleFactor, scrollOffset);
+    page()->setPageScaleFactor(scaleFactor, IntPoint(scrollOffset));
+
     m_pageScaleFactorIsSet = true;
+
+#if USE(ACCELERATED_COMPOSITING)
+    updateLayerTreeViewport();
+#endif
 }
 
 float WebViewImpl::deviceScaleFactor() const
@@ -3072,12 +3071,14 @@ void WebViewImpl::setIgnoreViewportTagMaximumScale(bool flag)
     m_page->chrome()->client()->dispatchViewportPropertiesDidChange(page()->mainFrame()->document()->viewportArguments());
 }
 
-static IntSize unscaledContentsSize(Frame* frame)
+IntSize WebViewImpl::contentsSize() const
 {
+    Frame* frame = page()->mainFrame();
     RenderView* root = frame->contentRenderer();
     if (!root)
         return IntSize();
-    return root->unscaledDocumentRect().size();
+
+    return root->documentRect().size();
 }
 
 IntSize WebViewImpl::layoutSize() const
@@ -3085,7 +3086,8 @@ IntSize WebViewImpl::layoutSize() const
     if (!isFixedLayoutModeEnabled())
         return m_size;
 
-    IntSize contentSize = unscaledContentsSize(page()->mainFrame());
+    IntSize contentSize = contentsSize();
+
     if (fixedLayoutSize().width >= contentSize.width())
         return fixedLayoutSize();
 
@@ -3113,7 +3115,7 @@ bool WebViewImpl::computePageScaleFactorLimits()
     int viewWidthNotIncludingScrollbars = m_size.width;
     if (viewWidthNotIncludingScrollbars && view->verticalScrollbar() && !view->verticalScrollbar()->isOverlayScrollbar())
         viewWidthNotIncludingScrollbars -= view->verticalScrollbar()->width();
-    int unscaledContentsWidth = unscaledContentsSize(page()->mainFrame()).width();
+    int unscaledContentsWidth = contentsSize().width();
     if (viewWidthNotIncludingScrollbars && unscaledContentsWidth) {
         // Limit page scaling down to the document width.
         m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / unscaledContentsWidth);
@@ -3765,15 +3767,10 @@ void WebViewImpl::didChangeContentsSize()
     } else
         mayNeedLayout = computePageScaleFactorLimits();
 
-    FrameView* view = mainFrameImpl()->frameView();
-    if (settingsImpl()->applyPageScaleFactorInCompositor() && view && view->visibleContentRect(true).width() != layoutSize().width()) {
-        view->resize(layoutSize());
-        mayNeedLayout = true;
-    }
-
     // didChangeContentsSize() may be called from FrameView::layout; we need to
     // relayout to avoid triggering the assertion that needsLayout() isn't set
     // at the end of a layout.
+    FrameView* view = mainFrameImpl()->frameView();
     if (mayNeedLayout && view && view->needsLayout())
         view->layout();
 #endif
@@ -4249,15 +4246,13 @@ void WebViewImpl::updateLayerTreeViewport()
         return;
 
     FrameView* view = page()->mainFrame()->view();
-    IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
-    IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, view->scrollOrigin());
-
-    IntSize layoutViewportSize = visibleRect.size();
+    IntSize layoutViewportSize = layoutSize();
     IntSize deviceViewportSize = m_size;
     if (m_webSettings->applyDeviceScaleFactorInCompositor())
         deviceViewportSize.scale(deviceScaleFactor());
+
+    m_nonCompositedContentHost->setViewport(deviceViewportSize, view->contentsSize(), view->scrollPosition(), view->scrollOrigin());
 
     m_layerTreeView->setViewportSize(layoutViewportSize, deviceViewportSize);
     m_layerTreeView->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);

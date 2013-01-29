@@ -37,6 +37,7 @@
 #include "FrameTestHelpers.h"
 #include "FrameView.h"
 #include "Range.h"
+#include "RenderView.h"
 #include "ResourceError.h"
 #include "Settings.h"
 #include "URLTestHelpers.h"
@@ -307,6 +308,110 @@ TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
     webViewImpl->layout();
 }
 
+TEST_F(WebFrameTest, setPageScaleFactorDoesNotLayout)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    int prevLayoutCount = webViewImpl->mainFrameImpl()->frameView()->layoutCount();
+    webViewImpl->setPageScaleFactor(3, WebPoint());
+    EXPECT_EQ(false, webViewImpl->mainFrameImpl()->frameView()->needsLayout());
+    EXPECT_EQ(prevLayoutCount, webViewImpl->mainFrameImpl()->frameView()->layoutCount());
+}
+
+TEST_F(WebFrameTest, pageScaleFactorWrittenToHistoryItem)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    webViewImpl->setPageScaleFactor(3, WebPoint());
+    webViewImpl->page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+    webViewImpl->setPageScaleFactor(1, WebPoint());
+    webViewImpl->page()->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
+    EXPECT_EQ(3, webViewImpl->pageScaleFactor());
+}
+
+TEST_F(WebFrameTest, pageScaleFactorShrinksViewport)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    int viewportWidthMinusScrollbar = 640 - 15;
+    int viewportHeightMinusScrollbar = 480 - 15;
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    webViewImpl->setPageScaleFactor(2, WebPoint());
+
+    WebCore::IntSize unscaledSize = webViewImpl->mainFrameImpl()->frameView()->unscaledVisibleContentSize(true);
+    EXPECT_EQ(viewportWidth, unscaledSize.width());
+    EXPECT_EQ(viewportHeight, unscaledSize.height());
+
+    WebCore::IntSize unscaledSizeMinusScrollbar = webViewImpl->mainFrameImpl()->frameView()->unscaledVisibleContentSize(false);
+    EXPECT_EQ(viewportWidthMinusScrollbar, unscaledSizeMinusScrollbar.width());
+    EXPECT_EQ(viewportHeightMinusScrollbar, unscaledSizeMinusScrollbar.height());
+
+    WebCore::IntSize scaledSize = webViewImpl->mainFrameImpl()->frameView()->visibleContentRect().size();
+    EXPECT_EQ(ceil(viewportWidthMinusScrollbar / 2.0), scaledSize.width());
+    EXPECT_EQ(ceil(viewportHeightMinusScrollbar / 2.0), scaledSize.height());
+}
+
+TEST_F(WebFrameTest, pageScaleFactorDoesNotApplyCssTransform)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    webViewImpl->setPageScaleFactor(2, WebPoint());
+
+    EXPECT_EQ(1, webViewImpl->page()->mainFrame()->frameScaleFactor());
+    EXPECT_EQ(980, webViewImpl->page()->mainFrame()->contentRenderer()->unscaledDocumentRect().width());
+    EXPECT_EQ(980, webViewImpl->mainFrameImpl()->frameView()->contentsSize().width());
+}
 #endif
 
 TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
@@ -784,7 +889,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTestCompositorScaling)
     // Zoom in to reset double_tap_zoom_in_effect flag.
     webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
     // 1 < textAutosizingFontScaleFactor < minimumPageScale < doubleTapZoomAlreadyLegibleScale
-    webView->setPageScaleFactorLimits(1.2f, 4);
+    webView->setPageScaleFactorLimits(1.0f, 4);
     doubleTapZoomAlreadyLegibleScale = webViewImpl->minimumPageScaleFactor() * doubleTapZoomAlreadyLegibleRatio;
     setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), (webViewImpl->minimumPageScaleFactor()) * (1 + doubleTapZoomAlreadyLegibleRatio) / 2);
     simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
