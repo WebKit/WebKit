@@ -105,7 +105,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     }
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_webContext->removeNetworkProcessProxy(this);
+    m_webContext->networkProcessCrashed(this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

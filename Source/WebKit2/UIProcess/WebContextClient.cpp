@@ -38,4 +38,12 @@ void WebContextClient::plugInAutoStartOriginHashesChanged(WebContext* context)
     m_client.plugInAutoStartOriginHashesChanged(toAPI(context), m_client.clientInfo);
 }
 
+void WebContextClient::networkProcessDidCrash(WebContext* context)
+{
+    if (!m_client.networkProcessDidCrash)
+        return;
+
+    m_client.networkProcessDidCrash(toAPI(context), m_client.clientInfo);
+}
+
 } // namespace WebKit

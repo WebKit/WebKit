@@ -41,11 +41,13 @@ typedef uint32_t WKCacheModel;
 
 // Context Client
 typedef void (*WKContextPlugInAutoStartOriginHashesChangedCallback)(WKContextRef context, const void *clientInfo);
+typedef void (*WKContextNetworkProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
 
 struct WKContextClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
+    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
 };
 typedef struct WKContextClient WKContextClient;
 

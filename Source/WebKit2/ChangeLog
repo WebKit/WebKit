@@ -1,3 +1,24 @@
+2013-01-28  Brady Eidson  <beidson@apple.com>
+
+        WebKit2 should notify the client if the NetworkProcess crashes.
+        <rdar://problem/13090513> and https://bugs.webkit.org/show_bug.cgi?id=108126
+
+        Reviewed by Sam Weinig.
+
+        Add new client callback to the ContextClient:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::networkProcessDidCrash):
+        * UIProcess/WebContextClient.h:
+
+        Call out to the client when the NetworkProcess crashes:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::networkProcessCrashed):
+        * UIProcess/WebContext.h:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+
 2013-01-28  Pratik Solanki  <psolanki@apple.com>
 
         PLATFORM(IOS) should come before __MAC_OS_X_VERSION_MIN_REQUIRED

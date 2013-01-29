@@ -264,7 +264,7 @@ public:
 #if ENABLE(NETWORK_PROCESS)
     void ensureNetworkProcess();
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
-    void removeNetworkProcessProxy(NetworkProcessProxy*);
+    void networkProcessCrashed(NetworkProcessProxy*);
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 #endif

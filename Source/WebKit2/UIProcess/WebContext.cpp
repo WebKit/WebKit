@@ -375,7 +375,7 @@ void WebContext::ensureNetworkProcess()
     m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 }
 
-void WebContext::removeNetworkProcessProxy(NetworkProcessProxy* networkProcessProxy)
+void WebContext::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
 {
     ASSERT(m_networkProcess);
     ASSERT(networkProcessProxy == m_networkProcess.get());
@@ -386,6 +386,8 @@ void WebContext::removeNetworkProcessProxy(NetworkProcessProxy* networkProcessPr
         it->value->processDidClose(networkProcessProxy);
 
     m_networkProcess = nullptr;
+
+    m_client.networkProcessDidCrash(this);
 }
 
 void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
