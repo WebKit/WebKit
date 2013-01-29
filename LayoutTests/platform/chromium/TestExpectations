@@ -3050,8 +3050,6 @@ webkit.org/b/69210 [ SnowLeopard ] fast/inline/continuation-outlines-with-layers
 
 webkit.org/b/106064 [ Android ] fast/inline/continuation-outlines-with-layers.html [ ImageOnlyFailure ]
 
-webkit.org/b/79013 http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout Crash ]
-
 crbug.com/113063 [ Debug ] storage/indexeddb/basics-workers.html [ Crash Pass ]
 
 webkit.org/b/79224 [ Win ] fast/canvas/webgl/tex-image-with-format-and-type.html [ Failure Pass ]

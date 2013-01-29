@@ -188,7 +188,7 @@ AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String
     , m_isSyncDatabase(databaseType == SyncDatabase)
 {
     ASSERT(context->isContextThread());
-    m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin();
+    m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin()->isolatedCopy();
 
     m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);
 
