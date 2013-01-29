@@ -172,19 +172,11 @@ public:
     {
     }
 
-    template <typename EnumType>
-    EnumType get() const
-    {
-        ASSERT(getClass() == MessageKindTraits<EnumType>::messageClass);
-        return static_cast<EnumType>(m_messageID & 0xffff);
-    }
-
     template <MessageClass K>
     bool is() const
     {
         return getClass() == K;
     }
-    
 
     static MessageID fromInt(unsigned i)
     {

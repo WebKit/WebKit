@@ -38,6 +38,21 @@ enum Kind {
     PostSynchronousMessage
 };
 
+inline CoreIPC::StringReference messageReceiverName()
+{
+    return CoreIPC::StringReference("WebContextLegacyMessage");
+}
+
+inline CoreIPC::StringReference postMessageMessageName()
+{
+    return CoreIPC::StringReference("PostMessage");
+}
+
+inline CoreIPC::StringReference postSynchronousMessageMessageName()
+{
+    return CoreIPC::StringReference("PostSynchronousMessage");
+}
+
 }
 
 namespace CoreIPC {
@@ -46,7 +61,7 @@ template<> struct MessageKindTraits<WebContextLegacyMessage::Kind> {
     static const MessageClass messageClass = MessageClassWebContextLegacy;
     static StringReference messageReceiverName()
     {
-        return StringReference("WebContextLegacyMessage");
+        return WebContextLegacyMessage::messageReceiverName();
     }
 };
 

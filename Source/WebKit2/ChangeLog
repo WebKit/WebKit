@@ -1,3 +1,23 @@
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of MessageID::get()
+        https://bugs.webkit.org/show_bug.cgi?id=108235
+
+        Reviewed by Beth Dakin.
+
+        Just check for the message receiver name and message name explicitly instead.
+
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::MessageID::is):
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        (WebContextLegacyMessage::messageReceiverName):
+        (WebContextLegacyMessage):
+        (WebContextLegacyMessage::postMessageMessageName):
+        (WebContextLegacyMessage::postSynchronousMessageMessageName):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+
 2013-01-29  Kiran Muppala  <cmuppala@apple.com>
 
         Add support for enabling process suppression in WebProcesses with no visible pages
