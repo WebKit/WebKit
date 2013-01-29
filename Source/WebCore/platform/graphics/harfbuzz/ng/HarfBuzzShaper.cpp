@@ -297,7 +297,7 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
             nextScript = uscript_getScript(character, &errorCode);
             if (U_FAILURE(errorCode))
                 return false;
-            if ((nextFontData != currentFontData) || ((currentScript != nextScript) && (nextScript != USCRIPT_INHERITED)))
+            if ((nextFontData != currentFontData) || ((currentScript != nextScript) && (nextScript != USCRIPT_INHERITED) && (!uscript_hasScript(character, currentScript))))
                 break;
             if (nextScript == USCRIPT_INHERITED)
                 nextScript = currentScript;
