@@ -1,3 +1,17 @@
+2013-01-28  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Collapse testing for a list of PLATFORM() into OS() and USE() tests
+        https://bugs.webkit.org/show_bug.cgi?id=108018
+
+        Reviewed by Eric Seidel.
+
+        No functional change as "OS(DARWIN) && USE(CF)" equals to the
+        following platforms: MAC, WX, QT and CHROMIUM. CHROMIUM
+        is not using JavaScriptCore. 
+
+        * runtime/DatePrototype.cpp:
+        (JSC):
+
 2013-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Static size inference for JavaScript objects
