@@ -52,6 +52,7 @@ my $showHelp = 0;
 my $verbose = 0;
 my $dumpTests = 0;
 my $build = 1;
+my $root;
 my $buildDefault = $build ? "build" : "do not build";
 my @testsFailed;
 my @testsTimedOut;
@@ -63,6 +64,7 @@ Usage: $programName [options] [suite or test prefixes]
   -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
+  --root=               Path to the pre-built root containing TestWebKitAPI
   --chromium            Run the Chromium port on Mac/Win/Linux
 EOF
 
@@ -70,7 +72,8 @@ GetOptions(
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
     'dump|d' => \$dumpTests,
-    'build!' => \$build
+    'build!' => \$build,
+    'root=s' => \$root
 );
 
 if ($showHelp) {
@@ -92,7 +95,9 @@ if (isChromiumAndroid()) {
     exit exitStatus(system(@runTestCommand));
 }
 
-buildTestTool() if $build;
+setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+
+buildTestTool() if $build && !defined($root);
 setPathForRunningWebKitApp(\%ENV);
 my @testsToRun = listAllTests();
 
