@@ -890,7 +890,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
-    recursiveCommitChanges(state);
+    recursiveCommitChanges(CommitState(), state);
 }
 
 void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
@@ -952,9 +952,11 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state) const
     return clipRectForSelf;
 }
 
-void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     TransformState localState = state;
+    CommitState childCommitState = commitState;
+    bool affectedByTransformAnimation = commitState.ancestorHasTransformAnimation;
     
     FloatRect visibleRect = computeVisibleRect(localState);
     FloatRect oldVisibleRect = m_visibleRect;
@@ -998,6 +1000,11 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     
     commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, oldVisibleRect);
 
+    if (isRunningTransformAnimation()) {
+        childCommitState.ancestorHasTransformAnimation = true;
+        affectedByTransformAnimation = true;
+    }
+
     if (m_maskLayer) {
         GraphicsLayerCA* maskLayerCA = static_cast<GraphicsLayerCA*>(m_maskLayer);
         maskLayerCA->commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, maskLayerCA->visibleRect());
@@ -1008,18 +1015,18 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-        curChild->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        curChild->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(childCommitState, localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
     if (m_maskLayer)
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
 
     commitLayerChangesAfterSublayers();
 
-    if (client() && m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+    if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
         client()->notifyFlushBeforeDisplayRefresh(this);
 
     if (hadChanges && client())
@@ -1118,7 +1125,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
 #endif
     
     if (m_uncommittedChanges & AnimationChanged)
-        updateLayerAnimations();
+        updateAnimations();
 
     // Updating the contents scale can cause parts of the layer to be invalidated,
     // so make sure to update the contents scale before updating the dirty rects.
@@ -1773,7 +1780,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::replicatedLayerRoot(ReplicaState& r
     return clonedLayerRoot;
 }
 
-void GraphicsLayerCA::updateLayerAnimations()
+void GraphicsLayerCA::updateAnimations()
 {
     if (m_animationsToProcess.size()) {
         AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
@@ -1823,6 +1830,21 @@ void GraphicsLayerCA::updateLayerAnimations()
         
         m_uncomittedAnimations.clear();
     }
+}
+
+bool GraphicsLayerCA::isRunningTransformAnimation() const
+{
+    AnimationsMap::const_iterator end = m_runningAnimations.end();
+    for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
+        const Vector<LayerPropertyAnimation>& propertyAnimations = it->value;
+        size_t numAnimations = propertyAnimations.size();
+        for (size_t i = 0; i < numAnimations; ++i) {
+            const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
+            if (currAnimation.m_property == AnimatedPropertyWebkitTransform)
+                return true;
+        }
+    }
+    return false;
 }
 
 void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation* caAnim, AnimatedPropertyID property, const String& animationName, int index, double timeOffset)

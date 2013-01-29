@@ -131,7 +131,13 @@ public:
     virtual void setMaintainsPixelAlignment(bool);
     virtual void deviceOrPageScaleFactorChanged();
 
-    void recursiveCommitChanges(const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
+    struct CommitState {
+        bool ancestorHasTransformAnimation;
+        CommitState()
+            : ancestorHasTransformAnimation(false)
+        { }
+    };
+    void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
@@ -207,6 +213,8 @@ private:
     bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex);
     bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType);
 #endif
+
+    bool isRunningTransformAnimation() const;
 
     bool animationIsRunning(const String& animationName) const
     {
@@ -326,7 +334,7 @@ private:
     void updateMaskLayer();
     void updateReplicatedLayers();
 
-    void updateLayerAnimations();
+    void updateAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
     void updateDebugBorder();
