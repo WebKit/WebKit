@@ -142,6 +142,7 @@ public:
     void clip(const String& winding = "nonzero");
 
     bool isPointInPath(const float x, const float y, const String& winding = "nonzero");
+    bool isPointInStroke(const float x, const float y);
 
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);

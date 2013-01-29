@@ -136,6 +136,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
                           in [Optional=DefaultIsUndefined] float y,
                           in [Optional] DOMString winding);
+    boolean isPointInStroke(in [Optional=DefaultIsUndefined] float x,
+                            in [Optional=DefaultIsUndefined] float y);
 
     // text
     attribute DOMString font;
