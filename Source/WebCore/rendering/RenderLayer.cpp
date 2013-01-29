@@ -2244,9 +2244,12 @@ void RenderLayer::updateCompositingLayersAfterScroll()
         // Our stacking container is guaranteed to contain all of our descendants that may need
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContainer()->enclosingCompositingLayer()) {
-            if (compositor()->compositingConsultsOverlap())
-                compositor()->updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
-            else
+            if (compositor()->compositingConsultsOverlap()) {
+                if (usesCompositedScrolling() && !hasOutOfFlowPositionedDescendant())
+                    compositor()->updateCompositingLayers(CompositingUpdateOnCompositedScroll, compositingAncestor);
+                else
+                    compositor()->updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
+            } else
                 compositingAncestor->backing()->updateAfterLayout(RenderLayerBacking::IsUpdateRoot);
         }
     }

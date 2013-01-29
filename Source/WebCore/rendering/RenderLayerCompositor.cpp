@@ -433,6 +433,9 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         needGeometryUpdate = true;
         break;
+    case CompositingUpdateOnCompositedScroll:
+        needGeometryUpdate = true;
+        break;
     }
 
     if (!checkForHierarchyUpdate && !needGeometryUpdate)
