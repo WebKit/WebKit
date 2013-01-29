@@ -1,3 +1,22 @@
+2013-01-29  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Correct zoom for focused node when using compositor scaling
+        https://bugs.webkit.org/show_bug.cgi?id=107599
+
+        Reviewed by Adam Barth.
+
+        When applyDeviceScaleFactorInCompositor, targetScale should exclude device scale factor.
+        When applyPageScaleFactorInCompositor, caret size and content sizes are in css pixels and they should be in the viewport of the new scale.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollFocusedNodeIntoRect):
+        (WebKit):
+        (WebKit::WebViewImpl::computeScaleAndScrollForFocusedNode): Extracted from scrollFocusedNodeIntoRect() to ease testing.
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp: Updated test DivScrollEditableTest
+        * tests/data/get_scale_for_zoom_into_editable_test.html: Moved the logic of onload script (which seems not to work) into WebFrameTest.cpp.
+
 2013-01-29  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Pass metadata in to IDBOpenDBRequest.onUpgradeNeeded/onSuccess
