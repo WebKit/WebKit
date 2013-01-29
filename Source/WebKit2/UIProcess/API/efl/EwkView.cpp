@@ -149,6 +149,10 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
 #if USE(COORDINATED_GRAPHICS)
     m_pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+    char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
+    bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
+    m_pageProxy->pageGroup()->preferences()->setCompositingBordersVisible(showDebugVisuals);
+    m_pageProxy->pageGroup()->preferences()->setCompositingRepaintCountersVisible(showDebugVisuals);
 #if ENABLE(WEBGL)
     m_pageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
 #endif

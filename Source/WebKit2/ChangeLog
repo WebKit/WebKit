@@ -1,3 +1,28 @@
+2013-01-28  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap] Enable debug borders and repaint counter via Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=107198
+
+        Reviewed by Benjamin Poulain.
+
+        Currently, if the environment variable WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS
+        is set to 1, only CoordinatedBacking shows debug borders and repaint counter.
+
+        This patch makes the environment variable change Settings.
+
+        In addition, Qt uses WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS instead of
+        QT_WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS from now.
+
+        After Bug 105787, all backing stores and platform layers in TextureMapper can
+        show debug borders and repaint counter.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+
 2013-01-28  Anders Carlsson  <andersca@apple.com>
 
         Move Mach port handling from WorkQueue to Connection

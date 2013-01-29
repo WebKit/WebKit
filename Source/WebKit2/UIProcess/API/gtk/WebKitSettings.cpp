@@ -257,7 +257,13 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_media_playback_allows_inline(settings, g_value_get_boolean(value));
         break;
     case PROP_DRAW_COMPOSITING_INDICATORS:
-        webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
+        if (g_value_get_boolean(value))
+            webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
+        else {
+            char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
+            bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
+            webkit_settings_set_draw_compositing_indicators(settings, showDebugVisuals);
+        }
         break;
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
         webkit_settings_set_enable_site_specific_quirks(settings, g_value_get_boolean(value));

@@ -323,6 +323,9 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     // Any page setting should preferrable be set before creating the page.
     webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+    bool showDebugVisuals = qgetenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS") == "1";
+    webPageProxy->pageGroup()->preferences()->setCompositingBordersVisible(showDebugVisuals);
+    webPageProxy->pageGroup()->preferences()->setCompositingRepaintCountersVisible(showDebugVisuals);
     webPageProxy->pageGroup()->preferences()->setFrameFlatteningEnabled(true);
     webPageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
 

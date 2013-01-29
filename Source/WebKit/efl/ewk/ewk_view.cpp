@@ -839,6 +839,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setInteractiveFormValidationEnabled(true);
 #if USE(ACCELERATED_COMPOSITING)
     priv->pageSettings->setAcceleratedCompositingEnabled(false);
+    char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
+    bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
+    priv->pageSettings->setShowDebugBorders(showDebugVisuals);
+    priv->pageSettings->setShowRepaintCounter(showDebugVisuals);
 #endif
 
     url = priv->pageSettings->userStyleSheetLocation();

@@ -150,6 +150,10 @@ void QWebSettingsPrivate::apply()
         settings->setAcceleratedCompositingForAnimationEnabled(value);
         settings->setAcceleratedCompositingForVideoEnabled(false);
         settings->setAcceleratedCompositingForPluginsEnabled(false);
+
+        bool showDebugVisuals = qgetenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS") == "1";
+        settings->setShowDebugBorders(showDebugVisuals);
+        settings->setShowRepaintCounter(showDebugVisuals);
 #endif
 #if ENABLE(WEBGL)
         value = attributes.value(QWebSettings::WebGLEnabled,
