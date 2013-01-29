@@ -1,3 +1,10 @@
+2013-01-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Unreviewed build fix after r141050
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExports.def: Update symbols
+        to match JavaScriptCore.vcproj version.
+
 2013-01-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Implement GCActivityCallback
