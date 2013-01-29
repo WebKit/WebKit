@@ -1,3 +1,13 @@
+2013-01-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add StorageManager class to cmake ports
+
+        Unreviewed build fix. Though StorageManager was added to WK2 in r141024,
+        it is not added to cmake ports(EFL).
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+
 2013-01-28  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/13098777>
