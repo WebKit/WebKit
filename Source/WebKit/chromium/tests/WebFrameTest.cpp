@@ -927,45 +927,47 @@ TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTestCompositorScaling)
 }
 #endif
 
-TEST_F(WebFrameTest, DivScrollIntoEditableTest)
+// This test depends on code that is compiled conditionally. We likely need to
+// add the proper ifdef when re-enabling it. See
+// https://bugs.webkit.org/show_bug.cgi?id=98558
+TEST_F(WebFrameTest, DISABLED_DivScrollIntoEditableTest)
 {
     registerMockedHttpURLLoad("get_scale_for_zoom_into_editable_test.html");
 
     int viewportWidth = 640;
     int viewportHeight = 480;
+    float leftBoxRatio = 0.3f;
     int caretPadding = 10;
     int minReadableCaretHeight = 18;
     WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_zoom_into_editable_test.html");
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
-    webView->setPageScaleFactorLimits(1, 4);
+    webView->setPageScaleFactorLimits(1, 10);
     webView->layout();
     webView->setDeviceScaleFactor(1.5f);
     webView->settings()->setAutoZoomFocusedNodeToLegibleScale(true);
+
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
     webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
 
-    WebRect editBoxWithText(200, 200, 500, 20);
-    WebRect editBoxWithNoText(200, 250, 500, 20);
+    WebRect editBoxWithText(200, 200, 250, 20);
+    WebRect editBoxWithNoText(200, 250, 250, 20);
 
     // Test scrolling the focused node
     // The edit box is shorter and narrower than the viewport when legible.
-    webView->advanceFocus(false);
-    // Set the caret to the end of the input box.
-    webView->mainFrame()->document().getElementById("EditBoxWithText").to<WebInputElement>().setSelectionRange(1000, 1000);
     setScaleAndScrollAndLayout(webView, WebPoint(0, 0), 1);
     WebRect rect, caret;
     webViewImpl->selectionBounds(caret, rect);
     webView->scrollFocusedNodeIntoRect(rect);
     // The edit box should be left aligned with a margin for possible label.
-    int hScroll = editBoxWithText.x * webView->pageScaleFactor();
+    int hScroll = editBoxWithText.x * webView->pageScaleFactor() - leftBoxRatio * viewportWidth;
     EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
     int vScroll = editBoxWithText.y * webView->pageScaleFactor() - (viewportHeight - editBoxWithText.height * webView->pageScaleFactor()) / 2;
     EXPECT_EQ(vScroll, webView->mainFrame()->scrollOffset().height);
     EXPECT_FLOAT_EQ(webView->deviceScaleFactor() * minReadableCaretHeight / caret.height, webView->pageScaleFactor());
 
     // The edit box is wider than the viewport when legible.
-    webView->setDeviceScaleFactor(2);
+    webView->setDeviceScaleFactor(4);
     setScaleAndScrollAndLayout(webView, WebPoint(0, 0), 1);
     webViewImpl->selectionBounds(caret, rect);
     webView->scrollFocusedNodeIntoRect(rect);

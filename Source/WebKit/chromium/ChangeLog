@@ -1,3 +1,15 @@
+2013-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141064.
+        http://trac.webkit.org/changeset/141064
+        https://bugs.webkit.org/show_bug.cgi?id=108166
+
+        [Chromium] WebFrameTest.DivScrollIntoEditableTest is failing
+        on WinXP. (Requested by keishi on #webkit).
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/get_scale_for_zoom_into_editable_test.html:
+
 2013-01-29  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Disabling WebFrameTest.DisambiguationPopup because it is failing.
