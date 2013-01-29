@@ -3857,7 +3857,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         if (pointState == PlatformTouchPoint::TouchPressed) {
             HitTestResult result;
             if (freshTouchEvents) {
-                result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+                result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ true, false, DontHitTestScrollbars, hitType);
                 m_originatingTouchPointTargetKey = touchPointTargetKey;
             } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
                 LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(m_originatingTouchPointDocument->frame(), point.pos());
@@ -3891,7 +3891,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
             // We only perform a hittest on release or cancel to unset :active or :hover state.
             if (touchPointTargetKey == m_originatingTouchPointTargetKey) {
-                hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+                hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ true, false, DontHitTestScrollbars, hitType);
                 m_originatingTouchPointTargetKey = 0;
             } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
                 LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(m_originatingTouchPointDocument->frame(), point.pos());
@@ -3925,7 +3925,10 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         int adjustedPageX = lroundf(pagePoint.x() / scaleFactor);
         int adjustedPageY = lroundf(pagePoint.y() / scaleFactor);
 
-        RefPtr<Touch> touch = Touch::create(targetFrame, touchTarget.get(), point.id(),
+        // FIXME: Instead of taking shadow ancestor, event retargetting algorithm should run.
+        // https://bugs.webkit.org/show_bug.cgi?id=107800
+        EventTarget* adjustedTouchTarget = doc->ancestorInThisScope(touchTarget.get()->toNode());
+        RefPtr<Touch> touch = Touch::create(targetFrame, adjustedTouchTarget, point.id(),
                                             point.screenPos().x(), point.screenPos().y(),
                                             adjustedPageX, adjustedPageY,
                                             point.radiusX(), point.radiusY(), point.rotationAngle(), point.force());
