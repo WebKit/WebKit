@@ -4315,6 +4315,8 @@ webkit.org/b/107341 [ Debug ] inspector/profiler/memory-instrumentation-cached-i
 webkit.org/b/107579 [ Debug ] media/track/track-css-matching.html [ Crash ]
 webkit.org/b/107579 [ Debug ] media/track/track-css-property-whitelist.html [ Crash ]
 
+webkit.org/b/108163 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-0colors.html [ Crash ]
+
 # Rebaseline required after https://webkit.org/b/31397
 webkit.org/b/107567 svg/batik/text/xmlSpace.svg [ Failure ] 
 webkit.org/b/107567 fast/text/capitalize-empty-generated-string.html [ Failure ] 
