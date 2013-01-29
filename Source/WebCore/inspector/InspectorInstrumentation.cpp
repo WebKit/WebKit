@@ -902,6 +902,8 @@ void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumen
 
 void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->frameDetached(frame);
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->frameDetached(frame);
 }
@@ -937,10 +939,10 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
             layerTreeAgent->reset();
 #endif
-        if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-            canvasAgent->reset();
         inspectorAgent->didCommitLoad();
     }
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->frameNavigated(loader->frame());
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->frameNavigated(loader);
 }

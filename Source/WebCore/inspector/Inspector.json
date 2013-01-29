@@ -3328,15 +3328,23 @@
             },
             {
                 "name": "captureFrame",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame containing document whose canvases are to be captured. If omitted, main frame is assumed." }
+                ],
                 "returns": [
-                    { "name": "traceLogId", "$ref": "TraceLogId" }
-                ]
+                    { "name": "traceLogId", "$ref": "TraceLogId", "description": "Identifier of the trace log containing captured canvas calls." }
+                ],
+                "description": "Starts (or continues) a canvas frame capturing which will be stopped automatically after the next frame is prepared."
             },
             {
                 "name": "startCapturing",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame containing document whose canvases are to be captured. If omitted, main frame is assumed." }
+                ],
                 "returns": [
-                    { "name": "traceLogId", "$ref": "TraceLogId" }
-                ]
+                    { "name": "traceLogId", "$ref": "TraceLogId", "description": "Identifier of the trace log containing captured canvas calls." }
+                ],
+                "description": "Starts (or continues) consecutive canvas frames capturing. The capturing is stopped by the corresponding stopCapturing command."
             },
             {
                 "name": "stopCapturing",
@@ -3385,7 +3393,15 @@
                 ]
             }
         ],
-        "events": []
+        "events": [
+            {
+                "name": "contextCreated",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing a canvas with a context." }
+                ],
+                "description": "Fired when a canvas context has been created in the given frame. The context may not be instrumented (see hasUninstrumentedCanvases command)."
+            }
+        ]
     },
     {
         "domain": "Input",
