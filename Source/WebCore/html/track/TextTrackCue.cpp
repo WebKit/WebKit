@@ -225,6 +225,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
 
 TextTrackCue::~TextTrackCue()
 {
+    removeDisplayTree();
 }
 
 PassRefPtr<TextTrackCueBox> TextTrackCue::createDisplayTree()
