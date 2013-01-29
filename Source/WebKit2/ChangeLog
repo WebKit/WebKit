@@ -1,3 +1,15 @@
+2013-01-29  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2] Fix unused parameter build warning
+        https://bugs.webkit.org/show_bug.cgi?id=108156
+
+        Reviewed by Kentaro Hara.
+
+        Comment out the unused parameters to fix the build warnings.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginProxy.h:
+
 2013-01-28  Jae Hyun Park  <jae.park@company100.net>
 
         [Qt] Build fix
