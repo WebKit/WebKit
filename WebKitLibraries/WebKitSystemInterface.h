@@ -522,13 +522,18 @@ CFStringRef WKCaptionAppearanceGetSettingsChangedNotification(void);
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef enum {
     WKOcclusionNotificationTypeApplicationBecameVisible,
-    WKOcclusionNotificationTypeApplicationBecameOccluded
+    WKOcclusionNotificationTypeApplicationBecameOccluded,
+    WKOcclusionNotificationTypeWindowBecameVisible,
+    WKOcclusionNotificationTypeWindowBecameOccluded
 } WKOcclusionNotificationType;
 
-typedef void (*WKOcclusionNotificationHandler)(uint32_t, void*, uint32_t, void*, uint32_t);
+typedef uint32_t WKWindowID;
+
+typedef void (*WKOcclusionNotificationHandler)(uint32_t, void* data, uint32_t dataLength, void*, uint32_t);
 
 bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
+bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOcclusionState);
 
 enum {
     WKProcessAssertionTypeVisible = (1UL << 10)

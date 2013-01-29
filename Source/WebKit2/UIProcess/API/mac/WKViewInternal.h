@@ -101,4 +101,6 @@ namespace WebKit {
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
 
+- (BOOL)_isWindowOccluded;
+
 @end
