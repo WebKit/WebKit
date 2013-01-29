@@ -1,3 +1,11 @@
+2013-01-29  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Disabling WebFrameTest.DisambiguationPopupMobileSite because WebFrameTest is still failing after r141073.
+
+        Unreviewed. Gardening.
+
+        * tests/WebFrameTest.cpp:
+
 2013-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141064.

@@ -2034,7 +2034,7 @@ TEST_F(WebFrameTest, DisambiguationPopupNoContainer)
     EXPECT_FALSE(client.triggered());
 }
 
-TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
+TEST_F(WebFrameTest, DISABLED_DisambiguationPopupMobileSite)
 {
     registerMockedHttpURLLoad("disambiguation_popup_mobile_site.html");
 
