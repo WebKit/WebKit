@@ -1,3 +1,11 @@
+2013-01-29  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed DEPS roll.
+
+        Roll Chromium DEPS to 179332.
+
+        * DEPS:
+
 2013-01-29  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Let callers specify reason (error) for aborting transaction
