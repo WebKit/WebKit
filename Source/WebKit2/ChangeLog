@@ -1,3 +1,64 @@
+2013-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement resources API using injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=107457
+
+        Reviewed by Sam Weinig.
+
+        The ResourceLoaderClient was removed from the UI process in
+        r140285, and most of the GTK+ API depends on resources. This patch
+        implements the same API using the ResourceLoaderClient from
+        injected bundle. It fixes the resources unit tests, as well as
+        other 14 unit tests that are timing out because they depend on
+        resource API.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode): Add support for encoding
+        WebURLResponse and WebError objects in user messages.
+        (WebKit::UserMessageDecoder::baseDecode): Add support for decoding
+        WebURLResponse and WebError objects from user messages.
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp: Added.
+        (didReceiveWebViewMessageFromInjectedBundle): Handle messages sent
+        to the WebView. For now it hanldes all the sresource loader client
+        messages.
+        (didReceiveMessageFromInjectedBundle): Handle messages received
+        from injected bundle.
+        (attachInjectedBundleClientToContext): Initialize the injected
+        bundle client.
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): Add a HashMap to map page IDs to
+        WebKitWebViews.
+        (createDefaultWebContext): Call
+        attachInjectedBundleClientToContext() to intialize the injected
+        bundle client.
+        (webkitWebContextCreatePageForWebView): Use
+        webkitWebViewBaseCreateWebPage() to create and initialize a new
+        WebPageProxy and map the newly created page with the given
+        WebKitWebView.
+        (webkitWebContextWebViewDestroyed): Called when the given
+        WebKitWebView is being destroyed to remove it from the views map.
+        (webkitWebContextGetWebViewForPage): Returns the WebKitWebView
+        associated to the given page ID.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Use
+        webkitWebContextCreatePageForWebView() instead of
+        webkitWebViewBaseCreateWebPage() directly.
+        (webkitWebViewDispose): Call webkitWebContextWebViewDestroyed() to
+        notify the context.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didInitiateLoadForResource): Send a message to the UI process
+        with the callback parameters encoded.
+        (willSendRequestForFrame): Ditto.
+        (didReceiveResponseForResource): Ditto.
+        (didReceiveContentLengthForResource): Ditto.
+        (didFinishLoadForResource): Ditto.
+        (didFailLoadForResource): Ditto.
+        (webkitWebPageCreate): Initialize the
+        WKBundlePageResourceLoadClient.
+
 2013-01-29  Laszlo Gombos  <l.gombos@samsung.com>
 
         [Qt] Remove misspelled ENABLE(SPEECH_INPUT) guard

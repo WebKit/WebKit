@@ -704,6 +704,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResultPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitInjectedBundleClient.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitInjectedBundleClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResult.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResult.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResultPrivate.h \

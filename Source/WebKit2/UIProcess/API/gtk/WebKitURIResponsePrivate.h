@@ -26,6 +26,7 @@
 #ifndef WebKitURIResponsePrivate_h
 #define WebKitURIResponsePrivate_h
 
+#include "WebCertificateInfo.h"
 #include "WebKitURIResponse.h"
 #include <WebCore/ResourceResponse.h>
 

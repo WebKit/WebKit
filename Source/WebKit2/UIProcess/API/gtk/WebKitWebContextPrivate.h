@@ -42,5 +42,8 @@ WebKit::WebSoupRequestManagerProxy* webkitWebContextGetRequestManager(WebKitWebC
 void webkitWebContextReceivedURIRequest(WebKitWebContext*, WebKitURISchemeRequest*);
 void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext*, uint64_t requestID);
 void webkitWebContextDidFinishURIRequest(WebKitWebContext*, uint64_t requestID);
+void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*);
+void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
+WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 
 #endif // WebKitWebContextPrivate_h
