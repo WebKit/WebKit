@@ -1066,7 +1066,7 @@ void IDBDatabaseBackendImpl::VersionChangeOperation::perform(IDBTransactionBacke
     }
     ASSERT(!m_database->m_pendingSecondHalfOpen);
     m_database->m_pendingSecondHalfOpen = PendingOpenCall::create(m_callbacks, m_databaseCallbacks, m_transactionId, m_version);
-    m_callbacks->onUpgradeNeeded(oldVersion, m_database, m_database->metadata());
+    m_callbacks->onUpgradeNeeded(oldVersion, transaction, m_database);
 }
 
 void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
@@ -1123,7 +1123,7 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     if (m_pendingSecondHalfOpen) {
         ASSERT(m_pendingSecondHalfOpen->version() == m_metadata.intVersion);
         ASSERT(m_metadata.id != InvalidId);
-        m_pendingSecondHalfOpen->callbacks()->onSuccess(this, this->metadata());
+        m_pendingSecondHalfOpen->callbacks()->onSuccess(this);
         m_pendingSecondHalfOpen.release();
         // Fall through when complete, as pending deletes may be (partially) unblocked.
     }
@@ -1204,14 +1204,14 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallback
         // For unit tests only - skip upgrade steps. Calling from script with DefaultIntVersion throws exception.
         ASSERT(isNewDatabase);
         m_databaseCallbacksSet.add(databaseCallbacks);
-        callbacks->onSuccess(this, this->metadata());
+        callbacks->onSuccess(this);
         return;
     }
 
     if (version == IDBDatabaseMetadata::NoIntVersion) {
         if (!isNewDatabase) {
             m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(databaseCallbacks));
-            callbacks->onSuccess(this, this->metadata());
+            callbacks->onSuccess(this);
             return;
         }
         // Spec says: If no version is specified and no database exists, set database version to 1.
@@ -1228,7 +1228,7 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallback
     }
     ASSERT(version == m_metadata.intVersion);
     m_databaseCallbacksSet.add(databaseCallbacks);
-    callbacks->onSuccess(this, this->metadata());
+    callbacks->onSuccess(this);
 }
 
 void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t requestedVersion)

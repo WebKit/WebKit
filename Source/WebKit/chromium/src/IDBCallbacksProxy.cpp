@@ -37,7 +37,6 @@
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBDatabaseError.h"
-#include "IDBMetadata.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"
@@ -85,14 +84,6 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCurso
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
-{
-    ASSERT(m_databaseCallbacks.get());
-    m_didComplete = true;
-    WebIDBDatabaseImpl* impl = m_didCreateProxy ? 0 : new WebIDBDatabaseImpl(backend, m_databaseCallbacks.release());
-    m_callbacks->onSuccess(impl);
-}
-
-void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend, const IDBDatabaseMetadata&)
 {
     ASSERT(m_databaseCallbacks.get());
     m_didComplete = true;
@@ -168,16 +159,8 @@ void IDBCallbacksProxy::onBlocked(int64_t existingVersion)
 void IDBCallbacksProxy::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBDatabaseBackendInterface> database)
 {
     ASSERT(m_databaseCallbacks);
-    ASSERT(!transaction);
     m_didCreateProxy = true;
-    m_callbacks->onUpgradeNeeded(oldVersion, 0, new WebIDBDatabaseImpl(database, m_databaseCallbacks));
-}
-
-void IDBCallbacksProxy::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface> database, const IDBDatabaseMetadata&)
-{
-    ASSERT(m_databaseCallbacks);
-    m_didCreateProxy = true;
-    m_callbacks->onUpgradeNeeded(oldVersion, 0, new WebIDBDatabaseImpl(database, m_databaseCallbacks));
+    m_callbacks->onUpgradeNeeded(oldVersion, new WebIDBTransactionImpl(transaction), new WebIDBDatabaseImpl(database, m_databaseCallbacks));
 }
 
 void IDBCallbacksProxy::setDatabaseCallbacks(PassRefPtr<IDBDatabaseCallbacksProxy> databaseCallbacks)

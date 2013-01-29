@@ -50,7 +50,6 @@ public:
     virtual void onSuccess(PassRefPtr<WebCore::DOMStringList>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBCursorBackendInterface>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey> primaryKey, PassRefPtr<WebCore::SerializedScriptValue>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBDatabaseBackendInterface>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBDatabaseBackendInterface>, const WebCore::IDBDatabaseMetadata&);
     virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);
     virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>);
     virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, const WebCore::IDBKeyPath&);
@@ -60,7 +59,6 @@ public:
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<WebCore::IDBKey> >& keys, const Vector<RefPtr<WebCore::IDBKey> >& primaryKeys, const Vector<RefPtr<WebCore::SerializedScriptValue> >& values);
     virtual void onBlocked(int64_t existingVersion);
     virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<WebCore::IDBTransactionBackendInterface>, PassRefPtr<WebCore::IDBDatabaseBackendInterface>);
-    virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<WebCore::IDBDatabaseBackendInterface>, const WebCore::IDBDatabaseMetadata&);
 
     void setDatabaseCallbacks(PassRefPtr<IDBDatabaseCallbacksProxy>);
 

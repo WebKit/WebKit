@@ -1,3 +1,27 @@
+2013-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141049.
+        http://trac.webkit.org/changeset/141049
+        https://bugs.webkit.org/show_bug.cgi?id=108151
+
+        Caused some indexed tests to crash. (Requested by keishi on
+        #webkit).
+
+        * public/WebIDBCallbacks.h:
+        (WebKit):
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onUpgradeNeeded):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onSuccess):
+        (WebKit::WebIDBCallbacksImpl::onUpgradeNeeded):
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (WebCore::MockIDBCallbacks::onSuccess):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-28  Raman Kumar  <ramankk@chromium.org>
 
         Expose isRadioButton and isCheckbox API in chromium-webkit glue layer.

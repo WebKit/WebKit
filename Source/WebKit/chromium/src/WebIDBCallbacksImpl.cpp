@@ -74,22 +74,10 @@ void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, 
 void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance)
 {
     if (m_databaseProxy) {
-        IDBDatabaseMetadata metadata = m_databaseProxy->metadata();
-        m_callbacks->onSuccess(m_databaseProxy.release(), metadata);
+        m_callbacks->onSuccess(m_databaseProxy.release());
         return;
     }
-    RefPtr<IDBDatabaseBackendInterface> localDatabaseProxy = IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance));
-    m_callbacks->onSuccess(localDatabaseProxy.release(), localDatabaseProxy->metadata());
-}
-
-void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance, const WebIDBMetadata& metadata)
-{
-    if (m_databaseProxy) {
-        m_callbacks->onSuccess(m_databaseProxy.release(), metadata);
-        return;
-    }
-    RefPtr<IDBDatabaseBackendInterface> localDatabaseProxy = IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance));
-    m_callbacks->onSuccess(localDatabaseProxy.release(), metadata);
+    m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance)));
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
@@ -127,16 +115,10 @@ void WebIDBCallbacksImpl::onBlocked(long long oldVersion)
     m_callbacks->onBlocked(oldVersion);
 }
 
-void WebIDBCallbacksImpl::onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase* database)
+void WebIDBCallbacksImpl::onUpgradeNeeded(long long oldVersion, WebIDBTransaction* transaction, WebIDBDatabase* database)
 {
     m_databaseProxy = IDBDatabaseBackendProxy::create(adoptPtr(database));
-    m_callbacks->onUpgradeNeeded(oldVersion, m_databaseProxy, m_databaseProxy->metadata());
-}
-
-void WebIDBCallbacksImpl::onUpgradeNeeded(long long oldVersion, WebIDBDatabase* database, const WebIDBMetadata& metadata)
-{
-    m_databaseProxy = IDBDatabaseBackendProxy::create(adoptPtr(database));
-    m_callbacks->onUpgradeNeeded(oldVersion, m_databaseProxy, metadata);
+    m_callbacks->onUpgradeNeeded(oldVersion, IDBTransactionBackendProxy::create(adoptPtr(transaction)), m_databaseProxy);
 }
 
 } // namespace WebKit

@@ -69,7 +69,7 @@ public:
     virtual void onError(PassRefPtr<IDBDatabaseError>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<DOMStringList>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { }
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) OVERRIDE
     {
         m_wasSuccessDBCalled = true;
     }

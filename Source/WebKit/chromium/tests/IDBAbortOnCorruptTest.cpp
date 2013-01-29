@@ -57,7 +57,7 @@ public:
     }
     virtual void onSuccess(PassRefPtr<DOMStringList>) { }
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) { }
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&)
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>)
     {
         EXPECT_TRUE(false);
     }
