@@ -177,7 +177,7 @@ void InitWebCoreSystemInterface(void)
         INIT(FilterDataComplete);
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);
         INIT(NSReboundDeltaForElasticDelta);

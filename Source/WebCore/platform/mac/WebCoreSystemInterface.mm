@@ -217,7 +217,7 @@ NSData *(*wkFilterAddData)(WebFilterEvaluator *, NSData *);
 NSData *(*wkFilterDataComplete)(WebFilterEvaluator *);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
