@@ -94,6 +94,7 @@ window.addEventListener("message", function(event) {
         eval(event.data);
     } catch (e) {
         alert(e.stack);
+        InspectorTest.completeTest();
         throw e;
     }
 });

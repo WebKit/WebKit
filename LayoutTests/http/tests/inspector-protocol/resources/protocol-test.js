@@ -83,8 +83,15 @@ function runTest()
 
     var url = scriptUrlBasePath + "/protocol-test.html";
     var inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
-
     inspectorFrontend.addEventListener("load", function(event) {
-        inspectorFrontend.postMessage("(" + test.toString() +")();", "*");
+        // FIXME: rename this 'test' global field across all tests.
+        var testFunction = window.test;
+        if (typeof testFunction === "function") {
+	        inspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
+            return;
+        }
+        // Kill waiting process if failed to send.
+        alert("Failed to send test function");
+        testRunner.notifyDone();
     });
 }
