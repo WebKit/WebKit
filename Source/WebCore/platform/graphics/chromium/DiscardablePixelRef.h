@@ -46,7 +46,7 @@ class DiscardablePixelRefAllocator : public SkBitmap::Allocator {
 // PixelRef object whose memory can be discarded when pixels are unlocked.
 class DiscardablePixelRef : public SkPixelRef {
 public:
-    DiscardablePixelRef(SkColorTable*);
+    DiscardablePixelRef(SkColorTable*, PassOwnPtr<SkMutex>);
     ~DiscardablePixelRef();
 
     static bool isDiscardable(SkPixelRef*);
@@ -63,6 +63,7 @@ private:
     SkColorTable* m_colorTable;
     void* m_lockedMemory;
     OwnPtr<WebKit::WebDiscardableMemory> m_discardable;
+    OwnPtr<SkMutex> m_mutex;
 };
 
 } // namespace WebCore

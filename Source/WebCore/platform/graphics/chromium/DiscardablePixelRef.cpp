@@ -45,7 +45,7 @@ bool DiscardablePixelRefAllocator::allocPixelRef(SkBitmap* dst, SkColorTable* ct
     if (size.isNeg() || !size.is32())
         return false;
 
-    SkAutoTUnref<DiscardablePixelRef> pixelRef(new DiscardablePixelRef(ctable));
+    SkAutoTUnref<DiscardablePixelRef> pixelRef(new DiscardablePixelRef(ctable, adoptPtr(new SkMutex())));
     if (pixelRef->allocAndLockDiscardableMemory(size.get32())) {
         pixelRef->setURI(labelDiscardable);
         dst->setPixelRef(pixelRef.get());
@@ -61,9 +61,11 @@ bool DiscardablePixelRefAllocator::allocPixelRef(SkBitmap* dst, SkColorTable* ct
     return dst->allocPixels(ctable);
 }
 
-DiscardablePixelRef::DiscardablePixelRef(SkColorTable* ctable)
-    : m_colorTable(ctable)
+DiscardablePixelRef::DiscardablePixelRef(SkColorTable* ctable, PassOwnPtr<SkMutex> mutex)
+    : SkPixelRef(mutex.get())
+    , m_colorTable(ctable)
     , m_lockedMemory(0)
+    , m_mutex(mutex)
 {
 }
 
