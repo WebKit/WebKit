@@ -196,7 +196,12 @@ void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction,
     if (availableLogicalSpace <= 0)
         return;
 
-    distributeSpaceToTracks(direction, tracks, availableLogicalSpace);
+    const size_t tracksSize = tracks.size();
+    Vector<GridTrack*> tracksForDistribution(tracksSize);
+    for (size_t i = 0; i < tracksSize; ++i)
+        tracksForDistribution[i] = tracks.data() + i;
+
+    distributeSpaceToTracks(tracksForDistribution, 0, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth, availableLogicalSpace);
 }
 
 LayoutUnit RenderGrid::computeUsedBreadthOfMinLength(TrackSizingDirection direction, const Length& trackLength) const
@@ -310,7 +315,6 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection di
 
 void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, size_t i, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
 {
-    // FIXME: The specification re-uses distributeSpaceToTrack, which we should probably do.
     GridTrack& track = (direction == ForColumns) ? columnTracks[i] : rowTracks[i];
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         size_t cellIndex = resolveGridPosition(direction, child);
@@ -319,33 +323,42 @@ void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDire
 
         LayoutUnit contentSize = (this->*sizingFunction)(child, direction, columnTracks);
         LayoutUnit additionalBreadthSpace = contentSize - (track.*trackGetter)();
-        LayoutUnit share = additionalBreadthSpace;
-        std::min(additionalBreadthSpace, track.m_maxBreadth - (track.*trackGetter)());
-        (track.*trackGrowthFunction)(share);
+        Vector<GridTrack*> tracks;
+        tracks.append(&track);
+        // FIXME: We should pass different values for |tracksForGrowthAboveMaxBreadth|.
+        distributeSpaceToTracks(tracks, &tracks, trackGetter, trackGrowthFunction, additionalBreadthSpace);
     }
 }
 
-void RenderGrid::distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>& tracks, LayoutUnit availableLogicalSpace)
+void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction, LayoutUnit& availableLogicalSpace)
 {
-    const size_t tracksSize = tracks.size();
-    Vector<GridTrack*> sortedTracks(tracksSize);
-    for (size_t i = 0; i < tracksSize; ++i)
-        sortedTracks[i] = tracks.data() + i;
+    std::sort(tracks.begin(), tracks.end(), sortByGridTrackGrowthPotential);
 
-    std::sort(sortedTracks.begin(), sortedTracks.end(), sortByGridTrackGrowthPotential);
-
+    size_t tracksSize = tracks.size();
     for (size_t i = 0; i < tracksSize; ++i) {
-        GridTrack& track = *sortedTracks[i];
+        GridTrack& track = *tracks[i];
         LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
         // We never shrink the used breadth by clamping the difference between max and used breadth. The spec uses
-        // 2 extra-variables and 2 extra iterations over the tracks to achieve that (because distributeSpaceToTracks
-        // is shared with other methods). If we start sharing the method, we should probably remove this clamping.
-        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, std::max(LayoutUnit(0), track.m_maxBreadth - track.m_usedBreadth));
-        track.m_usedBreadth += growthShare;
+        // 2 extra-variables and 2 extra iterations to ensure that we always grow our tracks (thus never going below
+        // min-track). If we decide to follow it to the letter, we should remove this clamping.
+        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, std::max(LayoutUnit(0), track.m_maxBreadth - (track.*trackGetter)()));
+        (track.*trackGrowthFunction)(growthShare);
         availableLogicalSpace -= growthShare;
     }
 
-    // FIXME: We don't implement the last 2 steps of the algorithm as we don't implement content based sizing.
+    if (availableLogicalSpace <= 0)
+        return;
+
+    if (!tracksForGrowthAboveMaxBreadth)
+        return;
+
+    tracksSize = tracksForGrowthAboveMaxBreadth->size();
+    for (size_t i = 0; i < tracksSize; ++i) {
+        GridTrack& track = *tracksForGrowthAboveMaxBreadth->at(i);
+        LayoutUnit growthShare = availableLogicalSpace / (tracksSize - i);
+        (track.*trackGrowthFunction)(growthShare);
+        availableLogicalSpace -= growthShare;
+    }
 }
 
 #ifndef NDEBUG
