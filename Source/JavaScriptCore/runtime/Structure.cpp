@@ -172,7 +172,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
     , m_staticFunctionReified(false)
 {
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
-    ASSERT(inlineCapacity < firstOutOfLineOffset);
+    ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
 }
 
 const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(Structure) };

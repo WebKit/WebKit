@@ -1,3 +1,15 @@
+2013-01-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Compilation warning in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=108178
+
+        Reviewed by Kentaro Hara.
+
+        Fixed 'comparison between signed and unsigned integer' warning in JSC::Structure constructor.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+
 2013-01-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix the JSC build on Mac
