@@ -55,7 +55,7 @@ public:
     }
     ~IDBFactory();
 
-    PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*);
+    PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, int64_t version, ExceptionCode&);

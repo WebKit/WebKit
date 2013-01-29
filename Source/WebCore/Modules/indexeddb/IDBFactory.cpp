@@ -95,7 +95,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
 }
 }
 
-PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context)
+PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context, ExceptionCode&)
 {
     if (!isContextValid(context))
         return 0;
