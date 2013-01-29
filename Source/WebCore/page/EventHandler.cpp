@@ -1549,7 +1549,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
             swallowEvent = handleMousePressEvent(mev);
     }
 
-    return !swallowEvent;
+    return swallowEvent;
 }
 
 // This method only exists for platforms that don't know how to deliver 
