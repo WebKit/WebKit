@@ -1,3 +1,11 @@
+2013-01-29  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Disable WebFrameTest.pageScaleFactorShrinksViewport (pending investigation after r141053).
+
+        * tests/WebFrameTest.cpp:
+
 2013-01-29  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Disabling WebFrameTest.DisambiguationPopupMobileSite because WebFrameTest is still failing after r141073.

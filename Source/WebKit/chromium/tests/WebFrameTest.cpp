@@ -355,7 +355,8 @@ TEST_F(WebFrameTest, pageScaleFactorWrittenToHistoryItem)
     EXPECT_EQ(3, webViewImpl->pageScaleFactor());
 }
 
-TEST_F(WebFrameTest, pageScaleFactorShrinksViewport)
+// Disabled, pending investigation after http://trac.webkit.org/changeset/141053
+TEST_F(WebFrameTest, DISABLED_pageScaleFactorShrinksViewport)
 {
     registerMockedHttpURLLoad("fixed_layout.html");
 
