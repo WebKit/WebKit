@@ -1,3 +1,18 @@
+2013-01-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        String constructed from Literals should be non-empty
+        https://bugs.webkit.org/show_bug.cgi?id=108103
+
+        Reviewed by Eric Carlson.
+
+        For efficiency, the construction from literal only works with valid non-empty strings.
+        One of the constructor was changed to fix an error from HTMLMediaElement.
+
+        This patch replaces the branch with an assertions.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+
 2013-01-28  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Platform.h:1212:22: error: '__MAC_OS_X_VERSION_MIN_REQUIRED' is not defined, evaluates to 0 [-Werror,-Wundef]

@@ -688,7 +688,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
     switch (support)
     {
         case MediaPlayer::IsNotSupported:
-            canPlay = ASCIILiteral("");
+            canPlay = emptyString();
             break;
         case MediaPlayer::MayBeSupported:
             canPlay = ASCIILiteral("maybe");
