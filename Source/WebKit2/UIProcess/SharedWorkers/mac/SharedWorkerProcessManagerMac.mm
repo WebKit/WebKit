@@ -32,11 +32,11 @@
 
 namespace WebKit {
 
-void SharedWorkerProcessManager::setApplicationIsOccluded(bool applicationIsOccluded)
+void SharedWorkerProcessManager::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
     size_t processCount = m_sharedWorkerProcesses.size();
     for (size_t i = 0; i < processCount; ++i)
-        m_sharedWorkerProcesses[i]->setApplicationIsOccluded(applicationIsOccluded);
+        m_sharedWorkerProcesses[i]->setProcessSuppressionEnabled(processSuppressionEnabled);
 }
 
 } // namespace WebKit

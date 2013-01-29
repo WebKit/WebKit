@@ -36,7 +36,7 @@ messages -> NetworkProcess LegacyReceiver {
     CancelDownload(uint64_t downloadID)
 
 #if PLATFORM(MAC)
-    SetApplicationIsOccluded(bool flag)
+    SetProcessSuppressionEnabled(bool flag)
 #endif
 
     AllowSpecificHTTPSCertificateForHost(WebKit::PlatformCertificateInfo certificate, WTF::String host)

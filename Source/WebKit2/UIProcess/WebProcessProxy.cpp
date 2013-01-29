@@ -105,6 +105,9 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
 #if ENABLE(CUSTOM_PROTOCOLS)
     , m_customProtocolManagerProxy(this)
 #endif
+#if PLATFORM(MAC)
+    , m_processSuppressionEnabled(false)
+#endif
 {
     connect();
 }
@@ -171,6 +174,11 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, 
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
     m_pageMap.set(pageID, webPage.get());
     globalPageMap().set(pageID, webPage.get());
+#if PLATFORM(MAC)
+    if (pageIsProcessSuppressible(webPage.get()))
+        m_processSuppressiblePages.add(pageID);
+    updateProcessSuppressionState();
+#endif
     return webPage.release();
 }
 
@@ -178,13 +186,21 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
 {
     m_pageMap.set(pageID, webPage);
     globalPageMap().set(pageID, webPage);
+#if PLATFORM(MAC)
+    if (pageIsProcessSuppressible(webPage));
+        m_processSuppressiblePages.add(pageID);
+    updateProcessSuppressionState();
+#endif
 }
 
 void WebProcessProxy::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
     globalPageMap().remove(pageID);
-
+#if PLATFORM(MAC)
+    m_processSuppressiblePages.remove(pageID);
+    updateProcessSuppressionState();
+#endif
 }
 
 Vector<WebPageProxy*> WebProcessProxy::pages() const
@@ -527,8 +543,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Con
     m_context->processDidFinishLaunching(this);
 
 #if PLATFORM(MAC)
-    if (WebContext::applicationIsOccluded() && m_context->processSuppressionEnabled())
-        connection()->send(Messages::WebProcess::SetApplicationIsOccluded(true), 0);
+    updateProcessSuppressionState();
 #endif
 }
 
@@ -670,6 +685,32 @@ void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title
     MESSAGE_CHECK_URL(url);
 
     m_context->historyClient().didUpdateHistoryTitle(m_context.get(), page, title, url, frame);
+}
+
+void WebProcessProxy::pageVisibilityChanged(WebKit::WebPageProxy *page)
+{
+#if PLATFORM(MAC)
+    if (pageIsProcessSuppressible(page))
+        m_processSuppressiblePages.add(page->pageID());
+    else
+        m_processSuppressiblePages.remove(page->pageID());
+    updateProcessSuppressionState();
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
+void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
+{
+#if PLATFORM(MAC)
+    if (pageIsProcessSuppressible(page))
+        m_processSuppressiblePages.add(page->pageID());
+    else
+        m_processSuppressiblePages.remove(page->pageID());
+    updateProcessSuppressionState();
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 } // namespace WebKit

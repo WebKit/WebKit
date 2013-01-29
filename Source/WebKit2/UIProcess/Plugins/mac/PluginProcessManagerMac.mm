@@ -32,11 +32,11 @@
 
 namespace WebKit {
 
-void PluginProcessManager::setApplicationIsOccluded(bool applicationIsOccluded)
+void PluginProcessManager::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
     size_t processCount = m_pluginProcesses.size();
     for (size_t i = 0; i < processCount; ++i)
-        m_pluginProcesses[i]->setApplicationIsOccluded(applicationIsOccluded);
+        m_pluginProcesses[i]->setProcessSuppressionEnabled(processSuppressionEnabled);
 }
 
 } // namespace WebKit

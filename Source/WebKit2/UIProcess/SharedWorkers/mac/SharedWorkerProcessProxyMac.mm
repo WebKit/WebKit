@@ -32,12 +32,12 @@
 
 namespace WebKit {
 
-void SharedWorkerProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void SharedWorkerProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
     if (!isValid())
         return;
 
-    m_connection->send(Messages::SharedWorkerProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    m_connection->send(Messages::SharedWorkerProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
 } // namespace WebKit

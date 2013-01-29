@@ -166,8 +166,8 @@ void SharedWorkerProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Con
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(MAC)
-    if (WebContext::applicationIsOccluded() && WebContext::processSuppressionEnabledForGlobalChildProcesses())
-        m_connection->send(Messages::SharedWorkerProcess::SetApplicationIsOccluded(true), 0);
+    if (WebContext::canEnableProcessSuppressionForGlobalChildProcesses())
+        setProcessSuppressionEnabled(true);
 #endif
 }
 

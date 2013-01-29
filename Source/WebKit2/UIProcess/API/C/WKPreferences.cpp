@@ -1023,3 +1023,13 @@ bool WKPreferencesGetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef pre
 {
     return toImpl(preferencesRef)->logsPageMessagesToSystemConsoleEnabled();
 }
+
+void WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPageVisibilityBasedProcessSuppressionEnabled(enabled);
+}
+
+bool WKPreferencesGetPageVisibilityBasedProcessSuppressionEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->pageVisibilityBasedProcessSuppressionEnabled();
+}

@@ -34,12 +34,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void NetworkProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
     if (!isValid())
         return;
     
-    connection()->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    connection()->send(Messages::NetworkProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
 #if HAVE(XPC)

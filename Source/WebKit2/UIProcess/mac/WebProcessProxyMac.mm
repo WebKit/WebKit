@@ -26,6 +26,9 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
+#import "WebContext.h"
+#import "WebPageGroup.h"
+#import "WebPreferences.h"
 #import "WebProcessMessages.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
@@ -59,6 +62,29 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 #if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
 #endif
+}
+
+bool WebProcessProxy::pageIsProcessSuppressible(WebPageProxy* page)
+{
+    return !page->isViewVisible() && page->pageGroup()->preferences()->pageVisibilityBasedProcessSuppressionEnabled();
+}
+
+bool WebProcessProxy::allPagesAreProcessSuppressible() const
+{
+    return (m_processSuppressiblePages.size() == m_pageMap.size()) && !m_processSuppressiblePages.isEmpty();
+}
+
+void WebProcessProxy::updateProcessSuppressionState()
+{
+    if (!isValid())
+        return;
+
+    bool canEnable = m_context->canEnableProcessSuppressionForWebProcess(this);
+    if (m_processSuppressionEnabled == canEnable)
+        return;
+    m_processSuppressionEnabled = canEnable;
+
+    connection()->send(Messages::WebProcess::SetProcessSuppressionEnabled(m_processSuppressionEnabled), 0);
 }
 
 } // namespace WebKit

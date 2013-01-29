@@ -880,6 +880,7 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         bool isVisible = m_pageClient->isViewVisible();
         if (isVisible != m_isVisible) {
             m_isVisible = isVisible;
+            m_process->pageVisibilityChanged(this);
             m_drawingArea->visibilityDidChange();
 
             if (!m_isVisible) {
@@ -1910,6 +1911,8 @@ void WebPageProxy::preferencesDidChange()
     if (m_pageGroup->preferences()->developerExtrasEnabled())
         inspector()->enableRemoteInspection();
 #endif
+
+    m_process->pagePreferencesChanged(this);
 
     // FIXME: It probably makes more sense to send individual preference changes.
     // However, WebKitTestRunner depends on getting a preference change notification

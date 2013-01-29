@@ -113,6 +113,15 @@ public:
 
     DownloadProxy* createDownloadProxy();
 
+    void pageVisibilityChanged(WebPageProxy*);
+    void pagePreferencesChanged(WebPageProxy*);
+
+#if PLATFORM(MAC)
+    bool allPagesAreProcessSuppressible() const;
+    static bool pageIsProcessSuppressible(WebPageProxy*);
+    void updateProcessSuppressionState();
+#endif
+
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 
@@ -196,6 +205,11 @@ private:
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
+#endif
+
+#if PLATFORM(MAC)
+    HashSet<uint64_t> m_processSuppressiblePages;
+    bool m_processSuppressionEnabled;
 #endif
 };
     

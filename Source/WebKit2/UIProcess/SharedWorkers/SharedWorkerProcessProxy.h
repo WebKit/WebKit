@@ -59,7 +59,7 @@ public:
     bool isValid() const { return m_connection; }
 
 #if PLATFORM(MAC)
-    void setApplicationIsOccluded(bool);
+    void setProcessSuppressionEnabled(bool);
 #endif
 
 private:

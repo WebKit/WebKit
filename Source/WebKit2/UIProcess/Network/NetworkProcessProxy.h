@@ -60,7 +60,7 @@ public:
     DownloadProxy* createDownloadProxy();
 
 #if PLATFORM(MAC)
-    void setApplicationIsOccluded(bool);
+    void setProcessSuppressionEnabled(bool);
 #endif
 
 private:

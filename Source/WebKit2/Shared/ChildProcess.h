@@ -62,8 +62,8 @@ public:
     void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
 
 #if PLATFORM(MAC)
-    bool applicationIsOccluded() const { return !m_processVisibleAssertion; }
-    void setApplicationIsOccluded(bool);
+    bool processSuppressionEnabled() const { return !m_processVisibleAssertion; }
+    void setProcessSuppressionEnabled(bool);
 #endif
 
     CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }

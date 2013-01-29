@@ -45,16 +45,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void ChildProcess::setApplicationIsOccluded(bool applicationIsOccluded)
+void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
-    if (this->applicationIsOccluded() == applicationIsOccluded)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (this->processSuppressionEnabled() == processSuppressionEnabled)
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if (applicationIsOccluded)
+    if (processSuppressionEnabled)
         m_processVisibleAssertion.clear();
     else
         m_processVisibleAssertion = WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypeVisible);
+#else
+    UNUSED_PARAM(processSuppressionEnabled);
 #endif
 }
 
@@ -74,8 +76,8 @@ void ChildProcess::platformInitialize()
     setpriority(PRIO_DARWIN_PROCESS, 0, 0);
     initializeTimerCoalescingPolicy();
 #endif
-    // Starting as unoccluded.  The proxy for this process will set the actual value from didFinishLaunching().
-    setApplicationIsOccluded(false);
+    // Starting with process suppression disabled.  The proxy for this process will enable if appropriate from didFinishLaunching().
+    setProcessSuppressionEnabled(false);
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }

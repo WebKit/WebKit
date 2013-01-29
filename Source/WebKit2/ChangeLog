@@ -1,3 +1,123 @@
+2013-01-29  Kiran Muppala  <cmuppala@apple.com>
+
+        Add support for enabling process suppression in WebProcesses with no visible pages
+        https://bugs.webkit.org/show_bug.cgi?id=108054
+
+        Reviewed by Anders Carlsson.
+
+        Provide a preference to enable process suppression in WebProcesses with
+        no visible pages even if the application is not completely occluded.
+        This provides more opportunities for process suppression to take effect.
+
+        Replace the messaging of application occlusion status from UI process to
+        ChildProcesses with messages that indicate the current required process
+        suppression state.  WebProcessProxy should determine if the process is
+        eligible for process suppression based on both application occlusion
+        and page visibility.  When either of these parameters changes,
+        the proxy should message the child process of the updated process
+        suppression state.
+
+        * NetworkProcess/NetworkProcess.messages.in: Rename
+        SetApplicationIsOccluded to SetProcessSuppressionEnabled.
+        * PluginProcess/PluginProcess.messages.in: Ditto.
+        * Shared/ChildProcess.h: 
+        (WebKit::ChildProcess::processSuppressionEnabled): Rename
+        applicationIsOccluded.
+        * Shared/WebPreferencesStore.h: Add a new preference
+        pageVisibilityBasedProcessSuppressionEnabled, to enabled/disable
+        process suppression of WebProcesses when all pages are hidden.
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled): Rename
+        setApplicationIsOccluded.
+        (WebKit::ChildProcess::platformInitialize): Replace call to
+        setApplicationIsOccluded with setProcessSuppressionEnabled.
+        * SharedWorkerProcess/SharedWorkerProcess.messages.in: Rename
+        SetApplicationIsOccluded to SetProcessSuppressionEnabled.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled):
+        (WKPreferencesGetPageVisibilityBasedProcessSuppressionEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Use setter
+        to update process suppression state instead of messaging directly.
+        Use WebContext::canEnableProcessSuppressionForNetworkProcess() helper
+        method to determine if process suppression should be enabled.
+        * UIProcess/Network/NetworkProcessProxy.h: Rename
+        setApplicationIsOccluded to setProcessSuppresionEnabled.
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::setProcessSuppressionEnabled): Ditto.
+        * UIProcess/Plugins/PluginProcessManager.h: Ditto.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Use setter
+        to update process suppression state instead of messaging directly.
+        Use WebContext::canEnableProcessSuppressionForGlobalChildProcesses()
+        helper method to determine if process suppression should be enabled.
+        * UIProcess/Plugins/PluginProcessProxy.h: Rename
+        setApplicationIsOccluded to setProcessSuppresionEnabled.
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::setProcessSuppressionEnabled): Ditto.
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::setProcessSuppressionEnabled): Ditto.
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.h: Ditto.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        (WebKit::SharedWorkerProcessProxy::didFinishLaunching): Use setter
+        to update process suppression state instead of messaging directly.
+        Use WebContext::canEnableProcessSuppressionForGlobalChildProcesses()
+        helper method to determine if process suppression should be enabled.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h: Rename
+        setApplicationIsOccluded to setProcessSuppresionEnabled.
+        * UIProcess/SharedWorkers/mac/SharedWorkerProcessManagerMac.mm:
+        (WebKit::SharedWorkerProcessManager::setProcessSuppressionEnabled):
+        Ditto.
+        * UIProcess/SharedWorkers/mac/SharedWorkerProcessProxyMac.mm:
+        (WebKit::SharedWorkerProcessProxy::setProcessSuppressionEnabled): Ditto.
+        * UIProcess/WebContext.h: Replace applicationIsOccluded() getter with
+        helper methods to determine if a child process can have process
+        suppression enabled.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange): Notify WebProcessProxy of
+        page visibility change.
+        (WebKit::WebPageProxy::preferencesDidChange): Notify WebProcessProxy of
+        change in preferences.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy): Initialize member variable
+        tracking process suppression state to false.
+        (WebKit::WebProcessProxy::createWebPage): Update set of pages which can
+        be process suppressed and the resulting process suppression state for
+        the child process.
+        (WebKit::WebProcessProxy::addExistingWebPage): Ditto.
+        (WebKit::WebProcessProxy::removeWebPage): Ditto.
+        (WebKit::WebProcessProxy::pageVisibilityChanged): Ditto.
+        (WebKit::WebProcessProxy::pagePreferencesChanged): Ditto.
+        (WebKit::WebProcessProxy::didFinishLaunching): Call
+        updateProcessSuppressionState().
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::updateProcessSuppressionStateOfGlobalChildProcesses): Use new
+        helper method canEnableProcessSuppressionForGlobalChildProcesses() to
+        determine if process suppression should be enabled.
+        (WebKit::applicationOcclusionStateChanged): Update renamed methods
+        and variables.
+        (WebKit::enableOcclusionNotifications): Move OmitProcessSuppression
+        user default check into canEnableProcessSuppression methods.
+        (WebKit::omitProcessSuppression):
+        (WebKit::WebContext::updateProcessSuppressionStateOfChildProcesses):
+        Use new helper method canEnableProcessSuppressionForNetworkProcess() to
+        determine if process suppression should be enabled for NetworkProcess.
+        Let WebProcess update process suppression state based on application
+        occlusion state and page visibility.
+        (WebKit::WebContext::canEnableProcessSuppressionForNetworkProcess):
+        (WebKit::WebContext::canEnableProcessSuppressionForWebProcess):
+        (WebKit::WebContext::canEnableProcessSuppressionForGlobalChildProcesses):
+        (WebKit::WebContext::processSuppressionEnabledChanged): Reevaluate if
+        process suppression is enabled for all contexts and update process
+        suppression state of global child processes.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::pageIsProcessSuppressible):
+        (WebKit::WebProcessProxy::allPagesAreProcessSuppressible):
+        (WebKit::WebProcessProxy::updateProcessSuppressionState):
+        * WebProcess/WebProcess.messages.in:
+
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
         Start using the message flag in MessageEncoder/MessageDecoder

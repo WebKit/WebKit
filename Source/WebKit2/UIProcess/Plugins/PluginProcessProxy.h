@@ -86,7 +86,7 @@ public:
     PluginProcess::Type processType() const { return m_processType; }
 
 #if PLATFORM(MAC)
-    void setApplicationIsOccluded(bool);
+    void setProcessSuppressionEnabled(bool);
 
     // Returns whether the plug-in needs the heap to be marked executable.
     static bool pluginNeedsExecutableHeap(const PluginModuleInfo&);

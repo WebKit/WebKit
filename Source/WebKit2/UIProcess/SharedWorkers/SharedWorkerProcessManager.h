@@ -54,7 +54,7 @@ public:
     void removeSharedWorkerProcessProxy(SharedWorkerProcessProxy*);
 
 #if PLATFORM(MAC)
-    void setApplicationIsOccluded(bool);
+    void setProcessSuppressionEnabled(bool);
 #endif
 
 private:

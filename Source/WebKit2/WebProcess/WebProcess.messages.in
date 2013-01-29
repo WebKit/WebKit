@@ -96,6 +96,6 @@ messages -> WebProcess LegacyReceiver {
     PostInjectedBundleMessage(CoreIPC::DataReference messageData);
 
 #if PLATFORM(MAC)
-    SetApplicationIsOccluded(bool flag);
+    SetProcessSuppressionEnabled(bool flag);
 #endif
 }

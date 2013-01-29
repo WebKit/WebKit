@@ -273,9 +273,10 @@ public:
 #if PLATFORM(MAC)
     void setProcessSuppressionEnabled(bool);
     bool processSuppressionEnabled() const { return m_processSuppressionEnabled; }
-    void updateChildProcessesApplicationOcclusionState();
-    static bool applicationIsOccluded();
-    static bool processSuppressionEnabledForGlobalChildProcesses();
+    bool canEnableProcessSuppressionForNetworkProcess() const;
+    bool canEnableProcessSuppressionForWebProcess(const WebProcessProxy*) const;
+    static bool canEnableProcessSuppressionForGlobalChildProcesses();
+    void updateProcessSuppressionStateOfChildProcesses();
 #endif
 
     static void willStartUsingPrivateBrowsing();

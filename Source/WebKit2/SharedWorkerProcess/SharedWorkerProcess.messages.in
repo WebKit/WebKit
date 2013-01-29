@@ -32,7 +32,7 @@ messages -> SharedWorkerProcess LegacyReceiver {
     CreateWebProcessConnection()
 
 #if PLATFORM(MAC)
-    SetApplicationIsOccluded(bool flag)
+    SetProcessSuppressionEnabled(bool flag)
 #endif
 }
 

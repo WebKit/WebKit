@@ -324,12 +324,12 @@ void PluginProcessProxy::applicationDidBecomeActive()
     makePluginProcessTheFrontProcess();
 }
 
-void PluginProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void PluginProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
     if (!isValid())
         return;
 
-    m_connection->send(Messages::PluginProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    m_connection->send(Messages::PluginProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
 } // namespace WebKit

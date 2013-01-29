@@ -40,7 +40,7 @@ messages -> PluginProcess LegacyReceiver {
     ClearSiteData(Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 
 #if PLATFORM(MAC)
-    SetApplicationIsOccluded(bool flag);
+    SetProcessSuppressionEnabled(bool flag);
 #endif
 }
 
