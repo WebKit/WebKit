@@ -60,12 +60,17 @@ string(TOLOWER ${PORT} WEBKIT_PORT_DIR)
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
-find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
-find_package(Gperf REQUIRED)
-find_package(Perl REQUIRED)
-find_package(PythonInterp REQUIRED)
-find_package(Ruby)
+find_package(BISON 2.4.1 REQUIRED)
+find_package(FLEX 2.5.34 REQUIRED)
+
+# TODO Enforce version requirement for gperf
+find_package(Gperf 3.0.1 REQUIRED)
+
+# TODO Enforce version requirement for perl
+find_package(Perl 5.10.0 REQUIRED)
+
+find_package(PythonInterp 2.6.0 REQUIRED)
+find_package(Ruby 1.8.7)
 
 # -----------------------------------------------------------------------------
 # Determine the target processor
