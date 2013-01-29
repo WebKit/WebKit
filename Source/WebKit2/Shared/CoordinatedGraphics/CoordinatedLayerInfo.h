@@ -43,6 +43,7 @@ struct CoordinatedLayerInfo {
         , mask(InvalidCoordinatedLayerID)
         , imageID(InvalidCoordinatedImageBackingID)
         , opacity(0)
+        , debugBorderWidth(0)
         , flags(0) { }
 
     CoordinatedLayerID replica;
@@ -57,6 +58,8 @@ struct CoordinatedLayerInfo {
     WebCore::IntRect contentsRect;
     float opacity;
     WebCore::Color solidColor;
+    WebCore::Color debugBorderColor;
+    float debugBorderWidth;
 
     union {
         struct {
@@ -68,6 +71,8 @@ struct CoordinatedLayerInfo {
             bool preserves3D : 1;
             bool isRootLayer: 1;
             bool fixedToViewport : 1;
+            bool showDebugBorders : 1;
+            bool showRepaintCounter : 1;
         };
         unsigned flags;
     };

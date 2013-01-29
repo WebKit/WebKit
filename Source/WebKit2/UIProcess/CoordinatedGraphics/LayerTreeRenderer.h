@@ -78,6 +78,7 @@ public:
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
     void destroyCanvas(CoordinatedLayerID);
 #endif
+    void setLayerRepaintCount(CoordinatedLayerID, int value);
 
     void detach();
     void appendUpdate(const Function<void()>&);

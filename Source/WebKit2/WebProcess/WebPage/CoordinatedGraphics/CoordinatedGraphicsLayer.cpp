@@ -371,6 +371,24 @@ void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
     didChangeLayerState();
 }
 
+void CoordinatedGraphicsLayer::setShowDebugBorder(bool show)
+{
+    if (isShowingDebugBorder() == show)
+        return;
+
+    GraphicsLayer::setShowDebugBorder(show);
+    didChangeLayerState();
+}
+
+void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
+{
+    if (isShowingRepaintCounter() == show)
+        return;
+
+    GraphicsLayer::setShowRepaintCounter(show);
+    didChangeLayerState();
+}
+
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
     NativeImagePtr newNativeImagePtr = image ? image->nativeImageForCurrentFrame() : 0;
@@ -550,7 +568,19 @@ void CoordinatedGraphicsLayer::syncLayerState()
     m_layerInfo.pos = m_adjustedPosition;
     m_layerInfo.size = m_adjustedSize;
 
+    m_layerInfo.showDebugBorders = isShowingDebugBorder();
+    if (m_layerInfo.showDebugBorders)
+        updateDebugIndicators();
+    m_layerInfo.showRepaintCounter = isShowingRepaintCounter();
+
     m_coordinator->syncLayerState(m_id, m_layerInfo);
+}
+
+void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
+{
+    ASSERT(m_layerInfo.showDebugBorders);
+    m_layerInfo.debugBorderColor = color;
+    m_layerInfo.debugBorderWidth = width;
 }
 
 void CoordinatedGraphicsLayer::syncAnimations()
@@ -698,8 +728,10 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, 
     paintGraphicsLayerContents(*context, rect);
 }
 
-void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& /* updatedRects */)
+void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& updatedRects)
 {
+    if (isShowingRepaintCounter() && !updatedRects.isEmpty())
+        m_coordinator->setLayerRepaintCount(id(), incrementRepaintCount());
 }
 
 void CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation()

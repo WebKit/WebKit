@@ -71,6 +71,8 @@ public:
     virtual void destroyCanvas(CoordinatedLayerID) = 0;
 #endif
 
+    virtual void setLayerRepaintCount(CoordinatedLayerID, int) = 0;
+
     virtual void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
 
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
@@ -112,6 +114,8 @@ public:
     virtual void setContentsRect(const IntRect&) OVERRIDE;
     virtual void setContentsToImage(Image*) OVERRIDE;
     virtual void setContentsToSolidColor(const Color&) OVERRIDE;
+    virtual void setShowDebugBorder(bool) OVERRIDE;
+    virtual void setShowRepaintCounter(bool) OVERRIDE;
     virtual bool shouldDirectlyCompositeImage(Image*) const OVERRIDE;
     virtual void setContentsToCanvas(PlatformLayer*) OVERRIDE;
     virtual void setMaskLayer(GraphicsLayer*) OVERRIDE;
@@ -166,6 +170,8 @@ public:
     bool hasPendingVisibleChanges();
 
 private:
+    virtual void setDebugBorder(const Color&, float width) OVERRIDE;
+
     bool fixedToViewport() const { return m_fixedToViewport; }
 
     void didChangeLayerState();

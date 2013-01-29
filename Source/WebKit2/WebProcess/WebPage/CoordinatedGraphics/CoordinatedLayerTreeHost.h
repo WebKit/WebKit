@@ -101,6 +101,7 @@ public:
     virtual void syncCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) OVERRIDE;
     virtual void destroyCanvas(CoordinatedLayerID) OVERRIDE;
 #endif
+    virtual void setLayerRepaintCount(CoordinatedLayerID, int) OVERRIDE;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
 

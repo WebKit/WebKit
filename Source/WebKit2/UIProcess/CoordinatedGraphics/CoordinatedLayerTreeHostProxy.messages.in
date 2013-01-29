@@ -55,6 +55,8 @@ messages -> CoordinatedLayerTreeHostProxy LegacyReceiver {
     DestroyCanvas(uint32_t id)
 #endif
 
+    SetLayerRepaintCount(uint32_t layerID, int value)
+
     SetBackgroundColor(WebCore::Color color)
 }
 #endif

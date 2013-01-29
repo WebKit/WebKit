@@ -85,6 +85,7 @@ public:
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
     void destroyCanvas(CoordinatedLayerID);
 #endif
+    void setLayerRepaintCount(CoordinatedLayerID, int value);
     void purgeBackingStores();
     LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
     void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);

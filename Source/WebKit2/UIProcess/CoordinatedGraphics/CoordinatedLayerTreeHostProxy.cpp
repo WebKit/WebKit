@@ -242,6 +242,11 @@ void CoordinatedLayerTreeHostProxy::destroyCanvas(CoordinatedLayerID id)
 }
 #endif
 
+void CoordinatedLayerTreeHostProxy::setLayerRepaintCount(CoordinatedLayerID id, int value)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::setLayerRepaintCount, m_renderer.get(), id, value));
+}
+
 void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 {
     m_surfaces.clear();

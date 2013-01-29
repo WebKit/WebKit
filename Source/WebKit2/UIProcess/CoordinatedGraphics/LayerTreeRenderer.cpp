@@ -255,6 +255,12 @@ void LayerTreeRenderer::destroyCanvas(CoordinatedLayerID id)
 }
 #endif
 
+void LayerTreeRenderer::setLayerRepaintCount(CoordinatedLayerID id, int value)
+{
+    GraphicsLayer* layer = layerByID(id);
+    toGraphicsLayerTextureMapper(layer)->setRepaintCount(value);
+}
+
 void LayerTreeRenderer::setLayerChildren(CoordinatedLayerID id, const Vector<CoordinatedLayerID>& childIDs)
 {
     GraphicsLayer* layer = layerByID(id);
@@ -333,6 +339,9 @@ void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLa
     layer->setDrawsContent(layerInfo.drawsContent);
     layer->setContentsVisible(layerInfo.contentsVisible);
     toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);
+    layer->setShowDebugBorder(layerInfo.showDebugBorders);
+    layer->setDebugBorder(layerInfo.debugBorderColor, layerInfo.debugBorderWidth);
+    layer->setShowRepaintCounter(layerInfo.showRepaintCounter);
 
     if (layerInfo.fixedToViewport)
         m_fixedLayers.add(id, layer);

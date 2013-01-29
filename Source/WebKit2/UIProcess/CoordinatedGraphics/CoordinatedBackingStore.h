@@ -36,13 +36,10 @@ public:
     explicit CoordinatedBackingStoreTile(float scale = 1)
         : TextureMapperTile(WebCore::FloatRect())
         , m_scale(scale)
-        , m_repaintCount(0)
     {
     }
 
     inline float scale() const { return m_scale; }
-    inline void incrementRepaintCount() { ++m_repaintCount; }
-    inline int repaintCount() const { return m_repaintCount; }
     void swapBuffers(WebCore::TextureMapper*);
     void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<CoordinatedSurface> buffer, const WebCore::IntPoint&);
 
@@ -52,7 +49,6 @@ private:
     WebCore::IntRect m_tileRect;
     WebCore::IntPoint m_surfaceOffset;
     float m_scale;
-    int m_repaintCount;
 };
 
 class CoordinatedBackingStore : public WebCore::TextureMapperBackingStore {
@@ -66,14 +62,19 @@ public:
     PassRefPtr<WebCore::BitmapTexture> texture() const;
     void setSize(const WebCore::FloatSize&);
     virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*);
+    virtual void drawBorder(WebCore::TextureMapper*, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) OVERRIDE;
+    virtual void drawRepaintCounter(WebCore::TextureMapper*, int repaintCount, const WebCore::Color&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) OVERRIDE;
 
 private:
     CoordinatedBackingStore()
         : m_scale(1.)
     { }
     void paintTilesToTextureMapper(Vector<WebCore::TextureMapperTile*>&, WebCore::TextureMapper*, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*, const WebCore::FloatRect&);
+    WebCore::TransformationMatrix adjustedTransformForRect(const WebCore::FloatRect&);
+    WebCore::FloatRect rect() const { return WebCore::FloatRect(WebCore::FloatPoint::zero(), m_size); }
 
-    HashMap<uint32_t, CoordinatedBackingStoreTile> m_tiles;
+    typedef HashMap<uint32_t, CoordinatedBackingStoreTile> CoordinatedBackingStoreTileMap;
+    CoordinatedBackingStoreTileMap m_tiles;
     HashSet<uint32_t> m_tilesToRemove;
     WebCore::FloatSize m_size;
     float m_scale;
