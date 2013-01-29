@@ -1449,7 +1449,7 @@ ElementShadow* Element::ensureShadow()
         return shadow;
 
     ElementRareData* data = elementRareData();
-    data->setShadow(adoptPtr(new ElementShadow()));
+    data->setShadow(ElementShadow::create());
     return data->shadow();
 }
 

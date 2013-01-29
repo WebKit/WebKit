@@ -27,28 +27,10 @@
 #include "config.h"
 #include "ElementShadow.h"
 
-#include "CSSParser.h"
-#include "CSSSelectorList.h"
 #include "ContainerNodeAlgorithms.h"
-#include "Document.h"
-#include "Element.h"
-#include "HTMLContentElement.h"
-#include "HTMLShadowElement.h"
 #include "InspectorInstrumentation.h"
-#include "NodeTraversal.h"
-#include "ShadowRoot.h"
-#include "StyleResolver.h"
 
 namespace WebCore {
-
-ElementShadow::ElementShadow()
-{
-}
-
-ElementShadow::~ElementShadow()
-{
-    ASSERT(m_shadowRoots.isEmpty());
-}
 
 static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
 {
@@ -138,7 +120,7 @@ void ElementShadow::detach()
     }
 }
 
-bool ElementShadow::childNeedsStyleRecalc()
+bool ElementShadow::childNeedsStyleRecalc() const
 {
     ASSERT(youngestShadowRoot());
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
@@ -148,7 +130,7 @@ bool ElementShadow::childNeedsStyleRecalc()
     return false;
 }
 
-bool ElementShadow::needsStyleRecalc()
+bool ElementShadow::needsStyleRecalc() const
 {
     ASSERT(youngestShadowRoot());
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
