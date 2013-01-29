@@ -1,3 +1,35 @@
+2013-01-29  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Pass metadata in to IDBOpenDBRequest.onUpgradeNeeded/onSuccess
+        https://bugs.webkit.org/show_bug.cgi?id=103920
+
+        Reviewed by Dimitri Glazkov.
+
+        Support the new IDBCallbacks::onSuccess and IDBCallbacks::onUpgradeNeeded
+        while maintaining chromium compatibility by shimming in the old API
+        in the WebKit side. Future code will clean this up so that it is just a
+        pass-through as it was before.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit):
+        (WebKit::WebIDBCallbacks::onSuccess): new method signature.
+        (WebKit::WebIDBCallbacks::onUpgradeNeeded): new method signature.
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onSuccess): call on new method signature proxies through old API.
+        (WebKit):
+        (WebKit::IDBCallbacksProxy::onUpgradeNeeded): call on new method signature proxies through old API.
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onSuccess): call on old WebKit proxy signature calls new API.
+        (WebKit):
+        (WebKit::WebIDBCallbacksImpl::onUpgradeNeeded): call on old WebKit proxy signature calls new API.
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * tests/IDBAbortOnCorruptTest.cpp: new method signature.
+        (WebCore::MockIDBCallbacks::onSuccess):
+        * tests/IDBDatabaseBackendTest.cpp: new method signature.
+
 2013-01-29  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Fix contents size calculation for page scale initialization
