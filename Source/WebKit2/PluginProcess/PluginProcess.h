@@ -32,10 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class RunLoop;
-}
-
 namespace WebKit {
 
 class NetscapePluginModule;
@@ -72,16 +68,11 @@ private:
     PluginProcess();
     ~PluginProcess();
 
-    void enterSandbox(const String& sandboxProfileDirectoryPath);
-
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
-
-    // Prevent entering the sandbox during first stage of process initialization. We can't do enter the sandbox before receiving
-    // sandbox profile directory in initialization message.
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE { }
-
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
 
     // CoreIPC::Connection::Client
@@ -100,10 +91,6 @@ private:
     
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
-
-    // Stored for delayed sandbox initialization.
-    ChildProcessInitializationParameters m_childProcessInitializationParameters;
-
     // Our web process connections.
     Vector<RefPtr<WebProcessConnection> > m_webProcessConnections;
 

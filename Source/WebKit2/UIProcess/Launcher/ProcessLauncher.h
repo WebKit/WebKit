@@ -28,12 +28,11 @@
 
 #include "Connection.h"
 #include "PlatformProcessIdentifier.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
-
-#ifndef NDEBUG
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
-#endif
 
 namespace WebKit {
 
@@ -61,6 +60,7 @@ public:
 
     struct LaunchOptions {
         ProcessType processType;
+        HashMap<String, String> extraInitializationData;
 #if PLATFORM(MAC)
         static const cpu_type_t MatchCurrentArchitecture = 0;
         cpu_type_t architecture;

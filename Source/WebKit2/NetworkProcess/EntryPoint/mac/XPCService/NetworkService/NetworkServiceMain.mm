@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER initializeNetworkService
+#define WEBKIT_XPC_SERVICE_INITIALIZER NetworkServiceInitializer
 #include "XPCServiceBootstrapper.h"
 
 using namespace WebKit;

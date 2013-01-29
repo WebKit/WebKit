@@ -50,6 +50,7 @@ public:
     virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier);
     virtual bool getClientIdentifier(String& clientIdentifier);
     virtual bool getClientProcessName(String& clientProcessName);
+    virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
     virtual void doPostRunWork();
 
@@ -80,6 +81,9 @@ int ChildProcessMain(int argc, char** argv)
             return EXIT_FAILURE;
 
         if (!delegate.getClientProcessName(parameters.uiProcessName))
+            return EXIT_FAILURE;
+
+        if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
             return EXIT_FAILURE;
 
         // FIXME: This should be moved to ChildProcessMac if it is still necessary.

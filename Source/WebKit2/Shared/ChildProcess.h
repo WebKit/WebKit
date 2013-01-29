@@ -30,7 +30,9 @@
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
 #include <WebCore/RunLoop.h>
+#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -41,6 +43,7 @@ struct ChildProcessInitializationParameters {
     String uiProcessName;
     String clientIdentifier;
     CoreIPC::Connection::Identifier connectionIdentifier;
+    HashMap<String, String> extraInitializationData;
 };
 
 class ChildProcess : protected CoreIPC::Connection::Client, public CoreIPC::MessageSender<ChildProcess> {

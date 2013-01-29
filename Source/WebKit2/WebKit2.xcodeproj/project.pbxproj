@@ -914,6 +914,8 @@
 		BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */; };
 		BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */; };
 		BCBECDC316B5CEB100047A1A /* PluginService.Development.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBECDC116B5CE0D00047A1A /* PluginService.Development.Main.mm */; };
+		BCBECDE716B6416800047A1A /* XPCServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */; };
+		BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */; };
 		BCC43ABA127B95DC00317F16 /* PlatformPopupMenuData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */; };
 		BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */; };
 		BCC43AC7127B99DE00317F16 /* WebPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */; };
@@ -2263,6 +2265,8 @@
 		BCBECDC016B5CE0D00047A1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCBECDC116B5CE0D00047A1A /* PluginService.Development.Main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginService.Development.Main.mm; sourceTree = "<group>"; };
 		BCBECDC216B5CE2A00047A1A /* PluginService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.Development.xcconfig; sourceTree = "<group>"; };
+		BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceEntryPoint.mm; sourceTree = "<group>"; };
+		BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCServiceEntryPoint.h; sourceTree = "<group>"; };
 		BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformPopupMenuData.cpp; sourceTree = "<group>"; };
 		BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPopupMenuData.h; sourceTree = "<group>"; };
 		BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuMac.mm; sourceTree = "<group>"; };
@@ -4177,8 +4181,10 @@
 		BC82836B16B3587900A278FE /* XPCService */ = {
 			isa = PBXGroup;
 			children = (
-				BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */,
 				BC82839716B480F600A278FE /* XPCServiceBootstrapper.Development.h */,
+				BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */,
+				BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */,
+				BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */,
 			);
 			name = XPCService;
 			path = mac/XPCService;
@@ -5320,6 +5326,7 @@
 				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
 				518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */,
 				BC82837A16B36A4F00A278FE /* ChildProcessMain.h in Headers */,
+				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
 				A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6436,6 +6443,7 @@
 				BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */,
+				BCBECDE716B6416800047A1A /* XPCServiceEntryPoint.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

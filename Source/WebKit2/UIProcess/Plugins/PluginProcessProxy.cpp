@@ -203,13 +203,9 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_connection->open();
     
     PluginProcessCreationParameters parameters;
-
-    parameters.pluginPath = m_pluginInfo.path;
     parameters.processType = m_processType;
-
     parameters.minimumLifetime = minimumLifetime;
     parameters.terminationTimeout = shutdownTimeout;
-
     platformInitializePluginProcess(parameters);
 
     // Initialize the plug-in host process.

@@ -88,6 +88,11 @@ bool ChildProcessMainDelegate::getClientProcessName(String& clientProcessName)
     return true;
 }
 
+bool ChildProcessMainDelegate::getExtraInitializationData(HashMap<String, String>&)
+{
+    return true;
+}
+
 void ChildProcessMainDelegate::doPostRunWork()
 {
 }

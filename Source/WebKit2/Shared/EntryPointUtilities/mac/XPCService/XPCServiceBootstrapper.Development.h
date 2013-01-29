@@ -30,7 +30,6 @@
 #error WEBKIT_XPC_SERVICE_INITIALIZER must be defined.
 #endif
 
-#import <AvailabilityMacros.h>
 #import <crt_externs.h>
 #import <dlfcn.h>
 #import <mach-o/dyld.h>
@@ -38,8 +37,6 @@
 #import <stdio.h>
 #import <stdlib.h>
 #import <xpc/xpc.h>
-
-extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 
 #define STRINGIZE(exp) #exp
 #define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
@@ -117,7 +114,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     exit(EXIT_FAILURE);
                 }
 
-                typedef void (*InitializerFunction)(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
+                typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(dlsym(frameworkLibrary, STRINGIZE_VALUE_OF(WEBKIT_XPC_SERVICE_INITIALIZER)));
                 if (!initializerFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit2.framework loaded from path: %s (Error: %s)", xpc_dictionary_get_string(event, "framework-executable-path"), dlerror());
@@ -132,12 +129,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 dup2(xpc_dictionary_dup_fd(event, "stdout"), STDOUT_FILENO);
                 dup2(xpc_dictionary_dup_fd(event, "stderr"), STDERR_FILENO);
 
-                initializerFunctionPtr(
-                    xpc_dictionary_get_string(event, "client-identifier"),
-                    peer,
-                    xpc_dictionary_copy_mach_send(event, "server-port"),
-                    xpc_dictionary_get_string(event, "ui-process-name")
-                );
+                initializerFunctionPtr(peer, event);
             }
         }
     });

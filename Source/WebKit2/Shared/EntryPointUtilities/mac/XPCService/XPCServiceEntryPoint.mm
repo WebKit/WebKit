@@ -23,13 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER PluginServiceInitializer
-#include "XPCServiceBootstrapper.Development.h"
+#import "config.h"
 
-using namespace WebKit;
+#if HAVE(XPC)
 
-int main(int argc, char** argv)
+#import "XPCServiceEntryPoint.h"
+
+extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
+
+namespace WebKit {
+
+XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {
-    xpc_main(XPCServiceEventHandler);
-    return 0;
 }
+
+bool XPCServiceInitializerDelegate::getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
+{
+    identifier = CoreIPC::Connection::Identifier(xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port"), m_connection);
+    return true;
+}
+
+bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
+{
+    clientIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-identifier");
+    if (clientIdentifier.isEmpty())
+        return false;
+    return true;
+}
+
+bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
+{
+    clientProcessName = xpc_dictionary_get_string(m_initializerMessage, "ui-process-name");
+    if (clientProcessName.isEmpty())
+        return false;
+    return true;
+}
+
+bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>&)
+{
+    return true;
+}
+
+} // namespace WebKit
+
+#endif // HAVE(XPC)

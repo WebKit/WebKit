@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER initializePluginService
+#if defined(__i386__)
+
+#define WEBKIT_XPC_SERVICE_INITIALIZER PluginServiceInitializer
 #include "XPCServiceBootstrapper.h"
 
 using namespace WebKit;
@@ -33,3 +35,12 @@ int main(int argc, char** argv)
     xpc_main(XPCServiceEventHandler);
     return 0;
 }
+
+#else
+
+int main(int argc, char** argv)
+{
+    return 0;
+}
+
+#endif

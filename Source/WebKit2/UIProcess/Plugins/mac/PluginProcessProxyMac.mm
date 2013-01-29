@@ -136,6 +136,14 @@ void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::Launch
     launchOptions.architecture = pluginInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
 
+    launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
+
+    // FIXME: We should rip this out once we have a good place to install plug-in
+    // sandbox profiles.
+    NSString* sandboxProfileDirectoryPath = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2PlugInSandboxProfileDirectoryPathKey];
+    if (sandboxProfileDirectoryPath)
+        launchOptions.extraInitializationData.add("sandbox-profile-directory-path", String(sandboxProfileDirectoryPath));
+
 #if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
 #endif
@@ -143,22 +151,14 @@ void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::Launch
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {
-    // For know only Flash is known to behave with asynchronous plug-in initialization.
+    // For now only Flash is known to behave with asynchronous plug-in initialization.
     parameters.supportsAsynchronousPluginInitialization = m_pluginInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
-
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif
-
-    // FIXME: We should rip this out once we have a good place to install plug-in
-    // sandbox profiles.
-    NSString* sandboxProfileDirectoryPath = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2PlugInSandboxProfileDirectoryPathKey];
-    if (sandboxProfileDirectoryPath)
-        parameters.sandboxProfileDirectoryPath = String(sandboxProfileDirectoryPath);
 }
 
 bool PluginProcessProxy::getPluginProcessSerialNumber(ProcessSerialNumber& pluginProcessSerialNumber)

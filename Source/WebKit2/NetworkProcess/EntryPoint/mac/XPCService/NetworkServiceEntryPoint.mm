@@ -28,33 +28,21 @@
 #if HAVE(XPC)
 
 #import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebKit2Initialize.h"
 #import "NetworkProcess.h"
-#import <WebCore/RunLoop.h>
-#import <stdio.h>
-#import <stdlib.h>
-#import <xpc/xpc.h>
+#import "WKBase.h"
+#import "XPCServiceEntryPoint.h"
 
-using namespace WebCore;
 using namespace WebKit;
 
-extern "C" WK_EXPORT void initializeNetworkService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
+extern "C" WK_EXPORT void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
 
-void initializeNetworkService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
+void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
-    // Remove the SecItemShim shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // Remove the SecItemShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
-    InitializeWebKit2();
-
-    ChildProcessInitializationParameters parameters;
-    parameters.uiProcessName = uiProcessName;
-    parameters.clientIdentifier = clientIdentifier;
-    parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
-
-    NetworkProcess::shared().initialize(parameters);
+    XPCServiceInitializer<NetworkProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
 
 #endif // HAVE(XPC)

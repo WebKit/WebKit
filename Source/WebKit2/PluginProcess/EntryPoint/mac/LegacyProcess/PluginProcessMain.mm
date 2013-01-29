@@ -80,6 +80,22 @@ public:
         }
     }
 
+    virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData)
+    {
+        String pluginPath = m_commandLine["plugin-path"];
+        if (pluginPath.isEmpty())
+            return false;
+        extraInitializationData.add("plugin-path", pluginPath);
+
+        // FIXME: We should stop passing this and have it in a hard coded place. For now
+        // though, let the absence of a sandboxProfileDirectoryPath indicate no plugin
+        // sandboxing should take place.
+        String sandboxProfileDirectoryPath = m_commandLine["sandbox-profile-directory-path"];
+        extraInitializationData.add("sandbox-profile-directory-path", sandboxProfileDirectoryPath);
+
+        return true;
+    }
+
     virtual void doPostRunWork()
     {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

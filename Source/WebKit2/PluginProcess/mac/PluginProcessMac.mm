@@ -270,31 +270,6 @@ static void initializeCocoaOverrides()
     CFRetain(orderOffScreenObserver);
 }
 
-void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
-{
-    m_childProcessInitializationParameters = parameters;
-
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
-#if defined(__i386__)
-    // Initialize the shim.
-    initializeShim();
-#endif
-
-    // Initialize Cocoa overrides.
-    initializeCocoaOverrides();
-
-    // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
-    // allowing plug-ins to change the mouse cursor at any time.
-    WKEnableSettingCursorWhenInBackground();
-
-#if defined(__i386__)
-    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    [defaults release];
-#endif
-}
-
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)
 {
     parentProcessConnection()->send(Messages::PluginProcessProxy::SetModalWindowIsShowing(modalWindowIsShowing), 0);
@@ -351,28 +326,40 @@ static void muteAudio(void)
 void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)",
-                                                                     "visible name of the plug-in host process. The first argument is the plug-in name "
-                                                                     "and the second argument is the application name."),
-                                 [[(NSString *)parameters.pluginPath lastPathComponent] stringByDeletingPathExtension], 
-                                 (NSString *)parameters.parentProcessName];
-    
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
-
-    // FIXME: PluginProcess initializes sandbox later than normal for ChildProcesses, because it needs
-    // to know profile directory path. Switch to normal initialization scheme once the path can be determined earlier.
-    enterSandbox(parameters.sandboxProfileDirectoryPath);
-
     if (parameters.processType == TypeSnapshotProcess)
         muteAudio();
 }
 
-void PluginProcess::enterSandbox(const String& sandboxProfileDirectoryPath)
+void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
-    SandboxInitializationParameters sandboxParameters;
+#if defined(__i386__)
+    // Initialize the shim.
+    initializeShim();
+#endif
 
-    String sandboxProfile = loadSandboxProfile(m_pluginPath, sandboxProfileDirectoryPath);
+    // Initialize Cocoa overrides.
+    initializeCocoaOverrides();
+
+    // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
+    // allowing plug-ins to change the mouse cursor at any time.
+    WKEnableSettingCursorWhenInBackground();
+
+#if defined(__i386__)
+    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+    [defaults release];
+#endif
+}
+
+void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+{
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)", "visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name."), [[(NSString *)m_pluginPath lastPathComponent] stringByDeletingPathExtension], (NSString *)parameters.uiProcessName];
+    WKSetVisibleApplicationName((CFStringRef)applicationName);
+}
+
+void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+{
+    String sandboxProfile = loadSandboxProfile(m_pluginPath, parameters.extraInitializationData.get("sandbox-profile-directory-path"));
     if (sandboxProfile.isEmpty())
         return;
 
@@ -403,7 +390,7 @@ void PluginProcess::enterSandbox(const String& sandboxProfileDirectoryPath)
     RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults.get()];
 
-    ChildProcess::initializeSandbox(m_childProcessInitializationParameters, sandboxParameters);
+    ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
 } // namespace WebKit

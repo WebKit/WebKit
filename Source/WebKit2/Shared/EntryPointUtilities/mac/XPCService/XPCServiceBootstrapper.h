@@ -31,10 +31,9 @@
 #endif
 
 #import <xpc/xpc.h>
-extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 
 // Forward declare the specified initializer.
-extern "C" void WEBKIT_XPC_SERVICE_INITIALIZER(const char* clientIdentifier, xpc_connection_t, mach_port_t serverPort, const char* uiProcessName);
+extern "C" void WEBKIT_XPC_SERVICE_INITIALIZER(xpc_connection_t, xpc_object_t);
 
 namespace WebKit {
 
@@ -57,12 +56,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                WEBKIT_XPC_SERVICE_INITIALIZER(
-                    xpc_dictionary_get_string(event, "client-identifier"),
-                    peer,
-                    xpc_dictionary_copy_mach_send(event, "server-port"),
-                    xpc_dictionary_get_string(event, "ui-process-name")
-                );
+                WEBKIT_XPC_SERVICE_INITIALIZER(peer, event);
             }
         }
     });

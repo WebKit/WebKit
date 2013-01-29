@@ -1,3 +1,86 @@
+2013-01-28  Sam Weinig  <sam@webkit.org>
+
+        Plug-ins should initialize their sandbox at creation time
+        https://bugs.webkit.org/show_bug.cgi?id=108098
+
+        Reviewed by Anders Carlsson.
+
+        Add the ability to add string key/value pairs to process creation parameters
+        to allow the plugin process to get passed the plugin path which in turn allows
+        the plugin to initialize its sandbox at the correct time.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/NetworkServiceMain.Development.mm:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        (WebKit::PluginProcessMainDelegate::getExtraData):
+        (PluginProcessMainDelegate):
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/PluginService.32.Main.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/PluginService.64.Main.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/PluginService.Development.Main.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (WebKit):
+        (PluginServiceInitializerDelegate):
+        (WebKit::PluginServiceInitializerDelegate::PluginServiceInitializerDelegate):
+        (WebKit::PluginServiceInitializerDelegate::getExtraData):
+        (PluginServiceInitializer):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializeProcess):
+        (WebKit::PluginProcess::initializePluginProcess):
+        (WebKit::PluginProcess::initializeProcessName):
+        (WebKit::PluginProcess::initializeSandbox):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        (WebKit::PluginProcess::platformInitializeProcess):
+        (WebKit::PluginProcess::initializeProcessName):
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/ChildProcess.h:
+        (ChildProcessInitializationParameters):
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.h:
+        (ChildProcessMainDelegate):
+        (WebKit::ChildProcessMain):
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm:
+        (WebKit::ChildProcessMainDelegate::getExtraData):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.Development.h:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.h:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h: Added.
+        (XPCServiceInitializerDelegate):
+        (WebKit::XPCServiceInitializerDelegate::XPCServiceInitializerDelegate):
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm: Added.
+        (WebKit::XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate):
+        (WebKit::XPCServiceInitializerDelegate::getConnectionIdentifier):
+        (WebKit::XPCServiceInitializerDelegate::getClientIdentifier):
+        (WebKit::XPCServiceInitializerDelegate::getClientProcessName):
+        (WebKit::XPCServiceInitializerDelegate::getExtraData):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (LaunchOptions):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        (WebKit::connectToReExecService):
+        (WebKit::createService):
+        (WebKit::createProcess):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
 2013-01-28  Kiran Muppala  <cmuppala@apple.com>
 
         Add window occlusion criteria to determine page visibility on Mac

@@ -28,34 +28,56 @@
 #if HAVE(XPC)
 
 #import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebKit2Initialize.h"
 #import "PluginProcess.h"
+#import "WKBase.h"
+#import "XPCServiceEntryPoint.h"
 #import <WebCore/RunLoop.h>
-#import <xpc/xpc.h>
+
+namespace WebKit {
+
+class PluginServiceInitializerDelegate : public XPCServiceInitializerDelegate {
+public:
+    PluginServiceInitializerDelegate(xpc_connection_t connection, xpc_object_t initializerMessage)
+        : XPCServiceInitializerDelegate(connection, initializerMessage)
+    {
+    }
+
+    virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData)
+    {
+        xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
+
+        String pluginPath = xpc_dictionary_get_string(extraDataInitializationDataObject, "plugin-path");
+        if (pluginPath.isEmpty())
+            return false;
+        extraInitializationData.add("plugin-path", pluginPath);
+
+        // FIXME: We should stop passing this and have it in a hard coded place. For now
+        // though, let the absence of a sandboxProfileDirectoryPath indicate no plugin
+        // sandboxing should take place.
+        String sandboxProfileDirectoryPath = xpc_dictionary_get_string(extraDataInitializationDataObject, "sandbox-profile-directory-path");
+        extraInitializationData.add("sandbox-profile-directory-path", sandboxProfileDirectoryPath);
+
+        return true;
+    }
+};
+
+} // namespace WebKit
 
 using namespace WebCore;
 using namespace WebKit;
 
-extern "C" WK_EXPORT void initializePluginService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
+extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
 
-void initializePluginService(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
+void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
+    // FIXME: Add support for teardown from PluginProcessMain.mm
+
     // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes
     // spawned by the PluginProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
-
     RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-    InitializeWebKit2();
 
-    ChildProcessInitializationParameters parameters;
-    parameters.uiProcessName = uiProcessName;
-    parameters.clientIdentifier = clientIdentifier;
-    parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
-
-    PluginProcess::shared().initialize(parameters);
-
-    // FIXME: Add support for teardown from PluginProcessMain.mm
+    XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(connection, initializerMessage);
 }
 
 #endif // HAVE(XPC)

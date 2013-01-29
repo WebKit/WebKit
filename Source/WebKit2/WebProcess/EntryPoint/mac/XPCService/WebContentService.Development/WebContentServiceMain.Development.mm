@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER initializeWebContentService
+#define WEBKIT_XPC_SERVICE_INITIALIZER WebContentServiceInitializer
 #include "XPCServiceBootstrapper.Development.h"
 
 using namespace WebKit;
