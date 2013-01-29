@@ -413,8 +413,8 @@ void GraphicsLayerTextureMapper::updateDebugBorderAndRepaintCountIfNeeded()
     if (!m_hasOwnBackingStore)
         return;
 
-    m_usingTiledLayer = shouldHaveBackingStore();
-    updateDebugIndicators();
+    if (isShowingDebugBorder())
+        updateDebugIndicators();
 
     // When this has its own backing store (e.g. Qt WK1), update the repaint count before calling TextureMapperLayer::flushCompositingStateForThisLayerOnly().
     bool needsToRepaint = shouldHaveBackingStore() && (m_needsDisplay || !m_needsDisplayRect.isEmpty());
