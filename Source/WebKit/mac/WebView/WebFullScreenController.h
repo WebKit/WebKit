@@ -59,6 +59,8 @@ namespace WebCore {
 - (WebView*)webView;
 - (void)setWebView:(WebView*)webView;
 
+- (NSView*)webViewPlaceholder;
+
 - (BOOL)isFullScreen;
 
 - (void)setElement:(PassRefPtr<WebCore::Element>)element;

@@ -139,6 +139,11 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     _webView = webView;
 }
 
+- (NSView*)webViewPlaceholder
+{
+    return _webViewPlaceholder.get();
+}
+
 - (Element*)element
 {
     return _element.get();

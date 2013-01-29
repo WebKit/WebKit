@@ -6719,6 +6719,19 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 @end
 
+@implementation WebView (WebViewFullScreen)
+
+- (NSView*)fullScreenPlaceholderView
+{
+#if ENABLE(FULLSCREEN_API)
+    if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen])
+        return [_private->newFullscreenController webViewPlaceholder];
+#endif
+    return nil;
+}
+
+@end
+
 void WebInstallMemoryPressureHandler(void)
 {
     memoryPressureHandler().install();

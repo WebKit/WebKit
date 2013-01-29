@@ -133,6 +133,11 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     return _isFullScreen;
 }
 
+- (WebCoreFullScreenPlaceholderView*)webViewPlaceholder
+{
+    return _webViewPlaceholder.get();
+}
+
 #pragma mark -
 #pragma mark NSWindowController overrides
 

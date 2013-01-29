@@ -62,6 +62,8 @@ class IntRect;
 - (WKView*)webView;
 - (void)setWebView:(WKView*)webView;
 
+- (WebCoreFullScreenPlaceholderView*)webViewPlaceholder;
+
 - (BOOL)isFullScreen;
 
 - (void)enterFullScreen:(NSScreen *)screen;

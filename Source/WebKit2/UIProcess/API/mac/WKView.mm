@@ -82,6 +82,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreNSStringExtras.h>
+#import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/FileSystem.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
@@ -3265,6 +3266,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
 
     _data->_page->setMainFrameIsScrollable(!expandsToFit);
+}
+
+- (NSView*)fullScreenPlaceholderView
+{
+#if ENABLE(FULLSCREEN_API)
+    if (_data->_fullScreenWindowController && [_data->_fullScreenWindowController isFullScreen])
+        return [_data->_fullScreenWindowController webViewPlaceholder];
+#endif
+    return nil;
 }
 
 @end

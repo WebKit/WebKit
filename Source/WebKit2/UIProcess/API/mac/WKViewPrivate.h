@@ -53,4 +53,6 @@
 @property (readwrite) CGFloat minimumLayoutWidth;
 @property (readwrite) CGFloat minimumWidthForAutoLayout;
 
+- (NSView*)fullScreenPlaceholderView;
+
 @end
