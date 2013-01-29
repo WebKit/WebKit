@@ -4284,6 +4284,7 @@ webkit.org/b/106689 canvas/philip/tests/2d.gradient.radial.transform.3.html [ Fa
 # Ref tests that now fail with Skia changes
 crbug.com/169602 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
 crbug.com/169602 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
+crbug.com/169602 fast/backgrounds/gradient-background-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
