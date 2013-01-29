@@ -1,3 +1,9 @@
+2013-01-29  Michael Brüning  <michael.bruning@digia.com>
+
+        Unreviewed, updated my email information.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-29  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] delete DRTTestRunner

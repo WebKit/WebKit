@@ -368,7 +368,7 @@ committers_unable_to_review = [
     Committer("Max Vujovic", ["mvujovic@adobe.com", "maxvujovic@gmail.com"], "mvujovic"),
     Committer("Maxime Britto", ["maxime.britto@gmail.com", "britto@apple.com"]),
     Committer("Maxime Simon", ["simon.maxime@gmail.com", "maxime.simon@webkit.org"], "maxime.simon"),
-    Committer(u"Michael Br\u00fcning", ["michaelbruening@gmail.com", "michael.bruning@digia.com", "michael.bruning@nokia.com"], "mibrunin"),
+    Committer(u"Michael Br\u00fcning", ["michael.bruning@digia.com", "michaelbruening@gmail.com"], "mibrunin"),
     Committer("Michael Nordman", "michaeln@google.com", "michaeln"),
     Committer("Michelangelo De Simone", "michelangelo@webkit.org", "michelangelo"),
     Committer("Mihnea Ovidenie", "mihnea@adobe.com", "mihnea"),
