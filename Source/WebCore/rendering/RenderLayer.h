@@ -437,8 +437,13 @@ public:
     // necessarily be stacking contexts.
     bool isStackingContainer() const { return isStackingContext() || needsCompositedScrolling(); }
 
-    // Gets the enclosing stacking container for this layer.
+    // Gets the enclosing stacking container for this layer, excluding this
+    // layer itself.
     RenderLayer* stackingContainer() const;
+
+    // Gets the enclosing stacking container for this layer, possibly the layer
+    // itself, if it is a stacking container.
+    RenderLayer* enclosingStackingContainer() { return isStackingContainer() ? this : stackingContainer(); }
 
     void dirtyZOrderLists();
     void dirtyStackingContainerZOrderLists();
