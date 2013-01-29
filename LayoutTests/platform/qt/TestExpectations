@@ -2164,6 +2164,11 @@ fast/notifications/notifications-check-permission.html
 fast/notifications/notifications-request-permission.html
 fast/notifications/notifications-without-permission.html
 
+# [Qt] New fast/notifications/ introduced in r140927 fails on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=108190
+fast/notifications/notifications-constructor-with-permission.html
+fast/notifications/notifications-constructor-without-permission.html
+
 # [Qt] unexpected result in fast/js/large-expressions.html
 # https://bugs.webkit.org/show_bug.cgi?id=76379
 fast/js/large-expressions.html
