@@ -361,7 +361,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         }
 
         constructTreeFromHTMLToken(token());
-        ASSERT(m_token.isUninitialized());
+        ASSERT(token().isUninitialized());
     }
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
