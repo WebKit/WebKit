@@ -46,7 +46,7 @@ public:
     void willFinishSweeping();
 
 private:
-#if USE(CF) || PLATFORM(BLACKBERRY)
+#if USE(CF) || PLATFORM(BLACKBERRY) || PLATFORM(QT)
 #if USE(CF)
     IncrementalSweeper(Heap*, CFRunLoopRef);
 #else

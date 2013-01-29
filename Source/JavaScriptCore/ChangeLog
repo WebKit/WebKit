@@ -1,3 +1,27 @@
+2013-01-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Implement IncrementalSweeper and HeapTimer
+        https://bugs.webkit.org/show_bug.cgi?id=103996
+
+        Reviewed by Simon Hausmann.
+
+        Implements the incremental sweeping garbage collection for the Qt platform.
+
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::HeapTimer):
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::timerEvent):
+        (JSC::HeapTimer::synchronize):
+        (JSC::HeapTimer::invalidate):
+        (JSC::HeapTimer::didStartVMShutdown):
+        * heap/HeapTimer.h:
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::scheduleTimer):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+
 2013-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not use a graph that is a vector, Nodes shouldn't move after allocation, and we should always refer to nodes by Node*

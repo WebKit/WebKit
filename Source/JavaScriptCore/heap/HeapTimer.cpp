@@ -33,6 +33,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
+#if PLATFORM(QT)
+#include <QCoreApplication>
+#include <QMutexLocker>
+#include <QThread>
+#include <QTimerEvent>
+#endif
+
 namespace JSC {
 
 #if USE(CF)
@@ -132,8 +139,70 @@ void HeapTimer::didStartVMShutdown()
     delete this;
 }
 
-#else
+#elif PLATFORM(QT)
 
+HeapTimer::HeapTimer(JSGlobalData* globalData)
+    : m_globalData(globalData)
+    , m_newThread(0)
+    , m_mutex(QMutex::NonRecursive)
+{
+    // The HeapTimer might be created before the runLoop is started,
+    // but we need to ensure the thread has an eventDispatcher already.
+    QEventLoop fakeLoop(this);
+}
+
+HeapTimer::~HeapTimer()
+{
+}
+
+void HeapTimer::timerEvent(QTimerEvent*)
+{
+    QMutexLocker lock(&m_mutex);
+    if (m_newThread) {
+        // We need to wait with processing until we are on the right thread.
+        return;
+    }
+
+    APIEntryShim shim(m_globalData, APIEntryShimWithoutLock::DontRefGlobalData);
+    doWork();
+}
+
+void HeapTimer::customEvent(QEvent*)
+{
+    ASSERT(m_newThread);
+    QMutexLocker lock(&m_mutex);
+    moveToThread(m_newThread);
+    m_newThread = 0;
+}
+
+void HeapTimer::synchronize()
+{
+    if (thread() != QThread::currentThread()) {
+        // We can only move from the objects own thread to another, so we fire an
+        // event into the owning thread to trigger the move.
+        // This must be processed before any timerEvents so giving it high priority.
+        QMutexLocker lock(&m_mutex);
+        m_newThread = QThread::currentThread();
+        QCoreApplication::postEvent(this, new QEvent(QEvent::User), Qt::HighEventPriority);
+    }
+}
+
+void HeapTimer::invalidate()
+{
+    QMutexLocker lock(&m_mutex);
+    m_timer.stop();
+}
+
+void HeapTimer::didStartVMShutdown()
+{
+    invalidate();
+    if (thread() == QThread::currentThread())
+        delete this;
+    else
+        deleteLater();
+}
+
+#else
 HeapTimer::HeapTimer(JSGlobalData* globalData)
     : m_globalData(globalData)
 {
