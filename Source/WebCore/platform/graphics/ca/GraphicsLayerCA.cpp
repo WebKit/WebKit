@@ -1674,6 +1674,12 @@ void GraphicsLayerCA::updateContentsColorLayer()
         updateContentsRect();
         ASSERT(m_contentsSolidColor.isValid()); // An invalid color should have removed the contents layer.
         m_contentsLayer->setBackgroundColor(m_contentsSolidColor);
+
+        if (m_contentsLayerClones) {
+            LayerMap::const_iterator end = m_contentsLayerClones->end();
+            for (LayerMap::const_iterator it = m_contentsLayerClones->begin(); it != end; ++it)
+                it->value->setBackgroundColor(m_contentsSolidColor);
+        }
     }
 }
 
