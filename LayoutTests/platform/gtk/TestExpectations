@@ -515,6 +515,9 @@ webkit.org/b/107377 storage/indexeddb/keypath-basics.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/mozilla/remove-index.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
+webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Failure ]
+
+webkit.org/b/108200 fast/css/relative-positioned-block-crash.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1398,7 +1401,6 @@ webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
 webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
