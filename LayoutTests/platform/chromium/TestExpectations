@@ -938,6 +938,9 @@ webkit.org/b/96109 [ Linux ] editing/pasteboard/paste-global-selection.html [ Sk
 # Chromium does not enable HIDDEN_PAGE_DOM_TIMER_THROTTLING
 fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 
+# Chromium disabled MATHML
+crbug.com/22554 mathml [ Skip ]
+
 # Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 # -----------------------------------------------------------------
