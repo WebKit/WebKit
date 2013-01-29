@@ -31,30 +31,44 @@
 
 namespace WebCore {
 
-    class CompositionEvent : public UIEvent {
-    public:
-        static PassRefPtr<CompositionEvent> create()
-        {
-            return adoptRef(new CompositionEvent);
-        }
-        static PassRefPtr<CompositionEvent> create(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
-        {
-          return adoptRef(new CompositionEvent(type, view, data));
-        }
-        virtual ~CompositionEvent();
+struct CompositionEventInit : UIEventInit {
+    CompositionEventInit();
 
-        void initCompositionEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, const String& data);
+    String data;
+};
 
-        String data() const { return m_data; }
+class CompositionEvent : public UIEvent {
+public:
+    static PassRefPtr<CompositionEvent> create()
+    {
+        return adoptRef(new CompositionEvent);
+    }
 
-        virtual const AtomicString& interfaceName() const;
+    static PassRefPtr<CompositionEvent> create(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
+    {
+        return adoptRef(new CompositionEvent(type, view, data));
+    }
 
-    private:
-        CompositionEvent();
-        CompositionEvent(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data);
+    static PassRefPtr<CompositionEvent> create(const AtomicString& type, const CompositionEventInit& initializer)
+    {
+        return adoptRef(new CompositionEvent(type, initializer));
+    }
 
-        String m_data;
-    };
+    virtual ~CompositionEvent();
+
+    void initCompositionEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, const String& data);
+
+    String data() const { return m_data; }
+
+    virtual const AtomicString& interfaceName() const;
+
+private:
+    CompositionEvent();
+    CompositionEvent(const AtomicString& type, PassRefPtr<AbstractView>, const String&);
+    CompositionEvent(const AtomicString& type, const CompositionEventInit&);
+
+    String m_data;
+};
 
 } // namespace WebCore
 

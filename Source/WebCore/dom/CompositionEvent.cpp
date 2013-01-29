@@ -31,6 +31,10 @@
 
 namespace WebCore {
 
+CompositionEventInit::CompositionEventInit()
+{
+}
+
 CompositionEvent::CompositionEvent()
 {
 }
@@ -38,6 +42,12 @@ CompositionEvent::CompositionEvent()
 CompositionEvent::CompositionEvent(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
     : UIEvent(type, true, true, view, 0)
     , m_data(data)
+{
+}
+
+CompositionEvent::CompositionEvent(const AtomicString& type, const CompositionEventInit& initializer)
+    : UIEvent(type, initializer)
+    , m_data(initializer.data)
 {
 }
 

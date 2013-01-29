@@ -11,6 +11,8 @@ PASS (new inner.Blob()).isInner is true
 PASS (new inner.Blob()).constructor.isInner is true
 PASS (new inner.CloseEvent()).isInner is true
 PASS (new inner.CloseEvent()).constructor.isInner is true
+PASS (new inner.CompositionEvent()).isInner is true
+PASS (new inner.CompositionEvent()).constructor.isInner is true
 PASS (new inner.CustomEvent()).isInner is true
 PASS (new inner.CustomEvent()).constructor.isInner is true
 PASS (new inner.DOMParser()).isInner is true

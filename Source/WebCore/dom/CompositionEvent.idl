@@ -23,10 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// Introduced in DOM Level 3:
-interface CompositionEvent : UIEvent {
+[
+    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
+    ConstructorTemplate=Event
+] interface CompositionEvent : UIEvent {
 
-    readonly attribute DOMString data;
+    [InitializedByEventConstructor] readonly attribute DOMString data;
 
     void initCompositionEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
                               in [Optional=DefaultIsUndefined] boolean canBubbleArg, 

@@ -391,6 +391,7 @@ webkit.org/b/99057 inspector/styles/variables [ Skip ]
 # DOM4_EVENTS_CONSTRUCTOR is not yet enabled.
 webkit.org/b/107428 fast/events/constructors/ui-event-constructor.html [ Skip ]
 webkit.org/b/107428 fast/events/constructors/mouse-event-constructor.html [ Skip ]
+webkit.org/b/107428 fast/events/constructors/composition-event-constructor.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.
 webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]

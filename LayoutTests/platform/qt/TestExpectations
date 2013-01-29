@@ -107,6 +107,7 @@ fast/forms/file/input-file-directory-upload.html
 # ENABLE(DOM4_EVENTS_CONSTRUCTOR) is disabled.
 fast/events/constructors/ui-event-constructor.html
 fast/events/constructors/mouse-event-constructor.html
+fast/events/constructors/composition-event-constructor.html
 
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
