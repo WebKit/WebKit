@@ -253,7 +253,8 @@ libWebCoreSVG_la_CPPFLAGS = \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(LIBSOUP_CFLAGS) \
+	$(UNICODE_CFLAGS)
 
 feature_defines_overrides += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
