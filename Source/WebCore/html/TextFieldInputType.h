@@ -58,6 +58,7 @@ protected:
 #endif
 
 protected:
+    virtual void attach() OVERRIDE;
     virtual bool needsContainer() const;
     virtual bool shouldHaveSpinButton() const;
     virtual void createShadowSubtree() OVERRIDE;
@@ -91,7 +92,6 @@ private:
     virtual HTMLElement* placeholderElement() const OVERRIDE;
     virtual void updatePlaceholderText() OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
-    virtual void attach() OVERRIDE;
     virtual void subtreeHasChanged() OVERRIDE;
 
     // SpinButtonElement::SpinButtonOwner functions.

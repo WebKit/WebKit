@@ -31,7 +31,6 @@
 #include "config.h"
 #include "TelephoneInputType.h"
 
-#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include <wtf/PassOwnPtr.h>
@@ -40,8 +39,13 @@ namespace WebCore {
 
 PassOwnPtr<InputType> TelephoneInputType::create(HTMLInputElement* element)
 {
-    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeTel);
     return adoptPtr(new TelephoneInputType(element));
+}
+
+void TelephoneInputType::attach()
+{
+    TextFieldInputType::attach();
+    observeFeatureIfVisible(FeatureObserver::InputTypeTel);
 }
 
 const AtomicString& TelephoneInputType::formControlType() const

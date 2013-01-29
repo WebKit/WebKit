@@ -49,6 +49,7 @@ public:
 
 private:
     DateTimeLocalInputType(HTMLInputElement* element) : BaseDateTimeLocalInputType(element) { }
+    virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual double valueAsDate() const OVERRIDE;

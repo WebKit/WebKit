@@ -32,7 +32,6 @@
 #include "WeekInputType.h"
 
 #include "DateComponents.h"
-#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -56,8 +55,12 @@ static const int weekStepScaleFactor = 604800000;
 
 PassOwnPtr<InputType> WeekInputType::create(HTMLInputElement* element)
 {
-    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeWeek);
     return adoptPtr(new WeekInputType(element));
+}
+
+void WeekInputType::attach()
+{
+    observeFeatureIfVisible(FeatureObserver::InputTypeWeek);
 }
 
 const AtomicString& WeekInputType::formControlType() const

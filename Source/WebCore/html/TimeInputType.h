@@ -49,6 +49,7 @@ public:
 
 private:
     TimeInputType(HTMLInputElement*);
+    virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual Decimal defaultValueForStepUp() const OVERRIDE;

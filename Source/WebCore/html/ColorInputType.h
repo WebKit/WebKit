@@ -53,6 +53,7 @@ public:
 
 private:
     ColorInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }
+    virtual void attach() OVERRIDE;
     virtual bool isColorControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;

@@ -55,6 +55,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MonthInputType.h"
+#include "NodeRenderStyle.h"
 #include "NumberInputType.h"
 #include "Page.h"
 #include "PasswordInputType.h"
@@ -140,13 +141,8 @@ PassOwnPtr<InputType> InputType::create(HTMLInputElement* element, const AtomicS
 {
     static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
     PassOwnPtr<InputType> (*factory)(HTMLInputElement*) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
-    if (!factory) {
+    if (!factory)
         factory = TextInputType::create;
-        if (typeName == InputTypeNames::datetime())
-            FeatureObserver::observe(element->document(), FeatureObserver::InputTypeDateTimeFallback);
-        else if (typeName == InputTypeNames::week())
-            FeatureObserver::observe(element->document(), FeatureObserver::InputTypeWeekFallback);
-    }
     return factory(element);
 }
 
@@ -1131,6 +1127,14 @@ void InputType::stepUpFromRenderer(int n)
                 applyStep(n + 1, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
         } else
             applyStep(n, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
+    }
+}
+
+void InputType::observeFeatureIfVisible(FeatureObserver::Feature feature) const
+{
+    if (RenderStyle* style = element()->renderStyle()) {
+        if (style->visibility() != HIDDEN)
+            FeatureObserver::observe(element()->document(), feature);
     }
 }
 

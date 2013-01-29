@@ -32,7 +32,6 @@
 #include "TimeInputType.h"
 
 #include "DateComponents.h"
-#include "FeatureObserver.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -64,8 +63,12 @@ TimeInputType::TimeInputType(HTMLInputElement*  element)
 
 PassOwnPtr<InputType> TimeInputType::create(HTMLInputElement* element)
 {
-    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeTime);
     return adoptPtr(new TimeInputType(element));
+}
+
+void TimeInputType::attach()
+{
+    observeFeatureIfVisible(FeatureObserver::InputTypeTime);
 }
 
 const AtomicString& TimeInputType::formControlType() const

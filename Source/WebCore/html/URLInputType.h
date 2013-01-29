@@ -41,6 +41,7 @@ public:
 
 private:
     URLInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;

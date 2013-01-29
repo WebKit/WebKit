@@ -47,6 +47,7 @@ public:
 
 private:
     SearchInputType(HTMLInputElement*);
+    virtual void attach() OVERRIDE;
     virtual void addSearchResult() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;

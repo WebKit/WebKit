@@ -35,7 +35,6 @@
 #include "Chrome.h"
 #include "Color.h"
 #include "ElementShadow.h"
-#include "FeatureObserver.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -72,13 +71,17 @@ static bool isValidColorString(const String& value)
 
 PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 {
-    FeatureObserver::observe(element->document(), FeatureObserver::InputTypeColor);
     return adoptPtr(new ColorInputType(element));
 }
 
 ColorInputType::~ColorInputType()
 {
     endColorChooser();
+}
+
+void ColorInputType::attach()
+{
+    observeFeatureIfVisible(FeatureObserver::InputTypeColor);
 }
 
 bool ColorInputType::isColorControl() const
