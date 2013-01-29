@@ -198,7 +198,7 @@ Element::~Element()
 
     if (ElementShadow* elementShadow = shadow()) {
         elementShadow->removeAllShadowRoots();
-        elementRareData()->setShadow(nullptr);
+        elementRareData()->clearShadow();
     }
 
     if (hasSyntheticAttrChildNodes())
@@ -1437,20 +1437,12 @@ void Element::recalcStyle(StyleChange change)
 
 ElementShadow* Element::shadow() const
 {
-    if (!hasRareData())
-        return 0;
-
-    return elementRareData()->shadow();
+    return hasRareData() ? elementRareData()->shadow() : 0;
 }
 
 ElementShadow* Element::ensureShadow()
 {
-    if (ElementShadow* shadow = ensureElementRareData()->shadow())
-        return shadow;
-
-    ElementRareData* data = elementRareData();
-    data->setShadow(ElementShadow::create());
-    return data->shadow();
+    return ensureElementRareData()->ensureShadow();
 }
 
 void Element::didAffectSelector(AffectedSelectorMask mask)

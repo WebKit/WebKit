@@ -93,8 +93,14 @@ public:
     // Manually called by Node::reportMemoryUsage.
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void clearShadow() { m_shadow = nullptr; }
     ElementShadow* shadow() const { return m_shadow.get(); }
-    void setShadow(PassOwnPtr<ElementShadow> shadow) { m_shadow = shadow; }
+    ElementShadow* ensureShadow()
+    {
+        if (!m_shadow)
+            m_shadow = ElementShadow::create();
+        return m_shadow.get();
+    }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
