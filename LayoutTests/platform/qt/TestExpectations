@@ -1835,6 +1835,12 @@ fast/images/icon-decoding.html
 # https://bugs.webkit.org/show_bug.cgi?id=105574
 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
 
+# [Qt] REGRESSION(140685): These tests will only work after upgrading gstreamer 0.10 to 1.0.
+# https://bugs.webkit.org/show_bug.cgi?id=108175
+fast/events/media-focus-in-standalone-media-document.html
+fast/events/tabindex-focus-blur-all.html
+fast/spatial-navigation/snav-media-elements.html
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
