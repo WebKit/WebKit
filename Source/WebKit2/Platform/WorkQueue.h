@@ -74,18 +74,8 @@ public:
     void invalidate();
 
 #if OS(DARWIN)
-    enum MachPortEventType {
-        // Fired when there is data on the given receive right.
-        MachPortDataAvailable,
-        
-        // Fired when the receive right for this send right has been destroyed.
-        MachPortDeadNameNotification
-    };
-    
-    // Will execute the given function whenever the given mach port event fires.
-    // Note that this will adopt the mach port and destroy it when the work queue is invalidated.
-    void registerMachPortEventHandler(mach_port_t, MachPortEventType, const Function<void()>&);
-    void unregisterMachPortEventHandler(mach_port_t);
+    dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
+
 #elif OS(WINDOWS)
     void registerHandle(HANDLE, const Function<void()>&);
     void unregisterAndCloseHandle(HANDLE);
@@ -110,13 +100,8 @@ private:
     void platformInvalidate();
 
 #if OS(DARWIN)
-#if HAVE(DISPATCH_H)
     static void executeFunction(void*);
-    Mutex m_eventSourcesMutex;
-    class EventSource;
-    HashMap<mach_port_t, EventSource*> m_eventSources;
     dispatch_queue_t m_dispatchQueue;
-#endif
 #elif OS(WINDOWS)
     class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
     public:

@@ -58,21 +58,27 @@ void Connection::platformInvalidate()
     ASSERT(m_receivePort);
 
     // Unregister our ports.
-    m_connectionQueue.unregisterMachPortEventHandler(m_sendPort);
+    dispatch_source_cancel(m_deadNameSource);
+    dispatch_release(m_deadNameSource);
+    m_deadNameSource = nullptr;
     m_sendPort = MACH_PORT_NULL;
 
-    m_connectionQueue.unregisterMachPortEventHandler(m_receivePort);
+    dispatch_source_cancel(m_receivePortDataAvailableSource);
+    dispatch_release(m_receivePortDataAvailableSource);
+    m_receivePortDataAvailableSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
 
     if (m_exceptionPort) {
-        m_connectionQueue.unregisterMachPortEventHandler(m_exceptionPort);
+        dispatch_source_cancel(m_exceptionPortDataAvailableSource);
+        dispatch_release(m_exceptionPortDataAvailableSource);
+        m_exceptionPortDataAvailableSource = nullptr;
         m_exceptionPort = MACH_PORT_NULL;
     }
 
 #if HAVE(XPC)
     if (m_xpcConnection) {
         xpc_release(m_xpcConnection);
-        m_xpcConnection = 0;
+        m_xpcConnection = nullptr;
     }
 #endif
 }
@@ -96,6 +102,17 @@ void Connection::platformInitialize(Identifier identifier)
     if (m_xpcConnection)
         xpc_retain(m_xpcConnection);
 #endif
+}
+
+static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, const WorkQueue& workQueue, const Function<void()>& function)
+{
+    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue.dispatchQueue());
+    dispatch_source_set_event_handler(source, function);
+    dispatch_source_set_cancel_handler(source, ^{
+        mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
+    });
+
+    return source;
 }
 
 bool Connection::open()
@@ -127,11 +144,13 @@ bool Connection::open()
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
     // Register the data available handler.
-    m_connectionQueue.registerMachPortEventHandler(m_receivePort, WorkQueue::MachPortDataAvailable, bind(&Connection::receiveSourceEventHandler, this));
+    m_receivePortDataAvailableSource = createDataAvailableSource(m_receivePort, m_connectionQueue, bind(&Connection::receiveSourceEventHandler, this));
+    dispatch_resume(m_receivePortDataAvailableSource);
 
     // If we have an exception port, register the data available handler and send over the port to the other end.
     if (m_exceptionPort) {
-        m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
+        m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, m_connectionQueue, bind(&Connection::exceptionSourceEventHandler, this));
+        dispatch_resume(m_exceptionPortDataAvailableSource);
 
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
@@ -251,7 +270,16 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
 
 void Connection::initializeDeadNameSource()
 {
-    m_connectionQueue.registerMachPortEventHandler(m_sendPort, WorkQueue::MachPortDeadNameNotification, bind(&Connection::connectionDidClose, this));
+    m_deadNameSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, 0, m_connectionQueue.dispatchQueue());
+    dispatch_source_set_event_handler(m_deadNameSource, bind(&Connection::connectionDidClose, this));
+
+    mach_port_t sendPort = m_sendPort;
+    dispatch_source_set_cancel_handler(m_deadNameSource, ^{
+        // Release our send right.
+        mach_port_deallocate(mach_task_self(), sendPort);
+    });
+
+    dispatch_resume(m_deadNameSource);
 }
 
 static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)

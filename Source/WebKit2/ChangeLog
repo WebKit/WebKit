@@ -1,3 +1,28 @@
+2013-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Move Mach port handling from WorkQueue to Connection
+        https://bugs.webkit.org/show_bug.cgi?id=108140
+
+        Reviewed by Sam Weinig.
+
+        Instead of having WorkQueue know about Mach port sources, just fold that
+        functionality directly into Connection. This lets us get rid of the generic source
+        handling from WorkQueue.
+
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::createDataAvailableSource):
+        (CoreIPC):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::initializeDeadNameSource):
+        * Platform/WorkQueue.h:
+        (WorkQueue::dispatchQueue):
+        (WorkQueue):
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::platformInvalidate):
+
 2013-01-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add StorageManager class to cmake ports
