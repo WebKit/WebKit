@@ -163,6 +163,8 @@ window.checkLayout = function(selectorList)
         return;
     }
     var nodes = document.querySelectorAll(selectorList);
+    nodes = Array.prototype.slice.call(nodes);
+    nodes.reverse();
     Array.prototype.forEach.call(nodes, function(node) {
         var failures = [];
         checkExpectedValues(node.parentNode, failures);
