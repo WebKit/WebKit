@@ -110,7 +110,8 @@ ImageFrame* DeferredImageDecoder::frameBufferAtIndex(size_t index)
     if (s_enabled
         && m_actualDecoder
         && m_actualDecoder->repetitionCount() == cAnimationNone
-        && m_actualDecoder->isSizeAvailable()) {
+        && m_actualDecoder->isSizeAvailable()
+        && m_actualDecoder->frameCount() == 1) {
 
         m_size = m_actualDecoder->size();
         m_filenameExtension = m_actualDecoder->filenameExtension();
