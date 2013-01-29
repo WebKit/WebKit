@@ -29,7 +29,8 @@
     CallWith=ScriptExecutionContext,
     V8CustomConstructor,
     JSCustomMarkFunction,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface MessageChannel {
 
     readonly attribute MessagePort port1;

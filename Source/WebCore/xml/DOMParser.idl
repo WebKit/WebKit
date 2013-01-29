@@ -18,7 +18,8 @@
  */
 
 [
-    Constructor
+    Constructor,
+    ImplementationLacksVTable
 ] interface DOMParser {
     Document parseFromString(in [Optional=DefaultIsUndefined] DOMString str, 
                              in [Optional=DefaultIsUndefined] DOMString contentType);

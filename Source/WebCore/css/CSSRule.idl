@@ -24,7 +24,8 @@
     JSGenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
-    V8DependentLifetime
+    V8DependentLifetime,
+    V8SkipVTableValidation
 ] interface CSSRule {
 
     // RuleType

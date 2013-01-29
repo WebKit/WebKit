@@ -30,7 +30,8 @@
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables,
-    InterfaceName=URL
+    InterfaceName=URL,
+    ImplementationLacksVTable
 ] interface DOMURL {
 #if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
     [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaSource? source);

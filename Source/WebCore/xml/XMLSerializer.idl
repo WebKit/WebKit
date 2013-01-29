@@ -19,7 +19,8 @@
  */
 
 [
-    Constructor
+    Constructor,
+    ImplementationLacksVTable
 ] interface XMLSerializer {
     DOMString serializeToString(in [Optional=DefaultIsUndefined] Node node)
         raises(DOMException);

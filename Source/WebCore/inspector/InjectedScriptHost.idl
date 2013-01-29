@@ -31,7 +31,8 @@
  */
 
 [
-    Conditional=INSPECTOR
+    Conditional=INSPECTOR,
+    ImplementationLacksVTable
 ] interface InjectedScriptHost {
     void clearConsoleMessages();
 

@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    ImplementationLacksVTable
 ] interface SVGAnimatedBoolean {
     [StrictTypeChecking] attribute boolean baseVal
         setter raises(DOMException);

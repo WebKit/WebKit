@@ -19,7 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface Range {
+[
+    ImplementationLacksVTable
+] interface Range {
 
     readonly attribute Node startContainer
         getter raises(DOMException);

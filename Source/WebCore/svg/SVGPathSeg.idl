@@ -27,7 +27,8 @@
 [
     Conditional=SVG,
     CustomToJSObject,
-    ObjCPolymorphic
+    ObjCPolymorphic,
+    ImplementationLacksVTable
 ] interface SVGPathSeg {
     // Path Segment Types
     const unsigned short PATHSEG_UNKNOWN = 0;

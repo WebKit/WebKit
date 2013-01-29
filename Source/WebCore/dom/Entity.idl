@@ -16,8 +16,9 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-
-interface Entity : Node {
+[
+    ImplementationLacksVTable
+] interface Entity : Node {
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString notationName;

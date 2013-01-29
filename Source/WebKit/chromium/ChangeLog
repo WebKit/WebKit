@@ -1,3 +1,13 @@
+2013-01-28  Tom Sepez  <tsepez@chromium.org>
+
+        [v8] Security feature: JavaScript Bindings hardening
+        https://bugs.webkit.org/show_bug.cgi?id=106608
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        Added ENABLE_BINDING_INTEGRITY option.
+
 2013-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141006.

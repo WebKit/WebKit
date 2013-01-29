@@ -33,7 +33,8 @@
     JSNoStaticTables,
     CustomToJSObject,
     DoNotCheckConstants,
-    TypedArray=signed char
+    TypedArray=signed char,
+    ImplementationNamespace=WTF
 ] interface Int8Array : ArrayBufferView {
     const unsigned long BYTES_PER_ELEMENT = 1;
 

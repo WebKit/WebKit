@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=VIDEO
+    Conditional=VIDEO,
+    ImplementationLacksVTable
 ] interface TimeRanges {
     readonly attribute unsigned long length;
     float start(in unsigned long index)

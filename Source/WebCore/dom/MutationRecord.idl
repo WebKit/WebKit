@@ -28,7 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface MutationRecord {
+[
+    V8SkipVTableValidation
+] interface MutationRecord {
     readonly attribute DOMString type;
     readonly attribute Node target;
 

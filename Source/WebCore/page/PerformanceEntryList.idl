@@ -33,7 +33,8 @@
     Conditional=WEB_TIMING,
     Conditional=PERFORMANCE_TIMELINE,
     OmitConstructor,
-    IndexedGetter
+    IndexedGetter,
+    ImplementationLacksVTable
 ] interface PerformanceEntryList {
     readonly attribute unsigned long length;
     PerformanceEntry item(in unsigned long index);

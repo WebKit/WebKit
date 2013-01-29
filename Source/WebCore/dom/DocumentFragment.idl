@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface DocumentFragment : Node {
+[
+    V8SkipVTableValidation
+] interface DocumentFragment : Node {
     // NodeSelector - Selector API
     Element querySelector(in DOMString selectors)
         raises(DOMException);

@@ -26,7 +26,8 @@
 // Introduced in DOM Level 2:
 [
     JSGenerateIsReachable,
-    IndexedGetter
+    IndexedGetter,
+    ImplementationLacksVTable
 ] interface MediaList {
 
              [TreatNullAs=NullString, TreatReturnedNullStringAs=Null] attribute DOMString mediaText

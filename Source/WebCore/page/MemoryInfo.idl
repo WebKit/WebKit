@@ -29,7 +29,8 @@
  */
 
 [
-    OmitConstructor
+    OmitConstructor,
+    ImplementationLacksVTable
 ] interface MemoryInfo {
 
     readonly attribute unsigned long totalJSHeapSize;

@@ -30,7 +30,8 @@
 
 [
     Conditional=FILE_SYSTEM,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface Metadata {
     readonly attribute Date modificationTime;
     readonly attribute unsigned long long size;

@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
+    ImplementationLacksVTable
 ] interface AudioListener {
     attribute float dopplerFactor;  // same as OpenAL (default 1.0)
     attribute float speedOfSound;   // in meters / second (default 343.3)

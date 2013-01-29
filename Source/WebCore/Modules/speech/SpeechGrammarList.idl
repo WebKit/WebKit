@@ -27,6 +27,7 @@
     Conditional=SCRIPTED_SPEECH,
     IndexedGetter,
     Constructor,
+    ImplementationLacksVTable
 ] interface SpeechGrammarList {
     readonly attribute unsigned long length;
     SpeechGrammar item(in [IsIndex] unsigned long index);

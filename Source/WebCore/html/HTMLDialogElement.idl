@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=DIALOG_ELEMENT
+    Conditional=DIALOG_ELEMENT,
+    V8SkipVTableValidation
 ] interface HTMLDialogElement : HTMLElement {
     [Reflect] attribute boolean open;
     void close() raises(DOMException);

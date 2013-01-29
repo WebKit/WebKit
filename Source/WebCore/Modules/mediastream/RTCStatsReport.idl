@@ -23,7 +23,8 @@
  */
 
 [
-    Conditional=MEDIA_STREAM
+    Conditional=MEDIA_STREAM,
+    ImplementationLacksVTable
 ] interface RTCStatsReport {
     readonly attribute RTCStatsElement local;
     readonly attribute RTCStatsElement remote;

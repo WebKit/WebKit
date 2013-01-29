@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
+    ImplementationLacksVTable
 ] interface AudioBuffer {
     readonly attribute long length; // in sample-frames
     readonly attribute float duration; // in seconds

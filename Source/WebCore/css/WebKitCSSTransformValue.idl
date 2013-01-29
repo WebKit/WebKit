@@ -28,7 +28,8 @@
 
 [
         IndexedGetter,
-        DoNotCheckConstants
+        DoNotCheckConstants,
+    ImplementationLacksVTable
 ] interface WebKitCSSTransformValue : CSSValueList {
 
     // OperationTypes

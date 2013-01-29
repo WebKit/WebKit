@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface CSSPrimitiveValue : CSSValue {
+[
+    ImplementationLacksVTable
+] interface CSSPrimitiveValue : CSSValue {
 
     // UnitTypes
     const unsigned short CSS_UNKNOWN    = 0;

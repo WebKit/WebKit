@@ -56,6 +56,8 @@ EventTarget
 ExtendsDOMGlobalObject
 GenerateIsReachable=ImplDocument|ImplElementRoot|ImplOwnerNodeRoot
 Immutable
+ImplementationLacksVTable
+ImplementationNamespace=*
 ImplementedAs=*
 IndexedGetter
 InitializedByEventConstructor
@@ -125,4 +127,5 @@ V8GenerateIsReachable=ImplDocument|ImplElementRoot|ImplOwnerRoot|ImplOwnerNodeRo
 V8NoWrapperCache
 V8MeasureAs=*
 V8ReadOnly
+V8SkipVTableValidation
 V8Unforgeable

@@ -27,7 +27,9 @@
     JSGenerateIsReachable=Impl,
     CustomConstructor,
     ConstructorParameters=1,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationNamespace=WTF,
+    ImplementationLacksVTable
 ] interface ArrayBuffer {
     readonly attribute unsigned long byteLength;
     ArrayBuffer slice(in long begin, in [Optional] long end);

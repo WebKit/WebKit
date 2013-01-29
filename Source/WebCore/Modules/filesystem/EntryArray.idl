@@ -31,7 +31,8 @@
 [
     Conditional=FILE_SYSTEM,
     IndexedGetter,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface EntryArray {
     readonly attribute unsigned long length;
     Entry item(in [IsIndex] unsigned long index);

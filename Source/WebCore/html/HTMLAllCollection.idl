@@ -29,7 +29,8 @@
     CustomCall,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplOwnerNodeRoot,
-    V8DependentLifetime
+    V8DependentLifetime,
+    V8SkipVTableValidation
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
     [Custom] Node item(in [Optional=DefaultIsUndefined] unsigned long index);

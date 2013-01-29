@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    ImplementationLacksVTable
 ] interface SVGAnimatedEnumeration {
     [StrictTypeChecking] attribute unsigned short baseVal
         setter raises(DOMException);

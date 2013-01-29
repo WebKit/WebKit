@@ -23,7 +23,8 @@
     JSCustomIsReachable,
     JSCustomFinalize,
     ObjCPolymorphic,
-    V8DependentLifetime
+    V8DependentLifetime,
+    ImplementationLacksVTable
 ] interface CSSValue {
 
     // UnitTypes

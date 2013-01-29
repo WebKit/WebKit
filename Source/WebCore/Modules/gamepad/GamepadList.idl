@@ -25,7 +25,8 @@
 
 [
     Conditional=GAMEPAD,
-    IndexedGetter
+    IndexedGetter,
+    ImplementationLacksVTable
 ] interface GamepadList {
     readonly attribute unsigned long length;
     Gamepad item(in [Optional=DefaultIsUndefined] unsigned long index);

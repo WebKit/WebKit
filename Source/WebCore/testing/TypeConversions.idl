@@ -24,7 +24,8 @@
  */
 
 [
-    OmitConstructor
+    OmitConstructor,
+    ImplementationLacksVTable
 ] interface TypeConversions {
     attribute long testLong;
     attribute unsigned long testUnsignedLong;

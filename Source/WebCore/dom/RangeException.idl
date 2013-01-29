@@ -18,7 +18,8 @@
  */
 
 [
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    ImplementationLacksVTable
 ] exception RangeException {
 
     readonly attribute unsigned short   code;

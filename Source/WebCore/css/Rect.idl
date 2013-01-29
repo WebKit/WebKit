@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface Rect {
+[
+    ImplementationLacksVTable
+] interface Rect {
     readonly attribute CSSPrimitiveValue  top;
     readonly attribute CSSPrimitiveValue  right;
     readonly attribute CSSPrimitiveValue  bottom;

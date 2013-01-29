@@ -24,7 +24,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    V8SkipVTableValidation
 ] interface AudioDestinationNode : AudioNode {
     readonly attribute long numberOfChannels;
 };

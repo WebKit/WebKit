@@ -16,8 +16,9 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  */
-
-interface MediaQueryList {
+[
+    ImplementationLacksVTable
+] interface MediaQueryList {
     readonly attribute DOMString media;
     readonly attribute boolean matches;
     void addListener(in [Optional=DefaultIsUndefined] MediaQueryListListener listener);

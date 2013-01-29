@@ -19,7 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface RGBColor {
+[
+    ImplementationLacksVTable
+] interface RGBColor {
     readonly attribute CSSPrimitiveValue  red;
     readonly attribute CSSPrimitiveValue  green;
     readonly attribute CSSPrimitiveValue  blue;

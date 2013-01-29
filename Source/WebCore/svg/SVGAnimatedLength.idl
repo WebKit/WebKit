@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    ImplementationLacksVTable
 ] interface SVGAnimatedLength {
     readonly attribute SVGLength baseVal;
     readonly attribute SVGLength animVal;

@@ -31,7 +31,8 @@
 [
     Conditional=SQL_DATABASE,
     JSNoStaticTables,
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    ImplementationLacksVTable
 ] exception SQLException {
     readonly attribute unsigned long code;
     readonly attribute DOMString message;

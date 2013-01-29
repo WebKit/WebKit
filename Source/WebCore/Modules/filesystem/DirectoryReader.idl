@@ -30,7 +30,8 @@
 
 [
     Conditional=FILE_SYSTEM,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface DirectoryReader {
     void readEntries(in [Callback] EntriesCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
 };

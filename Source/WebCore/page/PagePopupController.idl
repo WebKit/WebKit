@@ -29,7 +29,8 @@
  */
 
 [
-    Conditional=PAGE_POPUP
+    Conditional=PAGE_POPUP,
+    ImplementationLacksVTable
 ] interface PagePopupController {
     void setValueAndClosePopup(in long numberValue, in DOMString stringValue);
     DOMString localizeNumberString(in DOMString numberString);

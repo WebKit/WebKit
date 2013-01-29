@@ -35,6 +35,7 @@
 #if defined(V8_BINDING) && V8_BINDING
     CustomDeleteProperty,
 #endif
+    ImplementationLacksVTable
 ] interface DataTransferItemList {
     readonly attribute long length;
     DataTransferItem item(in [Optional=DefaultIsUndefined] unsigned long index);

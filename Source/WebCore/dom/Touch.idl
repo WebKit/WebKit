@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=TOUCH_EVENTS
+    Conditional=TOUCH_EVENTS,
+    ImplementationLacksVTable
 ] interface Touch {
     readonly attribute long             clientX;
     readonly attribute long             clientY;

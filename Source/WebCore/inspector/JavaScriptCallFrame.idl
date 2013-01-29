@@ -26,7 +26,8 @@
 [
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    ImplementationLacksVTable
 ] interface JavaScriptCallFrame {
 
     // Scope type

@@ -33,7 +33,8 @@
     JSNoStaticTables,
     CustomToJSObject,
     DoNotCheckConstants,
-    TypedArray=unsigned short
+    TypedArray=unsigned short,
+    ImplementationNamespace=WTF
 ] interface Uint16Array : ArrayBufferView {
     const unsigned long BYTES_PER_ELEMENT = 2;
 

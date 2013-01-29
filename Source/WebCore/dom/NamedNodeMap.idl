@@ -22,7 +22,8 @@
     GenerateIsReachable=ImplElementRoot,
     IndexedGetter,
     JSCustomMarkFunction,
-    NamedGetter
+    NamedGetter,
+    ImplementationLacksVTable
 ] interface NamedNodeMap {
 
     Node getNamedItem(in [Optional=DefaultIsUndefined] DOMString name);

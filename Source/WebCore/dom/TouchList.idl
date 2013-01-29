@@ -25,7 +25,8 @@
 
 [
     Conditional=TOUCH_EVENTS,
-    IndexedGetter
+    IndexedGetter,
+    ImplementationLacksVTable
 ] interface TouchList {
     readonly attribute unsigned long length;
 

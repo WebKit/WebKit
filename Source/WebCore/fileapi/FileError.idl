@@ -30,7 +30,8 @@
 
 [
     Conditional=BLOB|FILE_SYSTEM,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface FileError {
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // FIXME: Some of constant names are already defined in DOMException.h for Objective-C binding and we cannot have the same names here (they are translated into a enum in the same namespace).

@@ -29,7 +29,8 @@
 [
     Conditional=SQL_DATABASE,
     OmitConstructor,
-    JSNoStaticTables
+    JSNoStaticTables,
+    ImplementationLacksVTable
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
     [Custom] DOMObject item(in unsigned long index);

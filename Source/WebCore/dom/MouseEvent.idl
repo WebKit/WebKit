@@ -19,7 +19,8 @@
 
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    V8SkipVTableValidation
 ] interface MouseEvent : UIEvent {
     [InitializedByEventConstructor] readonly attribute long             screenX;
     [InitializedByEventConstructor] readonly attribute long             screenY;

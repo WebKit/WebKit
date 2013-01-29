@@ -21,7 +21,8 @@
 [
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot,
-    V8CustomToJSObject
+    V8CustomToJSObject,
+    V8SkipVTableValidation
 ] interface Element : Node {
 
     // DOM Level 1 Core

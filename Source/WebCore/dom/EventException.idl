@@ -29,7 +29,8 @@
 // Introduced in DOM Level 2:
 [
     JSNoStaticTables,
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    ImplementationLacksVTable,
 ] exception EventException {
 
     readonly attribute unsigned short   code;

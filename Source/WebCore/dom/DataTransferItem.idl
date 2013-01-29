@@ -30,6 +30,7 @@
 
 [
     Conditional=DATA_TRANSFER_ITEMS,
+    ImplementationLacksVTable
 ] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;

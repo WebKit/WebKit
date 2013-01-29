@@ -33,7 +33,8 @@
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,
     IndexedGetter,
-    NamedGetter
+    NamedGetter,
+    ImplementationLacksVTable
 ] interface DOMNamedFlowCollection {
     readonly attribute unsigned long length;
     WebKitNamedFlow item(in unsigned long index);

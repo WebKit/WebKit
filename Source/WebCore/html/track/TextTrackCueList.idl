@@ -26,7 +26,8 @@
 [
     Conditional=VIDEO_TRACK,
     V8EnabledAtRuntime=webkitVideoTrack,
-    IndexedGetter
+    IndexedGetter,
+    ImplementationLacksVTable
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;
     TextTrackCue item(in unsigned long index);

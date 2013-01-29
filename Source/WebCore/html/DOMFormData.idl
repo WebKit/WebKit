@@ -33,7 +33,8 @@
     ConstructorParameters=1,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
-    InterfaceName=FormData
+    InterfaceName=FormData,
+    ImplementationLacksVTable
 ] interface DOMFormData {
     // void append(DOMString name, DOMString value);
     // void append(DOMString name, Blob value, optional DOMString filename);

@@ -18,7 +18,8 @@
  */
 
 [
-    Constructor
+    Constructor,
+    ImplementationLacksVTable
 ] interface XPathEvaluator {
     XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
                                      in [Optional=DefaultIsUndefined] XPathNSResolver resolver)

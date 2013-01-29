@@ -25,7 +25,8 @@
 
 [
     Conditional=GEOLOCATION,
-    OmitConstructor
+    OmitConstructor,
+    ImplementationLacksVTable
 ] interface Geoposition {
     readonly attribute Coordinates coords;
     readonly attribute DOMTimeStamp timestamp;

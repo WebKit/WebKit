@@ -31,7 +31,8 @@
  */
 
 [
-    Conditional=INSPECTOR
+    Conditional=INSPECTOR,
+    ImplementationLacksVTable
 ] interface InspectorFrontendHost {
     void loaded();
     void closeWindow();

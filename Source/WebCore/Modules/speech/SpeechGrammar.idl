@@ -25,7 +25,8 @@
 
 [
     Conditional=SCRIPTED_SPEECH,
-    Constructor
+    Constructor,
+    ImplementationLacksVTable
 ] interface SpeechGrammar {
     [URL,CallWith=ScriptExecutionContext] attribute DOMString src;
     attribute float weight;
