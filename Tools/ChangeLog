@@ -1,3 +1,17 @@
+2013-01-29  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Use offical Windows CE support
+        https://bugs.webkit.org/show_bug.cgi?id=108061
+
+        Reviewed by Laszlo Gombos.
+
+        Recent version of CMake has added Windows CE support, but uses a
+        slightly different interface than the patched version used before.
+        Change the command line parameters to use the offical CMake binaries.
+
+        * Scripts/webkitdirs.pm:
+        (cmakeBasedPortArguments):
+
 2013-01-29  Alan Cutter  <alancutter@chromium.org>
 
         QueueStatusServer needs pages to display historical queue data
