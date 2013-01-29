@@ -106,6 +106,8 @@ function onTouch(event, receiver)
 }
 
 function runTest() {
+    document.getElementById("iframe1").contentWindow.document.title = "iframe1";
+    document.getElementById("iframe2").contentWindow.document.title = "iframe2";
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         // Touch the center of iframe1. 50px is offset to iframe1 in main frame,
@@ -162,11 +164,6 @@ function runTest() {
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
-}
-
-function getTitle() {
-    title++;
-    return  'iframe' + title;
 }
 </script>
 </body>
