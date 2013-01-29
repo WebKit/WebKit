@@ -135,9 +135,12 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator
     return mediator->dispatchEvent(&dispatcher);
 }
 
-inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNode)
+inline static EventTarget* eventTargetRespectingTargetRules(Node* referenceNode)
 {
     ASSERT(referenceNode);
+
+    if (referenceNode->isPseudoElement())
+        return referenceNode->parentNode();
 
 #if ENABLE(SVG)
     if (!referenceNode->isSVGElement() || !referenceNode->isInShadowTree())
@@ -192,10 +195,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     for (AncestorChainWalker walker(m_node.get()); walker.get(); walker.parent()) {
         Node* node = walker.get();
         if (targetStack.isEmpty())
-            targetStack.append(eventTargetRespectingSVGTargetRules(node));
+            targetStack.append(eventTargetRespectingTargetRules(node));
         else if (walker.crossingInsertionPoint())
             targetStack.append(targetStack.last());
-        m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
+        m_ancestors.append(EventContext(node, eventTargetRespectingTargetRules(node), targetStack.last()));
         if (!inDocument)
             return;
         if (!node->isShadowRoot())
@@ -212,7 +215,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    mediator->event()->setTarget(eventTargetRespectingSVGTargetRules(node));
+    mediator->event()->setTarget(eventTargetRespectingTargetRules(node));
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
@@ -253,7 +256,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
     RefPtr<Event> event = prpEvent;
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
+    event->setTarget(eventTargetRespectingTargetRules(m_node.get()));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
@@ -339,7 +342,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(PassRe
 
 inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, void* preDispatchEventHandlerResult)
 {
-    event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
+    event->setTarget(eventTargetRespectingTargetRules(m_node.get()));
     event->setCurrentTarget(0);
     event->setEventPhase(0);
 

@@ -35,6 +35,7 @@ struct WebKitTransitionEventInit : public EventInit {
 
     String propertyName;
     double elapsedTime;
+    String pseudoElement;
 };
 
 class WebKitTransitionEvent : public Event {
@@ -43,9 +44,9 @@ public:
     {
         return adoptRef(new WebKitTransitionEvent);
     }
-    static PassRefPtr<WebKitTransitionEvent> create(const AtomicString& type, const String& propertyName, double elapsedTime)
+    static PassRefPtr<WebKitTransitionEvent> create(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     {
-        return adoptRef(new WebKitTransitionEvent(type, propertyName, elapsedTime));
+        return adoptRef(new WebKitTransitionEvent(type, propertyName, elapsedTime, pseudoElement));
     }
     static PassRefPtr<WebKitTransitionEvent> create(const AtomicString& type, const WebKitTransitionEventInit& initializer)
     {
@@ -56,16 +57,18 @@ public:
 
     const String& propertyName() const;
     double elapsedTime() const;
+    const String& pseudoElement() const;
 
     virtual const AtomicString& interfaceName() const;
 
 private:
     WebKitTransitionEvent();
-    WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime);
+    WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement);
     WebKitTransitionEvent(const AtomicString& type, const WebKitTransitionEventInit& initializer);
 
     String m_propertyName;
     double m_elapsedTime;
+    String m_pseudoElement;
 };
 
 } // namespace WebCore

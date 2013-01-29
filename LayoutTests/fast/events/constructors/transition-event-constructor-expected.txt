@@ -7,6 +7,7 @@ PASS new TransitionEvent('eventType').bubbles is false
 PASS new TransitionEvent('eventType').cancelable is false
 PASS new TransitionEvent('eventType').propertyName is ""
 PASS new TransitionEvent('eventType').elapsedTime is 0
+PASS new TransitionEvent('eventType').pseudoElement is ""
 PASS new TransitionEvent('eventType', { bubbles: false }).bubbles is false
 PASS new TransitionEvent('eventType', { bubbles: true }).bubbles is true
 PASS new TransitionEvent('eventType', { cancelable: false }).cancelable is false
@@ -31,6 +32,8 @@ PASS new TransitionEvent('eventType', { elapsedTime: 18446744073709551615 }).ela
 PASS new TransitionEvent('eventType', { elapsedTime: NaN }).elapsedTime is NaN
 PASS new TransitionEvent('eventType', { elapsedTime: Infinity }).elapsedTime is Infinity
 PASS new TransitionEvent('eventType', { elapsedTime: -Infinity }).elapsedTime is -Infinity
+PASS new TransitionEvent('eventType', { pseudoElement: '::before' }).pseudoElement is "::before"
+PASS new TransitionEvent('eventType', { pseudoElement: '' }).pseudoElement is ""
 PASS new TransitionEvent('eventType', { elapsedTime: undefined }).elapsedTime is NaN
 PASS new TransitionEvent('eventType', { elapsedTime: null }).elapsedTime is 0
 PASS new TransitionEvent('eventType', { elapsedTime: false }).elapsedTime is 0
@@ -42,10 +45,11 @@ PASS new TransitionEvent('eventType', { elapsedTime: [123.45] }).elapsedTime is 
 PASS new TransitionEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime is NaN
 PASS new TransitionEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime is NaN
 PASS new TransitionEvent('eventType', { elapsedTime: {valueOf: function () { return 123.45 } } }).elapsedTime is 123.45
-PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).bubbles is true
-PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).cancelable is true
-PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).propertyName is 'doremi'
-PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).elapsedTime is 123.45
+PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).bubbles is true
+PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).cancelable is true
+PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).propertyName is 'doremi'
+PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).elapsedTime is 123.45
+PASS new TransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).pseudoElement is '::after'
 PASS successfullyParsed is true
 
 TEST COMPLETE

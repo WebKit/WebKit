@@ -165,7 +165,7 @@ static PassRefPtr<Event> createMatchingPrefixedEvent(const Event* event)
 {
     if (event->type() == eventNames().transitionendEvent) {
         const WebKitTransitionEvent* transitionEvent = static_cast<const WebKitTransitionEvent*>(event);
-        RefPtr<Event> prefixedEvent = WebKitTransitionEvent::create(eventNames().webkitTransitionEndEvent, transitionEvent->propertyName(), transitionEvent->elapsedTime());
+        RefPtr<Event> prefixedEvent = WebKitTransitionEvent::create(eventNames().webkitTransitionEndEvent, transitionEvent->propertyName(), transitionEvent->elapsedTime(), transitionEvent->pseudoElement());
         prefixedEvent->setTarget(event->target());
         prefixedEvent->setCurrentTarget(event->currentTarget());
         prefixedEvent->setEventPhase(event->eventPhase());

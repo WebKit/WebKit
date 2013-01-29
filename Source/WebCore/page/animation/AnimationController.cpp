@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "PseudoElement.h"
 #include "RenderView.h"
 #include "TransitionEvent.h"
 #include "WebKitAnimationEvent.h"
@@ -180,14 +181,15 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     m_eventsToDispatch.clear();
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
-        if (it->eventType == eventNames().transitionendEvent)
+        Element* element = it->element.get();
+        if (it->eventType == eventNames().transitionendEvent) {
 #if ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)
-            it->element->dispatchEvent(TransitionEvent::create(it->eventType, it->name, it->elapsedTime));
+            element->dispatchEvent(TransitionEvent::create(it->eventType, it->name, it->elapsedTime, PseudoElement::pseudoElementNameForEvents(element->pseudoId())));
 #else
-            it->element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime));
+            element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime, PseudoElement::pseudoElementNameForEvents(element->pseudoId())));
 #endif
-        else
-            it->element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
+        } else
+            element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }
 
     // call setChanged on all the elements

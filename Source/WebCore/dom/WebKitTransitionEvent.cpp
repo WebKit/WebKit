@@ -31,21 +31,20 @@
 namespace WebCore {
 
 WebKitTransitionEventInit::WebKitTransitionEventInit()
-    : propertyName()
-    , elapsedTime(0)
+    : elapsedTime(0)
 {
 }
 
 WebKitTransitionEvent::WebKitTransitionEvent()
-    : m_propertyName()
-    , m_elapsedTime(0)
+    : m_elapsedTime(0)
 {
 }
 
-WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime)
+WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     : Event(type, true, true)
     , m_propertyName(propertyName)
     , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
 {
 }
 
@@ -53,6 +52,7 @@ WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const Web
     : Event(type, initializer)
     , m_propertyName(initializer.propertyName)
     , m_elapsedTime(initializer.elapsedTime)
+    , m_pseudoElement(initializer.pseudoElement)
 {
 }
 
@@ -68,6 +68,11 @@ const String& WebKitTransitionEvent::propertyName() const
 double WebKitTransitionEvent::elapsedTime() const
 {
     return m_elapsedTime;
+}
+
+const String& WebKitTransitionEvent::pseudoElement() const
+{
+    return m_pseudoElement;
 }
 
 const AtomicString& WebKitTransitionEvent::interfaceName() const

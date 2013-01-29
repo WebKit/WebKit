@@ -48,11 +48,10 @@ public:
     virtual bool canStartSelection() const OVERRIDE { return false; }
     virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
 
+    static String pseudoElementNameForEvents(PseudoId);
+
 private:
     PseudoElement(Element*, PseudoId);
-
-    using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE { return false; }
 
     virtual void didRecalcStyle(StyleChange) OVERRIDE;
     virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }

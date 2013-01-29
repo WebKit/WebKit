@@ -39,6 +39,20 @@ const QualifiedName& pseudoElementTagName()
     return name;
 }
 
+String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
+{
+    DEFINE_STATIC_LOCAL(const String, after, (ASCIILiteral("::after")));
+    DEFINE_STATIC_LOCAL(const String, before, (ASCIILiteral("::before")));
+    switch (pseudoId) {
+    case AFTER:
+        return after;
+    case BEFORE:
+        return before;
+    default:
+        return emptyString();
+    }
+}
+
 PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
     : Element(pseudoElementTagName(), parent->document(), CreatePseudoElement)
     , m_pseudoId(pseudoId)

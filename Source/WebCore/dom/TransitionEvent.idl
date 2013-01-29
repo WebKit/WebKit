@@ -30,5 +30,6 @@
 ] interface TransitionEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString propertyName;
     [InitializedByEventConstructor] readonly attribute double elapsedTime;
+    [InitializedByEventConstructor] readonly attribute DOMString pseudoElement;
 };
 

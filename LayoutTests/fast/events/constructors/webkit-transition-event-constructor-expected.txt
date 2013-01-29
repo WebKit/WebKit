@@ -7,6 +7,7 @@ PASS new WebKitTransitionEvent('eventType').bubbles is false
 PASS new WebKitTransitionEvent('eventType').cancelable is false
 PASS new WebKitTransitionEvent('eventType').propertyName is ""
 PASS new WebKitTransitionEvent('eventType').elapsedTime is 0
+PASS new WebKitTransitionEvent('eventType').pseudoElement is ""
 PASS new WebKitTransitionEvent('eventType', { bubbles: false }).bubbles is false
 PASS new WebKitTransitionEvent('eventType', { bubbles: true }).bubbles is true
 PASS new WebKitTransitionEvent('eventType', { cancelable: false }).cancelable is false
@@ -31,6 +32,8 @@ PASS new WebKitTransitionEvent('eventType', { elapsedTime: 18446744073709551615 
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: NaN }).elapsedTime is NaN
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: Infinity }).elapsedTime is Infinity
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: -Infinity }).elapsedTime is -Infinity
+PASS new WebKitTransitionEvent('eventType', { pseudoElement: '::before' }).pseudoElement is "::before"
+PASS new WebKitTransitionEvent('eventType', { pseudoElement: '' }).pseudoElement is ""
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: undefined }).elapsedTime is NaN
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: null }).elapsedTime is 0
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: false }).elapsedTime is 0
@@ -42,10 +45,11 @@ PASS new WebKitTransitionEvent('eventType', { elapsedTime: [123.45] }).elapsedTi
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime is NaN
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime is NaN
 PASS new WebKitTransitionEvent('eventType', { elapsedTime: {valueOf: function () { return 123.45 } } }).elapsedTime is 123.45
-PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).bubbles is true
-PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).cancelable is true
-PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).propertyName is 'doremi'
-PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45 }).elapsedTime is 123.45
+PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).bubbles is true
+PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).cancelable is true
+PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).propertyName is 'doremi'
+PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).elapsedTime is 123.45
+PASS new WebKitTransitionEvent('eventType', { bubbles: true, cancelable: true, propertyName: 'doremi', elapsedTime: 123.45, pseudoElement: '::after' }).pseudoElement is '::after'
 PASS successfullyParsed is true
 
 TEST COMPLETE
