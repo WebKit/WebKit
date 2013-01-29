@@ -1,3 +1,12 @@
+2013-01-28  Sam Weinig  <sam@webkit.org>
+
+        <rdar://problem/13098777>
+        Add (allow mach-lookup (global-name "com.apple.tccd.system"))
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-01-28  Brady Eidson  <beidson@apple.com>
 
         WebKit2 should notify the client if the NetworkProcess crashes.
