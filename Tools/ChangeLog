@@ -1,3 +1,50 @@
+2013-01-29  Alan Cutter  <alancutter@chromium.org>
+
+        QueueStatusServer needs pages to display historical queue data
+        https://bugs.webkit.org/show_bug.cgi?id=107659
+
+        Reviewed by Eric Seidel.
+
+        Created a /queue-charts/<queue-name> handler to present queue and patch data using Google Chart Tools.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/config/charts.py: Copied from Tools/QueueStatusServer/model/queuelog.py.
+        (get_time_unit):
+        * QueueStatusServer/filters/webkit_extras.py:
+        (webkit_linkify):
+        (webkit_bug_id):
+        (webkit_attachment_id):
+        (results_link):
+        (queue_status_link):
+        (queue_charts_link):
+        * QueueStatusServer/handlers/queuecharts.py: Added.
+        (QueueCharts):
+        (QueueCharts.get):
+        (QueueCharts._get_min_med_max):
+        (QueueCharts._get_patch_data):
+        (QueueCharts._get_patch_logs):
+        (QueueCharts._get_queue_data):
+        (QueueCharts._get_queue_logs):
+        (QueueCharts._get_time_unit):
+        (QueueCharts._get_timestamp):
+        (QueueCharts._get_view_range):
+        * QueueStatusServer/handlers/queuestatus.py:
+        (QueueStatus.get):
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/queuelog.py:
+        (QueueLog):
+        (QueueLog.create_key):
+        (QueueLog.get_at):
+        (QueueLog.get_current):
+        (QueueLog.get_or_create):
+        (QueueLog._get_or_create_txn):
+        * QueueStatusServer/stylesheets/charts.css: Added.
+        (.chart):
+        (.choices):
+        * QueueStatusServer/templates/queuecharts.html: Added.
+        * QueueStatusServer/templates/queuestatus.html:
+
 2013-01-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Missing build flags when building with Harfbuzz

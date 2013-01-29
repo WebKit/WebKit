@@ -9,6 +9,7 @@
 
 <h3>Summary</h3>
 <div>
+<div>[{{ queue_name|force_escape|queue_charts_link:"charts"|safe }}]</div>
 Last Pass: {% if last_pass %}{{ last_pass.date|timesince }} ago{% else %}never{% endif %}
 {% if not bot_id and last_pass.bot_id %}
 by <a href="/queue-status/{{last_pass.queue_name}}/bots/{{last_pass.bot_id}}">{{ last_pass.bot_id }}</a>

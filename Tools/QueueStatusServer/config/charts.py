@@ -1,9 +1,9 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,50 +26,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
+patch_log_limit = 500
 
-from django.template.defaultfilters import stringfilter
-from google.appengine.ext import webapp
+# All units are represented numerically as seconds.
+one_minute = 60.0
+one_hour = one_minute * 60.0
+one_day = one_hour * 24.0
+one_month = one_day * 30.0
 
-register = webapp.template.create_template_register()
+# How far back to view the history, specified in seconds.
+view_range_choices = [
+    {"name": "1 day", "view_range": one_day},
+    {"name": "1 week", "view_range": one_day * 7},
+    {"name": "1 month", "view_range": one_month},
+]
 
-bug_regexp = re.compile(r"bug (?P<bug_id>\d+)")
-patch_regexp = re.compile(r"patch (?P<patch_id>\d+)")
+default_view_range = one_day
 
-
-@register.filter
-@stringfilter
-def webkit_linkify(value):
-    value = bug_regexp.sub(r'<a href="http://webkit.org/b/\g<bug_id>">bug \g<bug_id></a>', value)
-    value = patch_regexp.sub(r'<a href="https://bugs.webkit.org/attachment.cgi?id=\g<patch_id>&action=prettypatch">patch \g<patch_id></a>', value)
-    return value
-
-
-@register.filter
-@stringfilter
-def webkit_bug_id(value):
-    return '<a href="http://webkit.org/b/%s">%s</a>' % (value, value)
-
-
-@register.filter
-@stringfilter
-def webkit_attachment_id(value):
-    return '<a href="https://bugs.webkit.org/attachment.cgi?id=%s&action=prettypatch">%s</a>' % (value, value)
+_time_units = [
+    #(threshold, time unit, name)
+    (0, one_hour, "hours"),
+    (4 * one_day, one_day, "days"),
+    (3 * one_month, one_month, "months"),
+]
 
 
-@register.filter
-@stringfilter
-def results_link(status_id):
-    return '<a href="/results/%s">results</a>' % status_id
-
-
-@register.filter
-@stringfilter
-def queue_status_link(queue_name, text):
-    return '<a href="/queue-status/%s">%s</a>' % (queue_name, text)
-
-
-@register.filter
-@stringfilter
-def queue_charts_link(queue_name, text):
-    return '<a href="/queue-charts/%s">%s</a>' % (queue_name, text)
+def get_time_unit(view_range):
+    current_threshold, current_time_unit, current_name = _time_units[0]
+    for threshold, time_unit, name in _time_units[1:]:
+        if view_range >= threshold:
+            current_time_unit, current_name = time_unit, name
+        else:
+            break
+    return current_time_unit, current_name

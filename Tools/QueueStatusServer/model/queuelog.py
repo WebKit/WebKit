@@ -44,14 +44,29 @@ class QueueLog(db.Model):
     patch_retry_count = db.IntegerProperty(default=0)
     status_update_count = db.IntegerProperty(default=0)
 
-    @classmethod
-    def get_current(cls, queue_name, duration):
-        timestamp_now = time()
-        timestamp = int(timestamp_now / duration) * duration
-        date = datetime.utcfromtimestamp(timestamp)
-        key = cls.create_key(queue_name, duration, timestamp)
-        return cls.get_or_insert(key, date=date, duration=duration, queue_name=queue_name)
-
     @staticmethod
     def create_key(queue_name, duration, timestamp):
         return "%s-%s-%s" % (queue_name, duration, timestamp)
+
+    @classmethod
+    def get_at(cls, queue_name, duration, timestamp):
+        timestamp = int(timestamp / duration) * duration
+        date = datetime.utcfromtimestamp(timestamp)
+        key = cls.create_key(queue_name, duration, timestamp)
+        return cls.get_or_create(key, date=date, duration=duration, queue_name=queue_name)
+
+    @classmethod
+    def get_current(cls, queue_name, duration):
+        return cls.get_at(queue_name, duration, time())
+
+    # This is to prevent page requests from generating lots of rows in the database.
+    @classmethod
+    def get_or_create(cls, key_name, **kwargs):
+        return db.run_in_transaction(cls._get_or_create_txn, key_name, **kwargs)
+
+    @classmethod
+    def _get_or_create_txn(cls, key_name, **kwargs):
+        entity = cls.get_by_key_name(key_name, parent=kwargs.get('parent'))
+        if entity is None:
+            entity = cls(key_name=key_name, **kwargs)
+        return entity

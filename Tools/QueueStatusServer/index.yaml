@@ -10,6 +10,11 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: PatchLog
+  properties:
+  - name: queue_name
+  - name: date
+
 - kind: QueueStatus
   properties:
   - name: active_patch_id

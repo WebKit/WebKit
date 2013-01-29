@@ -104,6 +104,7 @@ class QueueStatus(webapp.RequestHandler):
 
         statuses = self._fetch_statuses(queue, bot_id)
         template_values = {
+            "queue_name": queue_name,
             "page_title": self._page_title(queue, bot_id),
             "work_item_rows": self._rows_for_work_items(queue),
             "status_groups": self._build_status_groups(statuses),
