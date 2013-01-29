@@ -76,7 +76,7 @@ public:
 
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
-    virtual void deviceScaleFactorDidChange() { }
+    virtual void deviceOrPageScaleFactorChanged() { }
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
     virtual bool isFlushingLayerChanges() const OVERRIDE { return m_isFlushingLayerChanges; }

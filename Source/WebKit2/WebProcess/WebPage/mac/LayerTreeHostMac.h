@@ -54,7 +54,7 @@ private:
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
     virtual void forceRepaint() OVERRIDE;
     virtual void sizeDidChange(const WebCore::IntSize& newSize) OVERRIDE;
-    virtual void deviceScaleFactorDidChange() OVERRIDE;
+    virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
 
     virtual void didInstallPageOverlay() OVERRIDE;
     virtual void didUninstallPageOverlay() OVERRIDE;

@@ -1,3 +1,49 @@
+2013-01-29  Huang Dongsung  <luxtella@company100.net>
+
+        [WK2] Call LayerTreeHost::deviceOrPageScaleFactorChanged() when a device or page scale factor is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=107802
+
+        Reviewed by Simon Fraser.
+
+        Currently, LayerTreeHostMac and *GTK call deviceOrPageScaleFactorChanged()
+        of the non compositing GraphicsLayer when a device scale factor is changed.
+
+        There are two problems.
+        1. We don't notify LayerTreeHost when a page scale factor is changed.
+        2. When using TiledCoreAnimationDrawingAreaProxy, LayerTreeHostMac does
+        not receive the device scale factor changed callback.
+
+        So this patch changes three points.
+        1. Rename from deviceScaleFactorDidChange() to deviceOrPageScaleFactorChanged()
+        in LayerTreeHost.
+        2. WebPage::setDeviceScaleFactor() calls LayerTreeHost::deviceScaleFactorDidChange()
+        because of dealing with TiledCoreAnimationDrawingAreaProxy.
+        3. WebPage::pageScaleFactor() calls LayerTreeHost::deviceScaleFactorDidChange()
+        to call deviceOrPageScaleFactorChanged() of the non compositing GraphicsLayer.
+
+        Unfortunately, I couldn't think of a way to test this in an automated fashion.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+            Don't call LayerTreeHost::deviceScaleFactorDidChange() because this
+            method calls WebPage::setDeviceScaleFactor() and then
+            LayerTreeHost::deviceScaleFactorDidChange() is called.
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePage):
+        (WebKit::WebPage::setDeviceScaleFactor):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::deviceOrPageScaleFactorChanged):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (LayerTreeHostGtk):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        (LayerTreeHostMac):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::deviceOrPageScaleFactorChanged):
+
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
         Get rid of MessageID::get()

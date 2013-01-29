@@ -162,7 +162,7 @@ void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
     [CATransaction synchronize];
 }
 
-void LayerTreeHostMac::deviceScaleFactorDidChange()
+void LayerTreeHostMac::deviceOrPageScaleFactorChanged()
 {
     // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();

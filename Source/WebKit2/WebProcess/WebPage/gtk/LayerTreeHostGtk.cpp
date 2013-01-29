@@ -207,7 +207,7 @@ void LayerTreeHostGtk::sizeDidChange(const IntSize& newSize)
     compositeLayersToContext(ForResize);
 }
 
-void LayerTreeHostGtk::deviceScaleFactorDidChange()
+void LayerTreeHostGtk::deviceOrPageScaleFactorChanged()
 {
     // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();

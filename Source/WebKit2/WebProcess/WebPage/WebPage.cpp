@@ -1217,6 +1217,9 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->pageScaleFactorDidChange();
 
+    if (m_drawingArea->layerTreeHost())
+        m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
@@ -1247,6 +1250,9 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
         layoutIfNeeded();
         m_findController.deviceScaleFactorDidChange();
     }
+
+    if (m_drawingArea->layerTreeHost())
+        m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
 }
 
 float WebPage::deviceScaleFactor() const
