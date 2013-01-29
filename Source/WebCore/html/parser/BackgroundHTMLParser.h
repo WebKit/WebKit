@@ -64,9 +64,9 @@ private:
 
     void sendTokensToMainThread();
 
-    SegmentedString m_input;
-    HTMLToken m_token;
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
+    SegmentedString m_input;
+    OwnPtr<HTMLToken> m_token;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;
     WeakPtr<HTMLDocumentParser> m_parser;

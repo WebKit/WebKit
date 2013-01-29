@@ -84,6 +84,7 @@ ParserMap::BackgroundParserMap& ParserMap::backgroundParsers()
 
 BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
     : m_inForeignContent(false)
+    , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
     , m_parser(parser)
@@ -153,9 +154,9 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 
 void BackgroundHTMLParser::pumpTokenizer()
 {
-    while (m_tokenizer->nextToken(m_input, m_token)) {
-        m_pendingTokens->append(CompactHTMLToken(m_token, TextPosition(m_input.currentLine(), m_input.currentColumn())));
-        m_token.clear();
+    while (m_tokenizer->nextToken(m_input, *m_token.get())) {
+        m_pendingTokens->append(CompactHTMLToken(m_token.get(), TextPosition(m_input.currentLine(), m_input.currentColumn())));
+        m_token->clear();
 
         if (!simulateTreeBuilder(m_pendingTokens->last()) || m_pendingTokens->size() >= pendingTokenLimit)
             sendTokensToMainThread();

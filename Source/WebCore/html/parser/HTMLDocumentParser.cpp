@@ -77,6 +77,7 @@ static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contex
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : ScriptableDocumentParser(document)
     , m_options(document)
+    , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
     , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
@@ -96,6 +97,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_options(fragment->document())
+    , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
     , m_xssAuditor(this)
@@ -345,20 +347,20 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
-            m_sourceTracker.start(m_input, m_tokenizer.get(), m_token);
+            m_sourceTracker.start(m_input, m_tokenizer.get(), token());
 
-        if (!m_tokenizer->nextToken(m_input.current(), m_token))
+        if (!m_tokenizer->nextToken(m_input.current(), token()))
             break;
 
         if (!isParsingFragment()) {
-            m_sourceTracker.end(m_input, m_tokenizer.get(), m_token);
+            m_sourceTracker.end(m_input, m_tokenizer.get(), token());
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            m_xssAuditor.filterToken(m_token);
+            m_xssAuditor.filterToken(token());
         }
 
-        constructTreeFromHTMLToken(m_token);
+        constructTreeFromHTMLToken(token());
         ASSERT(m_token.isUninitialized());
     }
 

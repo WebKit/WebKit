@@ -57,7 +57,7 @@ private:
 
 class CompactHTMLToken {
 public:
-    explicit CompactHTMLToken(const HTMLToken&, const TextPosition&);
+    CompactHTMLToken(const HTMLToken*, const TextPosition&);
 
     bool isSafeToSendToAnotherThread() const;
 

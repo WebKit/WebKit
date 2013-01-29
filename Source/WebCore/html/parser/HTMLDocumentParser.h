@@ -154,12 +154,12 @@ private:
     bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
     bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript(); }
 
+    HTMLToken& token() { return *m_token.get(); }
+
     HTMLParserOptions m_options;
     HTMLInputStream m_input;
 
-    // We hold m_token here because it might be partially complete.
-    HTMLToken m_token;
-
+    OwnPtr<HTMLToken> m_token;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     OwnPtr<HTMLScriptRunner> m_scriptRunner;
     OwnPtr<HTMLTreeBuilder> m_treeBuilder;
