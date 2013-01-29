@@ -391,7 +391,6 @@ webkit.org/b/99057 inspector/styles/variables [ Skip ]
 # DOM4_EVENTS_CONSTRUCTOR is not yet enabled.
 webkit.org/b/107428 fast/events/constructors/ui-event-constructor.html [ Skip ]
 webkit.org/b/107428 fast/events/constructors/mouse-event-constructor.html [ Skip ]
-webkit.org/b/107428 fast/events/constructors/composition-event-constructor.html [ Skip ]
 
 # No CORS support for media elements is implemented yet.
 webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]
@@ -630,7 +629,6 @@ webkit.org/b/106592 fast/regions/firstletter-inside-flowthread.html [ ImageOnlyF
 
 webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
-webkit.org/b/107194 storage/indexeddb/cursor-advance-workers.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html  [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/factory-basics-workers.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/index-basics-workers.html [ Failure Pass ]
@@ -1401,7 +1399,6 @@ webkit.org/b/107257 [ Debug ] fast/js/large-expressions.html [ Failure ]
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
 webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/objectstore-basics.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
