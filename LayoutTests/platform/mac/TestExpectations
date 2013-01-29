@@ -1294,3 +1294,7 @@ webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ]
 webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
+
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
+webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
+webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
