@@ -51,6 +51,7 @@
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
+#include "ObjectAllocationProfile.h"
 #include "Options.h"
 #include "Instruction.h"
 #include "JITCode.h"
@@ -787,13 +788,6 @@ namespace JSC {
         }
         ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
         ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
-        
-        unsigned numberOfArrayAllocationProfiles() const { return m_arrayAllocationProfiles.size(); }
-        ArrayAllocationProfile* addArrayAllocationProfile()
-        {
-            m_arrayAllocationProfiles.append(ArrayAllocationProfile());
-            return &m_arrayAllocationProfiles.last();
-        }
 #endif
 
         // Exception handling support
@@ -1314,6 +1308,7 @@ namespace JSC {
         SegmentedVector<ArrayAllocationProfile, 8> m_arrayAllocationProfiles;
         ArrayProfileVector m_arrayProfiles;
 #endif
+        SegmentedVector<ObjectAllocationProfile, 8> m_objectAllocationProfiles;
 
         // Constant Pool
         Vector<Identifier> m_identifiers;

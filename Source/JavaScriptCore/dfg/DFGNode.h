@@ -486,6 +486,17 @@ struct Node {
         return m_opInfo;
     }
     
+    bool hasInlineCapacity()
+    {
+        return op() == CreateThis;
+    }
+
+    unsigned inlineCapacity()
+    {
+        ASSERT(hasInlineCapacity());
+        return m_opInfo;
+    }
+
     void setIndexingType(IndexingType indexingType)
     {
         ASSERT(hasIndexingType());
@@ -700,7 +711,7 @@ struct Node {
     {
         switch (op()) {
         case CheckFunction:
-        case InheritorIDWatchpoint:
+        case AllocationProfileWatchpoint:
             return true;
         default:
             return false;

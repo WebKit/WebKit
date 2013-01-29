@@ -323,7 +323,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     // Optimize self access.
     if (slot.slotBase() == baseValue) {
         if ((slot.cachedPropertyType() != PropertySlot::Value)
-            || !MacroAssembler::isCompactPtrAlignedAddressOffset(offsetRelativeToPatchedStorage(slot.cachedOffset()))) {
+            || !MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
             dfgRepatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
             return true;
         }

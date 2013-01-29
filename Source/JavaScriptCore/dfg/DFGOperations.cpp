@@ -42,6 +42,7 @@
 #include "JSGlobalData.h"
 #include "JSNameScope.h"
 #include "NameInstance.h"
+#include "ObjectConstructor.h"
 #include "Operations.h"
 #include <wtf/InlineASM.h>
 
@@ -347,7 +348,7 @@ EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
-JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* constructor)
+JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, int32_t inlineCapacity)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
@@ -357,7 +358,7 @@ JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* constructor)
     ASSERT(jsCast<JSFunction*>(constructor)->methodTable()->getConstructData(jsCast<JSFunction*>(constructor), constructData) == ConstructTypeJS);
 #endif
     
-    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->cachedInheritorID(exec));
+    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->allocationProfile(exec, inlineCapacity)->structure());
 }
 
 JSCell* DFG_OPERATION operationNewObject(ExecState* exec, Structure* structure)

@@ -102,19 +102,19 @@ bool ObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* ex
     return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, descriptor);
 }
 
-// ECMA 15.2.2
-static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
+static ALWAYS_INLINE JSObject* constructObject(ExecState* exec)
 {
+    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    ArgList args(exec);
     JSValue arg = args.at(0);
     if (arg.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject);
+        return constructEmptyObject(exec, globalObject->objectPrototype());
     return arg.toObject(exec, globalObject);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState* exec)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructObject(exec, asInternalFunction(exec->callee())->globalObject(), args));
+    return JSValue::encode(constructObject(exec));
 }
 
 ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -125,8 +125,7 @@ ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constr
 
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructObject(exec, asInternalFunction(exec->callee())->globalObject(), args));
+    return JSValue::encode(constructObject(exec));
 }
 
 CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
@@ -351,7 +350,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object prototype may only be an Object or null.")));
     JSValue proto = exec->argument(0);
     JSObject* newObject = proto.isObject()
-        ? constructEmptyObject(exec, exec->globalData().prototypeMap.emptyObjectStructureForPrototype(asObject(proto)))
+        ? constructEmptyObject(exec, asObject(proto))
         : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);

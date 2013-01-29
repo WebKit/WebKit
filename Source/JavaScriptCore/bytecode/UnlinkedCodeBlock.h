@@ -58,6 +58,7 @@ class UnlinkedFunctionCodeBlock;
 typedef unsigned UnlinkedValueProfile;
 typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
+typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct ExecutableInfo {
@@ -398,6 +399,8 @@ public:
     unsigned numberOfArrayProfiles() { return m_arrayProfileCount; }
     UnlinkedArrayAllocationProfile addArrayAllocationProfile() { return m_arrayAllocationProfileCount++; }
     unsigned numberOfArrayAllocationProfiles() { return m_arrayAllocationProfileCount; }
+    UnlinkedObjectAllocationProfile addObjectAllocationProfile() { return m_objectAllocationProfileCount++; }
+    unsigned numberOfObjectAllocationProfiles() { return m_objectAllocationProfileCount; }
     UnlinkedValueProfile addValueProfile() { return m_valueProfileCount++; }
     unsigned numberOfValueProfiles() { return m_valueProfileCount; }
 
@@ -525,6 +528,7 @@ private:
     unsigned m_putToBaseOperationCount;
     unsigned m_arrayProfileCount;
     unsigned m_arrayAllocationProfileCount;
+    unsigned m_objectAllocationProfileCount;
     unsigned m_valueProfileCount;
     unsigned m_llintCallLinkInfoCount;
 

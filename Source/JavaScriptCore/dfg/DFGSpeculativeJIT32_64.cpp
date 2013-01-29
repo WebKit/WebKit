@@ -3563,7 +3563,7 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateJSArray(structure, resultGPR, storageGPR, numElements);
+            emitAllocateJSArray(resultGPR, structure, storageGPR, numElements);
             
             // At this point, one way or another, resultGPR and storageGPR have pointers to
             // the JSArray and the Butterfly, respectively.
@@ -3729,11 +3729,13 @@ void SpeculativeJIT::compile(Node& node)
             GPRTemporary result(this);
             GPRTemporary storage(this);
             GPRTemporary scratch(this);
+            GPRTemporary scratch2(this);
             
             GPRReg sizeGPR = size.gpr();
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
             GPRReg scratchGPR = scratch.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
             
             MacroAssembler::JumpList slowCases;
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_SPARSE_ARRAY_INDEX)));
@@ -3745,9 +3747,8 @@ void SpeculativeJIT::compile(Node& node)
             slowCases.append(
                 emitAllocateBasicStorage(resultGPR, storageGPR));
             m_jit.subPtr(scratchGPR, storageGPR);
-            emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(
-                TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(node.indexingType())), resultGPR, scratchGPR,
-                storageGPR, sizeof(JSArray), slowCases);
+            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node.indexingType());
+            emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
             
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
@@ -3808,7 +3809,7 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateJSArray(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), resultGPR, storageGPR, numElements);
+            emitAllocateJSArray(resultGPR, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), storageGPR, numElements);
             
             if (node.indexingType() == ArrayWithDouble) {
                 JSValue* data = m_jit.codeBlock()->constantBuffer(node.startConstant());
@@ -3919,45 +3920,54 @@ void SpeculativeJIT::compile(Node& node)
         
         SpeculateCellOperand callee(this, node.child1());
         GPRTemporary result(this);
+        GPRTemporary allocator(this);
         GPRTemporary structure(this);
         GPRTemporary scratch(this);
         
         GPRReg calleeGPR = callee.gpr();
         GPRReg resultGPR = result.gpr();
+        GPRReg allocatorGPR = allocator.gpr();
         GPRReg structureGPR = structure.gpr();
         GPRReg scratchGPR = scratch.gpr();
         
-        // Load the inheritorID. If the inheritorID is not set, go to slow path.
-        m_jit.loadPtr(MacroAssembler::Address(calleeGPR, JSFunction::offsetOfCachedInheritorID()), structureGPR);
         MacroAssembler::JumpList slowPath;
-        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, structureGPR));
-        
-        emitAllocateJSFinalObject(structureGPR, resultGPR, scratchGPR, slowPath);
-        
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR));
+
+        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
+        m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, allocatorGPR));
+        emitAllocateJSObject(resultGPR, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
+
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR, node.inlineCapacity()));
         
         cellResult(resultGPR, m_compileIndex);
         break;
     }
 
-    case InheritorIDWatchpoint: {
-        jsCast<JSFunction*>(node.function())->addInheritorIDWatchpoint(speculationWatchpoint());
+    case AllocationProfileWatchpoint: {
+        jsCast<JSFunction*>(node.function())->addAllocationProfileWatchpoint(speculationWatchpoint());
         noResult(m_compileIndex);
         break;
     }
 
     case NewObject: {
         GPRTemporary result(this);
+        GPRTemporary allocator(this);
         GPRTemporary scratch(this);
         
         GPRReg resultGPR = result.gpr();
+        GPRReg allocatorGPR = allocator.gpr();
         GPRReg scratchGPR = scratch.gpr();
         
         MacroAssembler::JumpList slowPath;
         
-        emitAllocateJSFinalObject(MacroAssembler::TrustedImmPtr(node.structure()), resultGPR, scratchGPR, slowPath);
-        
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, node.structure()));
+        Structure* structure = node.structure();
+        size_t allocationSize = JSObject::allocationSize(structure->inlineCapacity());
+        MarkedAllocator* allocatorPtr = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(allocationSize);
+
+        m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);
+        emitAllocateJSObject(resultGPR, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
+
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, structure));
         
         cellResult(resultGPR, m_compileIndex);
         break;

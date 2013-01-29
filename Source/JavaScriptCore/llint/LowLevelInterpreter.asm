@@ -369,32 +369,21 @@ macro functionInitialization(profileArgSkip)
 .stackHeightOK:
 end
 
-macro allocateBasicJSObject(sizeClassIndex, structure, result, scratch1, scratch2, slowCase)
+macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
     if ALWAYS_ALLOCATE_SLOW
         jmp slowCase
     else
-        const offsetOfMySizeClass =
-            JSGlobalData::heap +
-            Heap::m_objectSpace +
-            MarkedSpace::m_normalSpace +
-            MarkedSpace::Subspace::preciseAllocators +
-            sizeClassIndex * sizeof MarkedAllocator
-        
         const offsetOfFirstFreeCell = 
             MarkedAllocator::m_freeList + 
             MarkedBlock::FreeList::head
 
-        # FIXME: we can get the global data in one load from the stack.
-        loadp CodeBlock[cfr], scratch1
-        loadp CodeBlock::m_globalData[scratch1], scratch1
-        
         # Get the object from the free list.   
-        loadp offsetOfMySizeClass + offsetOfFirstFreeCell[scratch1], result
+        loadp offsetOfFirstFreeCell[allocator], result
         btpz result, slowCase
         
         # Remove the object from the free list.
-        loadp [result], scratch2
-        storep scratch2, offsetOfMySizeClass + offsetOfFirstFreeCell[scratch1]
+        loadp [result], scratch1
+        storep scratch1, offsetOfFirstFreeCell[allocator]
     
         # Initialize the object.
         storep structure, JSCell::m_structure[result]

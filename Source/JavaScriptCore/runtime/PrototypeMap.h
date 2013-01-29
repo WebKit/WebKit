@@ -33,26 +33,23 @@ namespace JSC {
 class JSObject;
 class Structure;
 
+// Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
 class PrototypeMap {
 public:
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*);
-    void clearEmptyObjectStructureForPrototype(JSObject*);
+    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
+    void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
     void addPrototype(JSObject*);
     bool isPrototype(JSObject*); // Returns a conservative estimate.
 
 private:
     WeakGCMap<JSObject*, JSObject> m_prototypes;
-    WeakGCMap<JSObject*, Structure> m_structures;
+    typedef WeakGCMap<std::pair<JSObject*, unsigned>, Structure> StructureMap;
+    StructureMap m_structures;
 };
 
 inline bool PrototypeMap::isPrototype(JSObject* object)
 {
     return m_prototypes.contains(object);
-}
-
-inline void PrototypeMap::clearEmptyObjectStructureForPrototype(JSObject* object)
-{
-    m_structures.remove(object);
 }
 
 } // namespace JSC

@@ -806,7 +806,7 @@ private:
         case CheckArgumentsNotCreated:
         case GlobalVarWatchpoint:
         case GarbageValue:
-        case InheritorIDWatchpoint:
+        case AllocationProfileWatchpoint:
         case Phantom:
             changed |= mergeDefaultFlags(node);
             break;

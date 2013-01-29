@@ -69,7 +69,7 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, PropertyOffset inlineCapacity = 0);
+        static Structure* create(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
     protected:
         void finishCreation(JSGlobalData& globalData)
@@ -221,7 +221,7 @@ namespace JSC {
         {
             if (m_propertyTable)
                 return m_propertyTable->propertyStorageSize();
-            return numberOfSlotsForLastOffset(m_offset, m_typeInfo.type());
+            return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
         }
         unsigned totalStorageCapacity() const
         {
@@ -359,7 +359,7 @@ namespace JSC {
     private:
         friend class LLIntOffsetsExtractor;
 
-        JS_EXPORT_PRIVATE Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType, PropertyOffset inlineCapacity);
+        JS_EXPORT_PRIVATE Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
 
@@ -400,7 +400,7 @@ namespace JSC {
         int transitionCount() const
         {
             // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
-            return numberOfSlotsForLastOffset(m_offset, m_typeInfo.type());
+            return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
         }
 
         bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain) const;
@@ -454,7 +454,7 @@ namespace JSC {
         unsigned m_staticFunctionReified;
     };
 
-    inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, PropertyOffset inlineCapacity)
+    inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
     {
         ASSERT(globalData.structureStructure);
         ASSERT(classInfo);

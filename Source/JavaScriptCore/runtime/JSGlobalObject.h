@@ -141,7 +141,6 @@ namespace JSC {
         WriteBarrier<Structure> m_callbackFunctionStructure;
         WriteBarrier<Structure> m_callbackObjectStructure;
         WriteBarrier<Structure> m_dateStructure;
-        WriteBarrier<Structure> m_emptyObjectStructure;
         WriteBarrier<Structure> m_nullPrototypeObjectStructure;
         WriteBarrier<Structure> m_errorStructure;
         WriteBarrier<Structure> m_functionStructure;
@@ -303,7 +302,6 @@ namespace JSC {
         Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }
         Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
         Structure* dateStructure() const { return m_dateStructure.get(); }
-        Structure* emptyObjectStructure() const { return m_emptyObjectStructure.get(); }
         Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
         Structure* errorStructure() const { return m_errorStructure.get(); }
         Structure* functionStructure() const { return m_functionStructure.get(); }
@@ -512,16 +510,6 @@ namespace JSC {
         // dynamic global object must be set since code is running
         ASSERT(globalData().dynamicGlobalObject);
         return globalData().dynamicGlobalObject;
-    }
-
-    inline JSObject* constructEmptyObject(ExecState* exec, JSGlobalObject* globalObject)
-    {
-        return constructEmptyObject(exec, globalObject->emptyObjectStructure());
-    }
-
-    inline JSObject* constructEmptyObject(ExecState* exec)
-    {
-        return constructEmptyObject(exec, exec->lexicalGlobalObject());
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0)

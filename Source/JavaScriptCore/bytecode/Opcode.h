@@ -44,11 +44,11 @@ namespace JSC {
         macro(op_create_activation, 2) \
         macro(op_init_lazy_reg, 2) \
         macro(op_create_arguments, 2) \
-        macro(op_create_this, 3) \
+        macro(op_create_this, 4) \
         macro(op_get_callee, 3) \
         macro(op_convert_this, 3) \
         \
-        macro(op_new_object, 2) \
+        macro(op_new_object, 4) \
         macro(op_new_array, 5) \
         macro(op_new_array_with_size, 4) \
         macro(op_new_array_buffer, 5) \

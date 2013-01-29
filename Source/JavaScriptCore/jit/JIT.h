@@ -62,6 +62,7 @@ namespace JSC {
     class Interpreter;
     class JSScope;
     class JSStack;
+    class MarkedAllocator;
     class Register;
     class StructureChain;
 
@@ -453,8 +454,8 @@ namespace JSC {
         void emitWriteBarrier(RegisterID owner, RegisterID valueTag, RegisterID scratch, RegisterID scratch2, WriteBarrierMode, WriteBarrierUseKind);
         void emitWriteBarrier(JSCell* owner, RegisterID value, RegisterID scratch, WriteBarrierMode, WriteBarrierUseKind);
 
-        template<typename ClassType, MarkedBlock::DestructorType, typename StructureType> void emitAllocateBasicJSObject(StructureType, RegisterID result, RegisterID storagePtr);
-        template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);
+        template<typename StructureType> // StructureType can be RegisterID or ImmPtr.
+        void emitAllocateJSObject(RegisterID allocator, StructureType, RegisterID result, RegisterID scratch);
         
 #if ENABLE(VALUE_PROFILER)
         // This assumes that the value to profile is in regT0 and that regT3 is available for

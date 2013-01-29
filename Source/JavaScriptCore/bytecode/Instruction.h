@@ -50,6 +50,7 @@ namespace JSC {
     class ArrayAllocationProfile;
     class ArrayProfile;
     class JSCell;
+    class ObjectAllocationProfile;
     class Structure;
     class StructureChain;
     struct LLIntCallLinkInfo;
@@ -195,6 +196,7 @@ namespace JSC {
         Instruction(ValueProfile* profile) { u.profile = profile; }
         Instruction(ArrayProfile* profile) { u.arrayProfile = profile; }
         Instruction(ArrayAllocationProfile* profile) { u.arrayAllocationProfile = profile; }
+        Instruction(ObjectAllocationProfile* profile) { u.objectAllocationProfile = profile; }
         
         Instruction(WriteBarrier<Unknown>* registerPointer) { u.registerPointer = registerPointer; }
         
@@ -215,6 +217,7 @@ namespace JSC {
             ValueProfile* profile;
             ArrayProfile* arrayProfile;
             ArrayAllocationProfile* arrayAllocationProfile;
+            ObjectAllocationProfile* objectAllocationProfile;
             void* pointer;
             bool* predicatePointer;
         } u;

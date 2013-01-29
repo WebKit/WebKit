@@ -310,33 +310,21 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
+template<typename StructureType>
+inline void JIT::emitAllocateJSObject(RegisterID allocator, StructureType structure, RegisterID result, RegisterID scratch)
 {
-    size_t size = ClassType::allocationSize(INLINE_STORAGE_CAPACITY);
-    MarkedAllocator* allocator = 0;
-    if (destructorType == MarkedBlock::Normal)
-        allocator = &m_globalData->heap.allocatorForObjectWithNormalDestructor(size);
-    else if (destructorType == MarkedBlock::ImmortalStructure)
-        allocator = &m_globalData->heap.allocatorForObjectWithImmortalStructureDestructor(size);
-    else
-        allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(size);
-    loadPtr(&allocator->m_freeList.head, result);
+    loadPtr(Address(allocator, MarkedAllocator::offsetOfFreeListHead()), result);
     addSlowCase(branchTestPtr(Zero, result));
 
     // remove the object from the free list
-    loadPtr(Address(result), storagePtr);
-    storePtr(storagePtr, &allocator->m_freeList.head);
+    loadPtr(Address(result), scratch);
+    storePtr(scratch, Address(allocator, MarkedAllocator::offsetOfFreeListHead()));
 
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));
 
     // initialize the object's property storage pointer
     storePtr(TrustedImmPtr(0), Address(result, JSObject::butterflyOffset()));
-}
-
-template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
-{
-    emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None, T>(structure, result, scratch);
 }
 
 #if ENABLE(VALUE_PROFILER)

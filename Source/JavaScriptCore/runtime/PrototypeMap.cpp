@@ -52,18 +52,24 @@ void PrototypeMap::addPrototype(JSObject* object)
     // used as a prototype.
 }
 
-Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* object)
+Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* prototype, unsigned inlineCapacity)
 {
-    WeakGCMap<JSObject*, Structure>::AddResult addResult = m_structures.add(object, nullptr);
+    StructureMap::AddResult addResult = m_structures.add(std::make_pair(prototype, inlineCapacity), nullptr);
     if (!addResult.isNewEntry) {
-        ASSERT(isPrototype(object));
+        ASSERT(isPrototype(prototype));
         return addResult.iterator->value.get();
     }
 
-    addPrototype(object);
-    Structure* structure = JSFinalObject::createStructure(object->globalObject()->globalData(), object->globalObject(), object);
+    addPrototype(prototype);
+    Structure* structure = JSFinalObject::createStructure(
+        prototype->globalObject()->globalData(), prototype->globalObject(), prototype, inlineCapacity);
     addResult.iterator->value = structure;
     return structure;
+}
+
+void PrototypeMap::clearEmptyObjectStructureForPrototype(JSObject* object, unsigned inlineCapacity)
+{
+    m_structures.remove(std::make_pair(object, inlineCapacity));
 }
 
 } // namespace JSC

@@ -95,15 +95,25 @@ void JIT::emit_op_jmp(Instruction* currentInstruction)
 
 void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
-    emitAllocateJSFinalObject(TrustedImmPtr(m_codeBlock->globalObject()->emptyObjectStructure()), regT0, regT1);
-    
+    Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
+    size_t allocationSize = JSObject::allocationSize(structure->inlineCapacity());
+    MarkedAllocator* allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(allocationSize);
+
+    RegisterID resultReg = regT0;
+    RegisterID allocatorReg = regT1;
+    RegisterID scratchReg = regT2;
+
+    move(TrustedImmPtr(allocator), allocatorReg);
+    emitAllocateJSObject(allocatorReg, TrustedImmPtr(structure), resultReg, scratchReg);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall(this, cti_op_new_object).call(currentInstruction[1].u.operand);
+    JITStubCall stubCall(this, cti_op_new_object);
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[3].u.objectAllocationProfile->structure()));
+    stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
@@ -922,22 +932,28 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
     int callee = currentInstruction[2].u.operand;
-    emitGetVirtualRegister(callee, regT0);
-    loadPtr(Address(regT0, JSFunction::offsetOfCachedInheritorID()), regT2);
-    addSlowCase(branchTestPtr(Zero, regT2));
-    
-    // now regT2 contains the inheritorID, which is the structure that the newly
-    // allocated object will have.
-    
-    emitAllocateJSFinalObject(regT2, regT0, regT1);
+    RegisterID calleeReg = regT0;
+    RegisterID resultReg = regT0;
+    RegisterID allocatorReg = regT1;
+    RegisterID structureReg = regT2;
+    RegisterID scratchReg = regT3;
+
+    emitGetVirtualRegister(callee, calleeReg);
+    loadPtr(Address(calleeReg, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
+    loadPtr(Address(calleeReg, JSFunction::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
+    addSlowCase(branchTestPtr(Zero, allocatorReg));
+
+    emitAllocateJSObject(allocatorReg, structureReg, resultReg, scratchReg);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter); // doesn't have an inheritor ID
+    linkSlowCase(iter); // doesn't have an allocation profile
     linkSlowCase(iter); // allocation failed
+
     JITStubCall stubCall(this, cti_op_create_this);
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.call(currentInstruction[1].u.operand);
 }
 

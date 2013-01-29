@@ -41,6 +41,7 @@
 #include "SymbolTable.h"
 #include "Debugger.h"
 #include "Nodes.h"
+#include "StaticPropertyAnalyzer.h"
 #include "UnlinkedCodeBlock.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
@@ -383,6 +384,7 @@ namespace JSC {
         RegisterID* emitEqualityOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);
         RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
 
+        RegisterID* emitCreateThis(RegisterID* dst);
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
@@ -521,8 +523,16 @@ namespace JSC {
 
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();
+        UnlinkedObjectAllocationProfile newObjectAllocationProfile();
         UnlinkedArrayProfile newArrayProfile();
         UnlinkedValueProfile emitProfiledOpcode(OpcodeID);
+        int kill(RegisterID* dst)
+        {
+            int index = dst->index();
+            m_staticPropertyAnalyzer.kill(index);
+            return index;
+        }
+
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         ALWAYS_INLINE void rewindBinaryOp();
@@ -774,6 +784,8 @@ namespace JSC {
         IdentifierResolvePutMap m_resolveBaseMap;
         IdentifierResolvePutMap m_resolveBaseForPutMap;
         IdentifierResolvePutMap m_resolveWithBaseForPutMap;
+
+        StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
         JSGlobalData* m_globalData;
 

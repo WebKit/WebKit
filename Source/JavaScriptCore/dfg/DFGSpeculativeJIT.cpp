@@ -59,12 +59,14 @@ SpeculativeJIT::~SpeculativeJIT()
     WTF::deleteAllValues(m_slowPathGenerators);
 }
 
-void SpeculativeJIT::emitAllocateJSArray(Structure* structure, GPRReg resultGPR, GPRReg storageGPR, unsigned numElements)
+void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure, GPRReg storageGPR, unsigned numElements)
 {
     ASSERT(hasUndecided(structure->indexingType()) || hasInt32(structure->indexingType()) || hasDouble(structure->indexingType()) || hasContiguous(structure->indexingType()));
     
     GPRTemporary scratch(this);
+    GPRTemporary scratch2(this);
     GPRReg scratchGPR = scratch.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
     
     unsigned vectorLength = std::max(BASE_VECTOR_LEN, numElements);
     
@@ -73,12 +75,8 @@ void SpeculativeJIT::emitAllocateJSArray(Structure* structure, GPRReg resultGPR,
     slowCases.append(
         emitAllocateBasicStorage(TrustedImm32(vectorLength * sizeof(JSValue) + sizeof(IndexingHeader)), storageGPR));
     m_jit.subPtr(TrustedImm32(vectorLength * sizeof(JSValue)), storageGPR);
-    emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(
-        TrustedImmPtr(structure), resultGPR, scratchGPR,
-        storageGPR, sizeof(JSArray), slowCases);
+    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
     
-    // I'm assuming that two 32-bit stores are better than a 64-bit store.
-    // I have no idea if that's true. And it probably doesn't matter anyway.
     m_jit.store32(TrustedImm32(numElements), MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
     m_jit.store32(TrustedImm32(vectorLength), MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
     

@@ -60,6 +60,7 @@
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
+#include <runtime/ObjectConstructor.h>
 #include <runtime/Operations.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>
@@ -1674,7 +1675,7 @@ DeserializationResult CloneDeserializer::deserialize()
         case ObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return make_pair(JSValue(), StackOverflowError);
-            JSObject* outObject = constructEmptyObject(m_exec, m_globalObject);
+            JSObject* outObject = constructEmptyObject(m_exec, m_globalObject->objectPrototype());
             m_gcBuffer.append(outObject);
             outputObjectStack.append(outObject);
             // fallthrough

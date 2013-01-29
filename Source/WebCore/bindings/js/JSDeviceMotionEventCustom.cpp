@@ -31,6 +31,7 @@
 
 #include "DeviceMotionData.h"
 #include "DeviceMotionEvent.h"
+#include <runtime/ObjectConstructor.h>
 
 using namespace JSC;
 

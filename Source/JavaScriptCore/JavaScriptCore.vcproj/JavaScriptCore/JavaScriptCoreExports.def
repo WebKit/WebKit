@@ -27,7 +27,7 @@ EXPORTS
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0StringPrintStream@WTF@@QAE@XZ
-    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EH@Z
+    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EI@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0WTFThreadData@WTF@@QAE@XZ
     ??0WrapperBase@MemoryInstrumentation@WTF@@QAE@PBDPBX@Z
@@ -195,6 +195,7 @@ EXPORTS
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?EcmaScriptConverter@DoubleToStringConverter@double_conversion@WTF@@SAABV123@XZ
     ?empty@StringImpl@WTF@@SAPAV12@XZ
+    ?emptyObjectStructureForPrototype@PrototypeMap@JSC@@QAEPAVStructure@2@PAVJSObject@2@I@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVString@WTF@@AAV32@@Z

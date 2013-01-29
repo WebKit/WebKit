@@ -2135,20 +2135,24 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 ASSERT(cell->inherits(&JSFunction::s_info));
                 
                 JSFunction* function = jsCast<JSFunction*>(cell);
-                Structure* inheritorID = function->tryGetKnownInheritorID();
-                if (inheritorID) {
-                    addToGraph(InheritorIDWatchpoint, OpInfo(function));
-                    set(currentInstruction[1].u.operand, addToGraph(NewObject, OpInfo(inheritorID)));
+                ObjectAllocationProfile* allocationProfile = function->tryGetAllocationProfile();
+                if (allocationProfile) {
+                    addToGraph(AllocationProfileWatchpoint, OpInfo(function));
+                    set(currentInstruction[1].u.operand,
+                        addToGraph(NewObject, OpInfo(allocationProfile->structure())));
                     alreadyEmitted = true;
                 }
             }
             if (!alreadyEmitted)
-                set(currentInstruction[1].u.operand, addToGraph(CreateThis, callee));
+                set(currentInstruction[1].u.operand,
+                    addToGraph(CreateThis, OpInfo(currentInstruction[3].u.operand), callee));
             NEXT_OPCODE(op_create_this);
         }
-            
+
         case op_new_object: {
-            set(currentInstruction[1].u.operand, addToGraph(NewObject, OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->emptyObjectStructure())));
+            set(currentInstruction[1].u.operand,
+                addToGraph(NewObject,
+                    OpInfo(currentInstruction[3].u.objectAllocationProfile->structure())));
             NEXT_OPCODE(op_new_object);
         }
             

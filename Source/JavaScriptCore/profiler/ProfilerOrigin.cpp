@@ -27,6 +27,7 @@
 #include "ProfilerOrigin.h"
 
 #include "JSGlobalObject.h"
+#include "ObjectConstructor.h"
 #include "Operations.h"
 #include "ProfilerBytecodes.h"
 #include "ProfilerDatabase.h"

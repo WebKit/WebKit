@@ -755,7 +755,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_create_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] create_this %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data());
+            unsigned inferredInlineCapacity = (++it)->u.operand;
+            out.printf("[%4d] create_this %s, %s, %u", location, registerName(exec, r0).data(), registerName(exec, r1).data(), inferredInlineCapacity);
             break;
         }
         case op_convert_this: {
@@ -766,7 +767,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
         case op_new_object: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] new_object\t %s", location, registerName(exec, r0).data());
+            unsigned inferredInlineCapacity = (++it)->u.operand;
+            out.printf("[%4d] new_object\t %s, %u", location, registerName(exec, r0).data(), inferredInlineCapacity);
+            ++it; // Skip object allocation profile.
             break;
         }
         case op_new_array: {
@@ -1812,6 +1815,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
         m_valueProfiles.grow(size);
 #endif
+    if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
+        m_objectAllocationProfiles.grow(size);
     if (size_t size = unlinkedCodeBlock->numberOfResolveOperations())
         m_resolveOperations.grow(size);
     size_t putToBaseCount = unlinkedCodeBlock->numberOfPutToBaseOperations();
@@ -1872,6 +1877,17 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 #endif
+
+        case op_new_object: {
+            int objectAllocationProfileIndex = pc[i + opLength - 1].u.operand;
+            ObjectAllocationProfile* objectAllocationProfile = &m_objectAllocationProfiles[objectAllocationProfileIndex];
+            int inferredInlineCapacity = pc[i + opLength - 2].u.operand;
+
+            instructions[i + opLength - 1] = objectAllocationProfile;
+            objectAllocationProfile->initialize(*globalData(),
+                m_ownerExecutable.get(), m_globalObject->objectPrototype(), inferredInlineCapacity);
+            break;
+        }
 
         case op_call:
         case op_call_eval: {
@@ -2390,6 +2406,8 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
+    for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
+        m_objectAllocationProfiles[i].visitAggregate(visitor);
 
     updateAllPredictions(Collection);
 }

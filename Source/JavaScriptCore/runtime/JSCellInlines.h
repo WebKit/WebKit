@@ -83,7 +83,7 @@ void* allocateCell(Heap& heap, size_t size)
     JSCell* result = 0;
     if (T::needsDestruction && T::hasImmortalStructure)
         result = static_cast<JSCell*>(heap.allocateWithImmortalStructureDestructor(size));
-    else if (T::needsDestruction && !T::hasImmortalStructure)
+    else if (T::needsDestruction)
         result = static_cast<JSCell*>(heap.allocateWithNormalDestructor(size));
     else 
         result = static_cast<JSCell*>(heap.allocateWithoutDestructor(size));

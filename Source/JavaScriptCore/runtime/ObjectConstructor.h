@@ -22,6 +22,8 @@
 #define ObjectConstructor_h
 
 #include "InternalFunction.h"
+#include "JSGlobalObject.h"
+#include "ObjectPrototype.h"
 
 namespace JSC {
 
@@ -57,6 +59,30 @@ namespace JSC {
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };
+
+    inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
+    {
+        return JSFinalObject::create(exec, structure);
+    }
+
+    inline JSObject* constructEmptyObject(ExecState* exec, JSObject* prototype, unsigned inlineCapacity)
+    {
+        JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+        PrototypeMap& prototypeMap = globalObject->globalData().prototypeMap;
+        Structure* structure = prototypeMap.emptyObjectStructureForPrototype(
+            prototype, inlineCapacity);
+        return constructEmptyObject(exec, structure);
+    }
+
+    inline JSObject* constructEmptyObject(ExecState* exec, JSObject* prototype)
+    {
+        return constructEmptyObject(exec, prototype, JSFinalObject::defaultInlineCapacity());
+    }
+
+    inline JSObject* constructEmptyObject(ExecState* exec)
+    {
+        return constructEmptyObject(exec, exec->lexicalGlobalObject()->objectPrototype());
+    }
 
 } // namespace JSC
 

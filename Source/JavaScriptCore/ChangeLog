@@ -1,3 +1,312 @@
+2013-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Static size inference for JavaScript objects
+        https://bugs.webkit.org/show_bug.cgi?id=108093
+
+        Reviewed by Phil Pizlo.
+
+        * API/JSObjectRef.cpp:
+        * JavaScriptCore.order:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Pay the tax man.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): op_new_object and op_create_this now
+        have an extra inferredInlineCapacity argument. This is the statically
+        inferred inline capacity, just from analyzing source text. op_new_object
+        also gets a pointer to an allocation profile. (For op_create_this, the
+        profile is in the construtor function.)
+
+        (JSC::CodeBlock::CodeBlock): Link op_new_object.
+
+        (JSC::CodeBlock::stronglyVisitStrongReferences): Mark our profiles.
+
+        * bytecode/CodeBlock.h:
+        (CodeBlock): Removed some dead code. Added object allocation profiles.
+
+        * bytecode/Instruction.h:
+        (JSC): New union type, since an instruction operand may point to an
+        object allocation profile now.
+
+        * bytecode/ObjectAllocationProfile.h: Added.
+        (JSC):
+        (ObjectAllocationProfile):
+        (JSC::ObjectAllocationProfile::offsetOfAllocator):
+        (JSC::ObjectAllocationProfile::offsetOfStructure):
+        (JSC::ObjectAllocationProfile::ObjectAllocationProfile):
+        (JSC::ObjectAllocationProfile::isNull):
+        (JSC::ObjectAllocationProfile::initialize):
+        (JSC::ObjectAllocationProfile::structure):
+        (JSC::ObjectAllocationProfile::inlineCapacity):
+        (JSC::ObjectAllocationProfile::clear):
+        (JSC::ObjectAllocationProfile::visitAggregate):
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount): New class
+        for tracking a prediction about object allocation: structure, inline
+        capacity, allocator to use.
+
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName): Updated instruction sizes.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC):
+        (JSC::UnlinkedCodeBlock::addObjectAllocationProfile):
+        (JSC::UnlinkedCodeBlock::numberOfObjectAllocationProfiles):
+        (UnlinkedCodeBlock): Unlinked support for allocation profiles.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate): Kill all remaining analyses at the
+        end of codegen, since this is our last opportunity.
+
+        (JSC::BytecodeGenerator::BytecodeGenerator): Added a static property
+        analyzer to bytecode generation. It tracks initializing assignments and
+        makes a guess about how many will happen.
+
+        (JSC::BytecodeGenerator::newObjectAllocationProfile):
+        (JSC):
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitPutGetterSetter):
+        (JSC::BytecodeGenerator::emitGetArgumentByVal):
+        (JSC::BytecodeGenerator::emitGetByVal): Added hooks to the static property
+        analyzer, so it can observe allocations and stores.
+
+        (JSC::BytecodeGenerator::emitCreateThis): Factored this into a helper
+        function because it was a significant amount of logic, and I wanted to
+        add to it.
+
+        (JSC::BytecodeGenerator::emitNewObject):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct): Added a hook to profiled opcodes
+        to track their stores, in case a store kills a profiled allocation. Since
+        profiled opcodes are basically the only interesting stores we do, this
+        is a convenient place to notice any store that might kill an allocation.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator): As above.
+
+        * bytecompiler/StaticPropertyAnalysis.h: Added.
+        (JSC):
+        (StaticPropertyAnalysis):
+        (JSC::StaticPropertyAnalysis::create):
+        (JSC::StaticPropertyAnalysis::addPropertyIndex):
+        (JSC::StaticPropertyAnalysis::record):
+        (JSC::StaticPropertyAnalysis::propertyIndexCount):
+        (JSC::StaticPropertyAnalysis::StaticPropertyAnalysis): Simple helper
+        class for tracking allocations and stores.
+
+        * bytecompiler/StaticPropertyAnalyzer.h: Added.
+        (StaticPropertyAnalyzer):
+        (JSC::StaticPropertyAnalyzer::StaticPropertyAnalyzer):
+        (JSC::StaticPropertyAnalyzer::createThis):
+        (JSC::StaticPropertyAnalyzer::newObject):
+        (JSC::StaticPropertyAnalyzer::putById):
+        (JSC::StaticPropertyAnalyzer::mov):
+        (JSC::StaticPropertyAnalyzer::kill): Helper class for observing allocations
+        and stores and making an inline capacity guess. The heuristics here are
+        intentionally minimal because we don't want this one class to try to
+        re-create something like a DFG or a runtime analysis. If we discover that
+        we need those kinds of analyses, we should just replace this class with
+        something else.
+
+        This class tracks multiple registers that alias the same object -- that
+        happens a lot, when moving locals into temporary registers -- but it
+        doesn't track control flow or multiple objects that alias the same register.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute): Updated for rename.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Updated for inline capacity and
+        allocation profile.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasInlineCapacity):
+        (Node):
+        (JSC::DFG::Node::inlineCapacity):
+        (JSC::DFG::Node::hasFunction): Give the graph a good way to represent
+        inline capacity for an allocation.
+
+        * dfg/DFGNodeType.h:
+        (DFG): Updated for rename.
+
+        * dfg/DFGOperations.cpp: Updated for interface change.
+
+        * dfg/DFGOperations.h: We pass the inline capacity to the slow case as
+        an argument. This is the simplest way, since it's stored as a bytecode operand.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): Updated for rename.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID): Fixed a horrible off-by-one-half bug that only
+        appears when doing an inline cached load for property number 64 on a 32-bit
+        system. In JSVALUE32_64 land, "offsetRelativeToPatchedStorage" is the
+        offset of the 64bit JSValue -- but we'll actually issue two loads, one for
+        the payload at that offset, and one for the tag at that offset + 4. We need
+        to ensure that both loads have a compact representation, or we'll corrupt
+        the instruction stream.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicStorage):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Lots of refactoring to support
+        passing an allocator to our allocation function, and/or passing a Structure
+        as a register instead of an immediate.
+
+        * heap/MarkedAllocator.h:
+        (DFG):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::offsetOfFreeListHead): Added an accessor to simplify
+        JIT code generation of allocation from an arbitrary allocator.
+
+        * jit/JIT.h:
+        (JSC):
+        * jit/JITInlines.h:
+        (JSC):
+        (JSC::JIT::emitAllocateJSObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this): Same refactoring as done for the DFG.
+
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID): Fixed the same bug mentioned above.
+
+        (JSC::DEFINE_STUB_FUNCTION): Updated for interface changes.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): Updated for interface changes.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Same refactoring as for the JITs.
+
+        * profiler/ProfilerBytecode.cpp:
+        * profiler/ProfilerBytecodes.cpp:
+        * profiler/ProfilerCompilation.cpp:
+        * profiler/ProfilerCompiledBytecode.cpp:
+        * profiler/ProfilerDatabase.cpp:
+        * profiler/ProfilerOSRExit.cpp:
+        * profiler/ProfilerOrigin.cpp:
+        * profiler/ProfilerProfiledBytecodes.cpp: Include ObjectConstructor.h
+        because that's where createEmptyObject() lives now.
+
+        * runtime/Executable.h:
+        (JSC::JSFunction::JSFunction): Updated for rename.
+
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell): Updated to match the allocator selection code in
+        the JIT, so it's clearer that both are correct.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::createAllocationProfile):
+        (JSC::JSFunction::visitChildren):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::getConstructData):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::offsetOfScopeChain):
+        (JSC::JSFunction::offsetOfExecutable):
+        (JSC::JSFunction::offsetOfAllocationProfile):
+        (JSC::JSFunction::allocationProfile):
+        (JSFunction):
+        (JSC::JSFunction::tryGetAllocationProfile):
+        (JSC::JSFunction::addAllocationProfileWatchpoint): Changed inheritorID
+        data member to be an ObjectAllocationProfile, which includes a pointer
+        to the desired allocator. This simplifies JIT code, since we don't have
+        to compute the allocator on the fly. I verified by code inspection that
+        JSFunction is still only 64 bytes.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::dateStructure): No direct pointer to the empty
+        object structure anymore, because now clients need to specify how much
+        inline capacity they want.
+
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.h:
+        (JSC):
+        (JSFinalObject):
+        (JSC::JSFinalObject::defaultInlineCapacity):
+        (JSC::JSFinalObject::maxInlineCapacity):
+        (JSC::JSFinalObject::createStructure): A little refactoring to try to 
+        clarify where some of these constants derive from.
+
+        (JSC::maxOffsetRelativeToPatchedStorage): Used for bug fix, above.
+
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget): Ugly, but effective.
+
+        * runtime/LiteralParser.cpp:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::constructWithObjectConstructor):
+        (JSC::callObjectConstructor):
+        (JSC::objectConstructorCreate): Updated for interface changes.
+
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject): Clarified your options for how to allocate
+        an empty object, to emphasize what things can actually vary.
+
+        * runtime/PropertyOffset.h: These constants have moved because they're
+        really higher level concepts to do with the layout of objects and the
+        collector. PropertyOffset is just an abstract number line, independent
+        of those things.
+
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+        (PrototypeMap): The map key is now a pair of prototype and inline capacity,
+        since Structure encodes inline capacity.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::copyPropertyTableForPinning):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::totalStorageSize):
+        (JSC::Structure::transitionCount):
+        (JSC::Structure::create): Fixed a nasty refactoring bug that only shows
+        up after enabling variable-sized inline capacities: we were passing our
+        type info where our inline capacity was expected. The compiler didn't
+        notice because both have type int :(.
+
 2013-01-28  Oliver Hunt  <oliver@apple.com>
 
         Add more assertions to the property storage use in arrays

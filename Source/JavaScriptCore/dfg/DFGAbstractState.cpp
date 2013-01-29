@@ -1344,7 +1344,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
         
-    case InheritorIDWatchpoint:
+    case AllocationProfileWatchpoint:
         node.setCanExit(true);
         break;
 

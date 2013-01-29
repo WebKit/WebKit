@@ -52,7 +52,16 @@ void JSProxy::setTarget(JSGlobalData& globalData, JSGlobalObject* globalObject)
     ASSERT_ARG(globalObject, globalObject);
     m_target.set(globalData, this, globalObject);
     setPrototype(globalData, globalObject->prototype());
-    globalData.prototypeMap.clearEmptyObjectStructureForPrototype(this);
+
+    PrototypeMap& prototypeMap = globalData.prototypeMap;
+    if (!prototypeMap.isPrototype(this))
+        return;
+
+    // This is slow but constant time. We think it's very rare for a proxy
+    // to be a prototype, and reasonably rare to retarget a proxy,
+    // so slow constant time is OK.
+    for (size_t i = 0; i <= JSFinalObject::maxInlineCapacity(); ++i)
+        prototypeMap.clearEmptyObjectStructureForPrototype(this, i);
 }
 
 String JSProxy::className(const JSObject* object)

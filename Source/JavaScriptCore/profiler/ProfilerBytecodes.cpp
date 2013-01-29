@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSGlobalObject.h"
+#include "ObjectConstructor.h"
 #include "Operations.h"
 #include <wtf/StringPrintStream.h>
 

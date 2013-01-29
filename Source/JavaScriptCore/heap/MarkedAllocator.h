@@ -15,10 +15,11 @@ class SpeculativeJIT;
 }
 
 class MarkedAllocator {
-    friend class JIT;
-    friend class DFG::SpeculativeJIT;
+    friend class LLIntOffsetsExtractor;
 
 public:
+    static ptrdiff_t offsetOfFreeListHead();
+
     MarkedAllocator();
     void reset();
     void canonicalizeCellLivenessData();
@@ -36,8 +37,6 @@ public:
     bool isPagedOut(double deadline);
    
 private:
-    friend class LLIntOffsetsExtractor;
-    
     JS_EXPORT_PRIVATE void* allocateSlowCase(size_t);
     void* tryAllocate(size_t);
     void* tryAllocateHelper(size_t);
@@ -52,6 +51,11 @@ private:
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
+
+inline ptrdiff_t MarkedAllocator::offsetOfFreeListHead()
+{
+    return OBJECT_OFFSETOF(MarkedAllocator, m_freeList) + OBJECT_OFFSETOF(MarkedBlock::FreeList, head);
+}
 
 inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)

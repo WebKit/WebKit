@@ -67,6 +67,7 @@
 #include <runtime/JSArray.h>
 #include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>
+#include <runtime/ObjectConstructor.h>
 #include <runtime/RegExpObject.h>
 
 using namespace JSC;

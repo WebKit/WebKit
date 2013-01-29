@@ -35,6 +35,7 @@
 #include "IDBTracing.h"
 
 #include <runtime/DateInstance.h>
+#include <runtime/ObjectConstructor.h>
 
 using namespace JSC;
 
