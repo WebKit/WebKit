@@ -1,0 +1,39 @@
+<html>
+<head>
+  <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("profiles");
+    ProfilerAgent.start(onStart);
+
+    function onStart()
+    {
+        InspectorTest.addResult("ProfilerAgent started.");
+        ProfilerAgent.stop(onStop);
+    }
+
+    function onStop()
+    {
+        InspectorTest.addResult("ProfilerAgent stopped.");
+        ProfilerAgent.clearProfiles(done);
+    }
+
+    function done()
+    {
+        InspectorTest.addResult("ProfilerAgent cleared.");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that ProfilerAgent start/stop doesn't crash.
+</p>
+
+</body>
+</html>
