@@ -47,7 +47,6 @@ namespace WebCore {
 class DatabaseCallback;
 class SQLTransactionSync;
 class SQLTransactionSyncCallback;
-class ScriptExecutionContext;
 class SecurityOrigin;
 
 // Instances of this class should be created and used only on the worker's context thread.
@@ -74,7 +73,7 @@ public:
     }
 
 private:
-    DatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion,
+    DatabaseSync(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
                  const String& displayName, unsigned long estimatedSize);
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 

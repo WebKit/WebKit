@@ -52,7 +52,13 @@ DatabaseThread::DatabaseThread()
 
 DatabaseThread::~DatabaseThread()
 {
-    // FIXME: Any cleanup required here?  Since the thread deletes itself after running its detached course, I don't think so.  Lets be sure.
+    // The DatabaseThread will only be destructed when both its owner
+    // DatabaseContext has deref'ed it, and the databaseThread() thread function
+    // has deref'ed the DatabaseThread object. The DatabaseContext destructor
+    // will take care of ensuring that a termination request has been issued.
+    // The termination request will trigger an orderly shutdown of the thread
+    // function databaseThread(). In shutdown, databaseThread() will deref the
+    // DatabaseThread before returning.
     ASSERT(terminationRequested());
 }
 
@@ -70,7 +76,6 @@ bool DatabaseThread::start()
 
 void DatabaseThread::requestTermination(DatabaseTaskSynchronizer *cleanupSync)
 {
-    ASSERT(!m_cleanupSync);
     m_cleanupSync = cleanupSync;
     LOG(StorageAPI, "DatabaseThread %p was asked to terminate\n", this);
     m_queue.kill();

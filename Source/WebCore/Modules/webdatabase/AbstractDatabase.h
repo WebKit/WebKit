@@ -35,6 +35,7 @@
 #include "DatabaseDetails.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -86,7 +87,7 @@ public:
     virtual void markAsDeletedAndClose() = 0;
     virtual void closeImmediately() = 0;
 
-    DatabaseContext* databaseContext() const { return m_databaseContext; }
+    DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
 
 protected:
     friend class ChangeVersionWrapper;
@@ -100,7 +101,7 @@ protected:
         SyncDatabase
     };
 
-    AbstractDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion,
+    AbstractDatabase(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
                      const String& displayName, unsigned long estimatedSize, DatabaseType);
 
     void closeDatabase();
@@ -127,8 +128,8 @@ protected:
     static const char* databaseInfoTableName();
 
     RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
+    RefPtr<DatabaseContext> m_databaseContext; // Associated with m_scriptExecutionContext.
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    DatabaseContext* m_databaseContext; // Owned by m_scriptExecutionContext.
 
     String m_name;
     String m_expectedVersion;

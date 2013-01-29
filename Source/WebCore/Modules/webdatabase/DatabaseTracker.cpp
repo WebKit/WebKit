@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DatabaseContext.h"
+#include "DatabaseManager.h"
 #include "DatabaseManagerClient.h"
 #include "DatabaseThread.h"
 #include "Logging.h"
@@ -167,7 +168,8 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
 
     // Give the chrome client a chance to increase the quota.
     // Drop all locks before calling out; we don't know what they'll do.
-    DatabaseContext::from(context)->databaseExceededQuota(name, DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
+    RefPtr<DatabaseContext> databaseContext = DatabaseManager::manager().databaseContextFor(context);
+    databaseContext->databaseExceededQuota(name, DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
 
     MutexLocker lockDatabase(m_databaseGuard);
 

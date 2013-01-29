@@ -174,10 +174,10 @@ const char* AbstractDatabase::databaseInfoTableName()
     return infoTableName;
 }
 
-AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
+AbstractDatabase::AbstractDatabase(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
                                    const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
-    : m_scriptExecutionContext(context)
-    , m_databaseContext(DatabaseContext::from(context))
+    : m_databaseContext(databaseContext)
+    , m_scriptExecutionContext(m_databaseContext->scriptExecutionContext())
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
@@ -187,7 +187,7 @@ AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String
     , m_new(false)
     , m_isSyncDatabase(databaseType == SyncDatabase)
 {
-    ASSERT(context->isContextThread());
+    ASSERT(m_databaseContext->scriptExecutionContext()->isContextThread());
     m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin()->isolatedCopy();
 
     m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);

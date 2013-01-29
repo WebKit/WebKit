@@ -44,44 +44,68 @@
 
 namespace WebCore {
 
-const char* DatabaseContext::supplementName()
-{
-    return "DatabaseContext";
-}
-
-DatabaseContext* DatabaseContext::existingDatabaseContextFrom(ScriptExecutionContext* context)
-{
-    return static_cast<DatabaseContext*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
-}
-
 DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
-    : m_scriptExecutionContext(context)
+    : ActiveDOMObject(context, this)
     , m_hasOpenDatabases(false)
+    , m_isRegistered(true) // will register on construction below.
+    , m_hasRequestedTermination(false)
 {
+    // ActiveDOMObject expects this to be called to set internal flags.
+    suspendIfNeeded();
+
+    // For debug accounting only. We must do this before we register the
+    // instance. The assertions assume this.
+    DatabaseManager::manager().didConstructDatabaseContext(); 
+
+    DatabaseManager::manager().registerDatabaseContext(this);
 }
 
 DatabaseContext::~DatabaseContext()
 {
-    if (m_databaseThread) {
-        ASSERT(m_databaseThread->terminationRequested());
-        m_databaseThread = 0;
-    }
+    stopDatabases();
+    ASSERT(!m_databaseThread || m_databaseThread->terminationRequested());
+
+    // For debug accounting only. We must call this last. The assertions assume
+    // this.
+    DatabaseManager::manager().didDestructDatabaseContext();
 }
 
-DatabaseContext* DatabaseContext::from(ScriptExecutionContext* context)
+// This is called if the associated ScriptExecutionContext is destructing while
+// we're still associated with it. That's our cue to disassociate and shutdown.
+// To do this, we stop the database and let everything shutdown naturally
+// because the database closing process may still make use of this context.
+// It is not safe to just delete the context here.
+void DatabaseContext::contextDestroyed()
 {
-    DatabaseContext* supplement = existingDatabaseContextFrom(context);
-    if (!supplement) {
-        supplement = new DatabaseContext(context);
-        provideTo(context, supplementName(), adoptPtr(supplement));
-        ASSERT(supplement == existingDatabaseContextFrom(context));
-    }
-    return supplement;
+    stopDatabases();
+
+    // Normally, willDestroyActiveDOMObject() is called in ~ActiveDOMObject().
+    // However, we're here because the destructor hasn't been called, and the
+    // ScriptExecutionContext we're associated with is about to be destructed.
+    // So, go ahead an unregister self from the ActiveDOMObject list, and
+    // set m_scriptExecutionContext to 0 so that ~ActiveDOMObject() doesn't
+    // try to do so again.
+    m_scriptExecutionContext->willDestroyActiveDOMObject(this);
+    m_scriptExecutionContext = 0;
+}
+
+// stop() is from stopActiveDOMObjects() which indicates that the owner Frame
+// or WorkerThread is shutting down. Initiate the orderly shutdown by stopping
+// the associated databases.
+void DatabaseContext::stop()
+{
+    stopDatabases();
 }
 
 DatabaseThread* DatabaseContext::databaseThread()
 {
     if (!m_databaseThread && !m_hasOpenDatabases) {
+        // It's OK to ask for the m_databaseThread after we've requested
+        // termination because we're still using it to execute the closing
+        // of the database. However, it is NOT OK to create a new thread
+        // after we've requested termination.
+        ASSERT(!m_hasRequestedTermination);
+
         // Create the database thread on first request - but not if at least one database was already opened,
         // because in that case we already had a database thread and terminated it and should not create another.
         m_databaseThread = DatabaseThread::create();
@@ -92,26 +116,29 @@ DatabaseThread* DatabaseContext::databaseThread()
     return m_databaseThread.get();
 }
 
-bool DatabaseContext::hasOpenDatabases(ScriptExecutionContext* context)
+bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
 {
-    // We don't use DatabaseContext::from because we don't want to cause
-    // DatabaseContext to be allocated if we don't have one already.
-    DatabaseContext* databaseContext = existingDatabaseContextFrom(context);
-    if (!databaseContext)
-        return false;
-    return databaseContext->m_hasOpenDatabases;
-}
+    if (m_isRegistered) {
+        DatabaseManager::manager().unregisterDatabaseContext(this);
+        m_isRegistered = false;
+    }
 
-void DatabaseContext::stopDatabases(ScriptExecutionContext* context, DatabaseTaskSynchronizer* cleanupSync)
-{
-    // We don't use DatabaseContext::from because we don't want to cause
-    // DatabaseContext to be allocated if we don't have one already.
-    DatabaseContext* databaseContext = existingDatabaseContextFrom(context);
+    // Though we initiate termination of the DatabaseThread here in
+    // stopDatabases(), we can't clear the m_databaseThread ref till we get to
+    // the destructor. This is because the Databases that are managed by
+    // DatabaseThread still rely on this ref between the context and the thread
+    // to execute the task for closing the database. By the time we get to the
+    // destructor, we're guaranteed that the databases are destructed (which is
+    // why our ref count is 0 then and we're destructing). Then, the
+    // m_databaseThread RefPtr destructor will deref and delete the
+    // DatabaseThread.
 
-    if (databaseContext && databaseContext->m_databaseThread)
-        databaseContext->m_databaseThread->requestTermination(cleanupSync);
-    else if (cleanupSync)
-        cleanupSync->taskCompleted();
+    if (m_databaseThread && !m_hasRequestedTermination) {
+        m_databaseThread->requestTermination(cleanupSync);
+        m_hasRequestedTermination = true;
+        return true;
+    }
+    return false;
 }
 
 bool DatabaseContext::allowDatabaseAccess() const

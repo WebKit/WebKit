@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class DatabaseCallback;
-class ScriptExecutionContext;
 class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionCallback;
@@ -87,7 +86,7 @@ private:
     class DatabaseTransactionTask;
     class DatabaseTableNamesTask;
 
-    Database(ScriptExecutionContext*, const String& name, const String& expectedVersion,
+    Database(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
              const String& displayName, unsigned long estimatedSize);
     void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
                         PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper>, bool readOnly);

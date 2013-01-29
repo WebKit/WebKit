@@ -34,6 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseCallback.h"
+#include "DatabaseContext.h"
 #include "DatabaseManager.h"
 #include "Logging.h"
 #include "SQLException.h"
@@ -47,9 +48,9 @@
 
 namespace WebCore {
 
-DatabaseSync::DatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
+DatabaseSync::DatabaseSync(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
                            const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
+    : AbstractDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
 {
 }
 

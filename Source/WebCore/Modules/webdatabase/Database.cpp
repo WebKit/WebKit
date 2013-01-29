@@ -65,8 +65,8 @@
 
 namespace WebCore {
 
-Database::Database(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
+Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+    : AbstractDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
     , m_deleted(false)
@@ -74,7 +74,7 @@ Database::Database(ScriptExecutionContext* context, const String& name, const St
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
 
     ScriptController::initializeThreading();
-    ASSERT(databaseContext()->databaseThread());
+    ASSERT(m_databaseContext->databaseThread());
 }
 
 class DerefContextTask : public ScriptExecutionContext::Task {
