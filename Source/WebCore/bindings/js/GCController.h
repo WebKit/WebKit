@@ -50,7 +50,7 @@ namespace WebCore {
     private:
         GCController(); // Use gcController() instead
 
-#if !USE(CF) && !PLATFORM(BLACKBERRY)
+#if !USE(CF) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT)
         void gcTimerFired(Timer<GCController>*);
         Timer<GCController> m_GCTimer;
 #endif

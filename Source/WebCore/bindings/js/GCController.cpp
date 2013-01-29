@@ -49,7 +49,7 @@ GCController& gcController()
 }
 
 GCController::GCController()
-#if !USE(CF) && !PLATFORM(BLACKBERRY)
+#if !USE(CF) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT)
     : m_GCTimer(this, &GCController::gcTimerFired)
 #endif
 {
@@ -62,7 +62,7 @@ void GCController::garbageCollectSoon()
     // systems with CoreFoundation. If and when the notion of a run loop is pushed 
     // down into WTF so that more platforms can take advantage of it, we will be 
     // able to use reportAbandonedObjectGraph on more platforms.
-#if USE(CF) || PLATFORM(BLACKBERRY)
+#if USE(CF) || PLATFORM(BLACKBERRY) || PLATFORM(QT)
     JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     JSDOMWindow::commonJSGlobalData()->heap.reportAbandonedObjectGraph();
 #else
@@ -71,7 +71,7 @@ void GCController::garbageCollectSoon()
 #endif
 }
 
-#if !USE(CF) && !PLATFORM(BLACKBERRY)
+#if !USE(CF) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT)
 void GCController::gcTimerFired(Timer<GCController>*)
 {
     collect(0);

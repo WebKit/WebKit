@@ -57,7 +57,7 @@ protected:
         , m_enabled(true)
     {
     }
-# else
+#else
     GCActivityCallback(JSGlobalData* globalData)
         : HeapTimer(globalData)
         , m_enabled(true)
@@ -83,10 +83,12 @@ public:
 #if USE(CF)
 protected:
     DefaultGCActivityCallback(Heap*, CFRunLoopRef);
-    
+#endif
+#if USE(CF) || PLATFORM(QT)
+protected:
     void cancelTimer();
     void scheduleTimer(double);
-    
+
 private:
     double m_delay;
 #endif
