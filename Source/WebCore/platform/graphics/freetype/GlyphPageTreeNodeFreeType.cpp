@@ -32,6 +32,7 @@
 #include "GlyphPageTreeNode.h"
 
 #include "SimpleFontData.h"
+#include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
@@ -40,11 +41,6 @@ namespace WebCore {
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    // The bufferLength will be greater than the glyph page size if the buffer has Unicode supplementary characters.
-    // We won't support this for now.
-    if (bufferLength > GlyphPage::size)
-        return false;
-
     cairo_scaled_font_t* scaledFont = fontData->platformData().scaledFont();
     ASSERT(scaledFont);
 
@@ -53,8 +49,13 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         return false;
 
     bool haveGlyphs = false;
+    UTF16UChar32Iterator iterator(buffer, bufferLength);
     for (unsigned i = 0; i < length; i++) {
-        Glyph glyph = FcFreeTypeCharIndex(face, buffer[i]);
+        UChar32 character = iterator.next();
+        if (character == iterator.end())
+            break;
+
+        Glyph glyph = FcFreeTypeCharIndex(face, character);
         if (!glyph)
             setGlyphDataForIndex(offset + i, 0, 0);
         else {
