@@ -70,7 +70,7 @@ void IDBOpenDBRequest::onBlocked(int64_t oldVersion)
     enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), newVersionAny.release(), eventNames().blockedEvent));
 }
 
-void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface>, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend)
+void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend, const IDBDatabaseMetadata& metadata)
 {
     IDB_TRACE("IDBOpenDBRequest::onUpgradeNeeded()");
     if (m_contextStopped || !scriptExecutionContext()) {
@@ -85,9 +85,6 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
     ASSERT(m_databaseCallbacks);
 
     RefPtr<IDBDatabaseBackendInterface> databaseBackend = prpDatabaseBackend;
-    // FIXME: This potentially expensive (synchronous) call into the backend could be removed if the metadata
-    // were passed in during the (asynchronous) onUpgradeNeeded call from the backend. http://wkbug.com/103920
-    IDBDatabaseMetadata metadata = databaseBackend->metadata();
 
     RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), databaseBackend, m_databaseCallbacks);
     idbDatabase->setMetadata(metadata);
@@ -98,9 +95,10 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
         // This database hasn't had an integer version before.
         oldVersion = IDBDatabaseMetadata::DefaultIntVersion;
     }
-    metadata.intVersion = oldVersion;
+    IDBDatabaseMetadata oldMetadata(metadata);
+    oldMetadata.intVersion = oldVersion;
 
-    m_transaction = IDBTransaction::create(scriptExecutionContext(), m_transactionId, idbDatabase.get(), this, metadata);
+    m_transaction = IDBTransaction::create(scriptExecutionContext(), m_transactionId, idbDatabase.get(), this, oldMetadata);
     m_result = IDBAny::create(idbDatabase.release());
 
     if (m_version == IDBDatabaseMetadata::NoIntVersion)
@@ -108,16 +106,13 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
     enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), IDBAny::create(m_version), eventNames().upgradeneededEvent));
 }
 
-void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpBackend)
+void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpBackend, const IDBDatabaseMetadata& metadata)
 {
     IDB_TRACE("IDBOpenDBRequest::onSuccess()");
     if (!shouldEnqueueEvent())
         return;
 
     RefPtr<IDBDatabaseBackendInterface> backend = prpBackend;
-    // FIXME: This potentially expensive (synchronous) call into the backend could be removed if the metadata
-    // were passed in during the (asynchronous) onSuccess call from the backend. http://wkbug.com/103920
-    IDBDatabaseMetadata metadata = backend->metadata();
     RefPtr<IDBDatabase> idbDatabase;
     if (m_result) {
         idbDatabase = m_result->idbDatabase();

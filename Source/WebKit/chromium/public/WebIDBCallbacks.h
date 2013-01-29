@@ -40,6 +40,7 @@ class WebIDBKeyPath;
 class WebIDBIndex;
 class WebIDBTransaction;
 class WebSerializedScriptValue;
+struct WebIDBMetadata;
 
 class WebIDBCallbacks {
 public:
@@ -51,6 +52,7 @@ public:
     virtual void onSuccess(const WebDOMStringList&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBCursor*, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onSuccess(WebIDBDatabase*, const WebIDBMetadata&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebIDBKey&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&) { WEBKIT_ASSERT_NOT_REACHED(); }
@@ -62,6 +64,7 @@ public:
     virtual void onBlocked(long long oldVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onUpgradeNeeded(long long oldVersion, WebIDBDatabase*, const WebIDBMetadata&) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit
