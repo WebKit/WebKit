@@ -776,3 +776,9 @@ webkit.org/b/105182 compositing/repaint/resize-repaint.html
 svg/text/select-textLength-spacing-stretch-1.svg
 svg/text/select-x-list-with-tspans-1.svg
 svg/text/select-x-list-1.svg
+
+# [WK2] REGRESSION (r141051): Broke plugin support on non-Mac WebKit2 Ports
+webkit.org/b/108182 plugins [ Skip ]
+webkit.org/b/108182 fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
+webkit.org/b/108182 fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
+webkit.org/b/108182 fast/replaced/invalid-object-with-fallback.html [ Skip ]
