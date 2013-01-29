@@ -1,5 +1,14 @@
 2013-01-28  Sam Weinig  <sam@webkit.org>
 
+        Disable default use of the Plug-in XPCService until we can
+        figure out how to deal with the 32-bit one.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+
+2013-01-28  Sam Weinig  <sam@webkit.org>
+
         Plug-ins should initialize their sandbox at creation time
         https://bugs.webkit.org/show_bug.cgi?id=108098
 

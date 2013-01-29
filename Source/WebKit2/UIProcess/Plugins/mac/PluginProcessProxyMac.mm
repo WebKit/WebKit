@@ -124,7 +124,7 @@ static bool shouldUseXPC()
         return [value boolValue];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
+    return false;
 #else
     return false;
 #endif
@@ -138,8 +138,7 @@ void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::Launch
 
     launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
 
-    // FIXME: We should rip this out once we have a good place to install plug-in
-    // sandbox profiles.
+    // FIXME: We should rip this out once we have a good place to install plug-in sandbox profiles.
     NSString* sandboxProfileDirectoryPath = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2PlugInSandboxProfileDirectoryPathKey];
     if (sandboxProfileDirectoryPath)
         launchOptions.extraInitializationData.add("sandbox-profile-directory-path", String(sandboxProfileDirectoryPath));
