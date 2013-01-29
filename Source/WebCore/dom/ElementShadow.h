@@ -48,7 +48,7 @@ public:
 
     ~ElementShadow()
     {
-        ASSERT(m_shadowRoots.isEmpty());
+        removeAllShadowRoots();
     }
 
     Element* host() const;
@@ -56,7 +56,6 @@ public:
     ShadowRoot* oldestShadowRoot() const { return m_shadowRoots.tail(); }
     ElementShadow* containingShadow() const;
 
-    void removeAllShadowRoots();
     void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ShadowRoot::ShadowRootType, ExceptionCode&);
 
     void attach();
@@ -77,6 +76,8 @@ public:
 
 private:
     ElementShadow() { }
+
+    void removeAllShadowRoots();
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     ContentDistributor m_distributor;

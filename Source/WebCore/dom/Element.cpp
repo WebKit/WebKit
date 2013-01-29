@@ -194,11 +194,7 @@ Element::~Element()
         ElementRareData* data = elementRareData();
         data->setPseudoElement(BEFORE, 0);
         data->setPseudoElement(AFTER, 0);
-    }
-
-    if (ElementShadow* elementShadow = shadow()) {
-        elementShadow->removeAllShadowRoots();
-        elementRareData()->clearShadow();
+        data->clearShadow();
     }
 
     if (hasSyntheticAttrChildNodes())
