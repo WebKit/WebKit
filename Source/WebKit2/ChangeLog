@@ -1,5 +1,19 @@
 2013-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Add StorageManager class
+        https://bugs.webkit.org/show_bug.cgi?id=108127
+
+        Reviewed by Sam Weinig.
+
+        The StorageManager will be in charge of handling access to local and session storage
+        in the UI process.
+
+        * UIProcess/Storage/StorageManager.cpp: Added.
+        * UIProcess/Storage/StorageManager.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-01-28  Anders Carlsson  <andersca@apple.com>
+
         More work on UI side local storage
         https://bugs.webkit.org/show_bug.cgi?id=108119
 

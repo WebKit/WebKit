@@ -35,6 +35,7 @@
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
+#include "StorageManager.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
@@ -419,6 +420,8 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
+
+    StorageManager m_storageManager;
 
     typedef HashMap<AtomicString, RefPtr<WebContextSupplement> > WebContextSupplementMap;
     WebContextSupplementMap m_supplements;
