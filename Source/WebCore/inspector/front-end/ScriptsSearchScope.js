@@ -123,7 +123,7 @@ WebInspector.ScriptsSearchScope.prototype = {
         for (var i = 0; i < projects.length; ++i) {
             if (projects[i].isServiceProject())
                 continue;
-            uiSourceCodes = this._uiSourceCodes.concat(projects[i].uiSourceCodes());
+            uiSourceCodes = uiSourceCodes.concat(projects[i].uiSourceCodes());
         }
         
         uiSourceCodes = uiSourceCodes.filter(filterOutAnonymous);
