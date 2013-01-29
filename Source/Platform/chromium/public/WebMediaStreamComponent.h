@@ -40,7 +40,7 @@ class MediaStreamComponent;
 }
 
 namespace WebKit {
-
+class WebMediaStreamDescriptor;
 class WebMediaStreamSource;
 class WebString;
 
@@ -62,6 +62,7 @@ public:
 
     WEBKIT_EXPORT WebString id() const;
 
+    WEBKIT_EXPORT WebMediaStreamDescriptor stream() const;
     WEBKIT_EXPORT WebMediaStreamSource source() const;
     WEBKIT_EXPORT bool isEnabled() const;
 

@@ -35,6 +35,7 @@
 #include <public/WebMediaStreamComponent.h>
 
 #include "MediaStreamComponent.h"
+#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebString.h>
 #include <wtf/Vector.h>
@@ -84,6 +85,12 @@ WebString WebMediaStreamComponent::id() const
 {
     ASSERT(!m_private.isNull());
     return m_private->id();
+}
+
+WebMediaStreamDescriptor WebMediaStreamComponent::stream() const
+{
+    ASSERT(!m_private.isNull());
+    return WebMediaStreamDescriptor(m_private->stream());
 }
 
 WebMediaStreamSource WebMediaStreamComponent::source() const

@@ -1,3 +1,14 @@
+2013-01-29  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: A MediaStreamComponent should be able to return the MediaStreamDescriptor it belongs to
+        https://bugs.webkit.org/show_bug.cgi?id=108173
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebMediaStreamComponent.h:
+        (WebKit):
+        (WebMediaStreamComponent):
+
 2013-01-28  Alexandre Elias  <aelias@chromium.org>
 
         Make page scale shrink FrameView in applyPageScaleInCompositor mode

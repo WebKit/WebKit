@@ -115,12 +115,12 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioComponents();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++)
-        m_audioTracks.append(MediaStreamTrack::create(context, m_descriptor, m_descriptor->audioComponent(i)));
+        m_audioTracks.append(MediaStreamTrack::create(context, m_descriptor->audioComponent(i)));
 
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoComponents();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++)
-        m_videoTracks.append(MediaStreamTrack::create(context, m_descriptor, m_descriptor->videoComponent(i)));
+        m_videoTracks.append(MediaStreamTrack::create(context, m_descriptor->videoComponent(i)));
 }
 
 MediaStream::~MediaStream()
@@ -150,8 +150,8 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
     if (getTrackById(track->id()))
         return;
 
-    RefPtr<MediaStreamComponent> component = MediaStreamComponent::create(track->component()->source());
-    RefPtr<MediaStreamTrack> newTrack = MediaStreamTrack::create(scriptExecutionContext(), m_descriptor, component.get());
+    RefPtr<MediaStreamComponent> component = MediaStreamComponent::create(m_descriptor.get(), track->component()->source());
+    RefPtr<MediaStreamTrack> newTrack = MediaStreamTrack::create(scriptExecutionContext(), component.get());
 
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:
@@ -257,10 +257,13 @@ EventTargetData* MediaStream::ensureEventTargetData()
 
 void MediaStream::addRemoteTrack(MediaStreamComponent* component)
 {
+    ASSERT(component && !component->stream());
     if (ended())
         return;
 
-    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), m_descriptor, component);
+    component->setStream(descriptor());
+
+    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), component);
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:
         m_audioTracks.append(track);

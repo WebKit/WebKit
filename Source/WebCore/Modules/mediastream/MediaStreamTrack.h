@@ -43,7 +43,7 @@ class MediaStreamComponent;
 
 class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
 public:
-    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
+    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, MediaStreamComponent*);
     virtual ~MediaStreamTrack();
 
     String kind() const;
@@ -59,7 +59,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
-    MediaStreamDescriptor* streamDescriptor();
     MediaStreamComponent* component();
     bool ended() const;
 
@@ -74,7 +73,7 @@ public:
     using RefCounted<MediaStreamTrack>::deref;
 
 private:
-    MediaStreamTrack(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
+    MediaStreamTrack(ScriptExecutionContext*, MediaStreamComponent*);
 
     // EventTarget
     virtual EventTargetData* eventTargetData() OVERRIDE;
@@ -87,7 +86,6 @@ private:
     virtual void sourceChangedState() OVERRIDE;
 
     bool m_stopped;
-    RefPtr<MediaStreamDescriptor> m_streamDescriptor;
     RefPtr<MediaStreamComponent> m_component;
 };
 

@@ -99,10 +99,10 @@ private:
         , m_ended(false)
     {
         for (size_t i = 0; i < audioSources.size(); i++)
-            m_audioComponents.append(MediaStreamComponent::create(audioSources[i]));
+            m_audioComponents.append(MediaStreamComponent::create(this, audioSources[i]));
 
         for (size_t i = 0; i < videoSources.size(); i++)
-            m_videoComponents.append(MediaStreamComponent::create(videoSources[i]));
+            m_videoComponents.append(MediaStreamComponent::create(this, videoSources[i]));
     }
 
     MediaStreamDescriptorClient* m_client;
