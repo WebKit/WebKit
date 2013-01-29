@@ -614,6 +614,7 @@ webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Failure ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Crash Failure ]
 webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
@@ -1411,6 +1412,8 @@ webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
 webkit.org/b/108100 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type.html [ Failure ]
+
+webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
