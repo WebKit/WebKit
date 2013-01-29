@@ -1,3 +1,16 @@
+2013-01-29  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK1] Fix QObject Bridge tests expected output.
+        https://bugs.webkit.org/show_bug.cgi?id=107827
+
+        Reviewed by Simon Hausmann.
+
+        The "not a function" TypeError now includes the call that caused the error.
+        Correct expected values accordingly.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::connectAndDisconnect):
+
 2013-01-28  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Enable debug borders and repaint counter via Settings.
