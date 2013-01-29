@@ -1,3 +1,12 @@
+2013-01-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix the JSC build on Mac
+
+        Unreviewed, build fix.
+
+        * heap/HeapTimer.h:
+        Qt on Mac has USE(CF) true, and should use the CF HeapTimer in that case.
+
 2013-01-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Implement IncrementalSweeper and HeapTimer

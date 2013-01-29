@@ -44,7 +44,7 @@ namespace JSC {
 
 class JSGlobalData;
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) && !USE(CF)
 class HeapTimer : public QObject {
 #else
 class HeapTimer {
