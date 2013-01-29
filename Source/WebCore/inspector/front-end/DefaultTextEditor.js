@@ -112,19 +112,19 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @param {string} regex
      * @param {string} cssClass
+     * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}
      */
     highlightRegex: function(regex, cssClass)
     {
-        this._mainPanel.highlightRegex(regex, cssClass);
+        return this._mainPanel.highlightRegex(regex, cssClass);
     },
 
     /**
-     * @param {string} regex
-     * @return {boolean}
+     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    removeRegexHighlight: function(regex)
+    removeRegexHighlight: function(highlightDescriptor)
     {
-        return this._mainPanel.removeRegexHighlight(regex);
+        this._mainPanel.removeRegexHighlight(highlightDescriptor);
     },
 
     /**
@@ -1360,7 +1360,7 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 
     this._container.addEventListener("focus", this._handleFocused.bind(this), false);
 
-    this._highlightRegexs = {};
+    this._highlightDescriptors = [];
 
     this._tokenHighlighter = new WebInspector.TextEditorMainPanel.TokenHighlighter(this, textModel);
 
@@ -1372,25 +1372,23 @@ WebInspector.TextEditorMainPanel.prototype = {
     /**
      * @param {string} regex
      * @param {string} cssClass
+     * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}
      */
     highlightRegex: function(regex, cssClass)
     {
-        this._highlightRegexs[regex] = {
-            regex: new RegExp(regex, "g"),
-            cssClass: cssClass
-        };
+        var highlightDescriptor = new WebInspector.TextEditorMainPanel.RegexHighlightDescriptor(new RegExp(regex, "g"), cssClass);
+        this._highlightDescriptors.push(highlightDescriptor);
         this._repaintVisibleChunks();
+        return highlightDescriptor;
     },
 
     /**
-     * @param {string} regex
-     * @return {boolean}
+     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    removeRegexHighlight: function(regex)
+    removeRegexHighlight: function(highlightDescriptor)
     {
-        var result = delete this._highlightRegexs[regex];
+        this._highlightDescriptors.remove(highlightDescriptor);
         this._repaintVisibleChunks();
-        return result;
     },
 
     _repaintVisibleChunks: function()
@@ -1813,9 +1811,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var highlight = {};
         this.beginDomUpdates();
-        for(var regexString in this._highlightRegexs) {
-            var regexHighlightDescriptor = this._highlightRegexs[regexString];
-            this._measureRegexHighlight(highlight, lineRows, regexHighlightDescriptor.regex, regexHighlightDescriptor.cssClass);
+        for(var i = 0; i < this._highlightDescriptors.length; ++i) {
+            var highlightDescriptor = this._highlightDescriptors[i];
+            this._measureHighlightDescriptor(highlight, lineRows, highlightDescriptor);
         }
 
         for(var i = 0; i < lineRows.length; ++i)
@@ -1828,36 +1826,17 @@ WebInspector.TextEditorMainPanel.prototype = {
     },
 
     /**
-     * @param {string} line
-     * @param {RegExp} regex
-     * @return {Array.<{startColumn: number, endColumn: number}>}
-     */
-    _findRegexOccurrences: function(line, regex)
-    {
-        var ranges = [];
-        var regexResult;
-        while (regexResult = regex.exec(line)) {
-            ranges.push({
-                startColumn: regexResult.index,
-                endColumn: regexResult.index + regexResult[0].length - 1
-            });
-        }
-        return ranges;
-    },
-
-    /**
      * @param {Object.<number, Array.<WebInspector.TextEditorMainPanel.LineOverlayHighlight>>} highlight
      * @param {Array.<Element>} lineRows
-     * @param {RegExp} regex
-     * @param {string} cssClass
+     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    _measureRegexHighlight: function(highlight, lineRows, regex, cssClass)
+    _measureHighlightDescriptor: function(highlight, lineRows, highlightDescriptor)
     {
         var rowsToMeasure = [];
         for(var i = 0; i < lineRows.length; ++i) {
             var lineRow = lineRows[i];
             var line = this._textModel.line(lineRow.lineNumber);
-            var ranges = this._findRegexOccurrences(line, regex);
+            var ranges = highlightDescriptor.rangesForLine(lineRow.lineNumber, line);
             if (ranges.length === 0)
                 continue;
 
@@ -1873,7 +1852,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             if (!highlight[lineNumber])
                 highlight[lineNumber] = [];
 
-            highlight[lineNumber].push(new WebInspector.TextEditorMainPanel.LineOverlayHighlight(metrics, cssClass));
+            highlight[lineNumber].push(new WebInspector.TextEditorMainPanel.LineOverlayHighlight(metrics, highlightDescriptor.cssClass()));
         }
     },
 
@@ -2669,6 +2648,82 @@ WebInspector.TextEditorMainPanel.prototype = {
 }
 
 /**
+ * @interface
+ */
+WebInspector.TextEditorMainPanel.HighlightDescriptor = function() { }
+
+WebInspector.TextEditorMainPanel.HighlightDescriptor.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {boolean}
+     */
+    affectsLine: function(lineNumber, line) { return false; },
+
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {Array.<{startColumn: number, endColumn: number}>}
+     */
+    rangesForLine: function(lineNumber, line) { return []; },
+
+    /**
+     * @return {string}
+     */
+    cssClass: function() { return ""; },
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.TextEditorMainPanel.HighlightDescriptor}
+ */
+WebInspector.TextEditorMainPanel.RegexHighlightDescriptor = function(regex, cssClass)
+{
+    this._cssClass = cssClass;
+    this._regex = regex;
+}
+
+WebInspector.TextEditorMainPanel.RegexHighlightDescriptor.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {boolean}
+     */
+    affectsLine: function(lineNumber, line)
+    {
+        this._regex.lastIndex = 0;
+        return this._regex.test(line);
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {Array.<{startColumn: number, endColumn: number}>}
+     */
+    rangesForLine: function(lineNumber, line)
+    {
+        var ranges = [];
+        var regexResult;
+        this._regex.lastIndex = 0;
+        while (regexResult = this._regex.exec(line)) {
+            ranges.push({
+                startColumn: regexResult.index,
+                endColumn: regexResult.index + regexResult[0].length - 1
+            });
+        }
+        return ranges;
+    },
+
+    /**
+     * @return {string}
+     */
+    cssClass: function()
+    {
+        return this._cssClass;
+    }
+}
+
+/**
  * @constructor
  * @param {Element} element
  */
@@ -3009,14 +3064,15 @@ WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
     {
         this._removeHighlight();
         this._selectedWord = selectedWord;
-        this._mainPanel.highlightRegex(this._regexString(selectedWord), "text-editor-token-highlight")
+        this._highlightDescriptor = this._mainPanel.highlightRegex(this._regexString(selectedWord), "text-editor-token-highlight")
     },
 
     _removeHighlight: function()
     {
         if (this._selectedWord) {
-            this._mainPanel.removeRegexHighlight(this._regexString(this._selectedWord));
+            this._mainPanel.removeRegexHighlight(this._highlightDescriptor);
             delete this._selectedWord;
+            delete this._highlightDescriptor;
         }
     },
 

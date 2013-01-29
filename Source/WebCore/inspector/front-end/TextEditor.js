@@ -63,14 +63,14 @@ WebInspector.TextEditor.prototype = {
     /**
      * @param {string} regex
      * @param {string} cssClass
+     * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}
      */
     highlightRegex: function(regex, cssClass) { },
 
     /**
-     * @param {string} regex
-     * @return {boolean}
+     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    removeRegexHighlight: function(regex) { },
+    removeRegexHighlight: function(highlightDescriptor) { },
 
     /**
      * @param {number} lineNumber
