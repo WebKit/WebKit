@@ -68,6 +68,8 @@ namespace WebKit {
         WEBKIT_EXPORT bool isText() const;
         WEBKIT_EXPORT bool isPasswordField() const;
         WEBKIT_EXPORT bool isImageButton() const;
+        WEBKIT_EXPORT bool isRadioButton() const;
+        WEBKIT_EXPORT bool isCheckbox() const;
         WEBKIT_EXPORT bool autoComplete() const;
         WEBKIT_EXPORT int maxLength() const;
         WEBKIT_EXPORT bool isActivatedSubmit() const;

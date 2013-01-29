@@ -68,6 +68,16 @@ bool WebInputElement::isImageButton() const
     return constUnwrap<HTMLInputElement>()->isImageButton();
 }
 
+bool WebInputElement::isRadioButton() const
+{
+    return constUnwrap<HTMLInputElement>()->isRadioButton();
+}
+
+bool WebInputElement::isCheckbox() const
+{
+    return constUnwrap<HTMLInputElement>()->isCheckbox();
+}
+
 bool WebInputElement::autoComplete() const
 {
     return constUnwrap<HTMLInputElement>()->shouldAutocomplete();

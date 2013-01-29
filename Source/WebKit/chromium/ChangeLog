@@ -1,3 +1,21 @@
+2013-01-28  Raman Kumar  <ramankk@chromium.org>
+
+        Expose isRadioButton and isCheckbox API in chromium-webkit glue layer.
+        https://bugs.webkit.org/show_bug.cgi?id=108031
+
+        Reviewed by Adam Barth.
+
+        In chromium, to know if an InputElement is radiobutton or a checkbox,
+        we are checking for formControlType (a string comparision), which is
+        very slow. Exposing these API to chromium will make them faster.
+
+        * public/WebInputElement.h:
+        (WebInputElement):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::isRadioButton):
+        (WebKit):
+        (WebKit::WebInputElement::isCheckbox):
+
 2013-01-28  Alexandre Elias  <aelias@chromium.org>
 
         Make page scale shrink FrameView in applyPageScaleInCompositor mode
