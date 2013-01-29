@@ -80,14 +80,25 @@ void CachedRawResource::data(PassRefPtr<ResourceBuffer> data, bool allDataReceiv
 
 void CachedRawResource::didAddClient(CachedResourceClient* c)
 {
-    if (m_response.isNull() || !hasClient(c))
+    if (!hasClient(c))
         return;
     // The calls to the client can result in events running, potentially causing
     // this resource to be evicted from the cache and all clients to be removed,
     // so a protector is necessary.
     CachedResourceHandle<CachedRawResource> protect(this);
     CachedRawResourceClient* client = static_cast<CachedRawResourceClient*>(c);
-    client->responseReceived(this, m_response);
+    size_t redirectCount = m_redirectChain.size();
+    for (size_t i = 0; i < redirectCount; i++) {
+        RedirectPair redirect = m_redirectChain[i];
+        ResourceRequest request(redirect.m_request);
+        client->redirectReceived(this, request, redirect.m_redirectResponse);
+        if (!hasClient(c))
+            return;
+    }
+    ASSERT(redirectCount == m_redirectChain.size());
+
+    if (!m_response.isNull())
+        client->responseReceived(this, m_response);
     if (!hasClient(c))
         return;
     if (m_data)
@@ -110,6 +121,7 @@ void CachedRawResource::willSendRequest(ResourceRequest& request, const Resource
         CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
         while (CachedRawResourceClient* c = w.next())
             c->redirectReceived(this, request, response);
+        m_redirectChain.append(RedirectPair(request, response));
     }
     CachedResource::willSendRequest(request, response);
 }
@@ -194,6 +206,12 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
         if (!shouldIgnoreHeaderForCacheReuse(headerName) && i->value != newHeaders.get(headerName))
             return false;
     }
+
+    for (size_t i = 0; i < m_redirectChain.size(); i++) {
+        if (m_redirectChain[i].m_redirectResponse.cacheControlContainsNoStore())
+            return false;
+    }
+
     return true;
 }
 

@@ -65,6 +65,7 @@
 #include "IntRect.h"
 #include "Language.h"
 #include "MallocStatistics.h"
+#include "MemoryCache.h"
 #include "MockPagePopupDriver.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
@@ -289,6 +290,14 @@ bool Internals::isPreloaded(const String& url)
 {
     Document* document = contextDocument();
     return document->cachedResourceLoader()->isPreloaded(url);
+}
+
+bool Internals::isLoadingFromMemoryCache(const String& url)
+{
+    if (!contextDocument())
+        return false;
+    CachedResource* resource = memoryCache()->resourceForURL(contextDocument()->completeURL(url));
+    return resource && resource->status() == CachedResource::Cached;
 }
 
 PassRefPtr<Element> Internals::createContentElement(ExceptionCode& ec)

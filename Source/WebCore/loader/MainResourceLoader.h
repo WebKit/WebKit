@@ -128,7 +128,7 @@ private:
     bool m_loadingMultipartContent;
     bool m_waitingForContentPolicy;
     double m_timeOfLastDataReceived;
-    unsigned long m_substituteDataLoadIdentifier;
+    unsigned long m_identifierForLoadWithoutResourceLoader;
 
 #if USE(CONTENT_FILTERING)
     OwnPtr<ContentFilter> m_contentFilter;

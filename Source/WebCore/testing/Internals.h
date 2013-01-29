@@ -72,6 +72,7 @@ public:
     String address(Node*);
 
     bool isPreloaded(const String& url);
+    bool isLoadingFromMemoryCache(const String& url);
 
     size_t numberOfScopedHTMLStyleChildren(const Node*, ExceptionCode&) const;
 
