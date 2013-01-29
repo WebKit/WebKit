@@ -38,6 +38,8 @@ public:
     static PassOwnPtr<MessageEncoder> create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
     virtual ~MessageEncoder();
 
+    void setMessageSendFlags(uint8_t);
+
 private:
     MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
 

@@ -50,6 +50,9 @@ MessageDecoder::~MessageDecoder()
 MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& attachments)
     : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
 {
+    if (!decodeUInt8(m_messageSendFlags))
+        return;
+
     if (!decode(m_messageReceiverName))
         return;
 

@@ -39,12 +39,14 @@ public:
     static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Deque<Attachment>&);
     virtual ~MessageDecoder();
 
+    uint8_t messageSendFlags() const { return m_messageSendFlags; }
     StringReference messageReceiverName() const { return m_messageReceiverName; }
     StringReference messageName() const { return m_messageName; }
 
 private:
     MessageDecoder(const DataReference& buffer, Deque<Attachment>&);
 
+    uint8_t m_messageSendFlags;
     StringReference m_messageReceiverName;
     StringReference m_messageName;
 };

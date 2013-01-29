@@ -139,6 +139,16 @@ bool ArgumentDecoder::decodeBool(bool& result)
     return true;
 }
 
+bool ArgumentDecoder::decodeUInt8(uint8_t& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+
+    result = *reinterpret_cast<uint8_t*>(m_bufferPos);
+    m_bufferPos += sizeof(result);
+    return true;
+}
+
 bool ArgumentDecoder::decodeUInt16(uint16_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))

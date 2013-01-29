@@ -31,9 +31,7 @@
 #include <wtf/PassRefPtr.h>
 
 namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
+class Connection;
 }
 
 namespace WebKit {

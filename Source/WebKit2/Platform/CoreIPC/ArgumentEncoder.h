@@ -46,6 +46,7 @@ public:
     void encodeVariableLengthByteArray(const DataReference&);
 
     void encode(bool);
+    void encode(uint8_t);
     void encode(uint16_t);
     void encode(uint32_t);
     void encode(uint64_t);

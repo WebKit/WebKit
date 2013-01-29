@@ -31,6 +31,8 @@
 
 namespace CoreIPC {
 
+static uint8_t messageSendFlagsPlaceholderValue = 0xff;
+
 PassOwnPtr<MessageEncoder> MessageEncoder::create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
 {
     return adoptPtr(new MessageEncoder(messageReceiverName, messageName, destinationID));
@@ -40,6 +42,7 @@ MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringRefere
 {
     ASSERT(!messageReceiverName.isEmpty());
 
+    encode(messageSendFlagsPlaceholderValue);
     encode(messageReceiverName);
     encode(messageName);
     encode(destinationID);
@@ -47,6 +50,15 @@ MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringRefere
 
 MessageEncoder::~MessageEncoder()
 {
+    ASSERT(*buffer() != messageSendFlagsPlaceholderValue);
+}
+
+void MessageEncoder::setMessageSendFlags(uint8_t messageSendFlags)
+{
+    ASSERT(messageSendFlags != messageSendFlagsPlaceholderValue);
+    ASSERT(*buffer() == messageSendFlagsPlaceholderValue);
+
+    *buffer() = messageSendFlags;
 }
 
 } // namespace CoreIPC

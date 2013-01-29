@@ -317,6 +317,8 @@ PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference 
 
 bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder, unsigned messageSendFlags)
 {
+    encoder->setMessageSendFlags(messageSendFlags);
+
     if (!isValid())
         return false;
 
