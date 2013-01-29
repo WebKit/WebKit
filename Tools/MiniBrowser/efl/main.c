@@ -302,6 +302,9 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         info("Create souce code window (F8) was pressed.\n");
         Browser_Window *window = window_create(ewk_view, ewk_view_url_get(ewk_view), 0, 0, EINA_TRUE);
         windows = eina_list_append(windows, window);
+    } else if (!strcmp(ev->key, "F11")) {
+        info("Fullscreen (F11) was pressed, toggling window/fullscreen.\n");
+        elm_win_fullscreen_set(window->elm_window, !elm_win_fullscreen_get(window->elm_window));
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
         Browser_Window *window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);

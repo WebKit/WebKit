@@ -1,3 +1,15 @@
+2013-01-29  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [EFL] Add Toggle fullscreen (F11) to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=108122
+
+        Reviewed by Antonio Gomes.
+
+        Adds fullscreen mode toggle (F11) option to MiniBrowser using native API.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down): Add 'F11' key handler.
+
 2013-01-29  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use offical Windows CE support
