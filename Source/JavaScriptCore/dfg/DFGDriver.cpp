@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,9 +72,8 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     if (!Options::useDFGJIT())
         return false;
     
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
-#endif
+    if (verboseCompilationEnabled())
+        dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     
     // Derive our set of must-handle values. The compilation must be at least conservative
     // enough to allow for OSR entry with these values.
@@ -112,16 +111,16 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     // that references any of the tables directly, yet.
     codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 
-    validate(dfg);
+    if (validationEnabled())
+        validate(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
     performStructureCheckHoisting(dfg);
     unsigned cnt = 1;
     dfg.m_fixpointState = FixpointNotConverged;
     for (;; ++cnt) {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
-#endif
+        if (verboseCompilationEnabled())
+            dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
         bool changed = false;
         performCFA(dfg);
         changed |= performConstantFolding(dfg);
@@ -135,18 +134,18 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     }
     dfg.m_fixpointState = FixpointConverged;
     performCSE(dfg);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
-#endif
+    if (verboseCompilationEnabled())
+        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
     performVirtualRegisterAllocation(dfg);
 
     GraphDumpMode modeForFinalValidate = DumpGraph;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Graph after optimization:\n");
-    dfg.dump();
-    modeForFinalValidate = DontDumpGraph;
-#endif
-    validate(dfg, modeForFinalValidate);
+    if (verboseCompilationEnabled()) {
+        dataLogF("Graph after optimization:\n");
+        dfg.dump();
+        modeForFinalValidate = DontDumpGraph;
+    }
+    if (validationEnabled())
+        validate(dfg, modeForFinalValidate);
     
     JITCompiler dataFlowJIT(dfg);
     bool result;

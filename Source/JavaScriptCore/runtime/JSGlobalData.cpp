@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"
+#include "DFGLongLivedState.h"
 #include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
@@ -251,6 +252,11 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     
     if (Options::enableProfiler())
         m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*this));
+
+#if ENABLE(DFG_JIT)
+    if (canUseJIT())
+        m_dfgState = adoptPtr(new DFG::LongLivedState());
+#endif
 }
 
 JSGlobalData::~JSGlobalData()

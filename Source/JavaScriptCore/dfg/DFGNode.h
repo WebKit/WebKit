@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ struct NewArrayBufferData {
 
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
-// a constant index, argument, or identifier) from a NodeIndex.
+// a constant index, argument, or identifier) from a Node*.
 struct OpInfo {
     explicit OpInfo(int32_t value) : m_value(static_cast<uintptr_t>(value)) { }
     explicit OpInfo(uint32_t value) : m_value(static_cast<uintptr_t>(value)) { }
@@ -99,7 +99,7 @@ struct Node {
     }
     
     // Construct a node with up to 3 children, no immediate value.
-    Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -111,7 +111,7 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and an immediate value.
-    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -124,7 +124,7 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and two immediate values.
-    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -153,6 +153,9 @@ struct Node {
     
     NodeType op() const { return static_cast<NodeType>(m_op); }
     NodeFlags flags() const { return m_flags; }
+    
+    // This is not a fast method.
+    unsigned index() const;
     
     void setOp(NodeType op)
     {
@@ -281,7 +284,7 @@ struct Node {
         convertToStructureTransitionWatchpoint(structureSet().singletonStructure());
     }
     
-    void convertToGetByOffset(unsigned storageAccessDataIndex, NodeIndex storage)
+    void convertToGetByOffset(unsigned storageAccessDataIndex, Node* storage)
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush);
         m_opInfo = storageAccessDataIndex;
@@ -290,7 +293,7 @@ struct Node {
         m_flags &= ~NodeClobbersWorld;
     }
     
-    void convertToPutByOffset(unsigned storageAccessDataIndex, NodeIndex storage)
+    void convertToPutByOffset(unsigned storageAccessDataIndex, Node* storage)
     {
         ASSERT(m_op == PutById || m_op == PutByIdDirect);
         m_opInfo = storageAccessDataIndex;
@@ -931,9 +934,10 @@ struct Node {
         return m_refCount;
     }
 
-    void ref()
+    Node* ref()
     {
         m_refCount++;
+        return this;
     }
 
     unsigned postfixRef()
@@ -1146,44 +1150,44 @@ struct Node {
         return isCellSpeculation(prediction());
     }
     
-    static bool shouldSpeculateInteger(Node& op1, Node& op2)
+    static bool shouldSpeculateInteger(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateInteger() && op2.shouldSpeculateInteger();
+        return op1->shouldSpeculateInteger() && op2->shouldSpeculateInteger();
     }
     
-    static bool shouldSpeculateIntegerForArithmetic(Node& op1, Node& op2)
+    static bool shouldSpeculateIntegerForArithmetic(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateIntegerForArithmetic() && op2.shouldSpeculateIntegerForArithmetic();
+        return op1->shouldSpeculateIntegerForArithmetic() && op2->shouldSpeculateIntegerForArithmetic();
     }
     
-    static bool shouldSpeculateIntegerExpectingDefined(Node& op1, Node& op2)
+    static bool shouldSpeculateIntegerExpectingDefined(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateIntegerExpectingDefined() && op2.shouldSpeculateIntegerExpectingDefined();
+        return op1->shouldSpeculateIntegerExpectingDefined() && op2->shouldSpeculateIntegerExpectingDefined();
     }
     
-    static bool shouldSpeculateDoubleForArithmetic(Node& op1, Node& op2)
+    static bool shouldSpeculateDoubleForArithmetic(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateDoubleForArithmetic() && op2.shouldSpeculateDoubleForArithmetic();
+        return op1->shouldSpeculateDoubleForArithmetic() && op2->shouldSpeculateDoubleForArithmetic();
     }
     
-    static bool shouldSpeculateNumber(Node& op1, Node& op2)
+    static bool shouldSpeculateNumber(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateNumber() && op2.shouldSpeculateNumber();
+        return op1->shouldSpeculateNumber() && op2->shouldSpeculateNumber();
     }
     
-    static bool shouldSpeculateNumberExpectingDefined(Node& op1, Node& op2)
+    static bool shouldSpeculateNumberExpectingDefined(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateNumberExpectingDefined() && op2.shouldSpeculateNumberExpectingDefined();
+        return op1->shouldSpeculateNumberExpectingDefined() && op2->shouldSpeculateNumberExpectingDefined();
     }
     
-    static bool shouldSpeculateFinalObject(Node& op1, Node& op2)
+    static bool shouldSpeculateFinalObject(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateFinalObject() && op2.shouldSpeculateFinalObject();
+        return op1->shouldSpeculateFinalObject() && op2->shouldSpeculateFinalObject();
     }
 
-    static bool shouldSpeculateArray(Node& op1, Node& op2)
+    static bool shouldSpeculateArray(Node* op1, Node* op2)
     {
-        return op1.shouldSpeculateArray() && op2.shouldSpeculateArray();
+        return op1->shouldSpeculateArray() && op2->shouldSpeculateArray();
     }
     
     bool canSpeculateInteger()
@@ -1195,14 +1199,16 @@ struct Node {
     {
         if (!child1())
             return;
-        out.printf("@%u", child1().index());
+        out.printf("@%u", child1()->index());
         if (!child2())
             return;
-        out.printf(", @%u", child2().index());
+        out.printf(", @%u", child2()->index());
         if (!child3())
             return;
-        out.printf(", @%u", child3().index());
+        out.printf(", @%u", child3()->index());
     }
+    
+    // NB. This class must have a trivial destructor.
     
     // Used to look up exception handling information (currently implemented as a bytecode index).
     CodeOrigin codeOrigin;
@@ -1226,10 +1232,16 @@ private:
 public:
     // Fields used by various analyses.
     AbstractValue value;
-    NodeIndex replacement;
+    Node* replacement;
 };
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::DFG::Node*);
+
+} // namespace WTF
 
 #endif
 #endif

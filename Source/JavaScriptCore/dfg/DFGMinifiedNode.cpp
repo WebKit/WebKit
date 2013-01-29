@@ -32,20 +32,20 @@
 
 namespace JSC { namespace DFG {
 
-MinifiedNode MinifiedNode::fromNode(NodeIndex nodeIndex, Node& node)
+MinifiedNode MinifiedNode::fromNode(Node* node)
 {
-    ASSERT(belongsInMinifiedGraph(node.op()));
+    ASSERT(belongsInMinifiedGraph(node->op()));
     MinifiedNode result;
-    result.m_id = MinifiedID(nodeIndex);
-    result.m_op = node.op();
-    if (hasChild(node.op()))
-        result.m_childOrInfo = node.child1().index();
-    else if (hasConstantNumber(node.op()))
-        result.m_childOrInfo = node.constantNumber();
-    else if (hasWeakConstant(node.op()))
-        result.m_childOrInfo = bitwise_cast<uintptr_t>(node.weakConstant());
+    result.m_id = MinifiedID(node);
+    result.m_op = node->op();
+    if (hasChild(node->op()))
+        result.m_childOrInfo = MinifiedID(node->child1().node()).m_id;
+    else if (hasConstantNumber(node->op()))
+        result.m_childOrInfo = node->constantNumber();
+    else if (hasWeakConstant(node->op()))
+        result.m_childOrInfo = bitwise_cast<uintptr_t>(node->weakConstant());
     else {
-        ASSERT(node.op() == PhantomArguments);
+        ASSERT(node->op() == PhantomArguments);
         result.m_childOrInfo = 0;
     }
     return result;

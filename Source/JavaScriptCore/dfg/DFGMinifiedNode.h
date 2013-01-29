@@ -58,7 +58,7 @@ class MinifiedNode {
 public:
     MinifiedNode() { }
     
-    static MinifiedNode fromNode(NodeIndex, Node&);
+    static MinifiedNode fromNode(Node*);
     
     MinifiedID id() const { return m_id; }
     NodeType op() const { return m_op; }

@@ -85,7 +85,7 @@ void compileOSRExit(ExecState* exec)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog(
         "Generating OSR exit #", exitIndex, " (seq#", exit.m_streamIndex,
-        ", bc#", exit.m_codeOrigin.bytecodeIndex, ", @", exit.m_nodeIndex, ", ",
+        ", bc#", exit.m_codeOrigin.bytecodeIndex, ", ",
         exit.m_kind, ") for ", *codeBlock, ".\n");
 #endif
 
@@ -112,8 +112,8 @@ void compileOSRExit(ExecState* exec)
         exit.m_code = FINALIZE_CODE_IF(
             shouldShowDisassembly(),
             patchBuffer,
-            ("DFG OSR exit #%u (bc#%u, @%u, %s) from %s",
-                exitIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex,
+            ("DFG OSR exit #%u (bc#%u, %s) from %s",
+                exitIndex, exit.m_codeOrigin.bytecodeIndex,
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data()));
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ public:
                     continue;
                 ASSERT(block->isReachable);
             
-                switch (m_graph[block->last()].op()) {
+                switch (block->last()->op()) {
                 case Jump: {
                     // Successor with one predecessor -> merge.
                     if (m_graph.m_blocks[m_graph.successor(block, 0)]->m_predecessors.size() == 1) {
@@ -129,10 +129,10 @@ public:
                             BlockIndex takenBlockIndex = m_graph.successorForCondition(block, condition);
                             BlockIndex notTakenBlockIndex = m_graph.successorForCondition(block, !condition);
                         
-                            ASSERT(m_graph[block->last()].isTerminal());
-                            CodeOrigin boundaryCodeOrigin = m_graph[block->last()].codeOrigin;
-                            m_graph[block->last()].setOpAndDefaultFlags(Phantom);
-                            ASSERT(m_graph[block->last()].refCount() == 1);
+                            ASSERT(block->last()->isTerminal());
+                            CodeOrigin boundaryCodeOrigin = block->last()->codeOrigin;
+                            block->last()->setOpAndDefaultFlags(Phantom);
+                            ASSERT(block->last()->refCount() == 1);
                         
                             jettisonBlock(blockIndex, notTakenBlockIndex, boundaryCodeOrigin);
                         
@@ -160,16 +160,15 @@ public:
                             dataLogF("CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
                                     blockIndex, targetBlockIndex);
 #endif
-                            ASSERT(m_graph[block->last()].isTerminal());
-                            Node& branch = m_graph[block->last()];
-                            ASSERT(branch.isTerminal());
-                            ASSERT(branch.op() == Branch);
-                            branch.setOpAndDefaultFlags(Phantom);
-                            ASSERT(branch.refCount() == 1);
+                            Node* branch = block->last();
+                            ASSERT(branch->isTerminal());
+                            ASSERT(branch->op() == Branch);
+                            branch->setOpAndDefaultFlags(Phantom);
+                            ASSERT(branch->refCount() == 1);
                             
                             block->appendNode(
                                 m_graph, DontRefChildren, DontRefNode, SpecNone, Jump,
-                                branch.codeOrigin, OpInfo(targetBlockIndex));
+                                branch->codeOrigin, OpInfo(targetBlockIndex));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -236,7 +235,8 @@ public:
                 }
             }
             
-            validate(m_graph);
+            if (Options::validateGraphAtEachPhase())
+                validate(m_graph);
         } while (innerChanged);
         
         return outerChanged;
@@ -260,45 +260,43 @@ private:
     
     void keepOperandAlive(BasicBlock* block, CodeOrigin codeOrigin, int operand)
     {
-        NodeIndex nodeIndex = block->variablesAtTail.operand(operand);
-        if (nodeIndex == NoNode)
+        Node* node = block->variablesAtTail.operand(operand);
+        if (!node)
             return;
-        if (m_graph[nodeIndex].variableAccessData()->isCaptured())
+        if (node->variableAccessData()->isCaptured())
             return;
-        if (m_graph[nodeIndex].op() == SetLocal)
-            nodeIndex = m_graph[nodeIndex].child1().index();
-        Node& node = m_graph[nodeIndex];
-        if (!node.shouldGenerate())
+        if (node->op() == SetLocal)
+            node = node->child1().node();
+        if (!node->shouldGenerate())
             return;
-        ASSERT(m_graph[nodeIndex].op() != SetLocal);
+        ASSERT(node->op() != SetLocal);
         block->appendNode(
-            m_graph, RefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, nodeIndex);
+            m_graph, RefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, node);
     }
     
     void fixPossibleGetLocal(BasicBlock* block, Edge& edge, bool changeRef)
     {
-        Node& child = m_graph[edge];
-        if (child.op() != GetLocal)
+        Node* child = edge.node();
+        if (child->op() != GetLocal)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("    Considering GetLocal at @%u, local r%d.\n", edge.index(), child.local());
+        dataLogF("    Considering GetLocal at @%u, local r%d.\n", node->index(), child->local());
 #endif
-        if (child.variableAccessData()->isCaptured()) {
+        if (child->variableAccessData()->isCaptured()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("        It's captured.\n");
 #endif
             return;
         }
-        NodeIndex originalNodeIndex = block->variablesAtTail.operand(child.local());
+        Node* originalNode = block->variablesAtTail.operand(child->local());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Dealing with original @%u.\n", originalNodeIndex);
+        dataLogF("        Dealing with original @%u.\n", originalNode->index());
 #endif
-        ASSERT(originalNodeIndex != NoNode);
-        Node* originalNode = &m_graph[originalNodeIndex];
+        ASSERT(originalNode);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("        Original has local r%d.\n", originalNode->local());
 #endif
-        ASSERT(child.local() == originalNode->local());
+        ASSERT(child->local() == originalNode->local());
         // Possibilities:
         // SetLocal -> the secondBlock is getting the value of something that is immediately
         //     available in the first block with a known NodeIndex.
@@ -312,10 +310,8 @@ private:
         // Flush -> the secondBlock is asking for keep-alive on an operand that the first
         //     block was forcing to be alive, so the second block should refer child of
         //     the flush.
-        if (originalNode->op() == Flush) {
-            originalNodeIndex = originalNode->child1().index();
-            originalNode = &m_graph[originalNodeIndex];
-        }
+        if (originalNode->op() == Flush)
+            originalNode = originalNode->child1().node();
         switch (originalNode->op()) {
         case SetLocal: {
             if (changeRef)
@@ -323,7 +319,7 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("        It's a SetLocal.\n");
 #endif
-            m_graph.changeIndex(edge, originalNode->child1().index(), changeRef);
+            m_graph.changeChild(edge, originalNode->child1().node(), changeRef);
             break;
         }
         case GetLocal: {
@@ -331,7 +327,7 @@ private:
             dataLogF("        It's a GetLocal.\n");
 #endif
             if (originalNode->shouldGenerate())
-                m_graph.changeIndex(edge, originalNodeIndex, changeRef);
+                m_graph.changeChild(edge, originalNode, changeRef);
             // If we have a GetLocal that points to a child GetLocal that is dead, then
             // we have no need to do anything: this original GetLocal is still valid.
             break;
@@ -375,23 +371,22 @@ private:
             return;
         }
         for (size_t i = 0; i < destinationBlock->phis.size(); ++i) {
-            NodeIndex phiNodeIndex = destinationBlock->phis[i];
-            Node& phiNode = m_graph[phiNodeIndex];
-            NodeIndex myNodeIndex = sourceBlock->variablesAtTail.operand(phiNode.local());
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("Considering removing reference from phi @%u to @%u on local r%d:",
-                    phiNodeIndex, myNodeIndex, phiNode.local());
-#endif
-            if (myNodeIndex == NoNode) {
+            Node* phiNode = destinationBlock->phis[i];
+            Node* myNode = sourceBlock->variablesAtTail.operand(phiNode->local());
+            if (!myNode) {
                 // This will happen if there is a phi in the destination that refers into
                 // the destination itself.
                 continue;
             }
-            Node& myNode = m_graph[myNodeIndex];
-            if (myNode.op() == GetLocal)
-                myNodeIndex = myNode.child1().index();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLogF(
+                "Considering removing reference from phi @%u to @%u on local r%d:",
+                phiNode->index(), myNode->index(), phiNode->local());
+#endif
+            if (myNode->op() == GetLocal)
+                myNode = myNode->child1().node();
             for (unsigned j = 0; j < AdjacencyList::Size; ++j)
-                removePotentiallyDeadPhiReference(myNodeIndex, phiNode, j, sourceBlock->isReachable);
+                removePotentiallyDeadPhiReference(myNode, phiNode, j, sourceBlock->isReachable);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("\n");
 #endif
@@ -416,58 +411,57 @@ private:
         fixPhis(blockIndex, jettisonedBlockIndex);
     }
     
-    void removePotentiallyDeadPhiReference(NodeIndex myNodeIndex, Node& phiNode, unsigned edgeIndex, bool changeRef)
+    void removePotentiallyDeadPhiReference(Node* myNode, Node* phiNode, unsigned edgeIndex, bool changeRef)
     {
-        if (phiNode.children.child(edgeIndex).indexUnchecked() != myNodeIndex)
+        if (phiNode->children.child(edgeIndex).node() != myNode)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF(" Removing reference at child %u.", edgeIndex);
 #endif
-        if (changeRef && phiNode.shouldGenerate())
-            m_graph.deref(myNodeIndex);
-        phiNode.children.removeEdgeFromBag(edgeIndex);
+        if (changeRef && phiNode->shouldGenerate())
+            m_graph.deref(myNode);
+        phiNode->children.removeEdgeFromBag(edgeIndex);
     }
     
     struct OperandSubstitution {
         OperandSubstitution()
-            : oldChild(NoNode)
-            , newChild(NoNode)
+            : oldChild(0)
+            , newChild(0)
         {
         }
         
-        explicit OperandSubstitution(NodeIndex oldChild)
+        explicit OperandSubstitution(Node* oldChild)
             : oldChild(oldChild)
             , newChild(oldChild)
         {
         }
         
-        OperandSubstitution(NodeIndex oldChild, NodeIndex newChild)
+        OperandSubstitution(Node* oldChild, Node* newChild)
             : oldChild(oldChild)
             , newChild(newChild)
         {
-            ASSERT((oldChild == NoNode) == (newChild == NoNode));
+            ASSERT((!oldChild) == (!newChild));
         }
         
-        void dump(FILE* out)
+        void dump(PrintStream& out) const
         {
-            if (oldChild == NoNode)
-                fprintf(out, "-");
+            if (!oldChild)
+                out.printf("-");
             else
-                fprintf(out, "@%u -> @%u", oldChild, newChild);
+                out.printf("@%u -> @%u", oldChild->index(), newChild->index());
         }
         
-        NodeIndex oldChild;
-        NodeIndex newChild;
+        Node* oldChild;
+        Node* newChild;
     };
     
-    NodeIndex skipGetLocal(NodeIndex nodeIndex)
+    Node* skipGetLocal(Node* node)
     {
-        if (nodeIndex == NoNode)
-            return NoNode;
-        Node& node = m_graph[nodeIndex];
-        if (node.op() == GetLocal)
-            return node.child1().index();
-        return nodeIndex;
+        if (!node)
+            return 0;
+        if (node->op() == GetLocal)
+            return node->child1().node();
+        return node;
     }
     
     void recordPossibleIncomingReference(
@@ -477,30 +471,29 @@ private:
             skipGetLocal(secondBlock->variablesAtTail.operand(operand)));
     }
     
-    void recordNewTarget(Operands<OperandSubstitution>& substitutions, int operand, NodeIndex nodeIndex)
+    void recordNewTarget(Operands<OperandSubstitution>& substitutions, int operand, Node* node)
     {
-        ASSERT(m_graph[nodeIndex].op() == SetLocal
-               || m_graph[nodeIndex].op() == SetArgument
-               || m_graph[nodeIndex].op() == Flush
-               || m_graph[nodeIndex].op() == Phi);
-        substitutions.operand(operand).newChild = nodeIndex;
+        ASSERT(
+            node->op() == SetLocal
+            || node->op() == SetArgument
+            || node->op() == Flush
+            || node->op() == Phi);
+        substitutions.operand(operand).newChild = node;
     }
     
     void fixTailOperand(
         BasicBlock* firstBlock, BasicBlock* secondBlock, int operand,
         Operands<OperandSubstitution>& substitutions)
     {
-        NodeIndex atSecondTail = secondBlock->variablesAtTail.operand(operand);
+        Node* atSecondTail = secondBlock->variablesAtTail.operand(operand);
         
-        if (atSecondTail == NoNode) {
+        if (!atSecondTail) {
             // If the variable is dead at the end of the second block, then do nothing; essentially
             // this means that we want the tail state to reflect whatever the first block did.
             return;
         }
 
-        Node& secondNode = m_graph[atSecondTail];
-        
-        switch (secondNode.op()) {
+        switch (atSecondTail->op()) {
         case SetLocal:
         case Flush: {
             // The second block did interesting things to the variables, so update the tail
@@ -511,7 +504,7 @@ private:
             
         case Phi: {
             // Keep what was in the first block.
-            ASSERT(firstBlock->variablesAtTail.operand(operand) != NoNode);
+            ASSERT(firstBlock->variablesAtTail.operand(operand));
             recordNewTarget(substitutions, operand, skipGetLocal(firstBlock->variablesAtTail.operand(operand)));
             break;
         }
@@ -520,28 +513,28 @@ private:
             // If it's a GetLocal on a captured var, then definitely keep what was
             // in the second block. In particular, it's possible that the first
             // block doesn't even know about this variable.
-            if (secondNode.variableAccessData()->isCaptured()) {
+            if (atSecondTail->variableAccessData()->isCaptured()) {
                 firstBlock->variablesAtTail.operand(operand) = atSecondTail;
-                recordNewTarget(substitutions, operand, secondNode.child1().index());
+                recordNewTarget(substitutions, operand, atSecondTail->child1().node());
                 break;
             }
             
             // It's possible that the second block had a GetLocal and the first block
             // had a SetArgument or a Phi. Then update the tail. Otherwise keep what was in the
             // first block.
-            NodeIndex atFirstTail = firstBlock->variablesAtTail.operand(operand);
-            ASSERT(atFirstTail != NoNode);
-            switch (m_graph[atFirstTail].op()) {
+            Node* atFirstTail = firstBlock->variablesAtTail.operand(operand);
+            ASSERT(atFirstTail);
+            switch (atFirstTail->op()) {
             case SetArgument:
             case Phi:
                 firstBlock->variablesAtTail.operand(operand) = atSecondTail;
-                recordNewTarget(substitutions, operand, secondNode.child1().index());
+                recordNewTarget(substitutions, operand, atSecondTail->child1().node());
                 break;
 
             default:
                 // Keep what was in the first block, and adjust the substitution to account for
                 // the fact that successors will refer to the child of the GetLocal.
-                ASSERT(firstBlock->variablesAtTail.operand(operand) != NoNode);
+                ASSERT(firstBlock->variablesAtTail.operand(operand));
                 recordNewTarget(substitutions, operand, skipGetLocal(firstBlock->variablesAtTail.operand(operand)));
                 break;
             }
@@ -567,10 +560,10 @@ private:
         
         // Remove the terminal of firstBlock since we don't need it anymore. Well, we don't
         // really remove it; we actually turn it into a Phantom.
-        ASSERT(m_graph[firstBlock->last()].isTerminal());
-        CodeOrigin boundaryCodeOrigin = m_graph[firstBlock->last()].codeOrigin;
-        m_graph[firstBlock->last()].setOpAndDefaultFlags(Phantom);
-        ASSERT(m_graph[firstBlock->last()].refCount() == 1);
+        ASSERT(firstBlock->last()->isTerminal());
+        CodeOrigin boundaryCodeOrigin = firstBlock->last()->codeOrigin;
+        firstBlock->last()->setOpAndDefaultFlags(Phantom);
+        ASSERT(firstBlock->last()->refCount() == 1);
         
         if (jettisonedBlockIndex != NoBlock) {
             BasicBlock* jettisonedBlock = m_graph.m_blocks[jettisonedBlockIndex].get();
@@ -599,28 +592,25 @@ private:
             recordPossibleIncomingReference(secondBlock, substitutions, i);
 
         for (size_t i = 0; i < secondBlock->size(); ++i) {
-            NodeIndex nodeIndex = secondBlock->at(i);
-            Node& node = m_graph[nodeIndex];
+            Node* node = secondBlock->at(i);
             
             bool childrenAlreadyFixed = false;
             
-            switch (node.op()) {
+            switch (node->op()) {
             case Phantom: {
-                if (!node.child1())
+                if (!node->child1())
                     break;
                 
-                ASSERT(node.shouldGenerate());
-                Node& possibleLocalOp = m_graph[node.child1()];
-                if (possibleLocalOp.op() != GetLocal
-                    && possibleLocalOp.hasLocal()
-                    && !possibleLocalOp.variableAccessData()->isCaptured()) {
-                    NodeIndex setLocalIndex =
-                        firstBlock->variablesAtTail.operand(possibleLocalOp.local());
-                    Node& setLocal = m_graph[setLocalIndex];
-                    if (setLocal.op() == SetLocal) {
-                        m_graph.changeEdge(node.children.child1(), setLocal.child1());
-                        ASSERT(!node.child2());
-                        ASSERT(!node.child3());
+                ASSERT(node->shouldGenerate());
+                Node* possibleLocalOp = node->child1().node();
+                if (possibleLocalOp->op() != GetLocal
+                    && possibleLocalOp->hasLocal()
+                    && !possibleLocalOp->variableAccessData()->isCaptured()) {
+                    Node* setLocal = firstBlock->variablesAtTail.operand(possibleLocalOp->local());
+                    if (setLocal->op() == SetLocal) {
+                        m_graph.changeEdge(node->children.child1(), setLocal->child1());
+                        ASSERT(!node->child2());
+                        ASSERT(!node->child3());
                         childrenAlreadyFixed = true;
                     }
                 }
@@ -637,11 +627,11 @@ private:
                 // Similarly for GetLocal; it could use any of those except for
                 // GetLocal. If it uses a Phi then it should be redirected to use a
                 // Phi from the tail operand.
-                if (m_graph[node.child1()].op() != Phi)
+                if (node->child1()->op() != Phi)
                     break;
                 
-                NodeIndex atFirstIndex = firstBlock->variablesAtTail.operand(node.local());
-                m_graph.changeEdge(node.children.child1(), Edge(skipGetLocal(atFirstIndex)), node.shouldGenerate());
+                Node* atFirst = firstBlock->variablesAtTail.operand(node->local());
+                m_graph.changeEdge(node->children.child1(), Edge(skipGetLocal(atFirst)), node->shouldGenerate());
                 childrenAlreadyFixed = true;
                 break;
             }
@@ -651,30 +641,30 @@ private:
             }
             
             if (!childrenAlreadyFixed) {
-                bool changeRef = node.shouldGenerate();
+                bool changeRef = node->shouldGenerate();
             
                 // If the child is a GetLocal, then we might like to fix it.
-                if (node.flags() & NodeHasVarArgs) {
-                    for (unsigned childIdx = node.firstChild();
-                         childIdx < node.firstChild() + node.numChildren();
-                         ++childIdx) {
+                if (node->flags() & NodeHasVarArgs) {
+                    for (unsigned childIdx = node->firstChild();
+                        childIdx < node->firstChild() + node->numChildren();
+                        ++childIdx) {
                         if (!!m_graph.m_varArgChildren[childIdx])
                             fixPossibleGetLocal(firstBlock, m_graph.m_varArgChildren[childIdx], changeRef);
                     }
-                } else if (!!node.child1()) {
-                    fixPossibleGetLocal(firstBlock, node.children.child1(), changeRef);
-                    if (!!node.child2()) {
-                        fixPossibleGetLocal(firstBlock, node.children.child2(), changeRef);
-                        if (!!node.child3())
-                            fixPossibleGetLocal(firstBlock, node.children.child3(), changeRef);
+                } else if (!!node->child1()) {
+                    fixPossibleGetLocal(firstBlock, node->children.child1(), changeRef);
+                    if (!!node->child2()) {
+                        fixPossibleGetLocal(firstBlock, node->children.child2(), changeRef);
+                        if (!!node->child3())
+                            fixPossibleGetLocal(firstBlock, node->children.child3(), changeRef);
                     }
                 }
             }
 
-            firstBlock->append(nodeIndex);
+            firstBlock->append(node);
         }
         
-        ASSERT(m_graph[firstBlock->last()].isTerminal());
+        ASSERT(firstBlock->last()->isTerminal());
         
         // Fix the predecessors of my new successors. This is tricky, since we are going to reset
         // all predecessors anyway due to reachability analysis. But we need to fix the
@@ -704,26 +694,24 @@ private:
         for (unsigned i = m_graph.numSuccessors(firstBlock); i--;) {
             BasicBlock* successor = m_graph.m_blocks[m_graph.successor(firstBlock, i)].get();
             for (unsigned j = 0; j < successor->phis.size(); ++j) {
-                NodeIndex phiNodeIndex = successor->phis[j];
-                Node& phiNode = m_graph[phiNodeIndex];
-                bool changeRef = phiNode.shouldGenerate();
-                OperandSubstitution substitution = substitutions.operand(phiNode.local());
+                Node* phiNode = successor->phis[j];
+                bool changeRef = phiNode->shouldGenerate();
+                OperandSubstitution substitution = substitutions.operand(phiNode->local());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("    Performing operand substitution @%u -> @%u.\n",
-                        substitution.oldChild, substitution.newChild);
+                dataLog("    Performing operand substitution ", substitution, ".\n");
 #endif
-                if (!phiNode.child1())
+                if (!phiNode->child1())
                     continue;
-                if (phiNode.child1().index() == substitution.oldChild)
-                    m_graph.changeIndex(phiNode.children.child1(), substitution.newChild, changeRef);
-                if (!phiNode.child2())
+                if (phiNode->child1() == substitution.oldChild)
+                    m_graph.changeChild(phiNode->children.child1(), substitution.newChild, changeRef);
+                if (!phiNode->child2())
                     continue;
-                if (phiNode.child2().index() == substitution.oldChild)
-                    m_graph.changeIndex(phiNode.children.child2(), substitution.newChild, changeRef);
-                if (!phiNode.child3())
+                if (phiNode->child2() == substitution.oldChild)
+                    m_graph.changeChild(phiNode->children.child2(), substitution.newChild, changeRef);
+                if (!phiNode->child3())
                     continue;
-                if (phiNode.child3().index() == substitution.oldChild)
-                    m_graph.changeIndex(phiNode.children.child3(), substitution.newChild, changeRef);
+                if (phiNode->child3() == substitution.oldChild)
+                    m_graph.changeChild(phiNode->children.child3(), substitution.newChild, changeRef);
             }
         }
         

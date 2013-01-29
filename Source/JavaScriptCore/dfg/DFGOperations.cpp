@@ -1617,8 +1617,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
     dataLog(
-        "Speculation failure in ", *codeBlock, " at @", debugInfo->nodeIndex,
-        " with ");
+        "Speculation failure in ", *codeBlock, " with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),

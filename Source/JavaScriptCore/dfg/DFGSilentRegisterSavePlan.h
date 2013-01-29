@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,38 +74,38 @@ public:
         : m_spillAction(DoNothingForSpill)
         , m_fillAction(DoNothingForFill)
         , m_register(-1)
-        , m_nodeIndex(NoNode)
+        , m_node(0)
     {
     }
     
     SilentRegisterSavePlan(
         SilentSpillAction spillAction,
         SilentFillAction fillAction,
-        NodeIndex nodeIndex,
+        Node* node,
         GPRReg gpr)
         : m_spillAction(spillAction)
         , m_fillAction(fillAction)
         , m_register(gpr)
-        , m_nodeIndex(nodeIndex)
+        , m_node(node)
     {
     }
     
     SilentRegisterSavePlan(
         SilentSpillAction spillAction,
         SilentFillAction fillAction,
-        NodeIndex nodeIndex,
+        Node* node,
         FPRReg fpr)
         : m_spillAction(spillAction)
         , m_fillAction(fillAction)
         , m_register(fpr)
-        , m_nodeIndex(nodeIndex)
+        , m_node(node)
     {
     }
     
     SilentSpillAction spillAction() const { return static_cast<SilentSpillAction>(m_spillAction); }
     SilentFillAction fillAction() const { return static_cast<SilentFillAction>(m_fillAction); }
     
-    NodeIndex nodeIndex() const { return m_nodeIndex; }
+    Node* node() const { return m_node; }
     
     GPRReg gpr() const { return static_cast<GPRReg>(m_register); }
     FPRReg fpr() const { return static_cast<FPRReg>(m_register); }
@@ -114,7 +114,7 @@ private:
     int8_t m_spillAction;
     int8_t m_fillAction;
     int8_t m_register;
-    NodeIndex m_nodeIndex;
+    Node* m_node;
 };
 
 } } // namespace JSC::DFG

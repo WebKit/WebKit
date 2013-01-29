@@ -91,7 +91,6 @@ struct OSRExit {
     MethodOfGettingAValueProfile m_valueProfile;
 
     unsigned m_patchableCodeOffset;
-    NodeIndex m_nodeIndex;
     CodeOrigin m_codeOrigin;
     CodeOrigin m_codeOriginForExitProfile;
     
@@ -124,7 +123,6 @@ private:
 
 struct SpeculationFailureDebugInfo {
     CodeBlock* codeBlock;
-    NodeIndex nodeIndex;
 };
 
 } } // namespace JSC::DFG

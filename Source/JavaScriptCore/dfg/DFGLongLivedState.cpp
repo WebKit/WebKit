@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,71 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPhase_h
-#define DFGPhase_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGLongLivedState.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCommon.h"
-#include "DFGGraph.h"
-
 namespace JSC { namespace DFG {
 
-class Phase {
-public:
-    Phase(Graph& graph, const char* name)
-        : m_graph(graph)
-        , m_name(name)
-    {
-        beginPhase();
-    }
-    
-    ~Phase()
-    {
-        endPhase();
-    }
-    
-    const char* name() const { return m_name; }
-    
-    // Each phase must have a run() method.
-    
-protected:
-    // Things you need to have a DFG compiler phase.
-    Graph& m_graph;
-    
-    JSGlobalData& globalData() { return m_graph.m_globalData; }
-    CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
-    CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
-    
-    const char* m_name;
-    
-private:
-    // Call these hooks when starting and finishing.
-    void beginPhase();
-    void endPhase();
-};
-
-template<typename PhaseType>
-bool runAndLog(PhaseType& phase)
+LongLivedState::LongLivedState()
 {
-    bool result = phase.run();
-    if (Options::dumpGraphAtEachPhase())
-        dataLogF("Phase %s changed the IR.\n", phase.name());
-    return result;
 }
 
-template<typename PhaseType>
-bool runPhase(Graph& graph)
+LongLivedState::~LongLivedState()
 {
-    PhaseType phase(graph);
-    return runAndLog(phase);
+}
+
+void LongLivedState::shrinkToFit()
+{
+    m_allocator.reset();
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGPhase_h
 

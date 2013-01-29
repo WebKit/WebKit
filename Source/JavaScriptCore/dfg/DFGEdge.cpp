@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,71 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPhase_h
-#define DFGPhase_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGEdge.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCommon.h"
-#include "DFGGraph.h"
+#include "DFGNode.h"
 
 namespace JSC { namespace DFG {
 
-class Phase {
-public:
-    Phase(Graph& graph, const char* name)
-        : m_graph(graph)
-        , m_name(name)
-    {
-        beginPhase();
-    }
-    
-    ~Phase()
-    {
-        endPhase();
-    }
-    
-    const char* name() const { return m_name; }
-    
-    // Each phase must have a run() method.
-    
-protected:
-    // Things you need to have a DFG compiler phase.
-    Graph& m_graph;
-    
-    JSGlobalData& globalData() { return m_graph.m_globalData; }
-    CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
-    CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
-    
-    const char* m_name;
-    
-private:
-    // Call these hooks when starting and finishing.
-    void beginPhase();
-    void endPhase();
-};
-
-template<typename PhaseType>
-bool runAndLog(PhaseType& phase)
+void Edge::dump(PrintStream& out) const
 {
-    bool result = phase.run();
-    if (Options::dumpGraphAtEachPhase())
-        dataLogF("Phase %s changed the IR.\n", phase.name());
-    return result;
-}
-
-template<typename PhaseType>
-bool runPhase(Graph& graph)
-{
-    PhaseType phase(graph);
-    return runAndLog(phase);
+    out.print(useKindToString(useKind()), node());
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGPhase_h
 

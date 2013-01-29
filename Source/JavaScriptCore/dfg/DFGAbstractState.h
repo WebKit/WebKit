@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,8 +72,8 @@ struct BasicBlock;
 // AbstractState state(codeBlock, graph);
 // state.beginBasicBlock(basicBlock);
 // bool endReached = true;
-// for (NodeIndex idx = basicBlock.begin; idx < basicBlock.end; ++idx) {
-//     if (!state.execute(idx))
+// for (unsigned i = 0; i < basicBlock->size(); ++i) {
+//     if (!state.execute(i))
 //         break;
 // }
 // bool result = state.endBasicBlock(<either Merge or DontMerge>);
@@ -97,14 +97,14 @@ public:
     
     ~AbstractState();
     
-    AbstractValue& forNode(NodeIndex nodeIndex)
+    AbstractValue& forNode(Node* node)
     {
-        return m_graph[nodeIndex].value;
+        return node->value;
     }
     
-    AbstractValue& forNode(Edge nodeUse)
+    AbstractValue& forNode(Edge edge)
     {
-        return forNode(nodeUse.index());
+        return forNode(edge.node());
     }
     
     Operands<AbstractValue>& variables()
@@ -187,36 +187,36 @@ private:
     void clobberCapturedVars(const CodeOrigin&);
     void clobberStructures(unsigned indexInBlock);
     
-    bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex);
+    bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
     
-    static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, NodeIndex destinationNodeIndex, NodeIndex sourceNodeIndex);
+    static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     
-    void speculateInt32Unary(Node& node, bool forceCanExit = false)
+    void speculateInt32Unary(Node* node, bool forceCanExit = false)
     {
-        AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(forceCanExit || !isInt32Speculation(childValue.m_type));
+        AbstractValue& childValue = forNode(node->child1());
+        node->setCanExit(forceCanExit || !isInt32Speculation(childValue.m_type));
         childValue.filter(SpecInt32);
     }
     
-    void speculateNumberUnary(Node& node)
+    void speculateNumberUnary(Node* node)
     {
-        AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(!isNumberSpeculation(childValue.m_type));
+        AbstractValue& childValue = forNode(node->child1());
+        node->setCanExit(!isNumberSpeculation(childValue.m_type));
         childValue.filter(SpecNumber);
     }
     
-    void speculateBooleanUnary(Node& node)
+    void speculateBooleanUnary(Node* node)
     {
-        AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(!isBooleanSpeculation(childValue.m_type));
+        AbstractValue& childValue = forNode(node->child1());
+        node->setCanExit(!isBooleanSpeculation(childValue.m_type));
         childValue.filter(SpecBoolean);
     }
     
-    void speculateInt32Binary(Node& node, bool forceCanExit = false)
+    void speculateInt32Binary(Node* node, bool forceCanExit = false)
     {
-        AbstractValue& childValue1 = forNode(node.child1());
-        AbstractValue& childValue2 = forNode(node.child2());
-        node.setCanExit(
+        AbstractValue& childValue1 = forNode(node->child1());
+        AbstractValue& childValue2 = forNode(node->child2());
+        node->setCanExit(
             forceCanExit
             || !isInt32Speculation(childValue1.m_type)
             || !isInt32Speculation(childValue2.m_type));
@@ -224,11 +224,11 @@ private:
         childValue2.filter(SpecInt32);
     }
     
-    void speculateNumberBinary(Node& node)
+    void speculateNumberBinary(Node* node)
     {
-        AbstractValue& childValue1 = forNode(node.child1());
-        AbstractValue& childValue2 = forNode(node.child2());
-        node.setCanExit(
+        AbstractValue& childValue1 = forNode(node->child1());
+        AbstractValue& childValue2 = forNode(node->child2());
+        node->setCanExit(
             !isNumberSpeculation(childValue1.m_type)
             || !isNumberSpeculation(childValue2.m_type));
         childValue1.filter(SpecNumber);
@@ -240,9 +240,9 @@ private:
         DefinitelyFalse,
         DefinitelyTrue
     };
-    BooleanResult booleanResult(Node&, AbstractValue&);
+    BooleanResult booleanResult(Node*, AbstractValue&);
     
-    bool trySetConstant(NodeIndex nodeIndex, JSValue value)
+    bool trySetConstant(Node* node, JSValue value)
     {
         // Make sure we don't constant fold something that will produce values that contravene
         // predictions. If that happens then we know that the code will OSR exit, forcing
@@ -251,11 +251,11 @@ private:
         // lot of subtle code that assumes that
         // speculationFromValue(jsConstant) == jsConstant.prediction(). "Hardening" that code
         // is probably less sane than just pulling back on constant folding.
-        SpeculatedType oldType = m_graph[nodeIndex].prediction();
+        SpeculatedType oldType = node->prediction();
         if (mergeSpeculations(speculationFromValue(value), oldType) != oldType)
             return false;
         
-        forNode(nodeIndex).set(value);
+        forNode(node).set(value);
         return true;
     }
     

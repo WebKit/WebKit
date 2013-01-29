@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,45 +39,43 @@ class AdjacencyList;
 class Edge {
 public:
     Edge()
-        : m_encodedWord(makeWord(NoNode, UntypedUse))
+        : m_encodedWord(makeWord(0, UntypedUse))
     {
     }
     
-    explicit Edge(NodeIndex nodeIndex)
-        : m_encodedWord(makeWord(nodeIndex, UntypedUse))
+    explicit Edge(Node* node)
+        : m_encodedWord(makeWord(node, UntypedUse))
     {
     }
     
-    Edge(NodeIndex nodeIndex, UseKind useKind)
-        : m_encodedWord(makeWord(nodeIndex, useKind))
+    Edge(Node* node, UseKind useKind)
+        : m_encodedWord(makeWord(node, useKind))
     {
     }
     
-    NodeIndex indexUnchecked() const { return m_encodedWord >> shift(); }
-    NodeIndex index() const
+    Node* node() const { return bitwise_cast<Node*>(m_encodedWord & ~((1 << shift()) - 1)); }
+    Node& operator*() const { return *node(); }
+    Node* operator->() const { return node(); }
+    
+    void setNode(Node* node)
     {
-        ASSERT(isSet());
-        return m_encodedWord >> shift();
-    }
-    void setIndex(NodeIndex nodeIndex)
-    {
-        m_encodedWord = makeWord(nodeIndex, useKind());
+        m_encodedWord = makeWord(node, useKind());
     }
     
     UseKind useKind() const
     {
-        ASSERT(isSet());
+        ASSERT(node());
         unsigned masked = m_encodedWord & (((1 << shift()) - 1));
         ASSERT(masked < LastUseKind);
         return static_cast<UseKind>(masked);
     }
     void setUseKind(UseKind useKind)
     {
-        ASSERT(isSet());
-        m_encodedWord = makeWord(index(), useKind);
+        ASSERT(node());
+        m_encodedWord = makeWord(node(), useKind);
     }
     
-    bool isSet() const { return indexUnchecked() != NoNode; }
+    bool isSet() const { return !!node(); }
     
     typedef void* Edge::*UnspecifiedBoolType;
     operator UnspecifiedBoolType*() const { return reinterpret_cast<UnspecifiedBoolType*>(isSet()); }
@@ -92,38 +90,41 @@ public:
     {
         return m_encodedWord != other.m_encodedWord;
     }
+    
+    void dump(PrintStream&) const;
 
 private:
     friend class AdjacencyList;
     
-    static uint32_t shift() { return 4; }
+    static uint32_t shift() { return 2; }
     
-    static int32_t makeWord(NodeIndex nodeIndex, UseKind useKind)
+    static uintptr_t makeWord(Node* node, UseKind useKind)
     {
-        ASSERT(static_cast<uint32_t>(((static_cast<int32_t>(nodeIndex) << shift()) >> shift())) == nodeIndex);
+        uintptr_t value = bitwise_cast<uintptr_t>(node);
+        ASSERT(!(value & ((1 << shift()) - 1)));
         ASSERT(useKind >= 0 && useKind < LastUseKind);
         ASSERT(LastUseKind <= (1 << shift()));
-        return (nodeIndex << shift()) | useKind;
+        return value | static_cast<uintptr_t>(useKind);
     }
     
-    int32_t m_encodedWord;
+    uintptr_t m_encodedWord;
 };
 
-inline bool operator==(Edge nodeUse, NodeIndex nodeIndex)
+inline bool operator==(Edge edge, Node* node)
 {
-    return nodeUse.indexUnchecked() == nodeIndex;
+    return edge.node() == node;
 }
-inline bool operator==(NodeIndex nodeIndex, Edge nodeUse)
+inline bool operator==(Node* node, Edge edge)
 {
-    return nodeUse.indexUnchecked() == nodeIndex;
+    return edge.node() == node;
 }
-inline bool operator!=(Edge nodeUse, NodeIndex nodeIndex)
+inline bool operator!=(Edge edge, Node* node)
 {
-    return nodeUse.indexUnchecked() != nodeIndex;
+    return edge.node() != node;
 }
-inline bool operator!=(NodeIndex nodeIndex, Edge nodeUse)
+inline bool operator!=(Node* node, Edge edge)
 {
-    return nodeUse.indexUnchecked() != nodeIndex;
+    return edge.node() != node;
 }
 
 } } // namespace JSC::DFG

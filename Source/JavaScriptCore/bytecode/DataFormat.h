@@ -82,7 +82,12 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "JSCell";
     case DataFormatJSBoolean:
         return "JSBoolean";
+    case DataFormatDead:
+        return "Dead";
+    case DataFormatArguments:
+        return "Arguments";
     default:
+        RELEASE_ASSERT_NOT_REACHED();
         return "Unknown";
     }
 }

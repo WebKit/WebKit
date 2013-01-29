@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "DFGCommon.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
+#include <wtf/HashMap.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
 
@@ -50,9 +51,10 @@ public:
     {
         m_labelForBlockIndex[blockIndex] = label;
     }
-    void setForNode(NodeIndex nodeIndex, MacroAssembler::Label label)
+    void setForNode(Node* node, MacroAssembler::Label label)
     {
-        m_labelForNodeIndex[nodeIndex] = label;
+        ASSERT(label.isSet());
+        m_labelForNode.add(node, label);
     }
     void setEndOfMainPath(MacroAssembler::Label label)
     {
@@ -83,12 +85,12 @@ private:
     void append(Vector<DumpedOp>&, StringPrintStream&, CodeOrigin&);
     Vector<DumpedOp> createDumpList(LinkBuffer&);
     
-    void dumpDisassembly(PrintStream&, const char* prefix, LinkBuffer&, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context);
+    void dumpDisassembly(PrintStream&, const char* prefix, LinkBuffer&, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, Node* context);
     
     Graph& m_graph;
     MacroAssembler::Label m_startOfCode;
     Vector<MacroAssembler::Label> m_labelForBlockIndex;
-    Vector<MacroAssembler::Label> m_labelForNodeIndex;
+    HashMap<Node*, MacroAssembler::Label> m_labelForNode;
     MacroAssembler::Label m_endOfMainPath;
     MacroAssembler::Label m_endOfCode;
 };

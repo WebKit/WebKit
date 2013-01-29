@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #include "VirtualRegister.h"
 
 /* DFG_ENABLE() - turn on a specific features in the DFG JIT */
-#define DFG_ENABLE(DFG_FEATURE) (defined DFG_ENABLE_##DFG_FEATURE && DFG_ENABLE_##DFG_FEATURE)
+#define DFG_ENABLE(DFG_FEATURE) (defined DFG_ENABLE_##DFG_FEATURE  && DFG_ENABLE_##DFG_FEATURE)
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define DFG_ENABLE_DEBUG_VERBOSE 0
@@ -50,14 +50,6 @@
 #else
 #define DFG_ENABLE_JIT_ASSERT 0
 #endif
-// Enable validation of the graph.
-#if !ASSERT_DISABLED
-#define DFG_ENABLE_VALIDATION 1
-#else
-#define DFG_ENABLE_VALIDATION 0
-#endif
-// Enable validation on completion of each phase.
-#define DFG_ENABLE_PER_PHASE_VALIDATION 0
 // Consistency check contents compiler data structures.
 #define DFG_ENABLE_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
@@ -81,22 +73,14 @@
 
 namespace JSC { namespace DFG {
 
-// Type for a reference to another node in the graph.
-typedef uint32_t NodeIndex;
-static const NodeIndex NoNode = UINT_MAX;
+struct Node;
 
 typedef uint32_t BlockIndex;
 static const BlockIndex NoBlock = UINT_MAX;
 
-struct NodeIndexTraits {
-    static NodeIndex defaultValue() { return NoNode; }
-    static void dump(NodeIndex value, PrintStream& out)
-    {
-        if (value == NoNode)
-            out.printf("-");
-        else
-            out.printf("@%u", value);
-    }
+struct NodePointerTraits {
+    static Node* defaultValue() { return 0; }
+    static void dump(Node* value, PrintStream& out);
 };
 
 enum UseKind {
@@ -142,6 +126,29 @@ inline bool isX86()
 #else
     return false;
 #endif
+}
+
+inline bool verboseCompilationEnabled()
+{
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    return true;
+#else
+    return Options::verboseCompilation() || Options::dumpGraphAtEachPhase();
+#endif
+}
+
+inline bool shouldDumpGraphAtEachPhase()
+{
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    return true;
+#else
+    return Options::dumpGraphAtEachPhase();
+#endif
+}
+
+inline bool validationEnabled()
+{
+    return Options::validateGraph() || Options::validateGraphAtEachPhase();
 }
 
 enum SpillRegistersMode { NeedToSpill, DontSpill };

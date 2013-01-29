@@ -75,7 +75,11 @@ namespace JSC {
     v(bool, showDFGDisassembly, false) \
     v(bool, showAllDFGNodes, false) \
     v(bool, dumpBytecodeAtDFGTime, false) \
+    v(bool, dumpGraphAtEachPhase, false) \
+    v(bool, verboseCompilation, false) \
     v(bool, printEachOSRExit, false) \
+    v(bool, validateGraph, false) \
+    v(bool, validateGraphAtEachPhase, false) \
     \
     v(bool, enableProfiler, false) \
     \

@@ -23,29 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBasicBlockInlines_h
-#define DFGBasicBlockInlines_h
+#include "config.h"
+#include "FunctionExecutableDump.h"
 
-#include "DFGBasicBlock.h"
-#include "DFGGraph.h"
+namespace JSC {
 
-#if ENABLE(DFG_JIT)
+void FunctionExecutableDump::dump(PrintStream& out) const
+{
+    out.print(m_executable->inferredName().string(), "#", m_executable->hashFor(CodeForCall), "/", m_executable->hashFor(CodeForConstruct), ":[", RawPointer(m_executable), "]");
+}
 
-namespace JSC { namespace DFG {
-
-#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* BasicBlock::appendNode(Graph& graph, RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
-    { \
-        Node* result = graph.addNode(refChildrenMode, refNodeMode, type valueParamsComma valueArgs); \
-        append(result); \
-        return result; \
-    }
-    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
-#undef DFG_DEFINE_APPEND_NODE
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGBasicBlockInlines_h
+} // namespace JSC
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -266,11 +266,11 @@ public:
         m_disassembler->setForBlock(blockIndex, labelIgnoringWatchpoints());
     }
     
-    void setForNode(NodeIndex nodeIndex)
+    void setForNode(Node* node)
     {
         if (LIKELY(!m_disassembler))
             return;
-        m_disassembler->setForNode(nodeIndex, labelIgnoringWatchpoints());
+        m_disassembler->setForNode(node, labelIgnoringWatchpoints());
     }
     
     void setEndOfMainPath()
@@ -348,10 +348,10 @@ public:
     }
 
 #if USE(JSVALUE32_64)
-    void* addressOfDoubleConstant(NodeIndex nodeIndex)
+    void* addressOfDoubleConstant(Node* node)
     {
-        ASSERT(m_graph.isNumberConstant(nodeIndex));
-        unsigned constantIndex = graph()[nodeIndex].constantNumber();
+        ASSERT(m_graph.isNumberConstant(node));
+        unsigned constantIndex = node->constantNumber();
         return &(codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex));
     }
 #endif
@@ -405,15 +405,15 @@ public:
         // value of (None, []). But the old JIT may stash some values there. So we really
         // need (Top, TOP).
         for (size_t argument = 0; argument < basicBlock.variablesAtHead.numberOfArguments(); ++argument) {
-            NodeIndex nodeIndex = basicBlock.variablesAtHead.argument(argument);
-            if (nodeIndex == NoNode || !m_graph[nodeIndex].shouldGenerate())
+            Node* node = basicBlock.variablesAtHead.argument(argument);
+            if (!node || !node->shouldGenerate())
                 entry->m_expectedValues.argument(argument).makeTop();
         }
         for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
-            NodeIndex nodeIndex = basicBlock.variablesAtHead.local(local);
-            if (nodeIndex == NoNode || !m_graph[nodeIndex].shouldGenerate())
+            Node* node = basicBlock.variablesAtHead.local(local);
+            if (!node || !node->shouldGenerate())
                 entry->m_expectedValues.local(local).makeTop();
-            else if (m_graph[nodeIndex].variableAccessData()->shouldUseDoubleFormat())
+            else if (node->variableAccessData()->shouldUseDoubleFormat())
                 entry->m_localsForcedDouble.set(local);
         }
 #else

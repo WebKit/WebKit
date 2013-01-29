@@ -42,7 +42,7 @@ class Graph;
 
 typedef Vector <BlockIndex, 2> PredecessorList;
 
-struct BasicBlock : Vector<NodeIndex, 8> {
+struct BasicBlock : Vector<Node*, 8> {
     BasicBlock(unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals)
         : bytecodeBegin(bytecodeBegin)
         , isOSRTarget(false)
@@ -75,7 +75,7 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     }
     
     size_t numNodes() const { return phis.size() + size(); }
-    NodeIndex nodeIndex(size_t i) const
+    Node* node(size_t i) const
     {
         if (i < phis.size())
             return phis[i];
@@ -83,26 +83,26 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     }
     bool isPhiIndex(size_t i) const { return i < phis.size(); }
     
-    bool isInPhis(NodeIndex nodeIndex) const
+    bool isInPhis(Node* node) const
     {
         for (size_t i = 0; i < phis.size(); ++i) {
-            if (phis[i] == nodeIndex)
+            if (phis[i] == node)
                 return true;
         }
         return false;
     }
     
-    bool isInBlock(NodeIndex index) const
+    bool isInBlock(Node* myNode) const
     {
         for (size_t i = 0; i < numNodes(); ++i) {
-            if (nodeIndex(i) == index)
+            if (node(i) == myNode)
                 return true;
         }
         return false;
     }
     
 #define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost NodeIndex appendNode(Graph&, RefChildrenMode, RefNodeMode, SpeculatedType valueParamsComma valueParams);
+    templatePre typeParams templatePost Node* appendNode(Graph&, RefChildrenMode, RefNodeMode, SpeculatedType valueParamsComma valueParams);
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
 #undef DFG_DEFINE_APPEND_NODE
     
@@ -121,11 +121,11 @@ struct BasicBlock : Vector<NodeIndex, 8> {
 #endif
     bool isReachable;
     
-    Vector<NodeIndex> phis;
+    Vector<Node*> phis;
     PredecessorList m_predecessors;
     
-    Operands<NodeIndex, NodeIndexTraits> variablesAtHead;
-    Operands<NodeIndex, NodeIndexTraits> variablesAtTail;
+    Operands<Node*, NodePointerTraits> variablesAtHead;
+    Operands<Node*, NodePointerTraits> variablesAtTail;
     
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;

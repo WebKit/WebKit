@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,71 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPhase_h
-#define DFGPhase_h
+#ifndef DFGLongLivedState_h
+#define DFGLongLivedState_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCommon.h"
-#include "DFGGraph.h"
+#include "DFGNodeAllocator.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace DFG {
 
-class Phase {
+class LongLivedState {
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(LongLivedState);
 public:
-    Phase(Graph& graph, const char* name)
-        : m_graph(graph)
-        , m_name(name)
-    {
-        beginPhase();
-    }
+    LongLivedState();
+    ~LongLivedState();
     
-    ~Phase()
-    {
-        endPhase();
-    }
+    void shrinkToFit();
     
-    const char* name() const { return m_name; }
-    
-    // Each phase must have a run() method.
-    
-protected:
-    // Things you need to have a DFG compiler phase.
-    Graph& m_graph;
-    
-    JSGlobalData& globalData() { return m_graph.m_globalData; }
-    CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
-    CodeBlock* profiledBlock() { return m_graph.m_profiledBlock; }
-    
-    const char* m_name;
-    
-private:
-    // Call these hooks when starting and finishing.
-    void beginPhase();
-    void endPhase();
+    NodeAllocator m_allocator;
 };
-
-template<typename PhaseType>
-bool runAndLog(PhaseType& phase)
-{
-    bool result = phase.run();
-    if (Options::dumpGraphAtEachPhase())
-        dataLogF("Phase %s changed the IR.\n", phase.name());
-    return result;
-}
-
-template<typename PhaseType>
-bool runPhase(Graph& graph)
-{
-    PhaseType phase(graph);
-    return runAndLog(phase);
-}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGPhase_h
+#endif // DFGLongLivedState_h
 

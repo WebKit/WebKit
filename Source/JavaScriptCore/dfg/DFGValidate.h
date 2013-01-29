@@ -37,11 +37,7 @@ namespace JSC { namespace DFG {
 
 enum GraphDumpMode { DontDumpGraph, DumpGraph };
 
-#if DFG_ENABLE(VALIDATION)
 void validate(Graph&, GraphDumpMode = DumpGraph);
-#else
-inline void validate(Graph&, GraphDumpMode = DumpGraph) { }
-#endif
 
 } } // namespace JSC::DFG
 

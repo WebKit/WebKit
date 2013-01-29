@@ -60,6 +60,9 @@ void ValueSource::dump(PrintStream& out) const
     case HaveNode:
         out.print("Node(", m_value, ")");
         break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 }
 

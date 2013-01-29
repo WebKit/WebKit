@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,15 +112,6 @@ public:
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
 
-    Node& at(NodeIndex nodeIndex)
-    {
-        return m_jit.graph()[nodeIndex];
-    }
-    Node& at(Edge nodeUse)
-    {
-        return at(nodeUse.index());
-    }
-    
     BlockIndex nextBlock()
     {
         for (BlockIndex result = m_block + 1; ; result++) {
@@ -131,14 +122,14 @@ public:
         }
     }
     
-    GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
-    FPRReg fillDouble(NodeIndex);
+    GPRReg fillInteger(Node*, DataFormat& returnFormat);
+    FPRReg fillDouble(Node*);
 #if USE(JSVALUE64)
-    GPRReg fillJSValue(NodeIndex);
+    GPRReg fillJSValue(Node*);
 #elif USE(JSVALUE32_64)
-    bool fillJSValue(NodeIndex, GPRReg&, GPRReg&, FPRReg&);
+    bool fillJSValue(Node*, GPRReg&, GPRReg&, FPRReg&);
 #endif
-    GPRReg fillStorage(NodeIndex);
+    GPRReg fillStorage(Node*);
 
     // lock and unlock GPR & FPR registers.
     void lock(GPRReg reg)
@@ -160,15 +151,15 @@ public:
 
     // Used to check whether a child node is on its last use,
     // and its machine registers may be reused.
-    bool canReuse(NodeIndex nodeIndex)
+    bool canReuse(Node* node)
     {
-        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.canReuse();
     }
     bool canReuse(Edge nodeUse)
     {
-        return canReuse(nodeUse.index());
+        return canReuse(nodeUse.node());
     }
     GPRReg reuse(GPRReg reg)
     {
@@ -229,26 +220,25 @@ public:
     // machine registers first (by locking VirtualRegsiters that are already
     // in machine register before filling those that are not we attempt to
     // avoid spilling values we will need immediately).
-    bool isFilled(NodeIndex nodeIndex)
+    bool isFilled(Node* node)
     {
-        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() != DataFormatNone;
     }
-    bool isFilledDouble(NodeIndex nodeIndex)
+    bool isFilledDouble(Node* node)
     {
-        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.registerFormat() == DataFormatDouble;
     }
 
     // Called on an operand once it has been consumed by a parent node.
-    void use(NodeIndex nodeIndex)
+    void use(Node* node)
     {
-        Node& node = at(nodeIndex);
-        if (!node.hasResult())
+        if (!node->hasResult())
             return;
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         // use() returns true when the value becomes dead, and any
@@ -275,7 +265,7 @@ public:
     }
     void use(Edge nodeUse)
     {
-        use(nodeUse.index());
+        use(nodeUse.node());
     }
     
     RegisterSet usedRegisters()
@@ -308,19 +298,19 @@ public:
 
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
-    GPRReg fillSpeculateInt(NodeIndex, DataFormat& returnFormat, SpeculationDirection);
-    GPRReg fillSpeculateIntStrict(NodeIndex);
-    FPRReg fillSpeculateDouble(NodeIndex, SpeculationDirection);
-    GPRReg fillSpeculateCell(NodeIndex, SpeculationDirection);
-    GPRReg fillSpeculateBoolean(NodeIndex, SpeculationDirection);
-    GeneratedOperandType checkGeneratedTypeForToInt32(NodeIndex);
+    GPRReg fillSpeculateInt(Node*, DataFormat& returnFormat, SpeculationDirection);
+    GPRReg fillSpeculateIntStrict(Node*);
+    FPRReg fillSpeculateDouble(Node*, SpeculationDirection);
+    GPRReg fillSpeculateCell(Node*, SpeculationDirection);
+    GPRReg fillSpeculateBoolean(Node*, SpeculationDirection);
+    GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(PassOwnPtr<SlowPathGenerator>);
     void runSlowPathGenerators();
     
-    void compile(Node&);
-    void noticeOSRBirth(NodeIndex, Node&);
-    void compileMovHint(Node&);
+    void compile(Node*);
+    void noticeOSRBirth(Node*);
+    void compileMovHint(Node*);
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
@@ -536,44 +526,44 @@ public:
         }
     }
     
-    bool isStrictInt32(NodeIndex);
+    bool isStrictInt32(Node*);
     
-    bool isKnownInteger(NodeIndex);
-    bool isKnownNumeric(NodeIndex);
-    bool isKnownCell(NodeIndex);
+    bool isKnownInteger(Node*);
+    bool isKnownNumeric(Node*);
+    bool isKnownCell(Node*);
     
-    bool isKnownNotInteger(NodeIndex);
-    bool isKnownNotNumber(NodeIndex);
+    bool isKnownNotInteger(Node*);
+    bool isKnownNotNumber(Node*);
 
-    bool isKnownNotCell(NodeIndex);
+    bool isKnownNotCell(Node*);
     
     // Checks/accessors for constant values.
-    bool isConstant(NodeIndex nodeIndex) { return m_jit.graph().isConstant(nodeIndex); }
-    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.graph().isJSConstant(nodeIndex); }
-    bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.graph().isInt32Constant(nodeIndex); }
-    bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.graph().isDoubleConstant(nodeIndex); }
-    bool isNumberConstant(NodeIndex nodeIndex) { return m_jit.graph().isNumberConstant(nodeIndex); }
-    bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.graph().isBooleanConstant(nodeIndex); }
-    bool isFunctionConstant(NodeIndex nodeIndex) { return m_jit.graph().isFunctionConstant(nodeIndex); }
-    int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.graph().valueOfInt32Constant(nodeIndex); }
-    double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfNumberConstant(nodeIndex); }
-    int32_t valueOfNumberConstantAsInt32(NodeIndex nodeIndex)
+    bool isConstant(Node* node) { return m_jit.graph().isConstant(node); }
+    bool isJSConstant(Node* node) { return m_jit.graph().isJSConstant(node); }
+    bool isInt32Constant(Node* node) { return m_jit.graph().isInt32Constant(node); }
+    bool isDoubleConstant(Node* node) { return m_jit.graph().isDoubleConstant(node); }
+    bool isNumberConstant(Node* node) { return m_jit.graph().isNumberConstant(node); }
+    bool isBooleanConstant(Node* node) { return m_jit.graph().isBooleanConstant(node); }
+    bool isFunctionConstant(Node* node) { return m_jit.graph().isFunctionConstant(node); }
+    int32_t valueOfInt32Constant(Node* node) { return m_jit.graph().valueOfInt32Constant(node); }
+    double valueOfNumberConstant(Node* node) { return m_jit.graph().valueOfNumberConstant(node); }
+    int32_t valueOfNumberConstantAsInt32(Node* node)
     {
-        if (isInt32Constant(nodeIndex))
-            return valueOfInt32Constant(nodeIndex);
-        return JSC::toInt32(valueOfNumberConstant(nodeIndex));
+        if (isInt32Constant(node))
+            return valueOfInt32Constant(node);
+        return JSC::toInt32(valueOfNumberConstant(node));
     }
 #if USE(JSVALUE32_64)
-    void* addressOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.addressOfDoubleConstant(nodeIndex); }
+    void* addressOfDoubleConstant(Node* node) { return m_jit.addressOfDoubleConstant(node); }
 #endif
-    JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfJSConstant(nodeIndex); }
-    bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfBooleanConstant(nodeIndex); }
-    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return m_jit.graph().valueOfFunctionConstant(nodeIndex); }
-    bool isNullConstant(NodeIndex nodeIndex)
+    JSValue valueOfJSConstant(Node* node) { return m_jit.graph().valueOfJSConstant(node); }
+    bool valueOfBooleanConstant(Node* node) { return m_jit.graph().valueOfBooleanConstant(node); }
+    JSFunction* valueOfFunctionConstant(Node* node) { return m_jit.graph().valueOfFunctionConstant(node); }
+    bool isNullConstant(Node* node)
     {
-        if (!isConstant(nodeIndex))
+        if (!isConstant(node))
             return false;
-        return valueOfJSConstant(nodeIndex).isNull();
+        return valueOfJSConstant(node).isNull();
     }
 
     Identifier* identifier(unsigned index)
@@ -626,9 +616,9 @@ public:
 #endif
 
 #if USE(JSVALUE64)
-    MacroAssembler::Imm64 valueOfJSConstantAsImm64(NodeIndex nodeIndex)
+    MacroAssembler::Imm64 valueOfJSConstantAsImm64(Node* node)
     {
-        return MacroAssembler::Imm64(JSValue::encode(valueOfJSConstant(nodeIndex)));
+        return MacroAssembler::Imm64(JSValue::encode(valueOfJSConstant(node)));
     }
 #endif
 
@@ -705,19 +695,19 @@ public:
 
         // Check that no intervening nodes will be generated.
         for (unsigned index = m_indexInBlock + 1; index < block->size() - 1; ++index) {
-            NodeIndex nodeIndex = block->at(index);
-            if (at(nodeIndex).shouldGenerate())
+            Node* node = block->at(index);
+            if (node->shouldGenerate())
                 return UINT_MAX;
         }
 
         // Check if the lastNode is a branch on this node.
-        Node& lastNode = at(block->last());
-        return lastNode.op() == Branch && lastNode.child1().index() == m_compileIndex ? block->size() - 1 : UINT_MAX;
+        Node* lastNode = block->last();
+        return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? block->size() - 1 : UINT_MAX;
     }
     
-    void nonSpeculativeValueToNumber(Node&);
-    void nonSpeculativeValueToInt32(Node&);
-    void nonSpeculativeUInt32ToNumber(Node&);
+    void nonSpeculativeValueToNumber(Node*);
+    void nonSpeculativeValueToInt32(Node*);
+    void nonSpeculativeUInt32ToNumber(Node*);
 
 #if USE(JSVALUE64)
     void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
@@ -728,19 +718,19 @@ public:
 #endif
 
     void nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert = false);
-    void nonSpeculativePeepholeBranchNull(Edge operand, NodeIndex branchNodeIndex, bool invert = false);
-    bool nonSpeculativeCompareNull(Node&, Edge operand, bool invert = false);
+    void nonSpeculativePeepholeBranchNull(Edge operand, Node* branchNode, bool invert = false);
+    bool nonSpeculativeCompareNull(Node*, Edge operand, bool invert = false);
     
-    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
-    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
-    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
+    void nonSpeculativePeepholeBranch(Node*, Node* branchNode, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
+    void nonSpeculativeNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
+    bool nonSpeculativeCompare(Node*, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
     
-    void nonSpeculativePeepholeStrictEq(Node&, NodeIndex branchNodeIndex, bool invert = false);
-    void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
-    bool nonSpeculativeStrictEq(Node&, bool invert = false);
+    void nonSpeculativePeepholeStrictEq(Node*, Node* branchNode, bool invert = false);
+    void nonSpeculativeNonPeepholeStrictEq(Node*, bool invert = false);
+    bool nonSpeculativeStrictEq(Node*, bool invert = false);
     
-    void compileInstanceOfForObject(Node&, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg);
-    void compileInstanceOf(Node&);
+    void compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg);
+    void compileInstanceOf(Node*);
     
     // Access to our fixed callee CallFrame.
     MacroAssembler::Address callFrameSlot(int slot)
@@ -774,137 +764,128 @@ public:
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
-    void emitCall(Node&);
+    void emitCall(Node*);
     
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
     // the nodes result, since the node may have the same VirtualRegister as
     // a child, and as such will use the same GeneratioInfo).
-    void useChildren(Node&);
+    void useChildren(Node*);
 
     // These method called to initialize the the GenerationInfo
     // to describe the result of an operation.
-    void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
+    void integerResult(GPRReg reg, Node* node, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         if (format == DataFormatInteger) {
             m_jit.jitAssertIsInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
-            info.initInteger(nodeIndex, node.refCount(), reg);
+            info.initInteger(node, node->refCount(), reg);
         } else {
 #if USE(JSVALUE64)
             RELEASE_ASSERT(format == DataFormatJSInteger);
             m_jit.jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
-            info.initJSValue(nodeIndex, node.refCount(), reg, format);
+            info.initJSValue(node, node->refCount(), reg, format);
 #elif USE(JSVALUE32_64)
             RELEASE_ASSERT_NOT_REACHED();
 #endif
         }
     }
-    void integerResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
+    void integerResult(GPRReg reg, Node* node, UseChildrenMode mode)
     {
-        integerResult(reg, nodeIndex, DataFormatInteger, mode);
+        integerResult(reg, node, DataFormatInteger, mode);
     }
-    void noResult(NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    void noResult(Node* node, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == UseChildrenCalledExplicitly)
             return;
-        Node& node = at(nodeIndex);
         useChildren(node);
     }
-    void cellResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    void cellResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderCell);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initCell(nodeIndex, node.refCount(), reg);
+        info.initCell(node, node->refCount(), reg);
     }
-    void booleanResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    void booleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initBoolean(nodeIndex, node.refCount(), reg);
+        info.initBoolean(node, node->refCount(), reg);
     }
 #if USE(JSVALUE64)
-    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
+    void jsValueResult(GPRReg reg, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (format == DataFormatJSInteger)
             m_jit.jitAssertIsJSInt32(reg);
         
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initJSValue(nodeIndex, node.refCount(), reg, format);
+        info.initJSValue(node, node->refCount(), reg, format);
     }
-    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
+    void jsValueResult(GPRReg reg, Node* node, UseChildrenMode mode)
     {
-        jsValueResult(reg, nodeIndex, DataFormatJS, mode);
+        jsValueResult(reg, node, DataFormatJS, mode);
     }
 #elif USE(JSVALUE32_64)
-    void jsValueResult(GPRReg tag, GPRReg payload, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
+    void jsValueResult(GPRReg tag, GPRReg payload, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_gprs.retain(tag, virtualRegister, SpillOrderJS);
         m_gprs.retain(payload, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initJSValue(nodeIndex, node.refCount(), tag, payload, format);
+        info.initJSValue(node, node->refCount(), tag, payload, format);
     }
-    void jsValueResult(GPRReg tag, GPRReg payload, NodeIndex nodeIndex, UseChildrenMode mode)
+    void jsValueResult(GPRReg tag, GPRReg payload, Node* node, UseChildrenMode mode)
     {
-        jsValueResult(tag, payload, nodeIndex, DataFormatJS, mode);
+        jsValueResult(tag, payload, node, DataFormatJS, mode);
     }
 #endif
-    void storageResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    void storageResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
         
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderStorage);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initStorage(nodeIndex, node.refCount(), reg);
+        info.initStorage(node, node->refCount(), reg);
     }
-    void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    void doubleResult(FPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
-        Node& node = at(nodeIndex);
         if (mode == CallUseChildren)
             useChildren(node);
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         m_fprs.retain(reg, virtualRegister, SpillOrderDouble);
         GenerationInfo& info = m_generationInfo[virtualRegister];
-        info.initDouble(nodeIndex, node.refCount(), reg);
+        info.initDouble(node, node->refCount(), reg);
     }
-    void initConstantInfo(NodeIndex nodeIndex)
+    void initConstantInfo(Node* node)
     {
-        ASSERT(isInt32Constant(nodeIndex) || isNumberConstant(nodeIndex) || isJSConstant(nodeIndex));
-        Node& node = at(nodeIndex);
-        m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
+        ASSERT(isInt32Constant(node) || isNumberConstant(node) || isJSConstant(node));
+        m_generationInfo[node->virtualRegister()].initConstant(node, node->refCount());
     }
     
     // These methods add calls to C++ helper functions.
@@ -1752,7 +1733,7 @@ public:
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
         prepareForExternalCall();
-        CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
+        CodeOrigin codeOrigin = m_currentNode->codeOrigin;
         CallBeginToken token;
         m_jit.beginCall(codeOrigin, token);
         JITCompiler::Call call = m_jit.appendCall(function);
@@ -2038,89 +2019,88 @@ public:
     void checkConsistency() { }
 #endif
 
-    bool isInteger(NodeIndex nodeIndex)
+    bool isInteger(Node* node)
     {
-        Node& node = at(nodeIndex);
-        if (node.hasInt32Result())
+        if (node->hasInt32Result())
             return true;
 
-        if (isInt32Constant(nodeIndex))
+        if (isInt32Constant(node))
             return true;
 
-        VirtualRegister virtualRegister = node.virtualRegister();
+        VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         
         return info.isJSInteger();
     }
     
-    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
-    bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
-    void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
-    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
-    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex);
-    void compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex);
-    void compileObjectEquality(Node&);
+    bool compare(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
+    bool compilePeepHoleBranch(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
+    void compilePeepHoleIntegerBranch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+    void compilePeepHoleDoubleBranch(Node*, Node* branchNode, JITCompiler::DoubleCondition);
+    void compilePeepHoleObjectEquality(Node*, Node* branchNode);
+    void compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild, Node* branchNode);
+    void compileObjectEquality(Node*);
     void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
-    void compileValueAdd(Node&);
+    void compileValueAdd(Node*);
     void compileNonStringCellOrOtherLogicalNot(Edge value, bool needSpeculationCheck);
-    void compileLogicalNot(Node&);
+    void compileLogicalNot(Node*);
     void emitNonStringCellOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken, bool needSpeculationCheck);
-    void emitBranch(Node&);
+    void emitBranch(Node*);
     
-    void compileIntegerCompare(Node&, MacroAssembler::RelationalCondition);
-    void compileDoubleCompare(Node&, MacroAssembler::DoubleCondition);
+    void compileIntegerCompare(Node*, MacroAssembler::RelationalCondition);
+    void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
     
-    bool compileStrictEqForConstant(Node&, Edge value, JSValue constant);
+    bool compileStrictEqForConstant(Node*, Edge value, JSValue constant);
     
-    bool compileStrictEq(Node&);
+    bool compileStrictEq(Node*);
     
-    void compileAllocatePropertyStorage(Node&);
-    void compileReallocatePropertyStorage(Node&);
+    void compileAllocatePropertyStorage(Node*);
+    void compileReallocatePropertyStorage(Node*);
     
 #if USE(JSVALUE32_64)
     template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>
-    void compileContiguousPutByVal(Node&, BaseOperandType&, PropertyOperandType&, ValueOperandType&, GPRReg valuePayloadReg, TagType valueTag);
+    void compileContiguousPutByVal(Node*, BaseOperandType&, PropertyOperandType&, ValueOperandType&, GPRReg valuePayloadReg, TagType valueTag);
 #endif
-    void compileDoublePutByVal(Node&, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property);
+    void compileDoublePutByVal(Node*, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property);
     bool putByValWillNeedExtraRegister(ArrayMode arrayMode)
     {
         return arrayMode.mayStoreToHole();
     }
     GPRReg temporaryRegisterForPutByVal(GPRTemporary&, ArrayMode);
-    GPRReg temporaryRegisterForPutByVal(GPRTemporary& temporary, Node& node)
+    GPRReg temporaryRegisterForPutByVal(GPRTemporary& temporary, Node* node)
     {
-        return temporaryRegisterForPutByVal(temporary, node.arrayMode());
+        return temporaryRegisterForPutByVal(temporary, node->arrayMode());
     }
     
-    void compileGetCharCodeAt(Node&);
-    void compileGetByValOnString(Node&);
+    void compileGetCharCodeAt(Node*);
+    void compileGetByValOnString(Node*);
 
-    void compileGetByValOnArguments(Node&);
-    void compileGetArgumentsLength(Node&);
+    void compileGetByValOnArguments(Node*);
+    void compileGetArgumentsLength(Node*);
     
-    void compileGetArrayLength(Node&);
+    void compileGetArrayLength(Node*);
     
-    void compileValueToInt32(Node&);
-    void compileUInt32ToNumber(Node&);
-    void compileDoubleAsInt32(Node&);
-    void compileInt32ToDouble(Node&);
-    void compileAdd(Node&);
-    void compileArithSub(Node&);
-    void compileArithNegate(Node&);
-    void compileArithMul(Node&);
+    void compileValueToInt32(Node*);
+    void compileUInt32ToNumber(Node*);
+    void compileDoubleAsInt32(Node*);
+    void compileInt32ToDouble(Node*);
+    void compileAdd(Node*);
+    void compileArithSub(Node*);
+    void compileArithNegate(Node*);
+    void compileArithMul(Node*);
 #if CPU(X86) || CPU(X86_64)
-    void compileIntegerArithDivForX86(Node&);
+    void compileIntegerArithDivForX86(Node*);
 #endif
-    void compileArithMod(Node&);
-    void compileSoftModulo(Node&);
-    void compileGetIndexedPropertyStorage(Node&);
-    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySignedness);
-    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
-    void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize);
-    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize);
-    void compileNewFunctionNoCheck(Node&);
-    void compileNewFunctionExpression(Node&);
-    bool compileRegExpExec(Node&);
+    void compileArithMod(Node*);
+    void compileSoftModulo(Node*);
+    void compileGetIndexedPropertyStorage(Node*);
+    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node*, size_t elementSize, TypedArraySignedness);
+    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node*, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
+    void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node*, size_t elementSize);
+    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node*, size_t elementSize);
+    void compileNewFunctionNoCheck(Node*);
+    void compileNewFunctionExpression(Node*);
+    bool compileRegExpExec(Node*);
     
     // size can be an immediate or a register, and must be in bytes. If size is a register,
     // it must be a different register than resultGPR. Emits code that place a pointer to
@@ -2132,13 +2112,6 @@ public:
         
         m_jit.loadPtr(&copiedAllocator->m_currentRemaining, resultGPR);
         MacroAssembler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, size, resultGPR);
-#if 0
-        MacroAssembler::Jump done = m_jit.jump();
-        slowPath1.link(&m_jit);
-        m_jit.breakpoint();
-        MacroAssembler::Jump slowPath = m_jit.jump();
-        done.link(&m_jit);
-#endif
         m_jit.storePtr(resultGPR, &copiedAllocator->m_currentRemaining);
         m_jit.negPtr(resultGPR);
         m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), resultGPR);
@@ -2192,23 +2165,23 @@ public:
 #endif
 
     // Add a speculation check without additional recovery.
-    void speculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail);
+    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail);
     // Add a speculation check without additional recovery, and with a promise to supply a jump later.
-    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, NodeIndex);
+    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Node*);
     OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Edge);
     // Add a set of speculation checks without additional recovery.
-    void speculationCheck(ExitKind, JSValueSource, NodeIndex, const MacroAssembler::JumpList& jumpsToFail);
+    void speculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, const MacroAssembler::JumpList& jumpsToFail);
     // Add a speculation check with additional recovery.
-    void speculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
+    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     // Use this like you would use speculationCheck(), except that you don't pass it a jump
     // (because you don't have to execute a branch; that's kind of the whole point), and you
     // must register the returned Watchpoint with something relevant. In general, this should
     // be used with extreme care. Use speculationCheck() unless you've got an amazing reason
     // not to.
-    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind, JSValueSource, NodeIndex);
+    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind, JSValueSource, Node*);
     // The default for speculation watchpoints is that they're uncounted, because the
     // act of firing a watchpoint invalidates it. So, future recompilations will not
     // attempt to set this watchpoint again.
@@ -2219,14 +2192,14 @@ public:
     
     // Note: not specifying the valueRecovery argument (leaving it as ValueRecovery()) implies
     // that you've ensured that there exists a MovHint prior to your use of forwardSpeculationCheck().
-    void forwardSpeculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& = ValueRecovery());
-    void forwardSpeculationCheck(ExitKind, JSValueSource, NodeIndex, const MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& = ValueRecovery());
-    void speculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, SpeculationDirection);
-    void speculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&, SpeculationDirection);
+    void forwardSpeculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const ValueRecovery& = ValueRecovery());
+    void forwardSpeculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& = ValueRecovery());
+    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, SpeculationDirection);
+    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&, SpeculationDirection);
     // Called when we statically determine that a speculation will fail.
-    void terminateSpeculativeExecution(ExitKind, JSValueRegs, NodeIndex);
+    void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*);
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
-    void terminateSpeculativeExecution(ExitKind, JSValueRegs, NodeIndex, SpeculationDirection);
+    void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*, SpeculationDirection);
     // Issue a forward speculation watchpoint, which will exit to the next instruction rather
     // than the current one.
     JumpReplacementWatchpoint* forwardSpeculationWatchpoint(ExitKind = UncountableWatchpoint);
@@ -2236,12 +2209,12 @@ public:
     
     JITCompiler::Jump jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode, IndexingType, bool invert);
     JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode, bool invert = false);
-    void checkArray(Node&);
-    void arrayify(Node&, GPRReg baseReg, GPRReg propertyReg);
-    void arrayify(Node&);
+    void checkArray(Node*);
+    void arrayify(Node*, GPRReg baseReg, GPRReg propertyReg);
+    void arrayify(Node*);
     
     template<bool strict>
-    GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat, SpeculationDirection);
+    GPRReg fillSpeculateIntInternal(Node*, DataFormat& returnFormat, SpeculationDirection);
     
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
@@ -2257,9 +2230,9 @@ public:
         return valueSourceReferenceForOperand(operand);
     }
     
-    void setNodeIndexForOperand(NodeIndex nodeIndex, int operand)
+    void setNodeForOperand(Node* node, int operand)
     {
-        valueSourceReferenceForOperand(operand) = ValueSource(MinifiedID(nodeIndex));
+        valueSourceReferenceForOperand(operand) = ValueSource(MinifiedID(node));
     }
     
     // Call this with care, since it both returns a reference into an array
@@ -2290,7 +2263,7 @@ public:
 
     // The current node being generated.
     BlockIndex m_block;
-    NodeIndex m_compileIndex;
+    Node* m_currentNode;
     unsigned m_indexInBlock;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
@@ -2351,7 +2324,7 @@ class IntegerOperand {
 public:
     explicit IntegerOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
 #ifndef NDEBUG
         , m_format(DataFormatNone)
@@ -2359,7 +2332,7 @@ public:
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
 
@@ -2369,9 +2342,9 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     DataFormat format()
@@ -2384,18 +2357,18 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillInteger(index(), m_format);
+            m_gprOrInvalid = m_jit->fillInteger(node(), m_format);
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
     DataFormat m_format;
 };
@@ -2404,7 +2377,7 @@ class DoubleOperand {
 public:
     explicit DoubleOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
@@ -2417,7 +2390,7 @@ public:
         // is not one already.
         ASSERT(use.useKind() != DoubleUse);
         
-        if (jit->isFilledDouble(m_index))
+        if (jit->isFilledDouble(m_node))
             fpr();
     }
 
@@ -2427,26 +2400,26 @@ public:
         m_jit->unlock(m_fprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     FPRReg fpr()
     {
         if (m_fprOrInvalid == InvalidFPRReg)
-            m_fprOrInvalid = m_jit->fillDouble(index());
+            m_fprOrInvalid = m_jit->fillDouble(node());
         return m_fprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     FPRReg m_fprOrInvalid;
 };
 
@@ -2454,7 +2427,7 @@ class JSValueOperand {
 public:
     explicit JSValueOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
 #if USE(JSVALUE64)
         , m_gprOrInvalid(InvalidGPRReg)
 #elif USE(JSVALUE32_64)
@@ -2464,12 +2437,12 @@ public:
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
 #if USE(JSVALUE64)
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
 #elif USE(JSVALUE32_64)
         m_register.pair.tagGPR = InvalidGPRReg;
         m_register.pair.payloadGPR = InvalidGPRReg;
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             fill();
 #endif
     }
@@ -2491,16 +2464,16 @@ public:
 #endif
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
 #if USE(JSVALUE64)
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillJSValue(index());
+            m_gprOrInvalid = m_jit->fillJSValue(node());
         return m_gprOrInvalid;
     }
     JSValueRegs jsValueRegs()
@@ -2513,7 +2486,7 @@ public:
     void fill()
     {
         if (m_register.pair.tagGPR == InvalidGPRReg && m_register.pair.payloadGPR == InvalidGPRReg)
-            m_isDouble = !m_jit->fillJSValue(index(), m_register.pair.tagGPR, m_register.pair.payloadGPR, m_register.fpr);
+            m_isDouble = !m_jit->fillJSValue(node(), m_register.pair.tagGPR, m_register.pair.payloadGPR, m_register.fpr);
     }
 
     GPRReg tagGPR()
@@ -2545,12 +2518,12 @@ public:
 
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
 #if USE(JSVALUE64)
     GPRReg m_gprOrInvalid;
 #elif USE(JSVALUE32_64)
@@ -2569,12 +2542,12 @@ class StorageOperand {
 public:
     explicit StorageOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
     
@@ -2584,26 +2557,26 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
     
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
     
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillStorage(index());
+            m_gprOrInvalid = m_jit->fillStorage(node());
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
     
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
 };
 
@@ -2739,7 +2712,7 @@ class SpeculateIntegerOperand {
 public:
     explicit SpeculateIntegerOperand(SpeculativeJIT* jit, Edge use, SpeculationDirection direction = BackwardSpeculation)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
 #ifndef NDEBUG
         , m_format(DataFormatNone)
@@ -2748,7 +2721,7 @@ public:
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
 
@@ -2758,9 +2731,9 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     DataFormat format()
@@ -2773,18 +2746,18 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateInt(index(), m_format, m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateInt(node(), m_format, m_direction);
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
     DataFormat m_format;
     SpeculationDirection m_direction;
@@ -2794,12 +2767,12 @@ class SpeculateStrictInt32Operand {
 public:
     explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
 
@@ -2809,26 +2782,26 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateIntStrict(index());
+            m_gprOrInvalid = m_jit->fillSpeculateIntStrict(node());
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
 };
 
@@ -2836,13 +2809,13 @@ class SpeculateDoubleOperand {
 public:
     explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge use, SpeculationDirection direction = BackwardSpeculation)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_fprOrInvalid(InvalidFPRReg)
         , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() == DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             fpr();
     }
 
@@ -2852,26 +2825,26 @@ public:
         m_jit->unlock(m_fprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     FPRReg fpr()
     {
         if (m_fprOrInvalid == InvalidFPRReg)
-            m_fprOrInvalid = m_jit->fillSpeculateDouble(index(), m_direction);
+            m_fprOrInvalid = m_jit->fillSpeculateDouble(node(), m_direction);
         return m_fprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     FPRReg m_fprOrInvalid;
     SpeculationDirection m_direction;
 };
@@ -2880,13 +2853,13 @@ class SpeculateCellOperand {
 public:
     explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge use, SpeculationDirection direction = BackwardSpeculation)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
         , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
 
@@ -2896,26 +2869,26 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
 
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
 
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateCell(index(), m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateCell(node(), m_direction);
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
     SpeculationDirection m_direction;
 };
@@ -2924,13 +2897,13 @@ class SpeculateBooleanOperand {
 public:
     explicit SpeculateBooleanOperand(SpeculativeJIT* jit, Edge use, SpeculationDirection direction = BackwardSpeculation)
         : m_jit(jit)
-        , m_index(use.index())
+        , m_node(use.node())
         , m_gprOrInvalid(InvalidGPRReg)
         , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
-        if (jit->isFilled(m_index))
+        if (jit->isFilled(m_node))
             gpr();
     }
     
@@ -2940,26 +2913,26 @@ public:
         m_jit->unlock(m_gprOrInvalid);
     }
     
-    NodeIndex index() const
+    Node* node() const
     {
-        return m_index;
+        return m_node;
     }
     
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateBoolean(index(), m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateBoolean(node(), m_direction);
         return m_gprOrInvalid;
     }
     
     void use()
     {
-        m_jit->use(m_index);
+        m_jit->use(m_node);
     }
 
 private:
     SpeculativeJIT* m_jit;
-    NodeIndex m_index;
+    Node* m_node;
     GPRReg m_gprOrInvalid;
     SpeculationDirection m_direction;
 };

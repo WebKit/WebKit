@@ -121,7 +121,7 @@ public:
     }
     
     explicit ValueSource(MinifiedID id)
-        : m_value(id.m_id)
+        : m_value(id)
     {
         ASSERT(!!id);
         ASSERT(kind() == HaveNode);

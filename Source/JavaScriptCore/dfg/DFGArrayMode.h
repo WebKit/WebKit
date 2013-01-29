@@ -197,7 +197,7 @@ public:
     
     ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone, NodeFlags = 0) const;
     
-    bool alreadyChecked(Graph&, Node&, AbstractValue&) const;
+    bool alreadyChecked(Graph&, Node*, AbstractValue&) const;
     
     void dump(PrintStream&) const;
     
@@ -343,7 +343,7 @@ public:
     
     // Returns 0 if this is not OriginalArray.
     Structure* originalArrayStructure(Graph&, const CodeOrigin&) const;
-    Structure* originalArrayStructure(Graph&, Node&) const;
+    Structure* originalArrayStructure(Graph&, Node*) const;
     
     bool benefitsFromStructureCheck() const
     {
@@ -422,7 +422,7 @@ private:
         }
     }
     
-    bool alreadyChecked(Graph&, Node&, AbstractValue&, IndexingType shape) const;
+    bool alreadyChecked(Graph&, Node*, AbstractValue&, IndexingType shape) const;
     
     union {
         struct {

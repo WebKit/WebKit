@@ -44,14 +44,14 @@ class MinifiedID {
 public:
     MinifiedID() : m_id(invalidID()) { }
     MinifiedID(WTF::HashTableDeletedValueType) : m_id(otherInvalidID()) { }
-    explicit MinifiedID(NodeIndex nodeIndex) : m_id(nodeIndex) { }
+    explicit MinifiedID(Node* node) : m_id(bitwise_cast<uintptr_t>(node)) { }
     
     bool operator!() const { return m_id == invalidID(); }
     
     // This takes Graph& to remind you, that you should only be calling this method
     // when you're in the main compilation pass (i.e. you have a graph) and not later,
     // like during OSR exit compilation.
-    NodeIndex nodeIndex(const Graph&) const { return static_cast<NodeIndex>(m_id); }
+    Node* node(const Graph&) const { return bitwise_cast<Node*>(m_id); }
     
     bool operator==(const MinifiedID& other) const { return m_id == other.m_id; }
     bool operator!=(const MinifiedID& other) const { return m_id != other.m_id; }

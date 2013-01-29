@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,11 +88,11 @@ private:
         dataLogF("\n");
 #endif
         for (unsigned i = 0; i < block->size(); ++i) {
-            NodeIndex nodeIndex = block->at(i);
-            if (!m_graph[nodeIndex].shouldGenerate())
+            Node* node = block->at(i);
+            if (!node->shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op()), nodeIndex);
+            dataLogF("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op()), node->index());
             m_state.dump(WTF::dataFile());
             dataLogF("\n");
 #endif

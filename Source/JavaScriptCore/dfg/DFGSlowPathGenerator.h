@@ -42,7 +42,7 @@ class SlowPathGenerator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SlowPathGenerator(SpeculativeJIT* jit)
-        : m_compileIndex(jit->m_compileIndex)
+        : m_currentNode(jit->m_currentNode)
     {
     }
     virtual ~SlowPathGenerator() { }
@@ -52,7 +52,7 @@ public:
         dataLogF("Generating slow path %p at offset 0x%x\n", this, jit->m_jit.debugOffset());
 #endif
         m_label = jit->m_jit.label();
-        jit->m_compileIndex = m_compileIndex;
+        jit->m_currentNode = m_currentNode;
         generateInternal(jit);
 #if !ASSERT_DISABLED
         jit->m_jit.breakpoint(); // make sure that the generator jumps back to somewhere
@@ -67,7 +67,7 @@ public:
 protected:
     virtual void generateInternal(SpeculativeJIT*) = 0;
     MacroAssembler::Label m_label;
-    NodeIndex m_compileIndex;
+    Node* m_currentNode;
 };
 
 template<typename JumpType>

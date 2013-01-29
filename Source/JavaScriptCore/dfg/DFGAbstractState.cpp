@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,21 +87,21 @@ void AbstractState::initialize(Graph& graph)
     root->cfaHasVisited = false;
     root->cfaFoundConstants = false;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
-        Node& node = graph[root->variablesAtHead.argument(i)];
-        ASSERT(node.op() == SetArgument);
-        if (!node.shouldGenerate()) {
+        Node* node = root->variablesAtHead.argument(i);
+        ASSERT(node->op() == SetArgument);
+        if (!node->shouldGenerate()) {
             // The argument is dead. We don't do any checks for such arguments, and so
             // for the purpose of the analysis, they contain no value.
             root->valuesAtHead.argument(i).clear();
             continue;
         }
         
-        if (node.variableAccessData()->isCaptured()) {
+        if (node->variableAccessData()->isCaptured()) {
             root->valuesAtHead.argument(i).makeTop();
             continue;
         }
         
-        SpeculatedType prediction = node.variableAccessData()->prediction();
+        SpeculatedType prediction = node->variableAccessData()->prediction();
         if (isInt32Speculation(prediction))
             root->valuesAtHead.argument(i).set(SpecInt32);
         else if (isBooleanSpeculation(prediction))
@@ -114,8 +114,8 @@ void AbstractState::initialize(Graph& graph)
         root->valuesAtTail.argument(i).clear();
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        NodeIndex nodeIndex = root->variablesAtHead.local(i);
-        if (nodeIndex != NoNode && graph[nodeIndex].variableAccessData()->isCaptured())
+        Node* node = root->variablesAtHead.local(i);
+        if (node && node->variableAccessData()->isCaptured())
             root->valuesAtHead.local(i).makeTop();
         else
             root->valuesAtHead.local(i).clear();
@@ -213,11 +213,11 @@ void AbstractState::reset()
     m_branchDirection = InvalidBranchDirection;
 }
 
-AbstractState::BooleanResult AbstractState::booleanResult(Node& node, AbstractValue& value)
+AbstractState::BooleanResult AbstractState::booleanResult(Node* node, AbstractValue& value)
 {
     JSValue childConst = value.value();
     if (childConst) {
-        if (childConst.toBoolean(m_codeBlock->globalObjectFor(node.codeOrigin)->globalExec()))
+        if (childConst.toBoolean(m_codeBlock->globalObjectFor(node->codeOrigin)->globalExec()))
             return DefinitelyTrue;
         return DefinitelyFalse;
     }
@@ -226,7 +226,7 @@ AbstractState::BooleanResult AbstractState::booleanResult(Node& node, AbstractVa
     if (isCellSpeculation(value.m_type)
         && value.m_currentKnownStructure.hasSingleton()) {
         Structure* structure = value.m_currentKnownStructure.singleton();
-        if (!structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node.codeOrigin))
+        if (!structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->codeOrigin))
             && structure->typeInfo().type() != StringType)
             return DefinitelyTrue;
     }
@@ -241,32 +241,31 @@ bool AbstractState::execute(unsigned indexInBlock)
     
     m_didClobber = false;
     
-    NodeIndex nodeIndex = m_block->at(indexInBlock);
-    Node& node = m_graph[nodeIndex];
+    Node* node = m_block->at(indexInBlock);
         
-    if (!node.shouldGenerate())
+    if (!node->shouldGenerate())
         return true;
         
-    switch (node.op()) {
+    switch (node->op()) {
     case JSConstant:
     case WeakJSConstant:
     case PhantomArguments: {
-        forNode(nodeIndex).set(m_graph.valueOfJSConstant(nodeIndex));
-        node.setCanExit(false);
+        forNode(node).set(m_graph.valueOfJSConstant(node));
+        node->setCanExit(false);
         break;
     }
         
     case Identity: {
-        forNode(nodeIndex) = forNode(node.child1());
-        node.setCanExit(false);
+        forNode(node) = forNode(node->child1());
+        node->setCanExit(false);
         break;
     }
             
     case GetLocal: {
-        VariableAccessData* variableAccessData = node.variableAccessData();
+        VariableAccessData* variableAccessData = node->variableAccessData();
         if (variableAccessData->prediction() == SpecNone) {
             m_isValid = false;
-            node.setCanExit(true);
+            node->setCanExit(true);
             break;
         }
         bool canExit = false;
@@ -277,53 +276,53 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         if (value.value())
             m_foundConstants = true;
-        forNode(nodeIndex) = value;
-        node.setCanExit(canExit);
+        forNode(node) = value;
+        node->setCanExit(canExit);
         break;
     }
         
     case GetLocalUnlinked: {
-        AbstractValue value = m_variables.operand(node.unlinkedLocal());
+        AbstractValue value = m_variables.operand(node->unlinkedLocal());
         if (value.value())
             m_foundConstants = true;
-        forNode(nodeIndex) = value;
-        node.setCanExit(false);
+        forNode(node) = value;
+        node->setCanExit(false);
         break;
     }
         
     case SetLocal: {
-        if (node.variableAccessData()->isCaptured()
-            || m_graph.isCreatedThisArgument(node.local())) {
-            m_variables.operand(node.local()) = forNode(node.child1());
-            node.setCanExit(false);
+        if (node->variableAccessData()->isCaptured()
+            || m_graph.isCreatedThisArgument(node->local())) {
+            m_variables.operand(node->local()) = forNode(node->child1());
+            node->setCanExit(false);
             break;
         }
         
-        if (node.variableAccessData()->shouldUseDoubleFormat()) {
+        if (node->variableAccessData()->shouldUseDoubleFormat()) {
             speculateNumberUnary(node);
-            m_variables.operand(node.local()).set(SpecDouble);
+            m_variables.operand(node->local()).set(SpecDouble);
             break;
         }
         
-        SpeculatedType predictedType = node.variableAccessData()->argumentAwarePrediction();
+        SpeculatedType predictedType = node->variableAccessData()->argumentAwarePrediction();
         if (isInt32Speculation(predictedType))
             speculateInt32Unary(node);
         else if (isCellSpeculation(predictedType)) {
-            node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
-            forNode(node.child1()).filter(SpecCell);
+            node->setCanExit(!isCellSpeculation(forNode(node->child1()).m_type));
+            forNode(node->child1()).filter(SpecCell);
         } else if (isBooleanSpeculation(predictedType))
             speculateBooleanUnary(node);
         else
-            node.setCanExit(false);
+            node->setCanExit(false);
         
-        m_variables.operand(node.local()) = forNode(node.child1());
+        m_variables.operand(node->local()) = forNode(node->child1());
         break;
     }
             
     case SetArgument:
         // Assert that the state of arguments has been set.
-        ASSERT(!m_block->valuesAtHead.operand(node.local()).isClear());
-        node.setCanExit(false);
+        ASSERT(!m_block->valuesAtHead.operand(node->local()).isClear());
+        node->setCanExit(false);
         break;
             
     case BitAnd:
@@ -332,30 +331,30 @@ bool AbstractState::execute(unsigned indexInBlock)
     case BitRShift:
     case BitLShift:
     case BitURShift: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
         if (left && right && left.isInt32() && right.isInt32()) {
             int32_t a = left.asInt32();
             int32_t b = right.asInt32();
             bool constantWasSet;
-            switch (node.op()) {
+            switch (node->op()) {
             case BitAnd:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a & b));
+                constantWasSet = trySetConstant(node, JSValue(a & b));
                 break;
             case BitOr:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a | b));
+                constantWasSet = trySetConstant(node, JSValue(a | b));
                 break;
             case BitXor:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a ^ b));
+                constantWasSet = trySetConstant(node, JSValue(a ^ b));
                 break;
             case BitRShift:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a >> static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(node, JSValue(a >> static_cast<uint32_t>(b)));
                 break;
             case BitLShift:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a << static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(node, JSValue(a << static_cast<uint32_t>(b)));
                 break;
             case BitURShift:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(node, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -363,199 +362,199 @@ bool AbstractState::execute(unsigned indexInBlock)
             }
             if (constantWasSet) {
                 m_foundConstants = true;
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
         speculateInt32Binary(node);
-        forNode(nodeIndex).set(SpecInt32);
+        forNode(node).set(SpecInt32);
         break;
     }
         
     case UInt32ToNumber: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
             ASSERT(child.isInt32());
-            if (trySetConstant(nodeIndex, JSValue(child.asUInt32()))) {
+            if (trySetConstant(node, JSValue(child.asUInt32()))) {
                 m_foundConstants = true;
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
-        if (!node.canSpeculateInteger()) {
-            forNode(nodeIndex).set(SpecDouble);
-            node.setCanExit(false);
+        if (!node->canSpeculateInteger()) {
+            forNode(node).set(SpecDouble);
+            node->setCanExit(false);
         } else {
-            forNode(nodeIndex).set(SpecInt32);
-            node.setCanExit(true);
+            forNode(node).set(SpecInt32);
+            node->setCanExit(true);
         }
         break;
     }
               
             
     case DoubleAsInt32: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
             double asDouble = child.asNumber();
             int32_t asInt = JSC::toInt32(asDouble);
             if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)
-                && trySetConstant(nodeIndex, JSValue(asInt))) {
+                && trySetConstant(node, JSValue(asInt))) {
                 m_foundConstants = true;
                 break;
             }
         }
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecNumber);
-        forNode(nodeIndex).set(SpecInt32);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecNumber);
+        forNode(node).set(SpecInt32);
         break;
     }
             
     case ValueToInt32: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
             bool constantWasSet;
             if (child.isInt32())
-                constantWasSet = trySetConstant(nodeIndex, child);
+                constantWasSet = trySetConstant(node, child);
             else
-                constantWasSet = trySetConstant(nodeIndex, JSValue(JSC::toInt32(child.asDouble())));
+                constantWasSet = trySetConstant(node, JSValue(JSC::toInt32(child.asDouble())));
             if (constantWasSet) {
                 m_foundConstants = true;
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
-        if (m_graph[node.child1()].shouldSpeculateInteger())
+        if (node->child1()->shouldSpeculateInteger())
             speculateInt32Unary(node);
-        else if (m_graph[node.child1()].shouldSpeculateNumber())
+        else if (node->child1()->shouldSpeculateNumber())
             speculateNumberUnary(node);
-        else if (m_graph[node.child1()].shouldSpeculateBoolean())
+        else if (node->child1()->shouldSpeculateBoolean())
             speculateBooleanUnary(node);
         else
-            node.setCanExit(false);
+            node->setCanExit(false);
         
-        forNode(nodeIndex).set(SpecInt32);
+        forNode(node).set(SpecInt32);
         break;
     }
         
     case Int32ToDouble: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
-            && trySetConstant(nodeIndex, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
+            && trySetConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         speculateNumberUnary(node);
-        if (isInt32Speculation(forNode(node.child1()).m_type))
-            forNode(nodeIndex).set(SpecDoubleReal);
+        if (isInt32Speculation(forNode(node->child1()).m_type))
+            forNode(node).set(SpecDoubleReal);
         else
-            forNode(nodeIndex).set(SpecDouble);
+            forNode(node).set(SpecDouble);
         break;
     }
         
     case CheckNumber:
-        forNode(node.child1()).filter(SpecNumber);
+        forNode(node->child1()).filter(SpecNumber);
         break;
             
     case ValueAdd:
     case ArithAdd: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(nodeIndex, JSValue(left.asNumber() + right.asNumber()))) {
+            && trySetConstant(node, JSValue(left.asNumber() + right.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         if (m_graph.addShouldSpeculateInteger(node)) {
             speculateInt32Binary(
-                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
-            forNode(nodeIndex).set(SpecInt32);
+                node, !nodeCanTruncateInteger(node->arithNodeFlags()));
+            forNode(node).set(SpecInt32);
             break;
         }
-        if (Node::shouldSpeculateNumberExpectingDefined(m_graph[node.child1()], m_graph[node.child2()])) {
+        if (Node::shouldSpeculateNumberExpectingDefined(node->child1().node(), node->child2().node())) {
             speculateNumberBinary(node);
-            if (isRealNumberSpeculation(forNode(node.child1()).m_type)
-                && isRealNumberSpeculation(forNode(node.child2()).m_type))
-                forNode(nodeIndex).set(SpecDoubleReal);
+            if (isRealNumberSpeculation(forNode(node->child1()).m_type)
+                && isRealNumberSpeculation(forNode(node->child2()).m_type))
+                forNode(node).set(SpecDoubleReal);
             else
-                forNode(nodeIndex).set(SpecDouble);
+                forNode(node).set(SpecDouble);
             break;
         }
-        if (node.op() == ValueAdd) {
-            clobberWorld(node.codeOrigin, indexInBlock);
-            forNode(nodeIndex).set(SpecString | SpecInt32 | SpecNumber);
-            node.setCanExit(false);
+        if (node->op() == ValueAdd) {
+            clobberWorld(node->codeOrigin, indexInBlock);
+            forNode(node).set(SpecString | SpecInt32 | SpecNumber);
+            node->setCanExit(false);
             break;
         }
         // We don't handle this yet. :-(
         m_isValid = false;
-        node.setCanExit(true);
+        node->setCanExit(true);
         break;
     }
             
     case ArithSub: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(nodeIndex, JSValue(left.asNumber() - right.asNumber()))) {
+            && trySetConstant(node, JSValue(left.asNumber() - right.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         if (m_graph.addShouldSpeculateInteger(node)) {
             speculateInt32Binary(
-                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
-            forNode(nodeIndex).set(SpecInt32);
+                node, !nodeCanTruncateInteger(node->arithNodeFlags()));
+            forNode(node).set(SpecInt32);
             break;
         }
         speculateNumberBinary(node);
-        forNode(nodeIndex).set(SpecDouble);
+        forNode(node).set(SpecDouble);
         break;
     }
         
     case ArithNegate: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
-            && trySetConstant(nodeIndex, JSValue(-child.asNumber()))) {
+            && trySetConstant(node, JSValue(-child.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         if (m_graph.negateShouldSpeculateInteger(node)) {
             speculateInt32Unary(
-                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
-            forNode(nodeIndex).set(SpecInt32);
+                node, !nodeCanTruncateInteger(node->arithNodeFlags()));
+            forNode(node).set(SpecInt32);
             break;
         }
         speculateNumberUnary(node);
-        forNode(nodeIndex).set(SpecDouble);
+        forNode(node).set(SpecDouble);
         break;
     }
         
     case ArithMul: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(nodeIndex, JSValue(left.asNumber() * right.asNumber()))) {
+            && trySetConstant(node, JSValue(left.asNumber() * right.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         if (m_graph.mulShouldSpeculateInteger(node)) {
             speculateInt32Binary(
                 node,
-                !nodeCanTruncateInteger(node.arithNodeFlags())
-                || !nodeCanIgnoreNegativeZero(node.arithNodeFlags()));
-            forNode(nodeIndex).set(SpecInt32);
+                !nodeCanTruncateInteger(node->arithNodeFlags())
+                || !nodeCanIgnoreNegativeZero(node->arithNodeFlags()));
+            forNode(node).set(SpecInt32);
             break;
         }
         speculateNumberBinary(node);
-        if (isRealNumberSpeculation(forNode(node.child1()).m_type)
-            || isRealNumberSpeculation(forNode(node.child2()).m_type))
-            forNode(nodeIndex).set(SpecDoubleReal);
+        if (isRealNumberSpeculation(forNode(node->child1()).m_type)
+            || isRealNumberSpeculation(forNode(node->child2()).m_type))
+            forNode(node).set(SpecDoubleReal);
         else
-            forNode(nodeIndex).set(SpecDouble);
+            forNode(node).set(SpecDouble);
         break;
     }
         
@@ -563,24 +562,24 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ArithMin:
     case ArithMax:
     case ArithMod: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()) {
             double a = left.asNumber();
             double b = right.asNumber();
             bool constantWasSet;
-            switch (node.op()) {
+            switch (node->op()) {
             case ArithDiv:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a / b));
+                constantWasSet = trySetConstant(node, JSValue(a / b));
                 break;
             case ArithMin:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a < b ? a : (b <= a ? b : a + b)));
+                constantWasSet = trySetConstant(node, JSValue(a < b ? a : (b <= a ? b : a + b)));
                 break;
             case ArithMax:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(a > b ? a : (b >= a ? b : a + b)));
+                constantWasSet = trySetConstant(node, JSValue(a > b ? a : (b >= a ? b : a + b)));
                 break;
             case ArithMod:
-                constantWasSet = trySetConstant(nodeIndex, JSValue(fmod(a, b)));
+                constantWasSet = trySetConstant(node, JSValue(fmod(a, b)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -589,84 +588,83 @@ bool AbstractState::execute(unsigned indexInBlock)
             }
             if (constantWasSet) {
                 m_foundConstants = true;
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
-        if (Node::shouldSpeculateIntegerForArithmetic(
-                m_graph[node.child1()], m_graph[node.child2()])
-            && node.canSpeculateInteger()) {
+        if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
+            && node->canSpeculateInteger()) {
             speculateInt32Binary(node, true); // forcing can-exit, which is a bit on the conservative side.
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         }
         speculateNumberBinary(node);
-        forNode(nodeIndex).set(SpecDouble);
+        forNode(node).set(SpecDouble);
         break;
     }
             
     case ArithAbs: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
-            && trySetConstant(nodeIndex, JSValue(fabs(child.asNumber())))) {
+            && trySetConstant(node, JSValue(fabs(child.asNumber())))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateIntegerForArithmetic()
-            && node.canSpeculateInteger()) {
+        if (node->child1()->shouldSpeculateIntegerForArithmetic()
+            && node->canSpeculateInteger()) {
             speculateInt32Unary(node, true);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         }
         speculateNumberUnary(node);
-        forNode(nodeIndex).set(SpecDouble);
+        forNode(node).set(SpecDouble);
         break;
     }
             
     case ArithSqrt: {
-        JSValue child = forNode(node.child1()).value();
+        JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
-            && trySetConstant(nodeIndex, JSValue(sqrt(child.asNumber())))) {
+            && trySetConstant(node, JSValue(sqrt(child.asNumber())))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         speculateNumberUnary(node);
-        forNode(nodeIndex).set(SpecDouble);
+        forNode(node).set(SpecDouble);
         break;
     }
             
     case LogicalNot: {
         bool didSetConstant = false;
-        switch (booleanResult(node, forNode(node.child1()))) {
+        switch (booleanResult(node, forNode(node->child1()))) {
         case DefinitelyTrue:
-            didSetConstant = trySetConstant(nodeIndex, jsBoolean(false));
+            didSetConstant = trySetConstant(node, jsBoolean(false));
             break;
         case DefinitelyFalse:
-            didSetConstant = trySetConstant(nodeIndex, jsBoolean(true));
+            didSetConstant = trySetConstant(node, jsBoolean(true));
             break;
         default:
             break;
         }
         if (didSetConstant) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
-        Node& child = m_graph[node.child1()];
-        if (isBooleanSpeculation(child.prediction()))
+        Node* child = node->child1().node();
+        if (isBooleanSpeculation(child->prediction()))
             speculateBooleanUnary(node);
-        else if (child.shouldSpeculateNonStringCellOrOther()) {
-            node.setCanExit(true);
-            forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
-        } else if (child.shouldSpeculateInteger())
+        else if (child->shouldSpeculateNonStringCellOrOther()) {
+            node->setCanExit(true);
+            forNode(child).filter((SpecCell & ~SpecString) | SpecOther);
+        } else if (child->shouldSpeculateInteger())
             speculateInt32Unary(node);
-        else if (child.shouldSpeculateNumber())
+        else if (child->shouldSpeculateNumber())
             speculateNumberUnary(node);
         else
-            node.setCanExit(false);
-        forNode(nodeIndex).set(SpecBoolean);
+            node->setCanExit(false);
+        forNode(node).set(SpecBoolean);
         break;
     }
         
@@ -676,36 +674,36 @@ bool AbstractState::execute(unsigned indexInBlock)
     case IsString:
     case IsObject:
     case IsFunction: {
-        node.setCanExit(node.op() == IsUndefined && m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
-        JSValue child = forNode(node.child1()).value();
+        node->setCanExit(node->op() == IsUndefined && m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
+        JSValue child = forNode(node->child1()).value();
         if (child) {
             bool constantWasSet;
-            switch (node.op()) {
+            switch (node->op()) {
             case IsUndefined:
-                if (m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(
+                if (m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
+                    constantWasSet = trySetConstant(node, jsBoolean(
                         child.isCell()
                         ? false 
                         : child.isUndefined()));
                 } else {
-                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(
+                    constantWasSet = trySetConstant(node, jsBoolean(
                         child.isCell()
-                        ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node.codeOrigin))
+                        ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->codeOrigin))
                         : child.isUndefined()));
                 }
                 break;
             case IsBoolean:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isBoolean()));
+                constantWasSet = trySetConstant(node, jsBoolean(child.isBoolean()));
                 break;
             case IsNumber:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isNumber()));
+                constantWasSet = trySetConstant(node, jsBoolean(child.isNumber()));
                 break;
             case IsString:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(isJSString(child)));
+                constantWasSet = trySetConstant(node, jsBoolean(isJSString(child)));
                 break;
             case IsObject:
                 if (child.isNull() || !child.isObject()) {
-                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isNull()));
+                    constantWasSet = trySetConstant(node, jsBoolean(child.isNull()));
                     break;
                 }
             default:
@@ -718,61 +716,61 @@ bool AbstractState::execute(unsigned indexInBlock)
             }
         }
 
-        forNode(nodeIndex).set(SpecBoolean);
+        forNode(node).set(SpecBoolean);
         break;
     }
 
     case TypeOf: {
         JSGlobalData* globalData = m_codeBlock->globalData();
-        JSValue child = forNode(node.child1()).value();
-        AbstractValue& abstractChild = forNode(node.child1());
+        JSValue child = forNode(node->child1()).value();
+        AbstractValue& abstractChild = forNode(node->child1());
         if (child) {
-            JSValue typeString = jsTypeStringForValue(*globalData, m_codeBlock->globalObjectFor(node.codeOrigin), child);
-            if (trySetConstant(nodeIndex, typeString)) {
+            JSValue typeString = jsTypeStringForValue(*globalData, m_codeBlock->globalObjectFor(node->codeOrigin), child);
+            if (trySetConstant(node, typeString)) {
                 m_foundConstants = true;
                 break;
             }
         } else if (isNumberSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(nodeIndex, globalData->smallStrings.numberString())) {
-                forNode(node.child1()).filter(SpecNumber);
+            if (trySetConstant(node, globalData->smallStrings.numberString())) {
+                forNode(node->child1()).filter(SpecNumber);
                 m_foundConstants = true;
                 break;
             }
         } else if (isStringSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(nodeIndex, globalData->smallStrings.stringString())) {
-                forNode(node.child1()).filter(SpecString);
+            if (trySetConstant(node, globalData->smallStrings.stringString())) {
+                forNode(node->child1()).filter(SpecString);
                 m_foundConstants = true;
                 break;
             }
         } else if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(nodeIndex, globalData->smallStrings.objectString())) {
-                forNode(node.child1()).filter(SpecFinalObject | SpecArray | SpecArguments);
+            if (trySetConstant(node, globalData->smallStrings.objectString())) {
+                forNode(node->child1()).filter(SpecFinalObject | SpecArray | SpecArguments);
                 m_foundConstants = true;
                 break;
             }
         } else if (isFunctionSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(nodeIndex, globalData->smallStrings.functionString())) {
-                forNode(node.child1()).filter(SpecFunction);
+            if (trySetConstant(node, globalData->smallStrings.functionString())) {
+                forNode(node->child1()).filter(SpecFunction);
                 m_foundConstants = true;
                 break;
             }
         } else if (isBooleanSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(nodeIndex, globalData->smallStrings.booleanString())) {
-                forNode(node.child1()).filter(SpecBoolean);
+            if (trySetConstant(node, globalData->smallStrings.booleanString())) {
+                forNode(node->child1()).filter(SpecBoolean);
                 m_foundConstants = true;
                 break;
             }
         } else {
-            Node& childNode = m_graph[node.child1()];
-            if (isCellSpeculation(childNode.prediction())) {
-                if (isStringSpeculation(childNode.prediction()))
-                    forNode(node.child1()).filter(SpecString);
+            Node* childNode = node->child1().node();
+            if (isCellSpeculation(childNode->prediction())) {
+                if (isStringSpeculation(childNode->prediction()))
+                    forNode(childNode).filter(SpecString);
                 else
-                    forNode(node.child1()).filter(SpecCell);
-                node.setCanExit(true);
+                    forNode(childNode).filter(SpecCell);
+                node->setCanExit(true);
             }
         }
-        forNode(nodeIndex).set(SpecString);
+        forNode(node).set(SpecString);
         break;
     }
             
@@ -783,26 +781,26 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CompareEq: {
         bool constantWasSet = false;
 
-        JSValue leftConst = forNode(node.child1()).value();
-        JSValue rightConst = forNode(node.child2()).value();
+        JSValue leftConst = forNode(node->child1()).value();
+        JSValue rightConst = forNode(node->child2()).value();
         if (leftConst && rightConst && leftConst.isNumber() && rightConst.isNumber()) {
             double a = leftConst.asNumber();
             double b = rightConst.asNumber();
-            switch (node.op()) {
+            switch (node->op()) {
             case CompareLess:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a < b));
+                constantWasSet = trySetConstant(node, jsBoolean(a < b));
                 break;
             case CompareLessEq:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a <= b));
+                constantWasSet = trySetConstant(node, jsBoolean(a <= b));
                 break;
             case CompareGreater:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a > b));
+                constantWasSet = trySetConstant(node, jsBoolean(a > b));
                 break;
             case CompareGreaterEq:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a >= b));
+                constantWasSet = trySetConstant(node, jsBoolean(a >= b));
                 break;
             case CompareEq:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a == b));
+                constantWasSet = trySetConstant(node, jsBoolean(a == b));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -811,24 +809,24 @@ bool AbstractState::execute(unsigned indexInBlock)
             }
         }
         
-        if (!constantWasSet && node.op() == CompareEq) {
-            SpeculatedType leftType = forNode(node.child1()).m_type;
-            SpeculatedType rightType = forNode(node.child2()).m_type;
+        if (!constantWasSet && node->op() == CompareEq) {
+            SpeculatedType leftType = forNode(node->child1()).m_type;
+            SpeculatedType rightType = forNode(node->child2()).m_type;
             if ((isInt32Speculation(leftType) && isOtherSpeculation(rightType))
                 || (isOtherSpeculation(leftType) && isInt32Speculation(rightType)))
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(false));
+                constantWasSet = trySetConstant(node, jsBoolean(false));
         }
         
         if (constantWasSet) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         
-        forNode(nodeIndex).set(SpecBoolean);
+        forNode(node).set(SpecBoolean);
         
-        Node& left = m_graph[node.child1()];
-        Node& right = m_graph[node.child2()];
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
         SpeculatedType filter;
         SpeculatedTypeChecker checker;
         if (Node::shouldSpeculateInteger(left, right)) {
@@ -837,122 +835,118 @@ bool AbstractState::execute(unsigned indexInBlock)
         } else if (Node::shouldSpeculateNumber(left, right)) {
             filter = SpecNumber;
             checker = isNumberSpeculation;
-        } else if (node.op() == CompareEq) {
-            if ((m_graph.isConstant(node.child1().index())
-                 && m_graph.valueOfJSConstant(node.child1().index()).isNull())
-                || (m_graph.isConstant(node.child2().index())
-                    && m_graph.valueOfJSConstant(node.child2().index()).isNull())) {
+        } else if (node->op() == CompareEq) {
+            if ((m_graph.isConstant(left) && m_graph.valueOfJSConstant(left).isNull())
+                || (m_graph.isConstant(right) && m_graph.valueOfJSConstant(right).isNull())) {
                 // We can exit if we haven't fired the MasqueradesAsUndefind watchpoint yet.
-                node.setCanExit(m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
+                node->setCanExit(m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
                 break;
             }
             
-            if (left.shouldSpeculateString() || right.shouldSpeculateString()) {
-                node.setCanExit(false);
+            if (left->shouldSpeculateString() || right->shouldSpeculateString()) {
+                node->setCanExit(false);
                 break;
             } 
-            if (left.shouldSpeculateNonStringCell() && right.shouldSpeculateNonStringCellOrOther()) {
-                node.setCanExit(true);
-                forNode(node.child1()).filter(SpecCell & ~SpecString);
-                forNode(node.child2()).filter((SpecCell & ~SpecString) | SpecOther);
+            if (left->shouldSpeculateNonStringCell() && right->shouldSpeculateNonStringCellOrOther()) {
+                node->setCanExit(true);
+                forNode(left).filter(SpecCell & ~SpecString);
+                forNode(right).filter((SpecCell & ~SpecString) | SpecOther);
                 break;
             }
-            if (left.shouldSpeculateNonStringCellOrOther() && right.shouldSpeculateNonStringCell()) {
-                node.setCanExit(true);
-                forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
-                forNode(node.child2()).filter(SpecCell & ~SpecString);
+            if (left->shouldSpeculateNonStringCellOrOther() && right->shouldSpeculateNonStringCell()) {
+                node->setCanExit(true);
+                forNode(left).filter((SpecCell & ~SpecString) | SpecOther);
+                forNode(right).filter(SpecCell & ~SpecString);
                 break;
             }
-            if (left.shouldSpeculateNonStringCell() && right.shouldSpeculateNonStringCell()) {
-                node.setCanExit(true);
-                forNode(node.child1()).filter(SpecCell & ~SpecString);
-                forNode(node.child2()).filter(SpecCell & ~SpecString);
+            if (left->shouldSpeculateNonStringCell() && right->shouldSpeculateNonStringCell()) {
+                node->setCanExit(true);
+                forNode(left).filter(SpecCell & ~SpecString);
+                forNode(right).filter(SpecCell & ~SpecString);
                 break;
             }
  
             filter = SpecTop;
             checker = isAnySpeculation;
-            clobberWorld(node.codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, indexInBlock);
         } else {
             filter = SpecTop;
             checker = isAnySpeculation;
-            clobberWorld(node.codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, indexInBlock);
         }
-        node.setCanExit(
-            !checker(forNode(node.child1()).m_type)
-            || !checker(forNode(node.child2()).m_type));
-        forNode(node.child1()).filter(filter);
-        forNode(node.child2()).filter(filter);
+        node->setCanExit(
+            !checker(forNode(left).m_type)
+            || !checker(forNode(right).m_type));
+        forNode(left).filter(filter);
+        forNode(right).filter(filter);
         break;
     }
             
     case CompareStrictEq: {
-        JSValue left = forNode(node.child1()).value();
-        JSValue right = forNode(node.child2()).value();
+        Node* leftNode = node->child1().node();
+        Node* rightNode = node->child2().node();
+        JSValue left = forNode(leftNode).value();
+        JSValue right = forNode(rightNode).value();
         if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(nodeIndex, jsBoolean(left.asNumber() == right.asNumber()))) {
+            && trySetConstant(node, jsBoolean(left.asNumber() == right.asNumber()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
-        forNode(nodeIndex).set(SpecBoolean);
-        if (m_graph.isJSConstant(node.child1().index())) {
-            JSValue value = m_graph.valueOfJSConstant(node.child1().index());
+        forNode(node).set(SpecBoolean);
+        if (m_graph.isJSConstant(leftNode)) {
+            JSValue value = m_graph.valueOfJSConstant(leftNode);
             if (!value.isNumber() && !value.isString()) {
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
-        if (m_graph.isJSConstant(node.child2().index())) {
-            JSValue value = m_graph.valueOfJSConstant(node.child2().index());
+        if (m_graph.isJSConstant(rightNode)) {
+            JSValue value = m_graph.valueOfJSConstant(rightNode);
             if (!value.isNumber() && !value.isString()) {
-                node.setCanExit(false);
+                node->setCanExit(false);
                 break;
             }
         }
-        if (Node::shouldSpeculateInteger(
-                m_graph[node.child1()], m_graph[node.child2()])) {
+        if (Node::shouldSpeculateInteger(leftNode, rightNode)) {
             speculateInt32Binary(node);
             break;
         }
-        if (Node::shouldSpeculateNumber(
-                m_graph[node.child1()], m_graph[node.child2()])) {
+        if (Node::shouldSpeculateNumber(leftNode, rightNode)) {
             speculateNumberBinary(node);
             break;
         }
-        Node& leftNode = m_graph[node.child1()];
-        Node& rightNode = m_graph[node.child2()];
-        if (leftNode.shouldSpeculateString() || rightNode.shouldSpeculateString()) {
-            node.setCanExit(false);
+        if (leftNode->shouldSpeculateString() || rightNode->shouldSpeculateString()) {
+            node->setCanExit(false);
             break;
         }
-        if (leftNode.shouldSpeculateNonStringCell() && rightNode.shouldSpeculateNonStringCell()) {
-            node.setCanExit(true);
-            forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
-            forNode(node.child2()).filter((SpecCell & ~SpecString) | SpecOther);
+        if (leftNode->shouldSpeculateNonStringCell() && rightNode->shouldSpeculateNonStringCell()) {
+            node->setCanExit(true);
+            forNode(leftNode).filter((SpecCell & ~SpecString) | SpecOther);
+            forNode(rightNode).filter((SpecCell & ~SpecString) | SpecOther);
             break;
         }
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
     }
         
     case StringCharCodeAt:
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecString);
-        forNode(node.child2()).filter(SpecInt32);
-        forNode(nodeIndex).set(SpecInt32);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecString);
+        forNode(node->child2()).filter(SpecInt32);
+        forNode(node).set(SpecInt32);
         break;
         
     case StringCharAt:
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecString);
-        forNode(node.child2()).filter(SpecInt32);
-        forNode(nodeIndex).set(SpecString);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecString);
+        forNode(node->child2()).filter(SpecInt32);
+        forNode(node).set(SpecString);
         break;
             
     case GetByVal: {
-        node.setCanExit(true);
-        switch (node.arrayMode().type()) {
+        node->setCanExit(true);
+        switch (node->arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
         case Array::Undecided:
@@ -962,81 +956,81 @@ bool AbstractState::execute(unsigned indexInBlock)
             m_isValid = false;
             break;
         case Array::Generic:
-            clobberWorld(node.codeOrigin, indexInBlock);
-            forNode(nodeIndex).makeTop();
+            clobberWorld(node->codeOrigin, indexInBlock);
+            forNode(node).makeTop();
             break;
         case Array::String:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecString);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecString);
             break;
         case Array::Arguments:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).makeTop();
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).makeTop();
             break;
         case Array::Int32:
-            forNode(node.child2()).filter(SpecInt32);
-            if (node.arrayMode().isOutOfBounds()) {
-                clobberWorld(node.codeOrigin, indexInBlock);
-                forNode(nodeIndex).makeTop();
+            forNode(node->child2()).filter(SpecInt32);
+            if (node->arrayMode().isOutOfBounds()) {
+                clobberWorld(node->codeOrigin, indexInBlock);
+                forNode(node).makeTop();
             } else
-                forNode(nodeIndex).set(SpecInt32);
+                forNode(node).set(SpecInt32);
             break;
         case Array::Double:
-            forNode(node.child2()).filter(SpecInt32);
-            if (node.arrayMode().isOutOfBounds()) {
-                clobberWorld(node.codeOrigin, indexInBlock);
-                forNode(nodeIndex).makeTop();
-            } else if (node.arrayMode().isSaneChain())
-                forNode(nodeIndex).set(SpecDouble);
+            forNode(node->child2()).filter(SpecInt32);
+            if (node->arrayMode().isOutOfBounds()) {
+                clobberWorld(node->codeOrigin, indexInBlock);
+                forNode(node).makeTop();
+            } else if (node->arrayMode().isSaneChain())
+                forNode(node).set(SpecDouble);
             else
-                forNode(nodeIndex).set(SpecDoubleReal);
+                forNode(node).set(SpecDoubleReal);
             break;
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            forNode(node.child2()).filter(SpecInt32);
-            if (node.arrayMode().isOutOfBounds())
-                clobberWorld(node.codeOrigin, indexInBlock);
-            forNode(nodeIndex).makeTop();
+            forNode(node->child2()).filter(SpecInt32);
+            if (node->arrayMode().isOutOfBounds())
+                clobberWorld(node->codeOrigin, indexInBlock);
+            forNode(node).makeTop();
             break;
         case Array::Int8Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Int16Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Int32Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Uint8Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Uint8ClampedArray:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Uint16Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         case Array::Uint32Array:
-            forNode(node.child2()).filter(SpecInt32);
-            if (node.shouldSpeculateInteger())
-                forNode(nodeIndex).set(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
+            if (node->shouldSpeculateInteger())
+                forNode(node).set(SpecInt32);
             else
-                forNode(nodeIndex).set(SpecDouble);
+                forNode(node).set(SpecDouble);
             break;
         case Array::Float32Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecDouble);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecDouble);
             break;
         case Array::Float64Array:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).set(SpecDouble);
+            forNode(node->child2()).filter(SpecInt32);
+            forNode(node).set(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1047,43 +1041,43 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case PutByVal:
     case PutByValAlias: {
-        node.setCanExit(true);
+        node->setCanExit(true);
         Edge child1 = m_graph.varArgChild(node, 0);
         Edge child2 = m_graph.varArgChild(node, 1);
         Edge child3 = m_graph.varArgChild(node, 2);
-        switch (node.arrayMode().modeForPut().type()) {
+        switch (node->arrayMode().modeForPut().type()) {
         case Array::ForceExit:
             m_isValid = false;
             break;
         case Array::Generic:
-            clobberWorld(node.codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, indexInBlock);
             break;
         case Array::Int32:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
             forNode(child3).filter(SpecInt32);
-            if (node.arrayMode().isOutOfBounds())
-                clobberWorld(node.codeOrigin, indexInBlock);
+            if (node->arrayMode().isOutOfBounds())
+                clobberWorld(node->codeOrigin, indexInBlock);
             break;
         case Array::Double:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
             forNode(child3).filter(SpecRealNumber);
-            if (node.arrayMode().isOutOfBounds())
-                clobberWorld(node.codeOrigin, indexInBlock);
+            if (node->arrayMode().isOutOfBounds())
+                clobberWorld(node->codeOrigin, indexInBlock);
             break;
         case Array::Contiguous:
         case Array::ArrayStorage:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (node.arrayMode().isOutOfBounds())
-                clobberWorld(node.codeOrigin, indexInBlock);
+            if (node->arrayMode().isOutOfBounds())
+                clobberWorld(node->codeOrigin, indexInBlock);
             break;
         case Array::SlowPutArrayStorage:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (node.arrayMode().mayStoreToHole())
-                clobberWorld(node.codeOrigin, indexInBlock);
+            if (node->arrayMode().mayStoreToHole())
+                clobberWorld(node->codeOrigin, indexInBlock);
             break;
         case Array::Arguments:
             forNode(child1).filter(SpecCell);
@@ -1092,7 +1086,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Int8Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1100,7 +1094,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Int16Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1108,7 +1102,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Int32Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1116,7 +1110,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Uint8Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1124,7 +1118,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Uint8ClampedArray:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1132,7 +1126,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Uint16Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1140,7 +1134,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Uint32Array:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
-            if (m_graph[child3].shouldSpeculateInteger())
+            if (child3->shouldSpeculateInteger())
                 forNode(child3).filter(SpecInt32);
             else
                 forNode(child3).filter(SpecNumber);
@@ -1163,166 +1157,188 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case ArrayPush:
-        node.setCanExit(true);
-        switch (node.arrayMode().type()) {
+        node->setCanExit(true);
+        switch (node->arrayMode().type()) {
         case Array::Int32:
-            forNode(node.child2()).filter(SpecInt32);
+            forNode(node->child2()).filter(SpecInt32);
             break;
         case Array::Double:
-            forNode(node.child2()).filter(SpecRealNumber);
+            forNode(node->child2()).filter(SpecRealNumber);
             break;
         default:
             break;
         }
-        clobberWorld(node.codeOrigin, indexInBlock);
-        forNode(nodeIndex).set(SpecNumber);
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).set(SpecNumber);
         break;
             
     case ArrayPop:
-        node.setCanExit(true);
-        clobberWorld(node.codeOrigin, indexInBlock);
-        forNode(nodeIndex).makeTop();
+        node->setCanExit(true);
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).makeTop();
         break;
             
     case RegExpExec:
     case RegExpTest:
-        node.setCanExit(
-            !isCellSpeculation(forNode(node.child1()).m_type)
-            || !isCellSpeculation(forNode(node.child2()).m_type));
-        forNode(node.child1()).filter(SpecCell);
-        forNode(node.child2()).filter(SpecCell);
-        forNode(nodeIndex).makeTop();
+        node->setCanExit(
+            !isCellSpeculation(forNode(node->child1()).m_type)
+            || !isCellSpeculation(forNode(node->child2()).m_type));
+        forNode(node->child1()).filter(SpecCell);
+        forNode(node->child2()).filter(SpecCell);
+        forNode(node).makeTop();
         break;
             
     case Jump:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
             
     case Branch: {
-        BooleanResult result = booleanResult(node, forNode(node.child1()));
+        Node* child = node->child1().node();
+        BooleanResult result = booleanResult(node, forNode(child));
         if (result == DefinitelyTrue) {
             m_branchDirection = TakeTrue;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         if (result == DefinitelyFalse) {
             m_branchDirection = TakeFalse;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         // FIXME: The above handles the trivial cases of sparse conditional
         // constant propagation, but we can do better:
         // We can specialize the source variable's value on each direction of
         // the branch.
-        Node& child = m_graph[node.child1()];
-        if (child.shouldSpeculateBoolean())
+        if (child->shouldSpeculateBoolean())
             speculateBooleanUnary(node);
-        else if (child.shouldSpeculateNonStringCellOrOther()) {
-            node.setCanExit(true);
-            forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
-        } else if (child.shouldSpeculateInteger())
+        else if (child->shouldSpeculateNonStringCellOrOther()) {
+            node->setCanExit(true);
+            forNode(child).filter((SpecCell & ~SpecString) | SpecOther);
+        } else if (child->shouldSpeculateInteger())
             speculateInt32Unary(node);
-        else if (child.shouldSpeculateNumber())
+        else if (child->shouldSpeculateNumber())
             speculateNumberUnary(node);
         else
-            node.setCanExit(false);
+            node->setCanExit(false);
         m_branchDirection = TakeBoth;
         break;
     }
             
     case Return:
         m_isValid = false;
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
         
     case Throw:
     case ThrowReferenceError:
         m_isValid = false;
-        node.setCanExit(true);
+        node->setCanExit(true);
         break;
             
     case ToPrimitive: {
-        JSValue childConst = forNode(node.child1()).value();
-        if (childConst && childConst.isNumber() && trySetConstant(nodeIndex, childConst)) {
+        Node* child = node->child1().node();
+        
+        JSValue childConst = forNode(child).value();
+        if (childConst && childConst.isNumber() && trySetConstant(node, childConst)) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         
-        Node& child = m_graph[node.child1()];
-        if (child.shouldSpeculateInteger()) {
+        if (child->shouldSpeculateInteger()) {
             speculateInt32Unary(node);
-            forNode(nodeIndex).set(SpecInt32);
+            forNode(node).set(SpecInt32);
             break;
         }
 
-        AbstractValue& source = forNode(node.child1());
-        AbstractValue& destination = forNode(nodeIndex);
-            
+        AbstractValue& source = forNode(child);
+        AbstractValue& destination = forNode(node);
+        
+        // NB. The more canonical way of writing this would have been:
+        //
+        // destination = source;
+        // if (destination.m_type & !(SpecNumber | SpecString | SpecBoolean)) {
+        //     destination.filter(SpecNumber | SpecString | SpecBoolean);
+        //     AbstractValue string;
+        //     string.set(globalData->stringStructure);
+        //     destination.merge(string);
+        // }
+        //
+        // The reason why this would, in most other cases, have been better is that
+        // then destination would preserve any non-SpeculatedType knowledge of source.
+        // As it stands, the code below forgets any non-SpeculatedType knowledge that
+        // source would have had. Fortunately, though, for things like strings and
+        // numbers and booleans, we don't care about the non-SpeculatedType knowedge:
+        // the structure won't tell us anything we don't already know, and neither
+        // will ArrayModes. And if the source was a meaningful constant then we
+        // would have handled that above. Unfortunately, this does mean that
+        // ToPrimitive will currently forget string constants. But that's not a big
+        // deal since we don't do any optimization on those currently.
+        
         SpeculatedType type = source.m_type;
         if (type & ~(SpecNumber | SpecString | SpecBoolean)) {
             type &= (SpecNumber | SpecString | SpecBoolean);
             type |= SpecString;
         }
         destination.set(type);
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
     }
             
     case StrCat:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(SpecString);
+        node->setCanExit(false);
+        forNode(node).set(SpecString);
         break;
             
     case NewArray:
-        node.setCanExit(true);
-        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node.indexingType()));
+        node->setCanExit(true);
+        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         m_haveStructures = true;
         break;
         
     case NewArrayBuffer:
-        node.setCanExit(true);
-        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node.indexingType()));
+        node->setCanExit(true);
+        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         m_haveStructures = true;
         break;
 
     case NewArrayWithSize:
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecInt32);
-        forNode(nodeIndex).set(SpecArray);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecInt32);
+        forNode(node).set(SpecArray);
         m_haveStructures = true;
         break;
             
     case NewRegexp:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->regExpStructure());
+        node->setCanExit(false);
+        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->regExpStructure());
         m_haveStructures = true;
         break;
             
     case ConvertThis: {
-        Node& child = m_graph[node.child1()];
-        AbstractValue& source = forNode(node.child1());
-        AbstractValue& destination = forNode(nodeIndex);
+        Node* child = node->child1().node();
+        AbstractValue& source = forNode(node->child1());
+        AbstractValue& destination = forNode(node);
             
         if (isObjectSpeculation(source.m_type)) {
             // This is the simple case. We already know that the source is an
             // object, so there's nothing to do. I don't think this case will
             // be hit, but then again, you never know.
             destination = source;
-            node.setCanExit(false);
+            node->setCanExit(false);
             m_foundConstants = true; // Tell the constant folder to turn this into Identity.
             break;
         }
         
-        node.setCanExit(true);
+        node->setCanExit(true);
         
-        if (isOtherSpeculation(child.prediction())) {
+        if (isOtherSpeculation(child->prediction())) {
             source.filter(SpecOther);
             destination.set(SpecObjectOther);
             break;
         }
         
-        if (isObjectSpeculation(child.prediction())) {
+        if (isObjectSpeculation(child->prediction())) {
             source.filter(SpecObjectMask);
             destination = source;
             break;
@@ -1334,10 +1350,10 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
 
     case CreateThis: {
-        AbstractValue& source = forNode(node.child1());
-        AbstractValue& destination = forNode(nodeIndex);
+        AbstractValue& source = forNode(node->child1());
+        AbstractValue& destination = forNode(node);
         
-        node.setCanExit(!isCellSpeculation(source.m_type));
+        node->setCanExit(!isCellSpeculation(source.m_type));
             
         source.filter(SpecFunction);
         destination.set(SpecFinalObject);
@@ -1345,41 +1361,41 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
         
     case AllocationProfileWatchpoint:
-        node.setCanExit(true);
+        node->setCanExit(true);
         break;
 
     case NewObject:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(node.structure());
+        node->setCanExit(false);
+        forNode(node).set(node->structure());
         m_haveStructures = true;
         break;
         
     case CreateActivation:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->activationStructure());
+        node->setCanExit(false);
+        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
         m_haveStructures = true;
         break;
         
     case CreateArguments:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->argumentsStructure());
+        node->setCanExit(false);
+        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->argumentsStructure());
         m_haveStructures = true;
         break;
         
     case TearOffActivation:
     case TearOffArguments:
-        node.setCanExit(false);
+        node->setCanExit(false);
         // Does nothing that is user-visible.
         break;
 
     case CheckArgumentsNotCreated:
         if (isEmptySpeculation(
                 m_variables.operand(
-                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type)) {
-            node.setCanExit(false);
+                    m_graph.argumentsRegisterFor(node->codeOrigin)).m_type)) {
+            node->setCanExit(false);
             m_foundConstants = true;
         } else
-            node.setCanExit(true);
+            node->setCanExit(true);
         break;
         
     case GetMyArgumentsLength:
@@ -1387,111 +1403,111 @@ bool AbstractState::execute(unsigned indexInBlock)
         // the arguments a bit. Note that this is not sufficient to force constant folding
         // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
         // We perform further optimizations on this later on.
-        if (node.codeOrigin.inlineCallFrame)
-            forNode(nodeIndex).set(jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1));
+        if (node->codeOrigin.inlineCallFrame)
+            forNode(node).set(jsNumber(node->codeOrigin.inlineCallFrame->arguments.size() - 1));
         else
-            forNode(nodeIndex).set(SpecInt32);
-        node.setCanExit(
+            forNode(node).set(SpecInt32);
+        node->setCanExit(
             !isEmptySpeculation(
                 m_variables.operand(
-                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type));
+                    m_graph.argumentsRegisterFor(node->codeOrigin)).m_type));
         break;
         
     case GetMyArgumentsLengthSafe:
-        node.setCanExit(false);
+        node->setCanExit(false);
         // This potentially clobbers all structures if the arguments object had a getter
         // installed on the length property.
-        clobberWorld(node.codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, indexInBlock);
         // We currently make no guarantee about what this returns because it does not
         // speculate that the length property is actually a length.
-        forNode(nodeIndex).makeTop();
+        forNode(node).makeTop();
         break;
         
     case GetMyArgumentByVal:
-        node.setCanExit(true);
+        node->setCanExit(true);
         // We know that this executable does not escape its arguments, so we can optimize
         // the arguments a bit. Note that this ends up being further optimized by the
         // ArgumentsSimplificationPhase.
-        forNode(node.child1()).filter(SpecInt32);
-        forNode(nodeIndex).makeTop();
+        forNode(node->child1()).filter(SpecInt32);
+        forNode(node).makeTop();
         break;
         
     case GetMyArgumentByValSafe:
-        node.setCanExit(true);
+        node->setCanExit(true);
         // This potentially clobbers all structures if the property we're accessing has
         // a getter. We don't speculate against this.
-        clobberWorld(node.codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, indexInBlock);
         // But we do speculate that the index is an integer.
-        forNode(node.child1()).filter(SpecInt32);
+        forNode(node->child1()).filter(SpecInt32);
         // And the result is unknown.
-        forNode(nodeIndex).makeTop();
+        forNode(node).makeTop();
         break;
         
     case NewFunction:
     case NewFunctionExpression:
     case NewFunctionNoCheck:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->functionStructure());
+        node->setCanExit(false);
+        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->functionStructure());
         break;
         
     case GetCallee:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(SpecFunction);
+        node->setCanExit(false);
+        forNode(node).set(SpecFunction);
         break;
         
     case SetCallee:
     case SetMyScope:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
             
     case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
     case SkipTopScope:
-        node.setCanExit(false);
-        forNode(nodeIndex).set(SpecCellOther);
+        node->setCanExit(false);
+        forNode(node).set(SpecCellOther);
         break;
 
     case SkipScope: {
-        node.setCanExit(false);
-        JSValue child = forNode(node.child1()).value();
-        if (child && trySetConstant(nodeIndex, JSValue(jsCast<JSScope*>(child.asCell())->next()))) {
+        node->setCanExit(false);
+        JSValue child = forNode(node->child1()).value();
+        if (child && trySetConstant(node, JSValue(jsCast<JSScope*>(child.asCell())->next()))) {
             m_foundConstants = true;
             break;
         }
-        forNode(nodeIndex).set(SpecCellOther);
+        forNode(node).set(SpecCellOther);
         break;
     }
 
     case GetScopeRegisters:
-        node.setCanExit(false);
-        forNode(node.child1()).filter(SpecCell);
-        forNode(nodeIndex).clear(); // The result is not a JS value.
+        node->setCanExit(false);
+        forNode(node->child1()).filter(SpecCell);
+        forNode(node).clear(); // The result is not a JS value.
         break;
 
     case GetScopedVar:
-        node.setCanExit(false);
-        forNode(nodeIndex).makeTop();
+        node->setCanExit(false);
+        forNode(node).makeTop();
         break;
             
     case PutScopedVar:
-        node.setCanExit(false);
-        clobberCapturedVars(node.codeOrigin);
+        node->setCanExit(false);
+        clobberCapturedVars(node->codeOrigin);
         break;
             
     case GetById:
     case GetByIdFlush:
-        node.setCanExit(true);
-        if (!node.prediction()) {
+        node->setCanExit(true);
+        if (!node->prediction()) {
             m_isValid = false;
             break;
         }
-        if (isCellSpeculation(m_graph[node.child1()].prediction())) {
-            forNode(node.child1()).filter(SpecCell);
+        if (isCellSpeculation(node->child1()->prediction())) {
+            forNode(node->child1()).filter(SpecCell);
 
-            if (Structure* structure = forNode(node.child1()).bestProvenStructure()) {
+            if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     m_graph.m_globalData, structure,
-                    m_graph.m_codeBlock->identifier(node.identifierNumber()));
+                    m_graph.m_codeBlock->identifier(node->identifierNumber()));
                 if (status.isSimple()) {
                     // Assert things that we can't handle and that the computeFor() method
                     // above won't be able to return.
@@ -1499,23 +1515,23 @@ bool AbstractState::execute(unsigned indexInBlock)
                     ASSERT(status.chain().isEmpty());
                     
                     if (status.specificValue())
-                        forNode(nodeIndex).set(status.specificValue());
+                        forNode(node).set(status.specificValue());
                     else
-                        forNode(nodeIndex).makeTop();
-                    forNode(node.child1()).filter(status.structureSet());
+                        forNode(node).makeTop();
+                    forNode(node->child1()).filter(status.structureSet());
                     
                     m_foundConstants = true;
                     break;
                 }
             }
         }
-        clobberWorld(node.codeOrigin, indexInBlock);
-        forNode(nodeIndex).makeTop();
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).makeTop();
         break;
             
     case GetArrayLength:
-        node.setCanExit(true); // Lies, but it's true for the common case of JSArray, so it's good enough.
-        forNode(nodeIndex).set(SpecInt32);
+        node->setCanExit(true); // Lies, but it's true for the common case of JSArray, so it's good enough.
+        forNode(node).set(SpecInt32);
         break;
         
     case CheckExecutable: {
@@ -1523,23 +1539,23 @@ bool AbstractState::execute(unsigned indexInBlock)
         // more thoroughly. https://bugs.webkit.org/show_bug.cgi?id=106200
         // FIXME: We could eliminate these entirely if we know the exact value that flows into this.
         // https://bugs.webkit.org/show_bug.cgi?id=106201
-        forNode(node.child1()).filter(SpecCell);
-        node.setCanExit(true);
+        forNode(node->child1()).filter(SpecCell);
+        node->setCanExit(true);
         break;
     }
 
     case CheckStructure:
     case ForwardCheckStructure: {
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
-        AbstractValue& value = forNode(node.child1());
+        AbstractValue& value = forNode(node->child1());
         // If this structure check is attempting to prove knowledge already held in
         // the futurePossibleStructure set then the constant folding phase should
         // turn this into a watchpoint instead.
-        StructureSet& set = node.structureSet();
+        StructureSet& set = node->structureSet();
         if (value.m_futurePossibleStructure.isSubsetOf(set)
             || value.m_currentKnownStructure.isSubsetOf(set))
             m_foundConstants = true;
-        node.setCanExit(
+        node->setCanExit(
             !value.m_currentKnownStructure.isSubsetOf(set)
             || !isCellSpeculation(value.m_type));
         value.filter(set);
@@ -1549,7 +1565,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     case StructureTransitionWatchpoint:
     case ForwardStructureTransitionWatchpoint: {
-        AbstractValue& value = forNode(node.child1());
+        AbstractValue& value = forNode(node->child1());
 
         // It's only valid to issue a structure transition watchpoint if we already
         // know that the watchpoint covers a superset of the structures known to
@@ -1557,154 +1573,154 @@ bool AbstractState::execute(unsigned indexInBlock)
         // Currently, we only issue singleton watchpoints (that check one structure)
         // and our futurePossibleStructure set can only contain zero, one, or an
         // infinity of structures.
-        ASSERT(value.m_futurePossibleStructure.isSubsetOf(StructureSet(node.structure())));
+        ASSERT(value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure())));
         
         ASSERT(value.isClear() || isCellSpeculation(value.m_type)); // Value could be clear if we've proven must-exit due to a speculation statically known to be bad.
-        value.filter(node.structure());
+        value.filter(node->structure());
         m_haveStructures = true;
-        node.setCanExit(true);
+        node->setCanExit(true);
         break;
     }
             
     case PutStructure:
     case PhantomPutStructure:
-        node.setCanExit(false);
-        if (!forNode(node.child1()).m_currentKnownStructure.isClear()) {
+        node->setCanExit(false);
+        if (!forNode(node->child1()).m_currentKnownStructure.isClear()) {
             clobberStructures(indexInBlock);
-            forNode(node.child1()).set(node.structureTransitionData().newStructure);
+            forNode(node->child1()).set(node->structureTransitionData().newStructure);
             m_haveStructures = true;
         }
         break;
     case GetButterfly:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
-        node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
-        forNode(node.child1()).filter(SpecCell);
-        forNode(nodeIndex).clear(); // The result is not a JS value.
+        node->setCanExit(!isCellSpeculation(forNode(node->child1()).m_type));
+        forNode(node->child1()).filter(SpecCell);
+        forNode(node).clear(); // The result is not a JS value.
         break;
     case CheckArray: {
-        if (node.arrayMode().alreadyChecked(m_graph, node, forNode(node.child1()))) {
+        if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
-        node.setCanExit(true); // Lies, but this is followed by operations (like GetByVal) that always exit, so there is no point in us trying to be clever here.
-        switch (node.arrayMode().type()) {
+        node->setCanExit(true); // Lies, but this is followed by operations (like GetByVal) that always exit, so there is no point in us trying to be clever here.
+        switch (node->arrayMode().type()) {
         case Array::String:
-            forNode(node.child1()).filter(SpecString);
+            forNode(node->child1()).filter(SpecString);
             break;
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            forNode(node.child1()).filter(SpecCell);
+            forNode(node->child1()).filter(SpecCell);
             break;
         case Array::Arguments:
-            forNode(node.child1()).filter(SpecArguments);
+            forNode(node->child1()).filter(SpecArguments);
             break;
         case Array::Int8Array:
-            forNode(node.child1()).filter(SpecInt8Array);
+            forNode(node->child1()).filter(SpecInt8Array);
             break;
         case Array::Int16Array:
-            forNode(node.child1()).filter(SpecInt16Array);
+            forNode(node->child1()).filter(SpecInt16Array);
             break;
         case Array::Int32Array:
-            forNode(node.child1()).filter(SpecInt32Array);
+            forNode(node->child1()).filter(SpecInt32Array);
             break;
         case Array::Uint8Array:
-            forNode(node.child1()).filter(SpecUint8Array);
+            forNode(node->child1()).filter(SpecUint8Array);
             break;
         case Array::Uint8ClampedArray:
-            forNode(node.child1()).filter(SpecUint8ClampedArray);
+            forNode(node->child1()).filter(SpecUint8ClampedArray);
             break;
         case Array::Uint16Array:
-            forNode(node.child1()).filter(SpecUint16Array);
+            forNode(node->child1()).filter(SpecUint16Array);
             break;
         case Array::Uint32Array:
-            forNode(node.child1()).filter(SpecUint32Array);
+            forNode(node->child1()).filter(SpecUint32Array);
             break;
         case Array::Float32Array:
-            forNode(node.child1()).filter(SpecFloat32Array);
+            forNode(node->child1()).filter(SpecFloat32Array);
             break;
         case Array::Float64Array:
-            forNode(node.child1()).filter(SpecFloat64Array);
+            forNode(node->child1()).filter(SpecFloat64Array);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node.child1()).filterArrayModes(node.arrayMode().arrayModesThatPassFiltering());
+        forNode(node->child1()).filterArrayModes(node->arrayMode().arrayModesThatPassFiltering());
         m_haveStructures = true;
         break;
     }
     case Arrayify: {
-        if (node.arrayMode().alreadyChecked(m_graph, node, forNode(node.child1()))) {
+        if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_foundConstants = true;
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
-        ASSERT(node.arrayMode().conversion() == Array::Convert
-            || node.arrayMode().conversion() == Array::RageConvert);
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecCell);
-        if (node.child2())
-            forNode(node.child2()).filter(SpecInt32);
+        ASSERT(node->arrayMode().conversion() == Array::Convert
+            || node->arrayMode().conversion() == Array::RageConvert);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecCell);
+        if (node->child2())
+            forNode(node->child2()).filter(SpecInt32);
         clobberStructures(indexInBlock);
-        forNode(node.child1()).filterArrayModes(node.arrayMode().arrayModesThatPassFiltering());
+        forNode(node->child1()).filterArrayModes(node->arrayMode().arrayModesThatPassFiltering());
         m_haveStructures = true;
         break;
     }
     case ArrayifyToStructure: {
-        AbstractValue& value = forNode(node.child1());
-        StructureSet set = node.structure();
+        AbstractValue& value = forNode(node->child1());
+        StructureSet set = node->structure();
         if (value.m_futurePossibleStructure.isSubsetOf(set)
             || value.m_currentKnownStructure.isSubsetOf(set))
             m_foundConstants = true;
-        node.setCanExit(true);
-        if (node.child2())
-            forNode(node.child2()).filter(SpecInt32);
+        node->setCanExit(true);
+        if (node->child2())
+            forNode(node->child2()).filter(SpecInt32);
         clobberStructures(indexInBlock);
         value.filter(set);
         m_haveStructures = true;
         break;
     }
     case GetIndexedPropertyStorage: {
-        node.setCanExit(false);
-        forNode(nodeIndex).clear();
+        node->setCanExit(false);
+        forNode(node).clear();
         break; 
     }
     case GetByOffset:
-        if (!m_graph[node.child1()].hasStorageResult()) {
-            node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
-            forNode(node.child1()).filter(SpecCell);
+        if (!node->child1()->hasStorageResult()) {
+            node->setCanExit(!isCellSpeculation(forNode(node->child1()).m_type));
+            forNode(node->child1()).filter(SpecCell);
         }
-        forNode(nodeIndex).makeTop();
+        forNode(node).makeTop();
         break;
             
     case PutByOffset: {
         bool canExit = false;
-        if (!m_graph[node.child1()].hasStorageResult()) {
-            canExit |= !isCellSpeculation(forNode(node.child1()).m_type);
-            forNode(node.child1()).filter(SpecCell);
+        if (!node->child1()->hasStorageResult()) {
+            canExit |= !isCellSpeculation(forNode(node->child1()).m_type);
+            forNode(node->child1()).filter(SpecCell);
         }
-        canExit |= !isCellSpeculation(forNode(node.child2()).m_type);
-        forNode(node.child2()).filter(SpecCell);
-        node.setCanExit(canExit);
+        canExit |= !isCellSpeculation(forNode(node->child2()).m_type);
+        forNode(node->child2()).filter(SpecCell);
+        node->setCanExit(canExit);
         break;
     }
             
     case CheckFunction: {
-        JSValue value = forNode(node.child1()).value();
-        if (value == node.function()) {
+        JSValue value = forNode(node->child1()).value();
+        if (value == node->function()) {
             m_foundConstants = true;
             ASSERT(value);
-            node.setCanExit(false);
+            node->setCanExit(false);
             break;
         }
         
-        node.setCanExit(true); // Lies! We can do better.
-        if (!forNode(node.child1()).filterByValue(node.function())) {
+        node->setCanExit(true); // Lies! We can do better.
+        if (!forNode(node->child1()).filterByValue(node->function())) {
             m_isValid = false;
             break;
         }
@@ -1713,67 +1729,69 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     case PutById:
     case PutByIdDirect:
-        node.setCanExit(true);
-        if (Structure* structure = forNode(node.child1()).bestProvenStructure()) {
+        node->setCanExit(true);
+        if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.m_globalData,
-                m_graph.globalObjectFor(node.codeOrigin),
+                m_graph.globalObjectFor(node->codeOrigin),
                 structure,
-                m_graph.m_codeBlock->identifier(node.identifierNumber()),
-                node.op() == PutByIdDirect);
+                m_graph.m_codeBlock->identifier(node->identifierNumber()),
+                node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
-                forNode(node.child1()).filter(structure);
+                forNode(node->child1()).filter(structure);
                 m_foundConstants = true;
                 break;
             }
             if (status.isSimpleTransition()) {
                 clobberStructures(indexInBlock);
-                forNode(node.child1()).set(status.newStructure());
+                forNode(node->child1()).set(status.newStructure());
                 m_haveStructures = true;
                 m_foundConstants = true;
                 break;
             }
         }
-        forNode(node.child1()).filter(SpecCell);
-        clobberWorld(node.codeOrigin, indexInBlock);
+        forNode(node->child1()).filter(SpecCell);
+        clobberWorld(node->codeOrigin, indexInBlock);
         break;
             
     case GetGlobalVar:
-        node.setCanExit(false);
-        forNode(nodeIndex).makeTop();
+        node->setCanExit(false);
+        forNode(node).makeTop();
         break;
         
     case GlobalVarWatchpoint:
-        node.setCanExit(true);
+        node->setCanExit(true);
         break;
             
     case PutGlobalVar:
     case PutGlobalVarCheck:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
             
     case CheckHasInstance:
-        node.setCanExit(true);
-        forNode(node.child1()).filter(SpecCell);
+        node->setCanExit(true);
+        forNode(node->child1()).filter(SpecCell);
         // Sadly, we don't propagate the fact that we've done CheckHasInstance
         break;
             
     case InstanceOf:
-        node.setCanExit(true);
+        node->setCanExit(true);
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
-        if (!(m_graph[node.child1()].prediction() & ~SpecCell) && !(forNode(node.child1()).m_type & ~SpecCell))
-            forNode(node.child1()).filter(SpecCell);
-        forNode(node.child2()).filter(SpecCell);
-        forNode(nodeIndex).set(SpecBoolean);
+        // FIXME: This appears broken: CheckHasInstance already does an unconditional cell
+        // check. https://bugs.webkit.org/show_bug.cgi?id=107479
+        if (!(node->child1()->prediction() & ~SpecCell) && !(forNode(node->child1()).m_type & ~SpecCell))
+            forNode(node->child1()).filter(SpecCell);
+        forNode(node->child2()).filter(SpecCell);
+        forNode(node).set(SpecBoolean);
         break;
             
     case Phi:
     case Flush:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
             
     case Breakpoint:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
             
     case Call:
@@ -1782,18 +1800,18 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ResolveBase:
     case ResolveBaseStrictPut:
     case ResolveGlobal:
-        node.setCanExit(true);
-        clobberWorld(node.codeOrigin, indexInBlock);
-        forNode(nodeIndex).makeTop();
+        node->setCanExit(true);
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).makeTop();
         break;
 
     case GarbageValue:
-        clobberWorld(node.codeOrigin, indexInBlock);
-        forNode(nodeIndex).makeTop();
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).makeTop();
         break;
 
     case ForceOSRExit:
-        node.setCanExit(true);
+        node->setCanExit(true);
         m_isValid = false;
         break;
             
@@ -1801,7 +1819,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case InlineStart:
     case Nop:
     case CountExecution:
-        node.setCanExit(false);
+        node->setCanExit(false);
         break;
         
     case LastNodeType:
@@ -1854,15 +1872,14 @@ inline void AbstractState::clobberStructures(unsigned indexInBlock)
     m_didClobber = true;
 }
 
-inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex nodeIndex)
+inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node* node)
 {
-    if (nodeIndex == NoNode)
+    if (!node)
         return false;
         
     AbstractValue source;
     
-    Node& tailNode = m_graph[nodeIndex];
-    if (tailNode.variableAccessData()->isCaptured()) {
+    if (node->variableAccessData()->isCaptured()) {
         // If it's captured then we know that whatever value was stored into the variable last is the
         // one we care about. This is true even if the variable at tail is dead, which might happen if
         // the last thing we did to the variable was a GetLocal and then ended up now using the
@@ -1875,26 +1892,25 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         dataLogF(" from last access due to captured variable.\n");
 #endif
     } else {
-        if (!tailNode.shouldGenerate()) {
+        if (!node->shouldGenerate()) {
             // If the node at tail is a GetLocal that is dead, then skip it to get to the Phi.
             // The Phi may be live.
-            if (tailNode.op() != GetLocal)
+            if (node->op() != GetLocal)
                 return false;
             
-            nodeIndex = tailNode.child1().index();
-            ASSERT(m_graph[nodeIndex].op() == Phi);
-            if (!m_graph[nodeIndex].shouldGenerate())
+            node = node->child1().node();
+            ASSERT(node->op() == Phi);
+            if (!node->shouldGenerate())
                 return false;
         }
         
-        Node& node = m_graph[nodeIndex];
-        ASSERT(node.shouldGenerate());
+        ASSERT(node->shouldGenerate());
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("          It's live, node @%u.\n", nodeIndex);
+        dataLogF("          It's live, node @%u.\n", node->index());
 #endif
     
-        switch (node.op()) {
+        switch (node->op()) {
         case Phi:
         case SetArgument:
         case Flush:
@@ -1909,7 +1925,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             
         case GetLocal:
             // The block refines the value with additional speculations.
-            source = forNode(nodeIndex);
+            source = forNode(node);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("          Refining to ");
             source.dump(WTF::dataFile());
@@ -1920,11 +1936,11 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         case SetLocal:
             // The block sets the variable, and potentially refines it, both
             // before and after setting it.
-            if (node.variableAccessData()->shouldUseDoubleFormat()) {
+            if (node->variableAccessData()->shouldUseDoubleFormat()) {
                 // FIXME: This unnecessarily loses precision.
                 source.set(SpecDouble);
             } else
-                source = forNode(node.child1());
+                source = forNode(node->child1());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("          Setting to ");
             source.dump(WTF::dataFile());
@@ -1982,35 +1998,34 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     return changed;
 }
 
-inline bool AbstractState::mergeToSuccessors(
-    Graph& graph, BasicBlock* basicBlock)
+inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBlock)
 {
-    Node& terminal = graph[basicBlock->last()];
+    Node* terminal = basicBlock->last();
     
-    ASSERT(terminal.isTerminal());
+    ASSERT(terminal->isTerminal());
     
-    switch (terminal.op()) {
+    switch (terminal->op()) {
     case Jump: {
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
-        return merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
+        return merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
     }
         
     case Branch: {
         ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
         bool changed = false;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal.takenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal->takenBlockIndex());
 #endif
         if (basicBlock->cfaBranchDirection != TakeFalse)
-            changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
+            changed |= merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
 #endif
         if (basicBlock->cfaBranchDirection != TakeTrue)
-            changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
+            changed |= merge(basicBlock, graph.m_blocks[terminal->notTakenBlockIndex()].get());
         return changed;
     }
         
@@ -2026,12 +2041,12 @@ inline bool AbstractState::mergeToSuccessors(
     }
 }
 
-inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, NodeIndex destinationNodeIndex, NodeIndex sourceNodeIndex)
+inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode)
 {
-    if (destinationNodeIndex == NoNode)
+    if (!destinationNode)
         return false;
     
-    ASSERT_UNUSED(sourceNodeIndex, sourceNodeIndex != NoNode);
+    ASSERT_UNUSED(sourceNode, sourceNode);
     
     // FIXME: We could do some sparse conditional propagation here!
     
@@ -2042,15 +2057,15 @@ void AbstractState::dump(PrintStream& out)
 {
     bool first = true;
     for (size_t i = 0; i < m_block->size(); ++i) {
-        NodeIndex index = m_block->at(i);
-        AbstractValue& value = forNode(index);
+        Node* node = m_block->at(i);
+        AbstractValue& value = forNode(node);
         if (value.isClear())
             continue;
         if (first)
             first = false;
         else
             out.printf(" ");
-        out.printf("@%lu:", static_cast<unsigned long>(index));
+        out.printf("@%lu:", static_cast<unsigned long>(node->index()));
         value.dump(out);
     }
 }

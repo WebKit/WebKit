@@ -38,7 +38,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 {
     // 1) Pro-forma stuff.
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("OSR exit for Node @%d (", (int)exit.m_nodeIndex);
+    dataLogF("OSR exit (");
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         dataLogF("bc#%u", codeOrigin.bytecodeIndex);
         if (!codeOrigin.inlineCallFrame)
@@ -52,7 +52,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = m_jit.codeBlock();
-        debugInfo->nodeIndex = exit.m_nodeIndex;
         
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }

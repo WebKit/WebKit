@@ -64,23 +64,22 @@ public:
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-                NodeIndex nodeIndex = block->at(indexInBlock);
-                Node& node = m_graph[nodeIndex];
-                if (!node.shouldGenerate())
+                Node* node = block->at(indexInBlock);
+                if (!node->shouldGenerate())
                     continue;
-                switch (node.op()) {
+                switch (node->op()) {
                 case CheckStructure:
                 case StructureTransitionWatchpoint: {
-                    Node& child = m_graph[node.child1()];
-                    if (child.op() != GetLocal)
+                    Node* child = node->child1().node();
+                    if (child->op() != GetLocal)
                         break;
-                    VariableAccessData* variable = child.variableAccessData();
+                    VariableAccessData* variable = child->variableAccessData();
                     variable->vote(VoteStructureCheck);
                     if (variable->isCaptured() || variable->structureCheckHoistingFailed())
                         break;
                     if (!isCellSpeculation(variable->prediction()))
                         break;
-                    noticeStructureCheck(variable, node.structureSet());
+                    noticeStructureCheck(variable, node->structureSet());
                     break;
                 }
                     
@@ -109,13 +108,13 @@ public:
                     
                 case ArrayifyToStructure:
                 case Arrayify:
-                    if (node.arrayMode().conversion() == Array::RageConvert) {
+                    if (node->arrayMode().conversion() == Array::RageConvert) {
                         // Rage conversion changes structures. We should avoid tying to do
                         // any kind of hoisting when rage conversion is in play.
-                        Node& child = m_graph[node.child1()];
-                        if (child.op() != GetLocal)
+                        Node* child = node->child1().node();
+                        if (child->op() != GetLocal)
                             break;
-                        VariableAccessData* variable = child.variableAccessData();
+                        VariableAccessData* variable = child->variableAccessData();
                         variable->vote(VoteOther);
                         if (variable->isCaptured() || variable->structureCheckHoistingFailed())
                             break;
@@ -130,30 +129,29 @@ public:
                     // kind of CheckStructure, then we should notice them to ensure that
                     // we're not hoisting a check that would contravene checks that are
                     // already being performed.
-                    VariableAccessData* variable = node.variableAccessData();
+                    VariableAccessData* variable = node->variableAccessData();
                     if (variable->isCaptured() || variable->structureCheckHoistingFailed())
                         break;
                     if (!isCellSpeculation(variable->prediction()))
                         break;
-                    NodeIndex source = node.child1().index();
+                    Node* source = node->child1().node();
                     for (unsigned subIndexInBlock = 0; subIndexInBlock < block->size(); ++subIndexInBlock) {
-                        NodeIndex subNodeIndex = block->at(subIndexInBlock);
-                        Node& subNode = m_graph[subNodeIndex];
-                        if (!subNode.shouldGenerate())
+                        Node* subNode = block->at(subIndexInBlock);
+                        if (!subNode->shouldGenerate())
                             continue;
-                        switch (subNode.op()) {
+                        switch (subNode->op()) {
                         case CheckStructure: {
-                            if (subNode.child1().index() != source)
+                            if (subNode->child1() != source)
                                 break;
                             
-                            noticeStructureCheck(variable, subNode.structureSet());
+                            noticeStructureCheck(variable, subNode->structureSet());
                             break;
                         }
                         case StructureTransitionWatchpoint: {
-                            if (subNode.child1().index() != source)
+                            if (subNode->child1() != source)
                                 break;
                             
-                            noticeStructureCheck(variable, subNode.structure());
+                            noticeStructureCheck(variable, subNode->structure());
                             break;
                         }
                         default:
@@ -161,14 +159,14 @@ public:
                         }
                     }
                     
-                    m_graph.vote(node, VoteOther);
+                    m_graph.voteChildren(node, VoteOther);
                     break;
                 }
                 case GarbageValue:
                     break;
                     
                 default:
-                    m_graph.vote(node, VoteOther);
+                    m_graph.voteChildren(node, VoteOther);
                     break;
                 }
             }
@@ -209,10 +207,10 @@ public:
                 continue;
             for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
                 int operand = m_graph.m_mustHandleValues.operandForIndex(i);
-                NodeIndex nodeIndex = block->variablesAtHead.operand(operand);
-                if (nodeIndex == NoNode)
+                Node* node = block->variablesAtHead.operand(operand);
+                if (!node)
                     continue;
-                VariableAccessData* variable = m_graph[nodeIndex].variableAccessData();
+                VariableAccessData* variable = node->variableAccessData();
                 HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                 if (iter == m_map.end())
                     continue;
@@ -265,48 +263,47 @@ public:
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-                NodeIndex nodeIndex = block->at(indexInBlock);
-                Node& node = m_graph[nodeIndex];
+                Node* node = block->at(indexInBlock);
                 // Be careful not to use 'node' after appending to the graph. In those switch
                 // cases where we need to append, we first carefully extract everything we need
                 // from the node, before doing any appending.
-                if (!node.shouldGenerate())
+                if (!node->shouldGenerate())
                     continue;
-                switch (node.op()) {
+                switch (node->op()) {
                 case SetArgument: {
                     ASSERT(!blockIndex);
                     // Insert a GetLocal and a CheckStructure immediately following this
                     // SetArgument, if the variable was a candidate for structure hoisting.
                     // If the basic block previously only had the SetArgument as its
                     // variable-at-tail, then replace it with this GetLocal.
-                    VariableAccessData* variable = node.variableAccessData();
+                    VariableAccessData* variable = node->variableAccessData();
                     HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
                     if (!iter->value.m_structure)
                         break;
                     
-                    CodeOrigin codeOrigin = node.codeOrigin;
+                    CodeOrigin codeOrigin = node->codeOrigin;
                     
-                    NodeIndex getLocalIndex = insertionSet.insertNode(
+                    Node* getLocal = insertionSet.insertNode(
                         indexInBlock + 1, DontRefChildren, DontRefNode, variable->prediction(),
-                        GetLocal, codeOrigin, OpInfo(variable), nodeIndex);
+                        GetLocal, codeOrigin, OpInfo(variable), node);
                     insertionSet.insertNode(
                         indexInBlock + 1, RefChildren, DontRefNode, SpecNone, CheckStructure,
                         codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
-                        getLocalIndex);
+                        getLocal);
 
-                    if (block->variablesAtTail.operand(variable->local()) == nodeIndex)
-                        block->variablesAtTail.operand(variable->local()) = getLocalIndex;
+                    if (block->variablesAtTail.operand(variable->local()) == node)
+                        block->variablesAtTail.operand(variable->local()) = getLocal;
                     
-                    m_graph.substituteGetLocal(*block, indexInBlock, variable, getLocalIndex);
+                    m_graph.substituteGetLocal(*block, indexInBlock, variable, getLocal);
                     
                     changed = true;
                     break;
                 }
                     
                 case SetLocal: {
-                    VariableAccessData* variable = node.variableAccessData();
+                    VariableAccessData* variable = node->variableAccessData();
                     HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
@@ -317,8 +314,8 @@ public:
                     // be dropped into this bytecode variable if the CheckStructure decides
                     // to exit.
                     
-                    CodeOrigin codeOrigin = node.codeOrigin;
-                    NodeIndex child1 = node.child1().index();
+                    CodeOrigin codeOrigin = node->codeOrigin;
+                    Node* child1 = node->child1().node();
                     
                     insertionSet.insertNode(
                         indexInBlock, DontRefChildren, DontRefNode, SpecNone, SetLocal, codeOrigin,
