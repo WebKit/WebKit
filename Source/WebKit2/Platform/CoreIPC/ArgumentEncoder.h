@@ -61,33 +61,7 @@ public:
         encode(static_cast<uint64_t>(t));
     }
 
-    template<bool B, typename T = void>
-    struct EnableIf { };
-
-    template<typename T>
-    struct EnableIf<true, T> { typedef T Type; };
-    
-    template<typename T> class UsesDeprecatedEncodeFunction {
-        typedef char YesType;
-        struct NoType {
-            char padding[8];
-        };
-
-        static YesType checkEncode(void (*)(ArgumentEncoder*, const T&));
-        static NoType checkEncode(...);
-
-    public:
-        static const bool value = sizeof(checkEncode(ArgumentCoder<T>::encode)) == sizeof(YesType);
-    };
-
-    // FIXME: This is the function that gets chosen if the argument coder takes the ArgumentEncoder as a pointer.
-    // This is the deprecated form - get rid of it.
-    template<typename T> void encode(const T& t, typename EnableIf<UsesDeprecatedEncodeFunction<T>::value>::Type* = 0)
-    {
-        ArgumentCoder<T>::encode(this, t);
-    }
-
-    template<typename T> void encode(const T& t, typename EnableIf<!UsesDeprecatedEncodeFunction<T>::value>::Type* = 0)
+    template<typename T> void encode(const T& t)
     {
         ArgumentCoder<T>::encode(*this, t);
     }
