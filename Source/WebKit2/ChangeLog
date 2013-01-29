@@ -1,5 +1,44 @@
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
+        Start using the message flag in MessageEncoder/MessageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=108227
+
+        Reviewed by Beth Dakin.
+
+        Stop using the flags in MessageID and store the flags directly in the message instead.
+        This is another step towards eliminating MessageID.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        (CoreIPC::Connection::createSyncMessageEncoder):
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::sendSyncMessageFromSecondaryThread):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        (CoreIPC::Connection::dispatchMessage):
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::MessageDecoder):
+        (CoreIPC::MessageDecoder::isSyncMessage):
+        (CoreIPC):
+        (CoreIPC::MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply):
+        * Platform/CoreIPC/MessageDecoder.h:
+        (MessageDecoder):
+        * Platform/CoreIPC/MessageEncoder.cpp:
+        (CoreIPC):
+        (CoreIPC::MessageEncoder::MessageEncoder):
+        (CoreIPC::MessageEncoder::~MessageEncoder):
+        (CoreIPC::MessageEncoder::setIsSyncMessage):
+        (CoreIPC::MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        * Platform/CoreIPC/MessageEncoder.h:
+        (MessageEncoder):
+        * Platform/CoreIPC/MessageFlags.h: Copied from Source/WebKit2/Platform/CoreIPC/MessageEncoder.h.
+        (CoreIPC):
+        * Platform/CoreIPC/MessageID.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
         Encode/decode message send flags in the message
         https://bugs.webkit.org/show_bug.cgi?id=108208
 

@@ -135,8 +135,7 @@ Connection::SyncMessageState::~SyncMessageState()
 
 bool Connection::SyncMessageState::processIncomingMessage(Connection* connection, IncomingMessage& incomingMessage)
 {
-    MessageID messageID = incomingMessage.messageID();
-    if (!messageID.shouldDispatchMessageWhenWaitingForSyncReply())
+    if (!incomingMessage.arguments()->shouldDispatchMessageWhenWaitingForSyncReply())
         return false;
 
     ConnectionAndIncomingMessage connectionAndIncomingMessage;
@@ -306,6 +305,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
 PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(messageReceiverName, messageName, destinationID);
+    encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
     COMPILE_ASSERT(sizeof(m_syncRequestID) == sizeof(int64_t), CanUseAtomicIncrement);
@@ -317,15 +317,13 @@ PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference 
 
 bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder, unsigned messageSendFlags)
 {
-    encoder->setMessageSendFlags(messageSendFlags);
-
     if (!isValid())
         return false;
 
     if (messageSendFlags & DispatchMessageEvenWhenWaitingForSyncReply
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
-        messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply);
+        encoder->setShouldDispatchMessageWhenWaitingForSyncReply(true);
 
     {
         MutexLocker locker(m_outgoingMessagesLock);
@@ -423,7 +421,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
     }
 
     // First send the message.
-    sendMessage(messageID.messageIDWithAddedFlags(MessageID::SyncMessage), encoder, DispatchMessageEvenWhenWaitingForSyncReply);
+    sendMessage(messageID, encoder, DispatchMessageEvenWhenWaitingForSyncReply);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
@@ -462,7 +460,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(Messag
         m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
     }
 
-    sendMessage(messageID.messageIDWithAddedFlags(MessageID::SyncMessage), encoder, 0);
+    sendMessage(messageID, encoder, 0);
 
     // Use a really long timeout.
     if (timeout == NoTimeout)
@@ -686,7 +684,7 @@ void Connection::sendOutgoingMessages()
 
 void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decoder)
 {
-    ASSERT(messageID.isSync());
+    ASSERT(decoder.isSyncMessage());
 
     uint64_t syncRequestID = 0;
     if (!decoder.decodeUInt64(syncRequestID) || !syncRequestID) {
@@ -741,13 +739,13 @@ void Connection::dispatchMessage(IncomingMessage& message)
 
     m_inDispatchMessageCount++;
 
-    if (message.messageID().shouldDispatchMessageWhenWaitingForSyncReply())
+    if (arguments->shouldDispatchMessageWhenWaitingForSyncReply())
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount++;
 
     bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
     m_didReceiveInvalidMessage = false;
 
-    if (message.messageID().isSync())
+    if (arguments->isSyncMessage())
         dispatchSyncMessage(message.messageID(), *arguments);
     else
         dispatchMessage(message.messageID(), *arguments);
@@ -755,7 +753,7 @@ void Connection::dispatchMessage(IncomingMessage& message)
     m_didReceiveInvalidMessage |= arguments->isInvalid();
     m_inDispatchMessageCount--;
 
-    if (message.messageID().shouldDispatchMessageWhenWaitingForSyncReply())
+    if (arguments->shouldDispatchMessageWhenWaitingForSyncReply())
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
     if (m_didReceiveInvalidMessage && m_client)

@@ -38,7 +38,8 @@ public:
     static PassOwnPtr<MessageEncoder> create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
     virtual ~MessageEncoder();
 
-    void setMessageSendFlags(uint8_t);
+    void setIsSyncMessage(bool);
+    void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
 
 private:
     MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);

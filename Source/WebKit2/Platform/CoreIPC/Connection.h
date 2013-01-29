@@ -69,7 +69,7 @@ enum MessageSendFlags {
 };
 
 enum SyncMessageSendFlags {
-    // Will allow events to continue being handled while waiting for the synch reply.
+    // Will allow events to continue being handled while waiting for the sync reply.
     SpinRunLoopWhileWaitingForReply = 1 << 0,
 };
     

@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
+#include "MessageFlags.h"
 #include "StringReference.h"
 
 namespace CoreIPC {
@@ -50,7 +51,7 @@ MessageDecoder::~MessageDecoder()
 MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& attachments)
     : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
 {
-    if (!decodeUInt8(m_messageSendFlags))
+    if (!decodeUInt8(m_messageFlags))
         return;
 
     if (!decode(m_messageReceiverName))
@@ -60,6 +61,16 @@ MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& a
         return;
 
     decodeUInt64(m_destinationID);
+}
+
+bool MessageDecoder::isSyncMessage() const
+{
+    return m_messageFlags & SyncMessage;
+}
+
+bool MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply() const
+{
+    return m_messageFlags & DispatchMessageWhenWaitingForSyncReply;
 }
 
 } // namespace CoreIPC

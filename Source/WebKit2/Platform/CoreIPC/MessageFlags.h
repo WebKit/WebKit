@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MessageEncoder.h"
-
-#include "ArgumentCoders.h"
-#include "MessageFlags.h"
-#include "StringReference.h"
+#ifndef MessageFlags_h
+#define MessageFlags_h
 
 namespace CoreIPC {
 
-static uint8_t defaultMessageFlags = 0;
-
-PassOwnPtr<MessageEncoder> MessageEncoder::create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
-{
-    return adoptPtr(new MessageEncoder(messageReceiverName, messageName, destinationID));
-}
-
-MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
-{
-    ASSERT(!messageReceiverName.isEmpty());
-
-    encode(defaultMessageFlags);
-    encode(messageReceiverName);
-    encode(messageName);
-    encode(destinationID);
-}
-
-MessageEncoder::~MessageEncoder()
-{
-}
-
-void MessageEncoder::setIsSyncMessage(bool isSyncMessage)
-{
-    if (isSyncMessage)
-        *buffer() |= SyncMessage;
-    else
-        *buffer() &= ~SyncMessage;
-
-}
-
-void MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool shouldDispatchMessageWhenWaitingForSyncReply)
-{
-    if (shouldDispatchMessageWhenWaitingForSyncReply)
-        *buffer() |= DispatchMessageWhenWaitingForSyncReply;
-    else
-        *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
-}
+enum MessageFlags {
+    SyncMessage = 1 << 0,
+    DispatchMessageWhenWaitingForSyncReply = 1 << 1,
+};
 
 } // namespace CoreIPC
+
+#endif // MessageFlags_h

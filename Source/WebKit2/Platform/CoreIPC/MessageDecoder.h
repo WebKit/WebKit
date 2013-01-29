@@ -39,14 +39,16 @@ public:
     static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Deque<Attachment>&);
     virtual ~MessageDecoder();
 
-    uint8_t messageSendFlags() const { return m_messageSendFlags; }
     StringReference messageReceiverName() const { return m_messageReceiverName; }
     StringReference messageName() const { return m_messageName; }
+
+    bool isSyncMessage() const;
+    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
 private:
     MessageDecoder(const DataReference& buffer, Deque<Attachment>&);
 
-    uint8_t m_messageSendFlags;
+    uint8_t m_messageFlags;
     StringReference m_messageReceiverName;
     StringReference m_messageName;
 };
