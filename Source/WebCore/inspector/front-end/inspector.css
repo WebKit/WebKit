@@ -1560,7 +1560,7 @@ iframe.panel.extension {
     display: block;
 }
 
-.pane.expanded .properties, .event-bar .event-properties {
+.pane.expanded .section .properties, .event-bar .event-properties {
     padding-left: 16px;
 }
 
