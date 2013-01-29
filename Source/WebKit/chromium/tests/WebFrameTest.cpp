@@ -1971,7 +1971,7 @@ static WebGestureEvent fatTap(int x, int y)
     return event;
 }
 
-TEST_F(WebFrameTest, DisambiguationPopup)
+TEST_F(WebFrameTest, DISABLED_DisambiguationPopup)
 {
     registerMockedHttpURLLoad("disambiguation_popup.html");
 

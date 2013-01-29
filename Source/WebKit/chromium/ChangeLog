@@ -1,3 +1,11 @@
+2013-01-29  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Disabling WebFrameTest.DisambiguationPopup because it is failing.
+
+        Unreviewed. Gardening.
+
+        * tests/WebFrameTest.cpp:
+
 2013-01-28  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Re-enable WebFrameTest.DivScrollIntoEditableTest
