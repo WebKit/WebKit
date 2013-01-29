@@ -1322,6 +1322,7 @@ svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
+ietestcenter/css3/valuesandunits/units-010.htm
 
 # Fail on 32 bit with minor pixel differences (tests introduced in r132602)
 fast/regions/autoheight-middleregion.html
