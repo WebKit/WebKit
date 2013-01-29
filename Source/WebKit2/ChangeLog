@@ -1,3 +1,23 @@
+2013-01-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Unified text checker implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=107682
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        Allow to check spelling for multiple words,
+        their misspelling location and length are saved to the vector.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        (WebKit):
+        As spelling implementation is exposed to UIProcess,
+        send a meesage to UIProcess to call TextChecker::checkTextOfParagraph.
+
 2013-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to prefetch DNS of a given hostname to WebKit2 GTK+ API

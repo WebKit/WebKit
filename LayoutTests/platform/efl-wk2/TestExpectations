@@ -292,6 +292,9 @@ webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 # WebKitTestRunner setTouchPointRadius() is not supported
 Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 
+# On Linux, should be able to get spelling suggestions without selecting the misspelled word when unified text checker is enabled.
+webkit.org/b/107684 editing/spelling/context-menu-suggestions.html [ Failure ]
+
 # Needs grammar checking
 Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
 Bug(EFL) editing/spelling/markers.html [ Failure ]
