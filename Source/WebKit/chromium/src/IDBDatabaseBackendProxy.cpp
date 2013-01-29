@@ -103,6 +103,11 @@ void IDBDatabaseBackendProxy::abort(int64_t transactionId)
     m_webIDBDatabase->abort(transactionId);
 }
 
+void IDBDatabaseBackendProxy::abort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
+{
+    m_webIDBDatabase->abort(transactionId, error);
+}
+
 void IDBDatabaseBackendProxy::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
 {
     m_webIDBDatabase->openCursor(transactionId, objectStoreId, indexId, keyRange, static_cast<WebIDBCursor::Direction>(direction), keyOnly, static_cast<WebIDBDatabase::TaskType>(taskType), new WebIDBCallbacksImpl(callbacks));

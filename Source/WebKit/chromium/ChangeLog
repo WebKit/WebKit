@@ -1,3 +1,27 @@
+2013-01-29  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Let callers specify reason (error) for aborting transaction
+        https://bugs.webkit.org/show_bug.cgi?id=107851
+
+        Reviewed by Tony Chang.
+
+        Let Chromium call abort() on a transaction and specify a reason, specifically for
+        QuotaExceededError.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::abort): New overload for abort() that takes an error.
+        * public/WebIDBDatabaseError.h:
+        (WebKit::WebIDBDatabaseError::WebIDBDatabaseError): Overloaded constructor/assign that takes error.
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::abort): New overload for abort() that takes an error.
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy): Ditto.
+        * src/WebIDBDatabaseError.cpp: Implementation of overload ctor/assign.
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::abort): New overload for abort() that takes an error.
+        * src/WebIDBDatabaseImpl.h: Ditto.
+        * tests/IDBDatabaseBackendTest.cpp: Overload stubs for Mock class.
+
 2013-01-29  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening.

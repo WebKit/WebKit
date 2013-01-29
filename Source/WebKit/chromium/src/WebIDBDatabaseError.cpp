@@ -45,6 +45,11 @@ void WebIDBDatabaseError::assign(const WebIDBDatabaseError& value)
     m_private = value.m_private;
 }
 
+void WebIDBDatabaseError::assign(unsigned short code)
+{
+    m_private = IDBDatabaseError::create(code);
+}
+
 void WebIDBDatabaseError::assign(unsigned short code, const WebString& message)
 {
     m_private = IDBDatabaseError::create(code, message);

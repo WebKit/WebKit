@@ -42,6 +42,7 @@ class WebIDBDatabaseError {
 public:
     ~WebIDBDatabaseError() { reset(); }
 
+    WebIDBDatabaseError(unsigned short code) { assign(code); }
     WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
     WebIDBDatabaseError(const WebIDBDatabaseError& error) { assign(error); }
     WebIDBDatabaseError& operator=(const WebIDBDatabaseError& error)
@@ -63,6 +64,7 @@ public:
 #endif
 
 private:
+    WEBKIT_EXPORT void assign(unsigned short code);
     WEBKIT_EXPORT void assign(unsigned short code, const WebString& message);
 
     WebPrivatePtr<WebCore::IDBDatabaseError> m_private;

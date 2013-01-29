@@ -672,6 +672,13 @@ void IDBDatabaseBackendImpl::abort(int64_t transactionId)
         m_transactions.get(transactionId)->abort();
 }
 
+void IDBDatabaseBackendImpl::abort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
+{
+    // If the transaction is unknown, then it has already been aborted by the backend before this call so it is safe to ignore it.
+    if (m_transactions.contains(transactionId))
+        m_transactions.get(transactionId)->abort(error);
+}
+
 void IDBDatabaseBackendImpl::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
 {
     IDB_TRACE("IDBDatabaseBackendImpl::get");

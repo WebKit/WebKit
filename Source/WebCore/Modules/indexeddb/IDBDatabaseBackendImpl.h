@@ -72,6 +72,7 @@ public:
 
     virtual void commit(int64_t transactionId);
     virtual void abort(int64_t transactionId);
+    virtual void abort(int64_t transactionId, PassRefPtr<IDBDatabaseError>);
 
     virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
     virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);

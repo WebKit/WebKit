@@ -38,6 +38,7 @@
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabaseCallbacks.h"
+#include "WebIDBDatabaseError.h"
 #include "WebIDBKey.h"
 #include "WebIDBKeyRange.h"
 #include "WebIDBMetadata.h"
@@ -116,6 +117,12 @@ void WebIDBDatabaseImpl::abort(long long transactionId)
 {
     if (m_databaseBackend)
         m_databaseBackend->abort(transactionId);
+}
+
+void WebIDBDatabaseImpl::abort(long long transactionId, const WebIDBDatabaseError& error)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->abort(transactionId, error);
 }
 
 void WebIDBDatabaseImpl::commit(long long transactionId)

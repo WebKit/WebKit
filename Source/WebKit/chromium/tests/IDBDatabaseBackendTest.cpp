@@ -149,6 +149,7 @@ public:
     }
 
     virtual void abort(int64_t transactionId) OVERRIDE { }
+    virtual void abort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) OVERRIDE { }
     virtual void commit(int64_t transactionId) OVERRIDE { }
 
     virtual void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, unsigned short direction, bool keyOnly, TaskType, PassRefPtr<IDBCallbacks>) OVERRIDE { }

@@ -41,6 +41,7 @@ namespace WebCore { class IDBDatabaseBackendInterface; }
 namespace WebKit {
 
 class WebIDBDatabaseCallbacks;
+class WebIDBDatabaseError;
 class WebIDBDatabaseMetadata;
 class WebIDBTransaction;
 
@@ -60,6 +61,7 @@ public:
     virtual void forceClose();
     virtual void close();
     virtual void abort(long long transactionId);
+    virtual void abort(long long transactionId, const WebIDBDatabaseError&);
     virtual void commit(long long transactionId);
 
     virtual void get(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, bool keyOnly, WebIDBCallbacks*) OVERRIDE;
