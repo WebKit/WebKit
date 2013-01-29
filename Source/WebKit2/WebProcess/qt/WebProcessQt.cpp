@@ -160,9 +160,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 #endif
 
-#if ENABLE(SPEECH_INPUT)
     WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled(false);
-#endif
 
     // We'll only install the Qt builtin bundle if we don't have one given by the UI process.
     // Currently only WTR provides its own bundle.

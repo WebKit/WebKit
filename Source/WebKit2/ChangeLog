@@ -1,3 +1,19 @@
+2013-01-29  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [Qt] Remove misspelled ENABLE(SPEECH_INPUT) guard
+        https://bugs.webkit.org/show_bug.cgi?id=105683
+
+        Reviewed by Simon Hausmann.
+
+        The ENABLE(SPEECH_INPUT) guard is only used in one location
+        in the source tree and as such it is always 0.
+
+        I believe that this guard is a left over and is not needed any more
+        as the code guarded is not guarded anywhere else.
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2013-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix after r141024.
