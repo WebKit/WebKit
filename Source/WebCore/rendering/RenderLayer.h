@@ -473,6 +473,13 @@ public:
     void setHasVisibleContent();
     void dirtyVisibleContentStatus();
 
+    bool hasBoxDecorationsOrBackground() const;
+    bool hasVisibleBoxDecorations() const;
+    // Returns true if this layer has visible content (ignoring any child layers).
+    bool isVisuallyNonEmpty() const;
+    // True if this layer container renderers that paint.
+    bool hasNonEmptyChildRenderers() const;
+
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
     // Part of the issue is with subtree relayout: we don't check if our ancestors have some descendant flags dirty, missing some updates.
     bool hasSelfPaintingLayerDescendant() const { return m_hasSelfPaintingLayerDescendant; }

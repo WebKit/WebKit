@@ -2077,6 +2077,13 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
             return false;
         }
     }
+    
+    bool paintsContent = layer->isVisuallyNonEmpty() || layer->hasVisibleDescendant();
+    if (!paintsContent) {
+        // isVisuallyNonEmpty() depends on layout.
+        m_reevaluateCompositingAfterLayout = true;
+        return false;
+    }
 
     return true;
 }

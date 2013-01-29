@@ -5404,6 +5404,59 @@ void RenderLayer::updateSelfPaintingLayer()
         parent()->dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 }
 
+bool RenderLayer::hasNonEmptyChildRenderers() const
+{
+    // Some HTML can cause whitespace text nodes to have renderers, like:
+    // <div>
+    // <img src=...>
+    // </div>
+    // so test for 0x0 RenderTexts here
+    for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
+        if (!child->hasLayer()) {
+            if (child->isRenderInline() || !child->isBox())
+                return true;
+        
+            if (toRenderBox(child)->width() > 0 || toRenderBox(child)->height() > 0)
+                return true;
+        }
+    }
+    return false;
+}
+
+static bool hasBoxDecorations(const RenderStyle* style)
+{
+    return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow() || style->hasFilter();
+}
+
+bool RenderLayer::hasBoxDecorationsOrBackground() const
+{
+    return hasBoxDecorations(renderer()->style()) || renderer()->hasBackground();
+}
+
+bool RenderLayer::hasVisibleBoxDecorations() const
+{
+    if (!hasVisibleContent())
+        return false;
+
+    return hasBoxDecorationsOrBackground() || hasOverflowControls();
+}
+
+bool RenderLayer::isVisuallyNonEmpty() const
+{
+    ASSERT(!m_visibleDescendantStatusDirty);
+
+    if (hasVisibleContent() && hasNonEmptyChildRenderers())
+        return true;
+
+    if (renderer()->isReplaced() || renderer()->hasMask())
+        return true;
+
+    if (hasVisibleBoxDecorations())
+        return true;
+
+    return false;
+}
+
 void RenderLayer::updateStackingContextsAfterStyleChange(const RenderStyle* oldStyle)
 {
     if (!oldStyle)

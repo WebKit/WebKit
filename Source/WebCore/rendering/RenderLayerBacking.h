@@ -152,7 +152,7 @@ public:
     void adjustTileCacheCoverage();
     
     void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
-    
+
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const OVERRIDE;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) OVERRIDE;
@@ -256,7 +256,6 @@ private:
     void updateBackgroundColor(bool isSimpleContainer);
     void updateContentsRect(bool isSimpleContainer);
 
-    bool containsNonEmptyRenderers() const;
     bool hasVisibleNonCompositingDescendantLayers() const;
 
     bool shouldClipCompositedBounds() const;
