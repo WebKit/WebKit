@@ -1,3 +1,25 @@
+2013-01-28  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Reduce the region that is spellchecked on keystroke
+        https://bugs.webkit.org/show_bug.cgi?id=108115
+
+        Reviewed by Rob Buis.
+
+        PR288217
+        Instead of blindly checking text until endOfDocument, we should be honoring the boundaries of
+        the VisibleSelection that is passed into SpellingHandler. Though this results in the same behavior
+        on focus, this dramatically reduces the region that is rechecked when a key is hit.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::spellCheckTextBlock):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+        * WebKitSupport/SpellingHandler.h:
+        (SpellingHandler):
+
 2013-01-28  Adam Barth  <abarth@webkit.org>
 
         Remove webkitNotifications.createHTMLNotification

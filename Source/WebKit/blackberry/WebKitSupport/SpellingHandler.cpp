@@ -74,6 +74,8 @@ void SpellingHandler::spellCheckTextBlock(WebCore::VisibleSelection& visibleSele
     m_endOfCurrentLine = endOfLine(m_startOfCurrentLine);
     m_textCheckingProcessType = textCheckingProcessType;
 
+    // Find the end of the region we're intending on checking.
+    m_endOfRange = endOfLine(visibleSelection.visibleEnd());
     m_timer.startOneShot(0);
 }
 
@@ -102,7 +104,7 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
     }
 
     if (rangeForSpellChecking->text().length() < MaxSpellCheckingStringLength) {
-        if (isEndOfDocument(m_endOfCurrentLine)) {
+        if (m_endOfCurrentLine == m_endOfRange) {
             createSpellCheckRequest(rangeForSpellChecking, m_textCheckingProcessType);
             m_isSpellCheckActive = false;
             return;
