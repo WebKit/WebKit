@@ -1,3 +1,24 @@
+2013-01-29  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Fix contents size calculation for page scale initialization
+        https://bugs.webkit.org/show_bug.cgi?id=108204
+
+        Reviewed by enne.
+
+        My previous patch http://webk.it/107424 had a few issues that are
+        blocking WebKit roll.
+
+        - We still need the layout in resize() given that
+        http://webk.it/107922 was reverted.
+
+        - I deleted code used only for the old page-scale mode in
+        contentsSize(), but this needs to wait until WebKit roll since it's
+        making bots fail in this short term.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::contentsSize):
+
 2013-01-29  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed DEPS roll.

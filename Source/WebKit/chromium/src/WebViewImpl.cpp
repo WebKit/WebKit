@@ -1670,11 +1670,9 @@ void WebViewImpl::resize(const WebSize& newSize)
 
 #if ENABLE(VIEWPORT)
     if (settings()->viewportEnabled()) {
-        if (!settingsImpl()->applyPageScaleFactorInCompositor()) {
-            // Relayout immediately to obtain the new content width, which is needed
-            // to calculate the minimum scale limit.
-            view->layout();
-        }
+        // Relayout immediately to obtain the new content width, which is needed
+        // to calculate the minimum scale limit.
+        view->layout();
         computePageScaleFactorLimits();
 
         // When the device rotates:
@@ -3079,6 +3077,12 @@ IntSize WebViewImpl::contentsSize() const
     RenderView* root = frame->contentRenderer();
     if (!root)
         return IntSize();
+
+    // If page scale is not applied by compositor, then the CSS transform will
+    // scale by an arbitrary amount. Return the unscaled contents size in this
+    // case.
+    if (!m_page->settings()->applyPageScaleFactorInCompositor())
+        return root->unscaledDocumentRect().size();
 
     return root->documentRect().size();
 }
