@@ -1,5 +1,17 @@
 2013-01-29  Oliver Hunt  <oliver@apple.com>
 
+        REGRESSION (r140594): RELEASE_ASSERT_NOT_REACHED in JSC::Interpreter::execute
+        https://bugs.webkit.org/show_bug.cgi?id=108097
+
+        Reviewed by Geoffrey Garen.
+
+        LiteralParser was accepting a bogus 'var a.b = c' statement
+
+        * runtime/LiteralParser.cpp:
+        (JSC::::tryJSONPParse):
+
+2013-01-29  Oliver Hunt  <oliver@apple.com>
+
         Force debug builds to do bounds checks on contiguous property storage
         https://bugs.webkit.org/show_bug.cgi?id=108212
 

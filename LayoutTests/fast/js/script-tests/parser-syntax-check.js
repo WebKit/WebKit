@@ -366,6 +366,9 @@ valid("if (0) new a(b+c) = 5");
 valid("([1 || 1].a = 1)");
 valid("({a: 1 || 1}.a = 1)");
 
+invalid("var a.b = c");
+invalid("var a.b;");
+
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
 foo = 'FAIL';
 bar = 'PASS';

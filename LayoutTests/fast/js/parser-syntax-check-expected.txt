@@ -575,6 +575,10 @@ PASS Valid:   "([1 || 1].a = 1)"
 PASS Valid:   "function f() { ([1 || 1].a = 1) }"
 PASS Valid:   "({a: 1 || 1}.a = 1)"
 PASS Valid:   "function f() { ({a: 1 || 1}.a = 1) }"
+PASS Invalid: "var a.b = c"
+PASS Invalid: "function f() { var a.b = c }"
+PASS Invalid: "var a.b;"
+PASS Invalid: "function f() { var a.b; }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'
