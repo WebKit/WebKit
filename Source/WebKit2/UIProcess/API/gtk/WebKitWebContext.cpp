@@ -771,6 +771,24 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
     context->priv->context->setInjectedBundleInitializationUserData(WebString::create(WebCore::filenameToString(directory)));
 }
 
+/**
+ * webkit_web_context_prefetch_dns:
+ * @context: a #WebKitWebContext
+ * @hostname: a hostname to be resolved
+ *
+ * Resolve the domain name of the given @hostname in advance, so that if a URI
+ * of @hostname is requested the load will be performed more quickly.
+ */
+void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* hostname)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(hostname);
+
+    ImmutableDictionary::MapType message;
+    message.set(String::fromUTF8("Hostname"), WebString::create(String::fromUTF8(hostname)));
+    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), ImmutableDictionary::adopt(message).get());
+}
+
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)
 {
     GRefPtr<WebKitDownload> download = downloadsMap().get(downloadProxy);

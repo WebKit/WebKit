@@ -20,11 +20,13 @@
 #include "config.h"
 #include "WebKitWebExtension.h"
 
+#include "ImmutableDictionary.h"
 #include "WKBundleAPICast.h"
 #include "WKBundlePage.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
+#include <WebCore/DNS.h>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
 
@@ -78,6 +80,15 @@ static void webkitWebExtensionPageDestroy(WebKitWebExtension* extension, WebPage
     extension->priv->pages.remove(page);
 }
 
+static void webkitWebExtensionDidReceiveMessage(WebKitWebExtension* extension, const String& messageName, ImmutableDictionary& message)
+{
+    if (messageName == String::fromUTF8("PrefetchDNS")) {
+        WebString* hostname = static_cast<WebString*>(message.get(String::fromUTF8("Hostname")));
+        WebCore::prefetchDNS(hostname->string());
+    } else
+        ASSERT_NOT_REACHED();
+}
+
 static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     webkitWebExtensionPageCreated(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(page));
@@ -86,6 +97,12 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     webkitWebExtensionPageDestroy(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(page));
+}
+
+static void didReceiveMessage(WKBundleRef bundle, WKStringRef name, WKTypeRef messageBody, const void* clientInfo)
+{
+    ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+    webkitWebExtensionDidReceiveMessage(WEBKIT_WEB_EXTENSION(clientInfo), toImpl(name)->string(), *toImpl(static_cast<WKDictionaryRef>(messageBody)));
 }
 
 WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
@@ -98,7 +115,7 @@ WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
         didCreatePage,
         willDestroyPage,
         0, // didInitializePageGroup
-        0, // didReceiveMessage
+        didReceiveMessage,
         0 // didReceiveMessageToPage
     };
     WKBundleSetClient(toAPI(bundle), &wkBundleClient);

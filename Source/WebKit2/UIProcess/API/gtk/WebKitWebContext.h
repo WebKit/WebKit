@@ -187,6 +187,11 @@ webkit_web_context_get_tls_errors_policy            (WebKitWebContext           
 WEBKIT_API void
 webkit_web_context_set_web_extensions_directory     (WebKitWebContext              *context,
                                                      const gchar                   *directory);
+
+WEBKIT_API void
+webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
+                                                     const gchar                   *hostname);
+
 G_END_DECLS
 
 #endif

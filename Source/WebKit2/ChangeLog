@@ -1,5 +1,25 @@
 2013-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add API to prefetch DNS of a given hostname to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=99695
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_prefetch_dns): Public method to resolve the
+        domain name in advance for the given hostname.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add
+        webkit_web_context_prefetch_dns.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionDidReceiveMessage): Parse PrefetchDNS message
+        and call WebCore::prefetchDNS() with the given hostname.
+        (didReceiveMessage): Call webkitWebExtensionDidReceiveMessage().
+        (webkitWebExtensionCreate): Add implementation for
+        didReceiveMessage callback.
+
+2013-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Implement resources API using injected bundle
         https://bugs.webkit.org/show_bug.cgi?id=107457
 
