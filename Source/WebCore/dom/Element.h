@@ -317,6 +317,8 @@ public:
     bool childrenAffectedByBackwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByBackwardPositionalRules(); }
     unsigned childIndex() const { return hasRareData() ? rareDataChildIndex() : 0; }
 
+    bool hasFlagsSetDuringStylingOfChildren() const;
+
     void setStyleAffectedByEmpty();
     void setChildrenAffectedByHover(bool);
     void setChildrenAffectedByActive(bool);
