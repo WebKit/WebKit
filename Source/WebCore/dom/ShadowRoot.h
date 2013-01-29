@@ -53,7 +53,7 @@ public:
     // in several elements for a while.
     // See https://bugs.webkit.org/show_bug.cgi?id=77503 and related bugs.
     enum ShadowRootType {
-        UserAgentShadowRoot,
+        UserAgentShadowRoot = 0,
         AuthorShadowRoot
     };
     static PassRefPtr<ShadowRoot> create(Element*, ShadowRootType, ExceptionCode& = ASSERT_NO_EXCEPTION);
@@ -92,20 +92,18 @@ public:
     const ScopeContentDistribution* scopeDistribution() const { return m_scopeDistribution.get(); }
     ScopeContentDistribution* ensureScopeDistribution();
 
-    ShadowRootType type() const { return m_isAuthorShadowRoot ? AuthorShadowRoot : UserAgentShadowRoot; }
+    ShadowRootType type() const { return static_cast<ShadowRootType>(m_type); }
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
-    explicit ShadowRoot(Document*);
+    ShadowRoot(Document*, ShadowRootType);
     virtual ~ShadowRoot();
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
-
-    void setType(ShadowRootType type) { m_isAuthorShadowRoot = type == AuthorShadowRoot; }
 
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
@@ -113,7 +111,7 @@ private:
     unsigned m_numberOfStyles : 28;
     unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
-    unsigned m_isAuthorShadowRoot : 1;
+    unsigned m_type : 1;
     unsigned m_registeredWithParentShadowRoot : 1;
 };
 
