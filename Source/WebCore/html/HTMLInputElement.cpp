@@ -476,15 +476,16 @@ void HTMLInputElement::updateType()
 
     removeFromRadioButtonGroup();
 
-    bool wasAttached = attached();
-    if (wasAttached)
-        detach();
-
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
     bool neededSuspensionCallback = needsSuspensionCallback();
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
 
     m_inputType->destroyShadowSubtree();
+
+    bool wasAttached = attached();
+    if (wasAttached)
+        detach();
+
     m_inputType = newType.release();
     m_inputType->createShadowSubtree();
 
