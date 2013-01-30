@@ -1,3 +1,12 @@
+2013-01-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebKitSystemInterface for <rdar://problem/13111288>.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
+        * WebKitSystemInterface.h: Removed WKEnterPluginSandbox, which has been unused now.
+
 2013-01-28  Kiran Muppala  <cmuppala@apple.com>
 
         Add window occlusion criteria to determine page visibility on Mac

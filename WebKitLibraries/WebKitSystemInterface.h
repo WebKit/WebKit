@@ -441,8 +441,6 @@ WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* s
 
 OSStatus WKEnableSandboxStyleFileQuarantine(void);
 
-bool WKEnterPluginSandbox(const char* profile, const char* parameters[], const char* readOnlyPaths[], const char* readWritePaths[]);
-
 int WKRecommendedScrollerStyle(void);
 
 bool WKExecutableWasLinkedOnOrBeforeSnowLeopard(void);
