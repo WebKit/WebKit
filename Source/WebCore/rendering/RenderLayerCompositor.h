@@ -366,6 +366,7 @@ private:
     bool m_flushingLayers;
     bool m_shouldFlushOnReattach;
     bool m_forceCompositingMode;
+    bool m_inPostLayoutUpdate; // true when it's OK to trust layout information (e.g. layer sizes and positions)
 
     bool m_isTrackingRepaints; // Used for testing.
 

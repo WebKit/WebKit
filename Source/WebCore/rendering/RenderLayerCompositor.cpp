@@ -61,6 +61,7 @@
 #include "TransformState.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
+#include <wtf/TemporaryChange.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
@@ -200,6 +201,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_flushingLayers(false)
     , m_shouldFlushOnReattach(false)
     , m_forceCompositingMode(false)
+    , m_inPostLayoutUpdate(false)
     , m_isTrackingRepaints(false)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if !LOG_DISABLED
@@ -418,6 +420,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
 
+    TemporaryChange<bool> postLayoutChange(m_inPostLayoutUpdate, true);
+    
     bool checkForHierarchyUpdate = m_reevaluateCompositingAfterLayout;
     bool needGeometryUpdate = false;
 
@@ -2065,6 +2069,12 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
             *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNonViewContainer;
         return false;
     }
+    
+    // Subsequent tests depend on layout. If we can't tell now, just keep things the way they are until layout is done.
+    if (!m_inPostLayoutUpdate) {
+        m_reevaluateCompositingAfterLayout = true;
+        return layer->isComposited();
+    }
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
     if (FrameView* frameView = m_renderView->frameView()) {
@@ -2075,18 +2085,13 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         if (!viewBounds.intersects(enclosingIntRect(layerBounds))) {
             if (viewportConstrainedNotCompositedReason)
                 *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForBoundsOutOfView;
-            // Reevaluate compositing after layout because the layer bounds may change and become composited.
-            m_reevaluateCompositingAfterLayout = true;
             return false;
         }
     }
     
     bool paintsContent = layer->isVisuallyNonEmpty() || layer->hasVisibleDescendant();
-    if (!paintsContent) {
-        // isVisuallyNonEmpty() depends on layout.
-        m_reevaluateCompositingAfterLayout = true;
+    if (!paintsContent)
         return false;
-    }
 
     return true;
 }
