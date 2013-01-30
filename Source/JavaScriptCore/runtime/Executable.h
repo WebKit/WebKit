@@ -176,16 +176,6 @@ namespace JSC {
             return hasJITCodeForConstruct();
         }
 
-        // Intrinsics are only for calls, currently.
-        Intrinsic intrinsic() const;
-        
-        Intrinsic intrinsicFor(CodeSpecializationKind kind) const
-        {
-            if (isCall(kind))
-                return intrinsic();
-            return NoIntrinsic;
-        }
-        
         static ptrdiff_t offsetOfJITCodeFor(CodeSpecializationKind kind)
         {
             if (kind == CodeForCall)
@@ -211,6 +201,16 @@ namespace JSC {
         }
 #endif // ENABLE(JIT)
 
+        // Intrinsics are only for calls, currently.
+        Intrinsic intrinsic() const;
+        
+        Intrinsic intrinsicFor(CodeSpecializationKind kind) const
+        {
+            if (isCall(kind))
+                return intrinsic();
+            return NoIntrinsic;
+        }
+        
 #if ENABLE(JIT) || ENABLE(LLINT_C_LOOP)
         MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind kind)
         {
