@@ -75,21 +75,38 @@ void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
     m_imageDataMap.remove(it);
 }
 
-void SVGImageCache::setRequestedSizeAndScales(const CachedImageClient* client, const SizeAndScales& sizeAndScales)
+void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client, const IntSize& containerSize, float containerZoom)
 {
     ASSERT(client);
-    ASSERT(!sizeAndScales.size.isEmpty());
-    m_sizeAndScalesMap.set(client, sizeAndScales);
+    ASSERT(!containerSize.isEmpty());
+
+    FloatSize containerSizeWithoutZoom(containerSize);
+    containerSizeWithoutZoom.scale(1 / containerZoom);
+    m_sizeAndScalesMap.set(client, SizeAndScales(containerSizeWithoutZoom, containerZoom));
 }
 
-SVGImageCache::SizeAndScales SVGImageCache::requestedSizeAndScales(const CachedImageClient* client) const
+IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
-    if (!client)
-        return SizeAndScales();
-    SizeAndScalesMap::const_iterator it = m_sizeAndScalesMap.find(client);
+    IntSize imageSize = m_svgImage->size();
+
+    if (!renderer)
+        return imageSize;
+    SizeAndScalesMap::const_iterator it = m_sizeAndScalesMap.find(renderer);
     if (it == m_sizeAndScalesMap.end())
-        return SizeAndScales();
-    return it->value;
+        return imageSize;
+
+    SizeAndScales sizeAndScales = it->value;
+    if (!sizeAndScales.size.isEmpty()) {
+        float scale = sizeAndScales.scale;
+        if (!scale) {
+            Page* page = renderer->document()->page();
+            scale = page->deviceScaleFactor() * page->pageScaleFactor();
+        }
+
+        imageSize.setWidth(scale * sizeAndScales.size.width());
+        imageSize.setHeight(scale * sizeAndScales.size.height());
+    }
+    return imageSize;
 }
 
 void SVGImageCache::imageContentChanged()
@@ -113,7 +130,7 @@ void SVGImageCache::redraw()
         // If the content changed we redraw using our existing ImageBuffer.
         ASSERT(data.buffer);
         ASSERT(data.image);
-        m_svgImage->drawSVGToImageBuffer(data.buffer, data.sizeAndScales.size, data.sizeAndScales.zoom, data.sizeAndScales.scale, SVGImage::ClearImageBuffer);
+        m_svgImage->drawSVGToImageBuffer(data.buffer, data.sizeAndScales.size, data.sizeAndScales.zoom * data.sizeAndScales.scale, SVGImage::ClearImageBuffer);
         data.image = data.buffer->copyImage(CopyBackingStore);
         data.imageNeedsUpdate = false;
     }
@@ -150,7 +167,7 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
     if (sizeIt == m_sizeAndScalesMap.end())
         return Image::nullImage();
 
-    IntSize size = sizeIt->value.size;
+    FloatSize size = sizeIt->value.size;
     float zoom = sizeIt->value.zoom;
     float scale = sizeIt->value.scale;
 
@@ -179,14 +196,14 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
     }
 
     FloatSize scaledSize(size);
-    scaledSize.scale(scale);
+    scaledSize.scale(scale * zoom);
 
     // Create and cache new image and image buffer at requested size.
     OwnPtr<ImageBuffer> newBuffer = ImageBuffer::create(expandedIntSize(scaledSize), 1);
     if (!newBuffer)
         return Image::nullImage();
 
-    m_svgImage->drawSVGToImageBuffer(newBuffer.get(), size, zoom, scale, SVGImage::DontClearImageBuffer);
+    m_svgImage->drawSVGToImageBuffer(newBuffer.get(), size, scale * zoom, SVGImage::DontClearImageBuffer);
 
     RefPtr<Image> newImage = newBuffer->copyImage(CopyBackingStore);
     Image* newImagePtr = newImage.get();

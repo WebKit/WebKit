@@ -99,7 +99,7 @@ IntSize SVGImage::size() const
     return IntSize(300, 150);
 }
 
-void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, float zoom, float scale, ShouldClearBuffer shouldClear)
+void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const FloatSize& size, float zoomAndScale, ShouldClearBuffer shouldClear)
 {
     // FIXME: This doesn't work correctly with animations. If an image contains animations, that say run for 2 seconds,
     // and we currently have one <img> that displays us. If we open another document referencing the same SVGImage it
@@ -130,35 +130,19 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     // Disable repainting; we don't want deferred repaints to schedule any timers due to this relayout.
     frame->view()->beginDisableRepaints();
 
-    renderer->setContainerSize(size);
+    IntSize containerSize = roundedIntSize(size);
+    renderer->setContainerSize(containerSize);
     frame->view()->resize(this->size());
 
-    if (zoom != 1)
-        frame->setPageZoomFactor(zoom);
-
-    // Eventually clear image buffer.
-    IntRect rect(IntPoint(), size);
-
-    FloatRect scaledRect(rect);
-    scaledRect.scale(scale);
-
+    FloatSize scaledContainerSize(size);
+    scaledContainerSize.scale(zoomAndScale);
+    IntRect destRect = IntRect(IntPoint(), expandedIntSize(scaledContainerSize));
     if (shouldClear == ClearImageBuffer)
-        buffer->context()->clearRect(enclosingIntRect(scaledRect));
+        buffer->context()->clearRect(destRect);
 
     // Draw SVG on top of ImageBuffer.
-    draw(buffer->context(), enclosingIntRect(scaledRect), rect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    draw(buffer->context(), destRect, IntRect(IntPoint(), containerSize), ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
 
-    // Reset container size & zoom to initial state. Otherwhise the size() of this
-    // image would return whatever last size was set by drawSVGToImageBuffer().
-    if (zoom != 1)
-        frame->setPageZoomFactor(1);
-
-    // Renderer may have been recreated by frame->setPageZoomFactor(zoom). So fetch it again.
-    renderer = toRenderSVGRoot(rootElement->renderer());
-    if (renderer)
-        renderer->setContainerSize(IntSize());
-
-    frame->view()->resize(this->size());
     if (frame->view()->needsLayout())
         frame->view()->layout();
 

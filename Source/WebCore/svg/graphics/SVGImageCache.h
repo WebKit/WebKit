@@ -21,6 +21,7 @@
 #define SVGImageCache_h
 
 #if ENABLE(SVG)
+#include "FloatSize.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "Timer.h"
@@ -53,29 +54,29 @@ public:
         {
         }
 
-        SizeAndScales(const IntSize& newSize, float newZoom, float newScale)
+        SizeAndScales(const FloatSize& newSize, float newZoom, float newScale)
             : size(newSize)
             , zoom(newZoom)
             , scale(newScale)
         {
         }
 
-        SizeAndScales(const IntSize& newSize, float newZoom)
+        SizeAndScales(const FloatSize& newSize, float newZoom)
             : size(newSize)
             , zoom(newZoom)
             , scale(0)
         {
         }
 
-        IntSize size;
+        FloatSize size; // This is the container size without zoom.
         float zoom;
         float scale; // A scale of 0 indicates that the default scale should be used.
     };
 
     void removeClientFromCache(const CachedImageClient*);
 
-    void setRequestedSizeAndScales(const CachedImageClient*, const SizeAndScales&);
-    SizeAndScales requestedSizeAndScales(const CachedImageClient*) const;
+    void setContainerSizeForRenderer(const CachedImageClient*, const IntSize&, float);
+    IntSize imageSizeForRenderer(const RenderObject*) const;
 
     Image* lookupOrCreateBitmapImageForRenderer(const RenderObject*);
     void imageContentChanged();
