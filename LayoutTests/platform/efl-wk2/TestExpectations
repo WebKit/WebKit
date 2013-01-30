@@ -48,8 +48,8 @@ editing/spelling/spelling-linebreak.html [ Pass ]
 webkit.org/b/92726 fast/dom/register-protocol-handler.html [ Crash ]
 webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 
-# Crashes on plugin test.
-webkit.org/b/98747 plugins/document-open.html [ Crash ]
+# Crashes on plugin test, also blocked by 108077
+webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
 
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
