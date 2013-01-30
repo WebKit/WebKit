@@ -1,3 +1,32 @@
+2013-01-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_window_features
+        https://bugs.webkit.org/show_bug.cgi?id=107924
+
+        Reviewed by Sam Weinig.
+
+        Use C API inside ewk_window_features instead of accessing
+        internal C++ classes directly, to avoid violating API
+        layering.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::createNewPage):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/API/efl/ewk_window_features.cpp:
+        (EwkWindowFeatures::EwkWindowFeatures):
+        (getWindowFeatureValue):
+        (EwkWindowFeatures::getWindowFeatureBoolValue):
+        (EwkWindowFeatures::getWindowFeatureDoubleValue):
+        (ewk_window_features_geometry_get):
+        * UIProcess/API/efl/ewk_window_features_private.h:
+        (EwkWindowFeatures::create):
+        (EwkWindowFeatures::geometry):
+        (EwkWindowFeatures::setGeometry):
+        (EwkWindowFeatures):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::createNewPage):
+
 2013-01-30  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Fix Qt/Mac build after r141024 and r141037

@@ -207,7 +207,7 @@ void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersR
 WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef wkRequest, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
     RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
-    return toPageUIClientEfl(clientInfo)->m_view->createNewPage(request, toImpl(wkWindowFeatures));
+    return toPageUIClientEfl(clientInfo)->m_view->createNewPage(request, wkWindowFeatures);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

@@ -173,7 +173,7 @@ public:
     void dismissColorPicker();
 #endif
 
-    WKPageRef createNewPage(PassRefPtr<EwkUrlRequest>, WebKit::ImmutableDictionary* windowFeatures);
+    WKPageRef createNewPage(PassRefPtr<EwkUrlRequest>, WKDictionaryRef windowFeatures);
     void close();
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);

@@ -26,48 +26,52 @@
 #include "config.h"
 #include "ewk_window_features.h"
 
-#include "WebNumber.h"
+#include "EwkView.h"
+#include "WKDictionary.h"
+#include "WKNumber.h"
+#include "WKString.h"
 #include "ewk_window_features_private.h"
-#include <Eina.h>
 
 using namespace WebKit;
 
-EwkWindowFeatures::EwkWindowFeatures(ImmutableDictionary* windowFeatures, EwkView* view)
+EwkWindowFeatures::EwkWindowFeatures(WKDictionaryRef windowFeatures, EwkView* view)
     : m_view(view)
-    , m_geometry(0, 0, 100, 100)
-    , m_toolbarVisible(true)
-    , m_statusBarVisible(true)
-    , m_scrollbarsVisible(true)
-    , m_menuBarVisible(true)
-    , m_locationBarVisible(true)
-    , m_resizable(true)
-    , m_fullScreen(false)
+    , m_toolbarVisible(getWindowFeatureBoolValue(windowFeatures, "toolBarVisible", true))
+    , m_statusBarVisible(getWindowFeatureBoolValue(windowFeatures, "statusBarVisible", true))
+    , m_scrollbarsVisible(getWindowFeatureBoolValue(windowFeatures, "scrollbarsVisible", true))
+    , m_menuBarVisible(getWindowFeatureBoolValue(windowFeatures, "menuBarVisible", true))
+    , m_locationBarVisible(getWindowFeatureBoolValue(windowFeatures, "locationBarVisible", true))
+    , m_resizable(getWindowFeatureBoolValue(windowFeatures, "resizable", true))
+    , m_fullScreen(getWindowFeatureBoolValue(windowFeatures, "fullscreen", false))
 {
-    if (windowFeatures) {
-        m_geometry.setX(getWindowFeatureValue<double, WebDouble>(windowFeatures, ASCIILiteral("x")));
-        m_geometry.setY(getWindowFeatureValue<double, WebDouble>(windowFeatures, ASCIILiteral("y")));
-        m_geometry.setWidth(getWindowFeatureValue<double, WebDouble>(windowFeatures, ASCIILiteral("width")));
-        m_geometry.setHeight(getWindowFeatureValue<double, WebDouble>(windowFeatures, ASCIILiteral("height")));
-
-        m_toolbarVisible = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("toolBarVisible"));
-        m_statusBarVisible = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("statusBarVisible"));
-        m_scrollbarsVisible = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("scrollbarsVisible"));
-        m_menuBarVisible = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("menuBarVisible"));
-        m_locationBarVisible = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("locationBarVisible"));
-        m_resizable = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("resizable"));
-        m_fullScreen = getWindowFeatureValue<bool, WebBoolean>(windowFeatures, ASCIILiteral("fullscreen"));
-    }
+    m_geometry.x = getWindowFeatureDoubleValue(windowFeatures, "x", 0);
+    m_geometry.y = getWindowFeatureDoubleValue(windowFeatures, "y", 0);
+    m_geometry.w = getWindowFeatureDoubleValue(windowFeatures, "width", 0);
+    m_geometry.h = getWindowFeatureDoubleValue(windowFeatures, "height", 0);
 }
 
-template <typename T1, typename T2>
-T1 EwkWindowFeatures::getWindowFeatureValue(ImmutableDictionary* windowFeatures, const String& featureName)
+static inline WKTypeRef getWindowFeatureValue(WKDictionaryRef windowFeatures, const char* featureName)
 {
-    T2* featureValue = static_cast<T2*>(windowFeatures->get(featureName));
+    ASSERT(featureName);
+    if (!windowFeatures)
+        return 0;
 
-    if (!featureValue)
-        return false;
+    WKRetainPtr<WKStringRef> key(AdoptWK, WKStringCreateWithUTF8CString(featureName));
+    return WKDictionaryGetItemForKey(windowFeatures, key.get());
+}
 
-    return featureValue->value();
+bool EwkWindowFeatures::getWindowFeatureBoolValue(WKDictionaryRef windowFeatures, const char* featureName, bool defaultValue)
+{
+    WKBooleanRef value = static_cast<WKBooleanRef>(getWindowFeatureValue(windowFeatures, featureName));
+
+    return value ? WKBooleanGetValue(value) : defaultValue;
+}
+
+double EwkWindowFeatures::getWindowFeatureDoubleValue(WKDictionaryRef windowFeatures, const char* featureName, double defaultValue)
+{
+    WKDoubleRef value = static_cast<WKDoubleRef>(getWindowFeatureValue(windowFeatures, featureName));
+
+    return value ?  WKDoubleGetValue(value) : defaultValue;
 }
 
 void EwkWindowFeatures::setToolbarVisible(bool toolbarVisible)
@@ -147,15 +151,16 @@ void ewk_window_features_geometry_get(const Ewk_Window_Features* window_features
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkWindowFeatures, window_features, impl);
 
+    const Evas_Coord_Rectangle& geometry = impl->geometry();
     if (x)
-        *x = static_cast<Evas_Coord>(impl->geometry().x());
+        *x = geometry.x;
 
     if (y)
-        *y = static_cast<Evas_Coord>(impl->geometry().y());
+        *y = geometry.y;
 
     if (width)
-        *width = static_cast<Evas_Coord>(impl->geometry().width());
+        *width = geometry.w;
 
     if (height)
-        *height = static_cast<Evas_Coord>(impl->geometry().height());
+        *height = geometry.h;
 }

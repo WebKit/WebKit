@@ -26,11 +26,9 @@
 #ifndef ewk_window_features_private_h
 #define ewk_window_features_private_h
 
-#include "EwkView.h"
-#include "ImmutableDictionary.h"
-#include "WindowFeatures.h"
 #include "ewk_object_private.h"
-#include <WebCore/FloatRect.h>
+#include <Evas.h>
+#include <WebKit2/WKBase.h>
 #include <wtf/RefCounted.h>
 
 class EwkView;
@@ -39,13 +37,13 @@ class EwkWindowFeatures : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkWindowFeatures)
 
-    static PassRefPtr<EwkWindowFeatures> create(WebKit::ImmutableDictionary* windowFeatures, EwkView* viewImpl)
+    static PassRefPtr<EwkWindowFeatures> create(WKDictionaryRef windowFeatures, EwkView* viewImpl)
     {
         return adoptRef(new EwkWindowFeatures(windowFeatures, viewImpl));
     }
 
-    WebCore::FloatRect geometry() const { return m_geometry; }
-    void setGeometry(WebCore::FloatRect& geometry) { m_geometry = geometry; }
+    const Evas_Coord_Rectangle& geometry() const { return m_geometry; }
+    void setGeometry(const Evas_Coord_Rectangle& geometry) { m_geometry = geometry; }
 
     bool toolbarVisible() const { return m_toolbarVisible; }
     void setToolbarVisible(bool toolbarVisible);
@@ -69,13 +67,14 @@ public:
     void setFullScreen(bool fullScreen) { m_fullScreen = fullScreen; }
 
 private:
-    EwkWindowFeatures(WebKit::ImmutableDictionary* windowFeatures, EwkView* viewImpl);
-    template <typename T1, typename T2>
-    static T1 getWindowFeatureValue(WebKit::ImmutableDictionary* windowFeatures, const String& featureName);
+    EwkWindowFeatures(WKDictionaryRef windowFeatures, EwkView* viewImpl);
+
+    static bool getWindowFeatureBoolValue(WKDictionaryRef windowFeatures, const char* featureName, bool defaultValue);
+    static double getWindowFeatureDoubleValue(WKDictionaryRef windowFeatures, const char* featureName, double defaultValue);
 
     EwkView* m_view;
 
-    WebCore::FloatRect m_geometry;
+    Evas_Coord_Rectangle m_geometry;
     bool m_toolbarVisible;
     bool m_statusBarVisible;
     bool m_scrollbarsVisible;
