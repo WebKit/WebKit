@@ -504,9 +504,6 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         ASSERT(currentPosition <= characters.length());
         task.child = textNode.release();
 
-        if (task.parent->document() != task.child->document())
-            task.parent->document()->adoptNode(task.child, ASSERT_NO_EXCEPTION);
-
         executeTask(task);
     }
 }
@@ -607,7 +604,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
     // When a node is to be foster parented, the last template element with no table element is below it in the stack of open elements is the foster parent element (NOT the template's parent!)
     HTMLElementStack::ElementRecord* lastTemplateElement = m_openElements.topmost(templateTag.localName());
     if (lastTemplateElement && !m_openElements.inTableScope(tableTag)) {
-        task.parent = toHTMLTemplateElement(lastTemplateElement->element())->content();
+        task.parent = lastTemplateElement->element();
         return;
     }
 
@@ -644,9 +641,6 @@ void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)
     findFosterSite(task);
     task.child = node;
     ASSERT(task.parent);
-
-    if (task.parent->document() != task.child->document())
-        task.parent->document()->adoptNode(task.child, ASSERT_NO_EXCEPTION);
 
     m_attachmentQueue.append(task);
 }
