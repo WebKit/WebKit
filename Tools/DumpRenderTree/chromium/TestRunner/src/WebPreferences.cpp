@@ -95,7 +95,7 @@ void WebPreferences::reset()
     offlineWebApplicationCacheEnabled = true;
     pluginsEnabled = true;
     shrinksStandaloneImagesToFit = false;
-    textAreasAreResizable = false;
+    textAreasAreResizable = true;
     userStyleSheetLocation = WebURL();
     usesPageCache = false;
     pageCacheSupportsPlugins = false;

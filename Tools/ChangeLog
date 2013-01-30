@@ -1,3 +1,15 @@
+2013-01-30  Tony Chang  <tony@chromium.org>
+
+        [Chromium] Enable textarea resize corner for tests
+        https://bugs.webkit.org/show_bug.cgi?id=108385
+
+        Reviewed by Ojan Vafai.
+
+        We should test what we ship. Also, this makes us pass more tests in content_shell.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset): Turn on resize corner.
+
 2013-01-30  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move custom policy delegate to TestRunner library
