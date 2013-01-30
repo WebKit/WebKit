@@ -1,3 +1,18 @@
+2013-01-29  Alan Cutter  <alancutter@chromium.org>
+
+        MockWeb should be able to serve mock web content
+        https://bugs.webkit.org/show_bug.cgi?id=108240
+
+        Reviewed by Dirk Pranke.
+
+        Added the ability to have MockWeb serve mock web data.
+
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+        * Scripts/webkitpy/common/net/web_mock.py:
+        (MockWeb.__init__):
+        (MockWeb.get_binary):
+
 2013-01-29  Jessie Berlin  <jberlin@apple.com>
 
         run-api-tests should have an option to specify root
