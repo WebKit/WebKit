@@ -896,7 +896,9 @@ void TileCache::setScrollingModeIndication(ScrollingModeIndication scrollingMode
         return;
 
     m_indicatorMode = scrollingMode;
-    updateTileCoverageMap();
+
+    if (m_tiledScrollingIndicatorLayer)
+        updateTileCoverageMap();
 }
 
 WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
