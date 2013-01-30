@@ -1450,6 +1450,9 @@ void Element::didAffectSelector(AffectedSelectorMask mask)
 
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
 {
+    if (alwaysCreateUserAgentShadowRoot())
+        ensureUserAgentShadowRoot();
+
 #if ENABLE(SHADOW_DOM)
     if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
         return ensureShadow()->addShadowRoot(this, ShadowRoot::AuthorShadowRoot);

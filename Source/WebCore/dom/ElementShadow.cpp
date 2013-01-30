@@ -36,9 +36,6 @@ ShadowRoot* ElementShadow::addShadowRoot(Element* shadowHost, ShadowRoot::Shadow
 {
     RefPtr<ShadowRoot> shadowRoot = ShadowRoot::create(shadowHost->document(), type);
 
-    if (type == ShadowRoot::AuthorShadowRoot)
-        shadowHost->willAddAuthorShadowRoot();
-
     shadowRoot->setHost(shadowHost);
     m_shadowRoots.push(shadowRoot.get());
     m_distributor.didShadowBoundaryChange(shadowHost);

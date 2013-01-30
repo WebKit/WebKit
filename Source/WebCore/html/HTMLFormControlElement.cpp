@@ -70,11 +70,6 @@ HTMLFormControlElement::~HTMLFormControlElement()
 {
 }
 
-void HTMLFormControlElement::willAddAuthorShadowRoot()
-{
-    ensureUserAgentShadowRoot();
-}
-
 String HTMLFormControlElement::formEnctype() const
 {
     return FormSubmission::Attributes::parseEncodingType(fastGetAttribute(formenctypeAttr));

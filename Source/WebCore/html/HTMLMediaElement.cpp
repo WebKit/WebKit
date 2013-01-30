@@ -1981,12 +1981,6 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
     }
 }
 
-void HTMLMediaElement::willAddAuthorShadowRoot()
-{
-    if (!userAgentShadowRoot())
-        ensureUserAgentShadowRoot();
-}
-
 void HTMLMediaElement::rewind(float timeDelta)
 {
     LOG(Media, "HTMLMediaElement::rewind(%f)", timeDelta);

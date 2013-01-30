@@ -44,10 +44,11 @@ private:
     enum Type { SUBMIT, RESET, BUTTON };
 
     virtual const AtomicString& formControlType() const;
-        
+
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void willAddAuthorShadowRoot() OVERRIDE;
+    // HTMLFormControlElement always creates one, but buttons don't need it.
+    virtual bool alwaysCreateUserAgentShadowRoot() const OVERRIDE { return false; }
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;

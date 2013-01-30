@@ -88,8 +88,6 @@ class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public Me
 public:
     MediaPlayer* player() const { return m_player.get(); }
 
-    virtual void willAddAuthorShadowRoot() OVERRIDE;
-
     virtual bool isVideo() const = 0;
     virtual bool hasVideo() const { return false; }
     virtual bool hasAudio() const;
@@ -382,6 +380,7 @@ protected:
 private:
     void createMediaPlayer();
 
+    virtual bool alwaysCreateUserAgentShadowRoot() const OVERRIDE { return true; }
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool hasCustomFocusLogic() const OVERRIDE;

@@ -45,8 +45,6 @@ public:
 
     HTMLFormElement* form() const { return FormAssociatedElement::form(); }
 
-    void willAddAuthorShadowRoot() OVERRIDE;
-
     String formEnctype() const;
     void setFormEnctype(const String&);
     String formMethod() const;
@@ -139,6 +137,7 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
 
     virtual bool isFormControlElement() const { return true; }
+    virtual bool alwaysCreateUserAgentShadowRoot() const OVERRIDE { return true; }
 
     virtual short tabIndex() const;
 
