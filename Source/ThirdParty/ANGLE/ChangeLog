@@ -1,3 +1,11 @@
+2013-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        Remove useless comment from Base.xcconfig
+
+        Rubber-stamped by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Remove comment.
+
 2013-01-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Doesn't build with GCC 4.7+

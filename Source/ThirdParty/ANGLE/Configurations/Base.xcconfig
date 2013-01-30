@@ -41,7 +41,6 @@ TARGETING_SAME_OS_X_VERSION_1070_1070 = YES;
 TARGETING_SAME_OS_X_VERSION_1080_1080 = YES;
 TARGETING_SAME_OS_X_VERSION_1090_1090 = YES;
 
-// Make macosx SDK builds work without AspenFamily.xcconfig.
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 
 // Don't build against an SDK unless we're targeting an older OS version.
