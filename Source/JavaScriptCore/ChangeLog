@@ -1,5 +1,18 @@
 2013-01-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Objective-C API: JSContext's dealloc causes ASSERT due to ordering of releases
+        https://bugs.webkit.org/show_bug.cgi?id=107978
+
+        Reviewed by Filip Pizlo.
+
+        We need to add the Identifier table save/restore in JSContextGroupRelease so that we 
+        have the correct table if we end up destroying the JSGlobalData/Heap.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupRelease):
+
+2013-01-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Objective-C API: exceptionHandler needs to be released in JSContext dealloc
         https://bugs.webkit.org/show_bug.cgi?id=108378
 
