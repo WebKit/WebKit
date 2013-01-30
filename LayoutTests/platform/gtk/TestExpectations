@@ -518,6 +518,8 @@ webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Fa
 
 webkit.org/b/108200 fast/css/relative-positioned-block-crash.html [ Crash Pass ]
 
+webkit.org/b/108365 http/tests/security/inactive-document-with-empty-security-origin.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1415,6 +1417,9 @@ webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure 
 webkit.org/b/108100 http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_entry_type.html [ Failure ]
 
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
+
+webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Failure ]
+webkit.org/b/108363 fullscreen/video-specified-size.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
