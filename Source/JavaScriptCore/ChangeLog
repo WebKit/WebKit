@@ -1,3 +1,26 @@
+2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Structure::m_outOfLineCapacity is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=108206
+
+        Reviewed by Geoffrey Garen.
+
+        We can calculate our out of line capacity by using the outOfLineSize and our knowledge about our resize policy.
+        According to GDB, this knocks Structures down from 136 bytes to 128 bytes (I'm guessing the extra bytes are from
+        better alignment of object fields), which puts Structures in a smaller size class. Woohoo! Looks neutral on our 
+        benchmarks.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC):
+        (JSC::Structure::suggestedNewOutOfLineStorageCapacity):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::outOfLineCapacity):
+        (JSC::Structure::totalStorageCapacity):
+
 2013-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Be a little more conservative about emitting table-based switches

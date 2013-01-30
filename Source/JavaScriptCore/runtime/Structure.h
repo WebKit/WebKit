@@ -182,11 +182,18 @@ namespace JSC {
         }
         bool transitivelyTransitionedFrom(Structure* structureToFind);
 
-        void growOutOfLineCapacity();
         unsigned outOfLineCapacity() const
         {
-            ASSERT(structure()->classInfo() == &s_info);
-            return m_outOfLineCapacity;
+            unsigned outOfLineSize = this->outOfLineSize();
+
+            if (!outOfLineSize)
+                return 0;
+
+            if (outOfLineSize <= initialOutOfLineCapacity)
+                return initialOutOfLineCapacity;
+
+            ASSERT(outOfLineSize > initialOutOfLineCapacity);
+            return WTF::roundUpToPowerOf<outOfLineGrowthFactor>(outOfLineSize);
         }
         unsigned outOfLineSize() const
         {
@@ -226,7 +233,7 @@ namespace JSC {
         unsigned totalStorageCapacity() const
         {
             ASSERT(structure()->classInfo() == &s_info);
-            return m_outOfLineCapacity + inlineCapacity();
+            return outOfLineCapacity() + inlineCapacity();
         }
 
         PropertyOffset firstValidOffset() const
@@ -435,7 +442,6 @@ namespace JSC {
         
         mutable InlineWatchpointSet m_transitionWatchpointSet;
 
-        uint32_t m_outOfLineCapacity;
         uint8_t m_inlineCapacity;
         COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
 
