@@ -415,6 +415,12 @@ void TestRunner::reset()
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
     m_shouldBlockRedirects = false;
     m_willSendRequestShouldReturnNull = false;
+    m_smartInsertDeleteEnabled = true;
+#if OS(WINDOWS)
+    m_selectTrailingWhitespaceEnabled = true;
+#else
+    m_selectTrailingWhitespaceEnabled = false;
+#endif
 
     m_httpHeadersToClear.clear();
 
@@ -634,6 +640,16 @@ void TestRunner::policyDelegateDone()
 bool TestRunner::shouldInterceptPostMessage() const
 {
     return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
+}
+
+bool TestRunner::isSmartInsertDeleteEnabled() const
+{
+    return m_smartInsertDeleteEnabled;
+}
+
+bool TestRunner::isSelectTrailingWhitespaceEnabled() const
+{
+    return m_selectTrailingWhitespaceEnabled;
 }
 
 void TestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
@@ -1471,14 +1487,14 @@ void TestRunner::textSurroundingNode(const CppArgumentList& arguments, CppVarian
 void TestRunner::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
-        m_delegate->setSmartInsertDeleteEnabled(arguments[0].value.boolValue);
+        m_smartInsertDeleteEnabled = arguments[0].value.boolValue;
     result->setNull();
 }
 
 void TestRunner::setSelectTrailingWhitespaceEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
-        m_delegate->setSelectTrailingWhitespaceEnabled(arguments[0].value.boolValue);
+        m_selectTrailingWhitespaceEnabled = arguments[0].value.boolValue;
     result->setNull();
 }
 

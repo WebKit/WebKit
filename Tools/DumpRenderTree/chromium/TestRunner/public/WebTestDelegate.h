@@ -81,8 +81,6 @@ public:
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) { return std::string(); }
     virtual std::string normalizeLayoutTestURL(const std::string&) { return std::string(); }
     virtual void setClientWindowRect(const WebKit::WebRect&) { }
-    virtual void setSelectTrailingWhitespaceEnabled(bool) { }
-    virtual void setSmartInsertDeleteEnabled(bool) { }
     virtual void showDevTools() { }
     virtual void closeDevTools() { }
     virtual void evaluateInWebInspector(long, const std::string&) { }

@@ -113,9 +113,11 @@ protected:
     void didEndEditing();
     void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
     void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
-    WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy);
+    bool createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy);
     void setStatusText(const WebKit::WebString&);
     void didStopLoading();
+    bool isSmartInsertDeleteEnabled();
+    bool isSelectTrailingWhitespaceEnabled();
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
@@ -284,7 +286,8 @@ public:
     }
     virtual WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest& request, const WebKit::WebWindowFeatures& features, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy policy)
     {
-        WebTestProxyBase::createView(creator, request, features, frameName, policy);
+        if (!WebTestProxyBase::createView(creator, request, features, frameName, policy))
+            return 0;
         return Base::createView(creator, request, features, frameName, policy);
     }
     virtual void setStatusText(const WebKit::WebString& text)
@@ -296,6 +299,14 @@ public:
     {
         WebTestProxyBase::didStopLoading();
         Base::didStopLoading();
+    }
+    virtual bool isSmartInsertDeleteEnabled()
+    {
+        return WebTestProxyBase::isSmartInsertDeleteEnabled();
+    }
+    virtual bool isSelectTrailingWhitespaceEnabled()
+    {
+        return WebTestProxyBase::isSelectTrailingWhitespaceEnabled();
     }
 
     // WebFrameClient implementation.

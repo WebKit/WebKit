@@ -129,8 +129,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() OVERRIDE;
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) OVERRIDE;
     virtual std::string normalizeLayoutTestURL(const std::string&) OVERRIDE;
-    virtual void setSelectTrailingWhitespaceEnabled(bool) OVERRIDE;
-    virtual void setSmartInsertDeleteEnabled(bool) OVERRIDE;
     virtual void setClientWindowRect(const WebKit::WebRect&) OVERRIDE;
     virtual void showDevTools() OVERRIDE;
     virtual void closeDevTools() OVERRIDE;
@@ -366,12 +364,6 @@ private:
     bool m_shutdownWasInvoked;
 
     WebKit::WebRect m_windowRect;
-
-    // true if we want to enable smart insert/delete.
-    bool m_smartInsertDeleteEnabled;
-
-    // true if we want to enable selection of trailing whitespaces
-    bool m_selectTrailingWhitespaceEnabled;
 
     // Edit command associated to the current keyboard event.
     std::string m_editCommandName;

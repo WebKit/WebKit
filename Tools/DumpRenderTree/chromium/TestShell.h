@@ -111,7 +111,6 @@ public:
     bool shouldDumpResourceRequestCallbacks() const { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceRequestCallbacks(); }
     bool shouldDumpResourceLoadCallbacks() const  { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceLoadCallbacks(); }
     bool shouldDumpResourceResponseMIMETypes() const  { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceResponseMIMETypes(); }
-    void setIsLoading(bool flag) { m_isLoading = flag; }
 
     // Called by the DRTTestRunner to signal test completion.
     void testFinished();
@@ -200,7 +199,6 @@ private:
 
     bool m_testIsPending;
     bool m_testIsPreparing;
-    bool m_isLoading;
     WebKit::WebView* m_webView;
     WebKit::WebWidget* m_focusedWidget;
     WebViewHost* m_devTools;

@@ -544,13 +544,13 @@ void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& 
         m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
 }
 
-WebView* WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
+bool WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
 {
     if (!m_testInterfaces->testRunner() || !m_testInterfaces->testRunner()->canOpenWindows())
-        return 0;
+        return false;
     if (m_testInterfaces->testRunner()->shouldDumpCreateView())
         m_delegate->printMessage(string("createView(") + URLDescription(request.url()) + ")\n");
-    return 0;
+    return true;
 }
 
 void WebTestProxyBase::setStatusText(const WebString& text)
@@ -564,6 +564,20 @@ void WebTestProxyBase::didStopLoading()
 {
     if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpProgressFinishedCallback())
         m_delegate->printMessage("postProgressFinishedNotification\n");
+}
+
+bool WebTestProxyBase::isSmartInsertDeleteEnabled()
+{
+    if (m_testInterfaces->testRunner())
+        return m_testInterfaces->testRunner()->isSmartInsertDeleteEnabled();
+    return true;
+}
+
+bool WebTestProxyBase::isSelectTrailingWhitespaceEnabled()
+{
+    if (m_testInterfaces->testRunner())
+        return m_testInterfaces->testRunner()->isSelectTrailingWhitespaceEnabled();
+    return false;
 }
 
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)

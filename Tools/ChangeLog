@@ -1,3 +1,48 @@
+2013-01-30  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move methods from WebTestDelegate to WebTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=108309
+
+        Reviewed by Adam Barth.
+
+        By moving more logic to the TestRunner library, we can share more
+        code with content shell.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::createView):
+        (WebTestRunner::WebTestProxy::isSmartInsertDeleteEnabled):
+        (WebTestRunner::WebTestProxy::isSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::isSmartInsertDeleteEnabled):
+        (WebTestRunner::WebTestRunner::isSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::isSmartInsertDeleteEnabled):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::isSelectTrailingWhitespaceEnabled):
+        (WebTestRunner::TestRunner::setSmartInsertDeleteEnabled):
+        (WebTestRunner::TestRunner::setSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::createView):
+        (WebTestRunner::WebTestProxyBase::isSmartInsertDeleteEnabled):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::isSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createView):
+        (WebViewHost::didStartLoading):
+        (WebViewHost::didStopLoading):
+        (WebViewHost::isSmartInsertDeleteEnabled):
+        (WebViewHost::isSelectTrailingWhitespaceEnabled):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-30  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed. Add Jae Hyun Park to contributor list.

@@ -84,6 +84,8 @@ public:
     virtual WebKit::WebFrame* topLoadingFrame() const { return 0; }
     virtual void policyDelegateDone() { }
     virtual bool shouldInterceptPostMessage() const { return false; }
+    virtual bool isSmartInsertDeleteEnabled() const { return true; }
+    virtual bool isSelectTrailingWhitespaceEnabled() const { return false; }
 };
 
 }

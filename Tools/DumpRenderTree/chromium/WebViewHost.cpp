@@ -152,8 +152,6 @@ static void printNodeDescription(const WebNode& node, int exception)
 
 WebView* WebViewHost::createView(WebFrame* creator, const WebURLRequest&, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
 {
-    if (!testRunner()->canOpenWindows())
-        return 0;
     creator->consumeUserGesture();
     return m_shell->createNewWindow(WebURL())->webView();
 }
@@ -203,12 +201,10 @@ void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const
 
 void WebViewHost::didStartLoading()
 {
-    m_shell->setIsLoading(true);
 }
 
 void WebViewHost::didStopLoading()
 {
-    m_shell->setIsLoading(false);
 }
 
 bool WebViewHost::shouldBeginEditing(const WebRange& range)
@@ -249,12 +245,16 @@ bool WebViewHost::shouldApplyStyle(const WebString& style, const WebRange& range
 
 bool WebViewHost::isSmartInsertDeleteEnabled()
 {
-    return m_smartInsertDeleteEnabled;
+    return true;
 }
 
 bool WebViewHost::isSelectTrailingWhitespaceEnabled()
 {
-    return m_selectTrailingWhitespaceEnabled;
+#if OS(WINDOWS)
+    return true;
+#else
+    return false;
+#endif
 }
 
 bool WebViewHost::handleCurrentKeyboardEvent()
@@ -1190,12 +1190,6 @@ void WebViewHost::reset()
     m_lastPageIdUpdated = -1;
     m_hasWindow = false;
     m_inModalLoop = false;
-    m_smartInsertDeleteEnabled = true;
-#if OS(WINDOWS)
-    m_selectTrailingWhitespaceEnabled = true;
-#else
-    m_selectTrailingWhitespaceEnabled = false;
-#endif
     m_isPainting = false;
     m_canvas.clear();
 #if ENABLE(POINTER_LOCK)
@@ -1227,22 +1221,6 @@ void WebViewHost::reset()
         webView()->mainFrame()->setName(WebString());
         webView()->settings()->setMinimumTimerInterval(webkit_support::GetForegroundTabTimerInterval());
     }
-}
-
-void WebViewHost::setSelectTrailingWhitespaceEnabled(bool enabled)
-{
-    m_selectTrailingWhitespaceEnabled = enabled;
-    // In upstream WebKit, smart insert/delete is mutually exclusive with select
-    // trailing whitespace, however, we allow both because Chromium on Windows
-    // allows both.
-}
-
-void WebViewHost::setSmartInsertDeleteEnabled(bool enabled)
-{
-    m_smartInsertDeleteEnabled = enabled;
-    // In upstream WebKit, smart insert/delete is mutually exclusive with select
-    // trailing whitespace, however, we allow both because Chromium on Windows
-    // allows both.
 }
 
 void WebViewHost::setClientWindowRect(const WebKit::WebRect& rect)

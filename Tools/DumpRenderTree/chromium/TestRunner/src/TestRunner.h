@@ -102,6 +102,8 @@ public:
     virtual WebKit::WebFrame* topLoadingFrame() const OVERRIDE;
     virtual void policyDelegateDone() OVERRIDE;
     virtual bool shouldInterceptPostMessage() const OVERRIDE;
+    virtual bool isSmartInsertDeleteEnabled() const OVERRIDE;
+    virtual bool isSelectTrailingWhitespaceEnabled() const OVERRIDE;
 
     // A single item in the work queue.
     class WorkItem {
@@ -638,6 +640,10 @@ private:
     bool m_shouldBlockRedirects;
 
     bool m_willSendRequestShouldReturnNull;
+
+    bool m_smartInsertDeleteEnabled;
+
+    bool m_selectTrailingWhitespaceEnabled;
 
     std::set<std::string> m_httpHeadersToClear;
 
