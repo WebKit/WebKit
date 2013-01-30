@@ -1880,12 +1880,13 @@ WebInspector.TextEditorMainPanel.prototype = {
         var cssClass = highlight.cssClass;
         for(var i = 0; i < metrics.length; ++i) {
             var highlightSpan = document.createElement("span");
+            highlightSpan._isOverlayHighlightElement = true;
             highlightSpan.addStyleClass(cssClass);
             highlightSpan.style.left = (metrics[i].left - extraWidth) + "px";
             highlightSpan.style.width = (metrics[i].width + extraWidth * 2) + "px";
             highlightSpan.textContent = " ";
             highlightSpan.addStyleClass("text-editor-overlay-highlight");
-            lineRow.appendChild(highlightSpan);
+            lineRow.insertBefore(highlightSpan, lineRow.decorationsElement);
         }
     },
 
@@ -2573,12 +2574,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         var textContents = [];
         var hasContent = false;
         for (var node = from ? from.nextSibling : this._container; node && node !== to; node = node.traverseNextNode(this._container)) {
-            if (node._isDecorationsElement) {
-                // Skip all children of the decoration container.
+            // Skip all children of the decoration container and overlay highlight spans.
+            while (node && node !== to && (node._isDecorationsElement || node._isOverlayHighlightElement))
                 node = node.nextSibling;
-                if (!node || node === to)
-                    break;
-            }
+            if (!node || node === to)
+                break;
+
             hasContent = true;
             if (node.nodeName.toLowerCase() === "br")
                 textContents.push("\n");
