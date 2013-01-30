@@ -51,34 +51,32 @@ static const size_t messageMaxSize = 4096;
 static const size_t attachmentMaxAmount = 255;
 
 enum {
-    MessageBodyIsOOL = 1U << 31
+    MessageBodyIsOutOfLine = 1U << 31
 };
 
 class MessageInfo {
 public:
     MessageInfo() { }
 
-    MessageInfo(MessageID messageID, size_t bodySize, size_t initialAttachmentCount)
-        : m_messageID(messageID.toInt())
+    MessageInfo(MessageID, size_t bodySize, size_t initialAttachmentCount)
+        : m_messageID(0)
         , m_bodySize(bodySize)
         , m_attachmentCount(initialAttachmentCount)
     {
-        ASSERT(!(m_messageID & MessageBodyIsOOL));
+        ASSERT(!(m_messageID & MessageBodyIsOutOfLine));
     }
 
-    void setMessageBodyOOL()
+    void setMessageBodyIsOutOfLine()
     {
-        ASSERT(!isMessageBodyOOL());
+        ASSERT(!isMessageBodyIsOutOfLine());
 
-        m_messageID |= MessageBodyIsOOL;
+        m_messageID |= MessageBodyIsOutOfLine;
         m_attachmentCount++;
     }
 
-    bool isMessageBodyOOL() const { return m_messageID & MessageBodyIsOOL; }
+    bool isMessageBodyIsOutOfLine() const { return m_messageID & MessageBodyIsOutOfLine; }
 
     size_t bodySize() const { return m_bodySize; }
-
-    MessageID messageID() const { return MessageID::fromInt(m_messageID & ~MessageBodyIsOOL); }
 
     size_t attachmentCount() const { return m_attachmentCount; }
 
@@ -206,7 +204,7 @@ bool Connection::processMessage()
     memcpy(&messageInfo, messageData, sizeof(messageInfo));
     messageData += sizeof(messageInfo);
 
-    size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(AttachmentInfo) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize());
+    size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(AttachmentInfo) + (messageInfo.isMessageBodyIsOutOfLine() ? 0 : messageInfo.bodySize());
     if (m_readBufferSize < messageLength)
         return false;
 
@@ -233,7 +231,7 @@ bool Connection::processMessage()
             }
         }
 
-        if (messageInfo.isMessageBodyOOL())
+        if (messageInfo.isMessageBodyIsOutOfLine())
             attachmentCount--;
 
         size_t fdIndex = 0;
@@ -257,7 +255,7 @@ bool Connection::processMessage()
             }
         }
 
-        if (messageInfo.isMessageBodyOOL()) {
+        if (messageInfo.isMessageBodyIsOutOfLine()) {
             ASSERT(messageInfo.bodySize());
 
             if (attachmentInfo[attachmentCount].isNull()) {
@@ -276,10 +274,10 @@ bool Connection::processMessage()
         }
     }
 
-    ASSERT(attachments.size() == messageInfo.isMessageBodyOOL() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount());
+    ASSERT(attachments.size() == messageInfo.isMessageBodyIsOutOfLine() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount());
 
     uint8_t* messageBody = messageData;
-    if (messageInfo.isMessageBodyOOL())
+    if (messageInfo.isMessageBodyIsOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
     OwnPtr<MessageDecoder> decoder;
@@ -288,7 +286,7 @@ bool Connection::processMessage()
     else
         decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()), attachments);
 
-    processIncomingMessage(messageInfo.messageID(), decoder.release());
+    processIncomingMessage(MessageID(), decoder.release());
 
     if (m_readBufferSize > messageLength) {
         memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBufferSize - messageLength);
@@ -468,7 +466,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
         if (!oolMessageBody->createHandle(handle, WebKit::SharedMemory::ReadOnly))
             return false;
 
-        messageInfo.setMessageBodyOOL();
+        messageInfo.setMessageBodyIsOutOfLine();
 
         memcpy(oolMessageBody->data(), encoder->buffer(), encoder->bufferSize());
 
@@ -540,7 +538,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
         ++iovLength;
     }
 
-    if (!messageInfo.isMessageBodyOOL() && encoder->bufferSize()) {
+    if (!messageInfo.isMessageBodyIsOutOfLine() && encoder->bufferSize()) {
         iov[iovLength].iov_base = reinterpret_cast<void*>(encoder->buffer());
         iov[iovLength].iov_len = encoder->bufferSize();
         ++iovLength;

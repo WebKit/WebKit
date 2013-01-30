@@ -1,3 +1,24 @@
+2013-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Adjust missing MessageID removals to fix build breaks
+        https://bugs.webkit.org/show_bug.cgi?id=108276
+
+        Unreviewed to fix build breaks.
+
+        Some MessageID removals wasn't adjusted into ConnectionUnix.cpp and coordinated graphics.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::MessageInfo::MessageInfo):
+        (CoreIPC::MessageInfo::setMessageBodyIsOutOfLine):
+        (CoreIPC::MessageInfo::isMessageBodyIsOutOfLine):
+        (CoreIPC::Connection::processMessage):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+
 2013-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r140983.

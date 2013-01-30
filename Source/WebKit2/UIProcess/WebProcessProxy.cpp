@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebProcessProxy.h"
 
-#include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
@@ -52,6 +51,10 @@
 #if ENABLE(PDFKIT_PLUGIN)
 #include "PDFPlugin.h"
 #endif
+#endif
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+#include "CustomProtocolManagerProxyMessages.h"
 #endif
 
 #if USE(SECURITY_FRAMEWORK)
