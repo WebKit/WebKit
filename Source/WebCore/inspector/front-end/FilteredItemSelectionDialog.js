@@ -43,7 +43,7 @@ WebInspector.FilteredItemSelectionDialog = function(delegate)
     xhr.send(null);
 
     this.element = document.createElement("div");
-    this.element.className = "js-outline-dialog";
+    this.element.className = "filtered-item-list-dialog";
     this.element.addEventListener("keydown", this._onKeyDown.bind(this), false);
     var styleElement = this.element.createChild("style");
     styleElement.type = "text/css";
@@ -93,7 +93,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     focus: function()
     {
         WebInspector.setCurrentFocusElement(this._promptElement);
-        if (this._filteredItems.length && !this._viewportControl.lastVisibleIndex())
+        if (this._filteredItems.length && this._viewportControl.lastVisibleIndex() === -1)
             this._viewportControl.refresh();
     },
 
@@ -104,6 +104,11 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         this._isHiding = true;
         if (this._filterTimer)
             clearTimeout(this._filterTimer);
+    },
+
+    renderAsTwoRows: function()
+    {
+        this._renderAsTwoRows = true;
     },
 
     onEnter: function()
@@ -139,12 +144,12 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     _createItemElement: function(index)
     {
         var itemElement = document.createElement("div");
-        itemElement.className = "item";
+        itemElement.className = "filtered-item-list-dialog-item " + (this._renderAsTwoRows ? "two-rows" : "one-row");
         itemElement._titleElement = itemElement.createChild("span");
         itemElement._titleElement.textContent = this._delegate.itemTitleAt(index);
         itemElement._titleSuffixElement = itemElement.createChild("span");
         itemElement._titleSuffixElement.textContent = this._delegate.itemSuffixAt(index);
-        itemElement._subtitleElement = itemElement.createChild("span", "subtitle");
+        itemElement._subtitleElement = itemElement.createChild("div", "filtered-item-list-dialog-subtitle");
         itemElement._subtitleElement.textContent = this._delegate.itemSubtitleAt(index);
         itemElement._index = index;
 
@@ -637,5 +642,6 @@ WebInspector.OpenResourceDialog.show = function(panel, relativeToElement)
         return;
 
     var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenResourceDialog(panel));
+    filteredItemSelectionDialog.renderAsTwoRows();
     WebInspector.Dialog.show(relativeToElement, filteredItemSelectionDialog);
 }

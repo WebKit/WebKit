@@ -44,7 +44,7 @@ WebInspector.ViewportControl = function(provider)
     this._provider = provider;
     this.element.addEventListener("scroll", this._onScroll.bind(this), false);
     this._firstVisibleIndex = 0;
-    this._lastVisibleIndex = 0;
+    this._lastVisibleIndex = -1;
 }
 
 /**
@@ -78,6 +78,9 @@ WebInspector.ViewportControl.prototype = {
 
     refresh: function()
     {
+        if (!this.element.clientHeight)
+            return;  // Do nothing for invisible controls.
+
         var itemCount = this._provider.itemCount();
 
         if (!this._rowHeight) {
@@ -89,7 +92,7 @@ WebInspector.ViewportControl.prototype = {
         var visibleTo = visibleFrom + this.element.clientHeight;
 
         this._firstVisibleIndex = Math.floor(visibleFrom / this._rowHeight);
-        this._lastVisibleIndex = Math.max(0, Math.min(Math.ceil(visibleTo / this._rowHeight), itemCount) - 1);
+        this._lastVisibleIndex = Math.min(Math.ceil(visibleTo / this._rowHeight), itemCount) - 1;
         this._topGapElement.style.height = (this._rowHeight * this._firstVisibleIndex) + "px";
         this._bottomGapElement.style.height = (this._rowHeight * (itemCount - this._lastVisibleIndex - 1)) + "px"; 
 
