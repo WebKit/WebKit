@@ -80,6 +80,12 @@
 bool WebCoreHas3DRendering = true;
 #endif
 
+#if !PLATFORM(MAC) && !PLATFORM(IOS)
+#define WTF_USE_COMPOSITING_FOR_SMALL_CANVASES 1
+#endif
+
+static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1906,7 +1912,12 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer)
 
     if (renderer->isCanvas()) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer->node());
-        return canvas->renderingContext() && canvas->renderingContext()->isAccelerated();
+#if USE(COMPOSITING_FOR_SMALL_CANVASES)
+        bool isCanvasLargeEnoughToForceCompositing = true;
+#else
+        bool isCanvasLargeEnoughToForceCompositing = canvas->size().area() >= canvasAreaThresholdRequiringCompositing;
+#endif
+        return canvas->renderingContext() && canvas->renderingContext()->isAccelerated() && (canvas->renderingContext()->is3d() || isCanvasLargeEnoughToForceCompositing);
     }
     return false;
 }

@@ -62,7 +62,6 @@ namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static const int maxIOSurfaceDimension = 4096;
-static const int minIOSurfaceArea = 50 * 100;
 
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
@@ -136,7 +135,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
         return;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (width.unsafeGet() >= maxIOSurfaceDimension || height.unsafeGet() >= maxIOSurfaceDimension || (width * height).unsafeGet() < minIOSurfaceArea)
+    if (width.unsafeGet() >= maxIOSurfaceDimension || height.unsafeGet() >= maxIOSurfaceDimension)
         accelerateRendering = false;
 #else
     ASSERT(renderingMode == Unaccelerated);
