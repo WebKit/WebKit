@@ -46,9 +46,6 @@
 #import "SecItemShim.h"
 #endif
 
-// Define this to 1 to bypass the sandbox for debugging purposes.
-#define DEBUG_BYPASS_SANDBOX 0
-
 using namespace WebCore;
 
 @interface NSURLRequest (Details) 
@@ -180,8 +177,9 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertific
 
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-    // FIXME: Remove when the process has a profile.
-    sandboxParameters.setOverrideSandboxProfilePath(String());
+    // Need to overide the default, because service has a different bundle ID.
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }

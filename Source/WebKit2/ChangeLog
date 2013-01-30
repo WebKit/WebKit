@@ -1,3 +1,18 @@
+2013-01-30  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12695827> PPT: Make loading file URLs work with a sandboxed NetworkProcess
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make: Preprocess a .sb.in file to build the profile.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        Don't prevent entering the sandbox. Override sandbox path, because service
+        gets a differnt one by default.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: Added.
+
 2013-01-30  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: LayerTreeRenderer manages the surface of UpdateAtlas.

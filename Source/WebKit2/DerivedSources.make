@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2) \
     $(WebKit2)/NetworkProcess \
+    $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
@@ -148,7 +149,8 @@ ifneq ($(SDKROOT),)
 endif
 
 SANDBOX_PROFILES = \
-	com.apple.WebProcess.sb
+	com.apple.WebProcess.sb \
+	com.apple.WebKit.NetworkProcess.sb
 
 all: $(SANDBOX_PROFILES)
 
