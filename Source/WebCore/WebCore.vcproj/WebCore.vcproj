@@ -77809,6 +77809,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ViewportControl.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\WatchExpressionsSidebarPane.js"
 					>
 				</File>

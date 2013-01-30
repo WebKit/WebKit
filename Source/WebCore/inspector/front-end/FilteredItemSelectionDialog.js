@@ -31,6 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.DialogDelegate}
+ * @implements {WebInspector.ViewportControl.Provider}
  * @param {WebInspector.SelectionDialogContentProvider} delegate
  */
 WebInspector.FilteredItemSelectionDialog = function(delegate)
@@ -44,15 +45,9 @@ WebInspector.FilteredItemSelectionDialog = function(delegate)
     this.element = document.createElement("div");
     this.element.className = "js-outline-dialog";
     this.element.addEventListener("keydown", this._onKeyDown.bind(this), false);
-    this.element.addEventListener("mousemove", this._onMouseMove.bind(this), false);
-    this.element.addEventListener("click", this._onClick.bind(this), false);
     var styleElement = this.element.createChild("style");
     styleElement.type = "text/css";
     styleElement.textContent = xhr.responseText;
-
-    this._itemElements = [];
-    this._elementIndexes = new Map();
-    this._elementHighlightChanges = new Map();
 
     this._promptElement = this.element.createChild("input", "monospace");
     this._promptElement.type = "text";
@@ -60,9 +55,13 @@ WebInspector.FilteredItemSelectionDialog = function(delegate)
 
     this._progressElement = this.element.createChild("div", "progress");
 
-    this._itemElementsContainer = document.createElement("div");
-    this._itemElementsContainer.className = "container monospace";
-    this._itemElementsContainer.addEventListener("scroll", this._onScroll.bind(this), false);
+    this._filteredItems = [];
+    this._viewportControl = new WebInspector.ViewportControl(this);
+    this._itemElementsContainer = this._viewportControl.element;
+    this._itemElementsContainer.addStyleClass("container");
+    this._itemElementsContainer.addStyleClass("monospace");
+    this._itemElementsContainer.addEventListener("mousemove", this._onMouseMove.bind(this), false);
+    this._itemElementsContainer.addEventListener("click", this._onClick.bind(this), false);
     this.element.appendChild(this._itemElementsContainer);
 
     this._delegate = delegate;
@@ -94,6 +93,8 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     focus: function()
     {
         WebInspector.setCurrentFocusElement(this._promptElement);
+        if (this._filteredItems.length && !this._viewportControl.lastVisibleIndex())
+            this._viewportControl.refresh();
     },
 
     willHide: function()
@@ -107,9 +108,9 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     onEnter: function()
     {
-        if (!this._selectedElement)
+        if (typeof this._selectedIndexInFiltered !== "number")
             return;
-        this._delegate.selectItem(this._elementIndexes.get(this._selectedElement), this._promptElement.value.trim());
+        this._delegate.selectItem(this._filteredItems[this._selectedIndexInFiltered], this._promptElement.value.trim());
     },
 
     /**
@@ -120,8 +121,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
      */
     _itemsLoaded: function(index, chunkLength, chunkIndex, chunkCount)
     {
-        for (var i = index; i < index + chunkLength; ++i)
-            this._itemElementsContainer.appendChild(this._createItemElement(i));
         this._filterItems();
 
         if (chunkIndex === chunkCount)
@@ -135,46 +134,34 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     /**
      * @param {number} index
+     * @return {Element}
      */
     _createItemElement: function(index)
     {
-        if (this._itemElements[index])
-            return this._itemElements[index];
-
         var itemElement = document.createElement("div");
         itemElement.className = "item";
         itemElement._titleElement = itemElement.createChild("span");
         itemElement._titleElement.textContent = this._delegate.itemTitleAt(index);
         itemElement._titleSuffixElement = itemElement.createChild("span");
+        itemElement._titleSuffixElement.textContent = this._delegate.itemSuffixAt(index);
         itemElement._subtitleElement = itemElement.createChild("span", "subtitle");
         itemElement._subtitleElement.textContent = this._delegate.itemSubtitleAt(index);
-        this._elementIndexes.put(itemElement, index);
-        this._itemElements.push(itemElement);
+        itemElement._index = index;
+
+        var key = this._delegate.itemKeyAt(index);
+        var ranges = [];
+        var match;
+        if (this._query) {
+            var regex = this._createSearchRegExp(this._query, true);
+            while ((match = regex.exec(key)) !== null && match[0])
+                ranges.push({ offset: match.index, length: regex.lastIndex - match.index });
+            if (ranges.length)
+                WebInspector.highlightRangesWithStyleClass(itemElement, ranges, "highlight");
+        }
+        if (index === this._filteredItems[this._selectedIndexInFiltered])
+            itemElement.addStyleClass("selected");
+
         return itemElement;
-    },
-
-    /**
-     * @param {Element} itemElement
-     */
-    _hideItemElement: function(itemElement)
-    {
-        itemElement.style.display = "none";
-    },
-
-    /**
-     * @param {Element} itemElement
-     */
-    _itemElementVisible: function(itemElement)
-    {
-        return itemElement.style.display !== "none";
-    },
-
-    /**
-     * @param {Element} itemElement
-     */
-    _showItemElement: function(itemElement)
-    {
-        itemElement.style.display = "";
     },
 
     /**
@@ -211,78 +198,56 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         delete this._filterTimer;
 
         var query = this._promptElement.value;
-        query = query.trim();
+        this._query = query.trim();
         var regex = this._createSearchRegExp(query);
 
-        var firstElement;
-        for (var i = 0; i < this._itemElements.length; ++i) {
-            var itemElement = this._itemElements[i];
-            itemElement._titleSuffixElement.textContent = this._delegate.itemSuffixAt(i);
+        var oldSelectedAbsoluteIndex = this._filteredItems[this._selectedIndexInFiltered];
+        this._filteredItems = [];
+        this._selectedIndexInFiltered = 0;
+        for (var i = 0; i < this._delegate.itemsCount(); ++i) {
+            var title = this._delegate.itemTitleAt(i);
             if (regex.test(this._delegate.itemKeyAt(i))) {
-                this._showItemElement(itemElement);
-                if (!firstElement)
-                    firstElement = itemElement;
-            } else
-                this._hideItemElement(itemElement);
+                if (i === oldSelectedAbsoluteIndex) 
+                    this._selectedIndexInFiltered = this._filteredItems.length;
+                this._filteredItems.push(i);
+            }
         }
 
-        if (!this._selectedElement || !this._itemElementVisible(this._selectedElement))
-            this._updateSelection(firstElement);
-
-        if (query) {
-            this._highlightItems(query);
-            this._query = query;
-        } else {
-            this._clearHighlight();
-            delete this._query;
-        }
+        this._viewportControl.refresh();
+        this._updateSelection(this._selectedIndexInFiltered);
     },
 
     _onKeyDown: function(event)
     {
-        function nextItem(itemElement, isPageScroll, forward)
-        {
-            var scrollItemsLeft = isPageScroll && this._rowsPerViewport ? this._rowsPerViewport : 1;
-            var candidate = itemElement;
-            var lastVisibleCandidate = candidate;
-            do {
-                candidate = forward ? candidate.nextSibling : candidate.previousSibling;
-                if (!candidate) {
-                    if (isPageScroll)
-                        return lastVisibleCandidate;
-                    else
-                        candidate = forward ? this._itemElementsContainer.firstChild : this._itemElementsContainer.lastChild;
-                }
-                if (!this._itemElementVisible(candidate))
-                    continue;
-                lastVisibleCandidate = candidate;
-                --scrollItemsLeft;
-            } while (scrollItemsLeft && candidate !== this._selectedElement);
+        if (typeof this._selectedIndexInFiltered === "number") {
+            var newSelectedIndex = this._selectedIndexInFiltered;
 
-            return candidate;
-        }
-
-        if (this._selectedElement) {
-            var candidate;
-            switch (event.keyCode) {
-            case WebInspector.KeyboardShortcut.Keys.Down.code:
-                candidate = nextItem.call(this, this._selectedElement, false, true);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.Up.code:
-                candidate = nextItem.call(this, this._selectedElement, false, false);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.PageDown.code:
-                candidate = nextItem.call(this, this._selectedElement, true, true);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.PageUp.code:
-                candidate = nextItem.call(this, this._selectedElement, true, false);
-                break;
+            function updateSelection(makeLast)
+            {
+                this._viewportControl.scrollItemIntoView(newSelectedIndex, makeLast); 
+                this._updateSelection(newSelectedIndex);
+                event.consume(true);
             }
 
-            if (candidate) {
-                this._updateSelection(candidate);
-                event.preventDefault();
-                return;
+            switch (event.keyCode) {
+            case WebInspector.KeyboardShortcut.Keys.Down.code:
+                if (++newSelectedIndex >= this._filteredItems.length)
+                    newSelectedIndex = this._filteredItems.length - 1;
+                updateSelection.call(this, true);
+                break;
+            case WebInspector.KeyboardShortcut.Keys.Up.code:
+                if (--newSelectedIndex < 0)
+                    newSelectedIndex = 0;
+                updateSelection.call(this, false);
+                break;
+            case WebInspector.KeyboardShortcut.Keys.PageDown.code:
+                newSelectedIndex = Math.min(newSelectedIndex + this._viewportControl.rowsPerViewport(), this._filteredItems.length - 1);
+                updateSelection.call(this, true);
+                break;
+            case WebInspector.KeyboardShortcut.Keys.PageUp.code:
+                newSelectedIndex = Math.max(newSelectedIndex - this._viewportControl.rowsPerViewport(), 0);
+                updateSelection.call(this, false);
+                break;
             }
         }
 
@@ -298,24 +263,19 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     },
 
     /**
-     * @param {Element} newSelectedElement
+     * @param {number} index  
      */
-    _updateSelection: function(newSelectedElement)
-    {
-        if (this._selectedElement === newSelectedElement)
-            return;
-        if (this._selectedElement)
-            this._selectedElement.removeStyleClass("selected");
-
-        this._selectedElement = newSelectedElement;
-        if (newSelectedElement) {
-            newSelectedElement.addStyleClass("selected");
-            newSelectedElement.scrollIntoViewIfNeeded(false);
-            if (!this._itemHeight) {
-                this._itemHeight = newSelectedElement.offsetHeight;
-                this._rowsPerViewport = Math.floor(this._itemElementsContainer.offsetHeight / this._itemHeight);
-            }
-        }
+    _updateSelection: function(index)
+    { 
+        var element = this._viewportControl.renderedElementAt(this._selectedIndexInFiltered);
+        if (element)
+            element.removeStyleClass("selected");
+        this._selectedIndexInFiltered = index;
+        element = this._viewportControl.renderedElementAt(index); 
+        if (element)
+            element.addStyleClass("selected");
+        else
+            this._viewportControl.refresh();
     },
 
     _onClick: function(event)
@@ -323,95 +283,38 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         var itemElement = event.target.enclosingNodeOrSelfWithClass("item");
         if (!itemElement)
             return;
-        this._updateSelection(itemElement);
-        this._delegate.selectItem(this._elementIndexes.get(this._selectedElement), this._promptElement.value.trim());
+        this._delegate.selectItem(itemElement._index, this._promptElement.value.trim());
         WebInspector.Dialog.hide();
     },
 
     _onMouseMove: function(event)
     {
+        if (event.pageX === this._lastMouseX && event.pageY === this._lastMouseY)
+            return;
+        this._lastMouseX = event.pageX;
+        this._lastMouseY = event.pageY;
         var itemElement = event.target.enclosingNodeOrSelfWithClass("item");
         if (!itemElement)
             return;
-        this._updateSelection(itemElement);
-    },
-
-    _onScroll: function()
-    {
-        if (this._query)
-            this._highlightItems(this._query);
-        else
-            this._clearHighlight();
+        this._updateSelection(itemElement._index);
     },
 
     /**
-     * @param {string} query
+     * @return {number}
      */
-    _highlightItems: function(query)
+    itemCount: function()
     {
-        var regex = this._createSearchRegExp(query, true);
-        var elementsToHighlight = [];
-        for (var i = 0; i < this._delegate.itemsCount(); ++i) {
-            var itemElement = this._itemElements[i];
-            if (this._itemElementVisible(itemElement) && this._itemElementInViewport(itemElement))
-                elementsToHighlight.push(itemElement);
-        }
-        for (var i = 0; i < elementsToHighlight.length; ++i)
-            this._highlightItem(elementsToHighlight[i], regex);
-    },
-
-    _clearHighlight: function()
-    {
-        for (var i = 0; i < this._delegate.itemsCount(); ++i)
-            this._clearElementHighlight(this._itemElements[i]);
+        return this._filteredItems.length;
     },
 
     /**
-     * @param {Element} itemElement
+     * @param {number} index
+     * @return {Element}
      */
-    _clearElementHighlight: function(itemElement)
+    itemElement: function(index)
     {
-        var changes = this._elementHighlightChanges.get(itemElement)
-        if (changes) {
-            WebInspector.revertDomChanges(changes);
-            this._elementHighlightChanges.remove(itemElement);
-        }
-    },
-
-    /**
-     * @param {Element} itemElement
-     * @param {RegExp} regex
-     */
-    _highlightItem: function(itemElement, regex)
-    {
-        this._clearElementHighlight(itemElement);
-
-        var key = this._delegate.itemKeyAt(this._elementIndexes.get(itemElement));
-        var ranges = [];
-
-        var match;
-        while ((match = regex.exec(key)) !== null && match[0]) {
-            ranges.push({ offset: match.index, length: regex.lastIndex - match.index });
-        }
-
-        var changes = [];
-        WebInspector.highlightRangesWithStyleClass(itemElement, ranges, "highlight", changes);
-
-        if (changes.length)
-            this._elementHighlightChanges.put(itemElement, changes);
-    },
-
-    /**
-     * @param {Element} itemElement
-     * @return {boolean}
-     */
-    _itemElementInViewport: function(itemElement)
-    {
-        if (itemElement.offsetTop + this._itemHeight < this._itemElementsContainer.scrollTop)
-            return false;
-        if (itemElement.offsetTop > this._itemElementsContainer.scrollTop + this._itemHeight * (this._rowsPerViewport + 1))
-            return false;
-        return true;
+        var delegateIndex = this._filteredItems[index];
+        return this._createItemElement(delegateIndex); 
     },
 
     __proto__: WebInspector.DialogDelegate.prototype
@@ -636,7 +539,11 @@ WebInspector.OpenResourceDialog = function(panel)
     {
         return uiSourceCode1.parsedURL.lastPathComponent.compareTo(uiSourceCode2.parsedURL.lastPathComponent);
     }
-    this._uiSourceCodes.sort(compareFunction);
+    if (this._uiSourceCodes.length > 1000) {
+        this._uiSourceCodes.sortRange(compareFunction, 0, this._uiSourceCodes.length - 1, 1000);
+        setTimeout(function() { this._uiSourceCodes.sort(compareFunction); }.bind(this), 0);
+    } else
+        this._uiSourceCodes.sort(compareFunction);
 }
 
 WebInspector.OpenResourceDialog.prototype = {

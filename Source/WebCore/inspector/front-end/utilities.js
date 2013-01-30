@@ -329,7 +329,7 @@ var sortRange = {
                 quickSortFirstK(array, comparator, pivotNewIndex + 1, right, k);
         }
 
-        if (leftBound === 0 && rightBound === (this.length - 1) && k === this.length)
+        if (leftBound === 0 && rightBound === (this.length - 1) && k >= this.length)
             this.sort(comparator);
         else
             quickSortFirstK(this, comparator, leftBound, rightBound, k);

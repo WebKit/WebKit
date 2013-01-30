@@ -224,6 +224,7 @@
     <file>UserMetrics.js</file>
     <file>utilities.js</file>
     <file>View.js</file>
+    <file>ViewportControl.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>

@@ -160,6 +160,7 @@ modules = [
             "Toolbar.js",
             "UIUtils.js",
             "View.js",
+            "ViewportControl.js",
             "treeoutline.js",
         ]
     },

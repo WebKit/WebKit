@@ -37,11 +37,11 @@
     float: right;
 }
 
-.js-outline-dialog > .container > div.item.selected {
+.js-outline-dialog .container div.item.selected {
     background-color: rgb(224, 224, 224);
 }
 
-.js-outline-dialog > .container > div.item span.highlight {
+.js-outline-dialog .container div.item span.highlight {
     color: black;
     font-weight: bold;
 }

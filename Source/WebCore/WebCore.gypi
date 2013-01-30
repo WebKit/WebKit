@@ -5264,6 +5264,7 @@
             'inspector/front-end/UserMetrics.js',
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',
+            'inspector/front-end/ViewportControl.js',
             'inspector/front-end/WorkerManager.js',
             'inspector/front-end/Workspace.js',
             'inspector/front-end/dialog.css',
