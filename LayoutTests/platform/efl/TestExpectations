@@ -819,6 +819,7 @@ webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
 webkit.org/b/106551 media/video-src-source.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source.html [ Crash Pass ]
+webkit.org/b/106551 media/video-source-type.html [ Crash Pass ]
 webkit.org/b/106551 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html [ Crash Pass ]
 
 webkit.org/b/107024 compositing/self-painting-layers2.html [ Pass Failure ]
@@ -1820,3 +1821,6 @@ webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure
 
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
+
+# empty position:fixed element gets a layer. Should not happen after r141039
+webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ Failure ]
