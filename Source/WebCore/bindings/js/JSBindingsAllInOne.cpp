@@ -118,7 +118,7 @@
 #include "JSMessageEventCustom.cpp"
 #include "JSMessagePortCustom.cpp"
 #include "JSMicroDataItemValueCustom.cpp"
-#include "JSMutationCallbackCustom.cpp"
+#include "JSMutationCallback.cpp"
 #include "JSMutationObserverCustom.cpp"
 #include "JSNamedNodeMapCustom.cpp"
 #include "JSNodeCustom.cpp"

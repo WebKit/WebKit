@@ -374,7 +374,6 @@ set(WebCore_IDL_FILES
     dom/MessageEvent.idl
     dom/MessagePort.idl
     dom/MouseEvent.idl
-    dom/MutationCallback.idl
     dom/MutationEvent.idl
     dom/MutationObserver.idl
     dom/MutationRecord.idl

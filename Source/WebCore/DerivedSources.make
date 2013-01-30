@@ -241,7 +241,6 @@ BINDING_IDLS = \
     $(WebCore)/dom/MessageEvent.idl \
     $(WebCore)/dom/MessagePort.idl \
     $(WebCore)/dom/MouseEvent.idl \
-    $(WebCore)/dom/MutationCallback.idl \
     $(WebCore)/dom/MutationEvent.idl \
     $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \

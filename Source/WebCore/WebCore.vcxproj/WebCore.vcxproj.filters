@@ -942,9 +942,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMouseEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMutationCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMutationEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6024,7 +6021,7 @@
     <ClCompile Include="..\bindings\js\JSMicroDataItemValueCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSMutationCallbackCustom.cpp">
+    <ClCompile Include="..\bindings\js\JSMutationCallback.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSMutationObserverCustom.cpp">
@@ -7446,9 +7443,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMouseEvent.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMutationCallback.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSMutationEvent.h">
@@ -12777,6 +12771,9 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSMessagePortCustom.h">
+      <Filter>bindings\js</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bindings\js\JSMutationCallback.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSNodeCustom.h">

@@ -6567,8 +6567,6 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMetadataCallback.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMouseEvent.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMouseEvent.h',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMutationCallback.cpp',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMutationCallback.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMutationEvent.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMutationEvent.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/JSMutationObserver.cpp',

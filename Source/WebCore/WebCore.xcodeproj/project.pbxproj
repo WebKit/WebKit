@@ -5950,13 +5950,12 @@
 		C6F0900A14327B6100685849 /* MutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900114327B6100685849 /* MutationCallback.h */; };
 		C6F0900E14327B6100685849 /* MutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0900514327B6100685849 /* MutationObserver.cpp */; };
 		C6F0900F14327B6100685849 /* MutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0900614327B6100685849 /* MutationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902014327D4F00685849 /* JSMutationCallback.cpp */; };
-		C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902114327D4F00685849 /* JSMutationCallback.h */; };
 		C6F0902C14327D4F00685849 /* JSMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902414327D4F00685849 /* JSMutationObserver.cpp */; };
 		C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902514327D4F00685849 /* JSMutationObserver.h */; };
 		C6F0917F143A2BB900685849 /* JSMutationObserverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */; };
-		C6F09185143A6C3B00685849 /* JSMutationCallbackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */; };
 		C6F41047130C6E8900393DE4 /* EntryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F41046130C6E8900393DE4 /* EntryBase.cpp */; };
+		C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */; };
+		C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
@@ -13485,17 +13484,15 @@
 		C6F08FC71431000D00685849 /* JSMutationRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationRecord.cpp; sourceTree = "<group>"; };
 		C6F08FC81431000D00685849 /* JSMutationRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationRecord.h; sourceTree = "<group>"; };
 		C6F0900114327B6100685849 /* MutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationCallback.h; sourceTree = "<group>"; };
-		C6F0900214327B6100685849 /* MutationCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationCallback.idl; sourceTree = "<group>"; };
 		C6F0900514327B6100685849 /* MutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserver.cpp; sourceTree = "<group>"; };
 		C6F0900614327B6100685849 /* MutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserver.h; sourceTree = "<group>"; };
 		C6F0900714327B6100685849 /* MutationObserver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationObserver.idl; sourceTree = "<group>"; };
-		C6F0902014327D4F00685849 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
-		C6F0902114327D4F00685849 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		C6F0902414327D4F00685849 /* JSMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationObserver.cpp; sourceTree = "<group>"; };
 		C6F0902514327D4F00685849 /* JSMutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationObserver.h; sourceTree = "<group>"; };
 		C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationObserverCustom.cpp; sourceTree = "<group>"; };
-		C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallbackCustom.cpp; sourceTree = "<group>"; };
 		C6F41046130C6E8900393DE4 /* EntryBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryBase.cpp; path = Modules/filesystem/EntryBase.cpp; sourceTree = "<group>"; };
+		C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
+		C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
@@ -19460,8 +19457,6 @@
 				FE80DA600E9C4703000D6F75 /* JSGeolocation.h */,
 				FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */,
 				FE80DA620E9C4703000D6F75 /* JSGeoposition.h */,
-				C6F0902014327D4F00685849 /* JSMutationCallback.cpp */,
-				C6F0902114327D4F00685849 /* JSMutationCallback.h */,
 				C6F0902414327D4F00685849 /* JSMutationObserver.cpp */,
 				C6F0902514327D4F00685849 /* JSMutationObserver.h */,
 				C6F08FC71431000D00685849 /* JSMutationRecord.cpp */,
@@ -20786,6 +20781,8 @@
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
+				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
+				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */,
@@ -20971,7 +20968,6 @@
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */,
 				1059457215B42953004D37FD /* JSMicroDataItemValueCustom.cpp */,
-				C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
@@ -22404,7 +22400,6 @@
 				85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */,
 				85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */,
 				C6F0900114327B6100685849 /* MutationCallback.h */,
-				C6F0900214327B6100685849 /* MutationCallback.idl */,
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
@@ -24776,7 +24771,7 @@
 				898785B9122CA2A7003AABDA /* JSMetadataCallback.h in Headers */,
 				1059457A15B42A43004D37FD /* JSMicroDataItemValue.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
-				C6F0902914327D4F00685849 /* JSMutationCallback.h in Headers */,
+				C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */,
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
@@ -28115,8 +28110,7 @@
 				1059457715B42A0D004D37FD /* JSMicroDataItemValue.cpp in Sources */,
 				1059457315B42953004D37FD /* JSMicroDataItemValueCustom.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
-				C6F0902814327D4F00685849 /* JSMutationCallback.cpp in Sources */,
-				C6F09185143A6C3B00685849 /* JSMutationCallbackCustom.cpp in Sources */,
+				C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */,
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				C6F0902C14327D4F00685849 /* JSMutationObserver.cpp in Sources */,
 				C6F0917F143A2BB900685849 /* JSMutationObserverCustom.cpp in Sources */,

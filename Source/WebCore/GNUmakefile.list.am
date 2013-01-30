@@ -539,8 +539,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMicroDataItemValue.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
-	DerivedSources/WebCore/JSMutationCallback.cpp \
-	DerivedSources/WebCore/JSMutationCallback.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSMutationObserver.cpp \
@@ -1388,7 +1386,6 @@ dom_binding_idls += \
 	$(WebCore)/dom/MessageEvent.idl \
 	$(WebCore)/dom/MessagePort.idl \
 	$(WebCore)/dom/MouseEvent.idl \
-	$(WebCore)/dom/MutationCallback.idl \
 	$(WebCore)/dom/MutationEvent.idl \
 	$(WebCore)/dom/MutationObserver.idl \
 	$(WebCore)/dom/MutationRecord.idl \
@@ -2382,7 +2379,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.h \
 	Source/WebCore/bindings/js/JSMicroDataItemValueCustom.cpp \
-	Source/WebCore/bindings/js/JSMutationCallbackCustom.cpp \
+	Source/WebCore/bindings/js/JSMutationCallback.cpp \
+	Source/WebCore/bindings/js/JSMutationCallback.h \
 	Source/WebCore/bindings/js/JSMutationObserverCustom.cpp \
 	Source/WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeCustom.cpp \

@@ -153,7 +153,7 @@ SOURCES += \
      bindings/js/JSMessagePortCustom.cpp \
      bindings/js/JSMessagePortCustom.h \
      bindings/js/JSMicroDataItemValueCustom.cpp \
-     bindings/js/JSMutationCallbackCustom.cpp \
+     bindings/js/JSMutationCallback.cpp \
      bindings/js/JSMutationObserverCustom.cpp \
      bindings/js/JSNamedNodeMapCustom.cpp \
      bindings/js/JSNodeCustom.cpp \
@@ -1366,6 +1366,7 @@ HEADERS += \
     bindings/js/JSImageConstructor.h \
     bindings/js/JSLazyEventListener.h \
     bindings/js/JSLocationCustom.h \
+    bindings/js/JSMutationCallback.h \
     bindings/js/JSNodeCustom.h \
     bindings/js/JSNodeFilterCondition.h \
     bindings/js/JSPluginElementFunctions.h \
