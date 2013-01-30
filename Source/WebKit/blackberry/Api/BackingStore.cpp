@@ -1912,17 +1912,19 @@ void BackingStorePrivate::renderContents(Platform::Graphics::Drawable* drawable,
     float widthScale = static_cast<float>(destinationSize.width()) / contentsRect.width();
     float heightScale = static_cast<float>(destinationSize.height()) / contentsRect.height();
 
-    if (widthScale != 1.0 && heightScale != 1.0) {
+    // Don't scale the transformed content rect when the content is smaller than the destination
+    if (widthScale < 1.0 && heightScale < 1.0) {
         TransformationMatrix matrix;
         matrix.scaleNonUniform(1.0 / widthScale, 1.0 / heightScale);
         transformedContentsRect = matrix.mapRect(transformedContentsRect);
-
         // We extract from the contentsRect but draw a slightly larger region than
         // we were told to, in order to avoid pixels being rendered only partially.
         const int atLeastOneDevicePixel = static_cast<int>(ceilf(std::max(1.0 / widthScale, 1.0 / heightScale)));
         transformedContentsRect.inflate(atLeastOneDevicePixel);
-        graphicsContext.scale(FloatSize(widthScale, heightScale));
     }
+
+    if (widthScale != 1.0 && heightScale != 1.0)
+        graphicsContext.scale(FloatSize(widthScale, heightScale));
 
     graphicsContext.clip(transformedContentsRect);
     m_client->frame()->view()->paintContents(&graphicsContext, transformedContentsRect);
