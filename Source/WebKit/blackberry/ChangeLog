@@ -1,3 +1,17 @@
+2013-01-30  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Webpage was cut off after rotating to landscape and then rotating back to portrait on specific website
+        https://bugs.webkit.org/show_bug.cgi?id=108281
+        PR 284985
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jacky Jiang.
+
+        Return correct fixedLayoutSize when overflow exceeds contents size.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+
 2013-01-30  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Remove QT4_UNICODE related code paths
