@@ -67,12 +67,20 @@ public:
     const Length& minTrackBreadth() const
     {
         ASSERT(!m_minTrackBreadth.isUndefined());
+        if (m_minTrackBreadth.isAuto()) {
+            DEFINE_STATIC_LOCAL(Length, minContent, (MinContent));
+            return minContent;
+        }
         return m_minTrackBreadth;
     }
 
     const Length& maxTrackBreadth() const
     {
         ASSERT(!m_maxTrackBreadth.isUndefined());
+        if (m_maxTrackBreadth.isAuto()) {
+            DEFINE_STATIC_LOCAL(Length, maxContent, (MaxContent));
+            return maxContent;
+        }
         return m_maxTrackBreadth;
     }
 
