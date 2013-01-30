@@ -4271,11 +4271,6 @@ webkit.org/b/106746 css3/filters/filter-property-parsing.html [ Failure ]
 
 webkit.org/b/108065 [ Debug ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Crash ]
 
-# Transient. Needs rebaseline.
-webkit.org/b/108283 fast/repaint/4774354.html [ ImageOnlyFailure ]
-webkit.org/b/108283 fast/repaint/4776765.html [ ImageOnlyFailure ]
-webkit.org/b/108283 fast/repaint/caret-with-transformation.html [ ImageOnlyFailure ]
-
 webkit.org/b/106609 [ Win ] animations/fill-mode-iteration-count-non-integer.html [ Failure ]
 
 webkit.org/b/106689 canvas/philip/tests/2d.gradient.interpolate.overlap2.html [ Failure ]
