@@ -124,6 +124,7 @@ private:
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();
     void stopBackgroundParser();
+    void didFailSpeculation(PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
     void processTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream>);
 #endif
 

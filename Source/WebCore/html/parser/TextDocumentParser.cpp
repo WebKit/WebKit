@@ -38,7 +38,9 @@ TextDocumentParser::TextDocumentParser(HTMLDocument* document)
     : HTMLDocumentParser(document, false)
     , m_haveInsertedFakePreElement(false)
 {
-    tokenizer()->setState(HTMLTokenizerState::PLAINTEXTState);
+    // FIXME: If we're using threading, we need to tell the BackgroundHTMLParser to use PLAINTEXTState.
+    if (tokenizer())
+        tokenizer()->setState(HTMLTokenizerState::PLAINTEXTState);
 }
 
 TextDocumentParser::~TextDocumentParser()
