@@ -2472,7 +2472,8 @@ const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedP
 void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const RenderStyle* parentStyle, unsigned hash, const MatchResult& matchResult)
 {
     static const unsigned matchedDeclarationCacheAdditionsBetweenSweeps = 100;
-    if (++m_matchedPropertiesCacheAdditionsSinceLastSweep >= matchedDeclarationCacheAdditionsBetweenSweeps) {
+    if (++m_matchedPropertiesCacheAdditionsSinceLastSweep >= matchedDeclarationCacheAdditionsBetweenSweeps
+        && !m_matchedPropertiesCacheSweepTimer.isActive()) {
         static const unsigned matchedDeclarationCacheSweepTimeInSeconds = 60;
         m_matchedPropertiesCacheSweepTimer.startOneShot(matchedDeclarationCacheSweepTimeInSeconds);
     }
