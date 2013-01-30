@@ -1,3 +1,16 @@
+2013-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove redundant AST dump method from cloop.rb, since they are already defined in ast.rb
+        https://bugs.webkit.org/show_bug.cgi?id=108247
+
+        Reviewed by Oliver Hunt.
+        
+        Makes offlineasm dumping easier to read and less likely to cause assertion failures.
+        Also fixes the strange situation where cloop.rb and ast.rb both defined dump methods,
+        but cloop.rb was winning.
+
+        * offlineasm/cloop.rb:
+
 2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: JSObjCClassInfo creates reference cycle with JSContext

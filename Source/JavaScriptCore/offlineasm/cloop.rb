@@ -66,67 +66,18 @@ end
 C_LOOP_SCRATCH_FPR = SpecialRegister.new("d8")
 
 class RegisterID
-    def dump
-        case name
-        when "t0"
-            "t0"
-        when "t1"
-            "t1"
-        when "t2"
-            "t2"
-        when "t3"
-            "t3"
-        when "t4"
-            "rPC"
-        when "t6"
-            "rBasePC"
-        when "csr1"
-            "tagTypeNumber"
-        when "csr2"
-            "tagMask"
-        when "cfr"
-            "cfr"
-        when "lr"
-            "rRetVPC"
-        when "sp"
-            "sp"
-        else
-            raise "Bad register #{name} for C_LOOP at #{codeOriginString}"
-        end
-    end
     def clValue(type=:int)
         dump + cloopMapType(type)
     end
 end
 
 class FPRegisterID
-    def dump
-        case name
-        when "ft0", "fr"
-            "d0"
-        when "ft1"
-            "d1"
-        when "ft2"
-            "d2"
-        when "ft3"
-            "d3"
-        when "ft4"
-            "d4"
-        when "ft5"
-            "d5"
-        else
-            raise "Bad register #{name} for C_LOOP at #{codeOriginString}"
-        end
-    end
     def clValue(type=:int)
         dump + cloopMapType(type)
     end
 end
 
 class Immediate
-    def dump
-        "#{value}"
-    end
     def clValue(type=:int)
         # There is a case of a very large unsigned number (0x8000000000000000)
         # which we wish to encode.  Unfortunately, the C/C++ compiler
@@ -156,9 +107,6 @@ class Immediate
 end
 
 class Address
-    def dump
-        "[#{base.dump}, #{offset.value}]"
-    end
     def clValue(type=:int)
         case type
         when :int8;         int8MemRef
@@ -229,9 +177,6 @@ class Address
 end
 
 class BaseIndex
-    def dump
-        "[#{base.dump}, #{offset.dump}, #{index.dump} << #{scaleShift}]"
-    end
     def clValue(type=:int)
         case type
         when :int8;       int8MemRef
@@ -294,9 +239,6 @@ class BaseIndex
 end
 
 class AbsoluteAddress
-    def dump
-        "#{codeOriginString}"
-    end
     def clValue
         dump
     end
