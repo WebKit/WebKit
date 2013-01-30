@@ -34,7 +34,6 @@
     'feature_defines': [
       'ENABLE_3D_PLUGIN=1',
       'ENABLE_BATTERY_STATUS=0',
-      'ENABLE_BINDING_INTEGRITY=0',
       'ENABLE_BLOB=1',
       'ENABLE_BLOB_SLICE=1',
       'ENABLE_CANVAS_PATH=0',
@@ -203,6 +202,15 @@
           'ENABLE_PRINTING=1',
           'ENABLE_SHARED_WORKERS=1',
           'ENABLE_WEB_AUDIO=1',
+        ],
+      }],
+      ['OS=="linux"', {
+        'feature_defines': [
+          'ENABLE_BINDING_INTEGRITY=1',
+        ],
+      }, { # OS!="linux"
+        'feature_defines': [
+          'ENABLE_BINDING_INTEGRITY=0',
         ],
       }],
       ['use_accelerated_compositing==1', {

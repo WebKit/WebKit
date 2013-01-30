@@ -1,3 +1,12 @@
+2013-01-29  Tom Sepez  <tsepez@chromium.org>
+
+        [v8] Enable binding integrity on linux
+        https://bugs.webkit.org/show_bug.cgi?id=108242
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2013-01-29  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Correct zoom for focused node when using compositor scaling
