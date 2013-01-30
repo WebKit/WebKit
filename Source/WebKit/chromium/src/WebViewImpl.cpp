@@ -2788,18 +2788,6 @@ void WebViewImpl::scrollFocusedNodeIntoRect(const WebRect& rect)
     }
 
 #if ENABLE(GESTURE_EVENTS)
-    float scale;
-    IntPoint scroll;
-    bool needAnimation;
-    computeScaleAndScrollForFocusedNode(focusedNode, scale, scroll, needAnimation);
-    if (needAnimation)
-        startPageScaleAnimation(scroll, false, scale, scrollAndScaleAnimationDurationInSeconds);
-#endif
-}
-
-#if ENABLE(GESTURE_EVENTS)
-void WebViewImpl::computeScaleAndScrollForFocusedNode(Node* focusedNode, float& newScale, IntPoint& newScroll, bool& needAnimation)
-{
     focusedNode->document()->updateLayoutIgnorePendingStylesheets();
 
     // 'caret' is rect encompassing the blinking cursor.
@@ -2810,66 +2798,61 @@ void WebViewImpl::computeScaleAndScrollForFocusedNode(Node* focusedNode, float& 
     // Pick a scale which is reasonably readable. This is the scale at which
     // the caret height will become minReadableCaretHeight (adjusted for dpi
     // and font scale factor).
-    float targetScale = settingsImpl()->applyDeviceScaleFactorInCompositor() ? 1 : deviceScaleFactor();
+    float targetScale = deviceScaleFactor();
 #if ENABLE(TEXT_AUTOSIZING)
     if (page() && page()->settings())
         targetScale *= page()->settings()->textAutosizingFontScaleFactor();
 #endif
-    const float caretHeight = settingsImpl()->applyPageScaleFactorInCompositor() ? caret.height : caret.height / pageScaleFactor();
-    newScale = clampPageScaleFactorToLimits(minReadableCaretHeight * targetScale / caretHeight);
+    const float newScale = clampPageScaleFactorToLimits(pageScaleFactor() * minReadableCaretHeight * targetScale / caret.height);
     const float deltaScale = newScale / pageScaleFactor();
 
     // Convert the rects to absolute space in the new scale.
     IntRect textboxRectInDocumentCoordinates = textboxRect;
     textboxRectInDocumentCoordinates.move(mainFrame()->scrollOffset());
+    textboxRectInDocumentCoordinates.scale(deltaScale);
     IntRect caretInDocumentCoordinates = caret;
     caretInDocumentCoordinates.move(mainFrame()->scrollOffset());
+    caretInDocumentCoordinates.scale(deltaScale);
 
-    int viewWidth = m_size.width;
-    int viewHeight = m_size.height;
-    if (settingsImpl()->applyPageScaleFactorInCompositor()) {
-        viewWidth /= newScale;
-        viewHeight /= newScale;
-    } else {
-        textboxRectInDocumentCoordinates.scale(deltaScale);
-        caretInDocumentCoordinates.scale(deltaScale);
-    }
-
-    if (textboxRectInDocumentCoordinates.width() <= viewWidth) {
+    IntPoint newOffset;
+    if (textboxRectInDocumentCoordinates.width() <= m_size.width) {
         // Field is narrower than screen. Try to leave padding on left so field's
         // label is visible, but it's more important to ensure entire field is
         // onscreen.
-        int idealLeftPadding = viewWidth * leftBoxRatio;
-        int maxLeftPaddingKeepingBoxOnscreen = viewWidth - textboxRectInDocumentCoordinates.width();
-        newScroll.setX(textboxRectInDocumentCoordinates.x() - min<int>(idealLeftPadding, maxLeftPaddingKeepingBoxOnscreen));
+        int idealLeftPadding = m_size.width * leftBoxRatio;
+        int maxLeftPaddingKeepingBoxOnscreen = m_size.width - textboxRectInDocumentCoordinates.width();
+        newOffset.setX(textboxRectInDocumentCoordinates.x() - min<int>(idealLeftPadding, maxLeftPaddingKeepingBoxOnscreen));
     } else {
         // Field is wider than screen. Try to left-align field, unless caret would
         // be offscreen, in which case right-align the caret.
-        newScroll.setX(max<int>(textboxRectInDocumentCoordinates.x(), caretInDocumentCoordinates.x() + caretInDocumentCoordinates.width() + caretPadding - viewWidth));
+        newOffset.setX(max<int>(textboxRectInDocumentCoordinates.x(), caretInDocumentCoordinates.x() + caretInDocumentCoordinates.width() + caretPadding - m_size.width));
     }
-    if (textboxRectInDocumentCoordinates.height() <= viewHeight) {
+    if (textboxRectInDocumentCoordinates.height() <= m_size.height) {
         // Field is shorter than screen. Vertically center it.
-        newScroll.setY(textboxRectInDocumentCoordinates.y() - (viewHeight - textboxRectInDocumentCoordinates.height()) / 2);
+        newOffset.setY(textboxRectInDocumentCoordinates.y() - (m_size.height - textboxRectInDocumentCoordinates.height()) / 2);
     } else {
         // Field is taller than screen. Try to top align field, unless caret would
         // be offscreen, in which case bottom-align the caret.
-        newScroll.setY(max<int>(textboxRectInDocumentCoordinates.y(), caretInDocumentCoordinates.y() + caretInDocumentCoordinates.height() + caretPadding - viewHeight));
+        newOffset.setY(max<int>(textboxRectInDocumentCoordinates.y(), caretInDocumentCoordinates.y() + caretInDocumentCoordinates.height() + caretPadding - m_size.height));
     }
 
-    needAnimation = false;
+    bool needAnimation = false;
     // If we are at less than the target zoom level, zoom in.
     if (deltaScale > minScaleChangeToTriggerZoom)
         needAnimation = true;
     // If the caret is offscreen, then animate.
-    IntRect sizeRect(0, 0, viewWidth, viewHeight);
+    IntRect sizeRect(0, 0, m_size.width, m_size.height);
     if (!sizeRect.contains(caret))
         needAnimation = true;
     // If the box is partially offscreen and it's possible to bring it fully
     // onscreen, then animate.
     if (sizeRect.contains(textboxRectInDocumentCoordinates.width(), textboxRectInDocumentCoordinates.height()) && !sizeRect.contains(textboxRect))
         needAnimation = true;
-}
+
+    if (needAnimation)
+        startPageScaleAnimation(newOffset, false, newScale, scrollAndScaleAnimationDurationInSeconds);
 #endif
+}
 
 void WebViewImpl::advanceFocus(bool reverse)
 {
