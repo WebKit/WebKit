@@ -941,3 +941,17 @@
 |     <template>
 |       #document-fragment
 |         <col>
+
+#data
+<body><template><i><menu>Foo</i>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <i>
+|         <menu>
+|           <i>
+|             "Foo"

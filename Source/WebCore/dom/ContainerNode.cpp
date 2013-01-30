@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
@@ -329,6 +330,9 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     ASSERT(nextChild);
     ASSERT(nextChild->parentNode() == this);
     ASSERT(!newChild->isDocumentFragment());
+#if ENABLE(TEMPLATE_ELEMENT)
+    ASSERT(!hasTagName(HTMLNames::templateTag));
+#endif
 
     if (nextChild->previousSibling() == newChild || nextChild == newChild) // nothing to do
         return;
@@ -697,6 +701,9 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild->isDocumentFragment());
+#if ENABLE(TEMPLATE_ELEMENT)
+    ASSERT(!hasTagName(HTMLNames::templateTag));
+#endif
 
     if (document() != newChild->document())
         document()->adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);

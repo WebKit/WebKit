@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLStackItem.h"
+#include "HTMLTemplateElement.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
@@ -1587,7 +1588,14 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         if (commonAncestor->causesFosterParenting())
             m_tree.fosterParent(lastNode->element());
         else {
+#if ENABLE(TEMPLATE_ELEMENT)
+            if (commonAncestor->hasTagName(templateTag))
+                toHTMLTemplateElement(commonAncestor->node())->content()->parserAppendChild(lastNode->element());
+            else
+                commonAncestor->node()->parserAppendChild(lastNode->element());
+#else
             commonAncestor->node()->parserAppendChild(lastNode->element());
+#endif
             ASSERT(lastNode->stackItem()->isElementNode());
             ASSERT(lastNode->element()->parentNode());
             if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())

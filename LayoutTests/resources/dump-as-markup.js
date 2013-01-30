@@ -224,19 +224,16 @@ Markup._get = function(node, depth, shadowRootList)
         else
           str += "#document-fragment";
     }
-    
-    
-    // HTML Template elements serialize their content DocumentFragment, and NOT their children.
-    if (node.namespaceURI = 'http://www.w3.org/1999/xhtml' && node.tagName == 'TEMPLATE') {
+
+    if (node.namespaceURI = 'http://www.w3.org/1999/xhtml' && node.tagName == 'TEMPLATE')
         str += Markup._get(node.content, depth + 1, shadowRootList);
-    } else {
-        for (var i = 0, len = node.childNodes.length; i < len; i++) {
-            var selection = Markup._getSelectionMarker(node, i);
-            if (selection)
-                str += Markup._indent(depth + 1) + selection;
-    
-            str += Markup._get(node.childNodes[i], depth + 1, shadowRootList);
-        }
+
+    for (var i = 0, len = node.childNodes.length; i < len; i++) {
+        var selection = Markup._getSelectionMarker(node, i);
+        if (selection)
+            str += Markup._indent(depth + 1) + selection;
+
+        str += Markup._get(node.childNodes[i], depth + 1, shadowRootList);
     }
     
     str += Markup._getShadowHostIfPossible(node, depth, shadowRootList);
