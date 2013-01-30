@@ -1,3 +1,37 @@
+2013-01-30  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move custom policy delegate to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=108328
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::decidePolicyForNavigation):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::policyDelegateEnabled):
+        (WebTestRunner::WebTestRunner::policyDelegateIsPermissive):
+        (WebTestRunner::WebTestRunner::policyDelegateShouldNotifyDone):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::policyDelegateEnabled):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::policyDelegateIsPermissive):
+        (WebTestRunner::TestRunner::policyDelegateShouldNotifyDone):
+        (WebTestRunner::TestRunner::setCustomPolicyDelegate):
+        (WebTestRunner::TestRunner::waitForPolicyDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::decidePolicyForNavigation):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::decidePolicyForNavigation):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK1] Support better testing of Web Notifications

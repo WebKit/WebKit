@@ -36,6 +36,7 @@
 #include "WebKit/chromium/public/WebDragOperation.h"
 #include "WebKit/chromium/public/WebEditingAction.h"
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
+#include "WebKit/chromium/public/WebNavigationType.h"
 #include "WebKit/chromium/public/WebTextAffinity.h"
 #include "WebKit/chromium/public/WebTextDirection.h"
 #include <map>
@@ -146,6 +147,7 @@ protected:
     bool runModalConfirmDialog(WebKit::WebFrame*, const WebKit::WebString&);
     bool runModalPromptDialog(WebKit::WebFrame*, const WebKit::WebString& message, const WebKit::WebString& defaultValue, WebKit::WebString* actualValue);
     bool runModalBeforeUnloadDialog(WebKit::WebFrame*, const WebKit::WebString&);
+    WebKit::WebNavigationPolicy decidePolicyForNavigation(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationType, const WebKit::WebNode& originatingNode, WebKit::WebNavigationPolicy defaultPolicy, bool isRedirect);
 
 private:
     void locationChangeDone(WebKit::WebFrame*);
@@ -444,6 +446,13 @@ public:
     {
         WebTestProxyBase::runModalBeforeUnloadDialog(frame, message);
         return Base::runModalBeforeUnloadDialog(frame, message);
+    }
+    virtual WebKit::WebNavigationPolicy decidePolicyForNavigation(WebKit::WebFrame* frame, const WebKit::WebURLRequest& request, WebKit::WebNavigationType type, const WebKit::WebNode& originatingNode, WebKit::WebNavigationPolicy defaultPolicy, bool isRedirect)
+    {
+        WebKit::WebNavigationPolicy policy = WebTestProxyBase::decidePolicyForNavigation(frame, request, type, originatingNode, defaultPolicy, isRedirect);
+        if (policy == WebKit::WebNavigationPolicyIgnore)
+            return policy;
+        return Base::decidePolicyForNavigation(frame, request, type, originatingNode, defaultPolicy, isRedirect);
     }
 };
 

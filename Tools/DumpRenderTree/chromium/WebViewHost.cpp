@@ -92,61 +92,7 @@ static const int screenWidth = 1920;
 static const int screenHeight = 1080;
 static const int screenUnavailableBorder = 8;
 
-// WebNavigationType debugging strings taken from PolicyDelegate.mm.
-static const char* linkClickedString = "link clicked";
-static const char* formSubmittedString = "form submitted";
-static const char* backForwardString = "back/forward";
-static const char* reloadString = "reload";
-static const char* formResubmittedString = "form resubmitted";
-static const char* otherString = "other";
-static const char* illegalString = "illegal value";
-
 static int nextPageID = 1;
-
-// Get a debugging string from a WebNavigationType.
-static const char* webNavigationTypeToString(WebNavigationType type)
-{
-    switch (type) {
-    case WebKit::WebNavigationTypeLinkClicked:
-        return linkClickedString;
-    case WebKit::WebNavigationTypeFormSubmitted:
-        return formSubmittedString;
-    case WebKit::WebNavigationTypeBackForward:
-        return backForwardString;
-    case WebKit::WebNavigationTypeReload:
-        return reloadString;
-    case WebKit::WebNavigationTypeFormResubmitted:
-        return formResubmittedString;
-    case WebKit::WebNavigationTypeOther:
-        return otherString;
-    }
-    return illegalString;
-}
-
-static string URLDescription(const GURL& url)
-{
-    if (url.SchemeIs("file"))
-        return url.ExtractFileName();
-    return url.possibly_invalid_spec();
-}
-
-static void printNodeDescription(const WebNode& node, int exception)
-{
-    if (exception) {
-        fputs("ERROR", stdout);
-        return;
-    }
-    if (node.isNull()) {
-        fputs("(null)", stdout);
-        return;
-    }
-    fputs(node.nodeName().utf8().data(), stdout);
-    const WebNode& parent = node.parentNode();
-    if (!parent.isNull()) {
-        fputs(" > ", stdout);
-        printNodeDescription(parent, 0);
-    }
-}
 
 // WebViewClient -------------------------------------------------------------
 
@@ -627,29 +573,11 @@ void WebViewHost::loadURLExternally(WebFrame*, const WebURLRequest& request, Web
 }
 
 WebNavigationPolicy WebViewHost::decidePolicyForNavigation(
-    WebFrame*, const WebURLRequest& request,
-    WebNavigationType type, const WebNode& originatingNode,
-    WebNavigationPolicy defaultPolicy, bool isRedirect)
+    WebFrame*, const WebURLRequest&,
+    WebNavigationType, const WebNode&,
+    WebNavigationPolicy defaultPolicy, bool)
 {
-    WebNavigationPolicy result;
-    if (!m_policyDelegateEnabled)
-        return defaultPolicy;
-
-    printf("Policy delegate: attempt to load %s with navigation type '%s'",
-           URLDescription(request.url()).c_str(), webNavigationTypeToString(type));
-    if (!originatingNode.isNull()) {
-        fputs(" originating from ", stdout);
-        printNodeDescription(originatingNode, 0);
-    }
-    fputs("\n", stdout);
-    if (m_policyDelegateIsPermissive)
-        result = WebKit::WebNavigationPolicyCurrentTab;
-    else
-        result = WebKit::WebNavigationPolicyIgnore;
-
-    if (m_policyDelegateShouldNotifyDone)
-        testRunner()->policyDelegateDone();
-    return result;
+    return defaultPolicy;
 }
 
 bool WebViewHost::canHandleRequest(WebFrame*, const WebURLRequest& request)
@@ -1077,18 +1005,6 @@ int WebViewHost::windowCount()
     return m_shell->windowCount();
 }
 
-void WebViewHost::setCustomPolicyDelegate(bool isCustom, bool isPermissive)
-{
-    m_policyDelegateEnabled = isCustom;
-    m_policyDelegateIsPermissive = isPermissive;
-}
-
-void WebViewHost::waitForPolicyDelegate()
-{
-    m_policyDelegateEnabled = true;
-    m_policyDelegateShouldNotifyDone = true;
-}
-
 void WebViewHost::goToOffset(int offset)
 {
     m_shell->goToOffset(offset);
@@ -1183,9 +1099,6 @@ void WebViewHost::setProxy(WebTestProxyBase* proxy)
 
 void WebViewHost::reset()
 {
-    m_policyDelegateEnabled = false;
-    m_policyDelegateIsPermissive = false;
-    m_policyDelegateShouldNotifyDone = false;
     m_pageId = -1;
     m_lastPageIdUpdated = -1;
     m_hasWindow = false;

@@ -377,6 +377,9 @@ void TestRunner::reset()
     }
     m_topLoadingFrame = 0;
     m_waitUntilDone = false;
+    m_policyDelegateEnabled = false;
+    m_policyDelegateIsPermissive = false;
+    m_policyDelegateShouldNotifyDone = false;
 
     WebSecurityPolicy::resetOriginAccessWhitelists();
 #if OS(LINUX) || OS(ANDROID)
@@ -637,6 +640,21 @@ void TestRunner::policyDelegateDone()
     m_waitUntilDone = false;
 }
 
+bool TestRunner::policyDelegateEnabled() const
+{
+    return m_policyDelegateEnabled;
+}
+
+bool TestRunner::policyDelegateIsPermissive() const
+{
+    return m_policyDelegateIsPermissive;
+}
+
+bool TestRunner::policyDelegateShouldNotifyDone() const
+{
+    return m_policyDelegateShouldNotifyDone;
+}
+
 bool TestRunner::shouldInterceptPostMessage() const
 {
     return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
@@ -857,18 +875,18 @@ void TestRunner::setCloseRemainingWindowsWhenComplete(const CppArgumentList& arg
 void TestRunner::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
-        bool enable = arguments[0].value.boolValue;
-        bool permissive = false;
+        m_policyDelegateEnabled = arguments[0].value.boolValue;
+        m_policyDelegateIsPermissive = false;
         if (arguments.size() > 1 && arguments[1].isBool())
-            permissive = arguments[1].value.boolValue;
-        m_delegate->setCustomPolicyDelegate(enable, permissive);
+            m_policyDelegateIsPermissive = arguments[1].value.boolValue;
     }
     result->setNull();
 }
 
 void TestRunner::waitForPolicyDelegate(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->waitForPolicyDelegate();
+    m_policyDelegateEnabled = true;
+    m_policyDelegateShouldNotifyDone = true;
     m_waitUntilDone = true;
     result->setNull();
 }

@@ -211,6 +211,35 @@ string urlSuitableForTestResult(const string& url)
     return filename;
 }
 
+// WebNavigationType debugging strings taken from PolicyDelegate.mm.
+const char* linkClickedString = "link clicked";
+const char* formSubmittedString = "form submitted";
+const char* backForwardString = "back/forward";
+const char* reloadString = "reload";
+const char* formResubmittedString = "form resubmitted";
+const char* otherString = "other";
+const char* illegalString = "illegal value";
+
+// Get a debugging string from a WebNavigationType.
+const char* webNavigationTypeToString(WebNavigationType type)
+{
+    switch (type) {
+    case WebKit::WebNavigationTypeLinkClicked:
+        return linkClickedString;
+    case WebKit::WebNavigationTypeFormSubmitted:
+        return formSubmittedString;
+    case WebKit::WebNavigationTypeBackForward:
+        return backForwardString;
+    case WebKit::WebNavigationTypeReload:
+        return reloadString;
+    case WebKit::WebNavigationTypeFormResubmitted:
+        return formResubmittedString;
+    case WebKit::WebNavigationTypeOther:
+        return otherString;
+    }
+    return illegalString;
+}
+
 }
 
 WebTestProxyBase::WebTestProxyBase()
@@ -906,6 +935,28 @@ void WebTestProxyBase::locationChangeDone(WebFrame* frame)
     if (frame != m_testInterfaces->testRunner()->topLoadingFrame())
         return;
     m_testInterfaces->testRunner()->setTopLoadingFrame(frame, true);
+}
+
+WebNavigationPolicy WebTestProxyBase::decidePolicyForNavigation(WebFrame*, const WebURLRequest& request, WebNavigationType type, const WebNode& originatingNode, WebNavigationPolicy defaultPolicy, bool isRedirect)
+{
+    WebNavigationPolicy result;
+    if (!(m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->policyDelegateEnabled()))
+        return defaultPolicy;
+
+    m_delegate->printMessage(string("Policy delegate: attempt to load ") + URLDescription(request.url()) + " with navigation type '" + webNavigationTypeToString(type) + "'");
+    if (!originatingNode.isNull()) {
+        m_delegate->printMessage(" originating from ");
+        printNodeDescription(m_delegate, originatingNode, 0);
+    }
+    m_delegate->printMessage("\n");
+    if (m_testInterfaces->testRunner()->policyDelegateIsPermissive())
+        result = WebKit::WebNavigationPolicyCurrentTab;
+    else
+        result = WebKit::WebNavigationPolicyIgnore;
+
+    if (m_testInterfaces->testRunner()->policyDelegateShouldNotifyDone())
+        m_testInterfaces->testRunner()->policyDelegateDone();
+    return result;
 }
 
 }

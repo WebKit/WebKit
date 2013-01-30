@@ -101,6 +101,9 @@ public:
     virtual void setTopLoadingFrame(WebKit::WebFrame*, bool) OVERRIDE;
     virtual WebKit::WebFrame* topLoadingFrame() const OVERRIDE;
     virtual void policyDelegateDone() OVERRIDE;
+    virtual bool policyDelegateEnabled() const OVERRIDE;
+    virtual bool policyDelegateIsPermissive() const OVERRIDE;
+    virtual bool policyDelegateShouldNotifyDone() const OVERRIDE;
     virtual bool shouldInterceptPostMessage() const OVERRIDE;
     virtual bool isSmartInsertDeleteEnabled() const OVERRIDE;
     virtual bool isSelectTrailingWhitespaceEnabled() const OVERRIDE;
@@ -528,6 +531,18 @@ private:
 
     // If true, don't dump output until notifyDone is called.
     bool m_waitUntilDone;
+
+    // Causes navigation actions just printout the intended navigation instead
+    // of taking you to the page. This is used for cases like mailto, where you
+    // don't actually want to open the mail program.
+    bool m_policyDelegateEnabled;
+
+    // Toggles the behavior of the policy delegate. If true, then navigations
+    // will be allowed. Otherwise, they will be ignored (dropped).
+    bool m_policyDelegateIsPermissive;
+
+    // If true, the policy delegate will signal layout test completion.
+    bool m_policyDelegateShouldNotifyDone;
 
     WorkQueue m_workQueue;
 

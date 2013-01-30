@@ -117,8 +117,6 @@ public:
     virtual void closeRemainingWindows() { }
     virtual int navigationEntryCount() { return 0; }
     virtual int windowCount() { return 0; }
-    virtual void setCustomPolicyDelegate(bool, bool) { }
-    virtual void waitForPolicyDelegate() { }
     virtual void goToOffset(int) { }
     virtual void reload() { }
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }

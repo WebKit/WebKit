@@ -174,8 +174,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void closeRemainingWindows() OVERRIDE;
     virtual int navigationEntryCount() OVERRIDE;
     virtual int windowCount() OVERRIDE;
-    virtual void setCustomPolicyDelegate(bool, bool) OVERRIDE;
-    virtual void waitForPolicyDelegate() OVERRIDE;
     virtual void goToOffset(int) OVERRIDE;
     virtual void reload() OVERRIDE;
     void loadURLForFrame(const WebKit::WebURL&, const std::string& frameName) OVERRIDE;
@@ -328,18 +326,6 @@ private:
     WebUserMediaClientMock* userMediaClientMock();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
 #endif
-
-    // Causes navigation actions just printout the intended navigation instead
-    // of taking you to the page. This is used for cases like mailto, where you
-    // don't actually want to open the mail program.
-    bool m_policyDelegateEnabled;
-
-    // Toggles the behavior of the policy delegate. If true, then navigations
-    // will be allowed. Otherwise, they will be ignored (dropped).
-    bool m_policyDelegateIsPermissive;
-
-    // If true, the policy delegate will signal layout test completion.
-    bool m_policyDelegateShouldNotifyDone;
 
     // Non-owning pointer. The WebViewHost instance is owned by this TestShell instance.
     TestShell* m_shell;
