@@ -204,3 +204,21 @@ function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalParameters
             (optionalParameters['runAfterOpen'])();
     };
 }
+
+function waitForRequests(requests, callback) {
+    var count = requests.length;
+
+    if (!count) {
+        callback(requests);
+        return;
+    }
+
+    requests.forEach(function(req) {
+        req.onsuccess = function() {
+            --count;
+            if (!count)
+                callback(requests);
+        };
+        req.onerror = unexpectedErrorCallback;
+    });
+}
