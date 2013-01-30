@@ -29,13 +29,13 @@
 #if USE(PLATFORM_STRATEGIES)
 #if ENABLE(SQL_DATABASE)
 
-#include "DBBackendServer.h"
+#include "DatabaseServer.h"
 
 namespace WebCore {
 
 AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 {
-    return new DBBackend::Server;
+    return new DatabaseServer;
 }
 
 } // namespace WebCore

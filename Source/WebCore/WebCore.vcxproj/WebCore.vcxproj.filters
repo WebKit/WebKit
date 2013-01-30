@@ -1845,6 +1845,9 @@
     <ClCompile Include="..\Modules\webdatabase\DatabaseManager.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\DatabaseServer.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DatabaseSync.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -1855,9 +1858,6 @@
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DatabaseTracker.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\DBBackendServer.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DOMWindowWebDatabase.cpp">
@@ -8456,6 +8456,9 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseManager.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\DatabaseServer.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseSync.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
@@ -8466,9 +8469,6 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseTracker.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\DBBackendServer.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DOMWindowWebDatabase.h">

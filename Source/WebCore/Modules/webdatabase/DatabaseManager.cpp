@@ -43,7 +43,7 @@
 #include "DatabaseStrategy.h"
 #include "PlatformStrategies.h"
 #else
-#include "DBBackendServer.h"
+#include "DatabaseServer.h"
 #endif
 
 namespace WebCore {
@@ -70,7 +70,7 @@ DatabaseManager::DatabaseManager()
 #if USE(PLATFORM_STRATEGIES)
     m_server = platformStrategies()->databaseStrategy()->getDatabaseServer();
 #else
-    m_server = new DBBackend::Server;
+    m_server = new DatabaseServer;
 #endif
     ASSERT(m_server); // We should always have a server to work with.
 }

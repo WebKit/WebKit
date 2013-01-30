@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DBBackendServer.h"
+#include "DatabaseServer.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -32,9 +32,8 @@
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
-namespace DBBackend {
 
-void Server::initialize(const String& databasePath)
+void DatabaseServer::initialize(const String& databasePath)
 {
 #if !PLATFORM(CHROMIUM)
     DatabaseTracker::initializeTracker(databasePath);
@@ -43,7 +42,7 @@ void Server::initialize(const String& databasePath)
 #endif
 }
 
-void Server::setClient(DatabaseManagerClient* client)
+void DatabaseServer::setClient(DatabaseManagerClient* client)
 {
 #if !PLATFORM(CHROMIUM)
     DatabaseTracker::tracker().setClient(client);
@@ -52,7 +51,7 @@ void Server::setClient(DatabaseManagerClient* client)
 #endif
 }
 
-String Server::databaseDirectoryPath() const
+String DatabaseServer::databaseDirectoryPath() const
 {
 #if !PLATFORM(CHROMIUM)
     return DatabaseTracker::tracker().databaseDirectoryPath();
@@ -61,118 +60,117 @@ String Server::databaseDirectoryPath() const
 #endif
 }
 
-void Server::setDatabaseDirectoryPath(const String& path)
+void DatabaseServer::setDatabaseDirectoryPath(const String& path)
 {
 #if !PLATFORM(CHROMIUM)
     DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
 #endif
 }
 
-String Server::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
+String DatabaseServer::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
 {
     return DatabaseTracker::tracker().fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
 #if !PLATFORM(CHROMIUM)
-bool Server::hasEntryForOrigin(SecurityOrigin* origin)
+bool DatabaseServer::hasEntryForOrigin(SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().hasEntryForOrigin(origin);
 }
 
-void Server::origins(Vector<RefPtr<SecurityOrigin> >& result)
+void DatabaseServer::origins(Vector<RefPtr<SecurityOrigin> >& result)
 {
     DatabaseTracker::tracker().origins(result);
 }
 
-bool Server::databaseNamesForOrigin(SecurityOrigin* origin, Vector<String>& result)
+bool DatabaseServer::databaseNamesForOrigin(SecurityOrigin* origin, Vector<String>& result)
 {
     return DatabaseTracker::tracker().databaseNamesForOrigin(origin, result);
 }
 
-DatabaseDetails Server::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
+DatabaseDetails DatabaseServer::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().detailsForNameAndOrigin(name, origin);
 }
 
-unsigned long long Server::usageForOrigin(SecurityOrigin* origin)
+unsigned long long DatabaseServer::usageForOrigin(SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().usageForOrigin(origin);
 }
 
-unsigned long long Server::quotaForOrigin(SecurityOrigin* origin)
+unsigned long long DatabaseServer::quotaForOrigin(SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().quotaForOrigin(origin);
 }
 
-void Server::setQuota(SecurityOrigin* origin, unsigned long long quotaSize)
+void DatabaseServer::setQuota(SecurityOrigin* origin, unsigned long long quotaSize)
 {
     DatabaseTracker::tracker().setQuota(origin, quotaSize);
 }
 
-void Server::deleteAllDatabases()
+void DatabaseServer::deleteAllDatabases()
 {
     DatabaseTracker::tracker().deleteAllDatabases();
 }
 
-bool Server::deleteOrigin(SecurityOrigin* origin)
+bool DatabaseServer::deleteOrigin(SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().deleteOrigin(origin);
 }
 
-bool Server::deleteDatabase(SecurityOrigin* origin, const String& name)
+bool DatabaseServer::deleteDatabase(SecurityOrigin* origin, const String& name)
 {
     return DatabaseTracker::tracker().deleteDatabase(origin, name);
 }
 
 // From a secondary thread, must be thread safe with its data
-void Server::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String& name)
+void DatabaseServer::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String& name)
 {
     DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(origin, name);
 }
 
-void Server::databaseChanged(DatabaseBackend* database)
+void DatabaseServer::databaseChanged(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().databaseChanged(database);
 }
 
 #else // PLATFORM(CHROMIUM)
-void Server::closeDatabasesImmediately(const String& originIdentifier, const String& name)
+void DatabaseServer::closeDatabasesImmediately(const String& originIdentifier, const String& name)
 {
     DatabaseTracker::tracker().closeDatabasesImmediately(originIdentifier, name);
 }
 #endif // PLATFORM(CHROMIUM)
 
-void Server::interruptAllDatabasesForContext(const ScriptExecutionContext* context)
+void DatabaseServer::interruptAllDatabasesForContext(const ScriptExecutionContext* context)
 {
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
 }
 
-bool Server::canEstablishDatabase(ScriptExecutionContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
+bool DatabaseServer::canEstablishDatabase(ScriptExecutionContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     return DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize);
 }
 
-void Server::addOpenDatabase(DatabaseBackend* database)
+void DatabaseServer::addOpenDatabase(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().addOpenDatabase(database);
 }
 
-void Server::removeOpenDatabase(DatabaseBackend* database)
+void DatabaseServer::removeOpenDatabase(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().removeOpenDatabase(database);
 }
 
-void Server::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
+void DatabaseServer::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     DatabaseTracker::tracker().setDatabaseDetails(origin, name, displayName, estimatedSize);
 }
 
-unsigned long long Server::getMaxSizeForDatabase(const DatabaseBackend* database)
+unsigned long long DatabaseServer::getMaxSizeForDatabase(const DatabaseBackend* database)
 {
     return DatabaseTracker::tracker().getMaxSizeForDatabase(database);
 }
 
-} // namespace DBBackend
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)

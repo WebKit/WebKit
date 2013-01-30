@@ -25425,6 +25425,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\DatabaseServer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseServer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\DatabaseSync.cpp"
 					>
 				</File>
@@ -25454,14 +25462,6 @@
 				</File>
 				<File
 					RelativePath="..\Modules\webdatabase\DatabaseTracker.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\DBBackendServer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\DBBackendServer.h"
 					>
 				</File>
 				<File

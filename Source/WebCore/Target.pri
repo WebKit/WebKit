@@ -24,8 +24,8 @@ SOURCES += \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
     Modules/webdatabase/DatabaseBackend.cpp \
     Modules/webdatabase/DatabaseContext.cpp \
+    Modules/webdatabase/DatabaseServer.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
-    Modules/webdatabase/DBBackendServer.cpp \
     Modules/webdatabase/WorkerContextWebDatabase.cpp \
     \
     accessibility/AccessibilityImageMapLink.cpp \
@@ -1442,11 +1442,11 @@ HEADERS += \
     Modules/webdatabase/DatabaseBackend.h \
     Modules/webdatabase/DatabaseCallback.h \
     Modules/webdatabase/DatabaseManager.h \
+    Modules/webdatabase/DatabaseServer.h \
     Modules/webdatabase/DatabaseSync.h \
     Modules/webdatabase/DatabaseTask.h \
     Modules/webdatabase/DatabaseThread.h \
     Modules/webdatabase/DatabaseTracker.h \
-    Modules/webdatabase/DBBackendServer.h \
     Modules/webdatabase/OriginQuotaManager.h \
     Modules/webdatabase/OriginUsageRecord.h \
     Modules/webdatabase/SQLCallbackWrapper.h \

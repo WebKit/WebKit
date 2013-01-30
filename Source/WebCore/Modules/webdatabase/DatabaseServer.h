@@ -23,20 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DBBackendServer_h
-#define DBBackendServer_h
+#ifndef DatabaseServer_h
+#define DatabaseServer_h
 
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabaseServer.h"
 
 namespace WebCore {
-namespace DBBackend {
 
-class Server: public AbstractDatabaseServer {
+class DatabaseServer: public AbstractDatabaseServer {
 public:
-    Server() { };
-    virtual ~Server() { }
+    DatabaseServer() { };
+    virtual ~DatabaseServer() { }
 
     virtual void initialize(const String& databasePath);
 
@@ -79,9 +78,8 @@ public:
     virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
 };
 
-} // namespace DBBackend
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)
 
-#endif // DBBackendServer_h
+#endif // DatabaseServer_h
