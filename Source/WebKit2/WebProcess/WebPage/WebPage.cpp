@@ -1271,6 +1271,8 @@ void WebPage::setUseFixedLayout(bool fixed)
 #if USE(COORDINATED_GRAPHICS)
     m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(fixed);
     m_page->settings()->setFixedPositionCreatesStackingContext(fixed);
+    m_page->settings()->setApplyDeviceScaleFactorInCompositor(fixed);
+    m_page->settings()->setApplyPageScaleFactorInCompositor(fixed);
 #endif
 
 #if USE(TILED_BACKING_STORE) && ENABLE(SMOOTH_SCROLLING)

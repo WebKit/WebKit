@@ -86,7 +86,7 @@ public:
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
     virtual WebCore::IntRect contentsRect() const;
     CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy() const { return m_coordinatedLayerTreeHostProxy.get(); }
-    virtual void setVisibleContentsRect(const WebCore::FloatRect& /* visibleContentsRect */, float /* scale */, const WebCore::FloatPoint& /* trajectoryVector */) { }
+    virtual void setVisibleContentsRect(const WebCore::FloatRect& /* visibleContentsRect */, const WebCore::FloatPoint& /* trajectoryVector */) { }
     virtual void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     WebPageProxy* page() { return m_webPageProxy; }

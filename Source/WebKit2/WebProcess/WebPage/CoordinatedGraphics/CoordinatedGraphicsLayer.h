@@ -123,6 +123,7 @@ public:
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const FloatRect&) OVERRIDE;
     virtual void setContentsNeedsDisplay() OVERRIDE;
+    virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
     virtual void flushCompositingState(const FloatRect&) OVERRIDE;
     virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 #if ENABLE(CSS_FILTERS)
@@ -137,7 +138,6 @@ public:
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
 
-    void setContentsScale(float);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
     void setRootLayer(bool);
@@ -252,7 +252,6 @@ private:
     WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;
     OwnPtr<TiledBackingStore> m_previousBackingStore;
-    float m_contentsScale;
 
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;

@@ -376,10 +376,10 @@ void DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIP
         m_coordinatedLayerTreeHostProxy->didReceiveCoordinatedLayerTreeHostProxyMessage(connection, messageID, decoder);
 }
 
-void DrawingAreaProxyImpl::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectoryVector)
+void DrawingAreaProxyImpl::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
 {
     if (m_coordinatedLayerTreeHostProxy)
-        m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, scale, trajectoryVector);
+        m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 }
 
 #endif

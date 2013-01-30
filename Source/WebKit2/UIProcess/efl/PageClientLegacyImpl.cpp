@@ -50,7 +50,7 @@ void PageClientLegacyImpl::didCommitLoad()
 void PageClientLegacyImpl::updateViewportSize()
 {
 #if USE(TILED_BACKING_STORE)
-    m_view->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_view->pagePosition()), m_view->size()), m_view->pageScaleFactor(), FloatPoint());
+    m_view->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_view->pagePosition()), m_view->size()), FloatPoint());
 #endif
 }
 

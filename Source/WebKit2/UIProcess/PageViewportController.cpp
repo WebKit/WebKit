@@ -197,6 +197,8 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
         FloatPoint currentDiscretePos = roundedIntPoint(m_contentsPosition);
         FloatPoint pixelAlignedPos = pixelAlignedFloatPoint(currentDiscretePos);
         m_contentsPosition = boundContentsPosition(pixelAlignedPos);
+
+        m_webPageProxy->scalePage(m_pageScaleFactor, roundedIntPoint(m_contentsPosition));
     }
 
     // There might be rendered frames not covering our requested position yet, wait for it.
@@ -258,7 +260,7 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& posit
     if (!m_pendingPositionChange)
         m_contentsPosition = position;
     if (!m_pendingScaleChange)
-        m_pageScaleFactor = scale;
+        applyScaleAfterRenderingContents(scale);
 
     syncVisibleContents(trajectoryVector);
 }
@@ -271,7 +273,7 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
 
     FloatRect visibleContentsRect(boundContentsPosition(m_contentsPosition), visibleContentsSize());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
-    drawingArea->setVisibleContentsRect(visibleContentsRect, m_pageScaleFactor, trajectoryVector);
+    drawingArea->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 
     m_client->didChangeVisibleContents();
 }
@@ -326,6 +328,9 @@ void PageViewportController::resumeContent()
 
 void PageViewportController::applyScaleAfterRenderingContents(float scale)
 {
+    if (m_pageScaleFactor == scale)
+        return;
+
     m_pageScaleFactor = scale;
     m_pendingScaleChange = true;
     syncVisibleContents();
@@ -333,6 +338,9 @@ void PageViewportController::applyScaleAfterRenderingContents(float scale)
 
 void PageViewportController::applyPositionAfterRenderingContents(const FloatPoint& pos)
 {
+    if (m_contentsPosition == pos)
+        return;
+
     m_contentsPosition = pos;
     m_pendingPositionChange = true;
     syncVisibleContents();

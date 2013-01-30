@@ -65,7 +65,7 @@ public:
     void deleteCompositingLayers(const Vector<CoordinatedLayerID>&);
     void setRootCompositingLayer(CoordinatedLayerID);
     void setContentsSize(const WebCore::FloatSize&);
-    void setVisibleContentsRect(const WebCore::FloatRect&, float pageScaleFactor, const WebCore::FloatPoint& trajectoryVector);
+    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     void createTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void updateTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
@@ -96,15 +96,12 @@ public:
 #endif
     void setBackgroundColor(const WebCore::Color&);
 
-    float deviceScaleFactor() const;
-
 protected:
     void dispatchUpdate(const Function<void()>&);
 
     DrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<LayerTreeRenderer> m_renderer;
     WebCore::FloatRect m_lastSentVisibleRect;
-    float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
     typedef HashMap<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
     SurfaceMap m_surfaces;

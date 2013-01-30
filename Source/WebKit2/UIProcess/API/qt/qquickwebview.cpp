@@ -846,7 +846,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     webPageProxy->drawingArea()->setSize(viewportSize.toSize(), IntSize());
     // The backing store scale factor should already be set to the device pixel ratio
     // of the underlying window, thus we set the effective scale to 1 here.
-    webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), FloatSize(viewportSize)), 1, FloatPoint());
+    webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), FloatSize(viewportSize)), FloatPoint());
 }
 
 qreal QQuickWebViewLegacyPrivate::zoomFactor() const

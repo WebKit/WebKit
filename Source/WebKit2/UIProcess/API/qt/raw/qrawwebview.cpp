@@ -355,7 +355,7 @@ void QRawWebView::setSize(const QSize& size)
     d->m_size = size;
 
     drawingArea->setSize(d->m_size, WebCore::IntSize());
-    drawingArea->setVisibleContentsRect(WebCore::IntRect(WebCore::IntPoint(), d->m_size), 1 /*scale*/, WebCore::FloatPoint());
+    drawingArea->setVisibleContentsRect(WebCore::IntRect(WebCore::IntPoint(), d->m_size), WebCore::FloatPoint());
 }
 
 WKPageRef QRawWebView::pageRef()

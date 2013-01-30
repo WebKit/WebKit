@@ -123,7 +123,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_pendingCanvasOperation(None)
 #endif
     , m_coordinator(0)
-    , m_contentsScale(1)
     , m_compositedNativeImagePtr(0)
     , m_canvasPlatformLayer(0)
     , m_animationStartedTimer(this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
@@ -698,16 +697,15 @@ void CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector(const Float
     setNeedsVisibleRectAdjustment();
 }
 
-void CoordinatedGraphicsLayer::setContentsScale(float scale)
+void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
 {
-    m_contentsScale = scale;
     if (shouldHaveBackingStore())
         m_pendingContentsScaleAdjustment = true;
 }
 
 float CoordinatedGraphicsLayer::effectiveContentsScale()
 {
-    return selfOrAncestorHaveNonAffineTransforms() ? 1 : m_contentsScale;
+    return selfOrAncestorHaveNonAffineTransforms() ? 1 : deviceScaleFactor() * pageScaleFactor();
 }
 
 void CoordinatedGraphicsLayer::adjustContentsScale()

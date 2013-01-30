@@ -76,7 +76,7 @@ public:
 
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
-    virtual void deviceOrPageScaleFactorChanged() { }
+    virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
     virtual bool isFlushingLayerChanges() const OVERRIDE { return m_isFlushingLayerChanges; }
@@ -86,7 +86,7 @@ public:
     virtual WebCore::FloatRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
-    virtual void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint&);
+    virtual void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
 
@@ -124,6 +124,8 @@ private:
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
+    virtual float deviceScaleFactor() const OVERRIDE;
+    virtual float pageScaleFactor() const OVERRIDE;
 
     // CoordinatedImageBacking::Coordinator
     virtual void createImageBacking(CoordinatedImageBackingID) OVERRIDE;
@@ -195,7 +197,6 @@ private:
     bool m_waitingForUIProcess;
     bool m_isSuspended;
     WebCore::FloatRect m_visibleContentsRect;
-    float m_contentsScale;
     bool m_shouldSendScrollPositionUpdate;
 
     LayerTreeContext m_layerTreeContext;
