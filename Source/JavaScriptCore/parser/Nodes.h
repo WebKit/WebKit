@@ -1509,7 +1509,8 @@ namespace JSC {
         RegisterID* emitBytecodeForBlock(BytecodeGenerator&, RegisterID* input, RegisterID* destination);
 
     private:
-        SwitchInfo::SwitchType tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
+        SwitchInfo::SwitchType tryTableSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
+        static const size_t s_tableSwitchMinimum = 10;
         ClauseListNode* m_list1;
         CaseClauseNode* m_defaultClause;
         ClauseListNode* m_list2;

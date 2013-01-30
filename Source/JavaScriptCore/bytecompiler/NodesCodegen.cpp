@@ -1851,9 +1851,22 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
         break;        
     }
 }
-    
-SwitchInfo::SwitchType CaseBlockNode::tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num)
+
+static inline size_t length(ClauseListNode* list1, ClauseListNode* list2)
 {
+    size_t length = 0;
+    for (ClauseListNode* node = list1; node; node = node->getNext())
+        ++length;
+    for (ClauseListNode* node = list2; node; node = node->getNext())
+        ++length;
+    return length;
+}
+
+SwitchInfo::SwitchType CaseBlockNode::tryTableSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num)
+{
+    if (length(m_list1, m_list2) < s_tableSwitchMinimum)
+        return SwitchInfo::SwitchNone;
+
     SwitchKind typeForTable = SwitchUnset;
     bool singleCharacterSwitch = true;
     
@@ -1888,7 +1901,7 @@ RegisterID* CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, Re
     Vector<ExpressionNode*, 8> literalVector;
     int32_t min_num = std::numeric_limits<int32_t>::max();
     int32_t max_num = std::numeric_limits<int32_t>::min();
-    SwitchInfo::SwitchType switchType = tryOptimizedSwitch(literalVector, min_num, max_num);
+    SwitchInfo::SwitchType switchType = tryTableSwitch(literalVector, min_num, max_num);
 
     if (switchType != SwitchInfo::SwitchNone) {
         // Prepare the various labels
