@@ -55,7 +55,7 @@ void WebConnection::postMessage(const String& messageName, APIObject* messageBod
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 
-    sendMessage(CoreIPC::MessageID(Messages::WebConnection::HandleMessage::messageID), encoder.release());
+    sendMessage(CoreIPC::MessageID(), encoder.release());
 }
 
 void WebConnection::didClose()

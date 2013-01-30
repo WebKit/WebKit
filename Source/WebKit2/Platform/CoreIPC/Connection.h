@@ -405,7 +405,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
     
-    return sendMessage(MessageID(T::messageID), encoder.release(), messageSendFlags);
+    return sendMessage(MessageID(), encoder.release(), messageSendFlags);
 }
 
 template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
@@ -419,7 +419,7 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
     encoder->encode(message);
 
     // Now send the message and wait for a reply.
-    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID), syncRequestID, encoder.release(), timeout, syncSendFlags);
+    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(MessageID(), syncRequestID, encoder.release(), timeout, syncSendFlags);
     if (!replyDecoder)
         return false;
 
@@ -434,7 +434,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
         return false;
 
     ASSERT(decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(this, MessageID(T::messageID), *decoder);
+    m_client->didReceiveMessage(this, MessageID(), *decoder);
     return true;
 }
 

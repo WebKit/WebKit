@@ -44,7 +44,7 @@ public:
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
-        return static_cast<T*>(this)->sendMessage(MessageID(U::messageID), encoder.release());
+        return static_cast<T*>(this)->sendMessage(MessageID(), encoder.release());
     }
     
     bool sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)

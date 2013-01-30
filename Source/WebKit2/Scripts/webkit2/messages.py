@@ -66,13 +66,6 @@ def surround_in_condition(string, condition):
     return '#if %s\n%s#endif\n' % (condition, string)
 
 
-def messages_to_kind_enum(messages):
-    result = []
-    result.append('enum Kind {\n')
-    result += [surround_in_condition('    %s,\n' % message.id(), message.condition) for message in messages]
-    result.append('};\n')
-    return ''.join(result)
-
 def function_parameter_type(type):
     # Don't use references for built-in types.
     builtin_types = frozenset([
@@ -129,7 +122,6 @@ def message_to_struct_declaration(message):
     function_parameters = [(function_parameter_type(x.type), x.name) for x in message.parameters]
     result.append('struct %s : %s' % (message.name, base_class(message)))
     result.append(' {\n')
-    result.append('    static const Kind messageID = %s;\n' % message.id())
     result.append('    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }\n')
     result.append('    static CoreIPC::StringReference name() { return CoreIPC::StringReference("%s"); }\n' % message.name)
     result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None])
@@ -293,18 +285,10 @@ def generate_messages_header(file):
     result.append('    return CoreIPC::StringReference("%s");\n' % receiver.name)
     result.append('}\n')
     result.append('\n')
-
-    result.append(messages_to_kind_enum(receiver.messages))
     result.append('\n')
     result.append('\n'.join([message_to_struct_declaration(x) for x in receiver.messages]))
     result.append('\n')
     result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
-
-    result.append('\nnamespace CoreIPC {\n\n')
-    result.append('template<> struct MessageKindTraits<Messages::%s::Kind> {\n' % receiver.name)
-    result.append('    static const MessageClass messageClass = MessageClass%s;\n' % receiver.name)
-    result.append('};\n')
-    result.append('\n} // namespace CoreIPC\n')
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)

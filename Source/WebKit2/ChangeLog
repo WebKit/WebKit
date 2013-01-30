@@ -1,3 +1,28 @@
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Stop generating the message kind enum
+        https://bugs.webkit.org/show_bug.cgi?id=108258
+
+        Reviewed by Beth Dakin.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        (CoreIPC::Connection::waitForAndDispatchImmediately):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        * Scripts/webkit2/messages.py:
+        (surround_in_condition):
+        (message_to_struct_declaration):
+        (generate_messages_header):
+        * Scripts/webkit2/messages_unittest.py:
+        * Scripts/webkit2/model.py:
+        (Message.__init__):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::send):
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::postMessage):
+
 2013-01-29  Kiran Muppala  <cmuppala@apple.com>
 
         Fix erroneous semicolon causing build failure: if statement has empty body [-Werror,-Wempty-body]

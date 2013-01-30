@@ -84,7 +84,7 @@ bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned 
     OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
 
-    return sendMessage(CoreIPC::MessageID(T::messageID), encoder.release(), messageSendFlags);
+    return sendMessage(CoreIPC::MessageID(), encoder.release(), messageSendFlags);
 }
 
 template<typename U> 

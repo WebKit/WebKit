@@ -45,9 +45,6 @@ class Message(object):
         self.attributes = frozenset(attributes or [])
         self.condition = condition
 
-    def id(self):
-        return '%sID' % self.name
-
     def has_attribute(self, attribute):
         return attribute in self.attributes
 
