@@ -332,6 +332,7 @@ void _NPN_InitializeVariantWithStringCopy(NPVariant* variant, const NPString* va
     memcpy((void*)variant->value.stringValue.UTF8Characters, value->UTF8Characters, sizeof(NPUTF8) * value->UTF8Length);
 }
 
+} // extern "C"
 
 // NPN_Registry
 //
@@ -369,6 +370,8 @@ static NPRootObjectMap& rootObjectMap()
     DEFINE_STATIC_LOCAL(NPRootObjectMap, objectMap, ());
     return objectMap;
 }
+
+extern "C" {
 
 void _NPN_RegisterObject(NPObject* npObject, NPObject* owner)
 {
@@ -458,4 +461,4 @@ bool _NPN_IsAlive(NPObject* npObject)
     return liveObjectMap().find(npObject) != liveObjectMap().end();
 }
 
-}  // extern "C"
+} // extern "C"
