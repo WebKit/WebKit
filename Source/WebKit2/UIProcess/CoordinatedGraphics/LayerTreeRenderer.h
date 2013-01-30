@@ -153,7 +153,6 @@ private:
     void ensureRootLayer();
     void commitPendingBackingStoreOperations();
 
-    CoordinatedBackingStore* getBackingStore(WebCore::GraphicsLayer*);
     void prepareContentBackingStore(WebCore::GraphicsLayer*);
     void createBackingStoreIfNeeded(WebCore::GraphicsLayer*);
     void removeBackingStoreIfNeeded(WebCore::GraphicsLayer*);
@@ -172,8 +171,8 @@ private:
     ImageBackingMap m_imageBackings;
     Vector<RefPtr<CoordinatedBackingStore> > m_releasedImageBackings;
 
-    typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore> > BackingStoreMap;
-    BackingStoreMap m_pendingSyncBackingStores;
+    typedef HashMap<WebCore::GraphicsLayer*, RefPtr<CoordinatedBackingStore> > BackingStoreMap;
+    BackingStoreMap m_backingStores;
 
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 

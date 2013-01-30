@@ -89,6 +89,7 @@ public:
 
     // FIXME: It will be removed after removing dependency of LayerTreeRenderer on GraphicsLayerTextureMapper.
     void setHasOwnBackingStore(bool b) { m_hasOwnBackingStore = b; }
+    void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
 
     void setFixedToViewport(bool fixed) { m_fixedToViewport = fixed; }
     bool fixedToViewport() const { return m_fixedToViewport; }
@@ -100,9 +101,9 @@ public:
 private:
     virtual void willBeDestroyed();
     void didFlushCompositingState();
-    void updateDebugBorderAndRepaintCountIfNeeded();
+    void updateDebugBorderAndRepaintCount();
     void updateBackingStoreIfNeeded();
-    void prepareBackingStore();
+    void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
     void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
 

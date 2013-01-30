@@ -74,7 +74,9 @@ public:
         FilterChange =              (1L << 23),
 
         DebugVisualsChange =        (1L << 24),
-        RepaintCountChange =        (1L << 25)
+        RepaintCountChange =        (1L << 25),
+
+        BackingStoreChange =        (1L << 26)
     };
 
     TextureMapperLayer()
@@ -99,10 +101,6 @@ public:
     bool descendantsOrSelfHaveRunningAnimations() const;
 
     void paint();
-
-    void setBackingStore(PassRefPtr<TextureMapperBackingStore> backingStore) { m_backingStore = backingStore; }
-    PassRefPtr<TextureMapperBackingStore> backingStore() { return m_backingStore; }
-    void clearBackingStoresRecursive();
 
     void setScrollPositionDeltaIfNeeded(const FloatSize&);
 

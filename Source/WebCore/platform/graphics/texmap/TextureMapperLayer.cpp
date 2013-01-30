@@ -54,16 +54,6 @@ const TextureMapperLayer* TextureMapperLayer::rootLayer() const
     return this;
 }
 
-void TextureMapperLayer::clearBackingStoresRecursive()
-{
-    m_backingStore.clear();
-    m_contentsLayer = 0;
-    for (size_t i = 0; i < m_children.size(); ++i)
-        m_children[i]->clearBackingStoresRecursive();
-    if (m_state.maskLayer)
-        m_state.maskLayer->clearBackingStoresRecursive();
-}
-
 void TextureMapperLayer::computeTransformsRecursive()
 {
     if (m_state.size.isEmpty() && m_state.masksToBounds)
@@ -436,6 +426,9 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
     if (changeMask & FilterChange)
         m_shouldUpdateCurrentFiltersFromGraphicsLayer = true;
 #endif
+
+    if (changeMask & BackingStoreChange)
+        m_backingStore = graphicsLayer->m_backingStore;
 
     if (changeMask & RepaintCountChange)
         m_state.repaintCount = graphicsLayer->repaintCount();

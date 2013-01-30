@@ -402,17 +402,32 @@ void GraphicsLayerTextureMapper::setShowRepaintCounter(bool show)
 */
 void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
-    updateDebugBorderAndRepaintCountIfNeeded();
+    prepareBackingStoreIfNeeded();
     m_layer->flushCompositingStateForThisLayerOnly(this);
     updateBackingStoreIfNeeded();
     didFlushCompositingState();
 }
 
-void GraphicsLayerTextureMapper::updateDebugBorderAndRepaintCountIfNeeded()
+void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()
 {
     if (!m_hasOwnBackingStore)
         return;
+    if (!shouldHaveBackingStore()) {
+        m_backingStore.clear();
+        m_changeMask |= TextureMapperLayer::BackingStoreChange;
+    } else {
+        if (!m_backingStore) {
+            m_backingStore = TextureMapperTiledBackingStore::create();
+            m_changeMask |= TextureMapperLayer::BackingStoreChange;
+        }
+    }
 
+    updateDebugBorderAndRepaintCount();
+}
+
+void GraphicsLayerTextureMapper::updateDebugBorderAndRepaintCount()
+{
+    ASSERT(m_hasOwnBackingStore);
     if (isShowingDebugBorder())
         updateDebugIndicators();
 
@@ -457,29 +472,22 @@ void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
 {
     if (!m_hasOwnBackingStore)
         return;
-    prepareBackingStore();
-    m_layer->setBackingStore(m_backingStore);
-}
 
-void GraphicsLayerTextureMapper::prepareBackingStore()
-{
     TextureMapper* textureMapper = m_layer->textureMapper();
     if (!textureMapper)
         return;
 
     if (!shouldHaveBackingStore()) {
-        m_backingStore.clear();
+        ASSERT(!m_backingStore);
         return;
     }
+    ASSERT(m_backingStore);
 
     IntRect dirtyRect = enclosingIntRect(FloatRect(FloatPoint::zero(), m_size));
     if (!m_needsDisplay)
         dirtyRect.intersect(enclosingIntRect(m_needsDisplayRect));
     if (dirtyRect.isEmpty())
         return;
-
-    if (!m_backingStore)
-        m_backingStore = TextureMapperTiledBackingStore::create();
 
 #if PLATFORM(QT)
     ASSERT(dynamic_cast<TextureMapperTiledBackingStore*>(m_backingStore.get()));
@@ -545,6 +553,16 @@ bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
     return GraphicsLayer::setFilters(filters);
 }
 #endif
+
+void GraphicsLayerTextureMapper::setBackingStore(PassRefPtr<TextureMapperBackingStore> backingStore)
+{
+    ASSERT(!m_hasOwnBackingStore);
+    if (m_backingStore == backingStore)
+        return;
+
+    m_backingStore = backingStore;
+    notifyChange(TextureMapperLayer::BackingStoreChange);
+}
 
 void GraphicsLayerTextureMapper::setRepaintCount(int repaintCount)
 {
