@@ -3951,6 +3951,13 @@ webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.htm
 
 webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
 
+# Failures introduced by page scale coordinate space change.
+crbug.com/172972 compositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
+crbug.com/172972 compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+crbug.com/172972 compositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
+crbug.com/172972 compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+crbug.com/172970 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
+
 # These tests are failing already and because of virtual test suite for deferred
 # image decoding they need to be suppressed again.
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
