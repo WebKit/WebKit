@@ -1269,10 +1269,6 @@ webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
 # Transient. Needs rebaseline.
-webkit.org/b/103955 fast/repaint/4774354.html [ ImageOnlyFailure ]
-webkit.org/b/103955 fast/repaint/4776765.html [ ImageOnlyFailure ]
-webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
-webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 
 # Needs rebaseline.

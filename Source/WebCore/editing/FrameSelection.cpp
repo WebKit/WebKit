@@ -1337,7 +1337,12 @@ static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect)
     if (!caretPainter)
         return;
 
-    caretPainter->repaintRectangle(rect);
+    // FIXME: Need to over-paint 1 pixel to workaround some rounding problems.
+    // https://bugs.webkit.org/show_bug.cgi?id=108283
+    LayoutRect inflatedRect = rect;
+    inflatedRect.inflate(1);
+
+    caretPainter->repaintRectangle(inflatedRect);
 }
 
 bool FrameSelection::recomputeCaretRect()
