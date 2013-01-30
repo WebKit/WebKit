@@ -1,3 +1,14 @@
+2013-01-29  Kiran Muppala  <cmuppala@apple.com>
+
+        Fix erroneous semicolon causing build failure: if statement has empty body [-Werror,-Wempty-body]
+        https://bugs.webkit.org/show_bug.cgi?id=108241
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addExistingWebPage): Remove erroneous
+        semicolon following the if condition.
+
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
         Remove almost everything from MessageID
