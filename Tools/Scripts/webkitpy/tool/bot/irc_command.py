@@ -253,9 +253,9 @@ class Sheriffs(IRCCommand):
     usage_string = "sheriffs"
     help_string = "Retrieves who the current Chromium WebKit sheriffs are from: %s" % urls.chromium_webkit_sheriff_url
 
-    def _retrieve_webkit_sheriffs(self, url):
+    def _retrieve_webkit_sheriffs(self, tool, url):
         try:
-            sheriff_js = Web().get_binary(url, True)
+            sheriff_js = tool.web.get_binary(url, True)
         except:
             return None
         if sheriff_js == None:
@@ -274,7 +274,7 @@ class Sheriffs(IRCCommand):
         else:
             url = args[0]
 
-        sheriffs = self._retrieve_webkit_sheriffs(url)
+        sheriffs = self._retrieve_webkit_sheriffs(tool, url)
         if sheriffs == None:
             return "%s: Failed to parse URL: %s" % (nick, url)
 

@@ -32,6 +32,7 @@ import unittest2 as unittest
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
 from webkitpy.tool.mocktool import MockTool
+from webkitpy.common.net.web_mock import MockWeb
 from webkitpy.common.system.executive_mock import MockExecutive
 
 
@@ -65,16 +66,22 @@ class IRCCommandTest(unittest.TestCase):
 
     def test_sheriffs(self):
         sheriffs = Sheriffs()
+        tool = MockTool(web=MockWeb({
+          "test_0": "document.write('');",
+          "test_1": "document.write('test_user');",
+          "test_2": "document.write('test_user_1, test_user_2');",
+          "test_malformed": "malformed",
+        }))
         self.assertEqual("tom: There are no Chromium Webkit sheriffs currently assigned.",
-                         sheriffs.execute("tom", [self._sheriff_test_data_url("0")], None, None))
+                         sheriffs.execute("tom", ["test_0"], tool, None))
         self.assertEqual("tom: The current Chromium Webkit sheriff is: test_user",
-                         sheriffs.execute("tom", [self._sheriff_test_data_url("1")], None, None))
+                         sheriffs.execute("tom", ["test_1"], tool, None))
         self.assertEqual("tom: The current Chromium Webkit sheriffs are: test_user_1, test_user_2",
-                         sheriffs.execute("tom", [self._sheriff_test_data_url("2")], None, None))
-        self.assertEqual("tom: Failed to parse URL: " + self._sheriff_test_data_url("malformed"),
-                         sheriffs.execute("tom", [self._sheriff_test_data_url("malformed")], None, None))
-        self.assertEqual("tom: Failed to parse URL: http://invalid/",
-                         sheriffs.execute("tom", ["http://invalid/"], None, None))
+                         sheriffs.execute("tom", ["test_2"], tool, None))
+        self.assertEqual("tom: Failed to parse URL: test_malformed",
+                         sheriffs.execute("tom", ["test_malformed"], tool, None))
+        self.assertEqual("tom: Failed to parse URL: invalid",
+                         sheriffs.execute("tom", ["invalid"], tool, None))
 
     def test_create_bug(self):
         create_bug = CreateBug()

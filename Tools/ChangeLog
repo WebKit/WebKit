@@ -1,3 +1,23 @@
+2013-01-29  Alan Cutter  <alancutter@chromium.org>
+
+        Tidy up Sheriffbot's Sheriffs command's unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=108262
+
+        Reviewed by Eric Seidel.
+
+        Added the use of MockWeb instead of the filesystem to test the sheriffs command.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Sheriffs._retrieve_webkit_sheriffs):
+        (Sheriffs.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_sheriffs):
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_0.js: Removed.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_1.js: Removed.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_2.js: Removed.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_malformed.js: Removed.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_zero.js: Removed.
+
 2013-01-29  Lucas Forschler  <lforschler@apple.com>
 
         Enable tests for Windows EWS!
