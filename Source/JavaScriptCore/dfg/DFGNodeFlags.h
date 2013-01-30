@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,8 @@ namespace JSC { namespace DFG {
 #define NodeUsedAsValue          (NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther)
 #define NodeUsedAsInt            0x1000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
 #define NodeUsedAsIntLocally     0x2000 // Same as NodeUsedAsInt, but within the same basic block.
+
+#define NodeArithFlagsMask       (NodeBehaviorMask | NodeBackPropMask)
 
 #define NodeDoesNotExit          0x4000 // This flag is negated to make it natural for the default to be that a node does exit.
 

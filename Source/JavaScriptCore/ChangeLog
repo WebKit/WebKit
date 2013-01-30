@@ -1,3 +1,43 @@
+2013-01-30  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(140504): pure CSE no longer matches things, 10% regression on Kraken
+        https://bugs.webkit.org/show_bug.cgi?id=108366
+
+        Reviewed by Geoffrey Garen and Mark Hahnenberg.
+        
+        This was a longstanding bug that was revealed by http://trac.webkit.org/changeset/140504.
+        Pure CSE requires that the Node::flags() that may affect the behavior of a node match,
+        when comparing a possibly redundant node to its possible replacement. It was doing this
+        by comparing Node::arithNodeFlags(), which as the name might appear to suggest, returns
+        just those flag bits that correspond to actual node behavior and not auxiliary things.
+        Unfortunately, Node::arithNodeFlags() wasn't actually masking off the irrelevant bits.
+        This worked prior to r140504 because CSE itself didn't mutate the flags, so there was a
+        very high probability that matching nodes would also have completely identical flag bits
+        (even the ones that aren't relevant to arithmetic behavior, like NodeDoesNotExit). But
+        r140504 moved one of CSE's side-tables (m_relevantToOSR) into a flag bit for quicker
+        access. These bits would be mutated as the CSE ran over a basic block, in such a way that
+        there was a very high probability that the possible replacement would already have the
+        bit set, while the redundant node did not have the bit set. Since Node::arithNodeFlags()
+        returned all of the bits, this would cause CSEPhase::pureCSE() to reject the match
+        almost every time.
+        
+        The solution is to make Node::arithNodeFlags() do as its name suggests: only return those
+        flags that are relevant to arithmetic behavior. This patch introduces a new mask that
+        represents those bits, and includes NodeBehaviorMask and NodeBackPropMask, which are both
+        used for queries on Node::arithNodeFlags(), and both affect arithmetic code gen. None of
+        the other flags are relevant to Node::arithNodeFlags() since they either correspond to
+        information already conveyed by the opcode (like NodeResultMask, NodeMustGenerate,
+        NodeHasVarArgs, NodeClobbersWorld, NodeMightClobber) or information that doesn't affect
+        the result that the node will produce or any of the queries performed on the result of
+        Node::arithNodeFlags (NodeDoesNotExit and of course NodeRelevantToOSR).
+        
+        This is a 10% speed-up on Kraken, undoing the regression from r140504.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+
 2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structure::m_outOfLineCapacity is unnecessary

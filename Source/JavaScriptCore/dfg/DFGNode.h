@@ -442,7 +442,7 @@ struct Node {
     // to know if it can speculate on negative zero.
     NodeFlags arithNodeFlags()
     {
-        NodeFlags result = m_flags;
+        NodeFlags result = m_flags & NodeArithFlagsMask;
         if (op() == ArithMul || op() == ArithDiv || op() == ArithMod)
             return result;
         return result & ~NodeNeedsNegZero;
