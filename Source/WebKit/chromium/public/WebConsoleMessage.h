@@ -40,7 +40,8 @@ struct WebConsoleMessage {
         LevelTip,
         LevelLog,
         LevelWarning,
-        LevelError
+        LevelError,
+        LevelDebug
     };
 
     Level level;

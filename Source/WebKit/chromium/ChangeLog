@@ -1,3 +1,28 @@
+2013-01-30  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] WebConsoleMessage is missing LevelDebug (chromium bug 172416)
+        https://bugs.webkit.org/show_bug.cgi?id=108004
+        http://code.google.com/p/chromium/issues/detail?id=172416
+
+        console.debug triggers a NOTREACHED() assertation in Chromium. This
+        is because WebCore::MessageLevel contains 5 levels, including debug,
+        where WebConsoleMessage::Level is missing a "debug" level. Add a
+        WebConsoleMessage::LevelDebug so that it can get passed up to the
+        renderer even if it doesn't make use of that now.
+
+        Requires another patch to chromium itself to fix chromium bug 172416
+        but this is a prerequisite.
+
+        Also add an enum compile time check to AssertMatchingEnums.cpp,
+
+        Patch by Kevin Day <kevinday@gmail.com> on 2013-01-28
+        Reviewed by Jochen Eisinger.
+
+        * public/WebConsoleMessage.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMessageToConsole):
+
 2013-01-30  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Correct zoom for focused node when using compositor scaling

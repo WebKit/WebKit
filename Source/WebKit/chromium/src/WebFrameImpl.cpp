@@ -837,6 +837,9 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
     case WebConsoleMessage::LevelError:
         webCoreMessageLevel = ErrorMessageLevel;
         break;
+    case WebConsoleMessage::LevelDebug:
+        webCoreMessageLevel = DebugMessageLevel;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return;
