@@ -85,7 +85,7 @@ static hb_bool_t getGlyphExtents(hb_font_t* hbFont, void* fontData, hb_codepoint
     return true;
 }
 
-static hb_font_funcs_t* harfbuzzCoreTextGetFontFuncs()
+static hb_font_funcs_t* harfBuzzCoreTextGetFontFuncs()
 {
     static hb_font_funcs_t* harfBuzzCoreTextFontFuncs = 0;
 
