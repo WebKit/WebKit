@@ -32,18 +32,14 @@
 
 namespace WebCore {
 
-void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ShadowRoot::ShadowRootType type)
+ShadowRoot* ElementShadow::addShadowRoot(Element* shadowHost, ShadowRoot::ShadowRootType type)
 {
-    ASSERT(shadowHost);
-    ASSERT(shadowRoot);
-    ASSERT(!shadowRoot->host());
-    ASSERT(shadowHost->document() == shadowRoot->document());
+    RefPtr<ShadowRoot> shadowRoot = ShadowRoot::create(shadowHost->document(), type);
 
     if (type == ShadowRoot::AuthorShadowRoot)
         shadowHost->willAddAuthorShadowRoot();
 
     shadowRoot->setHost(shadowHost);
-    shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_shadowRoots.push(shadowRoot.get());
     m_distributor.didShadowBoundaryChange(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
@@ -58,6 +54,8 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
         shadowHost->lazyReattach();
 
     InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
+
+    return shadowRoot.get();
 }
 
 void ElementShadow::removeAllShadowRoots()

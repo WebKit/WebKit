@@ -1452,7 +1452,7 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
 {
 #if ENABLE(SHADOW_DOM)
     if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
-        return ShadowRoot::create(this, ShadowRoot::AuthorShadowRoot);
+        return ensureShadow()->addShadowRoot(this, ShadowRoot::AuthorShadowRoot);
 #endif
 
     // Since some elements recreates shadow root dynamically, multiple shadow
@@ -1462,7 +1462,7 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
-    return ShadowRoot::create(this, ShadowRoot::AuthorShadowRoot);
+    return ensureShadow()->addShadowRoot(this, ShadowRoot::AuthorShadowRoot);
 }
 
 ShadowRoot* Element::shadowRoot() const
@@ -1492,7 +1492,7 @@ ShadowRoot* Element::ensureUserAgentShadowRoot()
 {
     if (ShadowRoot* shadowRoot = userAgentShadowRoot())
         return shadowRoot;
-    ShadowRoot* shadowRoot = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot).get();
+    ShadowRoot* shadowRoot = ensureShadow()->addShadowRoot(this, ShadowRoot::UserAgentShadowRoot);
     didAddUserAgentShadowRoot(shadowRoot);
     return shadowRoot;
 }

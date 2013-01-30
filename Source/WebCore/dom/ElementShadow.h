@@ -56,7 +56,7 @@ public:
     ShadowRoot* oldestShadowRoot() const { return m_shadowRoots.tail(); }
     ElementShadow* containingShadow() const;
 
-    void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ShadowRoot::ShadowRootType);
+    ShadowRoot* addShadowRoot(Element* shadowHost, ShadowRoot::ShadowRootType);
 
     void attach();
     void detach();

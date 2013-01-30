@@ -114,19 +114,6 @@ ShadowRoot::~ShadowRoot()
         clearRareData();
 }
 
-PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type)
-{
-    ASSERT(element);
-
-    RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document(), type));
-
-    element->ensureShadow()->addShadowRoot(element, shadowRoot, type);
-    ASSERT(element == shadowRoot->host());
-    ASSERT(element->shadow());
-
-    return shadowRoot.release();
-}
-
 PassRefPtr<Node> ShadowRoot::cloneNode(bool)
 {
     // ShadowRoot should not be arbitrarily cloned.

@@ -54,7 +54,11 @@ public:
         UserAgentShadowRoot = 0,
         AuthorShadowRoot
     };
-    static PassRefPtr<ShadowRoot> create(Element*, ShadowRootType);
+
+    static PassRefPtr<ShadowRoot> create(Document* document, ShadowRootType type)
+    {
+        return adoptRef(new ShadowRoot(document, type));
+    }
 
     void recalcStyle(StyleChange);
 
@@ -121,6 +125,8 @@ inline Element* ShadowRoot::host() const
 inline void ShadowRoot::setHost(Element* host)
 {
     setParentOrHostNode(host);
+    if (host)
+        setParentTreeScope(host->treeScope());
 }
 
 inline Element* ShadowRoot::activeElement() const
