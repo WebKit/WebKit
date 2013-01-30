@@ -812,16 +812,13 @@ public:
 
     void reshape(int width, int height);
 
-#if USE(CG)
-    static void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
-                              int canvasWidth, int canvasHeight, CGContextRef);
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, PlatformContextCairo* context);
 #elif PLATFORM(QT)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, QPainter* context);
-#elif PLATFORM(BLACKBERRY)
+#elif PLATFORM(BLACKBERRY) || USE(CG)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, GraphicsContext*);
 #endif

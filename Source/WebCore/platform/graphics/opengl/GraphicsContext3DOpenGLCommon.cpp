@@ -120,7 +120,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, 
         }
     }
 
-#if PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY) || USE(CG)
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context());
 #else
