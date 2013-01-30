@@ -80,7 +80,6 @@ protected:
     virtual void detach();
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
     bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
@@ -92,6 +91,8 @@ protected:
 private:
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
 
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+
     virtual void defaultEventHandler(Event*);
 
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
@@ -99,7 +100,6 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isPluginElement() const;
 
-private:
     mutable ScriptInstance m_instance;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;

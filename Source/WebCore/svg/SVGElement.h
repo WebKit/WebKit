@@ -136,12 +136,12 @@ protected:
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
 
+private:
+    friend class SVGElementInstance;
+
     // FIXME: Author shadows should be allowed
     // https://bugs.webkit.org/show_bug.cgi?id=77938
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
-
-private:
-    friend class SVGElementInstance;
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
     virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }

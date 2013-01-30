@@ -89,7 +89,6 @@ public:
     MediaPlayer* player() const { return m_player.get(); }
 
     virtual void willAddAuthorShadowRoot() OVERRIDE;
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool isVideo() const = 0;
     virtual bool hasVideo() const { return false; }
@@ -382,6 +381,8 @@ protected:
 
 private:
     void createMediaPlayer();
+
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool supportsFocus() const;

@@ -295,7 +295,6 @@ public:
 
     bool hasAuthorShadowRoot() const { return shadowRoot(); }
     virtual void willAddAuthorShadowRoot() { }
-    virtual bool areAuthorShadowsAllowed() const { return true; }
 
     ShadowRoot* userAgentShadowRoot() const;
     ShadowRoot* ensureUserAgentShadowRoot();
@@ -532,6 +531,7 @@ private:
     PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
     void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
 
+    virtual bool areAuthorShadowsAllowed() const { return true; }
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }
 
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.

@@ -304,12 +304,12 @@ protected:
 
     virtual void defaultEventHandler(Event*);
 
+private:
+    enum AutoCompleteSetting { Uninitialized, On, Off };
+
     // FIXME: Author shadows should be allowed
     // https://bugs.webkit.org/show_bug.cgi?id=92608
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
-
-private:
-    enum AutoCompleteSetting { Uninitialized, On, Off };
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
