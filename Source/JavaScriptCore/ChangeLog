@@ -1,3 +1,21 @@
+2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: JSObjCClassInfo creates reference cycle with JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=107839
+
+        Reviewed by Geoffrey Garen.
+
+        Fixing several ASSERTs that were incorrect along with some of the reallocation of m_prototype and 
+        m_constructor that they were based on.
+
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]): We now only allocate those
+        fields that are null (i.e. have been collected or have never been allocated to begin with).
+        (-[JSObjCClassInfo reallocateConstructorAndOrPrototype]): Renamed to better indicate that we're 
+        reallocating one or both of the prototype/constructor combo.
+        (-[JSObjCClassInfo wrapperForObject:]): Call new reallocate function.
+        (-[JSObjCClassInfo constructor]): Ditto.
+
 2013-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Make precise size classes more precise
