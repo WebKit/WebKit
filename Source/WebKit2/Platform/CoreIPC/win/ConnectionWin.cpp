@@ -170,10 +170,8 @@ void Connection::readEventHandler()
             ASSERT(m_readBuffer.size() >= sizeof(MessageID));
             size_t realBufferSize = m_readBuffer.size() - sizeof(MessageID);
 
-            unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
-
             OwnPtr<MessageDecoder> decoder = MessageDecoder::create(DataReference(m_readBuffer.data(), realBufferSize));
-            processIncomingMessage(MessageID::fromInt(messageID), decoder.release());
+            processIncomingMessage(MessageID(), decoder.release());
         }
 
         // Find out the size of the next message in the pipe (if there is one) so that we can read
@@ -288,7 +286,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
         return false;
 
     // We put the message ID last.
-    encoder->encode(static_cast<uint32_t>(messageID.toInt()));
+    encoder->encode(0);
 
     // Write the outgoing message.
 
