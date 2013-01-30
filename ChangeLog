@@ -1,3 +1,9 @@
+2013-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r141175.
+
+        * Source/autotools/symbols.filter: Export the WebCore::Element::createShadowRoot symbol.
+
 2013-01-29  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Cannot copy text when selecting readonly (or disabled) input elements

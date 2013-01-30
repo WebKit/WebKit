@@ -242,6 +242,7 @@ _ZN7WebCore4KURL10invalidateEv;
 _ZN6WebKit22WebGtkExtensionManager10initializeEPK14OpaqueWKBundlePKv;
 _ZN6WebKit22WebGtkExtensionManager6sharedEv;
 _ZN7WebCore28InspectorFrontendClientLocal11isUnderTestEv;
+_ZN7WebCore7Element16createShadowRootERi;
 
 local:
 _Z*;
