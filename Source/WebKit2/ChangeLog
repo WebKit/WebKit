@@ -1,3 +1,61 @@
+2013-01-29  Sam Weinig  <sam@webkit.org>
+
+        Replace unnecessary ArgumentDecoder member functions with decode overloads
+        https://bugs.webkit.org/show_bug.cgi?id=102013
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeVariableLengthByteArray):
+        (CoreIPC::ArgumentDecoder::decode):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (ArgumentDecoder):
+        (CoreIPC::ArgumentDecoder::decodeEnum):
+        (CoreIPC):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::MessageDecoder):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::decodeTimingFunction):
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::decode):
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::ObjCObjectGraphDecoder::baseDecode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::decode):
+        * Shared/qt/ArgumentCodersQt.cpp:
+        (CoreIPC::::decode):
+        * Shared/qt/QtNetworkReplyData.cpp:
+        (WebKit::QtNetworkReplyData::decode):
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeBool):
+        (WebKit::DecoderAdapter::decodeUInt16):
+        (WebKit::DecoderAdapter::decodeUInt32):
+        (WebKit::DecoderAdapter::decodeUInt64):
+        (WebKit::DecoderAdapter::decodeInt32):
+        (WebKit::DecoderAdapter::decodeInt64):
+        (WebKit::DecoderAdapter::decodeFloat):
+        (WebKit::DecoderAdapter::decodeDouble):
+
 2013-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WK2] Adjust missing MessageID removals to fix build breaks

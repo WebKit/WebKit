@@ -54,42 +54,42 @@ bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 
 bool DecoderAdapter::decodeBool(bool& value)
 {
-    return m_decoder->decodeBool(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeUInt16(uint16_t& value)
 {
-    return m_decoder->decodeUInt16(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeUInt32(uint32_t& value)
 {
-    return m_decoder->decodeUInt32(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeUInt64(uint64_t& value)
 {
-    return m_decoder->decodeUInt64(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeInt32(int32_t& value)
 {
-    return m_decoder->decodeInt32(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeInt64(int64_t& value)
 {
-    return m_decoder->decodeInt64(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeFloat(float& value)
 {
-    return m_decoder->decodeFloat(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeDouble(double& value)
 {
-    return m_decoder->decodeDouble(value);
+    return m_decoder->decode(value);
 }
 
 bool DecoderAdapter::decodeString(String& value)

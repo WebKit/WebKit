@@ -56,7 +56,7 @@ bool QtNetworkReplyData::decode(CoreIPC::ArgumentDecoder* decoder, QtNetworkRepl
         return false;
     if (!decoder->decode(destination.m_contentType))
         return false;
-    if (!decoder->decodeUInt64(destination.m_contentLength))
+    if (!decoder->decode(destination.m_contentLength))
         return false;
     if (!decoder->decode(destination.m_replyUuid))
         return false;

@@ -52,22 +52,22 @@ public:
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
     bool decodeVariableLengthByteArray(DataReference&);
 
-    bool decodeBool(bool&);
-    bool decodeUInt8(uint8_t&);
-    bool decodeUInt16(uint16_t&);
-    bool decodeUInt32(uint32_t&);
-    bool decodeUInt64(uint64_t&);
-    bool decodeInt32(int32_t&);
-    bool decodeInt64(int64_t&);
-    bool decodeFloat(float&);
-    bool decodeDouble(double&);
+    bool decode(bool&);
+    bool decode(uint8_t&);
+    bool decode(uint16_t&);
+    bool decode(uint32_t&);
+    bool decode(uint64_t&);
+    bool decode(int32_t&);
+    bool decode(int64_t&);
+    bool decode(float&);
+    bool decode(double&);
 
     template<typename T> bool decodeEnum(T& result)
     {
         COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
 
         uint64_t value;
-        if (!decodeUInt64(value))
+        if (!decode(value))
             return false;
         
         result = static_cast<T>(value);
@@ -117,51 +117,6 @@ private:
 
     Deque<Attachment> m_attachments;
 };
-
-template<> inline bool ArgumentDecoder::decode(bool& n)
-{
-    return decodeBool(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(uint8_t& n)
-{
-    return decodeUInt8(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(uint16_t& n)
-{
-    return decodeUInt16(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(uint32_t& n)
-{
-    return decodeUInt32(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(uint64_t& n)
-{
-    return decodeUInt64(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(int32_t& n)
-{
-    return decodeInt32(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(int64_t& n)
-{
-    return decodeInt64(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(float& n)
-{
-    return decodeFloat(n);
-}
-
-template<> inline bool ArgumentDecoder::decode(double& n)
-{
-    return decodeDouble(n);
-}
 
 } // namespace CoreIPC
 

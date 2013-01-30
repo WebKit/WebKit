@@ -116,7 +116,7 @@ bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned
 bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference)
 {
     uint64_t size;
-    if (!decodeUInt64(size))
+    if (!decode(size))
         return false;
     
     if (!alignBufferPosition(1, size))
@@ -129,7 +129,7 @@ bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference
     return true;
 }
 
-bool ArgumentDecoder::decodeBool(bool& result)
+bool ArgumentDecoder::decode(bool& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -139,7 +139,7 @@ bool ArgumentDecoder::decodeBool(bool& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeUInt8(uint8_t& result)
+bool ArgumentDecoder::decode(uint8_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -149,7 +149,7 @@ bool ArgumentDecoder::decodeUInt8(uint8_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeUInt16(uint16_t& result)
+bool ArgumentDecoder::decode(uint16_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -159,7 +159,7 @@ bool ArgumentDecoder::decodeUInt16(uint16_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeUInt32(uint32_t& result)
+bool ArgumentDecoder::decode(uint32_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -169,7 +169,7 @@ bool ArgumentDecoder::decodeUInt32(uint32_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeUInt64(uint64_t& result)
+bool ArgumentDecoder::decode(uint64_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -179,7 +179,7 @@ bool ArgumentDecoder::decodeUInt64(uint64_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeInt32(int32_t& result)
+bool ArgumentDecoder::decode(int32_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -189,7 +189,7 @@ bool ArgumentDecoder::decodeInt32(int32_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeInt64(int64_t& result)
+bool ArgumentDecoder::decode(int64_t& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -199,7 +199,7 @@ bool ArgumentDecoder::decodeInt64(int64_t& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeFloat(float& result)
+bool ArgumentDecoder::decode(float& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
@@ -209,7 +209,7 @@ bool ArgumentDecoder::decodeFloat(float& result)
     return true;
 }
 
-bool ArgumentDecoder::decodeDouble(double& result)
+bool ArgumentDecoder::decode(double& result)
 {
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;

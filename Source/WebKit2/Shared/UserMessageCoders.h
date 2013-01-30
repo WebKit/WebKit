@@ -399,13 +399,13 @@ public:
                 return false;
             if (renderer->type() != APIObject::TypeRenderObject)
                 return false;
-            if (!decoder->decodeBool(isReflection))
+            if (!decoder->decode(isReflection))
                 return false;
-            if (!decoder->decodeBool(isClipping))
+            if (!decoder->decode(isClipping))
                 return false;
-            if (!decoder->decodeBool(isClipped))
+            if (!decoder->decode(isClipped))
                 return false;
-            if (!decoder->decodeUInt32(compositingLayerTypeAsUInt32))
+            if (!decoder->decode(compositingLayerTypeAsUInt32))
                 return false;
             if (!decoder->decode(absoluteBoundingBox))
                 return false;

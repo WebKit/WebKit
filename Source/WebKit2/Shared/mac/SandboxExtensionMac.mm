@@ -137,7 +137,7 @@ void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder& encoder) co
 bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder* decoder, SandboxExtension::HandleArray& handles)
 {
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
     handles.allocate(size);
     for (size_t i = 0; i < size; i++) {

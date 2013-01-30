@@ -200,7 +200,7 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
 bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, WebCore::FilterOperations& filters)
 {
     uint32_t size;
-    if (!decoder->decodeUInt32(size))
+    if (!decoder->decode(size))
         return false;
 
     Vector<RefPtr<FilterOperation> >& operations = filters.operations();
@@ -217,7 +217,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE: {
             double value;
-            if (!decoder->decodeDouble(value))
+            if (!decoder->decode(value))
                 return false;
             filter = BasicColorMatrixFilterOperation::create(value, type);
             break;
@@ -227,7 +227,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY: {
             double value;
-            if (!decoder->decodeDouble(value))
+            if (!decoder->decode(value))
                 return false;
             filter = BasicComponentTransferFilterOperation::create(value, type);
             break;
@@ -245,7 +245,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             Color color;
             if (!ArgumentCoder<IntPoint>::decode(decoder, location))
                 return false;
-            if (!decoder->decodeInt32(stdDeviation))
+            if (!decoder->decode(stdDeviation))
                 return false;
             if (!ArgumentCoder<Color>::decode(decoder, color))
                 return false;
@@ -268,7 +268,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 return false;
 
             uint32_t parametersSize;
-            if (!decoder->decodeUInt32(parametersSize))
+            if (!decoder->decode(parametersSize))
                 return false;
 
             CustomFilterParameterList parameters(parametersSize);
@@ -284,7 +284,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 case CustomFilterParameter::ARRAY: {
                     RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name);
                     uint32_t arrayParameterSize;
-                    if (!decoder->decodeUInt32(arrayParameterSize))
+                    if (!decoder->decode(arrayParameterSize))
                         return false;
                     double arrayParameterValue;
                     for (size_t j = 0; j < arrayParameterSize; ++j) {
@@ -298,7 +298,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 case CustomFilterParameter::NUMBER: {
                     RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
                     uint32_t numberParameterSize;
-                    if (!decoder->decodeUInt32(numberParameterSize))
+                    if (!decoder->decode(numberParameterSize))
                         return false;
                     double numberParameterValue;
                     for (size_t j = 0; j < numberParameterSize; ++j) {
@@ -443,7 +443,7 @@ void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const 
 bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, TransformOperations& transformOperations)
 {
     uint32_t operationsSize;
-    if (!decoder->decodeUInt32(operationsSize))
+    if (!decoder->decode(operationsSize))
         return false;
 
     for (size_t i = 0; i < operationsSize; ++i) {
@@ -596,13 +596,13 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
             timingFunction = CubicBezierTimingFunction::create(bezierPreset);
             return true;
         }
-        if (!decoder->decodeDouble(x1))
+        if (!decoder->decode(x1))
             return false;
-        if (!decoder->decodeDouble(y1))
+        if (!decoder->decode(y1))
             return false;
-        if (!decoder->decodeDouble(x2))
+        if (!decoder->decode(x2))
             return false;
-        if (!decoder->decodeDouble(y2))
+        if (!decoder->decode(y2))
             return false;
 
         timingFunction = CubicBezierTimingFunction::create(x1, y1, x2, y2);
@@ -611,9 +611,9 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
     case TimingFunction::StepsFunction: {
         uint32_t numberOfSteps;
         bool stepAtStart;
-        if (!decoder->decodeUInt32(numberOfSteps))
+        if (!decoder->decode(numberOfSteps))
             return false;
-        if (!decoder->decodeBool(stepAtStart))
+        if (!decoder->decode(stepAtStart))
             return false;
 
         timingFunction = StepsTimingFunction::create(numberOfSteps, stepAtStart);
@@ -687,19 +687,19 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
         return false;
     if (!decoder->decodeEnum(state))
         return false;
-    if (!decoder->decodeDouble(startTime))
+    if (!decoder->decode(startTime))
         return false;
-    if (!decoder->decodeDouble(pauseTime))
+    if (!decoder->decode(pauseTime))
         return false;
-    if (!decoder->decodeBool(listsMatch))
+    if (!decoder->decode(listsMatch))
         return false;
     if (!decoder->decodeEnum(direction))
         return false;
-    if (!decoder->decodeUInt32(fillMode))
+    if (!decoder->decode(fillMode))
         return false;
-    if (!decoder->decodeDouble(duration))
+    if (!decoder->decode(duration))
         return false;
-    if (!decoder->decodeDouble(iterationCount))
+    if (!decoder->decode(iterationCount))
         return false;
     if (!decodeTimingFunction(decoder, timingFunction))
         return false;
@@ -717,7 +717,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
         return false;
     KeyframeValueList keyframes(property);
     unsigned keyframesSize;
-    if (!decoder->decodeUInt32(keyframesSize))
+    if (!decoder->decode(keyframesSize))
         return false;
     for (unsigned i = 0; i < keyframesSize; ++i) {
         float keyTime;
@@ -730,7 +730,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
         switch (property) {
         case AnimatedPropertyOpacity: {
             float value;
-            if (!decoder->decodeFloat(value))
+            if (!decoder->decode(value))
                 return false;
             keyframes.insert(new FloatAnimationValue(keyTime, value, timingFunction));
             break;

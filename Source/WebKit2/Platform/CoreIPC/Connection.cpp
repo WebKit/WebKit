@@ -687,7 +687,7 @@ void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decode
     ASSERT(decoder.isSyncMessage());
 
     uint64_t syncRequestID = 0;
-    if (!decoder.decodeUInt64(syncRequestID) || !syncRequestID) {
+    if (!decoder.decode(syncRequestID) || !syncRequestID) {
         // We received an invalid sync message.
         decoder.markInvalid();
         return;

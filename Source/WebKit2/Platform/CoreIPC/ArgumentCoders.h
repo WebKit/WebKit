@@ -106,7 +106,7 @@ template<typename T> struct VectorArgumentCoder<false, T> {
     static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
     {
         uint64_t size;
-        if (!decoder->decodeUInt64(size))
+        if (!decoder->decode(size))
             return false;
 
         Vector<T> tmp;
@@ -134,7 +134,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
     {
         uint64_t size;
-        if (!decoder->decodeUInt64(size))
+        if (!decoder->decode(size))
             return false;
 
         // Since we know the total size of the elements, we can allocate the vector in

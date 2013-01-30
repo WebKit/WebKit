@@ -73,7 +73,7 @@ bool ArgumentCoder<WebCore::DragData>::decode(ArgumentDecoder* decoder, DragData
         return false;
 
     bool hasPlatformData;
-    if (!decoder->decodeBool(hasPlatformData))
+    if (!decoder->decode(hasPlatformData))
         return false;
 
     QMimeData* mimeData = 0;

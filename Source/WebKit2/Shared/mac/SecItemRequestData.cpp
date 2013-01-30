@@ -69,7 +69,7 @@ bool SecItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemReques
         return false;
     
     bool expectAttributes;
-    if (!decoder->decodeBool(expectAttributes))
+    if (!decoder->decode(expectAttributes))
         return false;
     
     if (expectAttributes && !CoreIPC::decode(decoder, secItemRequestData.m_attributesToMatch))

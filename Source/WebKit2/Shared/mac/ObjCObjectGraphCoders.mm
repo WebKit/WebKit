@@ -178,7 +178,7 @@ public:
         }
         case NSArrayType: {
             uint64_t size;
-            if (!decoder->decodeUInt64(size))
+            if (!decoder->decode(size))
                 return false;
 
             RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
@@ -196,7 +196,7 @@ public:
         }
         case NSDictionaryType: {
             uint64_t size;
-            if (!decoder->decodeUInt64(size))
+            if (!decoder->decode(size))
                 return false;
 
             RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);

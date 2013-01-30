@@ -55,7 +55,7 @@ bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPo
         return false;
 #if PLATFORM(MAC)
     bool hadOptions;
-    if (!decoder->decodeBool(hadOptions))
+    if (!decoder->decode(hadOptions))
         return false;
     if (hadOptions) {
         if (!CoreIPC::decode(decoder, result.options))

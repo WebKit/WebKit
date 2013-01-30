@@ -327,7 +327,7 @@ void encode(ArgumentEncoder& encoder, NSDictionary *dictionary)
 bool decode(ArgumentDecoder* decoder, RetainPtr<NSDictionary>& result)
 {
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     RetainPtr<NSMutableDictionary> dictionary(AdoptNS, [[NSMutableDictionary alloc] initWithCapacity:size]);
@@ -417,7 +417,7 @@ void encode(ArgumentEncoder& encoder, NSArray *array)
 bool decode(ArgumentDecoder* decoder, RetainPtr<NSArray>& result)
 {
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);

@@ -51,7 +51,7 @@ MessageDecoder::~MessageDecoder()
 MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& attachments)
     : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
 {
-    if (!decodeUInt8(m_messageFlags))
+    if (!decode(m_messageFlags))
         return;
 
     if (!decode(m_messageReceiverName))
@@ -60,7 +60,7 @@ MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& a
     if (!decode(m_messageName))
         return;
 
-    decodeUInt64(m_destinationID);
+    decode(m_destinationID);
 }
 
 bool MessageDecoder::isSyncMessage() const

@@ -68,7 +68,7 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& han
     ASSERT(!handle.m_size);
 
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     CoreIPC::MachPort machPort;

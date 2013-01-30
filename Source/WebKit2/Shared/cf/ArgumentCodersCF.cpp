@@ -259,7 +259,7 @@ void encode(ArgumentEncoder& encoder, CFArrayRef array)
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFArrayRef>& result)
 {
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
@@ -317,7 +317,7 @@ void encode(ArgumentEncoder& encoder, CFDateRef date)
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFDateRef>& result)
 {
     double absoluteTime;
-    if (!decoder->decodeDouble(absoluteTime))
+    if (!decoder->decode(absoluteTime))
         return false;
 
     result.adoptCF(CFDateCreate(0, absoluteTime));
@@ -351,7 +351,7 @@ void encode(ArgumentEncoder& encoder, CFDictionaryRef dictionary)
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFDictionaryRef>& result)
 {
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -507,7 +507,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFURLRef>& result)
 {
     RetainPtr<CFURLRef> baseURL;
     bool hasBaseURL;
-    if (!decoder->decodeBool(hasBaseURL))
+    if (!decoder->decode(hasBaseURL))
         return false;
     if (hasBaseURL) {
         if (!decode(decoder, baseURL))

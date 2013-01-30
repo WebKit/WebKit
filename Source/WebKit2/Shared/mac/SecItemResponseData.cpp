@@ -52,13 +52,13 @@ void SecItemResponseData::encode(CoreIPC::ArgumentEncoder& encoder) const
 bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemResponseData& secItemResponseData)
 {
     int64_t resultCode;
-    if (!decoder->decodeInt64(resultCode))
+    if (!decoder->decode(resultCode))
         return false;
     secItemResponseData.m_resultCode = (OSStatus)resultCode;
     secItemResponseData.m_resultObject = 0;
 
     bool expectResultObject;
-    if (!decoder->decodeBool(expectResultObject))
+    if (!decoder->decode(expectResultObject))
         return false;
 
     if (expectResultObject && !CoreIPC::decode(decoder, secItemResponseData.m_resultObject))

@@ -139,7 +139,7 @@ bool ArgumentCoder<String>::decode(ArgumentDecoder* decoder, String& result)
 
     bool is8Bit;
 
-    if (!decoder->decodeBool(is8Bit))
+    if (!decoder->decode(is8Bit))
         return false;
 
     if (is8Bit)

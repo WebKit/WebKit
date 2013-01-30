@@ -90,15 +90,15 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& han
     ASSERT_ARG(handle, !handle.m_size);
 
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder->decode(size))
         return false;
 
     uint64_t sourceHandle;
-    if (!decoder->decodeUInt64(sourceHandle))
+    if (!decoder->decode(sourceHandle))
         return false;
 
     uint32_t sourcePID;
-    if (!decoder->decodeUInt32(sourcePID))
+    if (!decoder->decode(sourcePID))
         return false;
 
     HANDLE duplicatedHandle;
