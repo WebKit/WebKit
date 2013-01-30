@@ -33,7 +33,7 @@
 #include "ActiveDOMObject.h"
 #include "DatabaseDetails.h"
 #include <wtf/Assertions.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ class DatabaseTaskSynchronizer;
 class DatabaseThread;
 class ScriptExecutionContext;
 
-class DatabaseContext : public RefCounted<DatabaseContext>, ActiveDOMObject {
+class DatabaseContext : public ThreadSafeRefCounted<DatabaseContext>, ActiveDOMObject {
 public:
     virtual ~DatabaseContext();
 
