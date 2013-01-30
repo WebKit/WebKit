@@ -1,3 +1,28 @@
+2013-01-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][Qt][WebGL] Avoid deleting an uncreated canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=106878
+
+        Reviewed by Benjamin Poulain.
+
+        setContentsToCanvas is responsible for marking canvas for creation or deletion.
+        The issue here is that the canvas is marked for deletion even though it has not
+        been created. This causes an assert in LayerTreeRenderer::destroyCanvas.
+        This patch adds a seperate check to ensure that CoordinatedGraphicsLayer
+        tries to issue a request for canvas deletion only after request for canvas
+        creation has been handled.
+
+        New test: fast/canvas/webgl/canvas-resize-crash.html
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToCanvas):
+        (WebCore::CoordinatedGraphicsLayer::destroyCanvasIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::createCanvasIfNeeded):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::fixedToViewport):
+
 2013-01-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.

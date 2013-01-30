@@ -116,11 +116,12 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_shouldSyncImageBacking(true)
     , m_shouldSyncAnimations(true)
     , m_fixedToViewport(false)
-    , m_canvasNeedsDisplay(false)
-    , m_canvasNeedsCreate(false)
-    , m_canvasNeedsDestroy(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
+#if USE(GRAPHICS_SURFACE)
+    , m_isValidCanvas(false)
+    , m_pendingCanvasOperation(None)
+#endif
     , m_coordinator(0)
     , m_contentsScale(1)
     , m_compositedNativeImagePtr(0)
@@ -314,8 +315,11 @@ void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
+#if USE(GRAPHICS_SURFACE)
     if (m_canvasPlatformLayer)
-        m_canvasNeedsDisplay = true;
+        m_pendingCanvasOperation |= SyncCanvas;
+#endif
+
     if (client())
         client()->notifyFlushRequired(this);
 
@@ -327,16 +331,16 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
 #if USE(GRAPHICS_SURFACE)
     if (m_canvasPlatformLayer) {
         ASSERT(m_canvasToken.isValid());
-        if (!platformLayer)
-            m_canvasNeedsDestroy = true;
-        else if ((m_canvasSize != platformLayer->platformLayerSize()) || (m_canvasToken != platformLayer->graphicsSurfaceToken())) {
+        if (!platformLayer) {
+            m_pendingCanvasOperation |= DestroyCanvas;
+            m_pendingCanvasOperation &= ~CreateCanvas;
+        }  else if ((m_canvasSize != platformLayer->platformLayerSize()) || (m_canvasToken != platformLayer->graphicsSurfaceToken())) {
             // m_canvasToken can be different to platformLayer->graphicsSurfaceToken(), even if m_canvasPlatformLayer equals platformLayer.
-            m_canvasNeedsDestroy = true;
-            m_canvasNeedsCreate = true;
+            m_pendingCanvasOperation |= RecreateCanvas;
         }
     } else {
         if (platformLayer)
-            m_canvasNeedsCreate = true;
+            m_pendingCanvasOperation |= CreateAndSyncCanvas;
     }
 
     m_canvasPlatformLayer = platformLayer;
@@ -344,8 +348,7 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
     m_canvasSize = m_canvasPlatformLayer ? m_canvasPlatformLayer->platformLayerSize() : IntSize();
     m_canvasToken = m_canvasPlatformLayer ? m_canvasPlatformLayer->graphicsSurfaceToken() : GraphicsSurfaceToken();
     ASSERT(!(!m_canvasToken.isValid() && m_canvasPlatformLayer));
-    if (m_canvasPlatformLayer)
-        m_canvasNeedsDisplay = true;
+
     if (client())
         client()->notifyFlushRequired(this);
 #else
@@ -593,43 +596,50 @@ void CoordinatedGraphicsLayer::syncAnimations()
     m_coordinator->setLayerAnimations(m_id, m_animations);
 }
 
+#if USE(GRAPHICS_SURFACE)
 void CoordinatedGraphicsLayer::syncCanvas()
 {
     destroyCanvasIfNeeded();
     createCanvasIfNeeded();
 
-    if (!m_canvasNeedsDisplay)
+    if (!(m_pendingCanvasOperation & SyncCanvas))
         return;
 
-    ASSERT(m_canvasPlatformLayer);
-#if USE(GRAPHICS_SURFACE)
+    m_pendingCanvasOperation &= ~SyncCanvas;
+
+    if (!m_isValidCanvas)
+        return;
+
     m_coordinator->syncCanvas(m_id, m_canvasPlatformLayer);
-#endif
-    m_canvasNeedsDisplay = false;
 }
 
 void CoordinatedGraphicsLayer::destroyCanvasIfNeeded()
 {
-    if (!m_canvasNeedsDestroy)
+    if (!(m_pendingCanvasOperation & DestroyCanvas))
         return;
 
-#if USE(GRAPHICS_SURFACE)
-    m_coordinator->destroyCanvas(m_id);
-#endif
-    m_canvasNeedsDestroy = false;
+    if (m_isValidCanvas) {
+        m_coordinator->destroyCanvas(m_id);
+        m_isValidCanvas = false;
+    }
+
+    m_pendingCanvasOperation &= ~DestroyCanvas;
 }
 
 void CoordinatedGraphicsLayer::createCanvasIfNeeded()
 {
-    if (!m_canvasNeedsCreate)
+    if (!(m_pendingCanvasOperation & CreateCanvas))
         return;
 
     ASSERT(m_canvasPlatformLayer);
-#if USE(GRAPHICS_SURFACE)
-    m_coordinator->createCanvas(m_id, m_canvasPlatformLayer);
-#endif
-    m_canvasNeedsCreate = false;
+    if (!m_isValidCanvas) {
+        m_coordinator->createCanvas(m_id, m_canvasPlatformLayer);
+        m_isValidCanvas = true;
+    }
+
+    m_pendingCanvasOperation &= ~CreateCanvas;
 }
+#endif
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
@@ -647,7 +657,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     syncFilters();
 #endif
     updateContentBuffers();
+#if USE(GRAPHICS_SURFACE)
     syncCanvas();
+#endif
 }
 
 bool CoordinatedGraphicsLayer::imageBackingVisible()
@@ -873,7 +885,12 @@ bool CoordinatedGraphicsLayer::hasPendingVisibleChanges()
             return true;
     }
 
-    if (!m_shouldSyncLayerState && !m_shouldSyncChildren && !m_shouldSyncFilters && !m_shouldSyncImageBacking && !m_shouldSyncAnimations && !m_canvasNeedsDisplay)
+    bool shouldSyncCanvas = false;
+#if USE(GRAPHICS_SURFACE)
+    shouldSyncCanvas = m_pendingCanvasOperation & SyncCanvas;
+#endif
+
+    if (!m_shouldSyncLayerState && !m_shouldSyncChildren && !m_shouldSyncFilters && !m_shouldSyncImageBacking && !m_shouldSyncAnimations && !shouldSyncCanvas)
         return false;
 
     return tiledBackingStoreVisibleRect().intersects(tiledBackingStoreContentsRect());
