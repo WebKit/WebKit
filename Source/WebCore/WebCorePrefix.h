@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2013 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +26,8 @@
  */
 
 /* Things that need to be defined globally should go into "config.h". */
+
+#include <wtf/Platform.h>
 
 #if defined(__APPLE__)
 #ifdef __cplusplus
@@ -150,14 +152,20 @@ _LIBCPP_END_NAMESPACE_STD
 #include <CFNetwork/CFNetwork.h>
 #include <windows.h>
 #else
+#if !PLATFORM(IOS)
 #include <CoreServices/CoreServices.h>
-#endif
+#endif // !PLATFORM(IOS)
+#endif // defined(WIN32) || defined(_WIN32)
 
 #endif
 #endif // !defined(BUILDING_WX__)
 
 #ifdef __OBJC__
+#if PLATFORM(IOS)
+#import <Foundation/Foundation.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif // PLATFORM(IOS)
 #endif
 
 #ifdef __cplusplus
