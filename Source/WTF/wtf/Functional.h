@@ -32,7 +32,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+#if OS(DARWIN) && COMPILER_SUPPORTS(BLOCKS)
 #include <Block.h>
 #include <wtf/ObjcRuntimeExtras.h>
 #endif
@@ -370,7 +370,7 @@ private:
     R (C::*m_function)(P1, P2, P3, P4, P5);
 };
 
-#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+#if OS(DARWIN) && COMPILER_SUPPORTS(BLOCKS)
 template<typename R>
 class FunctionWrapper<R (^)()> {
 public:
@@ -704,7 +704,7 @@ public:
         return impl<R ()>()->operator()();
     }
 
-#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+#if OS(DARWIN) && COMPILER_SUPPORTS(BLOCKS)
     typedef void (^BlockType)();
     operator BlockType() const
     {

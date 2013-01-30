@@ -61,25 +61,25 @@ void Connection::platformInvalidate()
     // Unregister our ports.
     dispatch_source_cancel(m_deadNameSource);
     dispatch_release(m_deadNameSource);
-    m_deadNameSource = nullptr;
+    m_deadNameSource = 0;
     m_sendPort = MACH_PORT_NULL;
 
     dispatch_source_cancel(m_receivePortDataAvailableSource);
     dispatch_release(m_receivePortDataAvailableSource);
-    m_receivePortDataAvailableSource = nullptr;
+    m_receivePortDataAvailableSource = 0;
     m_receivePort = MACH_PORT_NULL;
 
     if (m_exceptionPort) {
         dispatch_source_cancel(m_exceptionPortDataAvailableSource);
         dispatch_release(m_exceptionPortDataAvailableSource);
-        m_exceptionPortDataAvailableSource = nullptr;
+        m_exceptionPortDataAvailableSource = 0;
         m_exceptionPort = MACH_PORT_NULL;
     }
 
 #if HAVE(XPC)
     if (m_xpcConnection) {
         xpc_release(m_xpcConnection);
-        m_xpcConnection = nullptr;
+        m_xpcConnection = 0;
     }
 #endif
 }
