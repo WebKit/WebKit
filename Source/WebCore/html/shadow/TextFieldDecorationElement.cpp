@@ -54,6 +54,8 @@ TextFieldDecorator::~TextFieldDecorator()
 
 // TextFieldDecorationElement ----------------------------------------------------------------
 
+// FIXME: This class is only used in Chromium, and has no layout tests!!
+
 TextFieldDecorationElement::TextFieldDecorationElement(Document* document, TextFieldDecorator* decorator)
     : HTMLDivElement(HTMLNames::divTag, document)
     , m_textFieldDecorator(decorator)
@@ -89,8 +91,13 @@ static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, Sh
     }
     if (newRoot)
         newRoot->removeChild(newRoot->firstChild());
-    else
-        newRoot = input->ensureUserAgentShadowRoot();
+    else {
+        // FIXME: This interacts really badly with author shadow roots because now
+        // we can interleave user agent and author shadow roots on the element meaning
+        // input.shadowRoot may be inaccessible if the browser has decided to decorate
+        // the input.
+        newRoot = input->ensureShadow()->addShadowRoot(input, ShadowRoot::UserAgentShadowRoot);
+    }
     decorationRoot = newRoot;
     decoratedRoot = existingRoot;
 }
