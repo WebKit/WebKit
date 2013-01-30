@@ -1,3 +1,13 @@
+2013-01-29  Lucas Forschler  <lforschler@apple.com>
+
+        Enable tests for Windows EWS!
+        https://bugs.webkit.org/show_bug.cgi?id=107968
+        
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-01-29  Alan Cutter  <alancutter@chromium.org>
 
         MockWeb should be able to serve mock web content
