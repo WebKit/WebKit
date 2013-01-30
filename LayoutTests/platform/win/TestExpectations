@@ -2586,3 +2586,4 @@ fast/images/style-access-during-imageChanged-crash.html
 fast/js/reentrant-caching.html
 fast/repaint/caret-with-transformation.html
 http/tests/incremental/pause-in-script-element.pl
+fast/text/international/harfbuzz-buffer-overrun.html
