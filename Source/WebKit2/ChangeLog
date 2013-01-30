@@ -1,5 +1,20 @@
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove almost everything from MessageID
+        https://bugs.webkit.org/show_bug.cgi?id=108244
+
+        Reviewed by Beth Dakin.
+
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::MessageID::MessageID):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        (CoreIPC::createMessageDecoder):
+        (CoreIPC::Connection::receiveSourceEventHandler):
+
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
         Get rid of MessageID::is()
         https://bugs.webkit.org/show_bug.cgi?id=108234
 

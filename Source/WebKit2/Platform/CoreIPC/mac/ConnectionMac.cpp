@@ -43,8 +43,9 @@ namespace CoreIPC {
 
 static const size_t inlineMessageMaxSize = 4096;
 
+// Message flags.
 enum {
-    MessageBodyIsOOL = 1 << 31
+    MessageBodyIsOutOfLine = 1 << 0
 };
     
 void Connection::platformInvalidate()
@@ -212,9 +213,9 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
     header->msgh_size = messageSize;
     header->msgh_remote_port = m_sendPort;
     header->msgh_local_port = MACH_PORT_NULL;
-    header->msgh_id = messageID.toInt();
+    header->msgh_id = 0;
     if (messageBodyIsOOL)
-        header->msgh_id |= MessageBodyIsOOL;
+        header->msgh_id |= MessageBodyIsOutOfLine;
 
     uint8_t* messageData;
 
@@ -292,7 +293,7 @@ static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header
         return MessageDecoder::create(DataReference(body, bodySize));
     }
 
-    bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOOL;
+    bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOutOfLine;
 
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
@@ -390,7 +391,6 @@ void Connection::receiveSourceEventHandler()
     if (!header)
         return;
 
-    MessageID messageID = MessageID::fromInt(header->msgh_id);
     OwnPtr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
 
@@ -428,7 +428,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    processIncomingMessage(messageID, decoder.release());
+    processIncomingMessage(MessageID(), decoder.release());
 }    
 
 void Connection::exceptionSourceEventHandler()
