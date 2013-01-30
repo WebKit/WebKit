@@ -468,9 +468,25 @@ void LayerTreeRenderer::updateTile(CoordinatedLayerID layerID, uint32_t tileID, 
     GraphicsLayer* layer = layerByID(layerID);
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
-    backingStore->updateTile(tileID, update.sourceRect, update.tileRect, update.surface, update.offset);
+
+    SurfaceMap::iterator it = m_surfaces.find(update.atlasID);
+    ASSERT(it != m_surfaces.end());
+
+    backingStore->updateTile(tileID, update.sourceRect, update.tileRect, it->value, update.offset);
     resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);
+}
+
+void LayerTreeRenderer::createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface> surface)
+{
+    ASSERT(!m_surfaces.contains(atlasID));
+    m_surfaces.add(atlasID, surface);
+}
+
+void LayerTreeRenderer::removeUpdateAtlas(uint32_t atlasID)
+{
+    ASSERT(m_surfaces.contains(atlasID));
+    m_surfaces.remove(atlasID);
 }
 
 void LayerTreeRenderer::createImageBacking(CoordinatedImageBackingID imageID)
@@ -601,6 +617,7 @@ void LayerTreeRenderer::purgeGLResources()
 #if USE(GRAPHICS_SURFACE)
     m_surfaceBackingStores.clear();
 #endif
+    m_surfaces.clear();
 
     m_rootLayer.clear();
     m_rootLayerID = InvalidCoordinatedLayerID;

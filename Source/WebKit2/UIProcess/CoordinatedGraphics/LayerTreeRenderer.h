@@ -56,12 +56,12 @@ public:
     struct TileUpdate {
         WebCore::IntRect sourceRect;
         WebCore::IntRect tileRect;
-        RefPtr<CoordinatedSurface> surface;
+        uint32_t atlasID;
         WebCore::IntPoint offset;
-        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& tile, PassRefPtr<CoordinatedSurface> newSurface, const WebCore::IntPoint& newOffset)
+        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& tile, uint32_t atlas, const WebCore::IntPoint& newOffset)
             : sourceRect(source)
             , tileRect(tile)
-            , surface(newSurface)
+            , atlasID(atlas)
             , offset(newOffset)
         {
         }
@@ -105,6 +105,8 @@ public:
     void createTile(CoordinatedLayerID, uint32_t tileID, float scale);
     void removeTile(CoordinatedLayerID, uint32_t tileID);
     void updateTile(CoordinatedLayerID, uint32_t tileID, const TileUpdate&);
+    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
+    void removeUpdateAtlas(uint32_t atlasID);
     void flushLayerChanges();
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
@@ -180,6 +182,9 @@ private:
     typedef HashMap<CoordinatedLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
+
+    typedef HashMap<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
+    SurfaceMap m_surfaces;
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedLayerTreeHostProxy* m_coordinatedLayerTreeHostProxy;

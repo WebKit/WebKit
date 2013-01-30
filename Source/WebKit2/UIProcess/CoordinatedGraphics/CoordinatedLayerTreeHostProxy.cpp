@@ -67,9 +67,7 @@ void CoordinatedLayerTreeHostProxy::createTileForLayer(CoordinatedLayerID layerI
 
 void CoordinatedLayerTreeHostProxy::updateTileForLayer(CoordinatedLayerID layerID, uint32_t tileID, const IntRect& tileRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    SurfaceMap::iterator it = m_surfaces.find(updateInfo.atlasID);
-    ASSERT(it != m_surfaces.end());
-    dispatchUpdate(bind(&LayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, LayerTreeRenderer::TileUpdate(updateInfo.updateRect, tileRect, it->value, updateInfo.surfaceOffset)));
+    dispatchUpdate(bind(&LayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, LayerTreeRenderer::TileUpdate(updateInfo.updateRect, tileRect, updateInfo.atlasID, updateInfo.surfaceOffset)));
 }
 
 void CoordinatedLayerTreeHostProxy::removeTileForLayer(CoordinatedLayerID layerID, uint32_t tileID)
@@ -79,14 +77,12 @@ void CoordinatedLayerTreeHostProxy::removeTileForLayer(CoordinatedLayerID layerI
 
 void CoordinatedLayerTreeHostProxy::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
 {
-    ASSERT(!m_surfaces.contains(atlasID));
-    m_surfaces.add(atlasID, WebCoordinatedSurface::create(handle));
+    dispatchUpdate(bind(&LayerTreeRenderer::createUpdateAtlas, m_renderer.get(), atlasID, WebCoordinatedSurface::create(handle)));
 }
 
 void CoordinatedLayerTreeHostProxy::removeUpdateAtlas(uint32_t atlasID)
 {
-    ASSERT(m_surfaces.contains(atlasID));
-    m_surfaces.remove(atlasID);
+    dispatchUpdate(bind(&LayerTreeRenderer::removeUpdateAtlas, m_renderer.get(), atlasID));
 }
 
 void CoordinatedLayerTreeHostProxy::createCompositingLayers(const Vector<CoordinatedLayerID>& ids)
@@ -240,7 +236,6 @@ void CoordinatedLayerTreeHostProxy::setLayerRepaintCount(CoordinatedLayerID id, 
 
 void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 {
-    m_surfaces.clear();
     m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
 }
 

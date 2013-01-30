@@ -103,8 +103,6 @@ protected:
     RefPtr<LayerTreeRenderer> m_renderer;
     WebCore::FloatRect m_lastSentVisibleRect;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
-    typedef HashMap<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
-    SurfaceMap m_surfaces;
 };
 
 }
