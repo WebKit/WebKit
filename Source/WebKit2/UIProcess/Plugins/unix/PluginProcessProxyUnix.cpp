@@ -43,15 +43,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo&)
+void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
 {
 #if PLATFORM(EFL) && !defined(NDEBUG)
     const char* commandPrefix = getenv("PLUGIN_PROCESS_COMMAND_PREFIX");
     if (commandPrefix && *commandPrefix)
         launchOptions.processCmdPrefix = String::fromUTF8(commandPrefix);
-#else
-    UNUSED_PARAM(launchOptions);
 #endif
+
+    launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)

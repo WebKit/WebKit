@@ -53,6 +53,7 @@ class PluginProcessCreationParameters;
 
 void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
 {
+    launchOptions.extraInitializationData.add("plugin-path", pluginInfo.path);
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)

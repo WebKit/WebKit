@@ -103,6 +103,7 @@ Q_DECL_EXPORT int PluginProcessMain(int argc, char** argv)
 
     WebKit::ChildProcessInitializationParameters parameters;
     parameters.connectionIdentifier = identifier;
+    parameters.extraInitializationData.add("plugin-path", app.arguments().at(2));
 
     WebKit::PluginProcess::shared().initialize(parameters);
 

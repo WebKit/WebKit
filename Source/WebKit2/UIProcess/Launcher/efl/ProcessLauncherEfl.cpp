@@ -42,7 +42,7 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    CString executablePath;
+    CString executablePath, pluginPath;
     switch (m_launchOptions.processType) {
     case WebProcess:
         executablePath = executablePathOfWebProcess().utf8();
@@ -50,6 +50,7 @@ void ProcessLauncher::launchProcess()
 #if ENABLE(PLUGIN_PROCESS)
     case PluginProcess:
         executablePath = executablePathOfPluginProcess().utf8();
+        pluginPath = m_launchOptions.extraInitializationData.get("plugin-path").utf8();
         break;
 #endif
     default:
@@ -63,7 +64,8 @@ void ProcessLauncher::launchProcess()
 #ifndef NDEBUG
     CString prefixedExecutablePath;
     if (!m_launchOptions.processCmdPrefix.isEmpty()) {
-        String prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + String::fromUTF8(executablePath.data()) + ' ' + socket;
+        String prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' +
+            String::fromUTF8(executablePath.data()) + ' ' + socket + ' ' + String::fromUTF8(pluginPath.data());
         prefixedExecutablePath = prefixedExecutablePathStr.utf8();
     }
 #endif
@@ -86,7 +88,7 @@ void ProcessLauncher::launchProcess()
                 exit(EXIT_SUCCESS);
         }
 #endif
-        execl(executablePath.data(), executablePath.data(), socket, static_cast<char*>(0));
+        execl(executablePath.data(), executablePath.data(), socket, pluginPath.data(), static_cast<char*>(0));
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;

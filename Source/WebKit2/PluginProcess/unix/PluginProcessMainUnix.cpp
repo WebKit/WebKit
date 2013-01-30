@@ -73,9 +73,8 @@ static int webkitXError(Display* xdisplay, XErrorEvent* error)
 
 WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
 {
-    ASSERT_UNUSED(argc, argc == 2 || argc == 3);
     bool scanPlugin = !strcmp(argv[1], "-scanPlugin");
-    ASSERT_UNUSED(argc, argc == 2 || (argc == 3 && scanPlugin));
+    ASSERT_UNUSED(argc, argc == 3);
 
 #if PLATFORM(GTK)
     gtk_init(&argc, &argv);
@@ -109,6 +108,7 @@ WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
 
     WebKit::ChildProcessInitializationParameters parameters;
     parameters.connectionIdentifier = socket;
+    parameters.extraInitializationData.add("plugin-path", argv[2]);
 
     WebKit::PluginProcess::shared().initialize(parameters);
 

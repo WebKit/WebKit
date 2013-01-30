@@ -112,12 +112,14 @@ void QtWebProcess::setupChildProcess()
 
 void ProcessLauncher::launchProcess()
 {
-    QString commandLine = QLatin1String("%1 %2 %3");
+    QString commandLine;
     if (m_launchOptions.processType == WebProcess) {
+        commandLine = QLatin1String("%1 %2 %3");
         QByteArray webProcessPrefix = qgetenv("QT_WEBKIT2_WP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(webProcessPrefix.constData())).arg(QString(executablePathOfWebProcess()));
 #if ENABLE(PLUGIN_PROCESS)
     } else if (m_launchOptions.processType == PluginProcess) {
+        commandLine = QLatin1String("%1 %2 %3 %4");
         QByteArray pluginProcessPrefix = qgetenv("QT_WEBKIT2_PP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(pluginProcessPrefix.constData())).arg(QString(executablePathOfPluginProcess()));
 #endif
@@ -168,6 +170,11 @@ void ProcessLauncher::launchProcess()
 
     int connector = sockets[1];
     commandLine = commandLine.arg(sockets[0]);
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+    if (m_launchOptions.processType == PluginProcess)
+        commandLine = commandLine.arg(QString(m_launchOptions.extraInitializationData.get("plugin-path")));
 #endif
 
     QProcess* webProcessOrSUIDHelper = new QtWebProcess();
