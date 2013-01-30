@@ -1,3 +1,29 @@
+2013-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        Upstream iOS build file changes for WTF
+        <http://webkit.org/b/108221>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig:
+        - Import iOS.xcconfig.
+        - Remove VALID_ARCHS.  Modern Xcodes define these correctly.
+        - Make HEADER_SEARCH_PATHS work with iOS Simulator builds.
+        - Add SUPPORTED_PLATFORMS so both Mac and iOS SDKs appear in
+          schemes.
+        - Define INSTALL_PATH when building for macosx SDK.
+        * Configurations/CopyWTFHeaders.xcconfig:
+        - Make PRIVATE_HEADERS_FOLDER_PATH work with iOS Simulator
+          builds.
+        * Configurations/DebugRelease.xcconfig:
+        - Simplify ARCHS.  This works correctly on 32-bit-only SDKs.
+        * Configurations/WTF.xcconfig:
+        - Fix installation directory for iOS Simulator builds by
+          defining INSTALL_PATH_ACTUAL.
+        * Configurations/iOS.xcconfig: Add.
+        * WTF.xcodeproj/project.pbxproj:
+        - Add iOS.xcconfig to the project.
+
 2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structure::m_outOfLineCapacity is unnecessary
