@@ -249,7 +249,7 @@
       }],
       ['use_x11==1 or OS=="android"', {
         'feature_defines': [
-          'WTF_USE_HARFBUZZ_NG=1',
+          'WTF_USE_HARFBUZZ=1',
         ],
       }],
       ['chromeos==1', {

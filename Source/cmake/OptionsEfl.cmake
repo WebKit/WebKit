@@ -142,7 +142,7 @@ endif ()
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
 add_definitions(-DWTF_USE_FREETYPE=1)
-add_definitions(-DWTF_USE_HARFBUZZ_NG=1)
+add_definitions(-DWTF_USE_HARFBUZZ=1)
 
 if (ENABLE_WEBKIT2 AND ENABLE_NETSCAPE_PLUGIN_API)
     set(ENABLE_PLUGIN_PROCESS 1)

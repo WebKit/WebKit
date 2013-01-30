@@ -195,7 +195,7 @@ public:
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ_NG)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
@@ -317,7 +317,7 @@ private:
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ_NG)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ)
     mutable OwnPtr<HashMap<String, bool> > m_combiningCharacterSequenceSupport;
 #endif
 

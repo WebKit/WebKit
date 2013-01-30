@@ -32,17 +32,12 @@
 #include "FontPlatformDataHarfBuzz.h"
 
 #include "FontCache.h"
+#include "HarfBuzzNGFace.h"
 #include "NotImplemented.h"
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTypeface.h"
-
-#if USE(HARFBUZZ_NG)
-#include "HarfBuzzNGFace.h"
-#else
-#include "HarfBuzzSkia.h"
-#endif
 
 #include <public/linux/WebFontInfo.h>
 #include <public/linux/WebFontRenderStyle.h>
@@ -273,7 +268,6 @@ bool FontPlatformData::isFixedPitch() const
     return false;
 }
 
-#if USE(HARFBUZZ_NG)
 HarfBuzzNGFace* FontPlatformData::harfbuzzFace() const
 {
     if (!m_harfbuzzFace)
@@ -281,15 +275,6 @@ HarfBuzzNGFace* FontPlatformData::harfbuzzFace() const
 
     return m_harfbuzzFace.get();
 }
-#else
-HarfbuzzFace* FontPlatformData::harfbuzzFace() const
-{
-    if (!m_harfbuzzFace)
-        m_harfbuzzFace = HarfbuzzFace::create(const_cast<FontPlatformData*>(this));
-
-    return m_harfbuzzFace.get();
-}
-#endif
 
 void FontPlatformData::getRenderStyleForStrike(const char* font, int sizeAndStyle)
 {

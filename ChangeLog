@@ -1,3 +1,16 @@
+2013-01-30  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [HarfBuzz] Remove the HarfBuzz-old code
+        https://bugs.webkit.org/show_bug.cgi?id=108077
+
+        Reviewed by Benjamin Poulain.
+
+        Rename WTF_USE_HARFBUZZ_NG to WTF_USE_HARFBUZZ since there
+        won't be a distinction between ng and non-ng HarfBuzz after
+        removing the old code.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r141175.
