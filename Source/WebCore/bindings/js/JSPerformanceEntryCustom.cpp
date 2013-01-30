@@ -35,7 +35,11 @@
 #include "JSPerformanceEntry.h"
 
 #include "JSDOMBinding.h"
+#include "JSPerformanceMark.h"
+#include "JSPerformanceMeasure.h"
 #include "JSPerformanceResourceTiming.h"
+#include "PerformanceMark.h"
+#include "PerformanceMeasure.h"
 #include "PerformanceResourceTiming.h"
 
 using namespace JSC;
@@ -50,6 +54,14 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, PerformanceEntry*
 #if ENABLE(RESOURCE_TIMING)
     if (entry->isResource())
         return wrap<JSPerformanceResourceTiming>(exec, globalObject, static_cast<PerformanceResourceTiming*>(entry));
+#endif
+
+#if ENABLE(USER_TIMING)
+    if (entry->isMark())
+        return wrap<JSPerformanceMark>(exec, globalObject, static_cast<PerformanceMark*>(entry));
+
+    if (entry->isMeasure())
+        return wrap<JSPerformanceMeasure>(exec, globalObject, static_cast<PerformanceMeasure*>(entry));
 #endif
 
     return wrap<JSPerformanceEntry>(exec, globalObject, entry);
