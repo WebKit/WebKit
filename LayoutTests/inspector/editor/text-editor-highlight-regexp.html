@@ -19,13 +19,22 @@ function test()
             ];
             var textEditor = InspectorTest.createTestEditor();
             textEditor.setText(text.join("\n"));
+            var paintLineCalls = 0;
+            function paintLineCounter()
+            {
+                ++paintLineCalls;
+            }
+            InspectorTest.addSniffer(textEditor._mainPanel, "_paintLine", paintLineCounter, true);
             InspectorTest.addResult("\nBefore highlight");
             InspectorTest.dumpEditorHTML(textEditor, true);
             var highlightDescriptor = textEditor.highlightRegex("foo_.", "some-css-class");
             InspectorTest.addResult("\nAdd highlight for regexp /foo_./");
+            InspectorTest.addResult("Lines repainted: " + paintLineCalls);
+            paintLineCalls = 0;
             InspectorTest.dumpEditorHTML(textEditor, true);
             InspectorTest.addResult("\nRemove highlight for regexp /foo_./");
             textEditor.removeRegexHighlight(highlightDescriptor);
+            InspectorTest.addResult("Lines repainted: " + paintLineCalls);
             InspectorTest.dumpEditorHTML(textEditor, true);
             next();
         },

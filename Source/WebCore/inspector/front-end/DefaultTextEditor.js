@@ -1378,7 +1378,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         var highlightDescriptor = new WebInspector.TextEditorMainPanel.RegexHighlightDescriptor(new RegExp(regex, "g"), cssClass);
         this._highlightDescriptors.push(highlightDescriptor);
-        this._repaintVisibleChunks();
+        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
         return highlightDescriptor;
     },
 
@@ -1388,21 +1388,35 @@ WebInspector.TextEditorMainPanel.prototype = {
     removeRegexHighlight: function(highlightDescriptor)
     {
         this._highlightDescriptors.remove(highlightDescriptor);
-        this._repaintVisibleChunks();
+        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
     },
 
-    _repaintVisibleChunks: function()
+    /**
+     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
+     */
+    _repaintLineRowsAffectedByHighlightDescriptor: function(highlightDescriptor)
     {
         var visibleFrom = this.scrollTop();
         var visibleTo = visibleFrom + this.clientHeight();
 
         var visibleChunks = this.findVisibleChunks(visibleFrom, visibleTo);
-        var selection = this.selection();
 
-        for(var i = visibleChunks.start; i < visibleChunks.end; ++i) {
+        var affectedLineRows = [];
+        for (var i = visibleChunks.start; i < visibleChunks.end; ++i) {
             var chunk = this._textChunks[i];
-            this._paintLines(chunk._startLine, chunk._startLine + chunk.linesCount);
+            if (!chunk.expanded())
+                continue;
+            for (var lineNumber = chunk.startLine; lineNumber < chunk.startLine + chunk.linesCount; ++lineNumber) {
+                var lineRow = chunk.expandedLineRow(lineNumber);
+                var line = this._textModel.line(lineNumber);
+                if (highlightDescriptor.affectsLine(lineNumber, line))
+                    affectedLineRows.push(lineRow);
+            }
         }
+        if (affectedLineRows.length === 0)
+            return;
+        var selection = this.selection();
+        this._paintLineRows(affectedLineRows);
         this._restoreSelection(selection);
     },
 
@@ -1795,20 +1809,34 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _paintLines: function(fromLine, toLine, restoreSelection)
     {
-        var chunk;
-        var selection;
         var lineRows = [];
+        var chunk;
         for (var lineNumber = fromLine; lineNumber < toLine; ++lineNumber) {
             if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
                 chunk = this.chunkForLine(lineNumber);
             var lineRow = chunk.expandedLineRow(lineNumber);
             if (!lineRow)
                 continue;
-            if (restoreSelection && !selection)
-                selection = this.selection();
             lineRows.push(lineRow);
         }
+        if (lineRows.length === 0)
+            return;
 
+        var selection;
+        if (restoreSelection)
+            selection = this.selection();
+
+        this._paintLineRows(lineRows);
+
+        if (restoreSelection)
+            this._restoreSelection(selection);
+    },
+
+    /**
+     * @param {Array.<Element>} lineRows
+     */
+    _paintLineRows: function(lineRows)
+    {
         var highlight = {};
         this.beginDomUpdates();
         for(var i = 0; i < this._highlightDescriptors.length; ++i) {
@@ -1820,9 +1848,6 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._paintLine(lineRows[i], highlight[lineRows[i].lineNumber]);
 
         this.endDomUpdates();
-
-        if (restoreSelection)
-            this._restoreSelection(selection);
     },
 
     /**
