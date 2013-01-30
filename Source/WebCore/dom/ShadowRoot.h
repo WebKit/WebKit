@@ -37,10 +37,7 @@
 
 namespace WebCore {
 
-class Document;
-class DOMSelection;
 class ElementShadow;
-class InsertionPoint;
 class ScopeContentDistribution;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
@@ -62,14 +59,13 @@ public:
 
     void recalcStyle(StyleChange);
 
-    virtual bool applyAuthorStyles() const OVERRIDE;
+    virtual bool applyAuthorStyles() const OVERRIDE { return m_applyAuthorStyles; }
     void setApplyAuthorStyles(bool);
-    virtual bool resetStyleInheritance() const OVERRIDE;
+    virtual bool resetStyleInheritance() const OVERRIDE { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
-    Element* host() const;
-    void setHost(Element*);
-    ElementShadow* owner() const;
+    Element* host() const { return toElement(parentOrHostNode()); }
+    ElementShadow* owner() const { return host() ? host()->shadow() : 0; }
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
@@ -103,9 +99,15 @@ public:
 private:
     ShadowRoot(Document*, ShadowRootType);
     virtual ~ShadowRoot();
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
+
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
+
+    // ShadowRoots should never be cloned.
+    virtual PassRefPtr<Node> cloneNode(bool) OVERRIDE { return 0; }
+
+    // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
+    bool isOrphan() const { return !host(); }
 
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
@@ -116,18 +118,6 @@ private:
     unsigned m_type : 1;
     unsigned m_registeredWithParentShadowRoot : 1;
 };
-
-inline Element* ShadowRoot::host() const
-{
-    return toElement(parentOrHostNode());
-}
-
-inline void ShadowRoot::setHost(Element* host)
-{
-    setParentOrHostNode(host);
-    if (host)
-        setParentTreeScope(host->treeScope());
-}
 
 inline Element* ShadowRoot::activeElement() const
 {

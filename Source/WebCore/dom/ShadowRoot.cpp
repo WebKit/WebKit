@@ -28,31 +28,13 @@
 #include "ShadowRoot.h"
 
 #include "ContentDistributor.h"
-#include "DOMSelection.h"
-#include "DOMWindow.h"
-#include "Document.h"
-#include "DocumentFragment.h"
-#include "Element.h"
 #include "ElementShadow.h"
-#include "HTMLContentElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLNames.h"
-#include "HTMLTextAreaElement.h"
 #include "HistogramSupport.h"
 #include "InsertionPoint.h"
-#include "NodeRareData.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SVGNames.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include "markup.h"
-
-// FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
-#define GuardOrphanShadowRoot(rejectStatement) \
-    if (!this->host()) {                       \
-        rejectStatement;                       \
-        return;                                \
-    }
 
 namespace WebCore {
 
@@ -66,19 +48,8 @@ COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_sh
 enum ShadowRootUsageOriginType {
     ShadowRootUsageOriginWeb = 0,
     ShadowRootUsageOriginNotWeb,
-    ShadowRootUsageOriginTypes
+    ShadowRootUsageOriginMax
 };
-
-static inline ShadowRootUsageOriginType determineUsageType(Document* document)
-{
-    // Enables only on CHROMIUM since this cost won't worth paying for platforms which don't collect this metrics.
-#if PLATFORM(CHROMIUM)
-    return document->url().string().startsWith("http") ? ShadowRootUsageOriginWeb : ShadowRootUsageOriginNotWeb;
-#else
-    UNUSED_PARAM(document);
-    return ShadowRootUsageOriginWeb;
-#endif
-}
 
 ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     : DocumentFragment(document, CreateShadowRoot)
@@ -94,8 +65,12 @@ ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     ASSERT(document);
     setTreeScope(this);
 
-    if (type == ShadowRoot::AuthorShadowRoot)
-        HistogramSupport::histogramEnumeration("WebCore.ShadowRoot.constructor", determineUsageType(document), ShadowRootUsageOriginTypes);
+#if PLATFORM(CHROMIUM)
+    if (type == ShadowRoot::AuthorShadowRoot) {
+        ShadowRootUsageOriginType usageType = document->url().protocolIsInHTTPFamily() ? ShadowRootUsageOriginWeb : ShadowRootUsageOriginNotWeb;
+        HistogramSupport::histogramEnumeration("WebCore.ShadowRoot.constructor", usageType, ShadowRootUsageOriginMax);
+    }
+#endif
 }
 
 ShadowRoot::~ShadowRoot()
@@ -114,12 +89,6 @@ ShadowRoot::~ShadowRoot()
         clearRareData();
 }
 
-PassRefPtr<Node> ShadowRoot::cloneNode(bool)
-{
-    // ShadowRoot should not be arbitrarily cloned.
-    return 0;
-}
-
 PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)
 {
     ec = DATA_CLONE_ERR;
@@ -133,7 +102,10 @@ String ShadowRoot::innerHTML() const
 
 void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
 {
-    GuardOrphanShadowRoot(ec = INVALID_ACCESS_ERR);
+    if (isOrphan()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
 
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, host(), AllowScriptingContent, ec))
         replaceChildrenWithFragment(this, fragment.release(), ec);
@@ -174,21 +146,10 @@ void ShadowRoot::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ElementShadow* ShadowRoot::owner() const
-{
-    if (host())
-        return host()->shadow();
-    return 0;
-}
-
-bool ShadowRoot::applyAuthorStyles() const
-{
-    return m_applyAuthorStyles;
-}
-
 void ShadowRoot::setApplyAuthorStyles(bool value)
 {
-    GuardOrphanShadowRoot({ });
+    if (isOrphan())
+        return;
 
     if (m_applyAuthorStyles != value) {
         m_applyAuthorStyles = value;
@@ -196,14 +157,10 @@ void ShadowRoot::setApplyAuthorStyles(bool value)
     }
 }
 
-bool ShadowRoot::resetStyleInheritance() const
-{
-    return m_resetStyleInheritance;
-}
-
 void ShadowRoot::setResetStyleInheritance(bool value)
 {
-    GuardOrphanShadowRoot({ });
+    if (isOrphan())
+        return;
 
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
@@ -258,7 +215,8 @@ void ShadowRoot::removedFrom(ContainerNode* insertionPoint)
 
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    GuardOrphanShadowRoot({ });
+    if (isOrphan())
+        return;
 
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     owner()->invalidateDistribution();

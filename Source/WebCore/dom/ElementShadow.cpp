@@ -36,7 +36,8 @@ ShadowRoot* ElementShadow::addShadowRoot(Element* shadowHost, ShadowRoot::Shadow
 {
     RefPtr<ShadowRoot> shadowRoot = ShadowRoot::create(shadowHost->document(), type);
 
-    shadowRoot->setHost(shadowHost);
+    shadowRoot->setParentOrHostNode(shadowHost);
+    shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_shadowRoots.push(shadowRoot.get());
     m_distributor.didShadowBoundaryChange(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
@@ -68,7 +69,7 @@ void ElementShadow::removeAllShadowRoots()
             oldRoot->detach();
 
         m_shadowRoots.removeHead();
-        oldRoot->setHost(0);
+        oldRoot->setParentOrHostNode(0);
         oldRoot->setParentTreeScope(shadowHost->document());
         oldRoot->setPrev(0);
         oldRoot->setNext(0);
