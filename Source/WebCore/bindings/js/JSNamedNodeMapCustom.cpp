@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,13 @@ namespace WebCore {
 
 bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, PropertyName propertyName)
 {
-    return impl->getNamedItem(propertyNameToString(propertyName));
+    return impl->getNamedItem(propertyNameToAtomicString(propertyName));
 }
 
 JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSNamedNodeMap* thisObj = jsCast<JSNamedNodeMap*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->getNamedItem(propertyNameToString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->getNamedItem(propertyNameToAtomicString(propertyName)));
 }
 
 void JSNamedNodeMap::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
         return v8Undefined();
 
     NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
-    RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
+    RefPtr<Node> result = imp->getNamedItem(toWebCoreAtomicString(name));
     if (!result)
         return v8Undefined();
 
