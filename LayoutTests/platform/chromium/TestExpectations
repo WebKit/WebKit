@@ -4381,3 +4381,4 @@ webkit.org/b/108285 [ Debug ] fast/workers/storage/open-database-set-empty-versi
 webkit.org/b/108285 [ Debug ] fast/workers/storage/open-database-while-transaction-in-progress.html [ Crash ]
 webkit.org/b/108285 [ Debug ] fast/workers/storage/sql-data-types-sync.html [ Crash ]
 webkit.org/b/108285 [ Debug ] fast/workers/storage/test-authorizer-sync.html [ Crash ]
+webkit.org/b/108285 [ Debug ] http/tests/workers/terminate-during-sync-operation.html [ Crash ]
