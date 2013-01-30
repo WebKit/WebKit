@@ -327,7 +327,7 @@ TEST_F(WebFrameTest, setPageScaleFactorDoesNotLayout)
 
     int prevLayoutCount = webViewImpl->mainFrameImpl()->frameView()->layoutCount();
     webViewImpl->setPageScaleFactor(3, WebPoint());
-    EXPECT_EQ(false, webViewImpl->mainFrameImpl()->frameView()->needsLayout());
+    EXPECT_FALSE(webViewImpl->mainFrameImpl()->frameView()->needsLayout());
     EXPECT_EQ(prevLayoutCount, webViewImpl->mainFrameImpl()->frameView()->layoutCount());
 }
 

@@ -1,3 +1,15 @@
+2013-01-30  Tony Gentilcore  <tonyg@chromium.org>
+
+        Fix compile error in WebFrameTest
+        https://bugs.webkit.org/show_bug.cgi?id=108360
+
+        Unreviewed build fix.
+
+        Fixes compile error:
+        ../../Source/WebKit/chromium/tests/WebFrameTest.cpp:330:5: error: converting false to pointer type for argument 1 of char testing::internal::IsNullLiteralHelper(testing::internal::Secret*) [-Werror=conversion-null]
+
+        * tests/WebFrameTest.cpp:
+
 2013-01-30  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Fix find in page rects for overflowing content.
