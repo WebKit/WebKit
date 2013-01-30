@@ -52,6 +52,8 @@ private:
     JSContext *m_weakContext;
 };
 
+@class JSWrapperMap;
+
 @interface JSContext(Internal)
 
 JSGlobalContextRef contextInternalContext(JSContext *);
@@ -64,6 +66,8 @@ JSGlobalContextRef contextInternalContext(JSContext *);
 - (void)endCallbackWithData:(CallbackData *)callbackData;
 
 - (JSValue *)wrapperForObject:(id)object;
+
+@property (readonly, retain) JSWrapperMap *wrapperMap;
 
 @end
 

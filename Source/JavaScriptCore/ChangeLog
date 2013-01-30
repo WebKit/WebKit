@@ -1,3 +1,29 @@
+2013-01-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: JSObjCClassInfo creates reference cycle with JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=107839
+
+        Reviewed by Oliver Hunt.
+
+        JSContext has a JSWrapperMap, which has an NSMutableDictionary m_classMap, which has values that 
+        are JSObjCClassInfo objects, which have strong references to two JSValue *'s, m_prototype and 
+        m_constructor, which in turn have strong references to the JSContext, creating a reference cycle. 
+        We should make m_prototype and m_constructor Weak<JSObject>. This gets rid of the strong reference 
+        to the JSContext and also prevents clients from accidentally creating reference cycles by assigning 
+        to the prototype of the constructor. If Weak<JSObject> fields are ever garbage collected, we will 
+        reallocate them.
+
+        * API/JSContext.mm:
+        (-[JSContext wrapperMap]):
+        * API/JSContextInternal.h:
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]):
+        (-[JSObjCClassInfo dealloc]):
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]):
+        (-[JSObjCClassInfo allocateConstructorAndPrototype]):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (-[JSObjCClassInfo constructor]):
+
 2013-01-29  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION (r140594): RELEASE_ASSERT_NOT_REACHED in JSC::Interpreter::execute
