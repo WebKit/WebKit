@@ -1,0 +1,92 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script src="resources/log-source.js"></script>
+<script>
+function log1()
+{
+    console.log.apply(console, arguments);
+}
+
+// Create a mix of log messages from different source files
+function onload()
+{
+    for (var i = 0; i < 10; i++) {
+        if (i % 2 == 0)
+            log1(i); // from console-filter-test.html
+        else
+            log2(i); // from log-source.js
+    }
+
+    console.log(10);
+
+    runTest();
+}
+
+function test()
+{
+    var messagesElement = WebInspector.consoleView.messagesElement;
+    var groupMessages = messagesElement.querySelector(".console-group-messages");
+
+    function dumpVisibleMessages()
+    {
+        var children = groupMessages.childNodes;
+
+        for (var i = 0; i < children.length; i++)
+            InspectorTest.addResult(children[i].textContent);
+    }
+
+    var url1 = groupMessages.childNodes[0].message.url;
+    var url2 = groupMessages.childNodes[1].message.url;
+
+    InspectorTest.runTestSuite([
+        function beforeFilter(next)
+        {
+            InspectorTest.addResult(arguments.callee.name);
+            dumpVisibleMessages();
+            next();
+        },
+        function addURL1Filter(next)
+        {
+            WebInspector.consoleView._addMessageURLFilter(url1);
+            dumpVisibleMessages();
+            next();
+        },
+        function addURL2Filter(next)
+        {
+            WebInspector.consoleView._addMessageURLFilter(url2);
+            dumpVisibleMessages();
+            next();
+        },
+        function removeURL1Filter(next)
+        {
+            WebInspector.consoleView._removeMessageURLFilter(url1);
+            dumpVisibleMessages();
+            next();
+        },
+        function restoreURL1Filter(next)
+        {
+            WebInspector.consoleView._addMessageURLFilter(url1);
+            dumpVisibleMessages();
+            next();
+        },
+        function removeAllFilters(next)
+        {
+            WebInspector.consoleView._removeMessageURLFilter();
+            dumpVisibleMessages();
+            next();
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+    Tests that console can filter messages by source.
+</p>
+
+</body>
+</html>

@@ -247,6 +247,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     },
 
     /**
+     * @param {Object} output
      * @param {boolean=} forceObjectFormat
      * @param {boolean=} includePreview
      */
@@ -447,7 +448,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         {
             if (index - lastNonEmptyIndex <= 1)
                 return;
-            var span = elem.createChild(span, "console-formatted-undefined");
+            var span = elem.createChild("span", "console-formatted-undefined");
             span.textContent = WebInspector.UIString("undefined × %d", index - lastNonEmptyIndex - 1);
         }
 
@@ -480,7 +481,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatWithSubstitutionString: function(parameters, formattedResult)
     {
-        var formatters = {}
+        var formatters = {};
 
         function parameterFormatter(force, obj)
         {
@@ -595,7 +596,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         regexObject.lastIndex = 0;
         var text = element.textContent;
         var match = regexObject.exec(text);
-        var offset = 0;
         var matchRanges = [];
         while (match) {
             matchRanges.push({ offset: match.index, length: match[0].length });

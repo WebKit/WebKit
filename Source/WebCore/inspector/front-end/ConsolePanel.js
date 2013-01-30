@@ -81,7 +81,7 @@ WebInspector.ConsolePanel.prototype = {
         this._searchRegex = createPlainTextSearchRegex(query, "gi");
 
         this._searchResults = [];
-        var messages = WebInspector.consoleView.messages;
+        var messages = WebInspector.console.messages;
         for (var i = 0; i < messages.length; i++) {
             if (messages[i].matchesRegex(this._searchRegex)) {
                 this._searchResults.push(messages[i]);

@@ -121,6 +121,7 @@ WebInspector.Settings = function()
     this.showToolbarIcons = this.createSetting("showToolbarIcons", false);
     this.workerInspectorWidth = this.createSetting("workerInspectorWidth", 600);
     this.workerInspectorHeight = this.createSetting("workerInspectorHeight", 600);
+    this.messageURLFilters = this.createSetting("messageURLFilters", {});
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

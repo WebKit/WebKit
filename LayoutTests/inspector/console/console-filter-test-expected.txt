@@ -1,0 +1,60 @@
+CONSOLE MESSAGE: line 9: 0
+CONSOLE MESSAGE: line 3: 1
+CONSOLE MESSAGE: line 9: 2
+CONSOLE MESSAGE: line 3: 3
+CONSOLE MESSAGE: line 9: 4
+CONSOLE MESSAGE: line 3: 5
+CONSOLE MESSAGE: line 9: 6
+CONSOLE MESSAGE: line 3: 7
+CONSOLE MESSAGE: line 9: 8
+CONSOLE MESSAGE: line 3: 9
+CONSOLE MESSAGE: line 22: 10
+Tests that console can filter messages by source.
+
+
+Running: beforeFilter
+beforeFilter
+0 console-filter-test.html:9
+1 log-source.js:3
+2 console-filter-test.html:9
+3 log-source.js:3
+4 console-filter-test.html:9
+5 log-source.js:3
+6 console-filter-test.html:9
+7 log-source.js:3
+8 console-filter-test.html:9
+9 log-source.js:3
+10 console-filter-test.html:22
+
+Running: addURL1Filter
+1 log-source.js:3
+3 log-source.js:3
+5 log-source.js:3
+7 log-source.js:3
+9 log-source.js:3
+
+Running: addURL2Filter
+
+Running: removeURL1Filter
+0 console-filter-test.html:9
+2 console-filter-test.html:9
+4 console-filter-test.html:9
+6 console-filter-test.html:9
+8 console-filter-test.html:9
+10 console-filter-test.html:22
+
+Running: restoreURL1Filter
+
+Running: removeAllFilters
+0 console-filter-test.html:9
+1 log-source.js:3
+2 console-filter-test.html:9
+3 log-source.js:3
+4 console-filter-test.html:9
+5 log-source.js:3
+6 console-filter-test.html:9
+7 log-source.js:3
+8 console-filter-test.html:9
+9 log-source.js:3
+10 console-filter-test.html:22
+
