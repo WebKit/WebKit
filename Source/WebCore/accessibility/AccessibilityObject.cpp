@@ -828,14 +828,7 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     // If this is in a list item, we need to manually add the text for the list marker 
     // because a RenderListMarker does not have a Node equivalent and thus does not appear
     // when iterating text.
-    const String& markerText = listItem->markerText();
-    if (markerText.isEmpty())
-        return String();
-                
-    // Append text, plus the period that follows the text.
-    // FIXME: Not all list marker styles are followed by a period, but this
-    // sounds much better when there is a synthesized pause because of a period.
-    return markerText + ". ";
+    return listItem->markerTextWithSuffix();
 }
     
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

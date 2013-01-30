@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<ul style="disc">
+<li id="listitem1">item 1</li>
+</ul>
+
+<ol>
+<li id="listitem2">item 2</li>
+</ol>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure the right suffix is returned when fetching text marker strings for list items.");
+
+    if (window.accessibilityController) {
+        var list1 = accessibilityController.accessibleElementById("listitem1");
+        var textRange = list1.textMarkerRangeForElement(list1);
+        var bulletString = String.fromCharCode(0x2022);
+        shouldBe("list1.stringForTextMarkerRange(textRange)", "bulletString + ' item 1'");
+
+        var list2 = accessibilityController.accessibleElementById("listitem2");
+        var textRange = list2.textMarkerRangeForElement(list2);
+        shouldBe("list2.stringForTextMarkerRange(textRange)", "'1. item 2'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+
