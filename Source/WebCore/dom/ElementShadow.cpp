@@ -32,31 +32,12 @@
 
 namespace WebCore {
 
-static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
-{
-    if (!shadowRoot)
-        return true;
-
-    if (shadowRoot->host()) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return false;
-    }
-
-    if (shadowRoot->document() != document) {
-        ec = WRONG_DOCUMENT_ERR;
-        return false;
-    }
-
-    return true;
-}
-
-void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ShadowRoot::ShadowRootType type, ExceptionCode& ec)
+void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ShadowRoot::ShadowRootType type)
 {
     ASSERT(shadowHost);
     ASSERT(shadowRoot);
-
-    if (!validateShadowRoot(shadowHost->document(), shadowRoot.get(), ec))
-        return;
+    ASSERT(!shadowRoot->host());
+    ASSERT(shadowHost->document() == shadowRoot->document());
 
     if (type == ShadowRoot::AuthorShadowRoot)
         shadowHost->willAddAuthorShadowRoot();

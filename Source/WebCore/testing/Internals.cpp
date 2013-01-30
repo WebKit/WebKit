@@ -580,7 +580,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
     if (ElementShadow* shadow = host->shadow())
         return shadow->youngestShadowRoot();
 
-    return ShadowRoot::create(host, ec).get();
+    return host->createShadowRoot(ec).get();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::createShadowRoot(Element* host, ExceptionCode& ec)
@@ -589,7 +589,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::createShadowRoot(Eleme
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
-    return ShadowRoot::create(host, ec).get();
+    return host->createShadowRoot(ec).get();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* host, ExceptionCode& ec)

@@ -63,6 +63,23 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope, public 
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
 
+enum ShadowRootUsageOriginType {
+    ShadowRootUsageOriginWeb = 0,
+    ShadowRootUsageOriginNotWeb,
+    ShadowRootUsageOriginTypes
+};
+
+static inline ShadowRootUsageOriginType determineUsageType(Document* document)
+{
+    // Enables only on CHROMIUM since this cost won't worth paying for platforms which don't collect this metrics.
+#if PLATFORM(CHROMIUM)
+    return document->url().string().startsWith("http") ? ShadowRootUsageOriginWeb : ShadowRootUsageOriginNotWeb;
+#else
+    UNUSED_PARAM(document);
+    return ShadowRootUsageOriginWeb;
+#endif
+}
+
 ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(this, document)
@@ -76,6 +93,9 @@ ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
 {
     ASSERT(document);
     setTreeScope(this);
+
+    if (type == ShadowRoot::AuthorShadowRoot)
+        HistogramSupport::histogramEnumeration("WebCore.ShadowRoot.constructor", determineUsageType(document), ShadowRootUsageOriginTypes);
 }
 
 ShadowRoot::~ShadowRoot()
@@ -94,62 +114,16 @@ ShadowRoot::~ShadowRoot()
         clearRareData();
 }
 
-static bool allowsAuthorShadowRoot(Element* element)
+PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type)
 {
-#if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
-        return true;
-#endif
-    return element->areAuthorShadowsAllowed();
-}
-
-enum ShadowRootUsageOriginType {
-    ShadowRootUsageOriginWeb = 0,
-    ShadowRootUsageOriginNotWeb,
-    ShadowRootUsageOriginTypes
-};
-
-static inline ShadowRootUsageOriginType determineUsageType(Element* host)
-{
-    // Enables only on CHROMIUM since this cost won't worth paying for platforms which don't collect this metrics.
-#if PLATFORM(CHROMIUM)
-    if (!host)
-        return ShadowRootUsageOriginWeb;
-    return host->document()->url().string().startsWith("http") ? ShadowRootUsageOriginWeb : ShadowRootUsageOriginNotWeb;
-#else
-    UNUSED_PARAM(host);
-    return ShadowRootUsageOriginWeb;
-#endif
-}
-
-PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
-{
-    HistogramSupport::histogramEnumeration("WebCore.ShadowRoot.constructor", determineUsageType(element), ShadowRootUsageOriginTypes);
-    return create(element, AuthorShadowRoot, ec);
-}
-
-PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type, ExceptionCode& ec)
-{
-    if (!element) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return 0;
-    }
-
-    // Since some elements recreates shadow root dynamically, multiple shadow subtrees won't work well in that element.
-    // Until they are fixed, we disable adding author shadow root for them.
-    if (type == AuthorShadowRoot && !allowsAuthorShadowRoot(element)) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return 0;
-    }
+    ASSERT(element);
 
     RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document(), type));
 
-    ec = 0;
-    element->ensureShadow()->addShadowRoot(element, shadowRoot, type, ec);
-    if (ec)
-        return 0;
+    element->ensureShadow()->addShadowRoot(element, shadowRoot, type);
     ASSERT(element == shadowRoot->host());
     ASSERT(element->shadow());
+
     return shadowRoot.release();
 }
 

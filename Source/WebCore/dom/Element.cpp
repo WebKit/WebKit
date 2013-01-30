@@ -1450,7 +1450,19 @@ void Element::didAffectSelector(AffectedSelectorMask mask)
 
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
 {
-    return ShadowRoot::create(this, ec);
+#if ENABLE(SHADOW_DOM)
+    if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
+        return ShadowRoot::create(this, ShadowRoot::AuthorShadowRoot);
+#endif
+
+    // Since some elements recreates shadow root dynamically, multiple shadow
+    // subtrees won't work well in that element. Until they are fixed, we disable
+    // adding author shadow root for them.
+    if (!areAuthorShadowsAllowed()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+    return ShadowRoot::create(this, ShadowRoot::AuthorShadowRoot);
 }
 
 ShadowRoot* Element::shadowRoot() const
@@ -1480,7 +1492,7 @@ ShadowRoot* Element::ensureUserAgentShadowRoot()
 {
     if (ShadowRoot* shadowRoot = userAgentShadowRoot())
         return shadowRoot;
-    ShadowRoot* shadowRoot = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
+    ShadowRoot* shadowRoot = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot).get();
     didAddUserAgentShadowRoot(shadowRoot);
     return shadowRoot;
 }
