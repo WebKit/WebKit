@@ -37,6 +37,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GLContext.h>
+#include <WebCore/GraphicsLayerTextureMapper.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 

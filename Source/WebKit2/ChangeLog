@@ -1,3 +1,10 @@
+2013-01-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp: Include GraphicsLayerTextureMapper.h
+        as a forwarding header from WebCore.
+
 2013-01-30  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove m_pendingSyncBackingStores in LayerTreeRenderer.
