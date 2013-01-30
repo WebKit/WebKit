@@ -117,7 +117,7 @@ void SharedWorkerProcessProxy::sharedWorkerProcessCrashedOrFailedToLaunch()
 
 void SharedWorkerProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveSharedWorkerProcessProxyMessage(connection, messageID, decoder);
+    didReceiveSharedWorkerProcessProxyMessage(connection, decoder);
 }
 
 void SharedWorkerProcessProxy::didClose(CoreIPC::Connection*)

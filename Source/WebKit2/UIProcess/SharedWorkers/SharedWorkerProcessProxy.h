@@ -76,7 +76,7 @@ private:
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
 
     // Message handlers
-    void didReceiveSharedWorkerProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveSharedWorkerProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didCreateWebProcessConnection(const CoreIPC::Attachment&);
 
     void platformInitializeSharedWorkerProcess(SharedWorkerProcessCreationParameters&);

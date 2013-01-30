@@ -113,7 +113,7 @@ private:
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
 
     // Message handlers
-    void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didCreateWebProcessConnection(const CoreIPC::Attachment&, bool supportsAsynchronousPluginInitialization);
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);

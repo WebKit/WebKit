@@ -50,7 +50,7 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
 
     // Implemented in generated RemoteLayerTreeHostMessageReceiver.cpp
-    void didReceiveRemoteLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveRemoteLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     // Message handlers.
     void commit(const RemoteLayerTreeTransaction&);

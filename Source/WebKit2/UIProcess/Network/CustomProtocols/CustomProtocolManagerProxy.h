@@ -58,7 +58,7 @@ public:
     void stopLoading(uint64_t customProtocolID);
 
 private:
-    void didReceiveCustomProtocolManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveCustomProtocolManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     ChildProcessProxy* m_childProcessProxy;
 

@@ -100,7 +100,7 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
     if (messageReceiverMap().dispatchMessage(connection, messageID, decoder))
         return;
 
-    didReceiveNetworkProcessMessage(connection, messageID, decoder);
+    didReceiveNetworkProcessMessage(connection, decoder);
 }
 
 void NetworkProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)

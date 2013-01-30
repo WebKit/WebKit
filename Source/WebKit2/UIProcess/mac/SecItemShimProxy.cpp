@@ -109,7 +109,7 @@ void SecItemShimProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t 
 void SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
     if (decoder.messageReceiverName() == Messages::SecItemShimProxy::messageReceiverName()) {
-        didReceiveSecItemShimProxyMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
+        didReceiveSecItemShimProxyMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
         return;
     }
 }

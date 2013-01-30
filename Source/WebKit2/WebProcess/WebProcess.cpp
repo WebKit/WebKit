@@ -595,7 +595,7 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
 
     if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        didReceiveWebProcessMessage(connection, messageID, decoder);
+        didReceiveWebProcessMessage(connection, decoder);
         return;
     }
 
@@ -641,7 +641,7 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringR
 void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
     if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
+        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
         return;
     }
 }

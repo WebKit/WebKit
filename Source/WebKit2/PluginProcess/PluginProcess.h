@@ -81,7 +81,7 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // Message handlers.
-    void didReceivePluginProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceivePluginProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void initializePluginProcess(const PluginProcessCreationParameters&);
     void createWebProcessConnection();
     void getSitesWithData(uint64_t callbackID);

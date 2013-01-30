@@ -55,7 +55,7 @@ private:
     // CoreIPC::MessageReceiver
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     // Implemented in generated WebDatabaseManagerMessageReceiver.cpp
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     void getDatabasesByOrigin(uint64_t callbackID) const;
     void getDatabaseOrigins(uint64_t callbackID) const;

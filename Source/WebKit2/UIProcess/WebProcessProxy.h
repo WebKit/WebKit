@@ -183,9 +183,9 @@ private:
     void didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID);
 
     // Implemented in generated WebProcessProxyMessageReceiver.cpp
-    void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-    void didReceiveWebProcessProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+    void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    void didReceiveWebProcessProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
 
     ResponsivenessTimer m_responsivenessTimer;
     

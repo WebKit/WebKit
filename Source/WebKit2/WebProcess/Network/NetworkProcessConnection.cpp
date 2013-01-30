@@ -55,7 +55,7 @@ void NetworkProcessConnection::didReceiveMessage(CoreIPC::Connection* connection
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
         if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
-            webResourceLoader->didReceiveWebResourceLoaderMessage(connection, messageID, decoder);
+            webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         
         return;
     }
@@ -67,7 +67,7 @@ void NetworkProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connec
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
         if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
-            webResourceLoader->didReceiveSyncWebResourceLoaderMessage(connection, messageID, decoder, replyEncoder);
+            webResourceLoader->didReceiveSyncWebResourceLoaderMessage(connection, decoder, replyEncoder);
         
         return;
     }

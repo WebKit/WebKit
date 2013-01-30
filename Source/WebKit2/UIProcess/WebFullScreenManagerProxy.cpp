@@ -56,12 +56,12 @@ void WebFullScreenManagerProxy::setWebView(PlatformWebView* webView)
 
 void WebFullScreenManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebFullScreenManagerProxyMessage(connection, messageID, decoder);
+    didReceiveWebFullScreenManagerProxyMessage(connection, decoder);
 }
 
 void WebFullScreenManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    didReceiveSyncWebFullScreenManagerProxyMessage(connection, messageID, decoder, replyEncoder);
+    didReceiveSyncWebFullScreenManagerProxyMessage(connection, decoder, replyEncoder);
 }
 
 void WebFullScreenManagerProxy::willEnterFullScreen()

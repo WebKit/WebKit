@@ -121,7 +121,7 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
     if (decoder.messageReceiverName() == Messages::WebProcessConnection::messageReceiverName()) {
-        didReceiveWebProcessConnectionMessage(connection, messageID, decoder);
+        didReceiveWebProcessConnectionMessage(connection, decoder);
         return;
     }
 
@@ -135,7 +135,7 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
         return;
 
     PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
-    pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, decoder);
+    pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, decoder);
 }
 
 void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
@@ -145,7 +145,7 @@ void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection
     uint64_t destinationID = decoder.destinationID();
 
     if (!destinationID) {
-        didReceiveSyncWebProcessConnectionMessage(connection, messageID, decoder, replyEncoder);
+        didReceiveSyncWebProcessConnectionMessage(connection, decoder, replyEncoder);
         return;
     }
 
@@ -159,7 +159,7 @@ void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection
         return;
 
     PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
-    pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, decoder, replyEncoder);
+    pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, decoder, replyEncoder);
 }
 
 void WebProcessConnection::didClose(CoreIPC::Connection*)

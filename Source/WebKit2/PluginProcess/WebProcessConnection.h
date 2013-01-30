@@ -68,8 +68,8 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName);
 
     // Message handlers.
-    void didReceiveWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    void didReceiveWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     void createPlugin(const PluginCreationParameters&, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
     void createPluginAsynchronously(const PluginCreationParameters&);
     void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete);

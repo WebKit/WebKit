@@ -233,7 +233,7 @@ void NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, C
     if (!messageReceiver)
         return;
 
-    messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, messageID, decoder, replyEncoder);
+    messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, decoder, replyEncoder);
 }
 
 } // namespace WebKit

@@ -96,7 +96,7 @@ private:
     virtual AuthenticationManager& downloadsAuthenticationManager() OVERRIDE;
 
     // Message Handlers
-    void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
     void ensurePrivateBrowsingSession();

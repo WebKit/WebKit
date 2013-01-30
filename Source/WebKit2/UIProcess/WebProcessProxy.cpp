@@ -424,7 +424,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         return;
 
     if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
-        didReceiveWebProcessProxyMessage(connection, messageID, decoder);
+        didReceiveWebProcessProxyMessage(connection, decoder);
         return;
     }
 
@@ -458,7 +458,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
         return;
 
     if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
-        didReceiveSyncWebProcessProxyMessage(connection, messageID, decoder, replyEncoder);
+        didReceiveSyncWebProcessProxyMessage(connection, decoder, replyEncoder);
         return;
     }
 
@@ -476,7 +476,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
 void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
     if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
-        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
+        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
 }
 
 void WebProcessProxy::didClose(CoreIPC::Connection*)

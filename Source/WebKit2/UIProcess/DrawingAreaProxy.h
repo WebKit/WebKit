@@ -60,7 +60,7 @@ public:
 
     DrawingAreaType type() const { return m_type; }
 
-    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     virtual void deviceScaleFactorDidChange() = 0;
 

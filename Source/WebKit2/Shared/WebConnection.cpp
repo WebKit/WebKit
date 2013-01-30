@@ -65,7 +65,7 @@ void WebConnection::didClose()
 
 void WebConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebConnectionMessage(connection, messageID, decoder);
+    didReceiveWebConnectionMessage(connection, decoder);
 }
 
 void WebConnection::handleMessage(CoreIPC::MessageDecoder& decoder)

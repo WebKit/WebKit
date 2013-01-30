@@ -129,7 +129,7 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
 
 void CustomProtocolManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveCustomProtocolManagerProxyMessage(connection, messageID, decoder);
+    didReceiveCustomProtocolManagerProxyMessage(connection, decoder);
 }
 
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const ResourceRequest& coreRequest)

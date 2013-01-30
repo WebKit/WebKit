@@ -46,10 +46,10 @@ private:
     SecItemShim();
 
     // QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage) OVERRIDE;
 
     // Implemented in generated SecItemShimMessageReceiver.cpp.
-    void didReceiveSecItemShimMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+    void didReceiveSecItemShimMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
 
     void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);
 };

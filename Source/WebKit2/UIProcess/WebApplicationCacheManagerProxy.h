@@ -79,7 +79,7 @@ private:
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebApplicationCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebApplicationCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };

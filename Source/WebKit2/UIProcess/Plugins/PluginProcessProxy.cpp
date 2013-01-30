@@ -159,7 +159,7 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 
 void PluginProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceivePluginProcessProxyMessage(connection, messageID, decoder);
+    didReceivePluginProcessProxyMessage(connection, decoder);
 }
 
 void PluginProcessProxy::didClose(CoreIPC::Connection*)

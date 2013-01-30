@@ -1928,7 +1928,7 @@ void WebPageProxy::preferencesDidChange()
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DrawingAreaProxy::messageReceiverName()) {
-        m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, messageID, decoder);
+        m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, decoder);
         return;
     }
 
@@ -1942,7 +1942,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspectorProxy::messageReceiverName()) {
         if (WebInspectorProxy* inspector = this->inspector())
-            inspector->didReceiveWebInspectorProxyMessage(connection, messageID, decoder);
+            inspector->didReceiveWebInspectorProxyMessage(connection, decoder);
         return;
     }
 #endif
@@ -1954,7 +1954,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 #endif
 
-    didReceiveWebPageProxyMessage(connection, messageID, decoder);
+    didReceiveWebPageProxyMessage(connection, decoder);
 }
 
 void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
@@ -1962,7 +1962,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspectorProxy::messageReceiverName()) {
         if (WebInspectorProxy* inspector = this->inspector())
-            inspector->didReceiveSyncWebInspectorProxyMessage(connection, messageID, decoder, replyEncoder);
+            inspector->didReceiveSyncWebInspectorProxyMessage(connection, decoder, replyEncoder);
         return;
     }
 #endif
@@ -1975,7 +1975,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 #endif
 
     // FIXME: Do something with reply.
-    didReceiveSyncWebPageProxyMessage(connection, messageID, decoder, replyEncoder);
+    didReceiveSyncWebPageProxyMessage(connection, decoder, replyEncoder);
 }
 
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)

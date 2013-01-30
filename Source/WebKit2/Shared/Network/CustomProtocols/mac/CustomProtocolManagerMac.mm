@@ -177,7 +177,7 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
 
 void CustomProtocolManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveCustomProtocolManagerMessage(connection, messageID, decoder);
+    didReceiveCustomProtocolManagerMessage(connection, decoder);
 }
 
 void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)

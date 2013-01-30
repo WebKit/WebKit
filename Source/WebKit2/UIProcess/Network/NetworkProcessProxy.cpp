@@ -124,7 +124,7 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
     }
 #endif
 
-    didReceiveNetworkProcessProxyMessage(connection, messageID, decoder);
+    didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
 void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)

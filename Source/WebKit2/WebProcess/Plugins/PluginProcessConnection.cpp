@@ -97,7 +97,7 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
     if (!pluginProxy)
         return;
 
-    pluginProxy->didReceivePluginProxyMessage(connection, messageID, decoder);
+    pluginProxy->didReceivePluginProxyMessage(connection, decoder);
 }
 
 void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
@@ -110,7 +110,7 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
     uint64_t destinationID = decoder.destinationID();
 
     if (!destinationID) {
-        didReceiveSyncPluginProcessConnectionMessage(connection, messageID, decoder, replyEncoder);
+        didReceiveSyncPluginProcessConnectionMessage(connection, decoder, replyEncoder);
         return;
     }
 
@@ -118,7 +118,7 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
     if (!pluginProxy)
         return;
 
-    pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, decoder, replyEncoder);
+    pluginProxy->didReceiveSyncPluginProxyMessage(connection, decoder, replyEncoder);
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)

@@ -70,7 +70,7 @@ private:
     void dispatchCookiesDidChange();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     ChildProcess* m_process;
 };

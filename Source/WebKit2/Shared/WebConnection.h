@@ -59,7 +59,7 @@ protected:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Implemented in generated WebConnectionMessageReceiver.cpp
-    void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     // Mesage handling implementation functions.
     void handleMessage(CoreIPC::MessageDecoder&);

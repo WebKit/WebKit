@@ -56,7 +56,7 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // Message handlers.
-    void didReceiveSharedWorkerProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveSharedWorkerProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void initializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters&);
     void createWebProcessConnection();
 

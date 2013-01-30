@@ -63,8 +63,8 @@ public:
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const;
 
-    void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     void networkProcessCrashed();
 

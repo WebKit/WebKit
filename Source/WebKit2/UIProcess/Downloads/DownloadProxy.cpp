@@ -99,12 +99,12 @@ void DownloadProxy::processDidClose()
 
 void DownloadProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveDownloadProxyMessage(connection, messageID, decoder);
+    didReceiveDownloadProxyMessage(connection, decoder);
 }
 
 void DownloadProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    didReceiveSyncDownloadProxyMessage(connection, messageID, decoder, replyEncoder);
+    didReceiveSyncDownloadProxyMessage(connection, decoder, replyEncoder);
 }
 
 void DownloadProxy::didStart(const ResourceRequest& request)

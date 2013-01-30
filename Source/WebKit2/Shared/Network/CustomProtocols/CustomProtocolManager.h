@@ -84,7 +84,7 @@ private:
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveCustomProtocolManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveCustomProtocolManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
     void didLoadData(uint64_t customProtocolID, const CoreIPC::DataReference&);

@@ -73,7 +73,7 @@ protected:
     void setAnimatingFullScreen(bool);
     void requestExitFullScreen();
 
-    void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;

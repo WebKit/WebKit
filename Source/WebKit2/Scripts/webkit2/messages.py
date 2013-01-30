@@ -531,7 +531,7 @@ def generate_message_handler(file):
                 async_messages.append(message)
 
     if async_dispatch_on_connection_queue_messages:
-        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
         result.append('{\n')
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(push)\n')
@@ -545,7 +545,7 @@ def generate_message_handler(file):
 
     if async_messages:
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+            result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         else:
             result.append('void %s::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name))
 
@@ -557,7 +557,7 @@ def generate_message_handler(file):
     if sync_messages:
         result.append('\n')
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         else:
             result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection*%s,CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, ' connection' if sync_delayed_messages else ''))
         result.append('{\n')

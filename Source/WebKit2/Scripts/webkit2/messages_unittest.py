@@ -704,7 +704,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -720,7 +720,7 @@ void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*
 #endif
 }
 
-void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)
+void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         CoreIPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
@@ -777,7 +777,7 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID,
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);

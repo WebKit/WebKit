@@ -2989,7 +2989,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
 {
     if (decoder.messageReceiverName() == Messages::DrawingArea::messageReceiverName()) {
         if (m_drawingArea)
-            m_drawingArea->didReceiveDrawingAreaMessage(connection, messageID, decoder);
+            m_drawingArea->didReceiveDrawingAreaMessage(connection, decoder);
         return;
     }
 
@@ -3004,7 +3004,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())
-            inspector->didReceiveWebInspectorMessage(connection, messageID, decoder);
+            inspector->didReceiveWebInspectorMessage(connection, decoder);
         return;
     }
 #endif
@@ -3016,12 +3016,12 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     }
 #endif
 
-    didReceiveWebPageMessage(connection, messageID, decoder);
+    didReceiveWebPageMessage(connection, decoder);
 }
 
 void WebPage::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {   
-    didReceiveSyncWebPageMessage(connection, messageID, decoder, replyEncoder);
+    didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
     
 InjectedBundleBackForwardList* WebPage::backForwardList()

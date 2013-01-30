@@ -50,7 +50,7 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder&decoder)
 {
-    didReceiveRemoteLayerTreeHostMessage(connection, messageID, decoder);
+    didReceiveRemoteLayerTreeHostMessage(connection, decoder);
 }
 
 void RemoteLayerTreeHost::notifyAnimationStarted(const GraphicsLayer*, double time)

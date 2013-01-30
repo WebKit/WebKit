@@ -132,7 +132,7 @@ bool PluginProcess::shouldTerminate()
 
 void PluginProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceivePluginProcessMessage(connection, messageID, decoder);
+    didReceivePluginProcessMessage(connection, decoder);
 }
 
 void PluginProcess::didClose(CoreIPC::Connection*)

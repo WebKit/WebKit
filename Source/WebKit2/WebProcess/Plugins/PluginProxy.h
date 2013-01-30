@@ -62,8 +62,8 @@ public:
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
     void pluginProcessCrashed();
 
-    void didReceivePluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    void didReceivePluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     bool isBeingAsynchronouslyInitialized() const { return m_waitingOnAsynchronousInitialization; }
 

@@ -1,3 +1,170 @@
+2013-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Remove MessageID parameter from generated message receivers
+        https://bugs.webkit.org/show_bug.cgi?id=108379
+
+        Reviewed by Beth Dakin.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (NetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        * NetworkProcess/NetworkProcess.h:
+        (NetworkProcess):
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveMessage):
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveMessage):
+        * Shared/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        (CustomProtocolManager):
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::didReceiveMessage):
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        (NPObjectMessageReceiver):
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::didReceiveSyncMessage):
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::didReceiveMessage):
+        * Shared/WebConnection.h:
+        (WebConnection):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::didReceiveMessageOnConnectionWorkQueue):
+        * Shared/mac/SecItemShim.h:
+        (SecItemShim):
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        (WebKit::SharedWorkerProcess::didReceiveMessage):
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        (SharedWorkerProcess):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveMessage):
+        (WebKit::DownloadProxy::didReceiveSyncMessage):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (DownloadProxy):
+        * UIProcess/DrawingAreaProxy.h:
+        (DrawingAreaProxy):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        (CustomProtocolManagerProxy):
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::didReceiveMessage):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (NetworkProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didReceiveMessage):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (PluginProcessProxy):
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        (WebKit::SharedWorkerProcessProxy::didReceiveMessage):
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h:
+        (SharedWorkerProcessProxy):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::didReceiveMessage):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        (WebApplicationCacheManagerProxy):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::didReceiveMessage):
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didReceiveMessage):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        (WebDatabaseManagerProxy):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::didReceiveMessage):
+        (WebKit::WebFullScreenManagerProxy::didReceiveSyncMessage):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebFullScreenManagerProxy):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        (WebKit::WebProcessProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (RemoteLayerTreeHost):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::didReceiveMessage):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.h:
+        (SecItemShimProxy):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::didReceiveMessage):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+        (WebApplicationCacheManager):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::didReceiveMessage):
+        * WebProcess/Cookies/WebCookieManager.h:
+        (WebCookieManager):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didReceiveMessage):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        (WebFullScreenManager):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Network/WebResourceLoader.h:
+        (WebResourceLoader):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveMessage):
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (PluginProcessConnection):
+        * WebProcess/Plugins/PluginProxy.h:
+        (PluginProxy):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::didReceiveMessage):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        (WebDatabaseManager):
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2013-01-30  Christophe Dumez  <dchris@gmail.com>
 
         [WK2][UNIX] g_spawn_sync() generates warning in PluginProcessProxy::scanPlugin()

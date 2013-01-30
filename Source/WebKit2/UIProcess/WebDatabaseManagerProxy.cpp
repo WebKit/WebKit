@@ -144,7 +144,7 @@ void WebDatabaseManagerProxy::derefWebContextSupplement()
 
 void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebDatabaseManagerProxyMessage(connection, messageID, decoder);
+    didReceiveWebDatabaseManagerProxyMessage(connection, decoder);
 }
 
 void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)

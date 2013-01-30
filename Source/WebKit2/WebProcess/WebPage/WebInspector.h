@@ -53,7 +53,7 @@ public:
     WebPage* inspectorPage() const { return m_inspectorPage; }
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
-    void didReceiveWebInspectorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveWebInspectorMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     // Called by WebInspector messages
     void show();
