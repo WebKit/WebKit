@@ -1,3 +1,14 @@
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Update the expected generated message results
+        https://bugs.webkit.org/show_bug.cgi?id=108293
+
+        Reviewed by Beth Dakin.
+
+        * Scripts/webkit2/messages.py:
+        (generate_messages_header):
+        * Scripts/webkit2/messages_unittest.py:
+
 2013-01-29  Sam Weinig  <sam@webkit.org>
 
         Replace unnecessary ArgumentDecoder member functions with decode overloads

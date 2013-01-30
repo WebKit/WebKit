@@ -596,14 +596,6 @@ struct ExperimentalOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
 } // namespace WebPage
 } // namespace Messages
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<Messages::WebPage::Kind> {
-    static const MessageClass messageClass = MessageClassWebPage;
-};
-
-} // namespace CoreIPC
-
 #endif // ENABLE(WEBKIT2)
 
 #endif // WebPageMessages_h

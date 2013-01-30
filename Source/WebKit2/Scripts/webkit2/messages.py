@@ -285,7 +285,6 @@ def generate_messages_header(file):
     result.append('    return CoreIPC::StringReference("%s");\n' % receiver.name)
     result.append('}\n')
     result.append('\n')
-    result.append('\n')
     result.append('\n'.join([message_to_struct_declaration(x) for x in receiver.messages]))
     result.append('\n')
     result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
