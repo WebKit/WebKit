@@ -39,6 +39,10 @@ typedef struct _GstElement GstElement;
 
 namespace WebCore {
 
+#ifdef FullscreenVideoControllerClass
+class FullscreenVideoControllerClass;
+#endif
+
 class GraphicsContext;
 class IntSize;
 class IntRect;
@@ -75,11 +79,13 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void setPreservesPitch(bool);
 
             void setVolume(float);
+            float volume() const;
             void volumeChanged();
             void notifyPlayerOfVolumeChange();
 
             bool supportsMuting() const;
             void setMuted(bool);
+            bool muted() const;
             void muteChanged();
             void notifyPlayerOfMute();
 
@@ -93,6 +99,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             float maxTimeSeekable() const;
             bool didLoadingProgress() const;
             unsigned totalBytes() const;
+            float maxTimeLoaded() const;
 
             void setVisible(bool);
             void setSize(const IntSize&);
@@ -109,6 +116,12 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void paint(GraphicsContext*, const IntRect&);
 
             bool hasSingleSecurityOrigin() const;
+
+#if USE(NATIVE_FULLSCREEN_VIDEO)
+            void enterFullscreen();
+            void exitFullscreen();
+            bool canEnterFullscreen() const { return true; }
+#endif
 
             bool supportsFullscreen() const;
             PlatformMedia platformMedia() const;
@@ -127,6 +140,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             MediaPlayer::MovieLoadType movieLoadType() const;
 
+            MediaPlayer* mediaPlayer() const { return m_player; }
+
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -144,7 +159,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             void cacheDuration();
             void updateStates();
-            float maxTimeLoaded() const;
 
             void createGSTPlayBin();
             bool changePipelineState(GstState state);
@@ -191,8 +205,11 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             bool m_delayingLoad;
             bool m_mediaDurationKnown;
             mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
-#ifndef GST_API_VERSION_1
+#if USE(NATIVE_FULLSCREEN_VIDEO)
             RefPtr<GStreamerGWorld> m_gstGWorld;
+#ifdef FullscreenVideoControllerClass
+            OwnPtr<FullscreenVideoControllerClass> m_fullscreenVideoController;
+#endif
 #endif
             guint m_volumeTimerHandler;
             guint m_muteTimerHandler;

@@ -1,3 +1,28 @@
+2013-01-26  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] USE(NATIVE_FULLSCREEN_VIDEO) support
+        https://bugs.webkit.org/show_bug.cgi?id=106760
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Build fixes for GStreamer NATIVE_FULLSCREEN_VIDEO support. Some
+        more changes will be needed to use the new
+        FullscreenVideoController though.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore):
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        (WebCore):
+        (FullScreenVideoQt):
+
 2013-01-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK1] Support better testing of Web Notifications

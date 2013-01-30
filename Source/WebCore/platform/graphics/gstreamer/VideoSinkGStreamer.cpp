@@ -81,7 +81,7 @@ struct _WebKitVideoSinkPrivate {
     GstVideoInfo info;
 #endif
 
-#ifndef GST_API_VERSION_1
+#if USE(NATIVE_FULLSCREEN_VIDEO)
     WebCore::GStreamerGWorld* gstGWorld;
 #endif
 
@@ -154,7 +154,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
         return GST_FLOW_OK;
     }
 
-#ifndef GST_API_VERSION_1
+#if USE(NATIVE_FULLSCREEN_VIDEO)
     // Ignore buffers if the video is already in fullscreen using
     // another sink.
     if (priv->gstGWorld->isFullscreen()) {
@@ -418,7 +418,7 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
 }
 
 
-#ifndef GST_API_VERSION_1
+#if USE(NATIVE_FULLSCREEN_VIDEO)
 GstElement* webkitVideoSinkNew(WebCore::GStreamerGWorld* gstGWorld)
 {
     GstElement* element = GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0));

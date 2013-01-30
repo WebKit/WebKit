@@ -161,6 +161,7 @@ if USE_GSTREAMER
 if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
+webcore_cppflags += -DWTF_USE_NATIVE_FULLSCREEN_VIDEO=1
 endif # END USE_GSTREAMER
 else
 feature_defines_overrides += ENABLE_VIDEO=0 ENABLE_VIDEO_TRACK=0

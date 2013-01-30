@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
 GStreamerFullScreenVideoHandler::GStreamerFullScreenVideoHandler()
     : m_videoElement(0)
     , m_fullScreenWidget(0)
@@ -99,7 +99,7 @@ FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
         connect(m_FullScreenVideoHandler, SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));
 #endif
 
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     m_FullScreenVideoHandlerGStreamer = new GStreamerFullScreenVideoHandler;
 #endif
 
@@ -113,7 +113,7 @@ FullScreenVideoQt::~FullScreenVideoQt()
 #if USE(QT_MULTIMEDIA)
     delete m_FullScreenVideoHandler;
 #endif
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     delete m_FullScreenVideoHandlerGStreamer;
 #endif
 #if USE(QTKIT)
@@ -143,7 +143,7 @@ void FullScreenVideoQt::enterFullScreenForNode(Node* node)
     m_FullScreenVideoHandler->enterFullScreen(mediaPlayerQt->mediaPlayer());
 #endif
 
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     m_FullScreenVideoHandlerGStreamer->setVideoElement(m_videoElement);
     m_FullScreenVideoHandlerGStreamer->enterFullScreen();
 #endif
@@ -174,7 +174,7 @@ void FullScreenVideoQt::exitFullScreenForNode(Node* node)
     MediaPlayerPrivateQt* mediaPlayerQt = mediaPlayer();
     mediaPlayerQt->restoreVideoItem();
 #endif
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     m_FullScreenVideoHandlerGStreamer->exitFullScreen();
 #endif
 
@@ -213,7 +213,7 @@ bool FullScreenVideoQt::isValid() const
 #if USE(QT_MULTIMEDIA)
     return m_FullScreenVideoHandler;
 #endif
-#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
+#if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     return m_FullScreenVideoHandlerGStreamer;
 #elif USE(QTKIT)
     return m_FullScreenVideoHandlerQTKit;

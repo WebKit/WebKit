@@ -6065,6 +6065,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \
 	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp \
+	Source/WebCore/platform/graphics/gstreamer/FullscreenVideoControllerGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/FullscreenVideoControllerGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.h \
 	Source/WebCore/platform/graphics/gstreamer/ImageGStreamerCairo.cpp \
