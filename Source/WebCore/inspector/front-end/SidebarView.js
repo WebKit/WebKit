@@ -46,7 +46,7 @@ WebInspector.SidebarView = function(sidebarPosition, sidebarWidthSettingName, de
 
     this._sidebarPosition = sidebarPosition || WebInspector.SidebarView.SidebarPosition.Start;
     this.setSecondIsSidebar(this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.End);
-    this._updateSidebarPosition();
+    this._updateSidebarPosition(true);
 }
 
 WebInspector.SidebarView.EventTypes = {
@@ -98,13 +98,16 @@ WebInspector.SidebarView.prototype = {
         this._autoOrientation = on;
     },
 
-    _updateSidebarPosition: function()
+    /**
+     * @param {boolean=} force
+     */
+    _updateSidebarPosition: function(force)
     {
         var verticalSplit = true;
         if (this._autoOrientation)
             verticalSplit = this.element.offsetHeight < this.element.offsetWidth;
 
-        if (verticalSplit === this.isVertical())
+        if (!force && verticalSplit === this.isVertical())
             return;
 
         if (this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.Start) {
