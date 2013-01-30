@@ -105,6 +105,7 @@ public:
     // Object operations, with the toObject operation included.
     const ClassInfo* classInfo() const;
     const MethodTable* methodTable() const;
+    const MethodTable* methodTableForDestruction() const;
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         

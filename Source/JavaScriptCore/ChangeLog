@@ -1,3 +1,26 @@
+2013-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Add some hardening to methodTable()
+        https://bugs.webkit.org/show_bug.cgi?id=108253
+
+        Reviewed by Mark Hahnenberg.
+
+        When accessing methodTable() we now always make sure that our
+        structure _could_ be valid.  Added a separate method to get a
+        classes methodTable during destruction as it's not possible to
+        validate the structure at that point.  This separation might
+        also make it possible to improve the performance of methodTable
+        access more generally in future.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::methodTableForDestruction):
+        (JSC):
+        (JSC::JSCell::methodTable):
+
 2013-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         offlineasm BaseIndex handling is broken on ARM due to MIPS changes

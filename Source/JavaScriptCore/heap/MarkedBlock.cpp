@@ -62,7 +62,7 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
 
-    cell->methodTable()->destroy(cell);
+    cell->methodTableForDestruction()->destroy(cell);
     cell->zap();
 }
 

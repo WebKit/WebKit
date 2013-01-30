@@ -137,8 +137,16 @@ inline void JSCell::setStructure(JSGlobalData& globalData, Structure* structure)
     m_structure.set(globalData, this, structure);
 }
 
+inline const MethodTable* JSCell::methodTableForDestruction() const
+{
+    return &classInfo()->methodTable;
+}
+
 inline const MethodTable* JSCell::methodTable() const
 {
+    if (Structure* rootStructure = m_structure->structure())
+        RELEASE_ASSERT(rootStructure == rootStructure->structure());
+
     return &classInfo()->methodTable;
 }
 
