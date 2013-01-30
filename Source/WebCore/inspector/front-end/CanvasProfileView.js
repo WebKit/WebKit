@@ -380,10 +380,23 @@ WebInspector.CanvasProfileType = function()
     this._recording = false;
     this._lastProfileHeader = null;
 
-    this._capturingModeSelector = new WebInspector.StatusBarComboBox(null);
+    this._capturingModeSelector = new WebInspector.StatusBarComboBox(this._dispatchViewUpdatedEvent.bind(this));
     this._capturingModeSelector.element.title = WebInspector.UIString("Canvas capture mode.");
     this._capturingModeSelector.createOption(WebInspector.UIString("Single Frame"), WebInspector.UIString("Capture a single canvas frame."), "");
     this._capturingModeSelector.createOption(WebInspector.UIString("Consecutive Frames"), WebInspector.UIString("Capture consecutive canvas frames."), "1");
+
+    /** @type {!Object.<string, Element>} */
+    this._frameOptions = {};
+
+    /** @type {!Object.<string, boolean>} */
+    this._framesWithCanvases = {};
+
+    this._frameSelector = new WebInspector.StatusBarComboBox(this._dispatchViewUpdatedEvent.bind(this));
+    this._frameSelector.element.title = WebInspector.UIString("Frame containing the canvases to capture.");
+    this._frameSelector.element.addStyleClass("hidden");
+    WebInspector.runtimeModel.contextLists().forEach(this._addFrame, this);
+    WebInspector.runtimeModel.addEventListener(WebInspector.RuntimeModel.Events.FrameExecutionContextListAdded, this._frameAdded, this);
+    WebInspector.runtimeModel.addEventListener(WebInspector.RuntimeModel.Events.FrameExecutionContextListRemoved, this._frameRemoved, this);
 
     this._decorationElement = document.createElement("div");
     this._decorationElement.addStyleClass("profile-canvas-decoration");
@@ -393,6 +406,8 @@ WebInspector.CanvasProfileType = function()
     reloadPageButton.type = "button";
     reloadPageButton.textContent = WebInspector.UIString("Reload");
     reloadPageButton.addEventListener("click", this._onReloadPageButtonClick.bind(this), false);
+
+    this._dispatcher = new WebInspector.CanvasDispatcher(this);
 
     // FIXME: enable/disable by a UI action?
     CanvasAgent.enable(this._updateDecorationElement.bind(this));
@@ -404,7 +419,7 @@ WebInspector.CanvasProfileType.TypeId = "CANVAS_PROFILE";
 WebInspector.CanvasProfileType.prototype = {
     get statusBarItems()
     {
-        return [this._capturingModeSelector.element];
+        return [this._capturingModeSelector.element, this._frameSelector.element];
     },
 
     get buttonTooltip()
@@ -441,7 +456,7 @@ WebInspector.CanvasProfileType.prototype = {
      */
     _runSingleFrameCapturing: function(profilesPanel)
     {
-        CanvasAgent.captureFrame(this._didStartCapturingFrame.bind(this, profilesPanel));
+        CanvasAgent.captureFrame(this._selectedFrameId(), this._didStartCapturingFrame.bind(this, profilesPanel));
     },
 
     /**
@@ -449,7 +464,7 @@ WebInspector.CanvasProfileType.prototype = {
      */
     _startFrameCapturing: function(profilesPanel)
     {
-        CanvasAgent.startCapturing(this._didStartCapturingFrame.bind(this, profilesPanel));
+        CanvasAgent.startCapturing(this._selectedFrameId(), this._didStartCapturingFrame.bind(this, profilesPanel));
     },
 
     _stopFrameCapturing: function()
@@ -565,7 +580,102 @@ WebInspector.CanvasProfileType.prototype = {
         return !this._capturingModeSelector.selectedOption().value;
     },
 
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _frameAdded: function(event)
+    {
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ (event.data);
+        this._addFrame(contextList);
+    },
+
+    /**
+     * @param {WebInspector.FrameExecutionContextList} contextList
+     */
+    _addFrame: function(contextList)
+    {
+        var frameId = contextList.frameId;
+        var option = document.createElement("option");
+        option.text = contextList.displayName;
+        option.title = contextList.url;
+        option.value = frameId;
+
+        this._frameOptions[frameId] = option;
+
+        if (this._framesWithCanvases[frameId]) {
+            this._frameSelector.addOption(option);
+            this._dispatchViewUpdatedEvent();
+        }
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _frameRemoved: function(event)
+    {
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ (event.data);
+        var frameId = contextList.frameId;
+        var option = this._frameOptions[frameId];
+        if (option && this._framesWithCanvases[frameId]) {
+            this._frameSelector.removeOption(option);
+            this._dispatchViewUpdatedEvent();
+        }
+        delete this._frameOptions[frameId];
+        delete this._framesWithCanvases[frameId];
+    },
+
+    /**
+     * @param {string} frameId
+     */
+    _contextCreated: function(frameId)
+    {
+        if (this._framesWithCanvases[frameId])
+            return;
+        this._framesWithCanvases[frameId] = true;
+        var option = this._frameOptions[frameId];
+        if (option) {
+            this._frameSelector.addOption(option);
+            this._dispatchViewUpdatedEvent();
+        }
+    },
+
+    /**
+     * @return {string|undefined}
+     */
+    _selectedFrameId: function()
+    {
+        var option = this._frameSelector.selectedOption();
+        return option ? option.value : undefined;
+    },
+
+    _dispatchViewUpdatedEvent: function()
+    {
+        this._frameSelector.element.enableStyleClass("hidden", this._frameSelector.size() <= 1);
+        this.dispatchEventToListeners(WebInspector.ProfileType.Events.ViewUpdated);
+    },
+
     __proto__: WebInspector.ProfileType.prototype
+}
+
+/**
+ * @constructor
+ * @implements {CanvasAgent.Dispatcher}
+ * @param {WebInspector.CanvasProfileType} profileType
+ */
+WebInspector.CanvasDispatcher = function(profileType)
+{
+    this._profileType = profileType;
+    InspectorBackend.registerCanvasDispatcher(this);
+}
+
+WebInspector.CanvasDispatcher.prototype = {
+    /**
+     * @param {string} frameId
+     */
+    contextCreated: function(frameId)
+    {
+        this._profileType._contextCreated(frameId);
+    }
 }
 
 /**
