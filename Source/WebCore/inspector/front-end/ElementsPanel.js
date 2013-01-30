@@ -47,13 +47,12 @@ WebInspector.ElementsPanel = function()
     this.registerRequiredCSS("textPrompt.css");
     this.setHideOnDetach();
 
-    WebInspector.dockController.addEventListener(WebInspector.DockController.EventTypes.StateChanged, this._onDockStateChanged.bind(this));
-
     const initialSidebarWidth = 325;
     const minimumContentWidthPercent = 34;
     const initialSidebarHeight = 325;
     const minimumContentHeightPercent = 34;
-    this.createSidebarView(this.element, this._sidebarPosition(), initialSidebarWidth, initialSidebarHeight);
+    this.createSidebarView(this.element, WebInspector.SidebarView.SidebarPosition.End, initialSidebarWidth, initialSidebarHeight);
+    this.splitView.setAutoOrientation(WebInspector.experimentsSettings.elementsPanelSingleColumn.isEnabled());
     this.splitView.setMinimumSidebarWidth(Preferences.minElementsSidebarWidth);
     this.splitView.setMinimumMainWidthPercent(minimumContentWidthPercent);
     this.splitView.setMinimumSidebarHeight(Preferences.minElementsSidebarHeight);
@@ -164,26 +163,6 @@ WebInspector.ElementsPanel.prototype = {
     {
         this.treeOutline.updateSelection();
         this.updateBreadcrumbSizes();
-        if (WebInspector.dockController.dockSide() !== WebInspector.DockController.State.Undocked)
-            this.splitView.setSidebarPosition(this._sidebarPosition());
-    },
-
-    _onDockStateChanged: function()
-    {
-        if (WebInspector.dockController.dockSide() === WebInspector.DockController.State.Undocked)
-            this.splitView.setSidebarPosition(this._sidebarPosition());
-    },
-
-    /**
-     * @return {string}
-     */
-    _sidebarPosition: function()
-    {
-        if (WebInspector.experimentsSettings.elementsPanelSingleColumn.isEnabled() &&
-            WebInspector.dockController.dockSide() === WebInspector.DockController.State.DockedToRight)
-            return WebInspector.SidebarView.SidebarPosition.Bottom;
-
-        return WebInspector.SidebarView.SidebarPosition.Right;
     },
 
     /**

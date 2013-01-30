@@ -38,16 +38,15 @@ WebInspector.SidebarView = function(sidebarPosition, sidebarWidthSettingName, de
 {
     WebInspector.SplitView.call(this, true, sidebarWidthSettingName, defaultSidebarWidth, defaultSidebarHeight);
 
-    this._leftElement = this.firstElement();
-    this._rightElement = this.secondElement();
-
     this._minimumSidebarWidth = Preferences.minSidebarWidth;
     this._minimumMainWidthPercent = 50;
 
     this._minimumSidebarHeight = Preferences.minSidebarHeight;
     this._minimumMainHeightPercent = 50;
 
-    this._innerSetSidebarPosition(sidebarPosition || WebInspector.SidebarView.SidebarPosition.Left);
+    this._sidebarPosition = sidebarPosition || WebInspector.SidebarView.SidebarPosition.Start;
+    this.setSecondIsSidebar(this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.End);
+    this._updateSidebarPosition();
 }
 
 WebInspector.SidebarView.EventTypes = {
@@ -58,10 +57,8 @@ WebInspector.SidebarView.EventTypes = {
  * @enum {string}
  */
 WebInspector.SidebarView.SidebarPosition = {
-    Left: "Left",
-    Right: "Right",
-    Top: "Top",
-    Bottom: "Bottom"
+    Start: "Start",
+    End: "End"
 }
 
 WebInspector.SidebarView.prototype = {
@@ -95,45 +92,34 @@ WebInspector.SidebarView.prototype = {
     },
 
     /**
-     * @param {string} sidebarPosition
+     * @param {boolean} on
      */
-    setSidebarPosition: function(sidebarPosition)
-    {
-        if (this.sidebarPosition_ === sidebarPosition)
-            return;
-
-        this._innerSetSidebarPosition(sidebarPosition);
+    setAutoOrientation: function(on) {
+        this._autoOrientation = on;
     },
 
-    /**
-     * @param {string} sidebarPosition
-     */
-    _innerSetSidebarPosition: function(sidebarPosition)
+    _updateSidebarPosition: function()
     {
-        this.sidebarPosition_ = sidebarPosition;
+        var verticalSplit = true;
+        if (this._autoOrientation)
+            verticalSplit = this.element.offsetHeight < this.element.offsetWidth;
 
-        switch (sidebarPosition) {
-        case WebInspector.SidebarView.SidebarPosition.Left:
-            this.setSecondIsSidebar(false);
-            this._setSidebarElementStyle("split-view-sidebar-left");
-            this.setVertical(true);
-            break;
-        case WebInspector.SidebarView.SidebarPosition.Right:
-            this.setSecondIsSidebar(true);
-            this._setSidebarElementStyle("split-view-sidebar-right");
-            this.setVertical(true);
-            break;
-        case WebInspector.SidebarView.SidebarPosition.Top:
-            this.setSecondIsSidebar(false);
-            this._setSidebarElementStyle("split-view-sidebar-top");
-            this.setVertical(false);
-            break;
-        case WebInspector.SidebarView.SidebarPosition.Bottom:
-            this.setSecondIsSidebar(true);
-            this._setSidebarElementStyle("split-view-sidebar-bottom");
-            this.setVertical(false);
-            break;
+        if (verticalSplit === this.isVertical())
+            return;
+
+        if (this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.Start) {
+            if (verticalSplit)
+                this._setSidebarElementStyle("split-view-sidebar-left");
+            else
+                this._setSidebarElementStyle("split-view-sidebar-top");
+        } else {
+            if (verticalSplit)
+                this._setSidebarElementStyle("split-view-sidebar-right");
+            else
+                this._setSidebarElementStyle("split-view-sidebar-bottom");
         }
+
+        this.setVertical(verticalSplit);
     },
 
     /**
@@ -186,6 +172,8 @@ WebInspector.SidebarView.prototype = {
 
     onResize: function()
     {
+        if (this._autoOrientation)
+            this._updateSidebarPosition();
         WebInspector.SplitView.prototype.onResize.call(this);
         this.dispatchEventToListeners(WebInspector.SidebarView.EventTypes.Resized, this.sidebarWidth());
     },

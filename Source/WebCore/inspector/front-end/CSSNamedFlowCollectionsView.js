@@ -33,7 +33,7 @@
  */
 WebInspector.CSSNamedFlowCollectionsView = function()
 {
-    WebInspector.SidebarView.call(this, WebInspector.SidebarView.SidebarPosition.Left);
+    WebInspector.SidebarView.call(this, WebInspector.SidebarView.SidebarPosition.Start);
     this.registerRequiredCSS("cssNamedFlows.css");
 
     this._namedFlows = {};
@@ -46,11 +46,11 @@ WebInspector.CSSNamedFlowCollectionsView = function()
     this._statusElement = document.createElement("span");
     this._statusElement.textContent = WebInspector.UIString("CSS Named Flows");
 
-    var sidebarHeader = this._leftElement.createChild("div", "tabbed-pane-header selected sidebar-header")
+    var sidebarHeader = this.firstElement().createChild("div", "tabbed-pane-header selected sidebar-header");
     var tab = sidebarHeader.createChild("div", "tabbed-pane-header-tab");
     tab.createChild("span", "tabbed-pane-header-tab-title").textContent = WebInspector.UIString("CSS Named Flows");
 
-    this._sidebarContentElement = this._leftElement.createChild("div", "sidebar-content outline-disclosure");
+    this._sidebarContentElement = this.firstElement().createChild("div", "sidebar-content outline-disclosure");
     this._flowListElement = this._sidebarContentElement.createChild("ol");
     this._flowTree = new TreeOutline(this._flowListElement);
 
@@ -60,7 +60,7 @@ WebInspector.CSSNamedFlowCollectionsView = function()
 
     this._tabbedPane = new WebInspector.TabbedPane();
     this._tabbedPane.closeableTabs = true;
-    this._tabbedPane.show(this._rightElement);
+    this._tabbedPane.show(this.secondElement());
 }
 
 WebInspector.CSSNamedFlowCollectionsView.prototype = {

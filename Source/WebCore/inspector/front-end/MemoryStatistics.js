@@ -43,7 +43,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
     model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
     this._containerAnchor = timelinePanel.element.lastChild;
-    this._memorySidebarView = new WebInspector.SidebarView(WebInspector.SidebarView.SidebarPosition.Left, undefined, sidebarWidth);
+    this._memorySidebarView = new WebInspector.SidebarView(WebInspector.SidebarView.SidebarPosition.Start, undefined, sidebarWidth);
     this._memorySidebarView.sidebarElement.addStyleClass("sidebar");
     this._memorySidebarView.element.id = "memory-graphs-container";
 

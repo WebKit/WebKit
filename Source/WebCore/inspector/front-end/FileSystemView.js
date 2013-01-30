@@ -35,7 +35,7 @@
  */
 WebInspector.FileSystemView = function(fileSystem)
 {
-    WebInspector.SidebarView.call(this, WebInspector.SidebarView.SidebarPosition.Left, "FileSystemViewSidebarWidth");
+    WebInspector.SidebarView.call(this, WebInspector.SidebarView.SidebarPosition.Start, "FileSystemViewSidebarWidth");
     this.element.addStyleClass("file-system-view");
     this.element.addStyleClass("storage-view");
 
