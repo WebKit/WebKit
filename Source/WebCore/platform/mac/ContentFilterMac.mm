@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassOwnPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response)
+PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response)
 {
-    return adoptPtr(new ContentFilter(response));
+    return adoptRef(new ContentFilter(response));
 }
 
 ContentFilter::ContentFilter(const ResourceResponse& response)

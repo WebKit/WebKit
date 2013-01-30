@@ -131,7 +131,7 @@ private:
     unsigned long m_identifierForLoadWithoutResourceLoader;
 
 #if USE(CONTENT_FILTERING)
-    OwnPtr<ContentFilter> m_contentFilter;
+    RefPtr<ContentFilter> m_contentFilter;
 #endif
 };
 

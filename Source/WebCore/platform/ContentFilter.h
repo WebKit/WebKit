@@ -28,7 +28,8 @@
 
 #if USE(CONTENT_FILTERING)
 
-#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -39,9 +40,9 @@ namespace WebCore {
 
 class ResourceResponse;
 
-class ContentFilter {
+class ContentFilter : public RefCounted<ContentFilter> {
 public:
-    static PassOwnPtr<ContentFilter> create(const ResourceResponse&);
+    static PassRefPtr<ContentFilter> create(const ResourceResponse&);
     static bool isEnabled();
     
     void addData(const char* data, int length);
