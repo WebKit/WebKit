@@ -1,3 +1,21 @@
+2013-01-30  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r138606
+
+    2013-01-01  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/12942239> Update copyright strings
+
+            Reviewed by Sam Weinig.
+
+            * Info.plist:
+            * NetworkProcess/Info.plist:
+            * PluginProcess/Info.plist:
+            * SharedWorkerProcess/Info.plist:
+            * WebProcess/Info.plist:
+            * WebProcessService/Info.plist:
+            * WebProcessServiceForWebKitDevelopment/Info.plist:
+
 2013-01-11  Anders Carlsson  <andersca@apple.com>
 
         Merge r139464.
