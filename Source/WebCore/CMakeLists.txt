@@ -944,11 +944,11 @@ set(WebCore_SOURCES
     Modules/webaudio/WaveShaperProcessor.cpp
     Modules/webaudio/WaveTable.cpp
 
-    Modules/webdatabase/AbstractDatabase.cpp
     Modules/webdatabase/ChangeVersionWrapper.cpp
     Modules/webdatabase/DOMWindowWebDatabase.cpp
     Modules/webdatabase/Database.cpp
     Modules/webdatabase/DatabaseAuthorizer.cpp
+    Modules/webdatabase/DatabaseBackend.cpp
     Modules/webdatabase/DatabaseContext.cpp
     Modules/webdatabase/DatabaseManager.cpp
     Modules/webdatabase/DatabaseSync.cpp

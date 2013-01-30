@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebDatabase.h"
 
-#include "AbstractDatabase.h"
+#include "DatabaseBackend.h"
 #include "DatabaseManager.h"
 #include "QuotaTracker.h"
 #include "SecurityOrigin.h"
@@ -42,7 +42,7 @@
 
 #if !ENABLE(SQL_DATABASE)
 namespace WebCore {
-class AbstractDatabase {
+class DatabaseBackend {
 public:
     String stringIdentifier() const { return String(); }
     String displayName() const { return String(); }
@@ -127,7 +127,7 @@ void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, co
 #endif
 }
 
-WebDatabase::WebDatabase(const AbstractDatabase* database)
+WebDatabase::WebDatabase(const DatabaseBackend* database)
     : m_database(database)
 {
 }

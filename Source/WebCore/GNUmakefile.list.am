@@ -2092,8 +2092,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
 	Source/WebCore/Modules/webaudio/WaveTable.cpp \
 	Source/WebCore/Modules/webaudio/WaveTable.h \
-	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
-	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
@@ -2103,6 +2101,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/Database.h \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBackend.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseBackend.h \
 	Source/WebCore/Modules/webdatabase/DatabaseBasicTypes.h \
 	Source/WebCore/Modules/webdatabase/DatabaseCallback.h \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \

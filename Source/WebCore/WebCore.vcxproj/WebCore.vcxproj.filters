@@ -1827,9 +1827,6 @@
     <ClCompile Include="..\Modules\notifications\WorkerContextNotifications.cpp">
       <Filter>Modules\notifications</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\AbstractDatabase.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -1837,6 +1834,9 @@
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DatabaseAuthorizer.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\DatabaseBackend.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DatabaseContext.cpp">
@@ -8432,9 +8432,6 @@
     <ClInclude Include="..\Modules\notifications\WorkerContextNotifications.h">
       <Filter>Modules\notifications</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\AbstractDatabase.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
@@ -8445,6 +8442,9 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseAuthorizer.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\DatabaseBackend.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseCallback.h">

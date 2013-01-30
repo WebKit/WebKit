@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AbstractDatabase_h
-#define AbstractDatabase_h
+#ifndef DatabaseBackend_h
+#define DatabaseBackend_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -50,9 +50,9 @@ class DatabaseContext;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
-class AbstractDatabase : public ThreadSafeRefCounted<AbstractDatabase> {
+class DatabaseBackend : public ThreadSafeRefCounted<DatabaseBackend> {
 public:
-    virtual ~AbstractDatabase();
+    virtual ~DatabaseBackend();
 
     virtual String version() const;
 
@@ -101,8 +101,8 @@ protected:
         SyncDatabase
     };
 
-    AbstractDatabase(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
-                     const String& displayName, unsigned long estimatedSize, DatabaseType);
+    DatabaseBackend(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
+        const String& displayName, unsigned long estimatedSize, DatabaseType);
 
     void closeDatabase();
 
@@ -156,4 +156,4 @@ private:
 
 #endif // ENABLE(SQL_DATABASE)
 
-#endif // AbstractDatabase_h
+#endif // DatabaseBackend_h

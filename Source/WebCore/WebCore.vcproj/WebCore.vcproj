@@ -25369,14 +25369,6 @@
 				Name="webdatabase"
 				>
 				<File
-					RelativePath="..\Modules\webdatabase\AbstractDatabase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\AbstractDatabase.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Modules\webdatabase\AbstractDatabaseServer.h"
 					>
 				</File>
@@ -25402,6 +25394,14 @@
 				</File>
 				<File
 					RelativePath="..\Modules\webdatabase\DatabaseAuthorizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackend.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackend.h"
 					>
 				</File>
 				<File

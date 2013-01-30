@@ -66,7 +66,7 @@
 namespace WebCore {
 
 Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
+    : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
     , m_deleted(false)
@@ -117,7 +117,7 @@ String Database::version() const
 {
     if (m_deleted)
         return String();
-    return AbstractDatabase::version();
+    return DatabaseBackend::version();
 }
 
 bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode& e, String& errorMessage)
@@ -191,7 +191,7 @@ unsigned long long Database::maximumSize() const
 
 bool Database::performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode& e, String& errorMessage)
 {
-    if (AbstractDatabase::performOpenAndVerify(setVersionInNewDatabase, e, errorMessage)) {
+    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, e, errorMessage)) {
         if (databaseContext()->databaseThread())
             databaseContext()->databaseThread()->recordDatabaseOpen(this);
 

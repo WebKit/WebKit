@@ -31,7 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabase.h"
+#include "DatabaseBackend.h"
 #include "DatabaseBasicTypes.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -49,7 +49,7 @@ class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
 
-class Database : public AbstractDatabase {
+class Database : public DatabaseBackend {
 public:
     virtual ~Database();
 

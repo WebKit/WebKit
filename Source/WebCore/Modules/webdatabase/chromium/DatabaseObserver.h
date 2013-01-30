@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class AbstractDatabase;
+class DatabaseBackend;
 class ScriptExecutionContext;
 
 // The implementation of this class is in the WebKit API (Chromium source tree)
@@ -45,16 +45,16 @@ class ScriptExecutionContext;
 class DatabaseObserver {
 public:
     static bool canEstablishDatabase(ScriptExecutionContext*, const String&, const String&, unsigned long);
-    static void databaseOpened(AbstractDatabase*);
-    static void databaseModified(AbstractDatabase*);
-    static void databaseClosed(AbstractDatabase*);
+    static void databaseOpened(DatabaseBackend*);
+    static void databaseModified(DatabaseBackend*);
+    static void databaseClosed(DatabaseBackend*);
 
-    static void reportOpenDatabaseResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportChangeVersionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportStartTransactionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportCommitTransactionResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportExecuteStatementResult(AbstractDatabase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportVacuumDatabaseResult(AbstractDatabase*, int sqliteErrorCode);
+    static void reportOpenDatabaseResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportChangeVersionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportStartTransactionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportCommitTransactionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportExecuteStatementResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportVacuumDatabaseResult(DatabaseBackend*, int sqliteErrorCode);
 };
 
 }

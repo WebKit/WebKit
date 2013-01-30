@@ -19,10 +19,10 @@ SOURCES += \
     Modules/geolocation/GeolocationController.cpp \
     Modules/geolocation/NavigatorGeolocation.cpp \
     \
-    Modules/webdatabase/AbstractDatabase.cpp \
     Modules/webdatabase/DOMWindowWebDatabase.cpp \
     Modules/webdatabase/Database.cpp \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
+    Modules/webdatabase/DatabaseBackend.cpp \
     Modules/webdatabase/DatabaseContext.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
     Modules/webdatabase/DBBackendServer.cpp \
@@ -1434,12 +1434,12 @@ HEADERS += \
     Modules/proximity/DeviceProximityController.h \
     Modules/proximity/DeviceProximityEvent.h \
     \
-    Modules/webdatabase/AbstractDatabase.h \
     Modules/webdatabase/AbstractDatabaseServer.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
     Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
     Modules/webdatabase/Database.h \
+    Modules/webdatabase/DatabaseBackend.h \
     Modules/webdatabase/DatabaseCallback.h \
     Modules/webdatabase/DatabaseManager.h \
     Modules/webdatabase/DatabaseSync.h \

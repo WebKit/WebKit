@@ -33,9 +33,9 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabase.h"
 #include "CrossThreadCopier.h"
 #include "CrossThreadTask.h"
+#include "DatabaseBackend.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "WebCommonWorkerClient.h"
@@ -177,50 +177,50 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
     return true;
 }
 
-void DatabaseObserver::databaseOpened(AbstractDatabase* database)
+void DatabaseObserver::databaseOpened(DatabaseBackend* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseOpened(WebDatabase(database));
 }
 
-void DatabaseObserver::databaseModified(AbstractDatabase* database)
+void DatabaseObserver::databaseModified(DatabaseBackend* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseModified(WebDatabase(database));
 }
 
-void DatabaseObserver::databaseClosed(AbstractDatabase* database)
+void DatabaseObserver::databaseClosed(DatabaseBackend* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseClosed(WebDatabase(database));
 }
 
-void DatabaseObserver::reportOpenDatabaseResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseObserver::reportOpenDatabaseResult(DatabaseBackend* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportOpenDatabaseResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseObserver::reportChangeVersionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseObserver::reportChangeVersionResult(DatabaseBackend* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportChangeVersionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseObserver::reportStartTransactionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseObserver::reportStartTransactionResult(DatabaseBackend* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportStartTransactionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseObserver::reportCommitTransactionResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseObserver::reportCommitTransactionResult(DatabaseBackend* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportCommitTransactionResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseObserver::reportExecuteStatementResult(AbstractDatabase* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseObserver::reportExecuteStatementResult(DatabaseBackend* database, int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportExecuteStatementResult(WebDatabase(database), errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseObserver::reportVacuumDatabaseResult(AbstractDatabase* database, int sqliteErrorCode)
+void DatabaseObserver::reportVacuumDatabaseResult(DatabaseBackend* database, int sqliteErrorCode)
 {
     WebDatabase::observer()->reportVacuumDatabaseResult(WebDatabase(database), sqliteErrorCode);
 }

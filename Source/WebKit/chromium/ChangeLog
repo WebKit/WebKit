@@ -1,3 +1,28 @@
+2013-01-29  Mark Lam  <mark.lam@apple.com>
+
+        Rename AbstractDatabase to DatabaseBackend.
+        https://bugs.webkit.org/show_bug.cgi?id=108275.
+
+        Reviewed by Sam Weinig.
+
+        This is a pure rename operation as part of the webdatabase refactoring
+        effort. There is no semantic change in this patch.
+
+        * public/WebDatabase.h:
+        (WebDatabase):
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::databaseOpened):
+        (WebCore::DatabaseObserver::databaseModified):
+        (WebCore::DatabaseObserver::databaseClosed):
+        (WebCore::DatabaseObserver::reportOpenDatabaseResult):
+        (WebCore::DatabaseObserver::reportChangeVersionResult):
+        (WebCore::DatabaseObserver::reportStartTransactionResult):
+        (WebCore::DatabaseObserver::reportCommitTransactionResult):
+        (WebCore::DatabaseObserver::reportExecuteStatementResult):
+        (WebCore::DatabaseObserver::reportVacuumDatabaseResult):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::WebDatabase):
+
 2013-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141153.

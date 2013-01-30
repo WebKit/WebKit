@@ -50,7 +50,7 @@ namespace WebCore {
 
 DatabaseSync::DatabaseSync(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
                            const String& displayName, unsigned long estimatedSize)
-    : AbstractDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
+    : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
 {
 }
 

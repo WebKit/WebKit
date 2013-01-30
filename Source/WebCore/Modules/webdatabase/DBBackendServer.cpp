@@ -130,7 +130,7 @@ void Server::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String&
     DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(origin, name);
 }
 
-void Server::databaseChanged(AbstractDatabase* database)
+void Server::databaseChanged(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().databaseChanged(database);
 }
@@ -152,12 +152,12 @@ bool Server::canEstablishDatabase(ScriptExecutionContext* context, const String&
     return DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize);
 }
 
-void Server::addOpenDatabase(AbstractDatabase* database)
+void Server::addOpenDatabase(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().addOpenDatabase(database);
 }
 
-void Server::removeOpenDatabase(AbstractDatabase* database)
+void Server::removeOpenDatabase(DatabaseBackend* database)
 {
     DatabaseTracker::tracker().removeOpenDatabase(database);
 }
@@ -167,7 +167,7 @@ void Server::setDatabaseDetails(SecurityOrigin* origin, const String& name, cons
     DatabaseTracker::tracker().setDatabaseDetails(origin, name, displayName, estimatedSize);
 }
 
-unsigned long long Server::getMaxSizeForDatabase(const AbstractDatabase* database)
+unsigned long long Server::getMaxSizeForDatabase(const DatabaseBackend* database)
 {
     return DatabaseTracker::tracker().getMaxSizeForDatabase(database);
 }

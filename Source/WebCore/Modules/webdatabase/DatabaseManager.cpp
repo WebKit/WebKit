@@ -28,8 +28,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabase.h"
 #include "Database.h"
+#include "DatabaseBackend.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseSync.h"
@@ -338,7 +338,7 @@ void DatabaseManager::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, cons
     m_server->scheduleNotifyDatabaseChanged(origin, name);
 }
 
-void DatabaseManager::databaseChanged(AbstractDatabase* database)
+void DatabaseManager::databaseChanged(DatabaseBackend* database)
 {
     m_server->databaseChanged(database);
 }
@@ -362,12 +362,12 @@ bool DatabaseManager::canEstablishDatabase(ScriptExecutionContext* context, cons
     return m_server->canEstablishDatabase(context, name, displayName, estimatedSize);
 }
 
-void DatabaseManager::addOpenDatabase(AbstractDatabase* database)
+void DatabaseManager::addOpenDatabase(DatabaseBackend* database)
 {
     m_server->addOpenDatabase(database);
 }
 
-void DatabaseManager::removeOpenDatabase(AbstractDatabase* database)
+void DatabaseManager::removeOpenDatabase(DatabaseBackend* database)
 {
     m_server->removeOpenDatabase(database);
 }
@@ -377,7 +377,7 @@ void DatabaseManager::setDatabaseDetails(SecurityOrigin* origin, const String& n
     m_server->setDatabaseDetails(origin, name, displayName, estimatedSize);
 }
 
-unsigned long long DatabaseManager::getMaxSizeForDatabase(const AbstractDatabase* database)
+unsigned long long DatabaseManager::getMaxSizeForDatabase(const DatabaseBackend* database)
 {
     return m_server->getMaxSizeForDatabase(database);
 }

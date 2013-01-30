@@ -34,7 +34,7 @@
 #include "../../../Platform/chromium/public/WebCommon.h"
 #include "WebSecurityOrigin.h"
 
-namespace WebCore { class AbstractDatabase; }
+namespace WebCore { class DatabaseBackend; }
 
 namespace WebKit {
 
@@ -63,12 +63,12 @@ public:
         const WebString& originIdentifier, const WebString& databaseName);
 
 #if WEBKIT_IMPLEMENTATION
-    WebDatabase(const WebCore::AbstractDatabase*);
+    WebDatabase(const WebCore::DatabaseBackend*);
 #endif
 
 private:
     WebDatabase() { }
-    const WebCore::AbstractDatabase* m_database;
+    const WebCore::DatabaseBackend* m_database;
 };
 
 } // namespace WebKit

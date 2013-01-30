@@ -33,7 +33,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabase.h"
+#include "DatabaseBackend.h"
 #include "DatabaseBasicTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +50,7 @@ class SQLTransactionSyncCallback;
 class SecurityOrigin;
 
 // Instances of this class should be created and used only on the worker's context thread.
-class DatabaseSync : public AbstractDatabase {
+class DatabaseSync : public DatabaseBackend {
 public:
     virtual ~DatabaseSync();
 

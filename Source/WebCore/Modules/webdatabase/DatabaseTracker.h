@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class AbstractDatabase;
+class DatabaseBackend;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
@@ -74,12 +74,12 @@ public:
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
-    void addOpenDatabase(AbstractDatabase*);
-    void removeOpenDatabase(AbstractDatabase*);
-    void getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases);
+    void addOpenDatabase(DatabaseBackend*);
+    void removeOpenDatabase(DatabaseBackend*);
+    void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<DatabaseBackend> >* databases);
 
-    unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
-    void databaseChanged(AbstractDatabase*);
+    unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
+    void databaseChanged(DatabaseBackend*);
 
     void interruptAllDatabasesForContext(const ScriptExecutionContext*);
 
@@ -131,7 +131,7 @@ private:
 
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
-    typedef HashSet<AbstractDatabase*> DatabaseSet;
+    typedef HashSet<DatabaseBackend*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash> DatabaseOriginMap;
 
@@ -175,12 +175,12 @@ public:
     void closeDatabasesImmediately(const String& originIdentifier, const String& name);
 
 private:
-    typedef HashSet<AbstractDatabase*> DatabaseSet;
+    typedef HashSet<DatabaseBackend*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<String, DatabaseNameMap*> DatabaseOriginMap;
     class CloseOneDatabaseImmediatelyTask;
 
-    void closeOneDatabaseImmediately(const String& originIdentifier, const String& name, AbstractDatabase* database);
+    void closeOneDatabaseImmediately(const String& originIdentifier, const String& name, DatabaseBackend*);
 
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;

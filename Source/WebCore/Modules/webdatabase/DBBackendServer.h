@@ -63,7 +63,7 @@ public:
 
     // From a secondary thread, must be thread safe with its data
     virtual void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
-    virtual void databaseChanged(AbstractDatabase*);
+    virtual void databaseChanged(DatabaseBackend*);
 
 #else // PLATFORM(CHROMIUM)
     virtual void closeDatabasesImmediately(const String& originIdentifier, const String& name);
@@ -72,11 +72,11 @@ public:
     virtual void interruptAllDatabasesForContext(const ScriptExecutionContext*);
 
     virtual bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
-    virtual void addOpenDatabase(AbstractDatabase*);
-    virtual void removeOpenDatabase(AbstractDatabase*);
+    virtual void addOpenDatabase(DatabaseBackend*);
+    virtual void removeOpenDatabase(DatabaseBackend*);
 
     virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
-    virtual unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
+    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
 };
 
 } // namespace DBBackend

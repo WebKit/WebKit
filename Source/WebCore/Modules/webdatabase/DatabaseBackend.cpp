@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "AbstractDatabase.h"
+#include "DatabaseBackend.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -140,7 +140,7 @@ static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<DatabaseGuid, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
+typedef HashMap<DatabaseGuid, HashSet<DatabaseBackend*>*> GuidDatabaseMap;
 static GuidDatabaseMap& guidToDatabaseMap()
 {
     // Ensure the the mutex is locked.
@@ -169,13 +169,13 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
 }
 
 // static
-const char* AbstractDatabase::databaseInfoTableName()
+const char* DatabaseBackend::databaseInfoTableName()
 {
     return infoTableName;
 }
 
-AbstractDatabase::AbstractDatabase(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
-                                   const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
+DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
+    const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
     : m_databaseContext(databaseContext)
     , m_scriptExecutionContext(m_databaseContext->scriptExecutionContext())
     , m_name(name.isolatedCopy())
@@ -198,9 +198,9 @@ AbstractDatabase::AbstractDatabase(PassRefPtr<DatabaseContext> databaseContext, 
     {
         MutexLocker locker(guidMutex());
         m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
-        HashSet<AbstractDatabase*>* hashSet = guidToDatabaseMap().get(m_guid);
+        HashSet<DatabaseBackend*>* hashSet = guidToDatabaseMap().get(m_guid);
         if (!hashSet) {
-            hashSet = new HashSet<AbstractDatabase*>;
+            hashSet = new HashSet<DatabaseBackend*>;
             guidToDatabaseMap().set(m_guid, hashSet);
         }
 
@@ -211,12 +211,12 @@ AbstractDatabase::AbstractDatabase(PassRefPtr<DatabaseContext> databaseContext, 
     DatabaseManager::manager().addOpenDatabase(this);
 }
 
-AbstractDatabase::~AbstractDatabase()
+DatabaseBackend::~DatabaseBackend()
 {
     ASSERT(!m_opened);
 }
 
-void AbstractDatabase::closeDatabase()
+void DatabaseBackend::closeDatabase()
 {
     if (!m_opened)
         return;
@@ -226,7 +226,7 @@ void AbstractDatabase::closeDatabase()
     {
         MutexLocker locker(guidMutex());
 
-        HashSet<AbstractDatabase*>* hashSet = guidToDatabaseMap().get(m_guid);
+        HashSet<DatabaseBackend*>* hashSet = guidToDatabaseMap().get(m_guid);
         ASSERT(hashSet);
         ASSERT(hashSet->contains(this));
         hashSet->remove(this);
@@ -238,7 +238,7 @@ void AbstractDatabase::closeDatabase()
     }
 }
 
-String AbstractDatabase::version() const
+String DatabaseBackend::version() const
 {
     // Note: In multi-process browsers the cached value may be accurate, but we cannot read the
     // actual version from the database without potentially inducing a deadlock.
@@ -246,7 +246,7 @@ String AbstractDatabase::version() const
     return getCachedVersion();
 }
 
-bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec, String& errorMessage)
+bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec, String& errorMessage)
 {
     ASSERT(errorMessage.isEmpty());
 
@@ -369,45 +369,45 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
     return true;
 }
 
-ScriptExecutionContext* AbstractDatabase::scriptExecutionContext() const
+ScriptExecutionContext* DatabaseBackend::scriptExecutionContext() const
 {
     return m_scriptExecutionContext.get();
 }
 
-SecurityOrigin* AbstractDatabase::securityOrigin() const
+SecurityOrigin* DatabaseBackend::securityOrigin() const
 {
     return m_contextThreadSecurityOrigin.get();
 }
 
-String AbstractDatabase::stringIdentifier() const
+String DatabaseBackend::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
     return m_name.isolatedCopy();
 }
 
-String AbstractDatabase::displayName() const
+String DatabaseBackend::displayName() const
 {
     // Return a deep copy for ref counting thread safety
     return m_displayName.isolatedCopy();
 }
 
-unsigned long AbstractDatabase::estimatedSize() const
+unsigned long DatabaseBackend::estimatedSize() const
 {
     return m_estimatedSize;
 }
 
-String AbstractDatabase::fileName() const
+String DatabaseBackend::fileName() const
 {
     // Return a deep copy for ref counting thread safety
     return m_filename.isolatedCopy();
 }
 
-DatabaseDetails AbstractDatabase::details() const
+DatabaseDetails DatabaseBackend::details() const
 {
     return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0);
 }
 
-bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
+bool DatabaseBackend::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
     String query(String("SELECT value FROM ") + infoTableName +  " WHERE key = '" + versionKey + "';");
 
@@ -425,7 +425,7 @@ bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheV
     return result;
 }
 
-bool AbstractDatabase::setVersionInDatabase(const String& version, bool shouldCacheVersion)
+bool DatabaseBackend::setVersionInDatabase(const String& version, bool shouldCacheVersion)
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
@@ -445,25 +445,25 @@ bool AbstractDatabase::setVersionInDatabase(const String& version, bool shouldCa
     return result;
 }
 
-void AbstractDatabase::setExpectedVersion(const String& version)
+void DatabaseBackend::setExpectedVersion(const String& version)
 {
     m_expectedVersion = version.isolatedCopy();
 }
 
-String AbstractDatabase::getCachedVersion() const
+String DatabaseBackend::getCachedVersion() const
 {
     MutexLocker locker(guidMutex());
     return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
-void AbstractDatabase::setCachedVersion(const String& actualVersion)
+void DatabaseBackend::setCachedVersion(const String& actualVersion)
 {
     // Update the in memory database version map.
     MutexLocker locker(guidMutex());
     updateGuidVersionMap(m_guid, actualVersion);
 }
 
-bool AbstractDatabase::getActualVersionForTransaction(String &actualVersion)
+bool DatabaseBackend::getActualVersionForTransaction(String &actualVersion)
 {
     ASSERT(m_sqliteDatabase.transactionInProgress());
 #if PLATFORM(CHROMIUM)
@@ -476,66 +476,66 @@ bool AbstractDatabase::getActualVersionForTransaction(String &actualVersion)
 #endif
 }
 
-void AbstractDatabase::disableAuthorizer()
+void DatabaseBackend::disableAuthorizer()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->disable();
 }
 
-void AbstractDatabase::enableAuthorizer()
+void DatabaseBackend::enableAuthorizer()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->enable();
 }
 
-void AbstractDatabase::setAuthorizerReadOnly()
+void DatabaseBackend::setAuthorizerReadOnly()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->setReadOnly();
 }
 
-void AbstractDatabase::setAuthorizerPermissions(int permissions)
+void DatabaseBackend::setAuthorizerPermissions(int permissions)
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->setPermissions(permissions);
 }
 
-bool AbstractDatabase::lastActionChangedDatabase()
+bool DatabaseBackend::lastActionChangedDatabase()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionChangedDatabase();
 }
 
-bool AbstractDatabase::lastActionWasInsert()
+bool DatabaseBackend::lastActionWasInsert()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionWasInsert();
 }
 
-void AbstractDatabase::resetDeletes()
+void DatabaseBackend::resetDeletes()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->resetDeletes();
 }
 
-bool AbstractDatabase::hadDeletes()
+bool DatabaseBackend::hadDeletes()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->hadDeletes();
 }
 
-void AbstractDatabase::resetAuthorizer()
+void DatabaseBackend::resetAuthorizer()
 {
     if (m_databaseAuthorizer)
         m_databaseAuthorizer->reset();
 }
 
-unsigned long long AbstractDatabase::maximumSize() const
+unsigned long long DatabaseBackend::maximumSize() const
 {
     return DatabaseManager::manager().getMaxSizeForDatabase(this);
 }
 
-void AbstractDatabase::incrementalVacuumIfNeeded()
+void DatabaseBackend::incrementalVacuumIfNeeded()
 {
     int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
     int64_t totalSize = m_sqliteDatabase.totalSize();
@@ -547,18 +547,18 @@ void AbstractDatabase::incrementalVacuumIfNeeded()
     }
 }
 
-void AbstractDatabase::interrupt()
+void DatabaseBackend::interrupt()
 {
     m_sqliteDatabase.interrupt();
 }
 
-bool AbstractDatabase::isInterrupted()
+bool DatabaseBackend::isInterrupted()
 {
     MutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
 }
 
-void AbstractDatabase::logErrorMessage(const String& message)
+void DatabaseBackend::logErrorMessage(const String& message)
 {
     m_scriptExecutionContext->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);
 }
@@ -566,43 +566,43 @@ void AbstractDatabase::logErrorMessage(const String& message)
 #if PLATFORM(CHROMIUM)
 // These are used to generate histograms of errors seen with websql.
 // See about:histograms in chromium.
-void AbstractDatabase::reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackend::reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportOpenDatabaseResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void AbstractDatabase::reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackend::reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportChangeVersionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void AbstractDatabase::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackend::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportStartTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void AbstractDatabase::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackend::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportCommitTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void AbstractDatabase::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackend::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportExecuteStatementResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void AbstractDatabase::reportVacuumDatabaseResult(int sqliteErrorCode)
+void DatabaseBackend::reportVacuumDatabaseResult(int sqliteErrorCode)
 {
     DatabaseObserver::reportVacuumDatabaseResult(this, sqliteErrorCode);
 }
 
 #else
-void AbstractDatabase::reportOpenDatabaseResult(int, int, int) { }
-void AbstractDatabase::reportChangeVersionResult(int, int, int) { }
-void AbstractDatabase::reportStartTransactionResult(int, int, int) { }
-void AbstractDatabase::reportCommitTransactionResult(int, int, int) { }
-void AbstractDatabase::reportExecuteStatementResult(int, int, int) { }
-void AbstractDatabase::reportVacuumDatabaseResult(int) { }
+void DatabaseBackend::reportOpenDatabaseResult(int, int, int) { }
+void DatabaseBackend::reportChangeVersionResult(int, int, int) { }
+void DatabaseBackend::reportStartTransactionResult(int, int, int) { }
+void DatabaseBackend::reportCommitTransactionResult(int, int, int) { }
+void DatabaseBackend::reportExecuteStatementResult(int, int, int) { }
+void DatabaseBackend::reportVacuumDatabaseResult(int) { }
 #endif // PLATFORM(CHROMIUM)
 
 } // namespace WebCore

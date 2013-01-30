@@ -103,7 +103,7 @@ public:
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
 
-    void databaseChanged(AbstractDatabase*);
+    void databaseChanged(DatabaseBackend*);
 
 #else // PLATFORM(CHROMIUM)
     void closeDatabasesImmediately(const String& originIdentifier, const String& name);
@@ -112,11 +112,11 @@ public:
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
     bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
-    void addOpenDatabase(AbstractDatabase*);
-    void removeOpenDatabase(AbstractDatabase*);
+    void addOpenDatabase(DatabaseBackend*);
+    void removeOpenDatabase(DatabaseBackend*);
 
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
-    unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
+    unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
 
 private:
     DatabaseManager();

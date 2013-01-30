@@ -33,7 +33,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabase.h"
+#include "DatabaseBackend.h"
 #include "DatabaseObserver.h"
 #include "ScriptExecutionContext.h"
 
@@ -41,7 +41,7 @@ namespace WebCore {
 
 class NotifyDatabaseChangedTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<NotifyDatabaseChangedTask> create(AbstractDatabase *database)
+    static PassOwnPtr<NotifyDatabaseChangedTask> create(DatabaseBackend *database)
     {
         return adoptPtr(new NotifyDatabaseChangedTask(database));
     }
@@ -52,15 +52,15 @@ public:
     }
 
 private:
-    NotifyDatabaseChangedTask(PassRefPtr<AbstractDatabase> database)
+    NotifyDatabaseChangedTask(PassRefPtr<DatabaseBackend> database)
         : m_database(database)
     {
     }
 
-    RefPtr<AbstractDatabase> m_database;
+    RefPtr<DatabaseBackend> m_database;
 };
 
-void SQLTransactionClient::didCommitWriteTransaction(AbstractDatabase* database)
+void SQLTransactionClient::didCommitWriteTransaction(DatabaseBackend* database)
 {
     if (!database->scriptExecutionContext()->isContextThread()) {
         database->scriptExecutionContext()->postTask(NotifyDatabaseChangedTask::create(database));
@@ -70,13 +70,13 @@ void SQLTransactionClient::didCommitWriteTransaction(AbstractDatabase* database)
     WebCore::DatabaseObserver::databaseModified(database);
 }
 
-void SQLTransactionClient::didExecuteStatement(AbstractDatabase* database)
+void SQLTransactionClient::didExecuteStatement(DatabaseBackend* database)
 {
     // This method is called after executing every statement that changes the DB.
     // Chromium doesn't need to do anything at that point.
 }
 
-bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
+bool SQLTransactionClient::didExceedQuota(DatabaseBackend* database)
 {
     // Chromium does not allow users to manually change the quota for an origin (for now, at least).
     // Don't do anything.
