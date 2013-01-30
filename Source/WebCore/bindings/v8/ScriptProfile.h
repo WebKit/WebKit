@@ -35,6 +35,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INSPECTOR)
+#include "InspectorTypeBuilder.h"
+#endif
+
 namespace v8 {
 class CpuProfile;
 }
@@ -60,8 +64,8 @@ public:
     double idleTime() const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;
-    PassRefPtr<InspectorObject> buildInspectorObjectForBottomUpHead() const;
+    PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForHead() const;
+    PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForBottomUpHead() const;
 #endif
 
 private:

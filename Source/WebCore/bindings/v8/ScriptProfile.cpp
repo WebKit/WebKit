@@ -71,35 +71,36 @@ double ScriptProfile::idleTime() const
 }
 
 #if ENABLE(INSPECTOR)
-static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::CpuProfileNode* node)
+static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectFor(const v8::CpuProfileNode* node)
 {
     v8::HandleScope handleScope;
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    result->setString("functionName", toWebCoreString(node->GetFunctionName()));
-    result->setString("url", toWebCoreString(node->GetScriptResourceName()));
-    result->setNumber("lineNumber", node->GetLineNumber());
-    result->setNumber("totalTime", node->GetTotalTime());
-    result->setNumber("selfTime", node->GetSelfTime());
-    result->setNumber("numberOfCalls", 0);
-    result->setBoolean("visible", true);
-    result->setNumber("callUID", node->GetCallUid());
 
-    RefPtr<InspectorArray> children = InspectorArray::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode> > children = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>::create();
     const int childrenCount = node->GetChildrenCount();
     for (int i = 0; i < childrenCount; i++) {
         const v8::CpuProfileNode* child = node->GetChild(i);
-        children->pushObject(buildInspectorObjectFor(child));
+        children->addItem(buildInspectorObjectFor(child));
     }
-    result->setArray("children", children);
+
+    RefPtr<TypeBuilder::Profiler::CPUProfileNode> result = TypeBuilder::Profiler::CPUProfileNode::create()
+        .setFunctionName(toWebCoreString(node->GetFunctionName()))
+        .setUrl(toWebCoreString(node->GetScriptResourceName()))
+        .setLineNumber(node->GetLineNumber())
+        .setTotalTime(node->GetTotalTime())
+        .setSelfTime(node->GetSelfTime())
+        .setNumberOfCalls(0)
+        .setVisible(true)
+        .setCallUID(node->GetCallUid())
+        .setChildren(children.release());
     return result.release();
 }
 
-PassRefPtr<InspectorObject> ScriptProfile::buildInspectorObjectForHead() const
+PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForHead() const
 {
     return buildInspectorObjectFor(m_profile->GetTopDownRoot());
 }
 
-PassRefPtr<InspectorObject> ScriptProfile::buildInspectorObjectForBottomUpHead() const
+PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForBottomUpHead() const
 {
     return buildInspectorObjectFor(m_profile->GetBottomUpRoot());
 }
