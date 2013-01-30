@@ -44,15 +44,15 @@ public:
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
-        return static_cast<T*>(this)->sendMessage(MessageID(), encoder.release());
+        return static_cast<T*>(this)->sendMessage(encoder.release());
     }
     
-    bool sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
+    bool sendMessage(PassOwnPtr<MessageEncoder> encoder)
     {
         Connection* connection = static_cast<T*>(this)->connection();
         ASSERT(connection);
 
-        return connection->sendMessage(messageID, encoder);
+        return connection->sendMessage(encoder);
     }
 
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)

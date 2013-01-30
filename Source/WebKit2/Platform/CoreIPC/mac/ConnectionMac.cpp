@@ -135,7 +135,7 @@ bool Connection::open()
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(), encoder.release());
+        sendMessage(encoder.release());
 
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
@@ -156,7 +156,7 @@ bool Connection::open()
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(), encoder.release());
+        sendMessage(encoder.release());
     }
 
     return true;

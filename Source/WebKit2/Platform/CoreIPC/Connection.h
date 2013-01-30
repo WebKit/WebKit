@@ -180,9 +180,9 @@ public:
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
     PassOwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(MessageID, PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
-    PassOwnPtr<MessageDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
-    PassOwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout);
+    bool sendMessage(PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
+    PassOwnPtr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
+    PassOwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout);
     bool sendSyncReply(PassOwnPtr<MessageEncoder>);
 
     void wakeUpRunLoop();
@@ -405,7 +405,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
     
-    return sendMessage(MessageID(), encoder.release(), messageSendFlags);
+    return sendMessage(encoder.release(), messageSendFlags);
 }
 
 template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
@@ -419,7 +419,7 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
     encoder->encode(message);
 
     // Now send the message and wait for a reply.
-    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(MessageID(), syncRequestID, encoder.release(), timeout, syncSendFlags);
+    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, encoder.release(), timeout, syncSendFlags);
     if (!replyDecoder)
         return false;
 

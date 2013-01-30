@@ -112,7 +112,7 @@ void InjectedBundle::postMessage(const String& messageName, APIObject* messageBo
     encoder->encode(messageName);
     encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
 
-    WebProcess::shared().connection()->sendMessage(CoreIPC::MessageID(WebContextLegacyMessage::PostMessage), encoder.release());
+    WebProcess::shared().connection()->sendMessage(encoder.release());
 }
 
 void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
@@ -124,7 +124,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject
     encoder->encode(messageName);
     encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
 
-    OwnPtr<CoreIPC::MessageDecoder> replyDecoder = WebProcess::shared().connection()->sendSyncMessage(CoreIPC::MessageID(WebContextLegacyMessage::PostSynchronousMessage), syncRequestID, encoder.release(), CoreIPC::Connection::NoTimeout);
+    OwnPtr<CoreIPC::MessageDecoder> replyDecoder = WebProcess::shared().connection()->sendSyncMessage(syncRequestID, encoder.release(), CoreIPC::Connection::NoTimeout);
     if (!replyDecoder || !replyDecoder->decode(messageDecoder)) {
         returnData = nullptr;
         return;

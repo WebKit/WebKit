@@ -1,5 +1,35 @@
 2013-01-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove MessageID parameter from Connection::sendMessage
+        https://bugs.webkit.org/show_bug.cgi?id=108269
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::sendSyncReply):
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::sendSyncMessageFromSecondaryThread):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        (CoreIPC::MessageSender::sendMessage):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::sendMessage):
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::postMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+
+2013-01-29  Anders Carlsson  <andersca@apple.com>
+
         Stop generating the message kind enum
         https://bugs.webkit.org/show_bug.cgi?id=108258
 

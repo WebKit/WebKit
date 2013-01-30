@@ -315,7 +315,7 @@ PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference 
     return encoder.release();
 }
 
-bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder, unsigned messageSendFlags)
+bool Connection::sendMessage(PassOwnPtr<MessageEncoder> encoder, unsigned messageSendFlags)
 {
     if (!isValid())
         return false;
@@ -327,7 +327,7 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> enc
 
     {
         MutexLocker locker(m_outgoingMessagesLock);
-        m_outgoingMessages.append(OutgoingMessage(messageID, encoder));
+        m_outgoingMessages.append(OutgoingMessage(MessageID(), encoder));
     }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
@@ -337,7 +337,7 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> enc
 
 bool Connection::sendSyncReply(PassOwnPtr<MessageEncoder> encoder)
 {
-    return sendMessage(MessageID(), encoder);
+    return sendMessage(encoder);
 }
 
 PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout)
@@ -396,12 +396,12 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageRec
     return nullptr;
 }
 
-PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
+PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
 {
     if (RunLoop::current() != m_clientRunLoop) {
         // No flags are supported for synchronous messages sent from secondary threads.
         ASSERT(!syncSendFlags);
-        return sendSyncMessageFromSecondaryThread(messageID, syncRequestID, encoder, timeout);
+        return sendSyncMessageFromSecondaryThread(syncRequestID, encoder, timeout);
     }
 
     if (!isValid()) {
@@ -421,7 +421,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
     }
 
     // First send the message.
-    sendMessage(messageID, encoder, DispatchMessageEvenWhenWaitingForSyncReply);
+    sendMessage(encoder, DispatchMessageEvenWhenWaitingForSyncReply);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
@@ -441,7 +441,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
     return reply.release();
 }
 
-PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout)
+PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout)
 {
     ASSERT(RunLoop::current() != m_clientRunLoop);
 
@@ -460,7 +460,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(Messag
         m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
     }
 
-    sendMessage(messageID, encoder, 0);
+    sendMessage(encoder, 0);
 
     // Use a really long timeout.
     if (timeout == NoTimeout)
