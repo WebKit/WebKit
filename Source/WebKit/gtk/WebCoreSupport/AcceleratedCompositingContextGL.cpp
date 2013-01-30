@@ -26,6 +26,7 @@
 #include "ChromeClientGtk.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsLayerTextureMapper.h"
 #include "PlatformContextCairo.h"
 #include "Settings.h"
 #include "TextureMapperGL.h"

@@ -25,6 +25,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "FrameView.h"
+#include "GraphicsLayerTextureMapper.h"
 #include "QWebFrameAdapter.h"
 #include "QWebPageAdapter.h"
 #include "TextureMapperLayer.h"
