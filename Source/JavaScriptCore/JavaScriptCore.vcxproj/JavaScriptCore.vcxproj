@@ -400,7 +400,6 @@
     <ClInclude Include="..\dfg\DFGOSREntry.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />
     <ClInclude Include="..\heap\BlockAllocator.h" />
-    <ClInclude Include="..\heap\CardSet.h" />
     <ClInclude Include="..\heap\ConservativeRoots.h" />
     <ClInclude Include="..\heap\CopiedAllocator.h" />
     <ClInclude Include="..\heap\CopiedBlock.h" />

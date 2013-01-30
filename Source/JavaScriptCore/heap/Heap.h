@@ -209,7 +209,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
         JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
-        void markRoots(bool fullGC);
+        void markRoots();
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
         void copyBackingStores();
@@ -286,11 +286,7 @@ namespace JSC {
     {
         if (Options::gcMaxHeapSize())
             return m_bytesAllocated > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
-#if ENABLE(GGC)
-        return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect && m_operationInProgress == NoOperation;
-#else
         return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect && m_operationInProgress == NoOperation;
-#endif
     }
 
     bool Heap::isBusy()
@@ -332,36 +328,12 @@ namespace JSC {
 
     inline bool Heap::isWriteBarrierEnabled()
     {
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
         return true;
 #else
         return false;
 #endif
     }
-
-#if ENABLE(GGC)
-    inline uint8_t* Heap::addressOfCardFor(JSCell* cell)
-    {
-        return MarkedBlock::blockFor(cell)->addressOfCardFor(cell);
-    }
-
-    inline void Heap::writeBarrier(const JSCell* owner, JSCell*)
-    {
-        WriteBarrierCounters::countWriteBarrier();
-        MarkedBlock* block = MarkedBlock::blockFor(owner);
-        if (block->isMarked(owner))
-            block->setDirtyObject(owner);
-    }
-
-    inline void Heap::writeBarrier(const JSCell* owner, JSValue value)
-    {
-        if (!value)
-            return;
-        if (!value.isCell())
-            return;
-        writeBarrier(owner, value.asCell());
-    }
-#else
 
     inline void Heap::writeBarrier(const JSCell*, JSCell*)
     {
@@ -372,7 +344,6 @@ namespace JSC {
     {
         WriteBarrierCounters::countWriteBarrier();
     }
-#endif
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
     {

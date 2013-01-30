@@ -223,35 +223,4 @@ void MarkedSpace::shrink()
     forEachBlock(freeOrShrink);
 }
 
-#if ENABLE(GGC)
-class GatherDirtyCells {
-    WTF_MAKE_NONCOPYABLE(GatherDirtyCells);
-public:
-    typedef void* ReturnType;
-    
-    explicit GatherDirtyCells(MarkedBlock::DirtyCellVector*);
-    void operator()(MarkedBlock*);
-    ReturnType returnValue() { return 0; }
-    
-private:
-    MarkedBlock::DirtyCellVector* m_dirtyCells;
-};
-
-inline GatherDirtyCells::GatherDirtyCells(MarkedBlock::DirtyCellVector* dirtyCells)
-    : m_dirtyCells(dirtyCells)
-{
-}
-
-inline void GatherDirtyCells::operator()(MarkedBlock* block)
-{
-    block->gatherDirtyCells(*m_dirtyCells);
-}
-
-void MarkedSpace::gatherDirtyCells(MarkedBlock::DirtyCellVector& dirtyCells)
-{
-    GatherDirtyCells gatherDirtyCells(&dirtyCells);
-    forEachBlock(gatherDirtyCells);
-}
-#endif
-
 } // namespace JSC

@@ -6263,7 +6263,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XMLViewerJS.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\XPathGrammar.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\AllocationSpace.h" />
-    <ClInclude Include="..\ForwardingHeaders\heap\CardSet.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Heap.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\SlotVisitor.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\StrongInlines.h" />

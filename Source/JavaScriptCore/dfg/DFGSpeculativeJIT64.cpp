@@ -4205,7 +4205,7 @@ void SpeculativeJIT::compile(Node* node)
             node->structureTransitionData().previousStructure,
             node->structureTransitionData().newStructure);
         
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
         // Must always emit this write barrier as the structure transition itself requires it
         writeBarrier(baseGPR, node->structureTransitionData().newStructure, WriteBarrierForGenericAccess);
 #endif
@@ -4258,7 +4258,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case PutByOffset: {
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
         SpeculateCellOperand base(this, node->child2());
 #endif
         StorageOperand storage(this, node->child1());
@@ -4267,7 +4267,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg storageGPR = storage.gpr();
         GPRReg valueGPR = value.gpr();
         
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
         writeBarrier(base.gpr(), value.gpr(), node->child3(), WriteBarrierForPropertyAccess);
 #endif
 

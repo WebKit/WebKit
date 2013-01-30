@@ -13878,9 +13878,6 @@
     <ClInclude Include="..\ForwardingHeaders\heap\AllocationSpace.h">
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\heap\CardSet.h">
-      <Filter>ForwardingHeaders\heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\heap\Heap.h">
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>

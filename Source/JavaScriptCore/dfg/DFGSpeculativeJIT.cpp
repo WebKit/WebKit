@@ -1013,30 +1013,6 @@ void SpeculativeJIT::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scra
 #if ENABLE(WRITE_BARRIER_PROFILING)
     JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
-    markCellCard(jit, owner, scratch1, scratch2);
-}
-
-void SpeculativeJIT::markCellCard(MacroAssembler& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
-{
-    UNUSED_PARAM(jit);
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(scratch1);
-    UNUSED_PARAM(scratch2);
-    
-#if ENABLE(GGC)
-    jit.move(owner, scratch1);
-    jit.andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch1);
-    jit.move(owner, scratch2);
-    // consume additional 8 bits as we're using an approximate filter
-    jit.rshift32(TrustedImm32(MarkedBlock::atomShift + 8), scratch2);
-    jit.andPtr(TrustedImm32(MarkedBlock::atomMask >> 8), scratch2);
-    MacroAssembler::Jump filter = jit.branchTest8(MacroAssembler::Zero, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfMarks()));
-    jit.move(owner, scratch2);
-    jit.rshift32(TrustedImm32(MarkedBlock::cardShift), scratch2);
-    jit.andPtr(TrustedImm32(MarkedBlock::cardMask), scratch2);
-    jit.store8(TrustedImm32(1), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfCards()));
-    filter.link(&jit);
-#endif
 }
 
 void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
@@ -1052,33 +1028,6 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUs
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
     JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
-#endif
-
-#if ENABLE(GGC)
-    GPRTemporary temp1;
-    GPRTemporary temp2;
-    if (scratch1 == InvalidGPRReg) {
-        GPRTemporary scratchGPR(this);
-        temp1.adopt(scratchGPR);
-        scratch1 = temp1.gpr();
-    }
-    if (scratch2 == InvalidGPRReg) {
-        GPRTemporary scratchGPR(this);
-        temp2.adopt(scratchGPR);
-        scratch2 = temp2.gpr();
-    }
-    
-    JITCompiler::Jump rhsNotCell;
-    bool hadCellCheck = false;
-    if (!isKnownCell(valueUse.node()) && !isCellSpeculation(m_jit.getSpeculation(valueUse.node()))) {
-        hadCellCheck = true;
-        rhsNotCell = m_jit.branchIfNotCell(valueGPR);
-    }
-
-    markCellCard(m_jit, ownerGPR, scratch1, scratch2);
-
-    if (hadCellCheck)
-        rhsNotCell.link(&m_jit);
 #endif
 }
 
@@ -1096,23 +1045,6 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUs
 #if ENABLE(WRITE_BARRIER_PROFILING)
     JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
-
-#if ENABLE(GGC)
-    GPRTemporary temp1;
-    GPRTemporary temp2;
-    if (scratch1 == InvalidGPRReg) {
-        GPRTemporary scratchGPR(this);
-        temp1.adopt(scratchGPR);
-        scratch1 = temp1.gpr();
-    }
-    if (scratch2 == InvalidGPRReg) {
-        GPRTemporary scratchGPR(this);
-        temp2.adopt(scratchGPR);
-        scratch2 = temp2.gpr();
-    }
-
-    markCellCard(m_jit, ownerGPR, scratch1, scratch2);
-#endif
 }
 
 void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch)
@@ -1127,29 +1059,6 @@ void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse,
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
     JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
-#endif
-
-#if ENABLE(GGC)
-    JITCompiler::Jump rhsNotCell;
-    bool hadCellCheck = false;
-    if (!isKnownCell(valueUse.node()) && !isCellSpeculation(m_jit.getSpeculation(valueUse.node()))) {
-        hadCellCheck = true;
-        rhsNotCell = m_jit.branchIfNotCell(valueGPR);
-    }
-    
-    GPRTemporary temp;
-    if (scratch == InvalidGPRReg) {
-        GPRTemporary scratchGPR(this);
-        temp.adopt(scratchGPR);
-        scratch = temp.gpr();
-    }
-
-    uint8_t* cardAddress = Heap::addressOfCardFor(owner);
-    m_jit.move(JITCompiler::TrustedImmPtr(cardAddress), scratch);
-    m_jit.store8(JITCompiler::TrustedImm32(1), JITCompiler::Address(scratch));
-
-    if (hadCellCheck)
-        rhsNotCell.link(&m_jit);
 #endif
 }
 

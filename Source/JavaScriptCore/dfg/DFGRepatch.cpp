@@ -664,7 +664,7 @@ static void emitPutReplaceStub(
     GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
     GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = false;
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
     GPRReg scratchGPR2;
     const bool writeBarrierNeeded = true;
 #else
@@ -688,7 +688,7 @@ static void emitPutReplaceStub(
         MacroAssembler::Address(baseGPR, JSCell::structureOffset()),
         MacroAssembler::TrustedImmPtr(structure));
     
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
 #if USE(JSVALUE64)
     scratchGPR2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
 #else
@@ -779,7 +779,7 @@ static void emitPutTransitionStub(
     
     bool needSecondScratch = false;
     bool needThirdScratch = false;
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
     needSecondScratch = true;
 #endif
     if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()
@@ -826,7 +826,7 @@ static void emitPutTransitionStub(
         }
     }
 
-#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if ENABLE(WRITE_BARRIER_PROFILING)
     ASSERT(needSecondScratch);
     ASSERT(scratchGPR2 != InvalidGPRReg);
     // Must always emit this write barrier as the structure transition itself requires it

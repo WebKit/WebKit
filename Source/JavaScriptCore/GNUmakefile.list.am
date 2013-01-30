@@ -288,7 +288,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CopyVisitorInlines.h \
 	Source/JavaScriptCore/heap/CopyVisitor.cpp \
 	Source/JavaScriptCore/heap/CopyWorkList.h \
-	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.cpp \
