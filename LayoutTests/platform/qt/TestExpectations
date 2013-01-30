@@ -1842,6 +1842,12 @@ fast/events/media-focus-in-standalone-media-document.html
 fast/events/tabindex-focus-blur-all.html
 fast/spatial-navigation/snav-media-elements.html
 
+# [Qt] These ref html tests are flaky. Investigating.
+# https://bugs.webkit.org/show_bug.cgi?id=108340
+fast/layers/no-clipping-overflow-hidden-added-after-transform.html
+fast/layers/no-clipping-overflow-hidden-added-after-transition.html
+fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
@@ -2162,6 +2168,7 @@ fast/inline/continuation-outlines-with-layers.html
 # Refactor notification tests requiring file:// permission
 fast/notifications/notifications-cancel-request-permission.html
 fast/notifications/notifications-check-permission.html
+fast/notifications/notifications-constructor-request-permission.html
 fast/notifications/notifications-request-permission.html
 fast/notifications/notifications-without-permission.html
 
