@@ -98,9 +98,9 @@ list(APPEND WebCore_SOURCES
 
     platform/text/TextEncodingDetectorNone.cpp
 
-    platform/text/win/TextCodecWin.cpp
+    platform/text/wchar/TextBreakIteratorWchar.cpp
 
-    platform/text/wince/TextBreakIteratorWince.cpp
+    platform/text/win/TextCodecWin.cpp
 )
 
 list(APPEND WebCore_LIBRARIES
