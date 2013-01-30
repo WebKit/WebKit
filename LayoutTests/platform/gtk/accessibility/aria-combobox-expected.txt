@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Role: AXRole: AXComboBox
 PASS combobox.isExpanded is false
 PASS combobox.isExpanded is false
-Role: AXRole: AXList
+Role: AXRole: AXListItem
 PASS successfullyParsed is true
 
 TEST COMPLETE
