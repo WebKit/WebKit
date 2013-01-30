@@ -163,6 +163,7 @@ JSGlobalContextRef contextInternalContext(JSContext *context)
     [m_wrapperMap release];
     JSGlobalContextRelease(m_context);
     [m_virtualMachine release];
+    [self.exceptionHandler release];
     [super dealloc];
 }
 

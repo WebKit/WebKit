@@ -1,3 +1,16 @@
+2013-01-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: exceptionHandler needs to be released in JSContext dealloc
+        https://bugs.webkit.org/show_bug.cgi?id=108378
+
+        Reviewed by Filip Pizlo.
+
+        JSContext has a (copy) exceptionHandler property that it doesn't release in dealloc. 
+        That sounds like the potential for a leak. It should be released.
+
+        * API/JSContext.mm:
+        (-[JSContext dealloc]):
+
 2013-01-30  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(140504): pure CSE no longer matches things, 10% regression on Kraken
