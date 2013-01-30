@@ -57,6 +57,7 @@
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PlatformLocale.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
@@ -64,6 +65,7 @@
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "ScriptEventListener.h"
+#include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
@@ -133,6 +135,9 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    setHasCustomCallbacks();
+#endif
 }
 
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
@@ -1963,5 +1968,20 @@ void HTMLInputElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_listAttributeTargetObserver);
 #endif
 }
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+PassRefPtr<RenderStyle> HTMLInputElement::customStyleForRenderer()
+{
+    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    if (!m_inputType->shouldApplyLocaleDirection())
+        return originalStyle.release();
+    TextDirection contentDirection = locale().isRTL() ? RTL : LTR;
+    if (originalStyle->direction() == contentDirection)
+        return originalStyle.release();
+    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
+    style->setDirection(contentDirection);
+    return style.release();
+}
+#endif
 
 } // namespace

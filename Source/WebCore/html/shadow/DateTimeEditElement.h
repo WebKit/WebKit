@@ -87,6 +87,7 @@ public:
     void blurByOwner();
     virtual void defaultEventHandler(Event*) OVERRIDE;
     void disabledStateChanged();
+    Element* fieldsWrapperElement() const;
     void focusIfNoFocus();
     void focusByOwner();
     bool hasFocusedField();

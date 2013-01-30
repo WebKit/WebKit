@@ -368,7 +368,7 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
             element->appendChild(Text::create(m_editElement.document(), String(&rightToLeftMark, 1)));
     }
     element->appendChild(Text::create(m_editElement.document(), text));
-    m_editElement.appendChild(element);
+    m_editElement.fieldsWrapperElement()->appendChild(element);
 }
 
 DateTimeNumericFieldElement::Parameters DateTimeEditBuilder::createNumericFieldParameters(const Decimal& msPerFieldUnit, const Decimal& msPerFieldSize) const
@@ -411,12 +411,18 @@ DateTimeEditElement::~DateTimeEditElement()
         m_fields[fieldIndex]->removeEventHandler();
 }
 
+inline Element* DateTimeEditElement::fieldsWrapperElement() const
+{
+    ASSERT(firstChild());
+    return toElement(firstChild());
+}
+
 void DateTimeEditElement::addField(PassRefPtr<DateTimeFieldElement> field)
 {
     if (m_fields.size() == m_fields.capacity())
         return;
     m_fields.append(field.get());
-    appendChild(field);
+    fieldsWrapperElement()->appendChild(field);
 }
 
 bool DateTimeEditElement::anyEditableFieldsHaveValues() const
@@ -447,7 +453,7 @@ PassRefPtr<RenderStyle> DateTimeEditElement::customStyleForRenderer()
     RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
     RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
     float width = 0;
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+    for (Node* child = fieldsWrapperElement()->firstChild(); child; child = child->nextSibling()) {
         if (!child->isElementNode())
             continue;
         Element* childElement = toElement(child);
@@ -461,7 +467,7 @@ PassRefPtr<RenderStyle> DateTimeEditElement::customStyleForRenderer()
             width += style->font().width(childElement->textContent());
         }
     }
-    style->setMinWidth(Length(ceilf(width), Fixed));
+    style->setWidth(Length(ceilf(width), Fixed));
     return style.release();
 }
 
@@ -579,14 +585,22 @@ bool DateTimeEditElement::isReadOnly() const
 
 void DateTimeEditElement::layout(const LayoutParameters& layoutParameters, const DateComponents& dateValue)
 {
+    DEFINE_STATIC_LOCAL(AtomicString, fieldsWrapperPseudoId, ("-webkit-datetime-edit-fields-wrapper", AtomicString::ConstructFromLiteral));
+    if (!firstChild()) {
+        RefPtr<HTMLDivElement> element = HTMLDivElement::create(document());
+        element->setPseudo(fieldsWrapperPseudoId);
+        appendChild(element.get());
+    }
+    Element* fieldsWrapper = fieldsWrapperElement();
+
     size_t focusedFieldIndex = this->focusedFieldIndex();
     DateTimeFieldElement* const focusedField = fieldAt(focusedFieldIndex);
     const AtomicString focusedFieldId = focusedField ? focusedField->shadowPseudoId() : nullAtom;
 
     DateTimeEditBuilder builder(*this, layoutParameters, dateValue);
-    Node* lastChildToBeRemoved = lastChild();
+    Node* lastChildToBeRemoved = fieldsWrapper->lastChild();
     if (!builder.build(layoutParameters.dateTimeFormat) || m_fields.isEmpty()) {
-        lastChildToBeRemoved = lastChild();
+        lastChildToBeRemoved = fieldsWrapper->lastChild();
         builder.build(layoutParameters.fallbackDateTimeFormat);
     }
 
@@ -602,11 +616,12 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters, const
     }
 
     if (lastChildToBeRemoved) {
-        for (Node* childNode = firstChild(); childNode; childNode = firstChild()) {
-            removeChild(childNode);
+        for (Node* childNode = fieldsWrapper->firstChild(); childNode; childNode = fieldsWrapper->firstChild()) {
+            fieldsWrapper->removeChild(childNode);
             if (childNode == lastChildToBeRemoved)
                 break;
         }
+        setNeedsStyleRecalc();
     }
 }
 

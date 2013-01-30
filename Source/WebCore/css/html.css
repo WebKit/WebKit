@@ -486,54 +486,60 @@ datalist {
 #if defined(ENABLE_INPUT_MULTIPLE_FIELDS_UI) && ENABLE_INPUT_MULTIPLE_FIELDS_UI
 #if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
 input[type="date"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
 input[type="datetime"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
 input[type="datetime-local"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
 input[type="month"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
 input[type="time"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
 input[type="week"] {
-    -webkit-align-items: stretch;
+    -webkit-align-items: center;
     display: -webkit-inline-flex;
     font-family: monospace;
+    overflow: hidden;
     padding: 0;
     -webkit-padding-start: 1px;
 }
@@ -543,7 +549,15 @@ input::-webkit-datetime-edit {
     -webkit-flex: 1;
     -webkit-user-modify: read-only !important;
     display: inline-block;
-    white-space: pre;
+    min-width: 0;
+    overflow: hidden;
+}
+
+input::-webkit-datetime-edit-fields-wrapper {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+    padding: 1px 0;
+    white-space: nowrap;
 }
 
 /* If you update padding, border, or margin in the following ruleset, update
@@ -597,12 +611,6 @@ input::-webkit-datetime-edit-text {
     -webkit-user-modify: read-only !important;
     display: inline;
     font: inherit !important;
-}
-
-input::-webkit-date-and-time-container {
-    -webkit-align-items: center;
-    -webkit-flex: 1;
-    display: -webkit-inline-flex;
 }
 
 input[type="date"]::-webkit-inner-spin-button,

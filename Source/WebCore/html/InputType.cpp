@@ -739,6 +739,11 @@ Icon* InputType::icon() const
     return 0;
 }
 
+bool InputType::shouldApplyLocaleDirection() const
+{
+    return false;
+}
+
 bool InputType::shouldResetOnDocumentActivation()
 {
     return false;

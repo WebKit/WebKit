@@ -7,6 +7,6 @@ text-align:
 text-transform: 
 background, color: 
 font-size, font-weight: 
-font-size with fixed input width: 
-Fixed input height: 
+font-size with fixed input width:   
+Fixed input height:   
 -webkit-appearance:none: 

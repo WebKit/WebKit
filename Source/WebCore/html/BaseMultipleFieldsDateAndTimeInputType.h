@@ -93,6 +93,7 @@ private:
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE FINAL;
     virtual FormControlState saveFormControlState() const OVERRIDE FINAL;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE FINAL;
+    virtual bool shouldApplyLocaleDirection() const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
     virtual void stepAttributeChanged() OVERRIDE FINAL;
     virtual void updateInnerTextValue() OVERRIDE FINAL;

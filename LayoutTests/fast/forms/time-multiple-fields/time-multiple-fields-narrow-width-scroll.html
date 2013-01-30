@@ -1,0 +1,20 @@
+<!DOCTYPE>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+
+<input id="time1" type="time" style="font-size:20px; width:40px;">
+
+<script>
+description('Check if changing focus in a multiple fields input scrolls the content.');
+if (!window.eventSender || !window.internals)
+    debug('This test rquires DRT/WRT.');
+var time1 = $('time1');
+time1.focus();
+var container = getElementByPseudoId(internals.oldestShadowRoot(time1), '-webkit-datetime-edit');
+var initialScrollLeft = container.scrollLeft;
+eventSender.keyDown('\t');
+shouldBeTrue('initialScrollLeft < container.scrollLeft');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
