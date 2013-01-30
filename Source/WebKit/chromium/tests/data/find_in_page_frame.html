@@ -25,17 +25,34 @@ div.fixed {
   height: 100px;
   position: fixed;
 }
+div.relative-overflow {
+  position: relative;
+  overflow: hidden;
+  height: 100px;
+}
+div.margin-overflow {
+  overflow: hidden;
+  margin-top:20px;
+  height: 50px;
+}
+div.absolute {
+  position: absolute;
+  top: 0px;
+  height: 20px;
+  width: 80px;
+  background-color: "green";
+}
 </style>
 </head>
 <body>
 This is a test.
-</br></br>
-</br></br>
-</br></br>
+<br>
+<br>
+<br>
 Foo bar.
-</br></br>
-</br></br>
-</br></br>
+<br>
+<br>
+<br>
 result 02
 <div class="transform">
 result 03
@@ -48,13 +65,13 @@ result 06
 <div class="scroll">
 result 07
 Foo bar.
-</br></br>
-</br></br>
-</br></br>
+<br>
+<br>
+<br>
 result 08
 </div>
 result 09
-</br></br>
+<br>
 result 10
 <table border="1" cellpadding="10" cellspacing="10">
 <tr>
@@ -71,5 +88,22 @@ result 10
 </tr>
 </table>
 result 15
+<div class="transform">
+<div style="height:0px">
+  <div style="float:left;">
+    result 16
+  </div>
+</div>
+</div>
+<div class="relative-overflow">
+  <div class="margin-overflow">
+    result 17
+    <div class="absolute">result 18</div>
+  </div>
+</div>
+<!-- Tests that will not yield matches should go below this line. -->
+<select>
+<option>result 19</option>
+</select>
 </body>
 </html>

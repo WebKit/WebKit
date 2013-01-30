@@ -1,3 +1,34 @@
+2013-01-30  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Fix find in page rects for overflowing content.
+        https://bugs.webkit.org/show_bug.cgi?id=104924
+
+        Reviewed by Julien Chaffraix.
+
+        If a div has overflowing content, we should only normalise its
+        coordinates against the renderview or the containing scrollable block.
+
+        TEST=WebFrameTest.FindInPageMatchRects
+
+        * src/FindInPageCoordinates.cpp:
+        (WebKit::enclosingScrollableAncestor):
+            Helper function to find the enclosing containing block with an overflow clip.
+        (WebKit::toNormalizedRect):
+            Pass in the container as an argument.
+        (WebKit::findInPageRectFromAbsoluteRect):
+            Compute the container for toNormalizedRect using enclosingScrollableAncestor.
+        * tests/WebFrameTest.cpp:
+            Add expectations for new tests in WebFrameTest::FindInPageMatchRects and WebFrameTest::FindInPage.
+        * tests/data/find.html:
+            Add test case for <select> element.
+        * tests/data/find_in_page_frame.html:
+            Add test cases:
+              - Result 15, 16 tests that containing <div> with style float:left and
+                height:0px does not impact coordinate normalization.
+              - Result 17, 18 tests that matches with absolute positioning are normalized containing
+                relative positioned block, even if there is a closer parent block with overflow clip.
+              - Result 19 adds a test case for <select> element.
+
 2013-01-30  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [HarfBuzz] Remove the HarfBuzz-old code

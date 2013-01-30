@@ -49,11 +49,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer)
+static const RenderBlock* enclosingScrollableAncestor(const RenderObject* renderer)
+{
+    ASSERT(!renderer->isRenderView());
+
+    // Trace up the containingBlocks until we reach either the render view or a scrollable object.
+    const RenderBlock* container = renderer->containingBlock();
+    while (!container->hasOverflowClip() && !container->isRenderView())
+        container = container->containingBlock();
+    return container;
+}
+
+static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer, const RenderBlock* container)
 {
     ASSERT(renderer);
 
-    const RenderBlock* container = renderer->containingBlock();
     ASSERT(container || renderer->isRenderView());
     if (!container)
         return FloatRect();
@@ -92,26 +102,27 @@ FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const Rende
         return FloatRect();
 
     // Normalize the input rect to its container block.
-    FloatRect normalizedRect = toNormalizedRect(inputRect, baseRenderer);
+    const RenderBlock* baseContainer = enclosingScrollableAncestor(baseRenderer);
+    FloatRect normalizedRect = toNormalizedRect(inputRect, baseRenderer, baseContainer);
 
     // Go up across frames.
-    for (const RenderObject* renderer = baseRenderer->containingBlock(); renderer; ) {
+    for (const RenderBox* renderer = baseContainer; renderer; ) {
 
         // Go up the render tree until we reach the root of the current frame (the RenderView).
-        for (const RenderBlock* container = renderer->containingBlock(); container;
-                renderer = container, container = container->containingBlock()) {
+        while (!renderer->isRenderView()) {
+            const RenderBlock* container = enclosingScrollableAncestor(renderer);
 
             // Compose the normalized rects.
-            FloatRect normalizedBoxRect = toNormalizedRect(renderer->absoluteBoundingBoxRect(), renderer);
+            FloatRect normalizedBoxRect = toNormalizedRect(renderer->absoluteBoundingBoxRect(), renderer, container);
             normalizedRect.scale(normalizedBoxRect.width(), normalizedBoxRect.height());
             normalizedRect.moveBy(normalizedBoxRect.location());
 
-            if (normalizedRect.isEmpty())
-                return normalizedRect;
+            renderer = container;
         }
 
-        // Jump to the renderer owning the frame, if any.
         ASSERT(renderer->isRenderView());
+
+        // Jump to the renderer owning the frame, if any.
         renderer = renderer->frame() ? renderer->frame()->ownerRenderer() : 0;
     }
 

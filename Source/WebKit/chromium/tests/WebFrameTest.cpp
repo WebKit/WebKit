@@ -1349,6 +1349,14 @@ TEST_F(WebFrameTest, FindInPage)
     // "bar4" is surrounded by <span>, but the focusable node should be the parent <div>.
     EXPECT_EQ(WebString::fromUTF8("DIV"), frame->document().focusedNode().nodeName());
 
+    // Find in <select> content.
+    EXPECT_FALSE(frame->find(findIdentifier, WebString::fromUTF8("bar5"), options, false, 0));
+    // If there are any matches, stopFinding will set the selection on the found text.
+    // However, we do not expect any matches, so check that the selection is null.
+    frame->stopFinding(false);
+    range = frame->selectionRange();
+    ASSERT_TRUE(range.isNull());
+
     webView->close();
 }
 
@@ -1517,9 +1525,10 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     webView->layout();
     webkit_support::RunAllPendingMessages();
 
+    // Note that the 'result 19' in the <select> element is not expected to produce a match.
     static const char* kFindString = "result";
     static const int kFindIdentifier = 12345;
-    static const int kNumResults = 16;
+    static const int kNumResults = 19;
 
     WebFindOptions options;
     WebString searchText = WebString::fromUTF8(kFindString);
@@ -1609,6 +1618,13 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     // and vertical-align: middle by default.
     EXPECT_TRUE(webMatchRects[13].y < webMatchRects[12].y);
     EXPECT_TRUE(webMatchRects[12].y < webMatchRects[14].y);
+
+    // Result 16 should be below result 15.
+    EXPECT_TRUE(webMatchRects[15].y > webMatchRects[14].y);
+
+    // Result 18 should be normalized with respect to the position:relative div, and not it's
+    // immediate containing div. Consequently, result 18 should be above result 17.
+    EXPECT_TRUE(webMatchRects[17].y > webMatchRects[18].y);
 
     // Resizing should update the rects version.
     webView->resize(WebSize(800, 600));
