@@ -54,6 +54,21 @@ public:
     static PassRefPtr<NotificationCenter> create(ScriptExecutionContext*, NotificationClient*);
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
+    PassRefPtr<Notification> createHTMLNotification(const String& URI, ExceptionCode& ec)
+    {
+        if (!client()) {
+            ec = INVALID_STATE_ERR;
+            return 0;
+        }
+        if (URI.isEmpty()) {
+            ec = SYNTAX_ERR;
+            return 0;
+        }
+        return Notification::create(scriptExecutionContext()->completeURL(URI), scriptExecutionContext(), ec, this);
+    }
+#endif
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
     PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
     {
         if (!client()) {

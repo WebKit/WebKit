@@ -59,8 +59,30 @@ Notification::Notification()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
+Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
+    : ActiveDOMObject(context, this)
+    , m_isHTML(true)
+    , m_state(Idle)
+    , m_notificationCenter(provider)
+{
+    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (url.isEmpty() || !url.isValid()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    m_notificationURL = url;
+}
+#endif
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
 Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
+    , m_isHTML(false)
     , m_title(title)
     , m_body(body)
     , m_state(Idle)
@@ -82,6 +104,7 @@ Notification::Notification(const String& title, const String& body, const String
 #if ENABLE(NOTIFICATIONS)
 Notification::Notification(ScriptExecutionContext* context, const String& title)
     : ActiveDOMObject(context, this)
+    , m_isHTML(false)
     , m_title(title)
     , m_state(Idle)
     , m_taskTimer(adoptPtr(new Timer<Notification>(this, &Notification::taskTimerFired)))
@@ -99,6 +122,13 @@ Notification::~Notification()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
+PassRefPtr<Notification> Notification::create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+{ 
+    RefPtr<Notification> notification(adoptRef(new Notification(url, context, ec, provider)));
+    notification->suspendIfNeeded();
+    return notification.release();
+}
+
 PassRefPtr<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
     RefPtr<Notification> notification(adoptRef(new Notification(title, body, iconURI, context, ec, provider)));

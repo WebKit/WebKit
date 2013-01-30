@@ -186,8 +186,15 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 {
     NotificationWrapper* wrapper = new NotificationWrapper();
     m_notifications.insert(notification, wrapper);
-    QString title = notification->title();
-    QString message = notification->body();
+    QString title;
+    QString message;
+    // FIXME: download & display HTML notifications
+    if (notification->isHTML())
+        message = notification->url().string();
+    else {
+        title = notification->title();
+        message = notification->body();
+    }
 
     if (m_platformPlugin.plugin() && m_platformPlugin.plugin()->supportsExtension(QWebKitPlatformPlugin::Notifications))
         wrapper->m_presenter = m_platformPlugin.createNotificationPresenter();
@@ -221,8 +228,12 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 
 void NotificationPresenterClientQt::cancel(Notification* notification)
 {
-    if (dumpNotification && notification->scriptExecutionContext())
-        printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->title()).toUtf8().constData());
+    if (dumpNotification && notification->scriptExecutionContext()) {
+        if (notification->isHTML())
+            printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->url().string()).toUtf8().constData());
+        else
+            printf("DESKTOP NOTIFICATION CLOSED: %s\n", QString(notification->title()).toUtf8().constData());
+    }
 
     NotificationsQueue::Iterator iter = m_notifications.find(notification);
     if (iter != m_notifications.end()) {
@@ -257,7 +268,11 @@ void NotificationPresenterClientQt::notificationClicked(const QString& title)
     Notification* notification = 0;
     while (iter != end) {
         notification = iter.key();
-        QString notificationTitle = notification->title();
+        QString notificationTitle;
+        if (notification->isHTML())
+            notificationTitle = notification->url().string();
+        else
+            notificationTitle = notification->title();
         if (notificationTitle == title)
             break;
         iter++;
@@ -414,7 +429,7 @@ void NotificationPresenterClientQt::removeReplacedNotificationFromQueue(Notifica
 
     while (iter != end) {
         Notification* existingNotification = iter.key();
-        if (existingNotification->tag() == notification->tag()) {
+        if (existingNotification->tag() == notification->tag() && existingNotification->url().protocol() == notification->url().protocol() && existingNotification->url().host() == notification->url().host()) {
             oldNotification = iter.key();
             break;
         }
@@ -439,15 +454,19 @@ void NotificationPresenterClientQt::detachNotification(Notification* notificatio
 void NotificationPresenterClientQt::dumpReplacedIdText(Notification* notification)
 {
     if (notification)
-        printf("REPLACING NOTIFICATION %s\n", QString(notification->title()).toUtf8().constData());
+        printf("REPLACING NOTIFICATION %s\n", notification->isHTML() ? QString(notification->url().string()).toUtf8().constData() : QString(notification->title()).toUtf8().constData());
 }
 
 void NotificationPresenterClientQt::dumpShowText(Notification* notification)
 {
-    printf("DESKTOP NOTIFICATION:%s icon %s, title %s, text %s\n",
-        notification->dir() == "rtl" ? "(RTL)" : "",
-        QString(notification->iconURL().string()).toUtf8().constData(), QString(notification->title()).toUtf8().constData(),
-        QString(notification->body()).toUtf8().constData());
+    if (notification->isHTML())
+        printf("DESKTOP NOTIFICATION: contents at %s\n", QString(notification->url().string()).toUtf8().constData());
+    else {
+        printf("DESKTOP NOTIFICATION:%s icon %s, title %s, text %s\n",
+            notification->dir() == "rtl" ? "(RTL)" : "",
+            QString(notification->iconURL().string()).toUtf8().constData(), QString(notification->title()).toUtf8().constData(),
+            QString(notification->body()).toUtf8().constData());
+    }
 }
 
 QWebPageAdapter* NotificationPresenterClientQt::toPage(ScriptExecutionContext* context)

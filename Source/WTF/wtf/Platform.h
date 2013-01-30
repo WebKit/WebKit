@@ -1194,6 +1194,10 @@
 #define WTF_USE_JSC 1
 #endif
 
+#if ENABLE(NOTIFICATIONS) && PLATFORM(MAC)
+#define ENABLE_TEXT_NOTIFICATIONS_ONLY 1
+#endif
+
 #if !defined(WTF_USE_ZLIB) && !PLATFORM(QT)
 #define WTF_USE_ZLIB 1
 #endif

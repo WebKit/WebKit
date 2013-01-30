@@ -34,6 +34,9 @@
     ActiveDOMObject,
     OmitConstructor
 ] interface NotificationCenter {
+#if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
+   [V8EnabledPerContext=htmlNotifications, V8MeasureAs=LegacyHTMLNotifications] Notification createHTMLNotification(in DOMString url) raises(DOMException);
+#endif
    [V8MeasureAs=LegacyTextNotifications] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
 
    int checkPermission();
