@@ -1228,9 +1228,9 @@ QString QWebPageAdapter::contextMenuItemTagForAction(QWebPageAdapter::MenuAction
 }
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-void QWebPageAdapter::allowNotificationsForFrame(QWebFrameAdapter* frame)
+void QWebPageAdapter::setNotificationsAllowedForFrame(QWebFrameAdapter* frame, bool allowed)
 {
-    NotificationPresenterClientQt::notificationPresenter()->allowNotificationForFrame(frame->frame);
+    NotificationPresenterClientQt::notificationPresenter()->setNotificationsAllowedForFrame(frame->frame, allowed);
 }
 
 void QWebPageAdapter::addNotificationPresenterClient()

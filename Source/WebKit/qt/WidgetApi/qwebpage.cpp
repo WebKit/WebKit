@@ -1584,11 +1584,15 @@ bool QWebPage::shouldInterruptJavaScript()
 
 void QWebPage::setFeaturePermission(QWebFrame* frame, Feature feature, PermissionPolicy policy)
 {
+#if !ENABLE(NOTIFICATIONS) && !ENABLE(LEGACY_NOTIFICATIONS) && !ENABLE(GEOLOCATION)
+    Q_UNUSED(frame);
+    Q_UNUSED(policy);
+#endif
     switch (feature) {
     case Notifications:
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        if (policy == PermissionGrantedByUser)
-            d->allowNotificationsForFrame(frame->d);
+        if (policy != PermissionUnknown)
+            d->setNotificationsAllowedForFrame(frame->d, (policy == PermissionGrantedByUser));
 #endif
         break;
     case Geolocation:

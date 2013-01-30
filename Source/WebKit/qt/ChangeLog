@@ -1,3 +1,24 @@
+2013-01-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Remember denied permission for notifications 
+        https://bugs.webkit.org/show_bug.cgi?id=107694
+
+        Reviewed by Jocelyn Turcotte.
+
+        Store denied permissions. According to the specification, we should
+        ask the user again if he has already granted or denied permission.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::setNotificationsAllowedForFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (NotificationPresenterClientQt):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::setNotificationsAllowedForFrame):
+        * WebCoreSupport/QWebPageAdapter.h:
+        * WidgetApi/qwebpage.cpp:
+        (QWebPage::setFeaturePermission):
+
 2013-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r140983.

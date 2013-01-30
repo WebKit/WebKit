@@ -101,7 +101,7 @@ public:
 
     void cancel(NotificationWrapper*);
 
-    void allowNotificationForFrame(Frame*);
+    void setNotificationsAllowedForFrame(Frame*, bool allowed);
 
     static bool dumpNotification;
 

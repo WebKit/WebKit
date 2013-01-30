@@ -312,7 +312,7 @@ public:
     void setGeolocationEnabledForFrame(QWebFrameAdapter*, bool);
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    void allowNotificationsForFrame(QWebFrameAdapter*);
+    void setNotificationsAllowedForFrame(QWebFrameAdapter*, bool allowed);
     void addNotificationPresenterClient();
 #ifndef QT_NO_SYSTEMTRAYICON
     bool hasSystemTrayIcon() const;
