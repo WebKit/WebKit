@@ -659,7 +659,7 @@ void WebViewImpl::scrollBy(const WebPoint& delta)
 {
     if (m_flingSourceDevice == WebGestureEvent::Touchpad) {
         WebMouseWheelEvent syntheticWheel;
-        const float tickDivisor = WebCore::WheelEvent::tickMultiplier;
+        const float tickDivisor = WebCore::WheelEvent::TickMultiplier;
 
         syntheticWheel.deltaX = delta.x;
         syntheticWheel.deltaY = delta.y;

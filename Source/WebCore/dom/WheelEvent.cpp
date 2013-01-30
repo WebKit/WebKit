@@ -31,9 +31,21 @@
 
 namespace WebCore {
 
+WheelEventInit::WheelEventInit()
+    : wheelDeltaX(0)
+    , wheelDeltaY(0)
+{
+}
+
 WheelEvent::WheelEvent()
     : m_granularity(Pixel)
     , m_directionInvertedFromDevice(false)
+{
+}
+
+WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializer)
+    : MouseEvent(type, initializer)
+    , m_wheelDelta(IntPoint(initializer.wheelDeltaX, initializer.wheelDeltaY))
 {
 }
 
@@ -49,7 +61,7 @@ WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                  0, 0,
 #endif
                  ctrlKey, altKey, shiftKey, metaKey, 0, 0, 0, false)
-    , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * tickMultiplier), static_cast<int>(wheelTicks.y() * tickMultiplier)))
+    , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * TickMultiplier), static_cast<int>(wheelTicks.y() * TickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
     , m_directionInvertedFromDevice(directionInvertedFromDevice)
@@ -72,7 +84,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     m_metaKey = metaKey;
     
     // Normalize to the Windows 120 multiple
-    m_wheelDelta = IntPoint(rawDeltaX * tickMultiplier, rawDeltaY * tickMultiplier);
+    m_wheelDelta = IntPoint(rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier);
     
     m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
     m_granularity = Pixel;

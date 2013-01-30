@@ -18,12 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Based off http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html#events-wheelevents
-interface WheelEvent : MouseEvent
-{
-    readonly attribute long    wheelDelta;
-    readonly attribute long    wheelDeltaX;
-    readonly attribute long    wheelDeltaY;
+[
+    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
+    ConstructorTemplate=Event
+] interface WheelEvent : MouseEvent {
+    [InitializedByEventConstructor] readonly attribute long wheelDeltaX;
+    [InitializedByEventConstructor] readonly attribute long wheelDeltaY;
+
+    readonly attribute long wheelDelta;
 
     // WebKit Extension
     readonly attribute boolean webkitDirectionInvertedFromDevice;

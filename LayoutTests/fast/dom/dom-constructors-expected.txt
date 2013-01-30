@@ -107,7 +107,6 @@ PASS TryAllocate('Rect') is 'exception'
 PASS TryAllocate('StyleSheet') is 'exception'
 PASS TryAllocate('StyleSheetList') is 'exception'
 PASS TryAllocate('TextEvent') is 'exception'
-PASS TryAllocate('WheelEvent') is 'exception'
 PASS TryAllocate('XPathResult') is 'exception'
 FAIL TryAllocate('BarInfo') should be exception. Was no constructor.
 PASS TryAllocate('CanvasGradient') is 'exception'

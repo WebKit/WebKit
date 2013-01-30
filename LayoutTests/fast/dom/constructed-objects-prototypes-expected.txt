@@ -65,6 +65,8 @@ PASS (new inner.WebKitPoint()).isInner is true
 PASS (new inner.WebKitPoint()).constructor.isInner is true
 PASS (new inner.WebKitTransitionEvent()).isInner is true
 PASS (new inner.WebKitTransitionEvent()).constructor.isInner is true
+PASS (new inner.WheelEvent()).isInner is true
+PASS (new inner.WheelEvent()).constructor.isInner is true
 PASS (new inner.Worker('foo')).isInner is true
 PASS (new inner.Worker('foo')).constructor.isInner is true
 PASS (new inner.XMLHttpRequest()).isInner is true

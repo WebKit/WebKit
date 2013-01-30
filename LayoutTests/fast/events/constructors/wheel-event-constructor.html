@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests the constructor for the WheelEvent DOM class.");
+
+var testObject = {nyannyan: 123};
+var testDiv = document.createElement("div");
+var xhr = new XMLHttpRequest;
+
+// No initializer is passed.
+shouldBe("new WheelEvent('eventType').bubbles", "false");
+shouldBe("new WheelEvent('eventType').cancelable", "false");
+shouldBe("new WheelEvent('eventType').view", "null");
+shouldBe("new WheelEvent('eventType').detail", "0");
+
+// bubbles is passed.
+shouldBe("new WheelEvent('eventType', { bubbles: false }).bubbles", "false");
+shouldBe("new WheelEvent('eventType', { bubbles: true }).bubbles", "true");
+
+// cancelable is passed.
+shouldBe("new WheelEvent('eventType', { cancelable: false }).cancelable", "false");
+shouldBe("new WheelEvent('eventType', { cancelable: true }).cancelable", "true");
+
+// view is passed.
+// Window objects.
+shouldBe("new WheelEvent('eventType', { view: window }).view", "window");
+shouldBe("new WheelEvent('eventType', { view: this }).view", "this");
+
+// Non-window objects.
+shouldBe("new WheelEvent('eventType', { view: testObject }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: document }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: undefined }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: null }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: false }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: true }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: '' }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: 'chocolate' }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: 12345 }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: 18446744073709551615 }).view", "null");
+shouldBe("new WheelEvent('eventType', { view: NaN }).view", "null");
+// Note that valueOf() is not called, when the left hand side is evaluated.
+shouldBeFalse("new WheelEvent('eventType', { view: {valueOf: function () { return window; } } }).view == window");
+shouldBe("new WheelEvent('eventType', { get view() { return 123; } }).view", "null");
+shouldThrow("new WheelEvent('eventType', { get view() { throw 'WheelEvent Error'; } })");
+
+// detail, screenX, screenY, clientX and clientY are passed.
+["detail", "screenX", "screenY", "clientX", "clientY", "wheelDeltaX", "wheelDeltaY"].forEach(function (attr) {
+    // numbers within the long range.
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 0 })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 2147483647 })." + attr, "2147483647");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": -1 })." + attr, "-1");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": -2147483648 })." + attr, "-2147483648");
+
+    // numbers out of the long range.
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 4294967295 })." + attr, "-1");
+    // 2^{53}-1, the largest number that can be exactly represented by double.
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 9007199254740991 })." + attr, "-1");
+    // 2^{64}-1
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 18446744073709551615 })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 123.45 })." + attr, "123");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": NaN })." + attr, "0");
+
+    // Non-numeric values.
+    shouldBe("new WheelEvent('eventType', { " + attr + ": undefined })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": null })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": '' })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": '12345' })." + attr, "12345");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": '12345a' })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": 'abc' })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": [] })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": [12345] })." + attr, "12345");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": [12345, 67890] })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": {} })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": {moemoe: 12345} })." + attr, "0");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": {valueOf: function () { return 12345; }} })." + attr, "12345");
+});
+
+// ctrlKey, altKey, shiftKey and metaKey are passed.
+["ctrlKey", "altKey", "shiftKey", "metaKey"].forEach(function (attr) {
+    shouldBe("new WheelEvent('eventType', { " + attr + ": false })." + attr, "false");
+    shouldBe("new WheelEvent('eventType', { " + attr + ": true })." + attr, "true");
+});
+
+// button is passed.
+// Numbers within the unsigned short range.
+shouldBe("new WheelEvent('eventType', { button: 0 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: 1 }).button", "1");
+shouldBe("new WheelEvent('eventType', { button: 65534 }).button", "65534");
+
+// Numbers that are equal to ((unsigned short)-1) should be treated as 0.
+shouldBe("new WheelEvent('eventType', { button: 65535 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: 9007199254740991 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: -1 }).button", "0");
+
+// Numbers out of the unsigned short range.
+// 2^{64}-1
+shouldBe("new WheelEvent('eventType', { button: 18446744073709551615 }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: 12345678901234567890 }).button", "2048");
+shouldBe("new WheelEvent('eventType', { button: 123.45 }).button", "123");
+shouldBe("new WheelEvent('eventType', { button: NaN }).button", "0");
+
+// Non-numeric values.
+shouldBe("new WheelEvent('eventType', { button: undefined }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: null }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: '' }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: '12345' }).button", "12345");
+shouldBe("new WheelEvent('eventType', { button: '12345a' }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: 'abc' }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: [] }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: [12345] }).button", "12345");
+shouldBe("new WheelEvent('eventType', { button: [12345, 67890] }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: {} }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: {moemoe: 12345} }).button", "0");
+shouldBe("new WheelEvent('eventType', { button: {valueOf: function () { return 12345; }} }).button", "12345");
+
+// relatedTarget is passed.
+// Valid objects.
+shouldBe("new WheelEvent('eventType', { relatedTarget: testDiv }).relatedTarget", "testDiv");
+shouldBe("new WheelEvent('eventType', { relatedTarget: document }).relatedTarget", "document");
+shouldBe("new WheelEvent('eventType', { relatedTarget: xhr }).relatedTarget", "xhr");
+
+// Invalid objects.
+shouldBe("new WheelEvent('eventType', { relatedTarget: testObject }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: undefined }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: null }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: false }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: true }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: '' }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: 'chocolate' }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: 12345 }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: 18446744073709551615 }).relatedTarget", "null");
+shouldBe("new WheelEvent('eventType', { relatedTarget: NaN }).relatedTarget", "null");
+// Note that valueOf() is not called, when the left hand side is evaluated.
+shouldBeFalse("new WheelEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv");
+shouldBe("new WheelEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget", "null");
+shouldThrow("new WheelEvent('eventType', { get relatedTarget() { throw 'WheelEvent Error'; } })");
+
+// All initializers are passed.
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).bubbles", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).cancelable", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).view", "window");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).detail", "111");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).screenX", "222");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).screenY", "333");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).clientX", "444");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).clientY", "555");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).ctrlKey", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).shiftKey", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).altKey", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).metaKey", "true");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).button", "666");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).relatedTarget", "testDiv");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).wheelDeltaX", "777");
+shouldBe("new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).wheelDeltaY", "888");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
