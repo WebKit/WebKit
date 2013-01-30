@@ -1414,7 +1414,6 @@ importScript("HeapSnapshotProxy.js");
 importScript("HeapSnapshotView.js");
 importScript("HeapSnapshotWorkerDispatcher.js");
 importScript("JSHeapSnapshot.js");
-importScript("NativeHeapGraph.js");
 importScript("NativeHeapSnapshot.js");
 importScript("NativeMemorySnapshotView.js");
 importScript("ProfileLauncherView.js");

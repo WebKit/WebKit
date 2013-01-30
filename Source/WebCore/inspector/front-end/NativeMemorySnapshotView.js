@@ -271,7 +271,7 @@ WebInspector.NativeSnapshotProfileType.prototype = {
          */
         function didReceiveMemorySnapshot(error, memoryBlock, graph)
         {
-            profileHeader._graph = new WebInspector.NativeHeapGraph(graph);
+            profileHeader._graph = graph;
             profileHeader.isTemporary = false;
             profileHeader.sidebarElement.subtitle = Number.bytesToString(/** @type{number} */(memoryBlock.size));
         }
@@ -338,88 +338,74 @@ WebInspector.NativeSnapshotProfileHeader.prototype = {
 
     startSnapshotTransfer: function()
     {
-        setTimeout(this._takeNativeSnapshot.bind(this), 0);
+        var meta = {
+          "node_fields": [
+            "type",
+            "name",
+            "id",
+            "self_size",
+            "edge_count"
+          ],
+          "node_types": [
+            [
+              "hidden",
+              "array",
+              "string",
+              "object",
+              "code",
+              "closure",
+              "regexp",
+              "number",
+              "native",
+              "synthetic"
+            ],
+            "string",
+            "number",
+            "number",
+            "number",
+            "number",
+            "number"
+          ],
+          "edge_fields": [
+            "type",
+            "name_or_index",
+            "to_node"
+          ],
+          "edge_types": [
+            [
+              "context",
+              "element",
+              "property",
+              "internal",
+              "hidden",
+              "shortcut",
+              "weak"
+            ],
+            "string_or_number",
+            "node"
+          ]
+        };
+        var graph = this._graph;
+        var heapSnapshot = {
+            "snapshot": {
+                "meta": meta,
+                node_count: graph.nodes.length / 5,
+                edge_count: graph.edges.length / 3,
+                root_index: graph.nodes.length - 5
+            },
+            nodes: graph.nodes,
+            edges: graph.edges,
+            strings: graph.strings
+        };
+
+        var chunk = JSON.stringify(heapSnapshot);
+        this.transferChunk(chunk);
+        this.finishHeapSnapshot();
     },
 
     snapshotConstructorName: function()
     {
         return "NativeHeapSnapshot";
-    },
-
-    _takeNativeSnapshot: function()
-    {
-        /**
-         * @param {?string} error
-         * @param {?MemoryAgent.MemoryBlock} memoryBlock
-         * @param {?Object=} graph
-         */
-        function didReceiveMemorySnapshot(error, memoryBlock, graph)
-        {
-            var meta = {
-              "node_fields": [
-                "type",
-                "name",
-                "id",
-                "self_size",
-                "edge_count"
-              ],
-              "node_types": [
-                [
-                  "hidden",
-                  "array",
-                  "string",
-                  "object",
-                  "code",
-                  "closure",
-                  "regexp",
-                  "number",
-                  "native",
-                  "synthetic"
-                ],
-                "string",
-                "number",
-                "number",
-                "number",
-                "number",
-                "number"
-              ],
-              "edge_fields": [
-                "type",
-                "name_or_index",
-                "to_node"
-              ],
-              "edge_types": [
-                [
-                  "context",
-                  "element",
-                  "property",
-                  "internal",
-                  "hidden",
-                  "shortcut",
-                  "weak"
-                ],
-                "string_or_number",
-                "node"
-              ]
-            };
-            var heapSnapshot = {
-                "snapshot": {
-                    "meta": meta,
-                    node_count: graph.nodes.length / 5,
-                    edge_count: graph.edges.length / 3,
-                    root_index: graph.nodes.length - 5
-                },
-                nodes: graph.nodes,
-                edges: graph.edges,
-                strings: graph.strings
-            };
-
-            var chunk = JSON.stringify(heapSnapshot);
-            this.transferChunk(chunk);
-            this.finishHeapSnapshot();
-        }
-        MemoryAgent.getProcessMemoryDistribution(true, didReceiveMemorySnapshot.bind(this));
-
     },
 
     __proto__: WebInspector.HeapProfileHeader.prototype

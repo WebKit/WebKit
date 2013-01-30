@@ -77289,10 +77289,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NativeHeapGraph.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\NativeHeapSnapshot.js"
 					>
 				</File>
