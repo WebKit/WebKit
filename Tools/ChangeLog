@@ -1,3 +1,9 @@
+2013-01-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed. Add Jae Hyun Park to contributor list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-29  Alan Cutter  <alancutter@chromium.org>
 
         Need a cr-linux debug EWS bot
