@@ -1,3 +1,33 @@
+2013-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Make precise size classes more precise
+        https://bugs.webkit.org/show_bug.cgi?id=108270
+
+        Reviewed by Mark Hahnenberg.
+
+        Size inference makes this profitable.
+
+        I chose 8 byte increments because JSString is 24 bytes. Otherwise, 16
+        byte increments might be better.
+
+        * heap/Heap.h:
+        (Heap): Removed firstAllocatorWithoutDestructors because it's unused now.
+
+        * heap/MarkedBlock.h:
+        (MarkedBlock): Updated constants.
+
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC): Also reduced the maximum precise size class because my testing
+        has shown that the smaller size classes are much more common. This
+        offsets some of the size class explosion caused by reducing the precise
+        increment.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): No need for this ASSERT anymore
+        because we don't rely on firstAllocatorWithoutDestructors anymore, since
+        we pick size classes dynamically now.
+
 2013-01-29  Oliver Hunt  <oliver@apple.com>
 
         Add some hardening to methodTable()

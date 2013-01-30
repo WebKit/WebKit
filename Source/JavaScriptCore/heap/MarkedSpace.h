@@ -114,9 +114,9 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
 
-    // [ 32... 512 ]
+    // [ 32... 128 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
-    static const size_t preciseCutoff = 512;
+    static const size_t preciseCutoff = 128;
     static const size_t preciseCount = preciseCutoff / preciseStep;
 
     // [ 1024... blockSize ]
@@ -168,11 +168,6 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
 {
     Functor functor;
     return forEachDeadCell(functor);
-}
-
-inline MarkedAllocator& MarkedSpace::firstAllocator()
-{
-    return m_normalSpace.preciseAllocators[0];
 }
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)

@@ -70,14 +70,11 @@ namespace JSC {
 
     class MarkedBlock : public HeapBlock<MarkedBlock> {
     public:
-        // Ensure natural alignment for native types whilst recognizing that the smallest
-        // object the heap will commonly allocate is four words.
-        static const size_t atomSize = 4 * sizeof(void*);
-        static const size_t atomShift = 5;
+        static const size_t atomSize = 8; // bytes
         static const size_t blockSize = 64 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
-        static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
+        static const size_t atomsPerBlock = blockSize / atomSize;
         static const size_t atomMask = atomsPerBlock - 1;
 
         struct FreeCell {

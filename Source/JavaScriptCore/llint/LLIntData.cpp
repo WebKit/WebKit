@@ -107,11 +107,6 @@ void Data::performAssertions(JSGlobalData& globalData)
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);
-#if USE(JSVALUE64)
-    ASSERT(&globalData.heap.allocatorForObjectWithoutDestructor(JSFinalObject::allocationSize(JSFinalObject::defaultInlineCapacity())) - &globalData.heap.firstAllocatorWithoutDestructors() == 1);
-#else
-    ASSERT(&globalData.heap.allocatorForObjectWithoutDestructor(JSFinalObject::allocationSize(JSFinalObject::defaultInlineCapacity())) - &globalData.heap.firstAllocatorWithoutDestructors() == 3);
-#endif
     ASSERT(FirstConstantRegisterIndex == 0x40000000);
     ASSERT(GlobalCode == 0);
     ASSERT(EvalCode == 1);
