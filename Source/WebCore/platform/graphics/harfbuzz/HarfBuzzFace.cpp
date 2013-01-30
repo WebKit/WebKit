@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 
 #include "FontPlatformData.h"
 #include "hb-ot.h"
@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-const hb_tag_t HarfBuzzNGFace::vertTag = HB_TAG('v', 'e', 'r', 't');
-const hb_tag_t HarfBuzzNGFace::vrt2Tag = HB_TAG('v', 'r', 't', '2');
+const hb_tag_t HarfBuzzFace::vertTag = HB_TAG('v', 'e', 'r', 't');
+const hb_tag_t HarfBuzzFace::vrt2Tag = HB_TAG('v', 'r', 't', '2');
 
 // Though we have FontCache class, which provides the cache mechanism for
 // WebKit's font objects, we also need additional caching layer for HarfBuzz
@@ -69,20 +69,20 @@ private:
     HashMap<uint32_t, uint16_t> m_glyphCache;
 };
 
-typedef HashMap<uint64_t, RefPtr<FaceCacheEntry>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > HarfBuzzNGFaceCache;
+typedef HashMap<uint64_t, RefPtr<FaceCacheEntry>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > HarfBuzzFaceCache;
 
-static HarfBuzzNGFaceCache* harfbuzzFaceCache()
+static HarfBuzzFaceCache* harfBuzzFaceCache()
 {
-    DEFINE_STATIC_LOCAL(HarfBuzzNGFaceCache, s_harfbuzzFaceCache, ());
-    return &s_harfbuzzFaceCache;
+    DEFINE_STATIC_LOCAL(HarfBuzzFaceCache, s_harfBuzzFaceCache, ());
+    return &s_harfBuzzFaceCache;
 }
 
-HarfBuzzNGFace::HarfBuzzNGFace(FontPlatformData* platformData, uint64_t uniqueID)
+HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
     : m_platformData(platformData)
     , m_uniqueID(uniqueID)
     , m_scriptForVerticalText(HB_SCRIPT_INVALID)
 {
-    HarfBuzzNGFaceCache::AddResult result = harfbuzzFaceCache()->add(m_uniqueID, 0);
+    HarfBuzzFaceCache::AddResult result = harfBuzzFaceCache()->add(m_uniqueID, 0);
     if (result.isNewEntry)
         result.iterator->value = FaceCacheEntry::create(createFace());
     result.iterator->value->ref();
@@ -90,14 +90,14 @@ HarfBuzzNGFace::HarfBuzzNGFace(FontPlatformData* platformData, uint64_t uniqueID
     m_glyphCacheForFaceCacheEntry = result.iterator->value->glyphCache();
 }
 
-HarfBuzzNGFace::~HarfBuzzNGFace()
+HarfBuzzFace::~HarfBuzzFace()
 {
-    HarfBuzzNGFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
-    ASSERT(result != harfbuzzFaceCache()->end());
+    HarfBuzzFaceCache::iterator result = harfBuzzFaceCache()->find(m_uniqueID);
+    ASSERT(result != harfBuzzFaceCache()->end());
     ASSERT(result.get()->value->refCount() > 1);
     result.get()->value->deref();
     if (result.get()->value->refCount() == 1)
-        harfbuzzFaceCache()->remove(m_uniqueID);
+        harfBuzzFaceCache()->remove(m_uniqueID);
 }
 
 static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
@@ -113,15 +113,15 @@ static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
         hb_ot_layout_script_get_language_tags(face, HB_OT_TAG_GSUB, scriptIndex, 0, &languageCount, languageTags);
         for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
             unsigned featureIndex;
-            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HarfBuzzNGFace::vertTag, &featureIndex)
-                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HarfBuzzNGFace::vrt2Tag, &featureIndex))
+            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HarfBuzzFace::vertTag, &featureIndex)
+                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HarfBuzzFace::vrt2Tag, &featureIndex))
                 return hb_ot_tag_to_script(scriptTags[scriptIndex]);
         }
     }
     return HB_SCRIPT_INVALID;
 }
 
-void HarfBuzzNGFace::setScriptForVerticalGlyphSubstitution(hb_buffer_t* buffer)
+void HarfBuzzFace::setScriptForVerticalGlyphSubstitution(hb_buffer_t* buffer)
 {
     if (m_scriptForVerticalText == HB_SCRIPT_INVALID)
         m_scriptForVerticalText = findScriptForVerticalGlyphSubstitution(m_face);

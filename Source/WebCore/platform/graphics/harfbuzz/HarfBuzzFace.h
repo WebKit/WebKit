@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HarfBuzzNGFace_h
-#define HarfBuzzNGFace_h
+#ifndef HarfBuzzFace_h
+#define HarfBuzzFace_h
 
 #include <hb.h>
 
@@ -42,23 +42,23 @@ namespace WebCore {
 
 class FontPlatformData;
 
-class HarfBuzzNGFace : public RefCounted<HarfBuzzNGFace> {
+class HarfBuzzFace : public RefCounted<HarfBuzzFace> {
 public:
     static const hb_tag_t vertTag;
     static const hb_tag_t vrt2Tag;
 
-    static PassRefPtr<HarfBuzzNGFace> create(FontPlatformData* platformData, uint64_t uniqueID)
+    static PassRefPtr<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
     {
-        return adoptRef(new HarfBuzzNGFace(platformData, uniqueID));
+        return adoptRef(new HarfBuzzFace(platformData, uniqueID));
     }
-    ~HarfBuzzNGFace();
+    ~HarfBuzzFace();
 
     hb_font_t* createFont();
 
     void setScriptForVerticalGlyphSubstitution(hb_buffer_t*);
 
 private:
-    HarfBuzzNGFace(FontPlatformData*, uint64_t);
+    HarfBuzzFace(FontPlatformData*, uint64_t);
 
     hb_face_t* createFace();
 
@@ -72,4 +72,4 @@ private:
 
 }
 
-#endif // HarfBuzzNGFace_h
+#endif // HarfBuzzFace_h

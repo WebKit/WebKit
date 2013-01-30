@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
@@ -90,7 +90,7 @@ static void CairoGetGlyphWidthAndExtents(cairo_scaled_font_t* scaledFont, hb_cod
     }
 }
 
-static hb_bool_t harfbuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t unicode, hb_codepoint_t, hb_codepoint_t* glyph, void*)
+static hb_bool_t harfBuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t unicode, hb_codepoint_t, hb_codepoint_t* glyph, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -108,7 +108,7 @@ static hb_bool_t harfbuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t uni
     return true;
 }
 
-static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t*, void* fontData, hb_codepoint_t glyph, void*)
+static hb_position_t harfBuzzGetGlyphHorizontalAdvance(hb_font_t*, void* fontData, hb_codepoint_t glyph, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -119,14 +119,14 @@ static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t*, void* fontDat
     return advance;
 }
 
-static hb_bool_t harfbuzzGetGlyphHorizontalOrigin(hb_font_t*, void*, hb_codepoint_t, hb_position_t*, hb_position_t*, void*)
+static hb_bool_t harfBuzzGetGlyphHorizontalOrigin(hb_font_t*, void*, hb_codepoint_t, hb_position_t*, hb_position_t*, void*)
 {
     // Just return true, following the way that Harfbuzz-FreeType
     // implementation does.
     return true;
 }
 
-static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t*, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void*)
+static hb_bool_t harfBuzzGetGlyphExtents(hb_font_t*, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -136,24 +136,24 @@ static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t*, void* fontData, hb_codepoin
     return true;
 }
 
-static hb_font_funcs_t* harfbuzzCairoTextGetFontFuncs()
+static hb_font_funcs_t* harfBuzzCairoTextGetFontFuncs()
 {
-    static hb_font_funcs_t* harfbuzzCairoFontFuncs = 0;
+    static hb_font_funcs_t* harfBuzzCairoFontFuncs = 0;
 
     // We don't set callback functions which we can't support.
     // Harfbuzz will use the fallback implementation if they aren't set.
-    if (!harfbuzzCairoFontFuncs) {
-        harfbuzzCairoFontFuncs = hb_font_funcs_create();
-        hb_font_funcs_set_glyph_func(harfbuzzCairoFontFuncs, harfbuzzGetGlyph, 0, 0);
-        hb_font_funcs_set_glyph_h_advance_func(harfbuzzCairoFontFuncs, harfbuzzGetGlyphHorizontalAdvance, 0, 0);
-        hb_font_funcs_set_glyph_h_origin_func(harfbuzzCairoFontFuncs, harfbuzzGetGlyphHorizontalOrigin, 0, 0);
-        hb_font_funcs_set_glyph_extents_func(harfbuzzCairoFontFuncs, harfbuzzGetGlyphExtents, 0, 0);
-        hb_font_funcs_make_immutable(harfbuzzCairoFontFuncs);
+    if (!harfBuzzCairoFontFuncs) {
+        harfBuzzCairoFontFuncs = hb_font_funcs_create();
+        hb_font_funcs_set_glyph_func(harfBuzzCairoFontFuncs, harfBuzzGetGlyph, 0, 0);
+        hb_font_funcs_set_glyph_h_advance_func(harfBuzzCairoFontFuncs, harfBuzzGetGlyphHorizontalAdvance, 0, 0);
+        hb_font_funcs_set_glyph_h_origin_func(harfBuzzCairoFontFuncs, harfBuzzGetGlyphHorizontalOrigin, 0, 0);
+        hb_font_funcs_set_glyph_extents_func(harfBuzzCairoFontFuncs, harfBuzzGetGlyphExtents, 0, 0);
+        hb_font_funcs_make_immutable(harfBuzzCairoFontFuncs);
     }
-    return harfbuzzCairoFontFuncs;
+    return harfBuzzCairoFontFuncs;
 }
 
-static hb_blob_t* harfbuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData)
+static hb_blob_t* harfBuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData)
 {
     cairo_scaled_font_t* scaledFont = reinterpret_cast<cairo_scaled_font_t*>(userData);
     if (!scaledFont)
@@ -182,17 +182,17 @@ static hb_blob_t* harfbuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData
     return hb_blob_create(reinterpret_cast<const char*>(buffer), tableSize, HB_MEMORY_MODE_WRITABLE, buffer, fastFree);
 }
 
-hb_face_t* HarfBuzzNGFace::createFace()
+hb_face_t* HarfBuzzFace::createFace()
 {
-    hb_face_t* face = hb_face_create_for_tables(harfbuzzCairoGetTable, m_platformData->scaledFont(), 0);
+    hb_face_t* face = hb_face_create_for_tables(harfBuzzCairoGetTable, m_platformData->scaledFont(), 0);
     ASSERT(face);
     return face;
 }
 
-hb_font_t* HarfBuzzNGFace::createFont()
+hb_font_t* HarfBuzzFace::createFont()
 {
     hb_font_t* font = hb_font_create(m_face);
-    hb_font_set_funcs(font, harfbuzzCairoTextGetFontFuncs(), m_platformData, 0);
+    hb_font_set_funcs(font, harfBuzzCairoTextGetFontFuncs(), m_platformData, 0);
     const float size = m_platformData->size();
     if (floorf(size) == size)
         hb_font_set_ppem(font, size, size);

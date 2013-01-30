@@ -28,7 +28,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 #endif
 
 using namespace std;

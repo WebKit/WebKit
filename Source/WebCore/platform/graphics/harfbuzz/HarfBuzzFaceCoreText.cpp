@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 
 #include "FontPlatformData.h"
 #include "HarfBuzzShaper.h"
@@ -87,17 +87,17 @@ static hb_bool_t getGlyphExtents(hb_font_t* hbFont, void* fontData, hb_codepoint
 
 static hb_font_funcs_t* harfbuzzCoreTextGetFontFuncs()
 {
-    static hb_font_funcs_t* harfbuzzCoreTextFontFuncs = 0;
+    static hb_font_funcs_t* harfBuzzCoreTextFontFuncs = 0;
 
-    if (!harfbuzzCoreTextFontFuncs) {
-        harfbuzzCoreTextFontFuncs = hb_font_funcs_create();
-        hb_font_funcs_set_glyph_func(harfbuzzCoreTextFontFuncs, getGlyph, 0, 0);
-        hb_font_funcs_set_glyph_h_advance_func(harfbuzzCoreTextFontFuncs, getGlyphHorizontalAdvance, 0, 0);
-        hb_font_funcs_set_glyph_h_origin_func(harfbuzzCoreTextFontFuncs, getGlyphHorizontalOrigin, 0, 0);
-        hb_font_funcs_set_glyph_extents_func(harfbuzzCoreTextFontFuncs, getGlyphExtents, 0, 0);
-        hb_font_funcs_make_immutable(harfbuzzCoreTextFontFuncs);
+    if (!harfBuzzCoreTextFontFuncs) {
+        harfBuzzCoreTextFontFuncs = hb_font_funcs_create();
+        hb_font_funcs_set_glyph_func(harfBuzzCoreTextFontFuncs, getGlyph, 0, 0);
+        hb_font_funcs_set_glyph_h_advance_func(harfBuzzCoreTextFontFuncs, getGlyphHorizontalAdvance, 0, 0);
+        hb_font_funcs_set_glyph_h_origin_func(harfBuzzCoreTextFontFuncs, getGlyphHorizontalOrigin, 0, 0);
+        hb_font_funcs_set_glyph_extents_func(harfBuzzCoreTextFontFuncs, getGlyphExtents, 0, 0);
+        hb_font_funcs_make_immutable(harfBuzzCoreTextFontFuncs);
     }
-    return harfbuzzCoreTextFontFuncs;
+    return harfBuzzCoreTextFontFuncs;
 }
 
 static void releaseTableData(void* userData)
@@ -106,7 +106,7 @@ static void releaseTableData(void* userData)
     CFRelease(cfData);
 }
 
-static hb_blob_t* harfbuzzCoreTextGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
+static hb_blob_t* harfBuzzCoreTextGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
 {
     CGFontRef cgFont = reinterpret_cast<CGFontRef>(userData);
     CFDataRef cfData = CGFontCopyTableForTag(cgFont, tag);
@@ -120,19 +120,19 @@ static hb_blob_t* harfbuzzCoreTextGetTable(hb_face_t* face, hb_tag_t tag, void* 
     return hb_blob_create(data, length, HB_MEMORY_MODE_READONLY, reinterpret_cast<void*>(const_cast<__CFData*>(cfData)), releaseTableData);
 }
 
-hb_face_t* HarfBuzzNGFace::createFace()
+hb_face_t* HarfBuzzFace::createFace()
 {
     // It seems that CTFontCopyTable of MacOSX10.5 sdk doesn't work for
     // OpenType layout tables(GDEF, GSUB, GPOS). Use CGFontCopyTableForTag instead.
-    hb_face_t* face = hb_face_create_for_tables(harfbuzzCoreTextGetTable, m_platformData->cgFont(), 0);
+    hb_face_t* face = hb_face_create_for_tables(harfBuzzCoreTextGetTable, m_platformData->cgFont(), 0);
     ASSERT(face);
     return face;
 }
 
-hb_font_t* HarfBuzzNGFace::createFont()
+hb_font_t* HarfBuzzFace::createFont()
 {
     hb_font_t* font = hb_font_create(m_face);
-    hb_font_set_funcs(font, harfbuzzCoreTextGetFontFuncs(), m_platformData, 0);
+    hb_font_set_funcs(font, harfBuzzCoreTextGetFontFuncs(), m_platformData, 0);
     const float size = m_platformData->m_size;
     hb_font_set_ppem(font, size, size);
     const int scale = (1 << 16) * static_cast<int>(size);

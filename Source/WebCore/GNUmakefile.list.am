@@ -4238,11 +4238,11 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/freetype/UTF16UChar32Iterator.h \
 	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp \
 	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.h \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.h \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFace.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFace.h \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaper.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaper.h \
 	Source/WebCore/plugins/npapi.h \
 	Source/WebCore/plugins/npruntime.h \
 	Source/WebCore/plugins/nptypes.h \

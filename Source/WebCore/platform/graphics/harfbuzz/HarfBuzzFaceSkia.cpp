@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
@@ -47,8 +47,8 @@
 
 namespace WebCore {
 
-// Our implementation of the callbacks which Harfbuzz requires by using Skia
-// calls. See the Harfbuzz source for references about what these callbacks do.
+// Our implementation of the callbacks which HarfBuzz requires by using Skia
+// calls. See the HarfBuzz source for references about what these callbacks do.
 
 struct HarfBuzzFontData {
     HarfBuzzFontData(WTF::HashMap<uint32_t, uint16_t>* glyphCacheForFaceCacheEntry)
@@ -58,7 +58,7 @@ struct HarfBuzzFontData {
     WTF::HashMap<uint32_t, uint16_t>* m_glyphCacheForFaceCacheEntry;
 };
 
-static hb_position_t SkiaScalarToHarfbuzzPosition(SkScalar value)
+static hb_position_t SkiaScalarToHarfBuzzPosition(SkScalar value)
 {
     return SkScalarToFixed(value);
 }
@@ -74,17 +74,17 @@ static void SkiaGetGlyphWidthAndExtents(SkPaint* paint, hb_codepoint_t codepoint
 
     paint->getTextWidths(&glyph, sizeof(glyph), &skWidth, &skBounds);
     if (width)
-        *width = SkiaScalarToHarfbuzzPosition(skWidth);
+        *width = SkiaScalarToHarfBuzzPosition(skWidth);
     if (extents) {
-        // Invert y-axis because Skia is y-grows-down but we set up harfbuzz to be y-grows-up.
-        extents->x_bearing = SkiaScalarToHarfbuzzPosition(skBounds.fLeft);
-        extents->y_bearing = SkiaScalarToHarfbuzzPosition(-skBounds.fTop);
-        extents->width = SkiaScalarToHarfbuzzPosition(skBounds.width());
-        extents->height = SkiaScalarToHarfbuzzPosition(-skBounds.height());
+        // Invert y-axis because Skia is y-grows-down but we set up HarfBuzz to be y-grows-up.
+        extents->x_bearing = SkiaScalarToHarfBuzzPosition(skBounds.fLeft);
+        extents->y_bearing = SkiaScalarToHarfBuzzPosition(-skBounds.fTop);
+        extents->width = SkiaScalarToHarfBuzzPosition(skBounds.width());
+        extents->height = SkiaScalarToHarfBuzzPosition(-skBounds.height());
     }
 }
 
-static hb_bool_t harfbuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoint_t unicode, hb_codepoint_t variationSelector, hb_codepoint_t* glyph, void* userData)
+static hb_bool_t harfBuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoint_t unicode, hb_codepoint_t variationSelector, hb_codepoint_t* glyph, void* userData)
 {
     HarfBuzzFontData* hbFontData = reinterpret_cast<HarfBuzzFontData*>(fontData);
 
@@ -101,7 +101,7 @@ static hb_bool_t harfbuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoin
     return !!*glyph;
 }
 
-static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, void* userData)
+static hb_position_t harfBuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, void* userData)
 {
     HarfBuzzFontData* hbFontData = reinterpret_cast<HarfBuzzFontData*>(fontData);
     hb_position_t advance = 0;
@@ -110,14 +110,14 @@ static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* 
     return advance;
 }
 
-static hb_bool_t harfbuzzGetGlyphHorizontalOrigin(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_position_t* x, hb_position_t* y, void* userData)
+static hb_bool_t harfBuzzGetGlyphHorizontalOrigin(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_position_t* x, hb_position_t* y, void* userData)
 {
-    // Just return true, following the way that Harfbuzz-FreeType
+    // Just return true, following the way that HarfBuzz-FreeType
     // implementation does.
     return true;
 }
 
-static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void* userData)
+static hb_bool_t harfBuzzGetGlyphExtents(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void* userData)
 {
     HarfBuzzFontData* hbFontData = reinterpret_cast<HarfBuzzFontData*>(fontData);
 
@@ -125,24 +125,24 @@ static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t* hbFont, void* fontData, hb_c
     return true;
 }
 
-static hb_font_funcs_t* harfbuzzSkiaGetFontFuncs()
+static hb_font_funcs_t* harfBuzzSkiaGetFontFuncs()
 {
-    static hb_font_funcs_t* harfbuzzSkiaFontFuncs = 0;
+    static hb_font_funcs_t* harfBuzzSkiaFontFuncs = 0;
 
     // We don't set callback functions which we can't support.
-    // Harfbuzz will use the fallback implementation if they aren't set.
-    if (!harfbuzzSkiaFontFuncs) {
-        harfbuzzSkiaFontFuncs = hb_font_funcs_create();
-        hb_font_funcs_set_glyph_func(harfbuzzSkiaFontFuncs, harfbuzzGetGlyph, 0, 0);
-        hb_font_funcs_set_glyph_h_advance_func(harfbuzzSkiaFontFuncs, harfbuzzGetGlyphHorizontalAdvance, 0, 0);
-        hb_font_funcs_set_glyph_h_origin_func(harfbuzzSkiaFontFuncs, harfbuzzGetGlyphHorizontalOrigin, 0, 0);
-        hb_font_funcs_set_glyph_extents_func(harfbuzzSkiaFontFuncs, harfbuzzGetGlyphExtents, 0, 0);
-        hb_font_funcs_make_immutable(harfbuzzSkiaFontFuncs);
+    // HarfBuzz will use the fallback implementation if they aren't set.
+    if (!harfBuzzSkiaFontFuncs) {
+        harfBuzzSkiaFontFuncs = hb_font_funcs_create();
+        hb_font_funcs_set_glyph_func(harfBuzzSkiaFontFuncs, harfBuzzGetGlyph, 0, 0);
+        hb_font_funcs_set_glyph_h_advance_func(harfBuzzSkiaFontFuncs, harfBuzzGetGlyphHorizontalAdvance, 0, 0);
+        hb_font_funcs_set_glyph_h_origin_func(harfBuzzSkiaFontFuncs, harfBuzzGetGlyphHorizontalOrigin, 0, 0);
+        hb_font_funcs_set_glyph_extents_func(harfBuzzSkiaFontFuncs, harfBuzzGetGlyphExtents, 0, 0);
+        hb_font_funcs_make_immutable(harfBuzzSkiaFontFuncs);
     }
-    return harfbuzzSkiaFontFuncs;
+    return harfBuzzSkiaFontFuncs;
 }
 
-static hb_blob_t* harfbuzzSkiaGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
+static hb_blob_t* harfBuzzSkiaGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
 {
     SkFontID uniqueID = static_cast<SkFontID>(reinterpret_cast<uint64_t>(userData));
 
@@ -159,8 +159,7 @@ static hb_blob_t* harfbuzzSkiaGetTable(hb_face_t* face, hb_tag_t tag, void* user
         return 0;
     }
 
-    return hb_blob_create(const_cast<char*>(buffer), tableSize,
-                          HB_MEMORY_MODE_WRITABLE, buffer, fastFree);
+    return hb_blob_create(const_cast<char*>(buffer), tableSize, HB_MEMORY_MODE_WRITABLE, buffer, fastFree);
 }
 
 static void destroyHarfBuzzFontData(void* userData)
@@ -169,21 +168,21 @@ static void destroyHarfBuzzFontData(void* userData)
     delete hbFontData;
 }
 
-hb_face_t* HarfBuzzNGFace::createFace()
+hb_face_t* HarfBuzzFace::createFace()
 {
-    hb_face_t* face = hb_face_create_for_tables(harfbuzzSkiaGetTable, reinterpret_cast<void*>(m_platformData->uniqueID()), 0);
+    hb_face_t* face = hb_face_create_for_tables(harfBuzzSkiaGetTable, reinterpret_cast<void*>(m_platformData->uniqueID()), 0);
     ASSERT(face);
     return face;
 }
 
-hb_font_t* HarfBuzzNGFace::createFont()
+hb_font_t* HarfBuzzFace::createFont()
 {
     HarfBuzzFontData* hbFontData = new HarfBuzzFontData(m_glyphCacheForFaceCacheEntry);
     m_platformData->setupPaint(&hbFontData->m_paint);
     hb_font_t* font = hb_font_create(m_face);
-    hb_font_set_funcs(font, harfbuzzSkiaGetFontFuncs(), hbFontData, destroyHarfBuzzFontData);
+    hb_font_set_funcs(font, harfBuzzSkiaGetFontFuncs(), hbFontData, destroyHarfBuzzFontData);
     float size = m_platformData->size();
-    int scale = SkiaScalarToHarfbuzzPosition(size);
+    int scale = SkiaScalarToHarfBuzzPosition(size);
     hb_font_set_scale(font, scale, scale);
     hb_font_make_immutable(font);
     return font;

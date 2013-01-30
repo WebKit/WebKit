@@ -112,7 +112,7 @@ private:
     GlyphBufferAdvance createGlyphBufferAdvance(float, float);
 
     Vector<hb_feature_t, 4> m_features;
-    Vector<OwnPtr<HarfBuzzRun>, 16> m_harfbuzzRuns;
+    Vector<OwnPtr<HarfBuzzRun>, 16> m_harfBuzzRuns;
 
     FloatPoint m_startOffset;
 

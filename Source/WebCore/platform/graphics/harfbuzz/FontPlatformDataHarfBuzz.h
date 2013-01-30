@@ -47,7 +47,7 @@ typedef uint32_t SkFontID;
 namespace WebCore {
 
 class FontDescription;
-class HarfBuzzNGFace;
+class HarfBuzzFace;
 
 // -----------------------------------------------------------------------------
 // FontPlatformData is the handle which WebKit has on a specific face. A face
@@ -107,7 +107,7 @@ public:
     String description() const;
 #endif
 
-    HarfBuzzNGFace* harfbuzzFace() const;
+    HarfBuzzFace* harfBuzzFace() const;
 
     // The returned styles are all actual styles without FontRenderStyle::NoPreference.
     const FontRenderStyle& fontRenderStyle() const { return m_style; }
@@ -135,7 +135,7 @@ private:
     bool m_fakeItalic;
     FontOrientation m_orientation;
     FontRenderStyle m_style;
-    mutable RefPtr<HarfBuzzNGFace> m_harfbuzzFace;
+    mutable RefPtr<HarfBuzzFace> m_harfBuzzFace;
 
     SkTypeface* hashTableDeletedFontValue() const { return reinterpret_cast<SkTypeface*>(-1); }
 };

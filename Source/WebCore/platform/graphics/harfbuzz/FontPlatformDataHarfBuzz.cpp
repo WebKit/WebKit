@@ -32,7 +32,7 @@
 #include "FontPlatformDataHarfBuzz.h"
 
 #include "FontCache.h"
-#include "HarfBuzzNGFace.h"
+#include "HarfBuzzFace.h"
 #include "NotImplemented.h"
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkFontHost.h"
@@ -124,7 +124,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src)
     , m_fakeItalic(src.m_fakeItalic)
     , m_orientation(src.m_orientation)
     , m_style(src.m_style)
-    , m_harfbuzzFace(src.m_harfbuzzFace)
+    , m_harfBuzzFace(src.m_harfBuzzFace)
 {
     SkSafeRef(m_typeface);
 }
@@ -150,7 +150,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src, float textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
     , m_orientation(src.m_orientation)
-    , m_harfbuzzFace(src.m_harfbuzzFace)
+    , m_harfBuzzFace(src.m_harfBuzzFace)
 {
     SkSafeRef(m_typeface);
     querySystemForRenderStyle();
@@ -188,7 +188,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
     m_textSize = src.m_textSize;
     m_fakeBold = src.m_fakeBold;
     m_fakeItalic = src.m_fakeItalic;
-    m_harfbuzzFace = src.m_harfbuzzFace;
+    m_harfBuzzFace = src.m_harfBuzzFace;
     m_orientation = src.m_orientation;
     m_style = src.m_style;
     m_emSizeInFontUnits = src.m_emSizeInFontUnits;
@@ -268,12 +268,12 @@ bool FontPlatformData::isFixedPitch() const
     return false;
 }
 
-HarfBuzzNGFace* FontPlatformData::harfbuzzFace() const
+HarfBuzzFace* FontPlatformData::harfBuzzFace() const
 {
-    if (!m_harfbuzzFace)
-        m_harfbuzzFace = HarfBuzzNGFace::create(const_cast<FontPlatformData*>(this), uniqueID());
+    if (!m_harfBuzzFace)
+        m_harfBuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID());
 
-    return m_harfbuzzFace.get();
+    return m_harfBuzzFace.get();
 }
 
 void FontPlatformData::getRenderStyleForStrike(const char* font, int sizeAndStyle)

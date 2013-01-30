@@ -29,7 +29,7 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-#import "HarfBuzzNGFace.h"
+#import "HarfBuzzFace.h"
 #endif
 
 namespace WebCore {
@@ -94,7 +94,7 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
-    m_harfbuzzFace = f.m_harfbuzzFace;
+    m_harfBuzzFace = f.m_harfBuzzFace;
 #endif
 }
 
@@ -111,7 +111,7 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
     m_CTFont = f.m_CTFont;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
-    m_harfbuzzFace = f.m_harfbuzzFace;
+    m_harfBuzzFace = f.m_harfBuzzFace;
 #endif
     return *this;
 }
@@ -309,18 +309,18 @@ static bool isAATFont(CTFontRef ctFont)
     return false;
 }
 
-HarfBuzzNGFace* FontPlatformData::harfbuzzFace()
+HarfBuzzFace* FontPlatformData::harfBuzzFace()
 {
     CTFontRef font = ctFont();
     // HarfBuzz can't handle AAT font
     if (isAATFont(font))
         return 0;
 
-    if (!m_harfbuzzFace) {
+    if (!m_harfBuzzFace) {
         uint64_t uniqueID = reinterpret_cast<uintptr_t>(font);
-        m_harfbuzzFace = HarfBuzzNGFace::create(const_cast<FontPlatformData*>(this), uniqueID);
+        m_harfBuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID);
     }
-    return m_harfbuzzFace.get();
+    return m_harfBuzzFace.get();
 }
 #endif
 
