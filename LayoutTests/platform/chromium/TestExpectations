@@ -4372,6 +4372,9 @@ webkit.org/b/9221 [ Win Mac ] fast/css/resize-corner-tracking-transformed-iframe
 # The test is flaky on chromium-ews
 webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Pass Failure ]
 
+webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
+webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+
 # Crashing after r141166
 webkit.org/b/108285 [ Debug ] fast/workers/storage/change-version-sync.html [ Crash ]
 webkit.org/b/108285 [ Debug ] fast/workers/storage/multiple-transactions-on-different-handles-sync.html [ Crash ]
