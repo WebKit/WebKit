@@ -61,6 +61,10 @@ webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
+# Assertion failure and incorrect results on our port after r140999
+webkit.org/b/106142 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Crash Failure ]
+webkit.org/b/106142 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Crash Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -433,3 +437,14 @@ webkit.org/b/108182 http/tests/security/cross-origin-plugin-private-browsing-tog
 webkit.org/b/108182 http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
 webkit.org/b/108182 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
 webkit.org/b/108182 plugins [ Skip ]
+webkit.org/b/108182 fast/loader/reload-zero-byte-plugin.html [ Skip ]
+webkit.org/b/108182 fast/frames/iframe-plugin-load-remove-document-crash.html [ Skip ]
+webkit.org/b/108182 fast/replaced/no-focus-ring-object.html [ Skip ]
+webkit.org/b/108182 fast/replaced/object-with-embed-url-param.html [ Skip ]
+webkit.org/b/108182 fast/replaced/no-focus-ring-embed.html [ Skip ]
+webkit.org/b/108182 http/tests/plugins/post-url-file.html [ Skip ]
+webkit.org/b/108182 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
+webkit.org/b/108182 compositing/plugins/small-to-large-composited-plugin.html [ Skip ]
+
+# New ruby selection test (in r140613) fails to render correctly, not generating an expected result
+webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
