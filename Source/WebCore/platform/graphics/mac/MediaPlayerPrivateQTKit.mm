@@ -1476,8 +1476,15 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
             Vector<String> typesForExtension = MIMETypeRegistry::getMediaMIMETypesForExtension(ext);
             unsigned count = typesForExtension.size();
             for (unsigned ndx = 0; ndx < count; ++ndx) {
-                if (!cache.contains(typesForExtension[ndx]))
-                    cache.add(typesForExtension[ndx]);
+                String& type = typesForExtension[ndx];
+
+                // QTKit will return non-video MIME types which it claims to support, but which we
+                // do not support in the <video> element. Disclaim all non video/ or audio/ types.
+                if (!type.startsWith("video/") && !type.startsWith("audio/"))
+                    continue;
+
+                if (!cache.contains(type))
+                    cache.add(type);
             }
         }
     }    
