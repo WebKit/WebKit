@@ -401,6 +401,11 @@ void WebSettingsImpl::setPrivilegedWebGLExtensionsEnabled(bool enabled)
     m_settings->setPrivilegedWebGLExtensionsEnabled(enabled);
 }
 
+void WebSettingsImpl::setRecordRenderingStats(bool enabled)
+{
+    m_recordRenderingStats = enabled;
+}
+
 void WebSettingsImpl::setRenderVSyncEnabled(bool enabled)
 {
     m_renderVSyncEnabled = enabled;

@@ -135,6 +135,7 @@ public:
     virtual void setPictographFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setPluginsEnabled(bool);
     virtual void setPrivilegedWebGLExtensionsEnabled(bool);
+    virtual void setRecordRenderingStats(bool);
     virtual void setRenderVSyncEnabled(bool);
     virtual void setRenderVSyncNotificationEnabled(bool);
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
@@ -182,6 +183,7 @@ public:
     bool doubleTapToZoomEnabled() const { return m_doubleTapToZoomEnabled; }
     bool perTilePaintingEnabled() const { return m_perTilePaintingEnabled; }
     bool acceleratedAnimationEnabled() const { return m_acceleratedAnimationEnabled; }
+    bool recordRenderingStats() const { return m_recordRenderingStats; }
     WebSize defaultTileSize() const { return m_defaultTileSize; }
     WebSize maxUntiledLayerSize() const { return m_maxUntiledLayerSize; }
 
@@ -199,6 +201,7 @@ private:
     bool m_doubleTapToZoomEnabled;
     bool m_perTilePaintingEnabled;
     bool m_acceleratedAnimationEnabled;
+    bool m_recordRenderingStats;
     WebSize m_defaultTileSize;
     WebSize m_maxUntiledLayerSize;
 };

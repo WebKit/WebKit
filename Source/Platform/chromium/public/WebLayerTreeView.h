@@ -56,6 +56,7 @@ public:
             , partialSwapEnabled(false)
             , acceleratedAnimationEnabled(true)
             , pageScalePinchZoomEnabled(false)
+            , recordRenderingStats(false)
             , refreshRate(0)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
@@ -73,6 +74,7 @@ public:
         bool partialSwapEnabled;
         bool acceleratedAnimationEnabled;
         bool pageScalePinchZoomEnabled;
+        bool recordRenderingStats;
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
