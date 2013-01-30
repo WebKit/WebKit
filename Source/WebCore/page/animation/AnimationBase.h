@@ -129,9 +129,6 @@ public:
     bool waitingForStartTime() const { return m_animState == AnimationStateStartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animState == AnimationStateStartWaitStyleAvailable; }
 
-    // "animating" means that something is running that requires a timer to keep firing
-    // (e.g. a software animation)
-    void setAnimating(bool inAnimating = true) { m_isAnimating = inAnimating; }
     virtual double timeToNextService();
 
     double progress(double scale, double offset, const TimingFunction*) const;
@@ -224,7 +221,6 @@ protected:
 
     AnimState m_animState;
 
-    bool m_isAnimating;       // transition/animation requires continual timer firing
     bool m_isAccelerated;
     bool m_transformFunctionListValid;
 #if ENABLE(CSS_FILTERS)

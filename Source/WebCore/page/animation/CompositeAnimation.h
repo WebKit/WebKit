@@ -68,7 +68,6 @@ public:
     
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
-    void setAnimating(bool);
     bool isAnimatingProperty(CSSPropertyID, bool acceleratedOnly, bool isRunningNow) const;
 
     PassRefPtr<KeyframeAnimation> getAnimationForProperty(CSSPropertyID) const;

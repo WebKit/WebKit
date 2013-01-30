@@ -325,26 +325,6 @@ PassRefPtr<RenderStyle> CompositeAnimation::getAnimatedStyle() const
     return resultStyle;
 }
 
-// "animating" means that something is running that requires the timer to keep firing
-void CompositeAnimation::setAnimating(bool animating)
-{
-    if (!m_transitions.isEmpty()) {
-        CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
-        for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
-            ImplicitAnimation* transition = it->value.get();
-            transition->setAnimating(animating);
-        }
-    }
-    if (!m_keyframeAnimations.isEmpty()) {
-        m_keyframeAnimations.checkConsistency();
-        AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
-        for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
-            KeyframeAnimation* anim = it->value.get();
-            anim->setAnimating(animating);
-        }
-    }
-}
-
 double CompositeAnimation::timeToNextService() const
 {
     // Returns the time at which next service is required. -1 means no service is required. 0 means 

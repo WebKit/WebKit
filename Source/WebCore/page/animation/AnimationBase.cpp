@@ -70,7 +70,6 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
 
 AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
     : m_animState(AnimationStateNew)
-    , m_isAnimating(false)
     , m_isAccelerated(false)
     , m_transformFunctionListValid(false)
 #if ENABLE(CSS_FILTERS)
