@@ -1,5 +1,16 @@
 2013-01-29  Filip Pizlo  <fpizlo@apple.com>
 
+        offlineasm BaseIndex handling is broken on ARM due to MIPS changes
+        https://bugs.webkit.org/show_bug.cgi?id=108261
+
+        Reviewed by Oliver Hunt.
+        
+        Backends shouldn't override each other's methods. That's not cool.
+
+        * offlineasm/mips.rb:
+
+2013-01-29  Filip Pizlo  <fpizlo@apple.com>
+
         cloop.rb shouldn't use a method called 'dump' for code generation
         https://bugs.webkit.org/show_bug.cgi?id=108251
 

@@ -313,7 +313,7 @@ end
 #
 
 class BaseIndex
-    def riscLowerMalformedAddressesRecurse(list, node, &block)
+    def BROKEN_riscLowerMalformedAddressesRecurse(list, node, &block)
         if scaleShift == 0
             tmp0 = Tmp.new(codeOrigin, :gpr)
             list << Instruction.new(codeOrigin, "addp", [base, index, tmp0])
