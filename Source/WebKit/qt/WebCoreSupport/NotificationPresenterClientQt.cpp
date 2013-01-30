@@ -440,6 +440,11 @@ void NotificationPresenterClientQt::sendEvent(Notification* notification, const 
         notification->dispatchEvent(Event::create(eventName, false, true));
 }
 
+void NotificationPresenterClientQt::clearCachedPermissions()
+{
+    m_cachedPermissions.clear();
+}
+
 void NotificationPresenterClientQt::removeReplacedNotificationFromQueue(Notification* notification)
 {
     Notification* oldNotification = 0;

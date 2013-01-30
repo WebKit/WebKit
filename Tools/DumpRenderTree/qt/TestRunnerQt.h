@@ -108,6 +108,7 @@ public Q_SLOTS:
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
     void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
+    void dumpNotifications();
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void setPrinting() { m_isPrinting = true; }
     void waitUntilDone();
@@ -315,7 +316,6 @@ private:
     QWebFrame* m_topLoadingFrame;
     WebCore::DumpRenderTree* m_drt;
     QWebHistory* m_webHistory;
-    QStringList m_desktopNotificationAllowedOrigins;
     bool m_ignoreDesktopNotification;
 
     QByteArray m_audioData;

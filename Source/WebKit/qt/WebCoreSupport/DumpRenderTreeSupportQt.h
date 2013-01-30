@@ -217,6 +217,7 @@ public:
     static void setSeamlessIFramesEnabled(bool);
 
     static QString frameRenderTreeDump(QWebFrameAdapter*);
+    static void clearNotificationPermissions();
 };
 
 #endif

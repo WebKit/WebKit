@@ -1066,3 +1066,8 @@ QString DumpRenderTreeSupportQt::frameRenderTreeDump(QWebFrameAdapter* adapter)
 
     return externalRepresentation(adapter->frame);
 }
+
+void DumpRenderTreeSupportQt::clearNotificationPermissions()
+{
+    WebCore::NotificationPresenterClientQt::notificationPresenter()->clearCachedPermissions();
+}

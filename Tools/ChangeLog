@@ -1,3 +1,26 @@
+2013-01-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Support better testing of Web Notifications
+        https://bugs.webkit.org/show_bug.cgi?id=107696
+
+        Reviewed by Jocelyn Turcotte.
+
+        Do not dump notification output to the console by default, instead allow the 
+        tests that need this feature to enable it.
+
+        Implement denyWebNotificationPermission and removeAllWebNotificationPermissions.
+        Remove unused m_desktopNotificationAllowedOrigins variable.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::TestRunner):
+        (TestRunner::reset):
+        (TestRunner::dumpNotifications):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::removeAllWebNotificationPermissions):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+
 2013-01-30  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move methods from WebTestDelegate to WebTestRunner

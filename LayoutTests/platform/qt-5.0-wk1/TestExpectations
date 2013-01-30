@@ -182,3 +182,9 @@ webkit.org/b/105158 compositing/tiling/crash-huge-layer.html
 
 # [Qt][WK1] New fast/css/sticky/sticky-top-zoomed.html fails
 webkit.org/b/105390 fast/css/sticky/sticky-top-zoomed.html
+
+# [Qt] Web Notification tests failing due to missing methods in DRT.
+webkit.org/b/95507 http/tests/notifications/events.html [ Failure ]
+webkit.org/b/95507 http/tests/notifications/window-show-on-click.html [ Failure ]
+webkit.org/b/95507 http/tests/notifications/legacy/events.html [ Failure ]
+webkit.org/b/95507 http/tests/notifications/legacy/window-show-on-click.html [ Failure ]

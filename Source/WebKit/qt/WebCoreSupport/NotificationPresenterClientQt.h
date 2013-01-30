@@ -118,6 +118,8 @@ public:
     void notificationClicked(const QString& title);
     void sendDisplayEvent(NotificationWrapper*);
 
+    void clearCachedPermissions();
+
 private:
     void sendEvent(Notification*, const AtomicString& eventName);
     void displayNotification(Notification*);

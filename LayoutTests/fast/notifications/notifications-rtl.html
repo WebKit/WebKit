@@ -12,6 +12,8 @@
             if (window.testRunner) {
                 testRunner.grantWebNotificationPermission("file://");
                 testRunner.dumpAsText();
+                if (testRunner.dumpNotifications)
+                    testRunner.dumpNotifications();
             }
 
             if (!window.webkitNotifications) {
