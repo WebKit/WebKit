@@ -310,6 +310,7 @@
 		F3FBC720161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
+		FE43302716A7ADC300D1585D /* TypeSafeEnum.h in Headers */ = {isa = PBXBuildFile; fileRef = FE43302616A7ADC300D1585D /* TypeSafeEnum.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -621,6 +622,7 @@
 		F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationSequence.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
+		FE43302616A7ADC300D1585D /* TypeSafeEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TypeSafeEnum.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -866,6 +868,7 @@
 				A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */,
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
 				A8A47341151A825B004123FF /* TypedArrayBase.h */,
+				FE43302616A7ADC300D1585D /* TypeSafeEnum.h */,
 				A8A47342151A825B004123FF /* TypeTraits.cpp */,
 				A8A47343151A825B004123FF /* TypeTraits.h */,
 				A8A47346151A825B004123FF /* Uint16Array.h */,
@@ -1224,6 +1227,7 @@
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				A8A47457151A825B004123FF /* TypedArrayBase.h in Headers */,
+				FE43302716A7ADC300D1585D /* TypeSafeEnum.h in Headers */,
 				A8A47459151A825B004123FF /* TypeTraits.h in Headers */,
 				A8A4745C151A825B004123FF /* Uint16Array.h in Headers */,
 				A8A4745D151A825B004123FF /* Uint32Array.h in Headers */,

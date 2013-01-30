@@ -6406,6 +6406,7 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackend.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseCallback.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseContext.h" />
+    <ClInclude Include="..\Modules\webdatabase\DatabaseError.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseManager.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseServer.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseSync.h" />

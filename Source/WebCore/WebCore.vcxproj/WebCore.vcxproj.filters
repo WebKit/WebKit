@@ -8453,6 +8453,9 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseContext.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\DatabaseError.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseManager.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>

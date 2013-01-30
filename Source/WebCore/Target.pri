@@ -1441,6 +1441,7 @@ HEADERS += \
     Modules/webdatabase/Database.h \
     Modules/webdatabase/DatabaseBackend.h \
     Modules/webdatabase/DatabaseCallback.h \
+    Modules/webdatabase/DatabaseError.h \
     Modules/webdatabase/DatabaseManager.h \
     Modules/webdatabase/DatabaseServer.h \
     Modules/webdatabase/DatabaseSync.h \

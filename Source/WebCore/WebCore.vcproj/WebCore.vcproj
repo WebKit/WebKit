@@ -25417,6 +25417,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\DatabaseError.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\DatabaseManager.cpp"
 					>
 				</File>

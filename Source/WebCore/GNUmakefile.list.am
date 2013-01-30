@@ -2108,6 +2108,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.h \
 	Source/WebCore/Modules/webdatabase/DatabaseDetails.h \
+	Source/WebCore/Modules/webdatabase/DatabaseError.h \
 	Source/WebCore/Modules/webdatabase/DatabaseManager.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseManager.h \
 	Source/WebCore/Modules/webdatabase/DatabaseManagerClient.h \
