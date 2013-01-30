@@ -823,6 +823,8 @@ void RenderLayerBacking::registerScrollingLayers()
     if (!scrollingCoordinator)
         return;
 
+    compositor()->updateViewportConstraintStatus(m_owningLayer);
+
     // FIXME: it would be nice to avoid all this work if the platform doesn't implement setLayerIsFixedToContainerLayer().
     if (renderer()->style()->position() == FixedPosition || compositor()->fixedPositionedByAncestor(m_owningLayer))
         scrollingCoordinator->setLayerIsFixedToContainerLayer(childForSuperlayers(), true);

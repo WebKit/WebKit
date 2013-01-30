@@ -11,7 +11,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 25.00 300.00 60.00)
       (sticky box rect 812.00 25.00 300.00 60.00)
       (sticky offset at last layout 8.00 0.00)
-      (layer position at last layout 812.00 25.00)
+      (layer position at last layout 820.00 25.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeRight )
@@ -20,7 +20,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 93.00 300.00 60.00)
       (sticky box rect 812.00 93.00 300.00 60.00)
       (sticky offset at last layout 0.00 0.00)
-      (layer position at last layout 612.00 93.00)
+      (layer position at last layout 812.00 93.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeLeft )
@@ -29,7 +29,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 161.00 300.00 60.00)
       (sticky box rect 812.00 161.00 300.00 60.00)
       (sticky offset at last layout 148.00 0.00)
-      (layer position at last layout 812.00 161.00)
+      (layer position at last layout 960.00 161.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeRight )
@@ -38,7 +38,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 229.00 300.00 60.00)
       (sticky box rect 812.00 229.00 300.00 60.00)
       (sticky offset at last layout 0.00 0.00)
-      (layer position at last layout 612.00 229.00)
+      (layer position at last layout 812.00 229.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeLeft AnchorEdgeRight )
@@ -48,7 +48,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 297.00 300.00 60.00)
       (sticky box rect 812.00 297.00 300.00 60.00)
       (sticky offset at last layout 8.00 0.00)
-      (layer position at last layout 612.00 297.00)
+      (layer position at last layout 820.00 297.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeLeft AnchorEdgeRight )
@@ -58,7 +58,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (sticky box rect 812.00 365.00 300.00 60.00)
       (sticky box rect 812.00 365.00 300.00 60.00)
       (sticky offset at last layout 148.00 0.00)
-      (layer position at last layout 612.00 365.00)
+      (layer position at last layout 960.00 365.00)
     )
   )
 )

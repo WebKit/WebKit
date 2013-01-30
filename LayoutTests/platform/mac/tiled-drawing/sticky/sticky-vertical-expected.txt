@@ -15,7 +15,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 73.00 558.00 80.00 300.00)
       (sticky box rect 73.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 42.00)
-      (layer position at last layout 73.00 558.00)
+      (layer position at last layout 73.00 600.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeBottom)
@@ -24,7 +24,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 163.00 558.00 80.00 300.00)
       (sticky box rect 163.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 0.00)
-      (layer position at last layout 163.00 406.00)
+      (layer position at last layout 163.00 558.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeTop )
@@ -33,7 +33,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 253.00 558.00 80.00 300.00)
       (sticky box rect 253.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 142.00)
-      (layer position at last layout 253.00 558.00)
+      (layer position at last layout 253.00 700.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeBottom)
@@ -42,7 +42,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 343.00 558.00 80.00 300.00)
       (sticky box rect 343.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 0.00)
-      (layer position at last layout 343.00 406.00)
+      (layer position at last layout 343.00 558.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
@@ -52,7 +52,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 433.00 558.00 80.00 300.00)
       (sticky box rect 433.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 42.00)
-      (layer position at last layout 433.00 406.00)
+      (layer position at last layout 433.00 600.00)
     )
     (Sticky node
       (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
@@ -62,7 +62,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (sticky box rect 523.00 558.00 80.00 300.00)
       (sticky box rect 523.00 558.00 80.00 300.00)
       (sticky offset at last layout 0.00 142.00)
-      (layer position at last layout 523.00 406.00)
+      (layer position at last layout 523.00 700.00)
     )
   )
 )
