@@ -70,10 +70,10 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
     ASSERT(m_state == Finished);
 }
 
-bool IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
+void IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
 {
     if (m_state == Finished)
-        return false;
+        return;
 
     if (type == IDBDatabaseBackendInterface::NormalTask)
         m_taskQueue.append(task);
@@ -87,8 +87,6 @@ bool IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskTy
         start();
     else if (m_state == Running && !m_taskTimer.isActive())
         m_taskTimer.startOneShot(0);
-
-    return true;
 }
 
 void IDBTransactionBackendImpl::abort()

@@ -870,7 +870,7 @@ void IDBDatabaseBackendImpl::setIndexKeys(int64_t transactionId, int64_t objectS
 {
     IDB_TRACE("IDBDatabaseBackendImpl::setIndexKeys");
     IDBTransactionBackendImpl* transaction = m_transactions.get(transactionId);
-    if (!transaction || transaction->isFinished())
+    if (!transaction)
         return;
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
@@ -916,11 +916,10 @@ void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t obje
     IDB_TRACE("IDBObjectStoreBackendImpl::setIndexesReady");
 
     IDBTransactionBackendImpl* transaction = m_transactions.get(transactionId);
-    if (!transaction || transaction->isFinished())
+    if (!transaction)
         return;
 
-    if (!transaction->scheduleTask(IDBDatabaseBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size())))
-        ASSERT_NOT_REACHED();
+    transaction->scheduleTask(IDBDatabaseBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(indexIds.size()));
 }
 
 void SetIndexesReadyOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -1268,9 +1267,8 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallba
     createTransaction(transactionId, databaseCallbacks, objectStoreIds, IDBTransaction::VERSION_CHANGE);
     RefPtr<IDBTransactionBackendImpl> transaction = m_transactions.get(transactionId);
 
-    if (!transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
-        ASSERT_NOT_REACHED();
-    }
+    transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion));
+
     ASSERT(!m_pendingSecondHalfOpen);
     m_databaseCallbacksSet.add(databaseCallbacks);
 }
