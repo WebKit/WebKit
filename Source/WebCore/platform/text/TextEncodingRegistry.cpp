@@ -45,9 +45,6 @@
 #if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif
-#if USE(QT4_UNICODE)
-#include "qt/TextCodecQt.h"
-#endif
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
@@ -294,11 +291,6 @@ static void extendTextCodecMaps()
 #if USE(ICU_UNICODE)
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
-#endif
-
-#if USE(QT4_UNICODE)
-    TextCodecQt::registerEncodingNames(addToTextEncodingNameMap);
-    TextCodecQt::registerCodecs(addToTextCodecMap);
 #endif
 
 #if PLATFORM(MAC)

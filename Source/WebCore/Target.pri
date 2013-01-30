@@ -2357,7 +2357,6 @@ HEADERS += \
     platform/text/DecodeEscapeSequences.h \
     platform/text/Hyphenation.h \
     platform/text/QuotedPrintable.h \
-    platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \
     platform/text/TextBoundaries.h \
@@ -2927,7 +2926,6 @@ SOURCES += \
     platform/qt/TemporaryLinkStubsQt.cpp \
     platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorInternalICUQt.cpp \
-    platform/text/qt/TextCodecQt.cpp \
     platform/qt/WidgetQt.cpp
 
 use?(LIBXML2) {

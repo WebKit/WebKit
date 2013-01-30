@@ -90,11 +90,6 @@ UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()
         int32_t resultLength = unorm_normalize(m_characters, 2, UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
         if (resultLength == 1 && !uStatus)
             return normalizedCharacters[0];
-#elif USE(QT4_UNICODE)
-        QString tmp(reinterpret_cast<const QChar*>(m_characters), 2);
-        QString res = tmp.normalized(QString::NormalizationForm_C, QChar::Unicode_3_2);
-        if (res.length() == 1)
-            return res.at(0).unicode();
 #endif
     }
 

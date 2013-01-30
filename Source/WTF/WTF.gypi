@@ -256,7 +256,6 @@
             'wtf/unicode/glib/UnicodeGLib.cpp',
             'wtf/unicode/glib/UnicodeGLib.h',
             'wtf/unicode/icu/CollatorICU.cpp',
-            'wtf/unicode/qt4/UnicodeQt4.h',
             'wtf/unicode/wchar/UnicodeWchar.cpp',
             'wtf/unicode/wchar/UnicodeWchar.h',
             'wtf/win/MainThreadWin.cpp',

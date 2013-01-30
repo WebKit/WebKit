@@ -37,8 +37,6 @@
 
 #if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
-#elif USE(QT4_UNICODE)
-#include <QString>
 #elif USE(GLIB_UNICODE)
 #include <glib.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -106,10 +104,6 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
         sourceLength = normalizedLength;
     }
     return newTextCodec(*this)->encode(source, sourceLength, handling);
-#elif USE(QT4_UNICODE)
-    QString str(reinterpret_cast<const QChar*>(characters), length);
-    str = str.normalized(QString::NormalizationForm_C);
-    return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), handling);
 #elif USE(GLIB_UNICODE)
     GOwnPtr<char> UTF8Source;
     UTF8Source.set(g_utf16_to_utf8(characters, length, 0, 0, 0));

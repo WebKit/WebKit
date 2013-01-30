@@ -28,9 +28,7 @@
 // Define platform neutral 8 bit character type (L is for Latin-1).
 typedef unsigned char LChar;
 
-#if USE(QT4_UNICODE)
-#include "qt4/UnicodeQt4.h"
-#elif USE(ICU_UNICODE)
+#if USE(ICU_UNICODE)
 #include <wtf/unicode/icu/UnicodeIcu.h>
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
