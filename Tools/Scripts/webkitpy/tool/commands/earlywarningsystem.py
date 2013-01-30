@@ -195,6 +195,12 @@ class ChromiumLinuxEWS(AbstractChromiumEWS):
     _default_run_tests = True
 
 
+class ChromiumLinuxDebugEWS(AbstractChromiumEWS):
+    name = "cr-linux-debug-ews"
+    port_name = "chromium-xvfb"
+    _build_style = "debug"
+
+
 class ChromiumWindowsEWS(AbstractChromiumEWS):
     name = "cr-win-ews"
 

@@ -29,40 +29,25 @@
 
 import re
 
+from config.queues import all_queue_names
 from model.activeworkitems import ActiveWorkItems
 from model.workitems import WorkItems
 
 
 class Queue(object):
-
-    # Eventually the list of queues may be stored in the data store.
-    _all_queue_names = [
-        "commit-queue",
-        "style-queue",
-        "chromium-ews",  # aka cr-linux-ews
-        "cr-android-ews",
-        "qt-ews",
-        "qt-wk2-ews",
-        "gtk-ews",
-        "mac-ews",
-        "mac-wk2-ews",
-        "win-ews",
-        "efl-ews",
-    ]
-
     def __init__(self, name):
-        assert(name in self._all_queue_names)
+        assert(name in all_queue_names)
         self._name = name
 
     @classmethod
     def queue_with_name(cls, queue_name):
-        if queue_name not in cls._all_queue_names:
+        if queue_name not in all_queue_names:
             return None
         return Queue(queue_name)
 
     @classmethod
     def all(cls):
-        return [Queue(name) for name in cls._all_queue_names]
+        return [Queue(name) for name in all_queue_names]
 
     @classmethod
     def all_ews(cls):
