@@ -123,9 +123,18 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    removeRegexHighlight: function(highlightDescriptor)
+    removeHighlight: function(highlightDescriptor)
     {
-        this._mainPanel.removeRegexHighlight(highlightDescriptor);
+        this._mainPanel.removeHighlight(highlightDescriptor);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} cssClass
+     */
+    highlightRange: function(range, cssClass)
+    {
+        return this._mainPanel.highlightRange(range, cssClass);
     },
 
     /**
@@ -1388,10 +1397,22 @@ WebInspector.TextEditorMainPanel.prototype = {
     /**
      * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
      */
-    removeRegexHighlight: function(highlightDescriptor)
+    removeHighlight: function(highlightDescriptor)
     {
         this._highlightDescriptors.remove(highlightDescriptor);
         this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} cssClass
+     */
+    highlightRange: function(range, cssClass)
+    {
+        var highlightDescriptor = new WebInspector.TextEditorMainPanel.RangeHighlightDescriptor(range, cssClass);
+        this._highlightDescriptors.push(highlightDescriptor);
+        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
+        return highlightDescriptor;
     },
 
     /**
@@ -2754,6 +2775,56 @@ WebInspector.TextEditorMainPanel.RegexHighlightDescriptor.prototype = {
 
 /**
  * @constructor
+ * @implements {WebInspector.TextEditorMainPanel.HighlightDescriptor}
+ * @param {WebInspector.TextRange} range
+ * @param {string} cssClass
+ */
+WebInspector.TextEditorMainPanel.RangeHighlightDescriptor = function(range, cssClass)
+{
+    this._cssClass = cssClass;
+    this._range = range;
+}
+
+WebInspector.TextEditorMainPanel.RangeHighlightDescriptor.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {boolean}
+     */
+    affectsLine: function(lineNumber, line)
+    {
+        return this._range.startLine <= lineNumber && lineNumber <= this._range.endLine && line.length > 0;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {string} line
+     * @return {Array.<{startColumn: number, endColumn: number}>}
+     */
+    rangesForLine: function(lineNumber, line)
+    {
+        if (!this.affectsLine(lineNumber, line))
+            return [];
+
+        var startColumn = lineNumber === this._range.startLine ? this._range.startColumn : 0;
+        var endColumn = lineNumber === this._range.endLine ? Math.max(this._range.endColumn, line.length) : line.length;
+        return [{
+            startColumn: startColumn,
+            endColumn: endColumn
+        }];
+    },
+
+    /**
+     * @return {string}
+     */
+    cssClass: function()
+    {
+        return this._cssClass;
+    }
+}
+
+/**
+ * @constructor
  * @param {Element} element
  */
 WebInspector.TextEditorMainPanel.ElementMetrics = function(element)
@@ -3099,7 +3170,7 @@ WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
     _removeHighlight: function()
     {
         if (this._selectedWord) {
-            this._mainPanel.removeRegexHighlight(this._highlightDescriptor);
+            this._mainPanel.removeHighlight(this._highlightDescriptor);
             delete this._selectedWord;
             delete this._highlightDescriptor;
         }
