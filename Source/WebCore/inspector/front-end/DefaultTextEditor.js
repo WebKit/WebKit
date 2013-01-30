@@ -94,6 +94,7 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 
+    this._wordMovementController = new WebInspector.DefaultTextEditor.WordMovementController(this, this._textModel);
     this._registerShortcuts();
 }
 
@@ -411,6 +412,8 @@ WebInspector.DefaultTextEditor.prototype = {
         var handleShiftTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, true);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
+
+        this._wordMovementController._registerShortcuts(this._shortcuts);
     },
 
     _handleSelectAll: function()
@@ -469,7 +472,7 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @return {WebInspector.TextRange}
      */
-    selection: function(textRange)
+    selection: function()
     {
         return this._mainPanel.selection();
     },
@@ -3115,6 +3118,139 @@ WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
         var leftBound = range.startColumn === 0 || NonWordChar.test(line.charAt(range.startColumn - 1));
         var rightBound = range.endColumn === line.length - 1 || NonWordChar.test(line.charAt(range.endColumn));
         return leftBound && rightBound && WordRegex.test(selectedText);
+    }
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.TextEditorModel} textModel
+ * @param {WebInspector.TextEditor} textEditor
+ */
+WebInspector.DefaultTextEditor.WordMovementController = function(textEditor, textModel)
+{
+    this._textModel = textModel;
+    this._textEditor = textEditor;
+}
+
+WebInspector.DefaultTextEditor.WordMovementController.prototype = {
+
+    /**
+     * @param {Object.<number, function()>} shortcuts
+     */
+    _registerShortcuts: function(shortcuts)
+    {
+        var keys = WebInspector.KeyboardShortcut.Keys;
+        var modifiers = WebInspector.KeyboardShortcut.Modifiers;
+
+        const wordJumpModifier = WebInspector.isMac() ? modifiers.Alt : modifiers.Ctrl;
+        shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Backspace.code, wordJumpModifier)] = this._handleCtrlBackspace.bind(this);
+        shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Left.code, wordJumpModifier)] = this._handleCtrlArrow.bind(this, "left");
+        shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Right.code, wordJumpModifier)] = this._handleCtrlArrow.bind(this, "right");
+        shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Left.code, modifiers.Shift | wordJumpModifier)] = this._handleCtrlShiftArrow.bind(this, "left");
+        shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Right.code, modifiers.Shift | wordJumpModifier)] = this._handleCtrlShiftArrow.bind(this, "right");
+    },
+
+    /**
+     * @param {WebInspector.TextRange} selection
+     * @param {string} direction
+     * @return {WebInspector.TextRange}
+     */
+    _rangeForCtrlArrowMove: function(selection, direction)
+    {
+        /**
+         * @param {string} char
+         */
+        function isStopChar(char)
+        {
+            return (char > " " && char < "0") ||
+                (char > "9" && char < "A") ||
+                (char > "Z" && char < "a") ||
+                (char > "z" && char <= "~");
+        }
+
+        /**
+         * @param {string} char
+         */
+        function isSpaceChar(char)
+        {
+            return char === "\t" || char === "\r" || char === "\n" || char === " ";
+        }
+
+        var lineNumber = selection.endLine;
+        var column = selection.endColumn;
+        if (direction === "left")
+            --column;
+
+        if (column === -1 && direction === "left") {
+            if (lineNumber > 0)
+                return new WebInspector.TextRange(selection.startLine, selection.startColumn, lineNumber - 1, this._textModel.line(lineNumber - 1).length);
+            else
+                return selection.clone();
+        }
+
+        var line = this._textModel.line(lineNumber);
+        if (column === line.length && direction === "right") {
+            if (lineNumber + 1 < this._textModel.linesCount)
+                return new WebInspector.TextRange(selection.startLine, selection.startColumn, selection.endLine + 1, 0);
+            else
+                return selection.clone();
+        }
+
+        var delta = direction === "left" ? -1 : +1;
+        var directionDependentEndColumnOffset = (delta + 1) / 2;
+
+        if (isSpaceChar(line.charAt(column))) {
+            while(column + delta >= 0 && column + delta < line.length && isSpaceChar(line.charAt(column + delta)))
+                column += delta;
+            if (column + delta < 0 || column + delta === line.length)
+                return new WebInspector.TextRange(selection.startLine, selection.startColumn, lineNumber, column + directionDependentEndColumnOffset);
+            else
+                column += delta;
+        }
+
+        var group = isStopChar(line.charAt(column));
+
+        while(column + delta >= 0 && column + delta < line.length && isStopChar(line.charAt(column + delta)) === group && !isSpaceChar(line.charAt(column + delta)))
+            column += delta;
+
+        return new WebInspector.TextRange(selection.startLine, selection.startColumn, lineNumber, column + directionDependentEndColumnOffset);
+    },
+
+    /**
+     * @param {string} direction
+     * @return {boolean}
+     */
+    _handleCtrlArrow: function(direction)
+    {
+        var newSelection = this._rangeForCtrlArrowMove(this._textEditor.selection(), direction);
+        this._textEditor.setSelection(newSelection.collapseToEnd());
+        return true;
+    },
+
+    /**
+     * @param {string} direction
+     * @return {boolean}
+     */
+    _handleCtrlShiftArrow: function(direction)
+    {
+        this._textEditor.setSelection(this._rangeForCtrlArrowMove(this._textEditor.selection(), direction));
+        return true;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    _handleCtrlBackspace: function()
+    {
+        var selection = this._textEditor.selection();
+        if (!selection.isEmpty())
+            return false;
+
+        var newSelection = this._rangeForCtrlArrowMove(selection, "left");
+        this._textModel.editRange(newSelection.normalize(), "");
+
+        this._textEditor.setSelection(newSelection.collapseToEnd());
+        return true;
     }
 }
 

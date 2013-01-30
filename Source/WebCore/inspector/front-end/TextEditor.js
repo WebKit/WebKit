@@ -151,7 +151,7 @@ WebInspector.TextEditor.prototype = {
     /**
      * @return {WebInspector.TextRange}
      */
-    selection: function(textRange) { },
+    selection: function() { },
 
     /**
      * @return {WebInspector.TextRange?}
