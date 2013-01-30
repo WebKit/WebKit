@@ -2523,7 +2523,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
     return resultRange.release();
 }
 
-bool TextIterator::getLocationAndLengthFromRange(Element* scope, const Range* range, size_t& location, size_t& length)
+bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range, size_t& location, size_t& length)
 {
     location = notFound;
     length = 0;

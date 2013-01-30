@@ -1,3 +1,23 @@
+2013-01-29  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Cannot copy text when selecting readonly (or disabled) input elements
+        https://bugs.webkit.org/show_bug.cgi?id=106287
+
+        Reviewed by Hajime Morita.
+
+        When an input element is disabled or readonly, its inner element is not editable. So its rootEditableElement
+        does not exist. In WebViewImpl::caretOrSelectionRange, if rootEditableElement does not exist, it uses
+        a document element. However, the inner element and document element have a different tree scope, selection range
+        cannot be gotten correctly.
+
+        We should use ShadowRoot instead of document so that we can stay in the same tree scope.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::caretOrSelectionRange):
+        * tests/WebViewTest.cpp:
+        * tests/data/selection_disabled.html: Added.
+        * tests/data/selection_readonly.html: Added.
+
 2013-01-29  Tom Sepez  <tsepez@chromium.org>
 
         [v8] Enable binding integrity on linux

@@ -2537,7 +2537,7 @@ bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
     if (!range)
         return false;
 
-    if (TextIterator::getLocationAndLengthFromRange(selection->rootEditableElementOrDocumentElement(), range.get(), *location, *length))
+    if (TextIterator::getLocationAndLengthFromRange(selection->rootEditableElementOrTreeScopeRootNode(), range.get(), *location, *length))
         return true;
     return false;
 }

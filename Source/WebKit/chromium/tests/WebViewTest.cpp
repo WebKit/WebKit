@@ -652,4 +652,52 @@ TEST_F(WebViewTest, LongPressSelection)
 }
 #endif
 
+TEST_F(WebViewTest, SelectionOnDisabledInput)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("selection_disabled.html"));
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "selection_disabled.html", true);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    std::string testWord = "This text should be selected.";
+
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    EXPECT_EQ(testWord, std::string(frame->selectionAsText().utf8().data()));
+
+    size_t location;
+    size_t length;
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
+
+    EXPECT_TRUE(webViewImpl->caretOrSelectionRange(&location, &length));
+    EXPECT_EQ(location, 0UL);
+    EXPECT_EQ(length, testWord.length());
+
+    webView->close();
+}
+
+TEST_F(WebViewTest, SelectionOnReadOnlyInput)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("selection_readonly.html"));
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "selection_readonly.html", true);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    std::string testWord = "This text should be selected.";
+
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    EXPECT_EQ(testWord, std::string(frame->selectionAsText().utf8().data()));
+
+    size_t location;
+    size_t length;
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
+
+    EXPECT_TRUE(webViewImpl->caretOrSelectionRange(&location, &length));
+    EXPECT_EQ(location, 0UL);
+    EXPECT_EQ(length, testWord.length());
+
+    webView->close();
+}
+
 }

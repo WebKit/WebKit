@@ -1,3 +1,12 @@
+2013-01-29  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Cannot copy text when selecting readonly (or disabled) input elements
+        https://bugs.webkit.org/show_bug.cgi?id=106287
+
+        Reviewed by Hajime Morita.
+
+        * Source/autotools/symbols.filter:
+
 2013-01-29  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Add minimum version information for tool dependencies
