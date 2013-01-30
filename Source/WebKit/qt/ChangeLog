@@ -1,3 +1,12 @@
+2013-01-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix minimal build after r141259.
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::clearNotificationPermissions):
+
 2013-01-26  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] USE(NATIVE_FULLSCREEN_VIDEO) support
