@@ -422,7 +422,7 @@ public:
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isMockObject() const { return false; }
     virtual bool isMediaControlLabel() const { return false; }
-    bool isTextControl() const { return roleValue() == TextAreaRole || roleValue() == TextFieldRole; }
+    bool isTextControl() const;
     bool isARIATextControl() const;
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }

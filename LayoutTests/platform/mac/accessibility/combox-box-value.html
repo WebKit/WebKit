@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="combo" type="text" role="combobox" aria-autocomplete="list" aria-owns="statelist" placeholder="Placeholder" value="text">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a combobox element used on a native text control will return the correct AXValue and placeholder.");
+
+    if (window.accessibilityController) {
+
+          var combobox = accessibilityController.accessibleElementById("combo");
+          shouldBe("combobox.stringValue", "'AXValue: text'");
+          shouldBe("combobox.stringAttributeValue('AXPlaceholderValue')", "'Placeholder'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

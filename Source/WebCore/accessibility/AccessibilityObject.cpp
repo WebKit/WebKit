@@ -268,6 +268,18 @@ bool AccessibilityObject::isBlockquote() const
     return node() && node()->hasTagName(blockquoteTag);
 }
 
+bool AccessibilityObject::isTextControl() const
+{
+    switch (roleValue()) {
+    case TextAreaRole:
+    case TextFieldRole:
+    case ComboBoxRole:
+        return true;
+    default:
+        return false;
+    }
+}
+    
 bool AccessibilityObject::isARIATextControl() const
 {
     return ariaRoleAttribute() == TextAreaRole || ariaRoleAttribute() == TextFieldRole;
