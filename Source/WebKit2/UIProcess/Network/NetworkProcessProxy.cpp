@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "AuthenticationChallengeProxy.h"
+#include "CustomProtocolManagerProxyMessages.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -117,7 +118,7 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
         return;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
-    if (messageID.is<CoreIPC::MessageClassCustomProtocolManagerProxy>()) {
+    if (decoder.messageReceiverName() == Messages::CustomProtocolManagerProxy::messageReceiverName()) {
         m_customProtocolManagerProxy.didReceiveMessage(connection, messageID, decoder);
         return;
     }

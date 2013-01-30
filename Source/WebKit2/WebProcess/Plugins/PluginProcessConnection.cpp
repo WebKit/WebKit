@@ -28,7 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include <runtime/JSObject.h>
+#include "NPObjectMessageReceiverMessages.h"
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeObjectMap.h"
 #include "PluginProcessConnectionManager.h"
@@ -36,6 +36,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/FileSystem.h>
+#include <runtime/JSObject.h>
 
 using namespace WebCore;
 
@@ -101,7 +102,7 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
 
 void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>()) {
+    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
         m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return;
     }

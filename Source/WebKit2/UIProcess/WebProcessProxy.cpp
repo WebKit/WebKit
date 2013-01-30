@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessProxy.h"
 
+#include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
@@ -419,13 +420,13 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     if (m_context->dispatchMessage(connection, messageID, decoder))
         return;
 
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
         didReceiveWebProcessProxyMessage(connection, messageID, decoder);
         return;
     }
 
 #if ENABLE(CUSTOM_PROTOCOLS)
-    if (messageID.is<CoreIPC::MessageClassCustomProtocolManagerProxy>()) {
+    if (decoder.messageReceiverName() == Messages::CustomProtocolManagerProxy::messageReceiverName()) {
 #if ENABLE(NETWORK_PROCESS)
         ASSERT(!context()->usesNetworkProcess());
 #endif
@@ -453,7 +454,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     if (m_context->dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
         return;
 
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
         didReceiveSyncWebProcessProxyMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
@@ -471,7 +472,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
 
 void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
+    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
         didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
 }
 

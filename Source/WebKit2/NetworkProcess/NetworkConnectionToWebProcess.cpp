@@ -27,6 +27,7 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "ConnectionStack.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
@@ -61,7 +62,7 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     
 void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (messageID.is<CoreIPC::MessageClassNetworkConnectionToWebProcess>()) {
+    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, messageID, decoder);
         return;
     }
@@ -71,7 +72,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* conne
 
 void NetworkConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& reply)
 {
-    if (messageID.is<CoreIPC::MessageClassNetworkConnectionToWebProcess>()) {
+    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveSyncNetworkConnectionToWebProcessMessage(connection, messageID, decoder, reply);
         return;
     }

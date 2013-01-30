@@ -893,7 +893,7 @@ bool WebContext::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::M
 
 void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+    if (decoder.messageReceiverName() == Messages::WebContext::messageReceiverName()) {
         didReceiveWebContextMessage(connection, messageID, decoder);
         return;
     }
@@ -917,7 +917,7 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
 void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+    if (decoder.messageReceiverName() == Messages::WebContext::messageReceiverName()) {
         didReceiveSyncWebContextMessage(connection, messageID, decoder, replyEncoder);
         return;
     }

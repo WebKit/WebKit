@@ -172,12 +172,6 @@ public:
     {
     }
 
-    template <MessageClass K>
-    bool is() const
-    {
-        return getClass() == K;
-    }
-
     static MessageID fromInt(unsigned i)
     {
         MessageID messageID;

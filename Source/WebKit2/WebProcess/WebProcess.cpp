@@ -45,6 +45,7 @@
 #include "WebMemorySampler.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageGroupProxyMessages.h"
 #include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessCreationParameters.h"
@@ -593,12 +594,12 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     if (messageReceiverMap().dispatchMessage(connection, messageID, decoder))
         return;
 
-    if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
+    if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
         didReceiveWebProcessMessage(connection, messageID, decoder);
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebPageGroupProxy::messageReceiverName()) {
         uint64_t pageGroupID = decoder.destinationID();
         if (!pageGroupID)
             return;
@@ -639,7 +640,7 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringR
 
 void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
+    if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
         didReceiveWebProcessMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
         return;
     }

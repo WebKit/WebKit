@@ -32,6 +32,7 @@
 #include "DataReference.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
 #include "ImmutableArray.h"
@@ -63,7 +64,9 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
+#include "WebFullScreenManagerProxyMessages.h"
 #include "WebInspectorProxy.h"
+#include "WebInspectorProxyMessages.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
@@ -1924,7 +1927,7 @@ void WebPageProxy::preferencesDidChange()
 
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
+    if (decoder.messageReceiverName() == Messages::DrawingAreaProxy::messageReceiverName()) {
         m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, messageID, decoder);
         return;
     }
@@ -1937,7 +1940,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 #endif
 
 #if ENABLE(INSPECTOR)
-    if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebInspectorProxy::messageReceiverName()) {
         if (WebInspectorProxy* inspector = this->inspector())
             inspector->didReceiveWebInspectorProxyMessage(connection, messageID, decoder);
         return;
@@ -1945,7 +1948,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (messageID.is<CoreIPC::MessageClassWebFullScreenManagerProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebFullScreenManagerProxy::messageReceiverName()) {
         fullScreenManager()->didReceiveMessage(connection, messageID, decoder);
         return;
     }
@@ -1957,7 +1960,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
 #if ENABLE(INSPECTOR)
-    if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebInspectorProxy::messageReceiverName()) {
         if (WebInspectorProxy* inspector = this->inspector())
             inspector->didReceiveSyncWebInspectorProxyMessage(connection, messageID, decoder, replyEncoder);
         return;
@@ -1965,7 +1968,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (messageID.is<CoreIPC::MessageClassWebFullScreenManagerProxy>()) {
+    if (decoder.messageReceiverName() == Messages::WebFullScreenManagerProxy::messageReceiverName()) {
         fullScreenManager()->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return;
     }

@@ -30,12 +30,14 @@
 
 #include "ArgumentCoders.h"
 #include "ConnectionStack.h"
+#include "NPObjectMessageReceiverMessages.h"
 #include "NPRemoteObjectMap.h"
 #include "PluginControllerProxy.h"
 #include "PluginCreationParameters.h"
 #include "PluginProcess.h"
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
+#include "WebProcessConnectionMessages.h"
 #include <WebCore/RunLoop.h>
 #include <unistd.h>
 
@@ -118,7 +120,7 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
 {
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
-    if (messageID.is<CoreIPC::MessageClassWebProcessConnection>()) {
+    if (decoder.messageReceiverName() == Messages::WebProcessConnection::messageReceiverName()) {
         didReceiveWebProcessConnectionMessage(connection, messageID, decoder);
         return;
     }
@@ -147,7 +149,7 @@ void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>()) {
+    if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
         m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return;
     }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
+#include "EventDispatcherMessages.h"
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebPage.h"
@@ -74,7 +75,7 @@ void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 
 void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
-    if (messageID.is<CoreIPC::MessageClassEventDispatcher>()) {
+    if (decoder.messageReceiverName() == Messages::EventDispatcher::messageReceiverName()) {
         didReceiveEventDispatcherMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
         return;
     }
