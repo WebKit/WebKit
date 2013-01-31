@@ -875,7 +875,10 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                 break;
             }
             case Node::ELEMENT_NODE: {
-                if (node->nodeName().findIgnoringCase(tagNameQuery) != notFound) {
+                if ((!startTagFound && !endTagFound && (node->nodeName().findIgnoringCase(tagNameQuery) != notFound))
+                    || (startTagFound && endTagFound && equalIgnoringCase(node->nodeName(), tagNameQuery))
+                    || (startTagFound && !endTagFound && node->nodeName().startsWith(tagNameQuery, false))
+                    || (!startTagFound && endTagFound && node->nodeName().endsWith(tagNameQuery, false))) {
                     resultCollector.add(node);
                     break;
                 }

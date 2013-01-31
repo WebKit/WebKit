@@ -15,7 +15,19 @@ F o o B a r
 Running: testStartTag
 < i n p u t   v a l u e = " I n p u t V a l " >
 
+Running: testEndTag
+< i n p u t   v a l u e = " I n p u t V a l " >
+
 Running: testPartialTag
+< i n p u t   v a l u e = " I n p u t V a l " >
+
+Running: testPartialAbsentTagStart
+Nothing found
+
+Running: testPartialAbsentTagEnd
+Nothing found
+
+Running: testFullTag
 < i n p u t   v a l u e = " I n p u t V a l " >
 
 Running: testExactAttributeName

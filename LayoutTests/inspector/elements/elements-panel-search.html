@@ -9,6 +9,12 @@ function test()
 
     function searchCallback(next, resultCount)
     {
+        if (resultCount == 0) {
+            InspectorTest.addResult("Nothing found");
+            WebInspector.domAgent.cancelSearch();
+            next();
+        }
+
         for (var i = 0; i < resultCount; ++i)
             WebInspector.domAgent.searchResult(i, searchResultCallback.bind(this, i + 1 === resultCount));
 
@@ -48,9 +54,29 @@ function test()
             WebInspector.domAgent.performSearch("<inpu" + "t", searchCallback.bind(this, next));
         },
 
+        function testEndTag(next)
+        {
+            WebInspector.domAgent.performSearch("npu" + "t>", searchCallback.bind(this, next));
+        },
+
         function testPartialTag(next)
         {
             WebInspector.domAgent.performSearch("npu" + "t", searchCallback.bind(this, next));
+        },
+
+        function testPartialAbsentTagStart(next)
+        {
+            WebInspector.domAgent.performSearch("<npu" + "t", searchCallback.bind(this, next));
+        },
+
+        function testPartialAbsentTagEnd(next)
+        {
+            WebInspector.domAgent.performSearch("npu" + ">", searchCallback.bind(this, next));
+        },
+
+        function testFullTag(next)
+        {
+            WebInspector.domAgent.performSearch("<inpu" + "t>", searchCallback.bind(this, next));
         },
 
         function testExactAttributeName(next)
