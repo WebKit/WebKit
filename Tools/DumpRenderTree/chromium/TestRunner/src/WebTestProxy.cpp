@@ -1009,4 +1009,14 @@ WebNavigationPolicy WebTestProxyBase::decidePolicyForNavigation(WebFrame*, const
     return result;
 }
 
+bool WebTestProxyBase::willCheckAndDispatchMessageEvent(WebFrame*, WebFrame*, WebSecurityOrigin, WebDOMMessageEvent)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldInterceptPostMessage()) {
+        m_delegate->printMessage("intercepted postMessage\n");
+        return true;
+    }
+
+    return false;
+}
+
 }

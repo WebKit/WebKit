@@ -641,11 +641,6 @@ void WebViewHost::deleteFileSystem(WebKit::WebFrame* frame, WebKit::WebFileSyste
 
 bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* sourceFrame, WebFrame* targetFrame, WebSecurityOrigin target, WebDOMMessageEvent event)
 {
-    if (m_shell->testRunner()->shouldInterceptPostMessage()) {
-        fputs("intercepted postMessage\n", stdout);
-        return true;
-    }
-
     return false;
 }
 

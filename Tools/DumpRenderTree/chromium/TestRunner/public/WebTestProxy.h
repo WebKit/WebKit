@@ -34,10 +34,12 @@
 #include "Platform/chromium/public/WebRect.h"
 #include "Platform/chromium/public/WebURLError.h"
 #include "WebKit/chromium/public/WebAccessibilityNotification.h"
+#include "WebKit/chromium/public/WebDOMMessageEvent.h"
 #include "WebKit/chromium/public/WebDragOperation.h"
 #include "WebKit/chromium/public/WebEditingAction.h"
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
 #include "WebKit/chromium/public/WebNavigationType.h"
+#include "WebKit/chromium/public/WebSecurityOrigin.h"
 #include "WebKit/chromium/public/WebTextAffinity.h"
 #include "WebKit/chromium/public/WebTextDirection.h"
 #include <map>
@@ -54,7 +56,6 @@ class WebIntentRequest;
 class WebIntentServiceInfo;
 class WebNode;
 class WebRange;
-class WebSecurityOrigin;
 class WebSerializedScriptValue;
 class WebSpellCheckClient;
 class WebString;
@@ -152,6 +153,7 @@ protected:
     bool runModalPromptDialog(WebKit::WebFrame*, const WebKit::WebString& message, const WebKit::WebString& defaultValue, WebKit::WebString* actualValue);
     bool runModalBeforeUnloadDialog(WebKit::WebFrame*, const WebKit::WebString&);
     WebKit::WebNavigationPolicy decidePolicyForNavigation(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationType, const WebKit::WebNode& originatingNode, WebKit::WebNavigationPolicy defaultPolicy, bool isRedirect);
+    bool willCheckAndDispatchMessageEvent(WebKit::WebFrame* sourceFrame, WebKit::WebFrame* targetFrame, WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);
 
 private:
     void locationChangeDone(WebKit::WebFrame*);
@@ -472,6 +474,12 @@ public:
         if (policy == WebKit::WebNavigationPolicyIgnore)
             return policy;
         return Base::decidePolicyForNavigation(frame, request, type, originatingNode, defaultPolicy, isRedirect);
+    }
+    virtual bool willCheckAndDispatchMessageEvent(WebKit::WebFrame* sourceFrame, WebKit::WebFrame* targetFrame, WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent event)
+    {
+        if (WebTestProxyBase::willCheckAndDispatchMessageEvent(sourceFrame, targetFrame, target, event))
+            return true;
+        return Base::willCheckAndDispatchMessageEvent(sourceFrame, targetFrame, target, event);
     }
 };
 
