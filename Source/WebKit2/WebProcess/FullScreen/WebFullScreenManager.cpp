@@ -28,7 +28,6 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Connection.h"
-#include "MessageID.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"

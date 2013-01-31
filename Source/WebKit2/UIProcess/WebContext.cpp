@@ -151,7 +151,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     platformInitialize();
 
     addMessageReceiver(Messages::WebContext::messageReceiverName(), this);
-    addMessageReceiver(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), this);
+    addMessageReceiver(WebContextLegacyMessages::messageReceiverName(), this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
 #if ENABLE(BATTERY_STATUS)
@@ -898,8 +898,8 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (decoder.messageReceiverName() == WebContextLegacyMessage::messageReceiverName()
-        && decoder.messageName() == WebContextLegacyMessage::postMessageMessageName()) {
+    if (decoder.messageReceiverName() == WebContextLegacyMessages::messageReceiverName()
+        && decoder.messageName() == WebContextLegacyMessages::postMessageMessageName()) {
         String messageName;
         RefPtr<APIObject> messageBody;
         WebContextUserMessageDecoder messageBodyDecoder(messageBody, WebProcessProxy::fromConnection(connection));
@@ -922,8 +922,8 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
         return;
     }
 
-    if (decoder.messageReceiverName() == WebContextLegacyMessage::messageReceiverName()
-        && decoder.messageName() == WebContextLegacyMessage::postSynchronousMessageMessageName()) {
+    if (decoder.messageReceiverName() == WebContextLegacyMessages::messageReceiverName()
+        && decoder.messageName() == WebContextLegacyMessages::postSynchronousMessageMessageName()) {
         // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
 
         String messageName;

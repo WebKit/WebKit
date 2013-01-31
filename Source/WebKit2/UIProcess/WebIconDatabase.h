@@ -42,7 +42,6 @@
 namespace CoreIPC {
 class ArgumentDecoder;
 class DataReference;
-class MessageID;
 }
 
 namespace WebCore {

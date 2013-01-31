@@ -180,7 +180,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return true;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
 {
     Vector<Attachment> attachments = encoder->releaseAttachments();
     
@@ -428,7 +428,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    processIncomingMessage(MessageID(), decoder.release());
+    processIncomingMessage(decoder.release());
 }    
 
 void Connection::exceptionSourceEventHandler()

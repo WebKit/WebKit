@@ -1,3 +1,61 @@
+2013-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Remove MessageID.h
+        https://bugs.webkit.org/show_bug.cgi?id=108516
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+        (CoreIPC::Connection::sendOutgoingMessages):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        (CoreIPC::Connection::dispatchMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC):
+        (Connection):
+        * Platform/CoreIPC/MessageID.h: Removed.
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        * Shared/CoreIPCSupport/WebConnectionMessageKinds.h: Removed.
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (CoreIPC):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebFrameProxy.h:
+        (CoreIPC):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (CoreIPC):
+        * UIProcess/WebIconDatabase.h:
+        (CoreIPC):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        (CoreIPC):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        (CoreIPC):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (CoreIPC):
+        * WebProcess/WebPage/DrawingArea.h:
+        (CoreIPC):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (CoreIPC):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (CoreIPC):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (CoreIPC):
+
 2013-01-31  Mike West  <mkwst@chromium.org>
 
         Cleanup: Use ScriptExecutionContext::topOrigin when relevant.

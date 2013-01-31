@@ -608,7 +608,6 @@
 		BC032DA910F437D10058C15A /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA110F437D10058C15A /* Arguments.h */; };
 		BC032DAA10F437D10058C15A /* Connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DA210F437D10058C15A /* Connection.cpp */; };
 		BC032DAB10F437D10058C15A /* Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA310F437D10058C15A /* Connection.h */; };
-		BC032DAC10F437D10058C15A /* MessageID.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DA410F437D10058C15A /* MessageID.h */; };
 		BC032DB910F4380F0058C15A /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DAF10F4380F0058C15A /* WebEvent.h */; };
 		BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DB010F4380F0058C15A /* WebEventConversion.cpp */; };
 		BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DB110F4380F0058C15A /* WebEventConversion.h */; };
@@ -977,7 +976,6 @@
 		BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE81D8B1319F7EF00241910 /* FontInfo.h */; };
 		BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE81D96131AE02000241910 /* DictionaryPopupInfo.cpp */; };
 		BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE81D97131AE02100241910 /* DictionaryPopupInfo.h */; };
-		BCE9C0B71484714700E33D61 /* WebConnectionMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE9C0B61484714700E33D61 /* WebConnectionMessageKinds.h */; };
 		BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */; };
 		BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE7ACD12817988009827DA /* WebProcessProxyMessages.h */; };
 		BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */; };
@@ -1936,7 +1934,6 @@
 		BC032DA110F437D10058C15A /* Arguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
 		BC032DA210F437D10058C15A /* Connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Connection.cpp; sourceTree = "<group>"; };
 		BC032DA310F437D10058C15A /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
-		BC032DA410F437D10058C15A /* MessageID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageID.h; sourceTree = "<group>"; };
 		BC032DAF10F4380F0058C15A /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEvent.h; sourceTree = "<group>"; };
 		BC032DB010F4380F0058C15A /* WebEventConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEventConversion.cpp; sourceTree = "<group>"; };
 		BC032DB110F4380F0058C15A /* WebEventConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventConversion.h; sourceTree = "<group>"; };
@@ -2331,7 +2328,6 @@
 		BCE81D8B1319F7EF00241910 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontInfo.h; sourceTree = "<group>"; };
 		BCE81D96131AE02000241910 /* DictionaryPopupInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictionaryPopupInfo.cpp; sourceTree = "<group>"; };
 		BCE81D97131AE02100241910 /* DictionaryPopupInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryPopupInfo.h; sourceTree = "<group>"; };
-		BCE9C0B61484714700E33D61 /* WebConnectionMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConnectionMessageKinds.h; sourceTree = "<group>"; };
 		BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionToUIProcess.cpp; sourceTree = "<group>"; };
 		BCE9C0D01485965D00E33D61 /* WebConnectionToUIProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConnectionToUIProcess.h; sourceTree = "<group>"; };
 		BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebProcessProxy.messages.in; sourceTree = "<group>"; };
@@ -3121,7 +3117,6 @@
 				1A2328FC162C866A00D82F7A /* MessageEncoder.cpp */,
 				1A2328FD162C866A00D82F7A /* MessageEncoder.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
-				BC032DA410F437D10058C15A /* MessageID.h */,
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
@@ -3998,7 +3993,6 @@
 		BC111B5F112F635E00337BAB /* CoreIPCSupport */ = {
 			isa = PBXGroup;
 			children = (
-				BCE9C0B61484714700E33D61 /* WebConnectionMessageKinds.h */,
 				BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */,
 			);
 			path = CoreIPCSupport;
@@ -4916,7 +4910,6 @@
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
-				BC032DAC10F437D10058C15A /* MessageID.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
 				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
@@ -5040,7 +5033,6 @@
 				3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */,
 				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,
 				BC4A6292147312BE006C681A /* WebConnectionClient.h in Headers */,
-				BCE9C0B71484714700E33D61 /* WebConnectionMessageKinds.h in Headers */,
 				1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */,
 				BC4A62A814744EC7006C681A /* WebConnectionToWebProcess.h in Headers */,
 				BCB9E2431120DACA00A137E0 /* WebContext.h in Headers */,

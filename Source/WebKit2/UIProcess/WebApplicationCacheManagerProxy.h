@@ -37,7 +37,6 @@
 
 namespace CoreIPC {
     class Connection;
-    class MessageID;
 }
 
 namespace WebKit {

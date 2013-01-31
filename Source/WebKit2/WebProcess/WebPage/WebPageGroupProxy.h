@@ -33,7 +33,6 @@
 namespace CoreIPC {
 class Connection;
 class MessageDecoder;
-class MessageID;
 }
 
 namespace WebCore {

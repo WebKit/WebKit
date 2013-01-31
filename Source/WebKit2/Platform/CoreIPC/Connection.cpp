@@ -572,7 +572,7 @@ void Connection::processIncomingSyncReply(PassOwnPtr<MessageDecoder> decoder)
     // This can happen if the send timed out, so it's fine to ignore.
 }
 
-void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<MessageDecoder> incomingMessage)
+void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessage)
 {
     OwnPtr<MessageDecoder> message = incomingMessage;
 
@@ -680,12 +680,12 @@ void Connection::sendOutgoingMessages()
             message = m_outgoingMessages.takeFirst();
         }
 
-        if (!sendOutgoingMessage(MessageID(), message.release()))
+        if (!sendOutgoingMessage(message.release()))
             break;
     }
 }
 
-void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decoder)
+void Connection::dispatchSyncMessage(MessageDecoder& decoder)
 {
     ASSERT(decoder.isSyncMessage());
 
@@ -726,7 +726,7 @@ void Connection::enqueueIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
     m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchOneMessage, this));
 }
 
-void Connection::dispatchMessage(MessageID messageID, MessageDecoder& decoder)
+void Connection::dispatchMessage(MessageDecoder& decoder)
 {
     m_client->didReceiveMessage(this, decoder);
 }
@@ -749,9 +749,9 @@ void Connection::dispatchMessage(PassOwnPtr<MessageDecoder> incomingMessage)
     m_didReceiveInvalidMessage = false;
 
     if (message->isSyncMessage())
-        dispatchSyncMessage(MessageID(), *message);
+        dispatchSyncMessage(*message);
     else
-        dispatchMessage(MessageID(), *message);
+        dispatchMessage(*message);
 
     m_didReceiveInvalidMessage |= message->isInvalid();
     m_inDispatchMessageCount--;

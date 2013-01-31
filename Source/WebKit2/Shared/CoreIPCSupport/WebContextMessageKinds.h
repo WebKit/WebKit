@@ -28,15 +28,9 @@
 
 // Messages sent from the injected bundle to the WebContext.
 
-#include "MessageID.h"
 #include "StringReference.h"
 
-namespace WebContextLegacyMessage {
-
-enum Kind {
-    PostMessage,
-    PostSynchronousMessage
-};
+namespace WebContextLegacyMessages {
 
 inline CoreIPC::StringReference messageReceiverName()
 {
@@ -53,18 +47,6 @@ inline CoreIPC::StringReference postSynchronousMessageMessageName()
     return CoreIPC::StringReference("PostSynchronousMessage");
 }
 
-}
-
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebContextLegacyMessage::Kind> {
-    static const MessageClass messageClass = MessageClassWebContextLegacy;
-    static StringReference messageReceiverName()
-    {
-        return WebContextLegacyMessage::messageReceiverName();
-    }
-};
-
-}
+} // namespace WebContextLegacyMessages
 
 #endif // InjectedBundleMessageKinds_h

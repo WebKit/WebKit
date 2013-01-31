@@ -28,8 +28,6 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
-#include "MessageID.h"
-
 #if PLATFORM(MAC)
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>

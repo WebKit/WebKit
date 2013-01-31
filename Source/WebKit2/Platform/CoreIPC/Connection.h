@@ -31,7 +31,6 @@
 #include "Arguments.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
-#include "MessageID.h"
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
 #include <wtf/PassRefPtr.h>
@@ -61,7 +60,6 @@ class RunLoop;
 namespace CoreIPC {
 
 class BinarySemaphore;
-class MessageID;
     
 enum MessageSendFlags {
     // Whether this message should be dispatched when waiting for a sync reply.
@@ -203,7 +201,7 @@ private:
     PassOwnPtr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
 
     // Called on the connection work queue.
-    void processIncomingMessage(MessageID, PassOwnPtr<MessageDecoder>);
+    void processIncomingMessage(PassOwnPtr<MessageDecoder>);
     void processIncomingSyncReply(PassOwnPtr<MessageDecoder>);
 
     void addQueueClientOnWorkQueue(QueueClient*);
@@ -212,15 +210,15 @@ private:
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
-    bool sendOutgoingMessage(MessageID, PassOwnPtr<MessageEncoder>);
+    bool sendOutgoingMessage(PassOwnPtr<MessageEncoder>);
     void connectionDidClose();
     
     // Called on the listener thread.
     void dispatchConnectionDidClose();
     void dispatchOneMessage();
     void dispatchMessage(PassOwnPtr<MessageDecoder>);
-    void dispatchMessage(MessageID, MessageDecoder&);
-    void dispatchSyncMessage(MessageID, MessageDecoder&);
+    void dispatchMessage(MessageDecoder&);
+    void dispatchSyncMessage(MessageDecoder&);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
