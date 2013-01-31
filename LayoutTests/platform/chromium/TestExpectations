@@ -1069,8 +1069,6 @@ webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list
 
 webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout Failure ]
 
-webkit.org/b/104800 [ Debug ] inspector-protocol/heap-profiler [ Crash ]
-
 # Timing out after http://trac.webkit.org/changeset/141245
 webkit.org/b/107944 inspector/editor/text-editor-ctrl-movements.html [ Pass Timeout ]
 

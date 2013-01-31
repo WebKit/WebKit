@@ -95,7 +95,7 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
-    virtual void takeHeapSnapshot(ErrorString*);
+    virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress);
     void toggleRecordButton(bool isProfiling);
 
     virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);

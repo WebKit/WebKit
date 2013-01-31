@@ -432,12 +432,12 @@ private:
 
 };
 
-void InspectorProfilerAgent::takeHeapSnapshot(ErrorString*)
+void InspectorProfilerAgent::takeHeapSnapshot(ErrorString*, const bool* reportProgress)
 {
     String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
     ++m_nextUserInitiatedHeapSnapshotNumber;
 
-    HeapSnapshotProgress progress(m_frontend);
+    HeapSnapshotProgress progress(reportProgress && *reportProgress ? m_frontend : 0);
     RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title, &progress);
     if (snapshot) {
         m_snapshots.add(snapshot->uid(), snapshot);

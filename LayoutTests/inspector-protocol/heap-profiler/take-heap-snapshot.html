@@ -28,7 +28,7 @@ function test()
         InspectorTest.completeTest();
     }
 
-    InspectorTest.sendCommand("Profiler.takeHeapSnapshot", {}, didTakeHeapSnapshot);
+    InspectorTest.sendCommand("Profiler.takeHeapSnapshot", { "reportProgress": false }, didTakeHeapSnapshot);
 }
 </script>
 </head>

@@ -1145,7 +1145,7 @@ WebInspector.ProfilesPanel.prototype = {
         function done() {
             this._launcherView.profileFinished();
         }
-        ProfilerAgent.takeHeapSnapshot(done.bind(this));
+        ProfilerAgent.takeHeapSnapshot(true, done.bind(this));
         WebInspector.userMetrics.ProfilesHeapProfileTaken.record();
     },
 

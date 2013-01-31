@@ -3127,7 +3127,10 @@
                 "name": "clearProfiles"
             },
             {
-                "name": "takeHeapSnapshot"
+                "name": "takeHeapSnapshot",
+                "parameters": [
+                    { "name": "reportProgress", "type": "boolean", "optional": true, "description": "If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken." }
+                ]
             },
             {
                 "name": "collectGarbage"
