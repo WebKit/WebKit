@@ -1,3 +1,12 @@
+2013-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12695827> PPT: Make loading file URLs work with a sandboxed NetworkProcess
+
+        Address review comments.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
         Stop using OutgoingMessage

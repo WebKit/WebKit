@@ -146,7 +146,7 @@
        (global-name "com.apple.FontServer")
        (global-name "com.apple.SecurityServer")
        (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.SystemConfiguration.PPPController")
+       (global-name "com.apple.SystemConfiguration.PPPController") ;; FIXME (13121943): Is this necessary?
        (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
        (global-name "com.apple.audio.VDCAssistant")
        (global-name "com.apple.audio.audiohald")
@@ -192,9 +192,9 @@
 (allow network-outbound
        (remote udp))
 (allow file-read*
-        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Kerberos.plist"))
-        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.GSS.plist"))
-        (literal (string-append (param "HOME_DIR") "/Library/Preferences/edu.mit.Kerberos"))
+        (home-subpath "/Library/Preferences/com.apple.Kerberos.plist")
+        (home-subpath "/Library/Preferences/com.apple.GSS.plist")
+        (home-subpath "/Library/Preferences/edu.mit.Kerberos")
         (literal "/Library/Preferences/com.apple.Kerberos.plist")
         (literal "/Library/Preferences/com.apple.GSS.plist")
         (literal "/Library/Preferences/edu.mit.Kerberos")
