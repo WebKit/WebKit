@@ -85,10 +85,6 @@ public:
     void removeWebPage(uint64_t pageID);
     Vector<WebPageProxy*> pages() const;
 
-#if ENABLE(WEB_INTENTS)
-    void removeMessagePortChannel(uint64_t channelID);
-#endif
-
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
 
     ResponsivenessTimer* responsivenessTimer() { return &m_responsivenessTimer; }

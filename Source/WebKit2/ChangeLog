@@ -1,3 +1,82 @@
+2013-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Remove Web Intents code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=108506
+
+        Reviewed by Simon Fraser.
+
+        Since nobody builds with Web Intents enabled anymore, and since the code is going to 
+        be removed from WebCore, remove it from WebKit2.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIObject.h:
+        * Shared/IntentData.cpp: Removed.
+        * Shared/IntentData.h: Removed.
+        * Shared/IntentServiceInfo.cpp: Removed.
+        * Shared/IntentServiceInfo.h: Removed.
+        * Shared/WebIntentServiceInfo.cpp: Removed.
+        * Shared/WebIntentServiceInfo.h: Removed.
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKIntentData.cpp: Removed.
+        * UIProcess/API/C/WKIntentData.h: Removed.
+        * UIProcess/API/C/WKIntentServiceInfo.cpp: Removed.
+        * UIProcess/API/C/WKIntentServiceInfo.h: Removed.
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebIntentData.cpp: Removed.
+        * UIProcess/WebIntentData.h: Removed.
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebLoaderClient.h:
+        (WebKit):
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        (WebKit):
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundleIntent.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleIntent.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (WebKit):
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebFrame.h:
+        (WebCore):
+        (WebKit):
+        (WebFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebCore):
+        (WebKit):
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        (WebCore):
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2013-01-31  Brady Eidson  <beidson@apple.com>
 
         Lack of a log level string should not obliterate compiled in logging channel state.

@@ -214,16 +214,6 @@ Vector<WebPageProxy*> WebProcessProxy::pages() const
     return result;
 }
 
-#if ENABLE(WEB_INTENTS)
-void WebProcessProxy::removeMessagePortChannel(uint64_t channelID)
-{
-    if (!isValid())
-        return;
-
-    send(Messages::WebProcess::RemoveMessagePortChannel(channelID), /* destinationID */ 0);
-}
-#endif
-
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
 {
     return m_backForwardListItemMap.get(itemID).get();

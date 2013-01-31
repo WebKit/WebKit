@@ -104,14 +104,6 @@ messages -> WebPageProxy LegacyReceiver {
     DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, WTF::String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)  Variadic
 
-    # Intent messages
-#if ENABLE(WEB_INTENTS)
-    DidReceiveIntentForFrame(uint64_t frameID, WebKit::IntentData intent, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-    RegisterIntentServiceForFrame(uint64_t frameID, WebKit::IntentServiceInfo serviceInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
-#endif
-
     # Progress messages
     DidChangeProgress(double value)
     DidFinishProgress()

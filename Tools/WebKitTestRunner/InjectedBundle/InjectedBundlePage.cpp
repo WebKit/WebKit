@@ -52,14 +52,6 @@
 #include "DumpRenderTreeSupportQt.h"
 #endif
 
-#if ENABLE(WEB_INTENTS)
-#include <WebKit2/WKBundleIntent.h>
-#include <WebKit2/WKBundleIntentRequest.h>
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-#include <WebKit2/WKIntentServiceInfo.h>
-#endif
-
 using namespace std;
 
 namespace WTR {
@@ -327,8 +319,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // willDestroyGlobalObjectForDOMWindowExtension
         didFinishProgress, // didFinishProgress
         0, // shouldForceUniversalAccessFromLocalURL
-        didReceiveIntentForFrame, // didReceiveIntentForFrame
-        registerIntentServiceForFrame, // registerIntentServiceForFrame
+        0, // didReceiveIntentForFrame
+        0, // registerIntentServiceForFrame
         0, // didLayout
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
@@ -583,89 +575,6 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundlePageRef page, WKBundleFra
 void InjectedBundlePage::didFinishProgress(WKBundlePageRef, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishProgress();
-}
-
-void InjectedBundlePage::didReceiveIntentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRequestRef intentRequest, WKTypeRef* userData, const void* clientInfo)
-{
-#if ENABLE(WEB_INTENTS)
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->m_currentIntentRequest = intentRequest;
-    WKRetainPtr<WKBundleIntentRef> intent(AdoptWK, WKBundleIntentRequestCopyIntent(intentRequest));
-
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("Received Web Intent: action=");
-    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKBundleIntentCopyAction(intent.get()));
-    stringBuilder.append(toWTFString(wkAction.get()));
-    stringBuilder.appendLiteral(" type=");
-    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKBundleIntentCopyType(intent.get()));
-    stringBuilder.append(toWTFString(wkType.get()));
-    stringBuilder.append('\n');
-
-    const size_t numMessagePorts = WKBundleIntentMessagePortCount(intent.get());
-    if (numMessagePorts) {
-        stringBuilder.appendLiteral("Have ");
-        stringBuilder.appendNumber(numMessagePorts);
-        stringBuilder.appendLiteral(" ports\n");
-    }
-
-    WKRetainPtr<WKURLRef> wkServiceUrl(AdoptWK, WKBundleIntentCopyService(intent.get()));
-    if (wkServiceUrl) {
-        WKRetainPtr<WKStringRef> wkService(AdoptWK, WKURLCopyString(wkServiceUrl.get()));
-        if (wkService && !WKStringIsEmpty(wkService.get())) {
-            stringBuilder.appendLiteral("Explicit intent service: ");
-            stringBuilder.append(toWTFString(wkService.get()));
-            stringBuilder.append('\n');
-        }
-    }
-
-    WKRetainPtr<WKDictionaryRef> wkExtras(AdoptWK, WKBundleIntentCopyExtras(intent.get()));
-    WKRetainPtr<WKArrayRef> wkExtraKeys(AdoptWK, WKDictionaryCopyKeys(wkExtras.get()));
-    const size_t numExtraKeys = WKArrayGetSize(wkExtraKeys.get());
-    for (size_t i = 0; i < numExtraKeys; ++i) {
-        WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkExtraKeys.get(), i));
-        WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(wkExtras.get(), wkKey));
-        stringBuilder.appendLiteral("Extras[");
-        stringBuilder.append(toWTFString(wkKey));
-        stringBuilder.appendLiteral("] = ");
-        stringBuilder.append(toWTFString(wkValue));
-        stringBuilder.append('\n');
-    }
-
-    WKRetainPtr<WKArrayRef> wkSuggestions(AdoptWK, WKBundleIntentCopySuggestions(intent.get()));
-    const size_t numSuggestions = WKArrayGetSize(wkSuggestions.get());
-    for (size_t i = 0; i < numSuggestions; ++i) {
-        WKStringRef wkSuggestion = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkSuggestions.get(), i));
-        stringBuilder.appendLiteral("Have suggestion ");
-        stringBuilder.append(toWTFString(wkSuggestion));
-        stringBuilder.append('\n');
-    }
-
-    InjectedBundle::shared().outputText(stringBuilder.toString());
-#endif
-}
-
-void InjectedBundlePage::registerIntentServiceForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef* userData, const void* clientInfo)
-{
-#if ENABLE(WEB_INTENTS_TAG)
-    StringBuilder stringBuilder;
-    stringBuilder.appendLiteral("Registered Web Intent Service: action=");
-    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKIntentServiceInfoCopyAction(serviceInfo));
-    stringBuilder.append(toWTFString(wkAction.get()));
-    stringBuilder.appendLiteral(" type=");
-    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKIntentServiceInfoCopyType(serviceInfo));
-    stringBuilder.append(toWTFString(wkType.get()));
-    stringBuilder.appendLiteral(" title=");
-    WKRetainPtr<WKStringRef> wkTitle(AdoptWK, WKIntentServiceInfoCopyTitle(serviceInfo));
-    stringBuilder.append(toWTFString(wkTitle.get()));
-    stringBuilder.appendLiteral(" url=");
-    WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKIntentServiceInfoCopyHref(serviceInfo));
-    if (wkUrl)
-        stringBuilder.append(toWTFString(adoptWK(WKURLCopyString(wkUrl.get()))));
-    stringBuilder.appendLiteral(" disposition=");
-    WKRetainPtr<WKStringRef> wkDisposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceInfo));
-    stringBuilder.append(toWTFString(wkDisposition.get()));
-    stringBuilder.append('\n');
-    InjectedBundle::shared().outputText(stringBuilder.toString());
-#endif
 }
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)

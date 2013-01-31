@@ -67,10 +67,6 @@ QT_END_NAMESPACE
 namespace WebCore {
     class ResourceRequest;
     struct PluginInfo;
-
-#if ENABLE(WEB_INTENTS)
-    class PlatformMessagePortChannel;
-#endif
 }
 
 namespace WebKit {
@@ -122,12 +118,6 @@ public:
     void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
     void removeWebPage(uint64_t pageID);
     WebPage* focusedWebPage() const;
-
-#if ENABLE(WEB_INTENTS) 
-    uint64_t addMessagePortChannel(PassRefPtr<WebCore::PlatformMessagePortChannel>);
-    WebCore::PlatformMessagePortChannel* messagePortChannel(uint64_t);
-    void removeMessagePortChannel(uint64_t);
-#endif
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
@@ -327,10 +317,6 @@ private:
 #endif
 
     HashMap<uint64_t, WebFrame*> m_frameMap;
-
-#if ENABLE(WEB_INTENTS)
-    HashMap<uint64_t, RefPtr<WebCore::PlatformMessagePortChannel> > m_messagePortChannels;
-#endif
 
     typedef HashMap<AtomicString, WebProcessSupplement*> WebProcessSupplementMap;
     WebProcessSupplementMap m_supplements;

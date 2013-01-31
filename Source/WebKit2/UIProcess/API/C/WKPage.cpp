@@ -760,13 +760,6 @@ void WKPageEndPrinting(WKPageRef page)
 }
 #endif
 
-void WKPageDeliverIntentToFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent)
-{
-#if ENABLE(WEB_INTENTS)
-    toImpl(page)->deliverIntentToFrame(toImpl(frame), toImpl(intent));
-#endif
-}
-
 WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef)
 {
     return 0;

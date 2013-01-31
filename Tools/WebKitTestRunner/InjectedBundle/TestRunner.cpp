@@ -53,11 +53,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(WEB_INTENTS)
-#include <WebKit2/WKBundleIntent.h>
-#include <WebKit2/WKBundleIntentRequest.h>
-#endif
-
 namespace WTR {
 
 const double TestRunner::waitToDumpWatchdogTimerInterval = 30;
@@ -667,52 +662,6 @@ void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
 {
     // FIXME: handle non-boolean preferences.
     WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), toBool(value));
-}
-
-void TestRunner::sendWebIntentResponse(JSStringRef reply)
-{
-#if ENABLE(WEB_INTENTS)
-    WKRetainPtr<WKBundleIntentRequestRef> currentRequest = InjectedBundle::shared().page()->currentIntentRequest();
-    if (!currentRequest)
-        return;
-
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
-    if (reply) {
-        WKRetainPtr<WKSerializedScriptValueRef> serializedData(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, reply), 0));
-        WKBundleIntentRequestPostResult(currentRequest.get(), serializedData.get());
-    } else {
-        JSRetainPtr<JSStringRef> errorReply(JSStringCreateWithUTF8CString("ERROR"));
-        WKRetainPtr<WKSerializedScriptValueRef> serializedData(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, errorReply.get()), 0));
-        WKBundleIntentRequestPostFailure(currentRequest.get(), serializedData.get());
-    }
-#endif
-}
-
-void TestRunner::deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data)
-{
-#if ENABLE(WEB_INTENTS)
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-
-    WKRetainPtr<WKStringRef> actionWK = toWK(action);
-    WKRetainPtr<WKStringRef> typeWK = toWK(type);
-    WKRetainPtr<WKSerializedScriptValueRef> dataWK(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, data), 0));
-
-    WKRetainPtr<WKMutableDictionaryRef> intentInitDict(AdoptWK, WKMutableDictionaryCreate());
-    WKRetainPtr<WKStringRef> actionKey(AdoptWK, WKStringCreateWithUTF8CString("action"));
-    WKDictionaryAddItem(intentInitDict.get(), actionKey.get(), actionWK.get());
-
-    WKRetainPtr<WKStringRef> typeKey(AdoptWK, WKStringCreateWithUTF8CString("type"));
-    WKDictionaryAddItem(intentInitDict.get(), typeKey.get(), typeWK.get());
-
-    WKRetainPtr<WKStringRef> dataKey(AdoptWK, WKStringCreateWithUTF8CString("data"));
-    WKDictionaryAddItem(intentInitDict.get(), dataKey.get(), dataWK.get());
-
-    WKRetainPtr<WKBundleIntentRef> wkIntent(AdoptWK, WKBundleIntentCreate(intentInitDict.get()));
-    WKBundlePageDeliverIntentToFrame(InjectedBundle::shared().page()->page(), mainFrame, wkIntent.get());
-#endif
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool accept)

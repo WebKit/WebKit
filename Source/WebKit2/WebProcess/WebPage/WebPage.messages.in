@@ -237,11 +237,6 @@ messages -> WebPage LegacyReceiver {
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 
-    # Web Intents
-#if ENABLE(WEB_INTENTS)
-    DeliverIntentToFrame(uint64_t frameID, WebKit::IntentData intentData)
-#endif
-
 #if PLATFORM(EFL)
     SetThemePath(WTF::String themePath)
 #endif

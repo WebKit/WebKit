@@ -110,9 +110,6 @@ namespace WebCore {
     class Frame;
     class FrameView;
     class HTMLPlugInElement;
-#if ENABLE(WEB_INTENTS)
-    class Intent;
-#endif
     class KeyboardEvent;
     class Page;
     class PrintContext;
@@ -153,10 +150,6 @@ struct EditorState;
 struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
-
-#if ENABLE(WEB_INTENTS)
-struct IntentData;
-#endif
 
 #if ENABLE(GESTURE_EVENTS)
 class WebGestureEvent;
@@ -491,10 +484,6 @@ public:
     bool isSmartInsertDeleteEnabled() const { return m_isSmartInsertDeleteEnabled; }
 #endif
 
-#if ENABLE(WEB_INTENTS)
-    void deliverCoreIntentToFrame(uint64_t frameID, WebCore::Intent*);
-#endif
-
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void clearSelection();
 
@@ -677,10 +666,6 @@ private:
 #endif
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }
-#endif
-
-#if ENABLE(WEB_INTENTS)
-    void deliverIntentToFrame(uint64_t frameID, const IntentData&);
 #endif
 
     static void scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);

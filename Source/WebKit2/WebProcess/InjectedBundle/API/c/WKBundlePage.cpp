@@ -54,10 +54,6 @@
 #include <WebCore/Page.h>
 #include <wtf/UnusedParam.h>
 
-#if ENABLE(WEB_INTENTS)
-#include "InjectedBundleIntent.h"
-#endif
-
 using namespace WebKit;
 
 WKTypeID WKBundlePageGetTypeID()
@@ -357,13 +353,6 @@ double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
 void WKBundlePageListenForLayoutMilestones(WKBundlePageRef pageRef, WKLayoutMilestones milestones)
 {
     toImpl(pageRef)->listenForLayoutMilestones(toLayoutMilestones(milestones));
-}
-
-void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef frameRef, WKBundleIntentRef intentRef)
-{
-#if ENABLE(WEB_INTENTS)
-    toImpl(pageRef)->deliverCoreIntentToFrame(toImpl(frameRef)->frameID(), toImpl(intentRef)->coreIntent());
-#endif
 }
 
 WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)

@@ -245,10 +245,6 @@ public:
 
     void overridePreference(JSStringRef preference, JSStringRef value);
 
-    // Web intents testing.
-    void sendWebIntentResponse(JSStringRef reply);
-    void deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data);
-
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
 

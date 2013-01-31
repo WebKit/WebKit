@@ -81,10 +81,6 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
 
-#if ENABLE(WEB_INTENTS)
-#include <WebCore/PlatformMessagePortChannel.h>
-#endif
-
 #if ENABLE(NETWORK_INFO)
 #include "WebNetworkInfoManagerMessages.h"
 #endif
@@ -684,26 +680,6 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
 
     return result.iterator->value.get();
 }
-
-#if ENABLE(WEB_INTENTS)
-uint64_t WebProcess::addMessagePortChannel(PassRefPtr<PlatformMessagePortChannel> messagePortChannel)
-{
-    static uint64_t channelID = 0;
-    m_messagePortChannels.add(++channelID, messagePortChannel);
-
-    return channelID;
-}
-
-PlatformMessagePortChannel* WebProcess::messagePortChannel(uint64_t channelID)
-{
-    return m_messagePortChannels.get(channelID).get();
-}
-
-void WebProcess::removeMessagePortChannel(uint64_t channelID)
-{
-    m_messagePortChannels.remove(channelID);
-}
-#endif
 
 void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)
 {

@@ -76,17 +76,6 @@
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
 
-#if ENABLE(WEB_INTENTS)
-#include "InjectedBundleIntentRequest.h"
-#include "IntentData.h"
-#include <WebCore/IntentRequest.h>
-#endif
-
-#if ENABLE(WEB_INTENTS_TAG)
-#include "IntentServiceInfo.h"
-#include "WebIntentServiceInfo.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -1560,44 +1549,6 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
 }
 
 #endif // PLATFORM(MAC)
-
-#if ENABLE(WEB_INTENTS)
-void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<APIObject> userData;
-    RefPtr<InjectedBundleIntentRequest> bundleIntentRequest = InjectedBundleIntentRequest::create(request.get());
-    webPage->injectedBundleLoaderClient().didReceiveIntentForFrame(webPage, m_frame, bundleIntentRequest.get(), userData);
-
-    IntentData intentData(request->intent());
-    webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData, InjectedBundleUserMessageEncoder(userData.get())));
-}
-#endif
-
-#if ENABLE(WEB_INTENTS_TAG)
-void WebFrameLoaderClient::registerIntentService(const String& action, const String& type, const KURL& href, const String& title, const String& disposition)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    IntentServiceInfo serviceInfo;
-    serviceInfo.action = action;
-    serviceInfo.type = type;
-    serviceInfo.href = href;
-    serviceInfo.title = title;
-    serviceInfo.disposition = disposition;
-
-    RefPtr<APIObject> userData;
-    RefPtr<WebIntentServiceInfo> webIntentServiceInfo = WebIntentServiceInfo::create(serviceInfo);
-    webPage->injectedBundleLoaderClient().registerIntentServiceForFrame(webPage, m_frame, webIntentServiceInfo.get(), userData);
-
-    webPage->send(Messages::WebPageProxy::RegisterIntentServiceForFrame(m_frame->frameID(), serviceInfo, InjectedBundleUserMessageEncoder(userData.get())));
-}
-#endif
 
 bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) const
 {
