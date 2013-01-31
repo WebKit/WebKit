@@ -1782,12 +1782,14 @@ bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 
 PlatformMedia MediaPlayerPrivateGStreamer::platformMedia() const
 {
-    PlatformMedia p;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
+    PlatformMedia p;
     p.type = PlatformMedia::GStreamerGWorldType;
     p.media.gstreamerGWorld = m_gstGWorld.get();
-#endif
     return p;
+#else
+    return NoPlatformMedia;
+#endif
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
