@@ -1,5 +1,13 @@
 // Helper functions.
 
+function heading(string)
+{
+    debug("");
+    debug("========================================");
+    debug(string);
+    debug("========================================");
+}
+
 function jsWrapperClass(node)
 {
     if (!node)
@@ -8,6 +16,8 @@ function jsWrapperClass(node)
     return string.substr(8, string.length - 9);
 }
 
+// FIXME: This type-checking approach fails on V8, which requires us to have Chromium-specific expectations.
+// We should use the shouldHaveConstructor function instead, which works regardless of JS engine.
 function shouldBeType(expression, className, prototypeName, constructorName)
 {
     if (!prototypeName)
@@ -19,8 +29,16 @@ function shouldBeType(expression, className, prototypeName, constructorName)
     shouldBe("jsWrapperClass(" + expression + ".constructor)", "'" + constructorName + "'");
 }
 
+function shouldHaveConstructor(expression, constructorName)
+{
+    shouldBeTrue(expression + " instanceof " + constructorName);
+    shouldBeTrue(expression + ".constructor === " + constructorName);
+    shouldBeTrue(expression + ".__proto__ === " + constructorName + ".prototype");
+}
+
 // Need to remove the base URL to avoid having local paths in the expected results.
-function removeBaseURL(src) {
+function removeBaseURL(src) 
+{
     var urlRegexp = /url\(([^\)]*)\)/g;
     return src.replace(urlRegexp, function(match, url) {
         return "url(" + url.substr(url.lastIndexOf("/") + 1) + ")";

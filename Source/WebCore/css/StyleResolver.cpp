@@ -5009,10 +5009,15 @@ bool StyleResolver::parseCustomFilterParameterList(CSSValue* parametersValue, Cu
     return true;
 }
 
-PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
+PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWithAtRuleReferenceSyntax(WebKitCSSFilterValue* filterValue)
 {
-    ASSERT(filterValue->length());
+    // FIXME: Implement style resolution for the custom filter at-rule reference syntax.
+    UNUSED_PARAM(filterValue);
+    return 0;
+}
 
+PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWithInlineSyntax(WebKitCSSFilterValue* filterValue)
+{
     CSSValue* shadersValue = filterValue->itemWithoutBoundsCheck(0);
     ASSERT(shadersValue->isValueList());
     CSSValueList* shadersList = static_cast<CSSValueList*>(shadersValue);
@@ -5111,6 +5116,14 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings, meshType);
     return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshType);
 }
+
+PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
+{
+    ASSERT(filterValue->length());
+    bool isAtRuleReferenceSyntax = filterValue->itemWithoutBoundsCheck(0)->isPrimitiveValue();
+    return isAtRuleReferenceSyntax ? createCustomFilterOperationWithAtRuleReferenceSyntax(filterValue) : createCustomFilterOperationWithInlineSyntax(filterValue);
+}
+
 #endif
 
 bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style, RenderStyle* rootStyle, FilterOperations& outOperations)

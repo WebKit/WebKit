@@ -232,10 +232,13 @@ public:
     PassRefPtr<CSSValueList> parseFilter();
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
 #if ENABLE(CSS_SHADERS)
-    PassRefPtr<WebKitCSSArrayFunctionValue> parseCustomFilterArrayFunction(CSSParserValue*);
     PassRefPtr<WebKitCSSMixFunctionValue> parseMixFunction(CSSParserValue*);
-    PassRefPtr<WebKitCSSFilterValue> parseCustomFilter(CSSParserValue*);
+    PassRefPtr<WebKitCSSArrayFunctionValue> parseCustomFilterArrayFunction(CSSParserValue*);
     PassRefPtr<CSSValueList> parseCustomFilterTransform(CSSParserValueList*);
+    PassRefPtr<CSSValueList> parseCustomFilterParameters(CSSParserValueList*);
+    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithAtRuleReferenceSyntax(CSSParserValue*);
+    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithInlineSyntax(CSSParserValue*);
+    PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunction(CSSParserValue*);
 #endif
 #endif
 
