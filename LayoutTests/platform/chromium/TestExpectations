@@ -4412,17 +4412,6 @@ webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while
 webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
 webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 
-# Crashing after r141166
-webkit.org/b/108285 [ Debug ] fast/workers/storage/change-version-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/multiple-transactions-on-different-handles-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/multiple-transactions.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/open-database-empty-version-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/open-database-set-empty-version-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/open-database-while-transaction-in-progress.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/sql-data-types-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] fast/workers/storage/test-authorizer-sync.html [ Crash ]
-webkit.org/b/108285 [ Debug ] http/tests/workers/terminate-during-sync-operation.html [ Crash ]
-
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word-with-underscores.html [ Skip ]
