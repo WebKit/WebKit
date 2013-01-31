@@ -1,5 +1,19 @@
 2013-01-30  Filip Pizlo  <fpizlo@apple.com>
 
+        Vector should consult allocator about ideal size when choosing capacity.
+        <http://webkit.org/b/108410>
+        <rdar://problem/13124002>
+
+        Reviewed by Benjamin Poulain.
+
+        Remove assertion about Vector capacity that won't hold anymore since capacity()
+        may not be what you passed to reserveCapacity().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
+2013-01-30  Andreas Kling  <akling@apple.com>
+
         DFG bytecode parser should have more assertions about the status of local accesses
         https://bugs.webkit.org/show_bug.cgi?id=108417
 

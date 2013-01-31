@@ -1,3 +1,27 @@
+2013-01-31  Andreas Kling  <akling@apple.com>
+
+        Vector should consult allocator about ideal size when choosing capacity.
+        <http://webkit.org/b/108410>
+        <rdar://problem/13124002>
+
+        Reviewed by Benjamin Poulain.
+
+        Added WTF::fastMallocGoodSize(), a workalike/wrapper for OS X's malloc_good_size().
+        It returns the actual size of the block that will get allocated for a given byte size.
+
+        Vector's internal buffer now checks with the allocator if the resulting allocation
+        could actually house more objects and updates its capacity to make use of the space.
+
+        * wtf/Deque.h:
+        (WTF::::expandCapacity):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocGoodSize):
+        * wtf/FastMalloc.h:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+
 2013-01-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add a StringTypeAdapter for ASCIILiteral

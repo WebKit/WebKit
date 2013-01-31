@@ -35,6 +35,7 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t);
     WTF_EXPORT_PRIVATE char* fastStrDup(const char*);
     WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
+    WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 
     struct TryMallocReturnValue {
         TryMallocReturnValue(void* data)
