@@ -257,6 +257,34 @@ void testObjectiveCAPI()
     }
 
     @autoreleasepool {
+        JSContext *context = [[[JSContext alloc] init] autorelease];        
+        JSValue *array = [JSValue valueWithNewArrayInContext:context];
+        checkResult(@"arrayLengthEmpty", [[array[@"length"] toNumber] unsignedIntegerValue] == 0);
+        JSValue *value1 = [JSValue valueWithInt32:42 inContext:context];
+        JSValue *value2 = [JSValue valueWithInt32:24 inContext:context];
+        NSUInteger lowIndex = 5;
+        NSUInteger maxLength = UINT_MAX;
+
+        [array setValue:value1 atIndex:lowIndex];
+        checkResult(@"array.length after put to low index", [[array[@"length"] toNumber] unsignedIntegerValue] == (lowIndex + 1));
+
+        [array setValue:value1 atIndex:(maxLength - 1)];
+        checkResult(@"array.length after put to maxLength - 1", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+
+        [array setValue:value2 atIndex:maxLength];
+        checkResult(@"array.length after put to maxLength", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+
+        [array setValue:value2 atIndex:(maxLength + 1)];
+        checkResult(@"array.length after put to maxLength + 1", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+
+        checkResult(@"valueAtIndex:0 is undefined", [[array valueAtIndex:0] isUndefined]);
+        checkResult(@"valueAtIndex:lowIndex", [[array valueAtIndex:lowIndex] toInt32] == 42);
+        checkResult(@"valueAtIndex:maxLength - 1", [[array valueAtIndex:(maxLength - 1)] toInt32] == 42);
+        checkResult(@"valueAtIndex:maxLength", [[array valueAtIndex:maxLength] toInt32] == 24);
+        checkResult(@"valueAtIndex:maxLength + 1", [[array valueAtIndex:(maxLength + 1)] toInt32] == 24);
+    }
+
+    @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         JSValue *object = [JSValue valueWithNewObjectInContext:context];
 

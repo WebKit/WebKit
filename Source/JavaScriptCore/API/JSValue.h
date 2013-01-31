@@ -159,9 +159,10 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (void)defineProperty:(NSString *)property descriptor:(id)descriptor;
 
 // Access an indexed property from the value. This method will return the
-// JavaScript value 'undefined' if no property exists at that index.
+// JavaScript value 'undefined' if no property exists at that index. 
 - (JSValue *)valueAtIndex:(NSUInteger)index;
-// Set an indexed property on the value.
+// Set an indexed property on the value. For JSValues that are JavaScript arrays, 
+// indices greater than UINT_MAX - 1 will not affect the length of the array.
 - (void)setValue:(id)value atIndex:(NSUInteger)index;
 
 // All JavaScript values are precisely one of these types.

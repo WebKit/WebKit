@@ -274,8 +274,10 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (JSValue *)valueAtIndex:(NSUInteger)index
 {
+    // Properties that are higher than an unsigned value can hold are converted to a double then inserted as a normal property.
+    // Indices that are bigger than the max allowed index size (UINT_MAX - 1) will be handled internally in get().
     if (index != (unsigned)index)
-        [self valueForProperty:[[JSValue valueWithDouble:index inContext:_context] toString]];
+        return [self valueForProperty:[[JSValue valueWithDouble:index inContext:_context] toString]];
 
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(contextInternalContext(_context), m_value, &exception);
@@ -291,6 +293,8 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (void)setValue:(id)value atIndex:(NSUInteger)index
 {
+    // Properties that are higher than an unsigned value can hold are converted to a double, then inserted as a normal property.
+    // Indices that are bigger than the max allowed index size (UINT_MAX - 1) will be handled internally in putByIndex().
     if (index != (unsigned)index)
         return [self setValue:value forProperty:[[JSValue valueWithDouble:index inContext:_context] toString]];
 
@@ -863,12 +867,6 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
 
         if ([object isKindOfClass:[JSValue class]])
             return (ObjcContainerConvertor::Task){ object, ((JSValue *)object)->m_value, ContainerNone };
-
-        if ([object isKindOfClass:[NSArray class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMakeArray(contextRef, 0, NULL, 0), ContainerArray };
-
-        if ([object isKindOfClass:[NSDictionary class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMake(contextRef, 0, 0), ContainerDictionary };
 
         if ([object isKindOfClass:[NSString class]]) {
             JSStringRef string = JSStringCreateWithCFString((CFStringRef)object);

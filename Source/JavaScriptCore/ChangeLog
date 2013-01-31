@@ -1,3 +1,20 @@
+2013-01-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Fix insertion of values greater than the max index allowed by the spec
+        https://bugs.webkit.org/show_bug.cgi?id=108264
+
+        Reviewed by Oliver Hunt.
+
+        Fixed a bug, added a test to the API tests, cleaned up some code.
+
+        * API/JSValue.h: Changed some of the documentation on setValue:atIndex: to indicate that 
+        setting values at indices greater than UINT_MAX - 1 wont' affect the length of JS arrays.
+        * API/JSValue.mm:
+        (-[JSValue valueAtIndex:]): We weren't returning when we should have been.
+        (-[JSValue setValue:atIndex:]): Added a comment about why we do the early check for being larger than UINT_MAX.
+        (objectToValueWithoutCopy): Removed two redundant cases that were already checked previously.
+        * API/tests/testapi.mm:
+
 2013-01-30  Andreas Kling  <akling@apple.com>
 
         Vector should consult allocator about ideal size when choosing capacity.
