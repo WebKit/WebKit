@@ -2022,7 +2022,7 @@ void FrameView::visibleContentsResized()
     if (!frame()->view())
         return;
 
-    if (needsLayout())
+    if (!useFixedLayout() && needsLayout())
         layout();
 
 #if USE(ACCELERATED_COMPOSITING)
