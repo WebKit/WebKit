@@ -1,3 +1,45 @@
+2013-01-31  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Remove WebCoordinatedSurface dependency from CoordinatedSurface
+        https://bugs.webkit.org/show_bug.cgi?id=108259
+
+        Reviewed by Noam Rosenthal.
+
+        This is a preparation patch for Threaded Coordinated Graphics.
+
+        WebCoordinatedSurface dependency should be removed from
+        CoordinatedSurface so as to share CoordinatedSurface between
+        WebCoordinatedSurface and CoordinatedSurface of WebKit1, which will be
+        implemented for Threaded Coordinated Graphics.
+
+        This patch introduces CoordinatedSurface::Factory, which is a function
+        pointer that creates CoordinatedSurfaces. CoordinatedLayerTreeHost sets
+        static CoordinatedSurface::Factory member variable. Classes that use
+        CoordinatedSurface, which are CoordinatedImageBacking and UpdateAtlas,
+        create CoordinatedSurfaces by calling CoordinatedSurface::create, which
+        will call the function set by CoordinatedLayerTreeHost.
+
+        This way, we can remove the WebCoordinatedSurface dependency from
+        CoordinatedSurface and be able to share the code in Threaded Coordinated
+        Graphics.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * Shared/CoordinatedGraphics/CoordinatedSurface.cpp: Added.
+        (WebKit):
+        (WebKit::CoordinatedSurface::setFactory):
+        (WebKit::CoordinatedSurface::create):
+        * Shared/CoordinatedGraphics/CoordinatedSurface.h:
+        (CoordinatedSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        * Target.pri:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::createCoordinatedSurface):
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-01-30  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix after http://trac.webkit.org/changeset/141372.

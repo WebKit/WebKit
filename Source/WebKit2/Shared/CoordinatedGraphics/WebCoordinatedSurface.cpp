@@ -68,11 +68,6 @@ bool WebCoordinatedSurface::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Ha
     return true;
 }
 
-PassRefPtr<CoordinatedSurface> CoordinatedSurface::create(const WebCore::IntSize& size, CoordinatedSurface::Flags flags)
-{
-    return WebCoordinatedSurface::create(size, flags);
-}
-
 PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
     RefPtr<WebCoordinatedSurface> surface;

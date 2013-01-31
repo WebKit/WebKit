@@ -42,6 +42,8 @@ public:
     };
     typedef unsigned Flags;
 
+    typedef PassRefPtr<CoordinatedSurface> Factory(const WebCore::IntSize&, Flags);
+    static void setFactory(Factory);
     static PassRefPtr<CoordinatedSurface> create(const WebCore::IntSize&, Flags);
 
     virtual ~CoordinatedSurface() { }
@@ -58,6 +60,9 @@ public:
 
 protected:
     virtual Flags flags() const = 0;
+
+private:
+    static CoordinatedSurface::Factory* s_factory;
 };
 
 } // namespace WebKit

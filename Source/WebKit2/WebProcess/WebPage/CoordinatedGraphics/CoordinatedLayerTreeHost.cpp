@@ -116,6 +116,8 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
+    CoordinatedSurface::setFactory(createCoordinatedSurface);
+
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 
@@ -684,6 +686,11 @@ PassOwnPtr<GraphicsLayer> CoordinatedLayerTreeHost::createGraphicsLayer(Graphics
     layer->setNeedsVisibleRectAdjustment();
     scheduleLayerFlush();
     return adoptPtr(layer);
+}
+
+PassRefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags)
+{
+    return WebCoordinatedSurface::create(size, flags);
 }
 
 float CoordinatedLayerTreeHost::deviceScaleFactor() const

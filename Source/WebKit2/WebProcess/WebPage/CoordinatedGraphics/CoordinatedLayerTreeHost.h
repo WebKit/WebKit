@@ -116,6 +116,8 @@ public:
 #endif
     virtual void setBackgroundColor(const WebCore::Color&) OVERRIDE;
 
+    static PassRefPtr<CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, CoordinatedSurface::Flags);
+
 protected:
     explicit CoordinatedLayerTreeHost(WebPage*);
 
