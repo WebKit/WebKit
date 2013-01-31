@@ -1,3 +1,31 @@
+2013-01-30  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Remove CoordinatedLayerTreeHostProxy dependency from LayerTreeRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=108164
+
+        Reviewed by Benjamin Poulain.
+
+        This is a preparation patch for Threaded Coordinated Graphics.
+
+        LayerTreeRenderer should not depend on CoordinatedLayerTreeHostProxy so that it
+        can be moved to WebCore.  This patch introduces LayerTreeRendererClient which
+        is implemented in CoordinatedLayerTreeHostProxy. LayerTreeRenderer uses this
+        client, instead of using CoordinatedLayerTreeHostProxy directly.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::animationFrameReady):
+        (WebKit::LayerTreeRenderer::updateViewport):
+        (WebKit::LayerTreeRenderer::renderNextFrame):
+        (WebKit::LayerTreeRenderer::purgeBackingStores):
+        (WebKit::LayerTreeRenderer::detach):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (WebKit):
+        (LayerTreeRendererClient):
+        (LayerTreeRenderer):
+
 2013-01-30  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Should respond to three-finger tap for dictionary definitions

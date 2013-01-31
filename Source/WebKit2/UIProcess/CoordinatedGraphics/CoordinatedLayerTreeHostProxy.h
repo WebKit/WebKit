@@ -26,6 +26,7 @@
 #include "CoordinatedGraphicsArgumentCoders.h"
 #include "CoordinatedLayerInfo.h"
 #include "DrawingAreaProxy.h"
+#include "LayerTreeRenderer.h"
 #include "Region.h"
 #include "SurfaceUpdateInfo.h"
 #include "WebCoordinatedSurface.h"
@@ -46,7 +47,7 @@ namespace WebKit {
 class CoordinatedLayerInfo;
 class LayerTreeRenderer;
 
-class CoordinatedLayerTreeHostProxy {
+class CoordinatedLayerTreeHostProxy : public LayerTreeRendererClient {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -77,8 +78,6 @@ public:
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
     void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void updateViewport();
-    void renderNextFrame();
     void didChangeScrollPosition(const WebCore::FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const WebCore::IntSize&, const WebCore::GraphicsSurfaceToken&);
@@ -86,15 +85,21 @@ public:
     void destroyCanvas(CoordinatedLayerID);
 #endif
     void setLayerRepaintCount(CoordinatedLayerID, int value);
-    void purgeBackingStores();
     LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
     void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void requestAnimationFrame();
-    void animationFrameReady();
 #endif
     void setBackgroundColor(const WebCore::Color&);
+
+    // LayerTreeRendererClient Methods.
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    virtual void animationFrameReady() OVERRIDE;
+#endif
+    virtual void updateViewport() OVERRIDE;
+    virtual void renderNextFrame() OVERRIDE;
+    virtual void purgeBackingStores() OVERRIDE;
 
 protected:
     void dispatchUpdate(const Function<void()>&);
