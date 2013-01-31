@@ -308,6 +308,10 @@ webkit.org/b/106405 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
 webkit.org/b/106405 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 webkit.org/b/106405 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
+webkit.org/b/108507 printing/quirks-percentage-height-body.html [ Skip ]
+webkit.org/b/108507 printing/quirks-percentage-height.html [ Skip ]
+webkit.org/b/108507 printing/standards-percentage-heights.html [ Skip ]
+
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 ### END OF (1) Classified failures with bug reports

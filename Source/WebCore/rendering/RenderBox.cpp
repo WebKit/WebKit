@@ -2416,25 +2416,22 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
     bool paginatedContentNeedsBaseHeight = document()->printing() && h.isPercent()
         && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->logicalHeight().isPercent()));
     if (stretchesToViewport() || paginatedContentNeedsBaseHeight) {
-        // FIXME: Finish accounting for block flow here.
-        // https://bugs.webkit.org/show_bug.cgi?id=46603
         LayoutUnit margins = collapsedMarginBefore() + collapsedMarginAfter();
-        LayoutUnit visHeight;
-        if (document()->printing())
-            visHeight = static_cast<LayoutUnit>(view()->pageLogicalHeight());
-        else  {
-            if (isHorizontalWritingMode())
-                visHeight = view()->viewHeight();
-            else
-                visHeight = view()->viewWidth();
-        }
+        LayoutUnit visibleHeight = viewLogicalHeightForPercentages();
         if (isRoot())
-            computedValues.m_extent = max(computedValues.m_extent, visHeight - margins);
+            computedValues.m_extent = max(computedValues.m_extent, visibleHeight - margins);
         else {
             LayoutUnit marginsBordersPadding = margins + parentBox()->marginBefore() + parentBox()->marginAfter() + parentBox()->borderAndPaddingLogicalHeight();
-            computedValues.m_extent = max(computedValues.m_extent, visHeight - marginsBordersPadding);
+            computedValues.m_extent = max(computedValues.m_extent, visibleHeight - marginsBordersPadding);
         }
     }
+}
+
+LayoutUnit RenderBox::viewLogicalHeightForPercentages() const
+{
+    if (document()->printing())
+        return static_cast<LayoutUnit>(view()->pageLogicalHeight());
+    return view()->viewLogicalHeight();
 }
 
 LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height) const
@@ -2542,13 +2539,14 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
             availableHeight = max<LayoutUnit>(0, contentBoxHeight);
         }
-    } else if (cb->isRenderView() || isOutOfFlowPositionedWithSpecifiedHeight) {
+    } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         LogicalExtentComputedValues computedValues;
         cb->computeLogicalHeight(cb->logicalHeight(), 0, computedValues);
         availableHeight = computedValues.m_extent - cb->borderAndPaddingLogicalHeight() - cb->scrollbarLogicalHeight();
-    }
+    } else if (cb->isRenderView())
+        availableHeight = viewLogicalHeightForPercentages();
 
     if (availableHeight == -1)
         return availableHeight;
