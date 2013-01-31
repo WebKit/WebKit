@@ -1,3 +1,18 @@
+2013-01-31  Chris Hopman  <cjhopman@chromium.org>
+
+        [chromium] Make selection handling work in applyPageScaleInCompositor mode
+        https://bugs.webkit.org/show_bug.cgi?id=107831
+
+        Reviewed by Ryosuke Niwa.
+
+        These functions expect a window point. When in
+        applyPageScaleFactorInCompositor mode, the points need to be unscaled
+        by the page scale factor.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        (WebKit::WebFrameImpl::moveCaretSelectionTowardsWindowPoint):
+
 2013-01-31  Tom Sepez  <tsepez@chromium.org>
 
         [v8] Enable binding integrity on mac
