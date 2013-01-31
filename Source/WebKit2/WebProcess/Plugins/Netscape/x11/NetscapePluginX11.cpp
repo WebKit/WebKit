@@ -47,7 +47,7 @@
 #include <Ecore_X.h>
 #endif
 
-#if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
+#if USE(CAIRO)
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo/cairo-xlib.h>

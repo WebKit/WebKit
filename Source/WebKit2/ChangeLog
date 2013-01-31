@@ -1,3 +1,14 @@
+2013-01-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove PLATFORM(WIN_CAIRO) from NetscapePluginX11.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=108439
+
+        Reviewed by Brent Fulgham.
+
+        PLATFORM(WIN_CAIRO) is Windows only, where no X11 exists.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed build fix: Remove Web Intents files from
