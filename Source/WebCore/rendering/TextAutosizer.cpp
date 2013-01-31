@@ -47,6 +47,17 @@ struct TextAutosizingWindowInfo {
     IntSize minLayoutSize;
 };
 
+struct TextAutosizingClusterInfo {
+    explicit TextAutosizingClusterInfo(RenderBlock* root)
+        : root(root)
+        , blockContainingAllText(0)
+    {
+    }
+
+    RenderBlock* root;
+    const RenderBlock* blockContainingAllText;
+};
+
 
 static const Vector<QualifiedName>& formInputTags()
 {
@@ -106,24 +117,25 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     while (cluster && !isAutosizingCluster(cluster))
         cluster = cluster->containingBlock();
 
-    processCluster(cluster, container, layoutRoot, windowInfo);
+    TextAutosizingClusterInfo clusterInfo(cluster);
+    processCluster(&clusterInfo, container, layoutRoot, windowInfo);
     return true;
 }
 
-void TextAutosizer::processCluster(RenderBlock* cluster, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
+void TextAutosizer::processCluster(TextAutosizingClusterInfo* clusterInfo, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
 {
     // Many pages set a max-width on their content. So especially for the
     // RenderView, instead of just taking the width of |cluster| we find
     // the lowest common ancestor of the first and last descendant text node of
     // the cluster (i.e. the deepest wrapper block that contains all the text),
     // and use its width instead.
-    const RenderBlock* blockContainingAllText = findDeepestBlockContainingAllText(cluster);
-    float textWidth = blockContainingAllText->contentLogicalWidth();
+    clusterInfo->blockContainingAllText = findDeepestBlockContainingAllText(clusterInfo->root);
+    float textWidth = clusterInfo->blockContainingAllText->contentLogicalWidth();
 
     float multiplier = 1;
-    if (clusterShouldBeAutosized(blockContainingAllText, textWidth)) {
-        int logicalWindowWidth = cluster->isHorizontalWritingMode() ? windowInfo.windowSize.width() : windowInfo.windowSize.height();
-        int logicalLayoutWidth = cluster->isHorizontalWritingMode() ? windowInfo.minLayoutSize.width() : windowInfo.minLayoutSize.height();
+    if (clusterShouldBeAutosized(clusterInfo, textWidth)) {
+        int logicalWindowWidth = clusterInfo->root->isHorizontalWritingMode() ? windowInfo.windowSize.width() : windowInfo.windowSize.height();
+        int logicalLayoutWidth = clusterInfo->root->isHorizontalWritingMode() ? windowInfo.minLayoutSize.width() : windowInfo.minLayoutSize.height();
         // Ignore box width in excess of the layout width, to avoid extreme multipliers.
         float logicalClusterWidth = std::min<float>(textWidth, logicalLayoutWidth);
 
@@ -132,10 +144,10 @@ void TextAutosizer::processCluster(RenderBlock* cluster, RenderBlock* container,
         multiplier = std::max(1.0f, multiplier);
     }
 
-    processContainer(multiplier, container, blockContainingAllText, subtreeRoot, windowInfo);
+    processContainer(multiplier, container, clusterInfo, subtreeRoot, windowInfo);
 }
 
-void TextAutosizer::processContainer(float multiplier, RenderBlock* container, const RenderBlock* blockContainingAllText, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
+void TextAutosizer::processContainer(float multiplier, RenderBlock* container, const TextAutosizingClusterInfo* clusterInfo, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
 {
     ASSERT(isAutosizingContainer(container));
 
@@ -151,10 +163,11 @@ void TextAutosizer::processContainer(float multiplier, RenderBlock* container, c
             // FIXME: Increase list marker size proportionately.
         } else if (isAutosizingContainer(descendant)) {
             RenderBlock* descendantBlock = toRenderBlock(descendant);
-            if (isAutosizingCluster(descendantBlock, blockContainingAllText))
-                processCluster(descendantBlock, descendantBlock, descendantBlock, windowInfo);
-            else
-                processContainer(multiplier, descendantBlock, blockContainingAllText, descendantBlock, windowInfo);
+            if (isAutosizingCluster(descendantBlock, clusterInfo)) {
+                TextAutosizingClusterInfo descendantClusterInfo(descendantBlock);
+                processCluster(&descendantClusterInfo, descendantBlock, descendantBlock, windowInfo);
+            } else
+                processContainer(multiplier, descendantBlock, clusterInfo, descendantBlock, windowInfo);
         }
         descendant = nextInPreOrderSkippingDescendantsOfContainers(descendant, subtreeRoot);
     }
@@ -217,7 +230,7 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
     return true;
 }
 
-bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const RenderBlock* parentBlockContainingAllText)
+bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const TextAutosizingClusterInfo* parentClusterInfo)
 {
     // "Autosizing clusters" are special autosizing containers within which we
     // want to enforce a uniform text size multiplier, in the hopes of making
@@ -247,9 +260,9 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const Rende
     // text and that of a narrow child before the child becomes a cluster.
     const float maxWidthDifference = 200;
 
-    if (parentBlockContainingAllText) {
+    if (parentClusterInfo->blockContainingAllText) {
         float contentWidth = renderer->contentLogicalWidth();
-        float clusterTextWidth = parentBlockContainingAllText->contentLogicalWidth();
+        float clusterTextWidth = parentClusterInfo->blockContainingAllText->contentLogicalWidth();
         if (contentWidth > clusterTextWidth || (clusterTextWidth - contentWidth) > maxWidthDifference)
             return true;
     }
@@ -270,7 +283,8 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const Rende
 
 bool TextAutosizer::isAutosizingCluster(const RenderObject* object)
 {
-    return isAutosizingContainer(object) && isAutosizingCluster(toRenderBlock(object), 0);
+    TextAutosizingClusterInfo emptyClusterInfo(0);
+    return isAutosizingContainer(object) && isAutosizingCluster(toRenderBlock(object), &emptyClusterInfo);
 }
 
 bool TextAutosizer::containerShouldBeAutosized(const RenderBlock* container)
@@ -364,7 +378,7 @@ bool TextAutosizer::contentHeightIsConstrained(const RenderBlock* container)
     return false;
 }
 
-bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* blockContainingAllText, float blockWidth)
+bool TextAutosizer::clusterShouldBeAutosized(const TextAutosizingClusterInfo* clusterInfo, float blockWidth)
 {
     // Don't autosize clusters that contain less than 4 lines of text (in
     // practice less lines are required, since measureDescendantTextWidth
@@ -379,13 +393,13 @@ bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* blockContainingA
     const float minLinesOfText = 4;
     float minTextWidth = blockWidth * minLinesOfText;
     float textWidth = 0;
-    measureDescendantTextWidth(blockContainingAllText, blockContainingAllText, minTextWidth, textWidth);
+    measureDescendantTextWidth(clusterInfo->blockContainingAllText, clusterInfo, minTextWidth, textWidth);
     if (textWidth >= minTextWidth)
         return true;
     return false;
 }
 
-void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, const RenderBlock* blockContainingAllText, float minTextWidth, float& textWidth)
+void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, const TextAutosizingClusterInfo* clusterInfo, float minTextWidth, float& textWidth)
 {
     bool skipLocalText = !containerShouldBeAutosized(container);
 
@@ -395,8 +409,8 @@ void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, con
             textWidth += toRenderText(descendant)->renderedTextLength() * descendant->style()->specifiedFontSize();
         } else if (isAutosizingContainer(descendant)) {
             RenderBlock* descendantBlock = toRenderBlock(descendant);
-            if (!isAutosizingCluster(descendantBlock, blockContainingAllText))
-                measureDescendantTextWidth(descendantBlock, blockContainingAllText, minTextWidth, textWidth);
+            if (!isAutosizingCluster(descendantBlock, clusterInfo))
+                measureDescendantTextWidth(descendantBlock, clusterInfo, minTextWidth, textWidth);
         }
         if (textWidth >= minTextWidth)
             return;
