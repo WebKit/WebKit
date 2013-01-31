@@ -21,7 +21,6 @@
 #include "WebSoupRequestManager.h"
 
 #include "DataReference.h"
-#include "MessageID.h"
 #include "WebErrors.h"
 #include "WebKitSoupRequestGeneric.h"
 #include "WebKitSoupRequestInputStream.h"

@@ -30,7 +30,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxy.h"
-#include <CoreIPC/MessageID.h>
 #endif
 
 using namespace WebCore;

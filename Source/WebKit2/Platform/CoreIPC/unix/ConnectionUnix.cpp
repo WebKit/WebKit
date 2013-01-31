@@ -58,32 +58,31 @@ class MessageInfo {
 public:
     MessageInfo() { }
 
-    MessageInfo(MessageID, size_t bodySize, size_t initialAttachmentCount)
-        : m_messageID(0)
-        , m_bodySize(bodySize)
+    MessageInfo(size_t bodySize, size_t initialAttachmentCount)
+        : m_bodySize(bodySize)
         , m_attachmentCount(initialAttachmentCount)
+        , m_isMessageBodyOutOfLine(false)
     {
-        ASSERT(!(m_messageID & MessageBodyIsOutOfLine));
     }
 
     void setMessageBodyIsOutOfLine()
     {
         ASSERT(!isMessageBodyIsOutOfLine());
 
-        m_messageID |= MessageBodyIsOutOfLine;
+        m_isMessageBodyOutOfLine = true;
         m_attachmentCount++;
     }
 
-    bool isMessageBodyIsOutOfLine() const { return m_messageID & MessageBodyIsOutOfLine; }
+    bool isMessageBodyIsOutOfLine() const { return m_isMessageBodyOutOfLine; }
 
     size_t bodySize() const { return m_bodySize; }
 
     size_t attachmentCount() const { return m_attachmentCount; }
 
 private:
-    uint32_t m_messageID;
     size_t m_bodySize;
     size_t m_attachmentCount;
+    bool m_isMessageBodyOutOfLine;
 };
 
 class AttachmentInfo {
@@ -286,7 +285,7 @@ bool Connection::processMessage()
     else
         decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()), attachments);
 
-    processIncomingMessage(MessageID(), decoder.release());
+    processIncomingMessage(decoder.release());
 
     if (m_readBufferSize > messageLength) {
         memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBufferSize - messageLength);
@@ -439,7 +438,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return m_isConnected;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
 {
 #if PLATFORM(QT)
     ASSERT(m_socketNotifier);
@@ -455,7 +454,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
         return false;
     }
 
-    MessageInfo messageInfo(messageID, encoder->bufferSize(), attachments.size());
+    MessageInfo messageInfo(encoder->bufferSize(), attachments.size());
     size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(AttachmentInfo)) + encoder->bufferSize();
     if (messageSizeWithBodyInline > messageMaxSize && encoder->bufferSize()) {
         RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(encoder->bufferSize());

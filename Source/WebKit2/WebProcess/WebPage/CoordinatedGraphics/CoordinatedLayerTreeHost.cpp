@@ -35,7 +35,6 @@
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #include "DrawingAreaImpl.h"
 #include "GraphicsContext.h"
-#include "MessageID.h"
 #include "SurfaceUpdateInfo.h"
 #include "WebCoordinatedSurface.h"
 #include "WebCoreArgumentCoders.h"
