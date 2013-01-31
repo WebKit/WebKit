@@ -34,6 +34,7 @@
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
 #import "Operations.h"
+#import "StrongInlines.h"
 #import <wtf/HashSet.h>
 
 #if JS_OBJC_API_ENABLED
@@ -42,9 +43,9 @@
     JSVirtualMachine *m_virtualMachine;
     JSGlobalContextRef m_context;
     JSWrapperMap *m_wrapperMap;
+    JSC::Strong<JSC::JSObject> m_exception;
 }
 
-@synthesize exception;
 @synthesize exceptionHandler;
 
 - (id)init
@@ -62,7 +63,6 @@
     m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0);
     m_wrapperMap = [[JSWrapperMap alloc] initWithContext:self];
 
-    self.exception = nil;
     self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;
     };
@@ -82,6 +82,21 @@
         return [self valueFromNotifyException:exceptionValue];
 
     return [JSValue valueWithValue:result inContext:self];
+}
+
+- (void)setException:(JSValue *)value
+{
+    if (value)
+        m_exception.set(toJS(m_context)->globalData(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
+    else
+        m_exception.clear();
+}
+
+- (JSValue *)exception
+{
+    if (!m_exception)
+        return nil;
+    return [JSValue valueWithValue:toRef(m_exception.get()) inContext:self];
 }
 
 - (JSWrapperMap *)wrapperMap

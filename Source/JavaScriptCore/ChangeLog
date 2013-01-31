@@ -1,3 +1,18 @@
+2013-01-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: JSContext exception property causes reference cycle
+        https://bugs.webkit.org/show_bug.cgi?id=107778
+
+        Reviewed by Darin Adler.
+
+        JSContext has a (retain) JSValue * exception property which, when non-null, creates a 
+        reference cycle (since the JSValue * holds a strong reference back to the JSContext *).
+
+        * API/JSContext.mm: Instead of JSValue *, we now use a plain JSValueRef, which eliminates the reference cycle.
+        (-[JSContext initWithVirtualMachine:]):
+        (-[JSContext setException:]):
+        (-[JSContext exception]):
+
 2013-01-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix. Win7 port.
