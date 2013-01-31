@@ -114,6 +114,10 @@ fast/events/constructors/keyboard-event-constructor.html
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
 http/tests/inspector/indexeddb
+http/tests/security/cross-origin-indexeddb-allowed.html
+http/tests/security/cross-origin-indexeddb.html
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
 
 inspector/timeline/timeline-animation-frame.html
 

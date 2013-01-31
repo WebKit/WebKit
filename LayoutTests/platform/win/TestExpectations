@@ -1093,6 +1093,10 @@ editing/spelling/spelling-marker-description.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 http/tests/inspector/indexeddb
+http/tests/security/cross-origin-indexeddb-allowed.html
+http/tests/security/cross-origin-indexeddb.html
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
 
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker

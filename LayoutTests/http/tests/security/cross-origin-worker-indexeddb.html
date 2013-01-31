@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows(true);
+            testRunner.setCloseRemainingWindowsWhenComplete(true);
+            internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+        }
+
+        document.location = "resources/document-for-cross-origin-worker-indexeddb.html"
+    </script>
+</body>
+</html>

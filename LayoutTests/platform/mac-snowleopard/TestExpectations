@@ -134,6 +134,10 @@ fast/repaint/fixed-move-after-keyboard-scroll.html
 # IndexedDB is not yet enabled.
 storage/indexeddb
 http/tests/inspector/indexeddb
+http/tests/security/cross-origin-indexeddb-allowed.html
+http/tests/security/cross-origin-indexeddb.html
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
 
 # Philip's canvas tests that fail on SnowLeopard only
 canvas/philip/tests/2d.gradient.interpolate.overlap.html

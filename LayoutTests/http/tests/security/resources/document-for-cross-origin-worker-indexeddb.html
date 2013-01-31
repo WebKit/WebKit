@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var frames = 2;
+
+        function decrement() {
+            --frames;
+            if (!frames && window.testRunner) {
+                internals.settings.setStorageBlockingPolicy('AllowAll');
+                testRunner.notifyDone();
+            }
+        }
+
+        window.onmessage = decrement;
+    </script>
+</head>
+<body>
+    <p>The first iframe below should return a security error, and the second should successfully open the database.</p>
+    <iframe src="http://localhost:8000/security/resources/cross-origin-iframe-for-worker-indexeddb.html"></iframe>
+    <iframe src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-worker-indexeddb.html"></iframe>
+</body>
+</html>

@@ -138,7 +138,7 @@ namespace WebCore {
         void unregisterObserver(Observer*);
         void notifyObserversOfStop();
 
-        const SecurityOrigin* topOrigin() const { return m_topOrigin.get(); }
+        virtual const SecurityOrigin* topOrigin() const OVERRIDE { return m_topOrigin.get(); }
 
     protected:
         WorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);

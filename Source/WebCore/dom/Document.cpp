@@ -4776,6 +4776,11 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
     }
 }
 
+const SecurityOrigin* Document::topOrigin() const
+{
+    return topDocument()->securityOrigin();
+}
+
 struct PerformTaskContext {
     WTF_MAKE_NONCOPYABLE(PerformTaskContext); WTF_MAKE_FAST_ALLOCATED;
 public:

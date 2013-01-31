@@ -1199,6 +1199,8 @@ public:
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
 
+    virtual const SecurityOrigin* topOrigin() const OVERRIDE;
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 

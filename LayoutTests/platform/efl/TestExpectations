@@ -1115,6 +1115,10 @@ webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Failure ]
 # IndexedDB is not yet enabled.
 Bug(EFL) storage/indexeddb
 Bug(EFL) http/tests/inspector/indexeddb
+Bug(EFL) http/tests/security/cross-origin-indexeddb-allowed.html
+Bug(EFL) http/tests/security/cross-origin-indexeddb.html
+Bug(EFL) http/tests/security/cross-origin-worker-indexeddb-allowed.html
+Bug(EFL) http/tests/security/cross-origin-worker-indexeddb.html
 
 # Quota API is not supported.
 Bug(EFL) storage/storageinfo-missing-arguments.html

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <script>
+        function test(method, args) {
+            try {
+                var request = window.webkitIndexedDB[method].call(window.webkitIndexedDB, args);
+                document.write('Successfully called window.webkitIndexedDB.' + method + '().<br>');
+            } catch (exception) {
+                document.write('window.webkitIndexedDB.' + method + '() threw an exception: ' + exception.name + '<br>');
+            }
+        }
+        test('deleteDatabase', 'testDBName');
+        test('open', 'testDBName');
+        test('webkitGetDatabaseNames');
+    </script>
+</body>
+</head>

@@ -89,6 +89,8 @@ public:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
+    virtual const SecurityOrigin* topOrigin() const = 0;
+
 #if ENABLE(BLOB)
     PublicURLManager& publicURLManager();
 #endif
