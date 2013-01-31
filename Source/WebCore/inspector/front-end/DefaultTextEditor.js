@@ -111,6 +111,15 @@ WebInspector.DefaultTextEditor.EditInfo = function(range, text)
 
 WebInspector.DefaultTextEditor.prototype = {
     /**
+     * @param {WebInspector.TextRange} range
+     * @return {string}
+     */
+    copyRange: function(range)
+    {
+        return this._textModel.copyRange(range);
+    },
+
+    /**
      * @param {string} regex
      * @param {string} cssClass
      * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}

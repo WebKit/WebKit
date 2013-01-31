@@ -3056,3 +3056,8 @@ body.platform-mac .progress-bar-container progress {
     border-left: none;
     margin-top: 1px;
 }
+
+.source-frame-position {
+    padding-left: 2px;
+    padding-top: 5px;
+}
