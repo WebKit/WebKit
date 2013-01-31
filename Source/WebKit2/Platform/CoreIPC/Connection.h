@@ -228,10 +228,6 @@ private:
         T* m_arguments;
     };
 
-public:
-    typedef Message<MessageEncoder> OutgoingMessage;
-
-private:
     Connection(Identifier, bool isServer, Client*, WebCore::RunLoop* clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
@@ -292,7 +288,7 @@ private:
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
-    Deque<OutgoingMessage> m_outgoingMessages;
+    Deque<OwnPtr<MessageEncoder>> m_outgoingMessages;
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;

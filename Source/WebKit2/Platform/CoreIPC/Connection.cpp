@@ -327,7 +327,7 @@ bool Connection::sendMessage(PassOwnPtr<MessageEncoder> encoder, unsigned messag
 
     {
         MutexLocker locker(m_outgoingMessagesLock);
-        m_outgoingMessages.append(OutgoingMessage(MessageID(), encoder));
+        m_outgoingMessages.append(encoder);
     }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
@@ -669,7 +669,7 @@ void Connection::sendOutgoingMessages()
         return;
 
     while (true) {
-        OutgoingMessage message;
+        OwnPtr<MessageEncoder> message;
         {
             MutexLocker locker(m_outgoingMessagesLock);
             if (m_outgoingMessages.isEmpty())
@@ -677,7 +677,7 @@ void Connection::sendOutgoingMessages()
             message = m_outgoingMessages.takeFirst();
         }
 
-        if (!sendOutgoingMessage(message.messageID(), adoptPtr(message.arguments())))
+        if (!sendOutgoingMessage(MessageID(), message.release()))
             break;
     }
 }
