@@ -47,6 +47,7 @@ from handlers.showresults import ShowResults
 from handlers.statusbubble import StatusBubble
 from handlers.submittoews import SubmitToEWS
 from handlers.svnrevision import SVNRevision
+from handlers.syncqueuelogs import SyncQueueLogs
 from handlers.updatestatus import UpdateStatus
 from handlers.updatesvnrevision import UpdateSVNRevision
 from handlers.updateworkitems import UpdateWorkItems
@@ -58,6 +59,7 @@ routes = [
     ('/', QueuesOverview),
     ('/dashboard', Dashboard),
     ('/gc', GC),
+    ('/sync-queue-logs', SyncQueueLogs),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
     (r'/patch/(.*)', Patch),
     (r'/submit-to-ews', SubmitToEWS),

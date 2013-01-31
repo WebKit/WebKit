@@ -1,3 +1,41 @@
+2013-01-31  Alan Cutter  <alancutter@chromium.org>
+
+        EWS graphs have unusual data for patch waiting times
+        https://bugs.webkit.org/show_bug.cgi?id=108427
+
+        Reviewed by Eric Seidel.
+
+        The max_patches_waiting QueueLog property may have missed recording patches waiting in idle times when no events are fired to update it. I added a cron job to take care of this issue.
+        The patch wait duration in PatchLogs was being incorrectly updated after a patch expired and was picked up again from the queue. That period should really count towards the processing time instead.
+        Added a WarningLog to record if any erroneous situations occur due to invalid contents in the datastore. These basically highlight if any "impossible" execution paths get executed.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/cron.yaml:
+        * QueueStatusServer/handlers/syncqueuelogs.py: Copied from Tools/QueueStatusServer/model/patchlog.py.
+        (SyncQueueLogs):
+        (SyncQueueLogs.get):
+        * QueueStatusServer/loggers/recordpatchevent.py:
+        (RecordPatchEvent.added):
+        (RecordPatchEvent.retrying):
+        (RecordPatchEvent.started):
+        (RecordPatchEvent.stopped):
+        (RecordPatchEvent.updated):
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/patchlog.py:
+        (PatchLog.lookup):
+        (PatchLog):
+        (PatchLog.lookup_if_exists):
+        (PatchLog.calculate_process_duration):
+        (PatchLog._generate_key):
+        * QueueStatusServer/model/queuelog.py:
+        (QueueLog.update_max_patches_waiting):
+        (QueueLog._get_or_create_txn):
+        (QueueLog):
+        (QueueLog._get_patches_waiting):
+        * QueueStatusServer/model/warninglog.py: Copied from Tools/QueueStatusServer/model/patchlog.py.
+        (WarningLog):
+        (WarningLog.record):
+
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
         Remove Web Intents code from WebKit2

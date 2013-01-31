@@ -26,45 +26,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from time import time
 from datetime import datetime
 
 from google.appengine.ext import db
 
 
-class PatchLog(db.Model):
+class WarningLog(db.Model):
+    date = db.DateTimeProperty(auto_now_add=True)
+    event = db.StringProperty()
+    message = db.StringProperty()
     attachment_id = db.IntegerProperty()
     queue_name = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
     bot_id = db.StringProperty()
-    retry_count = db.IntegerProperty(default=0)
-    status_update_count = db.IntegerProperty(default=0)
-    finished = db.BooleanProperty(default=False)
-    wait_duration = db.IntegerProperty()
-    process_duration = db.IntegerProperty()
 
     @classmethod
-    def lookup(cls, attachment_id, queue_name):
-        key = cls._generate_key(attachment_id, queue_name)
-        return cls.get_or_insert(key, attachment_id=attachment_id, queue_name=queue_name)
-
-    @classmethod
-    def lookup_if_exists(cls, attachment_id, queue_name):
-        key = cls._generate_key(attachment_id, queue_name)
-        return cls.get_by_key_name(key)
-
-    def calculate_wait_duration(self):
-        time_delta = datetime.utcnow() - self.date
-        self.wait_duration = int(self._time_delta_to_seconds(time_delta))
-
-    def calculate_process_duration(self):
-        time_delta = datetime.utcnow() - self.date
-        self.process_duration = int(self._time_delta_to_seconds(time_delta)) - (self.wait_duration or 0)
-
-    @classmethod
-    def _generate_key(cls, attachment_id, queue_name):
-        return "%s-%s" % (attachment_id, queue_name)
-
-    # Needed to support Python 2.5's lack of timedelta.total_seconds().
-    @classmethod
-    def _time_delta_to_seconds(cls, time_delta):
-        return time_delta.seconds + time_delta.days * 24 * 3600
+    def record(cls, event, message=None, attachment_id=None, queue_name=None, bot_id=None):
+        entity = cls(event=event, message=message, queue_name=queue_name, bot_id=bot_id, attachment_id=attachment_id)
+        entity.put()
+        return entity

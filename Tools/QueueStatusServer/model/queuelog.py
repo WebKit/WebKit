@@ -31,6 +31,9 @@ from datetime import datetime
 
 from google.appengine.ext import db
 
+from model.workitems import WorkItems
+from model.activeworkitems import ActiveWorkItems
+
 
 class QueueLog(db.Model):
     date = db.DateTimeProperty()
@@ -64,9 +67,22 @@ class QueueLog(db.Model):
     def get_or_create(cls, key_name, **kwargs):
         return db.run_in_transaction(cls._get_or_create_txn, key_name, **kwargs)
 
+    def update_max_patches_waiting(self):
+        patches_waiting = self._get_patches_waiting(self.queue_name)
+        if patches_waiting > self.max_patches_waiting:
+            self.max_patches_waiting = patches_waiting
+            return True
+        return False
+
     @classmethod
     def _get_or_create_txn(cls, key_name, **kwargs):
         entity = cls.get_by_key_name(key_name, parent=kwargs.get('parent'))
         if entity is None:
             entity = cls(key_name=key_name, **kwargs)
         return entity
+
+    @classmethod
+    def _get_patches_waiting(cls, queue_name):
+        work_items = WorkItems.lookup_by_queue(queue_name)
+        active_work_items = ActiveWorkItems.lookup_by_queue(queue_name)
+        return len(set(work_items.item_ids) - set(active_work_items.item_ids))
