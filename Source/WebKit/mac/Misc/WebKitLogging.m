@@ -57,9 +57,11 @@ WTFLogChannel WebKitLogIconDatabase =           { 0x80000000, "WebKitLogLevel", 
 
 static void initializeLogChannel(WTFLogChannel *channel)
 {
-    channel->state = WTFLogChannelOff;
     NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel->defaultName]];
+
+    // If there's no log level string from the user defaults, don't obliterate the compiled in values.
     if (logLevelString) {
+        channel->state = WTFLogChannelOff;
         unsigned logLevel;
         if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
             NSLog(@"unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);

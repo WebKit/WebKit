@@ -1,3 +1,13 @@
+2013-01-31  Brady Eidson  <beidson@apple.com>
+
+        Lack of a log level string should not obliterate compiled in logging channel state.
+        https://bugs.webkit.org/show_bug.cgi?id=108502
+
+        Reviewed by Alexey Proskuryakov and Sam Weinig.
+
+        * Platform/mac/Logging.mac.mm:
+        (WebKit::initializeLogChannel): If there's no log level string, leave the channel state alone.
+
 2013-01-31  Alexey Proskuryakov  <ap@apple.com>
 
         WebProcess sandbox profile overhaul.
