@@ -908,6 +908,7 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/upload-events.html
 http/tests/security/clipboard/clipboard-file-access.html
+media/video-src-blob.html
 storage/indexeddb/noblobs.html
 storage/indexeddb/structured-clone.html
 
