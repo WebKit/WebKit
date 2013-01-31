@@ -49,7 +49,6 @@ public:
     virtual void onError(const WebIDBDatabaseError&);
     virtual void onSuccess(const WebDOMStringList&);
     virtual void onSuccess(WebIDBCursor*, const WebIDBKey&, const WebIDBKey& primaryKey, const WebSerializedScriptValue&);
-    virtual void onSuccess(WebIDBDatabase*);
     virtual void onSuccess(WebIDBDatabase*, const WebIDBMetadata&);
     virtual void onSuccess(const WebIDBKey&);
     virtual void onSuccess(const WebSerializedScriptValue&);
@@ -58,7 +57,6 @@ public:
     virtual void onSuccess(long long);
     virtual void onSuccess();
     virtual void onBlocked(long long oldVersion);
-    virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*);
     virtual void onUpgradeNeeded(long long oldVersion, WebIDBDatabase*, const WebIDBMetadata&);
 
 private:
