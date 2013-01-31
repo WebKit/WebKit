@@ -473,11 +473,12 @@ void WebPluginContainerImpl::requestTouchEventType(TouchEventRequestType request
 {
     if (m_touchEventRequestType == requestType)
         return;
-    m_touchEventRequestType = requestType;
-    if (m_touchEventRequestType != TouchEventRequestTypeNone)
+    
+    if (requestType != TouchEventRequestTypeNone && m_touchEventRequestType == TouchEventRequestTypeNone)
         m_element->document()->didAddTouchEventHandler(m_element);
-    else
+    else if (requestType == TouchEventRequestTypeNone && m_touchEventRequestType != TouchEventRequestTypeNone)
         m_element->document()->didRemoveTouchEventHandler(m_element);
+    m_touchEventRequestType = requestType;
 }
 
 void WebPluginContainerImpl::setWantsWheelEvents(bool wantsWheelEvents)

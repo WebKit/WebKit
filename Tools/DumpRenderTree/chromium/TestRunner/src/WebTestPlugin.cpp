@@ -235,6 +235,8 @@ private:
     OwnPtr<WebExternalTextureLayer> m_layer;
 
     WebPluginContainer::TouchEventRequestType m_touchEventRequest;
+    // Requests touch events from the WebPluginContainerImpl multiple times to tickle webkit.org/b/108381
+    bool m_reRequestTouchEvents;
     bool m_printEventDetails;
     bool m_printUserGestureStatus;
     bool m_canProcessDrag;
@@ -246,6 +248,7 @@ WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& par
     , m_container(0)
     , m_context(0)
     , m_touchEventRequest(WebPluginContainer::TouchEventRequestTypeNone)
+    , m_reRequestTouchEvents(false)
     , m_printEventDetails(false)
     , m_printUserGestureStatus(false)
     , m_canProcessDrag(false)
@@ -255,6 +258,7 @@ WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& par
     static const WebString kAttributePrimitiveColor = WebString::fromUTF8("primitive-color");
     static const WebString kAttributeOpacity = WebString::fromUTF8("opacity");
     static const WebString kAttributeAcceptsTouch = WebString::fromUTF8("accepts-touch");
+    static const WebString kAttributeReRequestTouchEvents = WebString::fromUTF8("re-request-touch");
     static const WebString kAttributePrintEventDetails = WebString::fromUTF8("print-event-details");
     static const WebString kAttributeCanProcessDrag = WebString::fromUTF8("can-process-drag");
     static const WebString kAttributePrintUserGestureStatus = WebString::fromUTF8("print-user-gesture-status");
@@ -275,6 +279,8 @@ WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& par
             m_scene.opacity = parseOpacity(attributeValue);
         else if (attributeName == kAttributeAcceptsTouch)
             m_touchEventRequest = parseTouchEventRequestType(attributeValue);
+        else if (attributeName == kAttributeReRequestTouchEvents)
+            m_reRequestTouchEvents = parseBoolean(attributeValue);
         else if (attributeName == kAttributePrintEventDetails)
             m_printEventDetails = parseBoolean(attributeValue);
         else if (attributeName == kAttributeCanProcessDrag)
@@ -304,6 +310,10 @@ bool WebTestPluginImpl::initialize(WebPluginContainer* container)
     m_layer = adoptPtr(Platform::current()->compositorSupport()->createExternalTextureLayer(this));
     m_container = container;
     m_container->setWebLayer(m_layer->layer());
+    if (m_reRequestTouchEvents) {
+        m_container->requestTouchEventType(WebPluginContainer::TouchEventRequestTypeSynthesizedMouse);
+        m_container->requestTouchEventType(WebPluginContainer::TouchEventRequestTypeRaw);
+    }
     m_container->requestTouchEventType(m_touchEventRequest);
     m_container->setWantsWheelEvents(true);
     return true;

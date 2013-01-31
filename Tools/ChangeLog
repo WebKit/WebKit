@@ -1,3 +1,13 @@
+2013-01-30  Levi Weintraub  <leviw@chromium.org>
+
+        [Chromium] WebPluginContainerImpl adding imbalanced touch handler refs
+        https://bugs.webkit.org/show_bug.cgi?id=108381
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp: Adding an attribute that
+        tickles the case in WebPluginContainerImpl that imbalanced touch handler refs in Document.
+
 2013-01-30  Julie Parent  <jparent@chromium.org>
 
         Add a concept of dashboard parameters that invalidate others

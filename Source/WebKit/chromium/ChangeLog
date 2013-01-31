@@ -1,3 +1,18 @@
+2013-01-30  Levi Weintraub  <leviw@chromium.org>
+
+        [Chromium] WebPluginContainerImpl adding imbalanced touch handler refs
+        https://bugs.webkit.org/show_bug.cgi?id=108381
+
+        Reviewed by James Robinson.
+
+        WebPluginContainerImpl would call Document::didAddTouchEventHandler every time the plugin requested
+        touch events. Some plugins make this request more than once, leading to an imbalance in Document's
+        touch event handler map, and a stale node pointer when the plugin is destroyed. This change
+        has WebPluginContainerImpl only add one ref for the plugin at a time.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::requestTouchEventType):
+
 2013-01-30  Yusuf Ozuysal  <yusufo@google.com>
 
         Start sending scrollType as NonBubblingGesture for flings
