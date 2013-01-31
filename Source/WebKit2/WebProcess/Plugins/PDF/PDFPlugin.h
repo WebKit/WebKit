@@ -70,6 +70,7 @@ public:
     
     using ScrollableArea::notifyScrollPositionChanged;
     void notifyContentScaleFactorChanged(CGFloat scaleFactor);
+    void notifyDisplayModeChanged(int);
 
     void clickedLink(NSURL *);
     void saveToPDF();

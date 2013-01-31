@@ -187,6 +187,11 @@ static const char* annotationStyle =
     _pdfPlugin->notifyContentScaleFactorChanged(scaleFactor);
 }
 
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeDisplayMode:(int)mode
+{
+    _pdfPlugin->notifyDisplayModeChanged(mode);
+}
+
 @end
 
 namespace WebKit {
@@ -747,6 +752,12 @@ void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor(scaleFactor, IntPoint());
 
+    calculateSizes();
+    updateScrollbars();
+}
+
+void PDFPlugin::notifyDisplayModeChanged(int)
+{
     calculateSizes();
     updateScrollbars();
 }

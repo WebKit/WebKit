@@ -1,3 +1,17 @@
+2013-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Update scrollbars if PDFLayerController's display mode changes
+        https://bugs.webkit.org/show_bug.cgi?id=108412
+        <rdar://problem/13002261>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add pdfLayerController:didChangeDisplayMode:
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Add notifyDisplayModeChanged().
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate pdfLayerController:didChangeDisplayMode:]): Forward didChangeDisplayMode to notifyDisplayModeChanged.
+        (WebKit::PDFPlugin::notifyDisplayModeChanged): Update content size and scrollbar size when display mode changes.
+
 2013-01-30  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12695827> PPT: Make loading file URLs work with a sandboxed NetworkProcess
