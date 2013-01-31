@@ -1,3 +1,11 @@
+2013-01-30  Hajime Morrita  <morrita@google.com>
+
+        Unreviewed test failure fix for r141341.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2013-01-30  Levi Weintraub  <leviw@chromium.org>
 
         [Chromium] WebPluginContainerImpl adding imbalanced touch handler refs
