@@ -15,6 +15,10 @@ CONFIG += config_step
 # dependent libraries when using frameworks on Mac.
 !production_build:!debug_and_release:!buildbot:!win*:!build?(webkit2): CONFIG += force_static_libs_as_shared
 
+# Don't create .prl files for intermediate libraries because their contents get used when linking against
+# them, breaking "-Wl,-whole-archive -lMyIntermediateLib --Wl,-no-whole-archive"
+staticlib: CONFIG -= create_prl
+
 root_project_file: finalizeConfigure()
 
 # Sanitize build config for single-configuration builds

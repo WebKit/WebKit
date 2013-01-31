@@ -1,3 +1,14 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Prospective build fix.
+
+        Reviewed by Jocelyn Turcotte.
+
+        Don't create .prl files for intermediate libs as their contents get
+        injected within -Wl,-whole-archive -lFoo -wl,-no-whole-archive.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2013-01-31  Alan Cutter  <alancutter@chromium.org>
 
         EWS graphs have unusual data for patch waiting times
