@@ -1,3 +1,14 @@
+2013-01-31  Brady Eidson  <beidson@apple.com>
+
+        Assertion failure in WebResourceLoadScheduler::remove when loading .webarchives
+        <rdar://problem/12888145> and https://bugs.webkit.org/show_bug.cgi?id=108520
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Even if it isn't to be scheduled with the
+          NetworkProcess, still add this ResourceLoader to the scheduler's records.
+
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial Unix build fix.

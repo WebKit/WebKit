@@ -87,14 +87,17 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     ASSERT(priority != ResourceLoadPriorityUnresolved);
     priority = ResourceLoadPriorityHighest;
 
+    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ASSERT(identifier);
+
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
     if (resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
+        m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
         startResourceLoader(resourceLoader);
+
         return;
     }
 
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
-    ASSERT(identifier);
     
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
