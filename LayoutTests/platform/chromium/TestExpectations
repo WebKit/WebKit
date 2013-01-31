@@ -4332,7 +4332,7 @@ webkit.org/b/108383 [ Mac Win ] editing/pasteboard/pasting-tabs.html [ ImageOnly
 webkit.org/b/108383 [ Mac Win ] fast/block/float/overhanging-tall-block.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/dom/HTMLTextAreaElement/reset-textarea.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/basic-textareas-quirks.html [ ImageOnlyFailure ]
-webkit.org/b/108383 [ Mac Win ] fast/forms/basic-textareas.html [ ImageOnlyFailure ]
+webkit.org/b/108383 [ Lion MountainLion Win ] fast/forms/basic-textareas.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/form-element-geometry.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/linebox-overflow-in-textarea-padding.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/negativeLineHeight.html [ ImageOnlyFailure ]
