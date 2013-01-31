@@ -32,17 +32,16 @@
 #define WebMediaStreamCenterClient_h
 
 namespace WebKit {
-
-class WebMediaStreamComponent;
-class WebMediaStreamDescriptor;
+class WebMediaStream;
+class WebMediaStreamTrack;
 
 class WebMediaStreamCenterClient {
 public:
     virtual ~WebMediaStreamCenterClient() { }
 
-    virtual void stopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
-    virtual void addMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
-    virtual void removeMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
+    virtual void stopLocalMediaStream(const WebMediaStream&) = 0;
+    virtual void addMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&) = 0;
+    virtual void removeMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&) = 0;
 };
 
 } // namespace WebKit

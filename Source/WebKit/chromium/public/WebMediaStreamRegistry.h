@@ -35,12 +35,12 @@
 
 namespace WebKit {
 
-class WebMediaStreamDescriptor;
+class WebMediaStream;
 class WebURL;
 
 class WebMediaStreamRegistry {
 public:
-    WEBKIT_EXPORT static WebMediaStreamDescriptor lookupMediaStreamDescriptor(const WebURL&);
+    WEBKIT_EXPORT static WebMediaStream lookupMediaStreamDescriptor(const WebURL&);
 };
 
 } // namespace WebKit

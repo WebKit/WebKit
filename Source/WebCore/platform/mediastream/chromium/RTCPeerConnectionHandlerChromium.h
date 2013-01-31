@@ -41,7 +41,7 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
-class WebMediaStreamDescriptor;
+class WebMediaStream;
 class WebRTCICECandidate;
 }
 
@@ -78,8 +78,8 @@ public:
     virtual void didChangeSignalingState(WebKit::WebRTCPeerConnectionHandlerClient::SignalingState) OVERRIDE;
     virtual void didChangeICEGatheringState(WebKit::WebRTCPeerConnectionHandlerClient::ICEGatheringState) OVERRIDE;
     virtual void didChangeICEConnectionState(WebKit::WebRTCPeerConnectionHandlerClient::ICEConnectionState) OVERRIDE;
-    virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void didAddRemoteStream(const WebKit::WebMediaStream&) OVERRIDE;
+    virtual void didRemoveRemoteStream(const WebKit::WebMediaStream&) OVERRIDE;
     virtual void didAddRemoteDataChannel(WebKit::WebRTCDataChannelHandler*) OVERRIDE;
 
     static WebKit::WebRTCPeerConnectionHandler* toWebRTCPeerConnectionHandler(RTCPeerConnectionHandler*);

@@ -43,7 +43,7 @@
 #include "WebDocument.h"
 #include "WebSecurityOrigin.h"
 #include <public/WebMediaConstraints.h>
-#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStream.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
@@ -99,7 +99,7 @@ WebDocument WebUserMediaRequest::ownerDocument() const
     return WebDocument(m_private->ownerDocument());
 }
 
-void WebUserMediaRequest::requestSucceeded(const WebMediaStreamDescriptor& streamDescriptor)
+void WebUserMediaRequest::requestSucceeded(const WebMediaStream& streamDescriptor)
 {
     ASSERT(!isNull() && !streamDescriptor.isNull());
     m_private->succeed(streamDescriptor);

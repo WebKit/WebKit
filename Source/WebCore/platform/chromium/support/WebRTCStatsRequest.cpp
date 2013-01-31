@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -33,13 +32,13 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <public/WebMediaStreamComponent.h>
-#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCStatsRequest.h>
-#include <public/WebRTCStatsResponse.h>
 
 #include "RTCStatsRequest.h"
 #include "RTCStatsResponse.h"
+#include <public/WebMediaStream.h>
+#include <public/WebMediaStreamTrack.h>
+#include <public/WebRTCStatsResponse.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
@@ -71,14 +70,14 @@ bool WebRTCStatsRequest::hasSelector() const
     return m_private->hasSelector();
 }
 
-const WebMediaStreamDescriptor WebRTCStatsRequest::stream() const
+const WebMediaStream WebRTCStatsRequest::stream() const
 {
-    return WebMediaStreamDescriptor(m_private->stream());
+    return WebMediaStream(m_private->stream());
 }
 
-const WebMediaStreamComponent WebRTCStatsRequest::component() const
+const WebMediaStreamTrack WebRTCStatsRequest::component() const
 {
-    return WebMediaStreamComponent(m_private->component());
+    return WebMediaStreamTrack(m_private->component());
 }
 
 void WebRTCStatsRequest::requestSucceeded(const WebRTCStatsResponse& response) const

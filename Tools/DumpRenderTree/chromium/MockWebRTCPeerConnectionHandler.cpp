@@ -37,8 +37,8 @@
 #include "MockWebRTCDataChannelHandler.h"
 #include "Task.h"
 #include <public/WebMediaConstraints.h>
-#include <public/WebMediaStreamComponent.h>
-#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStream.h>
+#include <public/WebMediaStreamTrack.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
@@ -248,7 +248,7 @@ bool MockWebRTCPeerConnectionHandler::addICECandidate(const WebRTCICECandidate& 
     return true;
 }
 
-bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& stream, const WebMediaConstraints&)
+bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStream& stream, const WebMediaConstraints&)
 {
     m_streamCount += 1;
     m_client->didAddRemoteStream(stream);
@@ -256,7 +256,7 @@ bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& 
     return true;
 }
 
-void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescriptor& stream)
+void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStream& stream)
 {
     m_streamCount -= 1;
     m_client->didRemoveRemoteStream(stream);
@@ -268,8 +268,7 @@ void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request
     WebRTCStatsResponse response = request.createResponse();
     double currentDate = WTF::jsCurrentTime();
     if (request.hasSelector()) {
-        WebMediaStreamDescriptor stream = request.stream();
-        WebMediaStreamComponent component = request.component();
+        WebMediaStream stream = request.stream();
         // FIXME: There is no check that the fetched values are valid.
         size_t reportIndex = response.addReport();
         response.addElement(reportIndex, true, currentDate);

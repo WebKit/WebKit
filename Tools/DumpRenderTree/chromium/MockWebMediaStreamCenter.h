@@ -43,12 +43,12 @@ public:
     explicit MockWebMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
 
     virtual void queryMediaStreamSources(const WebKit::WebMediaStreamSourcesRequest&) OVERRIDE;
-    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
-    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
-    virtual bool didAddMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
-    virtual bool didRemoveMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
-    virtual void didStopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual void didCreateMediaStream(WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual bool didAddMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual bool didRemoveMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual void didStopLocalMediaStream(const WebKit::WebMediaStream&) OVERRIDE;
+    virtual void didCreateMediaStream(WebKit::WebMediaStream&) OVERRIDE;
 
 private:
     MockWebMediaStreamCenter() { }

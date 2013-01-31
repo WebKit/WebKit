@@ -33,7 +33,7 @@
 
 namespace WebKit {
 class WebMediaConstraints;
-class WebMediaStreamDescriptor;
+class WebMediaStream;
 class WebRTCConfiguration;
 class WebRTCDataChannelHandler;
 class WebRTCICECandidate;
@@ -58,8 +58,8 @@ public:
     virtual WebRTCSessionDescription remoteDescription() = 0;
     virtual bool updateICE(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
     virtual bool addICECandidate(const WebRTCICECandidate&) = 0;
-    virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;
-    virtual void removeStream(const WebMediaStreamDescriptor&) = 0;
+    virtual bool addStream(const WebMediaStream&, const WebMediaConstraints&) = 0;
+    virtual void removeStream(const WebMediaStream&) = 0;
     // FIXME: Remove default implementation when clients have changed.
     virtual void getStats(const WebRTCStatsRequest&) { }
     virtual WebRTCDataChannelHandler* createDataChannel(const WebString& label, bool reliable) { return 0; }

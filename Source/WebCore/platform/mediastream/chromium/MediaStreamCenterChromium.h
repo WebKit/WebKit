@@ -41,9 +41,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class WebMediaStream;
 class WebMediaStreamCenter;
-class WebMediaStreamComponent;
-class WebMediaStreamDescriptor;
+class WebMediaStreamTrack;
 }
 
 namespace WebCore {
@@ -66,9 +66,9 @@ public:
     virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
 
     // WebKit::WebMediaStreamCenterClient
-    virtual void stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual void addMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
-    virtual void removeMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void stopLocalMediaStream(const WebKit::WebMediaStream&) OVERRIDE;
+    virtual void addMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual void removeMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
 
 private:
     OwnPtr<WebKit::WebMediaStreamCenter> m_private;

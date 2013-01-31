@@ -57,8 +57,8 @@ public:
     virtual WebKit::WebRTCSessionDescription remoteDescription() OVERRIDE;
     virtual bool updateICE(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual bool addICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
-    virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
-    virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual bool addStream(const WebKit::WebMediaStream&, const WebKit::WebMediaConstraints&) OVERRIDE;
+    virtual void removeStream(const WebKit::WebMediaStream&) OVERRIDE;
     virtual void getStats(const WebKit::WebRTCStatsRequest&) OVERRIDE;
     virtual WebKit::WebRTCDataChannelHandler* createDataChannel(const WebKit::WebString& label, bool reliable) OVERRIDE;
     virtual void stop() OVERRIDE;

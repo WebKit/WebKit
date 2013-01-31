@@ -25,71 +25,9 @@
 #ifndef WebMediaStreamDescriptor_h
 #define WebMediaStreamDescriptor_h
 
-#include "WebCommon.h"
-#include "WebNonCopyable.h"
-#include "WebPrivatePtr.h"
-#include "WebVector.h"
+#include <public/WebMediaStream.h>
 
-namespace WebCore {
-class MediaStreamDescriptor;
-}
-
-namespace WebKit {
-
-class WebMediaStreamComponent;
-class WebMediaStreamSource;
-class WebString;
-
-class WebMediaStreamDescriptor {
-public:
-    class ExtraData {
-    public:
-        virtual ~ExtraData() { }
-    };
-
-    WebMediaStreamDescriptor() { }
-    WebMediaStreamDescriptor(const WebMediaStreamDescriptor& other) { assign(other); }
-    ~WebMediaStreamDescriptor() { reset(); }
-
-    WebMediaStreamDescriptor& operator=(const WebMediaStreamDescriptor& other)
-    {
-        assign(other);
-        return *this;
-    }
-
-    WEBKIT_EXPORT void assign(const WebMediaStreamDescriptor&);
-
-    WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources);
-    WEBKIT_EXPORT void reset();
-    bool isNull() const { return m_private.isNull(); }
-
-    // DEPRECATED
-    WEBKIT_EXPORT WebString label() const;
-
-    WEBKIT_EXPORT WebString id() const;
-
-    WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamComponent>&) const;
-    WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamComponent>&) const;
-
-    // Extra data associated with this WebMediaStreamDescriptor.
-    // If non-null, the extra data pointer will be deleted when the object is destroyed.
-    // Setting the extra data pointer will cause any existing non-null
-    // extra data pointer to be deleted.
-    WEBKIT_EXPORT ExtraData* extraData() const;
-    WEBKIT_EXPORT void setExtraData(ExtraData*);
-
-#if WEBKIT_IMPLEMENTATION
-    WebMediaStreamDescriptor(WebCore::MediaStreamDescriptor*);
-    WebMediaStreamDescriptor(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);
-    operator WTF::PassRefPtr<WebCore::MediaStreamDescriptor>() const;
-    operator WebCore::MediaStreamDescriptor*() const;
-    WebMediaStreamDescriptor& operator=(const WTF::PassRefPtr<WebCore::MediaStreamDescriptor>&);
-#endif
-
-private:
-    WebPrivatePtr<WebCore::MediaStreamDescriptor> m_private;
-};
-
-} // namespace WebKit
+// The name WebMediaStreamDescriptor is EXTREMELY DEPRECATED.
+#define WebMediaStreamDescriptor WebMediaStream
 
 #endif // WebMediaStreamDescriptor_h

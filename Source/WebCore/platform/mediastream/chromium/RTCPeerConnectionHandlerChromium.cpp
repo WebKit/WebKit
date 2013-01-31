@@ -46,7 +46,7 @@
 #include "RTCVoidRequest.h"
 #include <public/Platform.h>
 #include <public/WebMediaConstraints.h>
-#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStream.h>
 #include <public/WebRTCConfiguration.h>
 #include <public/WebRTCDataChannelHandler.h>
 #include <public/WebRTCICECandidate.h>
@@ -188,12 +188,12 @@ void RTCPeerConnectionHandlerChromium::didChangeICEConnectionState(WebKit::WebRT
     m_client->didChangeIceConnectionState(static_cast<RTCPeerConnectionHandlerClient::IceConnectionState>(state));
 }
 
-void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMediaStream& webMediaStreamDescriptor)
 {
     m_client->didAddRemoteStream(webMediaStreamDescriptor);
 }
 
-void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMediaStream& webMediaStreamDescriptor)
 {
     m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
 }

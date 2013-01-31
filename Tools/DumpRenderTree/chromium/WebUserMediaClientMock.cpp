@@ -39,7 +39,7 @@
 #include "WebMediaStreamRegistry.h"
 #include "WebUserMediaRequest.h"
 #include <public/WebMediaConstraints.h>
-#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStream.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebVector.h>
 #include <wtf/Assertions.h>
@@ -49,7 +49,7 @@ using namespace WebTestRunner;
 
 class UserMediaRequestTask : public WebMethodTask<WebUserMediaClientMock> {
 public:
-    UserMediaRequestTask(WebUserMediaClientMock* object, const WebUserMediaRequest& request, const WebMediaStreamDescriptor result)
+    UserMediaRequestTask(WebUserMediaClientMock* object, const WebUserMediaRequest& request, const WebMediaStream result)
         : WebMethodTask<WebUserMediaClientMock>(object)
         , m_request(request)
         , m_result(result)
@@ -66,12 +66,12 @@ public:
 
 private:
     WebUserMediaRequest m_request;
-    WebMediaStreamDescriptor m_result;
+    WebMediaStream m_result;
 };
 
 ////////////////////////////////
 
-class MockExtraData : public WebMediaStreamDescriptor::ExtraData {
+class MockExtraData : public WebMediaStream::ExtraData {
 public:
     int foo;
 };
@@ -87,18 +87,18 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     WebUserMediaRequest request = streamRequest;
 
     if (request.ownerDocument().isNull() || !request.ownerDocument().frame()) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
+        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
 
     WebMediaConstraints constraints = request.audioConstraints();
     if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
+        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
     constraints = request.videoConstraints();
     if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
+        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
 
@@ -113,7 +113,7 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     if (request.video())
         videoSources[0].initialize("MockVideoDevice#1", WebMediaStreamSource::TypeVideo, "Mock video device");
 
-    WebMediaStreamDescriptor stream;
+    WebMediaStream stream;
     stream.initialize("foobar", audioSources, videoSources);
 
     stream.setExtraData(new MockExtraData());

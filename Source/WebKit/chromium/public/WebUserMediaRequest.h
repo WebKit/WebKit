@@ -42,7 +42,7 @@ class UserMediaRequest;
 namespace WebKit {
 class WebDocument;
 class WebMediaConstraints;
-class WebMediaStreamDescriptor;
+class WebMediaStream;
 class WebMediaStreamSource;
 class WebString;
 template <typename T> class WebVector;
@@ -72,7 +72,7 @@ public:
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
     WEBKIT_EXPORT WebDocument ownerDocument() const;
 
-    WEBKIT_EXPORT void requestSucceeded(const WebMediaStreamDescriptor&);
+    WEBKIT_EXPORT void requestSucceeded(const WebMediaStream&);
 
     WEBKIT_EXPORT void requestFailed();
 

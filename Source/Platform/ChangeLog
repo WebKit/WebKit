@@ -1,3 +1,51 @@
+2013-01-31  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Rename WebMediaStreamDescriptor and WebMediaStreamComponent to WebMediaStream and WebMediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=108458
+
+        Only renames, no other code changes.
+
+        Reviewed by Adam Barth.
+
+        * Platform.gypi:
+        * chromium/public/WebMediaStream.h: Copied from Source/Platform/chromium/public/WebMediaStreamDescriptor.h.
+        (WebCore):
+        (WebKit):
+        (WebMediaStream):
+        (ExtraData):
+        (WebKit::WebMediaStream::ExtraData::~ExtraData):
+        (WebKit::WebMediaStream::WebMediaStream):
+        (WebKit::WebMediaStream::~WebMediaStream):
+        (WebKit::WebMediaStream::operator=):
+        (WebKit::WebMediaStream::isNull):
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebKit):
+        (WebMediaStreamCenter):
+        (WebKit::WebMediaStreamCenter::didAddMediaStreamTrack):
+        (WebKit::WebMediaStreamCenter::didRemoveMediaStreamTrack):
+        * chromium/public/WebMediaStreamCenterClient.h:
+        (WebKit):
+        (WebMediaStreamCenterClient):
+        * chromium/public/WebMediaStreamComponent.h:
+        * chromium/public/WebMediaStreamDescriptor.h:
+        * chromium/public/WebMediaStreamTrack.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::~WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::operator=):
+        (WebKit::WebMediaStreamTrack::isNull):
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandlerClient):
+        * chromium/public/WebRTCStatsRequest.h:
+        (WebKit):
+        (WebRTCStatsRequest):
+
 2013-01-30  Yusuf Ozuysal  <yusufo@google.com>
 
         Start sending scrollType as NonBubblingGesture for flings

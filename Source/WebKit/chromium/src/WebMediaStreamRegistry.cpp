@@ -37,7 +37,7 @@
 #include "KURL.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamRegistry.h"
-#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStream.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 
@@ -45,9 +45,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebMediaStreamDescriptor WebMediaStreamRegistry::lookupMediaStreamDescriptor(const WebURL& url)
+WebMediaStream WebMediaStreamRegistry::lookupMediaStreamDescriptor(const WebURL& url)
 {
-    return WebMediaStreamDescriptor(MediaStreamRegistry::registry().lookupMediaStreamDescriptor(KURL(url).string()));
+    return WebMediaStream(MediaStreamRegistry::registry().lookupMediaStreamDescriptor(KURL(url).string()));
 }
 
 } // namespace WebKit

@@ -31,52 +31,9 @@
 #ifndef WebMediaStreamComponent_h
 #define WebMediaStreamComponent_h
 
-#include "WebCommon.h"
-#include "WebNonCopyable.h"
-#include "WebPrivatePtr.h"
+#include <public/WebMediaStreamTrack.h>
 
-namespace WebCore {
-class MediaStreamComponent;
-}
-
-namespace WebKit {
-class WebMediaStreamDescriptor;
-class WebMediaStreamSource;
-class WebString;
-
-class WebMediaStreamComponent {
-public:
-    WebMediaStreamComponent() { }
-    WebMediaStreamComponent(const WebMediaStreamComponent& other) { assign(other); }
-    ~WebMediaStreamComponent() { reset(); }
-
-    WebMediaStreamComponent& operator=(const WebMediaStreamComponent& other)
-    {
-        assign(other);
-        return *this;
-    }
-    WEBKIT_EXPORT void assign(const WebMediaStreamComponent&);
-    WEBKIT_EXPORT void initialize(const WebMediaStreamSource&);
-    WEBKIT_EXPORT void reset();
-    bool isNull() const { return m_private.isNull(); }
-
-    WEBKIT_EXPORT WebString id() const;
-
-    WEBKIT_EXPORT WebMediaStreamDescriptor stream() const;
-    WEBKIT_EXPORT WebMediaStreamSource source() const;
-    WEBKIT_EXPORT bool isEnabled() const;
-
-#if WEBKIT_IMPLEMENTATION
-    WebMediaStreamComponent(WebCore::MediaStreamComponent*);
-    WebMediaStreamComponent& operator=(WebCore::MediaStreamComponent*);
-    operator WTF::PassRefPtr<WebCore::MediaStreamComponent>() const;
-    operator WebCore::MediaStreamComponent*() const;
-#endif
-
-private:
-    WebPrivatePtr<WebCore::MediaStreamComponent> m_private;
-};
-
-} // namespace WebKit
+// The name WebMediaStreamComponent is EXTREMELY DEPRECATED.
+#define WebMediaStreamComponent WebMediaStreamTrack
 
 #endif // WebMediaStreamComponent_h

@@ -34,11 +34,11 @@
 #include "MockWebMediaStreamCenter.h"
 
 #include <public/WebAudioDestinationConsumer.h>
+#include <public/WebMediaStream.h>
 #include <public/WebMediaStreamCenterClient.h>
-#include <public/WebMediaStreamComponent.h>
-#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebMediaStreamSourcesRequest.h>
+#include <public/WebMediaStreamTrack.h>
 #include <public/WebVector.h>
 
 using namespace WebKit;
@@ -53,34 +53,34 @@ void MockWebMediaStreamCenter::queryMediaStreamSources(const WebMediaStreamSourc
     request.didCompleteQuery(audioSources, videoSources);
 }
 
-void MockWebMediaStreamCenter::didEnableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent& component)
+void MockWebMediaStreamCenter::didEnableMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack& component)
 {
     component.source().setReadyState(WebMediaStreamSource::ReadyStateLive);
 }
 
-void MockWebMediaStreamCenter::didDisableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent& component)
+void MockWebMediaStreamCenter::didDisableMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack& component)
 {
     component.source().setReadyState(WebMediaStreamSource::ReadyStateMuted);
 }
 
-bool MockWebMediaStreamCenter::didAddMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&)
+bool MockWebMediaStreamCenter::didAddMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&)
 {
     return true;
 };
 
-bool MockWebMediaStreamCenter::didRemoveMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&)
+bool MockWebMediaStreamCenter::didRemoveMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&)
 {
     return true;
 };
 
-void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStreamDescriptor& stream)
+void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStream& stream)
 {
-    WebVector<WebMediaStreamComponent> audioComponents;
+    WebVector<WebMediaStreamTrack> audioComponents;
     stream.audioSources(audioComponents);
     for (size_t i = 0; i < audioComponents.size(); ++i)
         audioComponents[i].source().setReadyState(WebMediaStreamSource::ReadyStateEnded);
 
-    WebVector<WebMediaStreamComponent> videoComponents;
+    WebVector<WebMediaStreamTrack> videoComponents;
     stream.videoSources(videoComponents);
     for (size_t i = 0; i < videoComponents.size(); ++i)
         videoComponents[i].source().setReadyState(WebMediaStreamSource::ReadyStateEnded);
@@ -93,9 +93,9 @@ public:
     virtual void consumeAudio(const WebVector<const float*>&, size_t number_of_frames) OVERRIDE { }
 };
 
-void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStreamDescriptor& stream)
+void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStream& stream)
 {
-    WebVector<WebMediaStreamComponent> audioComponents;
+    WebVector<WebMediaStreamTrack> audioComponents;
     stream.audioSources(audioComponents);
     for (size_t i = 0; i < audioComponents.size(); ++i) {
         WebMediaStreamSource source = audioComponents[i].source();

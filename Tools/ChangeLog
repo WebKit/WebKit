@@ -1,3 +1,31 @@
+2013-01-31  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Rename WebMediaStreamDescriptor and WebMediaStreamComponent to WebMediaStream and WebMediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=108458
+
+        Reviewed by Adam Barth.
+
+        Only renames, no other code changes.
+
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.cpp:
+        (MockWebMediaStreamCenter::didEnableMediaStreamTrack):
+        (MockWebMediaStreamCenter::didDisableMediaStreamTrack):
+        (MockWebMediaStreamCenter::didAddMediaStreamTrack):
+        (MockWebMediaStreamCenter::didRemoveMediaStreamTrack):
+        (MockWebMediaStreamCenter::didStopLocalMediaStream):
+        (MockWebMediaStreamCenter::didCreateMediaStream):
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.h:
+        (MockWebMediaStreamCenter):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::addStream):
+        (MockWebRTCPeerConnectionHandler::removeStream):
+        (MockWebRTCPeerConnectionHandler::getStats):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (UserMediaRequestTask::UserMediaRequestTask):
+        (WebUserMediaClientMock::requestUserMedia):
+
 2013-01-31  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION (r141402): incorrectly set injected bundle path when running GTK unit tests

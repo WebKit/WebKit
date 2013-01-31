@@ -37,10 +37,10 @@
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSourcesQueryClient.h"
 #include <public/Platform.h>
+#include <public/WebMediaStream.h>
 #include <public/WebMediaStreamCenter.h>
-#include <public/WebMediaStreamComponent.h>
-#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebMediaStreamSourcesRequest.h>
+#include <public/WebMediaStreamTrack.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -101,22 +101,22 @@ void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* s
 void MediaStreamCenterChromium::didCreateMediaStream(MediaStreamDescriptor* stream)
 {
     if (m_private) {
-        WebKit::WebMediaStreamDescriptor webStream(stream);
+        WebKit::WebMediaStream webStream(stream);
         m_private->didCreateMediaStream(webStream);
     }
 }
 
-void MediaStreamCenterChromium::stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor& stream)
+void MediaStreamCenterChromium::stopLocalMediaStream(const WebKit::WebMediaStream& stream)
 {
     endLocalMediaStream(stream);
 }
 
-void MediaStreamCenterChromium::addMediaStreamTrack(const WebKit::WebMediaStreamDescriptor& stream, const WebKit::WebMediaStreamComponent& component)
+void MediaStreamCenterChromium::addMediaStreamTrack(const WebKit::WebMediaStream& stream, const WebKit::WebMediaStreamTrack& component)
 {
     MediaStreamCenter::addMediaStreamTrack(stream, component);
 }
 
-void MediaStreamCenterChromium::removeMediaStreamTrack(const WebKit::WebMediaStreamDescriptor& stream, const WebKit::WebMediaStreamComponent& component)
+void MediaStreamCenterChromium::removeMediaStreamTrack(const WebKit::WebMediaStream& stream, const WebKit::WebMediaStreamTrack& component)
 {
     MediaStreamCenter::removeMediaStreamTrack(stream, component);
 }
