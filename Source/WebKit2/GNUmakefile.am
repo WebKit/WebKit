@@ -502,7 +502,9 @@ libWebCoreGtk2_la_CPPFLAGS = \
 
 # Injected Bundle
 injectedbundledir = $(libdir)/webkit2gtk-3.0/injected-bundle
+if ENABLE_WEBKIT2
 injectedbundle_LTLIBRARIES = libwebkit2gtkinjectedbundle.la
+endif
 
 libwebkit2gtkinjectedbundle_la_SOURCES = \
 	Source/WebKit2/WebProcess/gtk/WebGtkInjectedBundleMain.cpp
