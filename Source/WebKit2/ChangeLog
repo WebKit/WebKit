@@ -1,3 +1,10 @@
+2013-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix after http://trac.webkit.org/changeset/141372.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::performDictionaryLookupAtLocation):
+
 2013-01-30  Jae Hyun Park  <jae.park@company100.net>
 
         Coordinated Graphics : Remove CoordinatedLayerTreeHostProxy dependency from LayerTreeRenderer

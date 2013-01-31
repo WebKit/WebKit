@@ -941,7 +941,7 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
 
 bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
 {
-    PDFSelection* lookupSelection = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(IntPoint(point))];
+    PDFSelection* lookupSelection = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(roundedIntPoint(point))];
 
     if ([[lookupSelection string] length])
         [m_pdfLayerController.get() searchInDictionaryWithSelection:lookupSelection];
