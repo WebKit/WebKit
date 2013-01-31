@@ -190,6 +190,7 @@ public:
     virtual bool isSelectTrailingWhitespaceEnabled() { return true; }
 
     virtual void didBeginEditing() { }
+    virtual void didCancelCompositionOnSelectionChange() { }
     virtual void didChangeSelection(bool isSelectionEmpty) { }
     virtual void didChangeContents() { }
     virtual void didExecuteCommand(const WebString& commandName) { }

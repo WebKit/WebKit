@@ -1,3 +1,14 @@
+2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
+
+        Editor::m_compositionNode not updated on HTMLInputElement::setValue()
+        https://bugs.webkit.org/show_bug.cgi?id=107737
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::respondToChangedSelection):
+            Adding a call to the newly refactored method.
+
 2013-01-31  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: provide new bundle APIs to allow bundle clients to be notified of pasteboard access.

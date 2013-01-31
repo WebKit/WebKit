@@ -296,6 +296,7 @@ public:
     void confirmComposition();
     void confirmComposition(const String&); // if no existing composition, replaces selection
     void cancelComposition();
+    bool cancelCompositionIfSelectionIsInvalid();
     PassRefPtr<Range> compositionRange() const;
     bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
     bool setSelectionOffsets(int selectionStart, int selectionEnd);

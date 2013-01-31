@@ -1,3 +1,17 @@
+2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
+
+        Editor::m_compositionNode not updated on HTMLInputElement::setValue()
+        https://bugs.webkit.org/show_bug.cgi?id=107737
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didCancelCompositionOnSelectionChange):
+            Adding a callback to let the WebViewClient know that the composition has been cancelled.
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::respondToChangedSelection):
+            Adding a call composition if it is no longer valid.
+
 2013-01-31  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move LocalizedStrings to WebCore

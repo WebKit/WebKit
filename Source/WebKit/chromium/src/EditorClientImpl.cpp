@@ -268,8 +268,11 @@ void EditorClientImpl::didBeginEditing()
 void EditorClientImpl::respondToChangedSelection(Frame* frame)
 {
     if (m_webView->client()) {
-        if (frame)
+        if (frame) {
             m_webView->client()->didChangeSelection(!frame->selection()->isRange());
+            if (frame->editor()->cancelCompositionIfSelectionIsInvalid())
+                m_webView->client()->didCancelCompositionOnSelectionChange();
+        }
     }
 }
 
