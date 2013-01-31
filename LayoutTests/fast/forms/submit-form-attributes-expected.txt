@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Ordinary values for input:
 PASS input.formAction is ""
 PASS input.formEnctype is "application/x-www-form-urlencoded"
-PASS input.formMethod is "get"
+PASS input.formMethod is ""
 PASS input.formTarget is ""
 PASS input.formAction is "http://localhost/"
 PASS input.formAction is "http://localhost/"
@@ -29,7 +29,7 @@ Setting null for input:
 PASS input.formEnctype is "application/x-www-form-urlencoded"
 PASS input.getAttribute("formEnctype") is null
 PASS input.formEnctype is "application/x-www-form-urlencoded"
-PASS input.formMethod is "get"
+PASS input.formMethod is ""
 PASS input.getAttribute("formMethod") is null
 PASS input.formMethod is "get"
 PASS input.formTarget is ""
@@ -61,7 +61,7 @@ PASS input.formTarget is "256"
 Ordinary values for button:
 PASS button.formAction is ""
 PASS button.formEnctype is "application/x-www-form-urlencoded"
-PASS button.formMethod is "get"
+PASS button.formMethod is ""
 PASS button.formTarget is ""
 PASS button.formAction is "http://localhost/"
 PASS button.formAction is "http://localhost/"
@@ -84,7 +84,7 @@ Setting null for button:
 PASS button.formEnctype is "application/x-www-form-urlencoded"
 PASS button.getAttribute("formEnctype") is null
 PASS button.formEnctype is "application/x-www-form-urlencoded"
-PASS button.formMethod is "get"
+PASS button.formMethod is ""
 PASS button.getAttribute("formMethod") is null
 PASS button.formMethod is "get"
 PASS button.formTarget is ""
