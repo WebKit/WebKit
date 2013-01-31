@@ -3692,6 +3692,7 @@
             'platform/chromium/KeyboardCodes.h',
             'platform/chromium/LanguageChromium.cpp',
             'platform/chromium/LinkHashChromium.cpp',
+            'platform/chromium/LocalizedStringsChromium.cpp',
             'platform/chromium/MemoryUsageSupportChromium.cpp',
             'platform/chromium/MIMETypeRegistryChromium.cpp',
             'platform/chromium/PageClientChromium.h',
