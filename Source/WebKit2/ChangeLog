@@ -1,3 +1,10 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed build fix: Remove Web Intents files from
+        the Qt build system.
+
+        * Target.pri:
+
 2013-01-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.

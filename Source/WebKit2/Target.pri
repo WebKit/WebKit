@@ -86,8 +86,6 @@ HEADERS += \
     Shared/ImageOptions.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
-    Shared/IntentData.h \
-    Shared/IntentServiceInfo.h \
     Shared/LayerTreeContext.h \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
@@ -124,7 +122,6 @@ HEADERS += \
     Shared/WebGraphicsContext.h \
     Shared/WebHitTestResult.h \
     Shared/WebImage.h \
-    Shared/WebIntentServiceInfo.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebOpenPanelParameters.h \
@@ -182,8 +179,6 @@ HEADERS += \
     UIProcess/API/C/WKHitTestResult.h \
     UIProcess/API/C/WKIconDatabase.h \
     UIProcess/API/C/WKInspector.h \
-    UIProcess/API/C/WKIntentData.h \
-    UIProcess/API/C/WKIntentServiceInfo.h \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
@@ -277,7 +272,6 @@ HEADERS += \
     UIProcess/WebIconDatabase.h \
     UIProcess/WebIconDatabaseClient.h \
     UIProcess/WebInspectorProxy.h \
-    UIProcess/WebIntentData.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebMediaCacheManagerProxy.h \
@@ -305,8 +299,6 @@ HEADERS += \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
-    WebProcess/InjectedBundle/API/c/WKBundleIntent.h \
-    WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h \
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -319,8 +311,6 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleClient.h \
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
-    WebProcess/InjectedBundle/InjectedBundleIntent.h \
-    WebProcess/InjectedBundle/InjectedBundleIntentRequest.h \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h \
@@ -471,8 +461,6 @@ SOURCES += \
     Shared/FontInfo.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
-    Shared/IntentData.cpp \
-    Shared/IntentServiceInfo.cpp \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
     Shared/OriginAndDatabases.cpp \
@@ -500,7 +488,6 @@ SOURCES += \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebKit2Initialize.cpp \
     Shared/WebImage.cpp \
-    Shared/WebIntentServiceInfo.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebNetworkInfo.cpp \
     Shared/WebOpenPanelParameters.cpp \
@@ -554,8 +541,6 @@ SOURCES += \
     UIProcess/API/C/WKHitTestResult.cpp \
     UIProcess/API/C/WKIconDatabase.cpp \
     UIProcess/API/C/WKInspector.cpp \
-    UIProcess/API/C/WKIntentData.cpp \
-    UIProcess/API/C/WKIntentServiceInfo.cpp \
     UIProcess/API/C/WKNotification.cpp \
     UIProcess/API/C/WKNotificationManager.cpp \
     UIProcess/API/C/WKNotificationPermissionRequest.cpp \
@@ -642,7 +627,6 @@ SOURCES += \
     UIProcess/WebIconDatabase.cpp \
     UIProcess/WebIconDatabaseClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
-    UIProcess/WebIntentData.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
@@ -684,8 +668,6 @@ SOURCES += \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
@@ -700,8 +682,6 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundleClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
-    WebProcess/InjectedBundle/InjectedBundleIntent.cpp \
-    WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp \    
