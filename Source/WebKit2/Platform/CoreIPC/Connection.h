@@ -192,42 +192,6 @@ public:
     void decrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount() { --m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount; }
 
 private:
-    template<typename T> class Message {
-    public:
-        Message()
-            : m_arguments(0)
-        {
-        }
-
-        Message(MessageID messageID, PassOwnPtr<T> arguments)
-            : m_messageID(messageID)
-            , m_arguments(arguments.leakPtr())
-        {
-        }
-        
-        MessageID messageID() const { return m_messageID; }
-        uint64_t destinationID() const { return m_arguments->destinationID(); }
-
-        T* arguments() const { return m_arguments; }
-        
-        PassOwnPtr<T> releaseArguments()
-        {
-            OwnPtr<T> arguments = adoptPtr(m_arguments);
-            m_arguments = 0;
-
-            return arguments.release();
-        }
-        
-    private:
-        MessageID m_messageID;
-        // The memory management of this class is very unusual. The class acts
-        // as if it has an owning reference to m_arguments (e.g., accepting a
-        // PassOwnPtr in its constructor) in all ways except that it does not
-        // deallocate m_arguments on destruction.
-        // FIXME: Does this leak m_arguments on destruction?
-        T* m_arguments;
-    };
-
     Connection(Identifier, bool isServer, Client*, WebCore::RunLoop* clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
@@ -251,18 +215,16 @@ private:
     bool sendOutgoingMessage(MessageID, PassOwnPtr<MessageEncoder>);
     void connectionDidClose();
     
-    typedef Message<MessageDecoder> IncomingMessage;
-
     // Called on the listener thread.
     void dispatchConnectionDidClose();
     void dispatchOneMessage();
-    void dispatchMessage(IncomingMessage&);
+    void dispatchMessage(PassOwnPtr<MessageDecoder>);
     void dispatchMessage(MessageID, MessageDecoder&);
     void dispatchSyncMessage(MessageID, MessageDecoder&);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
-    void enqueueIncomingMessage(IncomingMessage&);
+    void enqueueIncomingMessage(PassOwnPtr<MessageDecoder>);
 
     Client* m_client;
     bool m_isServer;
@@ -284,7 +246,7 @@ private:
 
     // Incoming messages.
     Mutex m_incomingMessagesLock;
-    Deque<IncomingMessage> m_incomingMessages;
+    Deque<OwnPtr<MessageDecoder> > m_incomingMessages;
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
