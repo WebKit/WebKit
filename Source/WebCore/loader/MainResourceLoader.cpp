@@ -576,10 +576,13 @@ void MainResourceLoader::notifyFinished(CachedResource* resource)
         return;
     }
 
+    // FIXME: we should fix the design to eliminate the need for a platform ifdef here
+#if !PLATFORM(CHROMIUM)
     if (m_documentLoader->request().cachePolicy() == ReturnCacheDataDontLoad && !m_resource->wasCanceled()) {
         frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
         return;
     }
+#endif
 
     const ResourceError& error = m_resource->resourceError();
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))
