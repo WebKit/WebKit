@@ -194,7 +194,7 @@ TEST(WebInputEventFactoryTest, NumPadConversion)
     // Round-trip through the WebCore KeyboardEvent class.
     WebKit::PlatformKeyboardEventBuilder platformBuilder(webEvent);
     RefPtr<WebCore::KeyboardEvent> keypress = WebCore::KeyboardEvent::create(platformBuilder, 0);
-    EXPECT_TRUE(keypress->keyLocation() == WebCore::KeyboardEvent::DOM_KEY_LOCATION_NUMPAD);
+    EXPECT_TRUE(keypress->keyLocation() == WebCore::KeyboardEvent::DOMKeyLocationNumpad);
 
     WebKit::WebKeyboardEventBuilder builder(*keypress);
     EXPECT_TRUE(builder.modifiers & WebInputEvent::IsKeyPad);

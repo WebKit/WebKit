@@ -1742,6 +1742,7 @@ fast/events/constructors/ui-event-constructor.html
 fast/events/constructors/mouse-event-constructor.html
 fast/events/constructors/composition-event-constructor.html
 fast/events/constructors/wheel-event-constructor.html
+fast/events/constructors/keyboard-event-constructor.html
 
 # Disable until the windows WebKit API supports injecting in the top frame only.
 # https://bugs.webkit.org/show_bug.cgi?id=41800

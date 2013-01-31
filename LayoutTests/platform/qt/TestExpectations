@@ -109,6 +109,7 @@ fast/events/constructors/ui-event-constructor.html
 fast/events/constructors/mouse-event-constructor.html
 fast/events/constructors/composition-event-constructor.html
 fast/events/constructors/wheel-event-constructor.html
+fast/events/constructors/keyboard-event-constructor.html
 
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb

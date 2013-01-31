@@ -532,11 +532,11 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
         return; // Skip all other keyboard events.
 
     modifiers = getWebInputModifiers(event);
-    if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_NUMPAD)
+    if (event.keyLocation() == KeyboardEvent::DOMKeyLocationNumpad)
         modifiers |= WebInputEvent::IsKeyPad;
-    else if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_LEFT)
+    else if (event.keyLocation() == KeyboardEvent::DOMKeyLocationLeft)
         modifiers |= WebInputEvent::IsLeft;
-    else if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_RIGHT)
+    else if (event.keyLocation() == KeyboardEvent::DOMKeyLocationRight)
         modifiers |= WebInputEvent::IsRight;
 
     timeStampSeconds = event.timeStamp() / millisPerSecond;

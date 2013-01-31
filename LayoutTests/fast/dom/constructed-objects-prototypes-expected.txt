@@ -27,6 +27,8 @@ PASS (new inner.HashChangeEvent()).isInner is true
 PASS (new inner.HashChangeEvent()).constructor.isInner is true
 PASS (new inner.Image()).isInner is true
 PASS (new inner.Image()).constructor.isInner is true
+PASS (new inner.KeyboardEvent()).isInner is true
+PASS (new inner.KeyboardEvent()).constructor.isInner is true
 PASS (new inner.MediaController()).isInner is true
 PASS (new inner.MediaController()).constructor.isInner is true
 PASS (new inner.MessageChannel()).isInner is true

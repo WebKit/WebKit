@@ -1,5 +1,19 @@
 2013-01-30  Kentaro Hara  <haraken@chromium.org>
 
+        Implement KeyboardEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=108320
+
+        Reviewed by Adam Barth.
+
+        Renamed keyboard event constant variables to avoid style errors.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::WebKeyboardEventBuilder::WebKeyboardEventBuilder):
+        * tests/WebInputEventConversionTest.cpp:
+        * tests/WebInputEventFactoryTestGtk.cpp:
+
+2013-01-30  Kentaro Hara  <haraken@chromium.org>
+
         Implement WheelEvent constructor
         https://bugs.webkit.org/show_bug.cgi?id=108303
 

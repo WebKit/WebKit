@@ -58,18 +58,18 @@ int getModifiersForKeyLocationCode(WebCore::KeyboardEvent::KeyLocationCode locat
 TEST(WebInputEventConversionTest, WebKeyboardEventBuilder)
 {
     // Test key location conversion.
-    int modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOM_KEY_LOCATION_STANDARD);
+    int modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOMKeyLocationStandard);
     EXPECT_FALSE(modifiers & WebInputEvent::IsKeyPad || modifiers & WebInputEvent::IsLeft || modifiers & WebInputEvent::IsRight);
 
-    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOM_KEY_LOCATION_LEFT);
+    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOMKeyLocationLeft);
     EXPECT_TRUE(modifiers & WebInputEvent::IsLeft);
     EXPECT_FALSE(modifiers & WebInputEvent::IsKeyPad || modifiers & WebInputEvent::IsRight);
 
-    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOM_KEY_LOCATION_RIGHT);
+    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOMKeyLocationRight);
     EXPECT_TRUE(modifiers & WebInputEvent::IsRight);
     EXPECT_FALSE(modifiers & WebInputEvent::IsKeyPad || modifiers & WebInputEvent::IsLeft);
 
-    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOM_KEY_LOCATION_NUMPAD);
+    modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOMKeyLocationNumpad);
     EXPECT_TRUE(modifiers & WebInputEvent::IsKeyPad);
     EXPECT_FALSE(modifiers & WebInputEvent::IsLeft || modifiers & WebInputEvent::IsRight);
 }

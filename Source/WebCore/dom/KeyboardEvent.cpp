@@ -74,26 +74,35 @@ static inline int windowsVirtualKeyCodeWithoutLocation(int keycode)
 static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeyboardEvent& key)
 {
     if (key.isKeypad())
-        return KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
+        return KeyboardEvent::DOMKeyLocationNumpad;
 
     switch (key.windowsVirtualKeyCode()) {
     case VK_LCONTROL:
     case VK_LSHIFT:
     case VK_LMENU:
     case VK_LWIN:
-        return KeyboardEvent::DOM_KEY_LOCATION_LEFT;
+        return KeyboardEvent::DOMKeyLocationLeft;
     case VK_RCONTROL:
     case VK_RSHIFT:
     case VK_RMENU:
     case VK_RWIN:
-        return KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
+        return KeyboardEvent::DOMKeyLocationRight;
     default:
-        return KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+        return KeyboardEvent::DOMKeyLocationStandard;
     }
 }
 
+KeyboardEventInit::KeyboardEventInit()
+    : keyLocation(0)
+    , ctrlKey(false)
+    , altKey(false)
+    , shiftKey(false)
+    , metaKey(false)
+{
+}
+
 KeyboardEvent::KeyboardEvent()
-    : m_keyLocation(DOM_KEY_LOCATION_STANDARD)
+    : m_keyLocation(DOMKeyLocationStandard)
     , m_altGraphKey(false)
 {
 }
@@ -104,6 +113,14 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
     , m_keyEvent(adoptPtr(new PlatformKeyboardEvent(key)))
     , m_keyIdentifier(key.keyIdentifier())
     , m_keyLocation(keyLocationCode(key))
+    , m_altGraphKey(false)
+{
+}
+
+KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventInit& initializer)
+    : UIEventWithKeyState(eventType, initializer.bubbles, initializer.cancelable, initializer.view, initializer.detail, initializer.ctrlKey, initializer.altKey, initializer.shiftKey, initializer.metaKey)
+    , m_keyIdentifier(initializer.keyIdentifier)
+    , m_keyLocation(initializer.keyLocation)
     , m_altGraphKey(false)
 {
 }

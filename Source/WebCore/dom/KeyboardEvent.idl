@@ -18,8 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 3:
-interface KeyboardEvent : UIEvent {
+[
+    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
+    ConstructorTemplate=Event
+] interface KeyboardEvent : UIEvent {
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     // KeyLocationCode
@@ -29,12 +31,12 @@ interface KeyboardEvent : UIEvent {
     const unsigned long       KEY_LOCATION_NUMPAD        = 0x03;
 #endif
 
-    readonly attribute DOMString        keyIdentifier;
-    readonly attribute unsigned long    keyLocation;
-    readonly attribute boolean          ctrlKey;
-    readonly attribute boolean          shiftKey;
-    readonly attribute boolean          altKey;
-    readonly attribute boolean          metaKey;
+    [InitializedByEventConstructor] readonly attribute DOMString        keyIdentifier;
+    [InitializedByEventConstructor] readonly attribute unsigned long    keyLocation;
+    [InitializedByEventConstructor] readonly attribute boolean          ctrlKey;
+    [InitializedByEventConstructor] readonly attribute boolean          shiftKey;
+    [InitializedByEventConstructor] readonly attribute boolean          altKey;
+    [InitializedByEventConstructor] readonly attribute boolean          metaKey;
     readonly attribute boolean          altGraphKey;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
