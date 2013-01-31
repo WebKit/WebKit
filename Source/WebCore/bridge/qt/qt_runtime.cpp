@@ -1559,7 +1559,7 @@ void QtConnectionObject::execute(void** argv)
     const QMetaMethod method = meta->method(m_signalIndex);
 
     JSValueRef* ignoredException = 0;
-    JSRetainPtr<JSStringRef> lengthProperty(JSStringCreateWithUTF8CString("length"));
+    JSRetainPtr<JSStringRef> lengthProperty(Adopt, JSStringCreateWithUTF8CString("length"));
     int receiverLength = int(JSValueToNumber(m_context, JSObjectGetProperty(m_context, m_receiverFunction, lengthProperty.get(), ignoredException), ignoredException));
     int argc = qMax(method.parameterCount(), receiverLength);
     WTF::Vector<JSValueRef> args(argc);
