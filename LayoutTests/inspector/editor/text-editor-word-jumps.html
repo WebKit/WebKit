@@ -20,6 +20,7 @@ function testFunction(foo, bar)
     textEditor.element.focus();
 
     InspectorTest.addResult(textEditor.text());
+    const wordJumpModifier = WebInspector.isMac() ? "altKey" : "ctrlKey";
 
     function dumpEditorSelection()
     {
@@ -53,7 +54,7 @@ function testFunction(foo, bar)
             var oldSelection;
             do {
                 oldSelection = selection;
-                eventSender.keyDown("rightArrow", ["ctrlKey"]);
+                eventSender.keyDown("rightArrow", [wordJumpModifier]);
                 selection = dumpEditorSelection();
             } while (selection.compareTo(oldSelection) !== 0);
             next();
@@ -66,7 +67,7 @@ function testFunction(foo, bar)
             var oldSelection;
             do {
                 oldSelection = selection;
-                eventSender.keyDown("leftArrow", ["ctrlKey"]);
+                eventSender.keyDown("leftArrow", [wordJumpModifier]);
                 selection = dumpEditorSelection();
             } while (selection.compareTo(oldSelection) !== 0);
             next();
@@ -79,7 +80,7 @@ function testFunction(foo, bar)
             var oldSelection;
             do {
                 oldSelection = selection;
-                eventSender.keyDown("rightArrow", ["ctrlKey", "shiftKey"]);
+                eventSender.keyDown("rightArrow", [wordJumpModifier, "shiftKey"]);
                 selection = dumpEditorSelection();
             } while (selection.collapseToEnd().compareTo(oldSelection.collapseToEnd()) !== 0);
             next();
@@ -92,7 +93,7 @@ function testFunction(foo, bar)
             var oldSelection;
             do {
                 oldSelection = selection;
-                eventSender.keyDown("leftArrow", ["ctrlKey", "shiftKey"]);
+                eventSender.keyDown("leftArrow", [wordJumpModifier, "shiftKey"]);
                 selection = dumpEditorSelection();
             } while (selection.collapseToEnd().compareTo(oldSelection.collapseToEnd()) !== 0);
             next();
@@ -104,7 +105,7 @@ function testFunction(foo, bar)
             InspectorTest.addResult("===============");
             InspectorTest.addResult(textEditor.text());
             do {
-                eventSender.keyDown("\b", ["ctrlKey"]);
+                eventSender.keyDown("\b", [wordJumpModifier]);
                 InspectorTest.addResult("===============");
                 InspectorTest.addResult(textEditor.text() + "<<");
             } while (textEditor.text() !== "");
