@@ -130,6 +130,16 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::bound(ScriptExecutionContext* context, cons
     return IDBKeyRange::create(lower, upper, lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
 }
 
+bool IDBKeyRange::isOnlyKey() const
+{
+    if (m_lowerType != LowerBoundClosed || m_upperType != UpperBoundClosed)
+        return false;
+
+    ASSERT(m_lower);
+    ASSERT(m_upper);
+    return m_lower->isEqual(m_upper.get());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

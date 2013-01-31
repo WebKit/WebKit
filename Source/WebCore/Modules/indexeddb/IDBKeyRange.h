@@ -77,10 +77,7 @@ public:
     static PassRefPtr<IDBKeyRange> bound(ScriptExecutionContext* context, const ScriptValue& lower, const ScriptValue& upper, bool lowerOpen, ExceptionCode& ec) { return bound(context, lower, upper, lowerOpen, false, ec); }
     static PassRefPtr<IDBKeyRange> bound(ScriptExecutionContext*, const ScriptValue& lower, const ScriptValue& upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
-    bool isOnlyKey()
-    {
-        return m_lower == m_upper && m_lowerType == LowerBoundOpen && m_upperType == UpperBoundClosed;
-    }
+    bool isOnlyKey() const;
 
 private:
     IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType);

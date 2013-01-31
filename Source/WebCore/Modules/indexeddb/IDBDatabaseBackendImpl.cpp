@@ -755,6 +755,10 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
         return;
     }
+    if (!primaryKey) {
+        m_callbacks->onSuccess();
+        return;
+    }
     if (m_cursorType == IDBCursorBackendInterface::KeyOnly) {
         // Index Value Retrieval Operation
         m_callbacks->onSuccess(primaryKey.get());

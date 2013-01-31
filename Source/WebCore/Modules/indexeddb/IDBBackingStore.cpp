@@ -790,6 +790,8 @@ bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64
         INTERNAL_READ_ERROR(GetRecord);
         return false;
     }
+    if (!found)
+        return true;
 
     int64_t version;
     const char* p = decodeVarInt(data.begin(), data.end(), version);
