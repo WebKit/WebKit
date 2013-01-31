@@ -481,6 +481,7 @@ public:
         return m_emulatedTextZoomFactor;
     }
 
+    void setInitialPageScaleFactor(float initialPageScaleFactor) { m_initialPageScaleFactor = initialPageScaleFactor; }
     bool ignoreViewportTagMaximumScale() const { return m_ignoreViewportTagMaximumScale; }
 
     // Determines whether a page should e.g. be opened in a background tab.
@@ -612,7 +613,7 @@ public:
     WebSettingsImpl* settingsImpl();
 
 private:
-    bool computePageScaleFactorLimits();
+    void computePageScaleFactorLimits();
     float clampPageScaleFactorToLimits(float scale);
     WebCore::IntPoint clampOffsetAtScale(const WebCore::IntPoint& offset, float scale) const;
     WebCore::IntSize contentsSize() const;
@@ -752,6 +753,7 @@ private:
     float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
     float m_maximumPageScaleFactor;
+    float m_initialPageScaleFactor;
     bool m_ignoreViewportTagMaximumScale;
     bool m_pageScaleFactorIsSet;
 

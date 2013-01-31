@@ -396,6 +396,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_pageDefinedMaximumPageScaleFactor(-1)
     , m_minimumPageScaleFactor(minPageScaleFactor)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
+    , m_initialPageScaleFactor(-1)
     , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
     , m_savedPageScaleFactor(0)
@@ -1660,10 +1661,9 @@ void WebViewImpl::resize(const WebSize& newSize)
 
 #if ENABLE(VIEWPORT)
     if (settings()->viewportEnabled()) {
-        // Relayout immediately to obtain the new content width, which is needed
-        // to calculate the minimum scale limit.
-        view->layout();
-        computePageScaleFactorLimits();
+        // Relayout immediately to recalculate the minimum scale limit.
+        if (view->needsLayout())
+            view->layout();
 
         // When the device rotates:
         // - If the page width is unchanged, then zoom by new width/old width
@@ -3047,9 +3047,22 @@ void WebViewImpl::disableAutoResizeMode()
 
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
 {
+    if (minPageScale == m_pageDefinedMinimumPageScaleFactor && maxPageScale == m_pageDefinedMaximumPageScaleFactor)
+        return;
+
     m_pageDefinedMinimumPageScaleFactor = minPageScale;
     m_pageDefinedMaximumPageScaleFactor = maxPageScale;
-    computePageScaleFactorLimits();
+
+    if (settings()->viewportEnabled()) {
+        // If we're in viewport tag mode, we need to layout to obtain the latest
+        // contents size and compute the final limits.
+        FrameView* view = mainFrameImpl()->frameView();
+        if (view)
+            view->setNeedsLayout();
+    } else {
+        // Otherwise just compute the limits immediately.
+        computePageScaleFactorLimits();
+    }
 }
 
 void WebViewImpl::setIgnoreViewportTagMaximumScale(bool flag)
@@ -3092,45 +3105,46 @@ IntSize WebViewImpl::layoutSize() const
     return IntSize(contentSize.width(), contentSize.width() * aspectRatio);
 }
 
-bool WebViewImpl::computePageScaleFactorLimits()
+void WebViewImpl::computePageScaleFactorLimits()
 {
     if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1)
-        return false;
+        return;
 
     if (!mainFrame() || !page() || !page()->mainFrame() || !page()->mainFrame()->view())
-        return false;
+        return;
 
     FrameView* view = page()->mainFrame()->view();
 
     m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor);
     m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor);
-    if (!m_webSettings->applyDeviceScaleFactorInCompositor()) {
-        m_minimumPageScaleFactor *= deviceScaleFactor();
-        m_maximumPageScaleFactor *= deviceScaleFactor();
-    }
 
-    int viewWidthNotIncludingScrollbars = m_size.width;
-    if (viewWidthNotIncludingScrollbars && view->verticalScrollbar() && !view->verticalScrollbar()->isOverlayScrollbar())
-        viewWidthNotIncludingScrollbars -= view->verticalScrollbar()->width();
-    int unscaledContentsWidth = contentsSize().width();
-    if (viewWidthNotIncludingScrollbars && unscaledContentsWidth) {
-        // Limit page scaling down to the document width.
-        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / unscaledContentsWidth);
+    if (settings()->viewportEnabled()) {
+        if (!contentsSize().width() || !m_size.width)
+            return;
+
+        // When viewport tag is enabled, the scale needed to see the full
+        // content width is the default minimum.
+        int viewWidthNotIncludingScrollbars = m_size.width;
+        if (view->verticalScrollbar() && !view->verticalScrollbar()->isOverlayScrollbar())
+            viewWidthNotIncludingScrollbars -= view->verticalScrollbar()->width();
+        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / contentsSize().width());
         m_maximumPageScaleFactor = max(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
     }
     ASSERT(m_minimumPageScaleFactor <= m_maximumPageScaleFactor);
 
-    float clampedScale = clampPageScaleFactorToLimits(pageScaleFactor());
+    // Initialize and/or clamp the page scale factor if needed.
+    float newPageScaleFactor = pageScaleFactor();
+    if (!m_pageScaleFactorIsSet && m_initialPageScaleFactor != -1) {
+        newPageScaleFactor = m_initialPageScaleFactor;
+        m_pageScaleFactorIsSet = true;
+    }
+    newPageScaleFactor = clampPageScaleFactorToLimits(newPageScaleFactor);
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerTreeView)
-        m_layerTreeView->setPageScaleFactorAndLimits(clampedScale, m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+        m_layerTreeView->setPageScaleFactorAndLimits(newPageScaleFactor, m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 #endif
-    if (clampedScale != pageScaleFactor()) {
-        setPageScaleFactorPreservingScrollOffset(clampedScale);
-        return true;
-    }
-
-    return false;
+    if (newPageScaleFactor != pageScaleFactor())
+        setPageScaleFactorPreservingScrollOffset(newPageScaleFactor);
 }
 
 float WebViewImpl::minimumPageScaleFactor() const
@@ -3742,32 +3756,31 @@ void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
         }
     }
 
+    if (settings()->viewportEnabled()) {
+        if (!isPageScaleFactorSet()) {
+            // If the viewport tag failed to be processed earlier, we need
+            // to recompute it now.
+            ViewportArguments viewportArguments = mainFrameImpl()->frame()->document()->viewportArguments();
+            m_page->chrome()->client()->dispatchViewportPropertiesDidChange(viewportArguments);
+        }
+
+        // Contents size is an input to the page scale limits, so a good time to
+        // recalculate is after layout has occurred.
+        computePageScaleFactorLimits();
+
+        // Relayout immediately to avoid violating the rule that needsLayout()
+        // isn't set at the end of a layout.
+        FrameView* view = mainFrameImpl()->frameView();
+        if (view && view->needsLayout())
+            view->layout();
+    }
+
     m_client->didUpdateLayout();
+
 }
 
 void WebViewImpl::didChangeContentsSize()
 {
-#if ENABLE(VIEWPORT)
-    if (!settings()->viewportEnabled() || !mainFrameImpl())
-        return;
-
-    bool mayNeedLayout = false;
-    if (!isPageScaleFactorSet()) {
-        // If the viewport tag failed to be processed earlier, we need
-        // to recompute it now.
-        ViewportArguments viewportArguments = mainFrameImpl()->frame()->document()->viewportArguments();
-        m_page->chrome()->client()->dispatchViewportPropertiesDidChange(viewportArguments);
-        mayNeedLayout = true;
-    } else
-        mayNeedLayout = computePageScaleFactorLimits();
-
-    // didChangeContentsSize() may be called from FrameView::layout; we need to
-    // relayout to avoid triggering the assertion that needsLayout() isn't set
-    // at the end of a layout.
-    FrameView* view = mainFrameImpl()->frameView();
-    if (mayNeedLayout && view && view->needsLayout())
-        view->layout();
-#endif
 }
 
 bool WebViewImpl::useExternalPopupMenus()

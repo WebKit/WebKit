@@ -1,3 +1,38 @@
+2013-01-31  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Rework page scale factor limits initialization
+        https://bugs.webkit.org/show_bug.cgi?id=108446
+
+        Reviewed by James Robinson.
+
+        When loading a page with viewportEnabled, both the limits
+        specified by the viewport tag and the content width need to be
+        considered before we initialize the minimum page scale (and
+        pageScaleFactor itself usually to the same value). The timing has
+        proven tricky to get correct.
+
+        This patch simplifies the flow by computing the
+        limits only at the end of layouts and at no other time. In combination
+        with https://bugs.webkit.org/show_bug.cgi?id=107922 which sets
+        needsLayout() appropriately, this results in a more robust and easy
+        to understand sequence.
+
+        Fixes FixedLayoutInitializeAtMinimumPageScale test.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::layoutUpdated):
+        (WebKit::WebViewImpl::didChangeContentsSize):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::setInitialPageScaleFactor):
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+
 2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
 
         Editor::m_compositionNode not updated on HTMLInputElement::setValue()

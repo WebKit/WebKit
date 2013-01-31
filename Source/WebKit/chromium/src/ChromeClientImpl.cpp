@@ -669,12 +669,10 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!m_webView->settingsImpl()->applyDeviceScaleFactorInCompositor())
         computed.initialScale *= deviceScaleFactor;
 
-    bool needInitializePageScale = !m_webView->isPageScaleFactorSet();
+    m_webView->setInitialPageScaleFactor(computed.initialScale);
     m_webView->setFixedLayoutSize(flooredIntSize(computed.layoutSize));
     m_webView->setDeviceScaleFactor(deviceScaleFactor);
     m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
-    if (needInitializePageScale)
-        m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale);
 #endif
 }
 
