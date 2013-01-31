@@ -1,3 +1,13 @@
+2013-01-30  Yusuf Ozuysal  <yusufo@google.com>
+
+        Start sending scrollType as NonBubblingGesture for flings
+        https://bugs.webkit.org/show_bug.cgi?id=108372
+
+        Reviewed by James Robinson.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+
 2013-01-30  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Add WebFrame::visibleContentRect()

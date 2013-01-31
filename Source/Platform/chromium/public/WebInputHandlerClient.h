@@ -39,7 +39,8 @@ public:
     };
     enum ScrollInputType {
         ScrollInputTypeGesture,
-        ScrollInputTypeWheel
+        ScrollInputTypeWheel,
+        ScrollInputTypeNonBubblingGesture
     };
 
     // Selects a layer to be scrolled at a given point in window coordinates.

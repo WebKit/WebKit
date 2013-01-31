@@ -1,3 +1,16 @@
+2013-01-30  Yusuf Ozuysal  <yusufo@google.com>
+
+        Start sending scrollType as NonBubblingGesture for flings
+        https://bugs.webkit.org/show_bug.cgi?id=108372
+
+        Reviewed by James Robinson.
+
+        Using the newly defined scrollType layerTreeHostImpl will stop bubbling flings to
+        parent layers. It will only bubble if the child layer is at the end of its scroll
+        range
+
+        * chromium/public/WebInputHandlerClient.h:
+
 2013-01-30  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add recordRenderingStats to WebSettings
