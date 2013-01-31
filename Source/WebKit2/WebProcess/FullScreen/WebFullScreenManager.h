@@ -52,7 +52,7 @@ public:
     static PassRefPtr<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     bool supportsFullScreen(bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*);

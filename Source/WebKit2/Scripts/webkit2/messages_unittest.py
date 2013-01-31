@@ -316,7 +316,6 @@ _expected_header = """/*
 #include "Arguments.h"
 #include "Connection.h"
 #include "MessageEncoder.h"
-#include "MessageID.h"
 #include "Plugin.h"
 #include "StringReference.h"
 #include <WebCore/KeyboardEvent.h>

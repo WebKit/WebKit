@@ -157,7 +157,7 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     m_pluginProcessManager->removePluginProcessProxy(this);
 }
 
-void PluginProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void PluginProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceivePluginProcessProxyMessage(connection, decoder);
 }

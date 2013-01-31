@@ -31,6 +31,7 @@
 #include "Arguments.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
+#include "MessageID.h"
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
 #include <wtf/PassRefPtr.h>
@@ -94,7 +95,7 @@ public:
 
     class QueueClient {
     public:
-        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageID, MessageDecoder&, bool& didHandleMessage) = 0;
+        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageDecoder&, bool& didHandleMessage) = 0;
 
     protected:
         virtual ~QueueClient() { }
@@ -434,7 +435,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
         return false;
 
     ASSERT(decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(this, MessageID(), *decoder);
+    m_client->didReceiveMessage(this, *decoder);
     return true;
 }
 

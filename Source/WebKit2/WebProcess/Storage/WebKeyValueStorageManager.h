@@ -55,7 +55,7 @@ private:
     virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
     // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getKeyValueStorageOrigins(uint64_t callbackID);
     void deleteEntriesForOrigin(const SecurityOriginData&);

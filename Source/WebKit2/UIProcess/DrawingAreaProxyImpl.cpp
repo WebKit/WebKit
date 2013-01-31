@@ -370,7 +370,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
 }
 
 #if USE(COORDINATED_GRAPHICS)
-void DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     if (m_coordinatedLayerTreeHostProxy)
         m_coordinatedLayerTreeHostProxy->didReceiveCoordinatedLayerTreeHostProxyMessage(connection, messageID, decoder);

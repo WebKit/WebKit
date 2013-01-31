@@ -68,7 +68,7 @@ protected:
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
 
-    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
+    bool sendMessage(PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
     Vector<std::pair<CoreIPC::Connection::OutgoingMessage, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
@@ -84,7 +84,7 @@ bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned 
     OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
 
-    return sendMessage(CoreIPC::MessageID(), encoder.release(), messageSendFlags);
+    return sendMessage(encoder.release(), messageSendFlags);
 }
 
 template<typename U> 

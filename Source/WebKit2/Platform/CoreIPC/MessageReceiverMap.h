@@ -26,7 +26,6 @@
 #ifndef MessageReceiverMap_h
 #define MessageReceiverMap_h
 
-#include "MessageID.h"
 #include "StringReference.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -51,8 +50,8 @@ public:
 
     void invalidate();
 
-    bool dispatchMessage(Connection*, MessageID, MessageDecoder&);
-    bool dispatchSyncMessage(Connection*, MessageID, MessageDecoder&, OwnPtr<MessageEncoder>&);
+    bool dispatchMessage(Connection*, MessageDecoder&);
+    bool dispatchSyncMessage(Connection*, MessageDecoder&, OwnPtr<MessageEncoder>&);
 
 private:
     // Message receivers that don't require a destination ID.

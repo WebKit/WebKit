@@ -127,7 +127,7 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
     ASSERT(m_childProcessProxy);
 }
 
-void CustomProtocolManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void CustomProtocolManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveCustomProtocolManagerProxyMessage(connection, decoder);
 }

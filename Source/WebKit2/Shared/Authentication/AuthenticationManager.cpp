@@ -64,7 +64,7 @@ AuthenticationManager::AuthenticationManager(ChildProcess* process)
     m_process->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
 }
 
-void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveAuthenticationManagerMessage(connection, decoder);
 }

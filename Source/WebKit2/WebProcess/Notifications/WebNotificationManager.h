@@ -73,7 +73,7 @@ private:
 
     // CoreIPC::MessageReceiver
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);

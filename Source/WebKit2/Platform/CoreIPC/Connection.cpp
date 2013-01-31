@@ -601,7 +601,7 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<MessageD
         bool didHandleMessage = false;
 
         MessageDecoder* decoder = incomingMessage.arguments();
-        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, incomingMessage.messageID(), *decoder, didHandleMessage);
+        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, *decoder, didHandleMessage);
         if (didHandleMessage) {
             // A connection queue client handled the message, our work here is done.
             incomingMessage.releaseArguments();
@@ -696,7 +696,7 @@ void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decode
     OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
-    m_client->didReceiveSyncMessage(this, messageID, decoder, replyEncoder);
+    m_client->didReceiveSyncMessage(this, decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!decoder.isInvalid());
@@ -725,7 +725,7 @@ void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
 
 void Connection::dispatchMessage(MessageID messageID, MessageDecoder& decoder)
 {
-    m_client->didReceiveMessage(this, messageID, decoder);
+    m_client->didReceiveMessage(this, decoder);
 }
 
 void Connection::dispatchMessage(IncomingMessage& message)

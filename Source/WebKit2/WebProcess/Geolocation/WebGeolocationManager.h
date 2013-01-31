@@ -58,7 +58,7 @@ public:
 
 private:
     // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didChangePosition(const WebGeolocationPosition::Data&);
     void didFailToDeterminePosition(const String& errorMessage);

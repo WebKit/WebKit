@@ -89,7 +89,7 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     m_pluginProcessConnectionManager->removePluginProcessConnection(this);
 }
 
-void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(decoder.destinationID());
 
@@ -100,10 +100,10 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
     pluginProxy->didReceivePluginProxyMessage(connection, decoder);
 }
 
-void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
-        m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
+        m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return;
     }
 

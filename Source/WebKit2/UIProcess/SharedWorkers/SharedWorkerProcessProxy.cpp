@@ -115,7 +115,7 @@ void SharedWorkerProcessProxy::sharedWorkerProcessCrashedOrFailedToLaunch()
     m_sharedWorkerProcessManager->removeSharedWorkerProcessProxy(this);
 }
 
-void SharedWorkerProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void SharedWorkerProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveSharedWorkerProcessProxyMessage(connection, decoder);
 }

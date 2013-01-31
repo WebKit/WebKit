@@ -64,7 +64,7 @@ public:
 
     void pluginDestroyed(Plugin*);
 
-    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
 private:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);

@@ -101,7 +101,7 @@ private:
     virtual void derefWebContextSupplement() OVERRIDE;
 
     // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebCookieManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
 #if PLATFORM(MAC)

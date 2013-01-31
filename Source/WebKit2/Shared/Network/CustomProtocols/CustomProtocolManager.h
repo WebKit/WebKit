@@ -83,7 +83,7 @@ private:
 #endif
 
     // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveCustomProtocolManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);

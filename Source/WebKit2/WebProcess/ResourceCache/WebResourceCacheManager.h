@@ -48,7 +48,7 @@ public:
 private:
     // CoreIPC::MessageReceiver
     // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getCacheOrigins(uint64_t callbackID) const;
     void clearCacheForOrigin(SecurityOriginData, uint32_t cachesToClear) const;

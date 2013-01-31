@@ -56,7 +56,7 @@ protected:
     virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) = 0;
 
     // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Implemented in generated WebConnectionMessageReceiver.cpp
     void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);

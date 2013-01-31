@@ -109,17 +109,17 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     m_webContext->networkProcessCrashed(this);
 }
 
-void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+    if (m_messageReceiverMap.dispatchMessage(connection, decoder))
         return;
 
-    if (m_webContext->dispatchMessage(connection, messageID, decoder))
+    if (m_webContext->dispatchMessage(connection, decoder))
         return;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     if (decoder.messageReceiverName() == Messages::CustomProtocolManagerProxy::messageReceiverName()) {
-        m_customProtocolManagerProxy.didReceiveMessage(connection, messageID, decoder);
+        m_customProtocolManagerProxy.didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -127,9 +127,9 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
+    if (m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
 
     ASSERT_NOT_REACHED();

@@ -142,7 +142,7 @@ void WebDatabaseManagerProxy::derefWebContextSupplement()
 
 // CoreIPC::MessageReceiver
 
-void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveWebDatabaseManagerProxyMessage(connection, decoder);
 }

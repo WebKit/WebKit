@@ -63,7 +63,7 @@ void WebConnection::didClose()
     m_client.didClose(this);
 }
 
-void WebConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void WebConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveWebConnectionMessage(connection, decoder);
 }

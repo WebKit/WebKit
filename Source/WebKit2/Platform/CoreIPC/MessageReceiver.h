@@ -26,7 +26,6 @@
 #ifndef MessageReceiver_h
 #define MessageReceiver_h
 
-#include "MessageID.h"
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 
@@ -40,8 +39,8 @@ class MessageReceiver {
 public:
     virtual ~MessageReceiver() { }
 
-    virtual void didReceiveMessage(Connection*, MessageID, MessageDecoder&) = 0;
-    virtual void didReceiveSyncMessage(Connection*, MessageID, MessageDecoder&, OwnPtr<MessageEncoder>&)
+    virtual void didReceiveMessage(Connection*, MessageDecoder&) = 0;
+    virtual void didReceiveSyncMessage(Connection*, MessageDecoder&, OwnPtr<MessageEncoder>&)
     {
         ASSERT_NOT_REACHED();
     }

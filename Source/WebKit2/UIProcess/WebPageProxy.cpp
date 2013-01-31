@@ -1925,7 +1925,7 @@ void WebPageProxy::preferencesDidChange()
     m_process->send(Messages::WebPage::PreferencesDidChange(pageGroup()->preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DrawingAreaProxy::messageReceiverName()) {
         m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, decoder);
@@ -1949,7 +1949,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 
 #if ENABLE(FULLSCREEN_API)
     if (decoder.messageReceiverName() == Messages::WebFullScreenManagerProxy::messageReceiverName()) {
-        fullScreenManager()->didReceiveMessage(connection, messageID, decoder);
+        fullScreenManager()->didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -1957,7 +1957,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     didReceiveWebPageProxyMessage(connection, decoder);
 }
 
-void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspectorProxy::messageReceiverName()) {
@@ -1969,7 +1969,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 
 #if ENABLE(FULLSCREEN_API)
     if (decoder.messageReceiverName() == Messages::WebFullScreenManagerProxy::messageReceiverName()) {
-        fullScreenManager()->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
+        fullScreenManager()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return;
     }
 #endif

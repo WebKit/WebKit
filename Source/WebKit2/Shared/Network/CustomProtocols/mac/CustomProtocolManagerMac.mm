@@ -175,7 +175,7 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     return m_registeredSchemes.contains(scheme);
 }
 
-void CustomProtocolManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void CustomProtocolManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveCustomProtocolManagerMessage(connection, decoder);
 }
