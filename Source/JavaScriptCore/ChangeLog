@@ -1,3 +1,9 @@
+2013-01-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix. Win7 port.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
 2013-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Disable ENABLE_FULLSCREEN_API on iOS
