@@ -165,6 +165,7 @@ PASS new MouseEvent('eventType', { button: {valueOf: function () { return 12345;
 PASS new MouseEvent('eventType', { relatedTarget: testDiv }).relatedTarget is testDiv
 PASS new MouseEvent('eventType', { relatedTarget: document }).relatedTarget is document
 PASS new MouseEvent('eventType', { relatedTarget: xhr }).relatedTarget is xhr
+PASS new MouseEvent('eventType', { relatedTarget: window }).relatedTarget is window
 PASS new MouseEvent('eventType', { relatedTarget: testObject }).relatedTarget is null
 PASS new MouseEvent('eventType', { relatedTarget: undefined }).relatedTarget is null
 PASS new MouseEvent('eventType', { relatedTarget: null }).relatedTarget is null

@@ -466,6 +466,17 @@ bool Dictionary::get(const String& key, RefPtr<EventTarget>& value) const
         return false;
 
     EventTarget* target = 0;
+    // We need to handle a DOMWindow specially, because a wrapper object of a DOMWindow
+    // exists on a prototype chain of v8Value.
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> window = wrapper->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(m_isolate));
+        if (!window.IsEmpty()) {
+            value = toWrapperTypeInfo(window)->toEventTarget(window);
+            return true;
+        }
+    }
+
     if (V8DOMWrapper::isDOMWrapper(v8Value)) {
         v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
         target = toWrapperTypeInfo(wrapper)->toEventTarget(wrapper);

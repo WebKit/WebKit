@@ -123,6 +123,7 @@ shouldBe("new MouseEvent('eventType', { button: {valueOf: function () { return 1
 shouldBe("new MouseEvent('eventType', { relatedTarget: testDiv }).relatedTarget", "testDiv");
 shouldBe("new MouseEvent('eventType', { relatedTarget: document }).relatedTarget", "document");
 shouldBe("new MouseEvent('eventType', { relatedTarget: xhr }).relatedTarget", "xhr");
+shouldBe("new MouseEvent('eventType', { relatedTarget: window }).relatedTarget", "window");
 
 // Invalid objects.
 shouldBe("new MouseEvent('eventType', { relatedTarget: testObject }).relatedTarget", "null");
