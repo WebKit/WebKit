@@ -28,6 +28,7 @@
 
 #include "IntPoint.h"
 #include <RefPtrCairo.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
 
@@ -42,9 +43,13 @@ public:
     void useForDrag(GdkDragContext*, const IntPoint& hotspot);
 
 private:
+    bool isComposited;
     GtkWidget* m_window;
     RefPtr<cairo_surface_t> m_image;
     IntSize m_imageSize;
+#ifdef GTK_API_VERSION_2
+    GRefPtr<GdkPixbuf> m_pixbuf;
+#endif
 };
 
 }

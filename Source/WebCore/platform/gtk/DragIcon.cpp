@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DragIcon.h"
+#include "GdkCairoUtilities.h"
 
 #include <gtk/gtk.h>
 
@@ -48,8 +49,13 @@ static gboolean dragIconWindowDrawEventCallback(GtkWidget*, cairo_t* context, Dr
 #endif // GTK_API_VERSION_2
 
 DragIcon::DragIcon()
-    : m_window(gtk_window_new(GTK_WINDOW_POPUP))
+    : isComposited(gdk_screen_is_composited(gdk_screen_get_default()))
+    , m_window(0)
 {
+    if (!isComposited)
+        return;
+
+    m_window = gtk_window_new(GTK_WINDOW_POPUP);
 #ifdef GTK_API_VERSION_2
     g_signal_connect(m_window, "expose-event", G_CALLBACK(dragIconWindowDrawEventCallback), this);
 #else
@@ -72,7 +78,8 @@ DragIcon::DragIcon()
 
 DragIcon::~DragIcon()
 {
-    gtk_widget_destroy(m_window);
+    if (m_window)
+        gtk_widget_destroy(m_window);
 }
 
 void DragIcon::draw(cairo_t* context)
@@ -90,7 +97,14 @@ void DragIcon::setImage(cairo_surface_t* image)
     ASSERT(image);
     m_image = image;
     m_imageSize = IntSize(cairo_image_surface_get_width(image), cairo_image_surface_get_height(image));
-    gtk_window_resize(GTK_WINDOW(m_window), m_imageSize.width(), m_imageSize.height());
+    if (isComposited) {
+        gtk_window_resize(GTK_WINDOW(m_window), m_imageSize.width(), m_imageSize.height());
+        return;
+    }
+
+#ifdef GTK_API_VERSION_2
+    m_pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(image));
+#endif
 }
 
 void DragIcon::useForDrag(GdkDragContext* context)
@@ -102,7 +116,15 @@ void DragIcon::useForDrag(GdkDragContext* context)
 
 void DragIcon::useForDrag(GdkDragContext* context, const IntPoint& hotspot)
 {
-    gtk_drag_set_icon_widget(context, m_window, hotspot.x(), hotspot.y());
+    if (isComposited) {
+        gtk_drag_set_icon_widget(context, m_window, hotspot.x(), hotspot.y());
+        return;
+    }
+#ifdef GTK_API_VERSION_2
+    gtk_drag_set_icon_pixbuf(context, m_pixbuf.get(), hotspot.x(), hotspot.y());
+#else
+    gtk_drag_set_icon_surface(context, m_image.get());
+#endif
 }
 
 } // namespace WebCore
