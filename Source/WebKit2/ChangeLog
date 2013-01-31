@@ -1,3 +1,16 @@
+2013-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        WebProcess sandbox profile overhaul.
+
+        Reviewed by Sam Weinig.
+
+        Moves some rules together by susbystem for easier maintenance.
+
+        Addresses <rdar://problem/9276393>, <rdar://problem/10844321>, <rdar://problem/12408537>,
+        <rdar://problem/12558524>.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial build fix: Pre C++11 the use of
