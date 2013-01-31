@@ -35,8 +35,6 @@
 #include "ewk_file_chooser.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
-#include "ewk_intent.h"
-#include "ewk_intent_request.h"
 #include "ewk_js.h"
 #include "ewk_main.h"
 #include "ewk_network.h"

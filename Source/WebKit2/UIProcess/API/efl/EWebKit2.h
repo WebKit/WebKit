@@ -42,8 +42,6 @@
 #include "ewk_favicon_database.h"
 #include "ewk_file_chooser_request.h"
 #include "ewk_form_submission_request.h"
-#include "ewk_intent.h"
-#include "ewk_intent_service.h"
 #include "ewk_main.h"
 #include "ewk_navigation_data.h"
 #include "ewk_navigation_policy_decision.h"

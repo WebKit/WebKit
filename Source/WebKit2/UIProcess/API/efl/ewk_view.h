@@ -49,8 +49,6 @@
  *   #Ewk_Form_Submission_Request and the form has not been submitted yet,
  *   ewk_form_submission_request_submit() will be called automatically.
  * - "icon,changed", void: reports that the view's favicon has changed.
- * - "intent,request,new", Ewk_Intent*: reports new Web intent request.
- * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Error*: reports main frame load failed.
  * - "load,finished", void: reports load finished.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
@@ -81,7 +79,6 @@
 #include "ewk_context_menu.h"
 #include "ewk_download_job.h"
 #include "ewk_error.h"
-#include "ewk_intent.h"
 #include "ewk_popup_menu.h"
 #include "ewk_security_origin.h"
 #include "ewk_settings.h"
@@ -423,15 +420,6 @@ EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
  * @return the Ewk_Settings of this view or @c NULL on failure
  */
 EAPI Ewk_Settings *ewk_view_settings_get(const Evas_Object *o);
-
-/**
- * Delivers a Web intent to the view's main frame.
- *
- * @param o view object to deliver the intent to
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool    ewk_view_intent_deliver(Evas_Object *o, Ewk_Intent *intent);
 
 /**
  * Asks the main frame to navigate back in the history.

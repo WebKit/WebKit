@@ -24,8 +24,6 @@
 #include "config.h"
 #include "ewk_frame.h"
 
-#include "DOMWindowIntents.h"
-#include "DeliveredIntent.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
@@ -55,7 +53,6 @@
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
 #include "ewk_frame_private.h"
-#include "ewk_intent_private.h"
 #include "ewk_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_touch_event_private.h"
@@ -751,30 +748,6 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     hitTest->context = static_cast<Ewk_Hit_Test_Result_Context>(context);
 
     return hitTest;
-}
-
-void ewk_frame_intent_deliver(const Evas_Object* ewkFrame, Ewk_Intent* ewk_intent)
-{
-#if ENABLE(WEB_INTENTS)
-    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->frame);
-
-    WebCore::Intent* intent = EWKPrivate::coreIntent(ewk_intent);
-
-    OwnPtr<WebCore::MessagePortChannelArray> channels;
-    WebCore::MessagePortChannelArray* origChannels = intent->messagePorts();
-    if (origChannels && origChannels->size()) {
-        channels = adoptPtr(new WebCore::MessagePortChannelArray(origChannels->size()));
-        for (size_t i = 0; i < origChannels->size(); ++i)
-            (*channels)[i] = origChannels->at(i).release();
-    }
-    OwnPtr<WebCore::MessagePortArray> ports = WebCore::MessagePort::entanglePorts(*(smartData->frame->document()), channels.release());
-
-    OwnPtr<WebCore::DeliveredIntentClient> dummyClient;
-    RefPtr<WebCore::DeliveredIntent> deliveredIntent = WebCore::DeliveredIntent::create(smartData->frame, dummyClient.release(), intent->action(), intent->type(), intent->data(), ports.release(), intent->extras());
-
-    WebCore::DOMWindowIntents::from(smartData->frame->document()->domWindow())->deliver(deliveredIntent.release());
-#endif
 }
 
 Eina_Bool
@@ -1547,32 +1520,6 @@ void ewk_frame_load_progress_changed(Evas_Object* ewkFrame)
 
     evas_object_smart_callback_call(ewkFrame, "load,progress", &progress);
     ewk_view_load_progress_changed(smartData->view);
-}
-
-/**
- * @internal
- * Reports new intent.
- *
- * Emits signal: "intent,new" with pointer to a Ewk_Intent_Request.
- */
-void ewk_frame_intent_new(Evas_Object* ewkFrame, Ewk_Intent_Request* request)
-{
-#if ENABLE(WEB_INTENTS)
-    evas_object_smart_callback_call(ewkFrame, "intent,new", request);
-#endif
-}
-
-/**
- * @internal
- * Reports an intent service registration.
- *
- * Emits signal: "intent,service,register" with pointer to a Ewk_Intent_Service_Info.
- */
-void ewk_frame_intent_service_register(Evas_Object* ewkFrame, Ewk_Intent_Service_Info* info)
-{
-#if ENABLE(WEB_INTENTS_TAG)
-    evas_object_smart_callback_call(ewkFrame, "intent,service,register", info);
-#endif
 }
 
 /**

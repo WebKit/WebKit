@@ -185,12 +185,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void provisionalLoadStarted();
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
-#if ENABLE(WEB_INTENTS)
-    virtual void dispatchIntent(PassRefPtr<WebCore::IntentRequest>);
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-    virtual void registerIntentService(const String& action, const String& type, const KURL& href, const String& title, const String& disposition);
-#endif
 
     virtual WTF::PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&);
     virtual void setTitle(const StringWithDirection& title, const KURL&);

@@ -38,12 +38,6 @@ typedef struct EwkObject Ewk_Download_Job;
 typedef struct EwkObject Ewk_File_Chooser_Request;
 typedef struct EwkObject Ewk_Form_Submission_Request;
 typedef struct EwkObject Ewk_Navigation_Policy_Decision;
-#if ENABLE(WEB_INTENTS)
-typedef struct EwkObject Ewk_Intent;
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-typedef struct EwkObject Ewk_Intent_Service;
-#endif
 typedef struct EwkError Ewk_Error;
 
 struct Ewk_Download_Job_Error;
@@ -81,13 +75,7 @@ enum CallbackType {
     URLChanged,
     Vibrate,
     WebProcessCrashed,
-    WindowResizable,
-#if ENABLE(WEB_INTENTS)
-    IntentRequest,
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-    IntentServiceRegistration,
-#endif
+    WindowResizable
 };
 
 template <CallbackType>
@@ -198,12 +186,6 @@ DECLARE_EWK_VIEW_CALLBACK(URLChanged, "url,changed", const char*);
 DECLARE_EWK_VIEW_CALLBACK(Vibrate, "vibrate", uint32_t*);
 DECLARE_EWK_VIEW_CALLBACK(WebProcessCrashed, "webprocess,crashed", bool*);
 DECLARE_EWK_VIEW_CALLBACK(WindowResizable, "window,resizable", bool*);
-#if ENABLE(WEB_INTENTS)
-DECLARE_EWK_VIEW_CALLBACK(IntentRequest, "intent,request,new", Ewk_Intent*);
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-DECLARE_EWK_VIEW_CALLBACK(IntentServiceRegistration, "intent,service,register", Ewk_Intent_Service*);
-#endif
 
 }
 

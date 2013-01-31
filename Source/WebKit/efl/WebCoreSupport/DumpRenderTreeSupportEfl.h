@@ -35,8 +35,6 @@
 #endif
 
 typedef struct _Ewk_History_Item Ewk_History_Item;
-typedef struct _Ewk_Intent Ewk_Intent;
-typedef struct _Ewk_Intent_Request Ewk_Intent_Request;
 
 typedef Vector<Ewk_History_Item*> HistoryItemChildrenVector;
 
@@ -123,11 +121,6 @@ public:
     static void setSerializeHTTPLoads(bool);
     static void setShouldTrackVisitedLinks(bool);
     
-    // Web Intents
-    static void sendWebIntentResponse(Ewk_Intent_Request*, JSStringRef response);
-    static WebCore::MessagePortChannelArray* intentMessagePorts(const Ewk_Intent*);
-    static void deliverWebIntent(Evas_Object* ewkFrame, JSStringRef action, JSStringRef type, JSStringRef data);
-
     // TextInputController
     static void setComposition(Evas_Object*, const char*, int, int);
     static bool hasComposition(const Evas_Object*);

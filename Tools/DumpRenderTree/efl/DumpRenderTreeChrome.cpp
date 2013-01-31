@@ -54,7 +54,6 @@ using namespace WebCore;
 
 HashMap<unsigned long, CString> DumpRenderTreeChrome::m_dumpAssignedUrls;
 Evas_Object* DumpRenderTreeChrome::m_provisionalLoadFailedFrame = 0;
-Ewk_Intent_Request* DumpRenderTreeChrome::m_currentIntentRequest = 0;
 
 PassOwnPtr<DumpRenderTreeChrome> DumpRenderTreeChrome::create(Evas* evas)
 {
@@ -123,8 +122,6 @@ Evas_Object* DumpRenderTreeChrome::createView() const
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(view);
     evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);
-    evas_object_smart_callback_add(mainFrame, "intent,new", onFrameIntentNew, 0);
-    evas_object_smart_callback_add(mainFrame, "intent,service,register", onFrameIntentServiceRegistration, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
@@ -241,11 +238,6 @@ Evas_Object* DumpRenderTreeChrome::mainView() const
     return m_mainView;
 }
 
-Ewk_Intent_Request* DumpRenderTreeChrome::currentIntentRequest() const
-{
-    return m_currentIntentRequest;
-}
-
 void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 {
     ewk_settings_icon_database_clear();
@@ -331,11 +323,6 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_settings_object_cache_capacity_set(0, cacheTotalCapacity, cacheTotalCapacity);
     DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(0);
     ewk_settings_page_cache_capacity_set(3);
-
-    if (m_currentIntentRequest) {
-        ewk_intent_request_unref(m_currentIntentRequest);
-        m_currentIntentRequest = 0;
-    }
 
     policyDelegateEnabled = false;
     policyDelegatePermissive = false;
@@ -616,8 +603,6 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     Evas_Object* frame = static_cast<Evas_Object*>(eventInfo);
 
     evas_object_smart_callback_add(frame, "icon,changed", onFrameIconChanged, 0);
-    evas_object_smart_callback_add(frame, "intent,new", onFrameIntentNew, 0);
-    evas_object_smart_callback_add(frame, "intent,service,register", onFrameIntentServiceRegistration, 0);
     evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(frame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
@@ -849,61 +834,6 @@ void DumpRenderTreeChrome::onNewResourceRequest(void*, Evas_Object*, void* event
 
     if (!done && gTestRunner->dumpResourceLoadCallbacks())
         m_dumpAssignedUrls.add(request->identifier, pathSuitableForTestResult(request->url));
-}
-
-void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo)
-{
-    Ewk_Intent_Request* request = static_cast<Ewk_Intent_Request*>(eventInfo);
-    Ewk_Intent* intent = ewk_intent_request_intent_get(request);
-    if (!intent)
-        return;
-
-    ewk_intent_request_ref(request);
-    if (m_currentIntentRequest)
-        ewk_intent_request_unref(m_currentIntentRequest);
-    m_currentIntentRequest = request;
-
-    printf("Received Web Intent: action=%s type=%s\n",
-           ewk_intent_action_get(intent),
-           ewk_intent_type_get(intent));
-
-    const MessagePortChannelArray* messagePorts = DumpRenderTreeSupportEfl::intentMessagePorts(intent);
-    if (messagePorts)
-        printf("Have %d ports\n", static_cast<int>(messagePorts->size()));
-
-    const char* service = ewk_intent_service_get(intent);
-    if (service && strcmp(service, ""))
-        printf("Explicit intent service: %s\n", service);
-
-    void* data = 0;
-    Eina_List* extraNames = ewk_intent_extra_names_get(intent);
-    EINA_LIST_FREE(extraNames, data) {
-        const char* name = static_cast<char*>(data);
-        const char* value = ewk_intent_extra_get(intent, name);
-        if (value) {
-            printf("Extras[%s] = %s\n", name, value);
-            eina_stringshare_del(value);
-        }
-        eina_stringshare_del(name);
-    }
-
-    Eina_List* suggestions = ewk_intent_suggestions_get(intent);
-    EINA_LIST_FREE(suggestions, data) {
-        const char* suggestion = static_cast<char*>(data);
-        printf("Have suggestion %s\n", suggestion);
-        eina_stringshare_del(suggestion);
-    }
-}
-
-void DumpRenderTreeChrome::onFrameIntentServiceRegistration(void*, Evas_Object*, void* eventInfo)
-{
-    Ewk_Intent_Service_Info* serviceInfo = static_cast<Ewk_Intent_Service_Info*>(eventInfo);
-    printf("Registered Web Intent Service: action=%s type=%s title=%s url=%s disposition=%s\n",
-           serviceInfo->action,
-           serviceInfo->type,
-           serviceInfo->title,
-           serviceInfo->href,
-           serviceInfo->disposition);
 }
 
 void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInfo)

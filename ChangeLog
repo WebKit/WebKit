@@ -1,3 +1,14 @@
+2013-01-31  Christophe Dumez  <dchris@gmail.com>
+
+        [EFL] Disable Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=108457
+
+        Reviewed by Alexey Proskuryakov.
+
+        Turn off WEB_INTENTS flag in EFL CMake project.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Make it possible to compile WebKit2 Qt related files without access to internal WK2 C++ API

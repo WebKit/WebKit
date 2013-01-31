@@ -34,8 +34,6 @@
 #include "ewk_auth_request_private.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_error_private.h"
-#include "ewk_intent_private.h"
-#include "ewk_intent_service_private.h"
 #include "ewk_view.h"
 
 using namespace EwkViewCallbacks;
@@ -55,24 +53,6 @@ void PageLoadClientEfl::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WK
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
     view->smartCallback<TitleChange>().call(toImpl(title)->string());
 }
-
-#if ENABLE(WEB_INTENTS)
-void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
-{
-    EwkView* view = toPageLoadClientEfl(clientInfo)->view();
-    RefPtr<EwkIntent> ewkIntent = EwkIntent::create(intent);
-    view->smartCallback<IntentRequest>().call(ewkIntent.get());
-}
-#endif
-
-#if ENABLE(WEB_INTENTS_TAG)
-void PageLoadClientEfl::registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void* clientInfo)
-{
-    EwkView* view = toPageLoadClientEfl(clientInfo)->view();
-    RefPtr<EwkIntentService> ewkIntentService = EwkIntentService::create(serviceInfo);
-    view->smartCallback<IntentServiceRegistration>().call(ewkIntentService.get());
-}
-#endif
 
 void PageLoadClientEfl::didChangeProgress(WKPageRef page, const void* clientInfo)
 {
@@ -182,12 +162,6 @@ PageLoadClientEfl::PageLoadClientEfl(EwkView* view)
     loadClient.version = kWKPageLoaderClientCurrentVersion;
     loadClient.clientInfo = this;
     loadClient.didReceiveTitleForFrame = didReceiveTitleForFrame;
-#if ENABLE(WEB_INTENTS)
-    loadClient.didReceiveIntentForFrame = didReceiveIntentForFrame;
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-    loadClient.registerIntentServiceForFrame = registerIntentServiceForFrame;
-#endif
     loadClient.didStartProgress = didChangeProgress;
     loadClient.didChangeProgress = didChangeProgress;
     loadClient.didFinishProgress = didChangeProgress;

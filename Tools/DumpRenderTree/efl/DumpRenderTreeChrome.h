@@ -32,7 +32,6 @@
 
 #include <Eina.h>
 #include <Evas.h>
-#include <ewk_intent_request.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -58,8 +57,6 @@ public:
     Evas_Object* mainFrame() const;
     Evas_Object* mainView() const;
 
-    Ewk_Intent_Request* currentIntentRequest() const;
-
     void resetDefaultsToConsistentValues();
 
 private:
@@ -75,7 +72,6 @@ private:
     Vector<Evas_Object*> m_extraViews;
     static HashMap<unsigned long, CString> m_dumpAssignedUrls;
     static Evas_Object* m_provisionalLoadFailedFrame;
-    static Ewk_Intent_Request* m_currentIntentRequest;
 
     // Smart callbacks
     static void onWindowObjectCleared(void*, Evas_Object*, void*);
@@ -138,9 +134,6 @@ private:
     static void onResourceLoadFailed(void*, Evas_Object*, void*);
 
     static void onNewResourceRequest(void*, Evas_Object*, void*);
-
-    static void onFrameIntentNew(void*, Evas_Object*, void*);
-    static void onFrameIntentServiceRegistration(void*, Evas_Object*, void*);
 
     static void onDownloadRequest(void*, Evas_Object*, void*);
 };
