@@ -239,7 +239,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
         switch (cookie[tokenStartSvg]) {
         case 'P':
         case 'p' : {
-            if (length >= 4 && cookie.find("ath", tokenStartSvg + 1, false)) {
+            if (length >= 4 && ((cookie.find("ath", tokenStartSvg + 1, false) - tokenStartSvg) == 1)) {
                 // We need the path to be decoded to match those returned from KURL::path().
                 // The path attribute may or may not include percent-encoded characters. Fortunately
                 // if there are no percent-encoded characters, decoding the url is a no-op.
@@ -250,24 +250,23 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 #if 0
                 // Check if path attribute is a prefix of the request URI.
                 if (!m_defaultCookieURL.path().startsWith(res->path()))
-                    LOG_AND_DELETE("Invalid cookie %s (path): it does not math the URL", cookie.ascii().data());
+                    LOG_AND_DELETE("Invalid cookie attribute %s (path): it does not math the URL", cookie.ascii().data());
 #endif
-
             } else
-                LOG_AND_DELETE("Invalid cookie %s (path)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (path)", cookie.ascii().data());
             break;
         }
 
         case 'D':
         case 'd' : {
-            if (length >= 6 && cookie.find("omain", tokenStartSvg + 1, false)) {
+            if (length >= 6 && ((cookie.find("omain", tokenStartSvg + 1, false) - tokenStartSvg) == 1)) {
                 if (parsedValue.length() > 1 && parsedValue[0] == '"' && parsedValue[parsedValue.length() - 1] == '"')
                     parsedValue = parsedValue.substring(1, parsedValue.length() - 2);
 
                 // Check if the domain contains an embedded dot.
                 size_t dotPosition = parsedValue.find(".", 1);
                 if (dotPosition == notFound || dotPosition == parsedValue.length())
-                    LOG_AND_DELETE("Invalid cookie %s (domain): it does not contain an embedded dot", cookie.ascii().data());
+                    LOG_AND_DELETE("Invalid cookie attribute %s (domain): it does not contain an embedded dot", cookie.ascii().data());
 
                 // If the domain does not start with a dot, add one for security checks,
                 // For example: ab.c.com dose not domain match b.c.com;
@@ -283,7 +282,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 if (m_defaultDomainIsIPAddress) {
                     String realDomainCanonical = String(BlackBerry::Platform::getCanonicalIPFormat(realDomain.utf8().data()).c_str());
                     if (realDomainCanonical.isEmpty() || realDomainCanonical != m_defaultCookieHost)
-                        LOG_AND_DELETE("Invalid cookie %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
+                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
                     realDomain = realDomainCanonical;
                     isIPAddress = true;
                 } else {
@@ -295,52 +294,52 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                     // We also have to make a special case for IP addresses. If a website tries to set
                     // a cookie to 61.97, that domain is not an IP address and will end with the m_defaultCookieHost
                     if (!m_defaultCookieHost.endsWith(realDomain, false))
-                        LOG_AND_DELETE("Invalid cookie %s (domain): it does not domain match the host", cookie.ascii().data());
+                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): it does not domain match the host", cookie.ascii().data());
                     // We should check for an embedded dot in the portion of string in the host not in the domain
                     // but to match firefox behaviour we do not.
 
                     // Check whether the domain is a top level domain, if it is throw it out
                     // http://publicsuffix.org/list/
                     if (BlackBerry::Platform::isTopLevelDomain(realDomain.utf8().data()))
-                        LOG_AND_DELETE("Invalid cookie %s (domain): it did not pass the top level domain check", cookie.ascii().data());
+                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): it did not pass the top level domain check", cookie.ascii().data());
                 }
                 res->setDomain(realDomain, isIPAddress);
             } else
-                LOG_AND_DELETE("Invalid cookie %s (domain)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (domain)", cookie.ascii().data());
             break;
         }
 
         case 'E' :
         case 'e' : {
-            if (length >= 7 && cookie.find("xpires", tokenStartSvg + 1, false))
+            if (length >= 7 && ((cookie.find("xpires", tokenStartSvg + 1, false) - tokenStartSvg) == 1))
                 res->setExpiry(parsedValue);
             else
-                LOG_AND_DELETE("Invalid cookie %s (expires)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (expires)", cookie.ascii().data());
             break;
         }
 
         case 'M' :
         case 'm' : {
-            if (length >= 7 && cookie.find("ax-age", tokenStartSvg + 1, false))
+            if (length >= 7 && ((cookie.find("ax-age", tokenStartSvg + 1, false) - tokenStartSvg) == 1))
                 res->setMaxAge(parsedValue);
             else
-                LOG_AND_DELETE("Invalid cookie %s (max-age)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (max-age)", cookie.ascii().data());
             break;
         }
 
         case 'C' :
         case 'c' : {
-            if (length >= 7 && cookie.find("omment", tokenStartSvg + 1, false))
+            if (length >= 7 && ((cookie.find("omment", tokenStartSvg + 1, false) - tokenStartSvg) == 1))
                 // We do not have room for the comment part (and so do Mozilla) so just log the comment.
                 LOG(Network, "Comment %s for ParsedCookie : %s\n", parsedValue.ascii().data(), cookie.ascii().data());
             else
-                LOG_AND_DELETE("Invalid cookie %s (comment)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (comment)", cookie.ascii().data());
             break;
         }
 
         case 'V' :
         case 'v' : {
-            if (length >= 7 && cookie.find("ersion", tokenStartSvg + 1, false)) {
+            if (length >= 7 && ((cookie.find("ersion", tokenStartSvg + 1, false) - tokenStartSvg) == 1)) {
                 // Although the out-of-dated Cookie Spec(RFC2965, http://tools.ietf.org/html/rfc2965) defined
                 // the value of version can only contain DIGIT, some random sites, e.g. https://devforums.apple.com
                 // would use double quotation marks to quote the digit. So we need to get rid of them for compliance.
@@ -350,26 +349,26 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 if (parsedValue.toInt() != 1)
                     LOG_AND_DELETE("ParsedCookie version %d not supported (only support version=1)", parsedValue.toInt());
             } else
-                LOG_AND_DELETE("Invalid cookie %s (version)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (version)", cookie.ascii().data());
             break;
         }
 
         case 'S' :
         case 's' : {
             // Secure is a standalone token ("Secure;")
-            if (length >= 6 && cookie.find("ecure", tokenStartSvg + 1, false))
+            if (length >= 6 && ((cookie.find("ecure", tokenStartSvg + 1, false) - tokenStartSvg) == 1))
                 res->setSecureFlag(true);
             else
-                LOG_AND_DELETE("Invalid cookie %s (secure)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (secure)", cookie.ascii().data());
             break;
         }
         case 'H':
         case 'h': {
             // HttpOnly is a standalone token ("HttpOnly;")
-            if (length >= 8 && cookie.find("ttpOnly", tokenStartSvg + 1, false))
+            if (length >= 8 && ((cookie.find("ttpOnly", tokenStartSvg + 1, false) - tokenStartSvg) == 1))
                 res->setIsHttpOnly(true);
             else
-                LOG_AND_DELETE("Invalid cookie %s (HttpOnly)", cookie.ascii().data());
+                LOG_ERROR("Invalid cookie attribute %s (HttpOnly)", cookie.ascii().data());
             break;
         }
 
