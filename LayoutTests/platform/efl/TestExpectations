@@ -212,6 +212,9 @@ fast/forms/submit-to-blank-multiple-times.html
 # Flaky tests (text diff mismatch)
 http/tests/navigation/document-location-mouseover.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=107118
+fast/canvas/canvas-quadratic-same-endpoint.html
+
 # ------------------------------------
 # Tests for features under development
 # ------------------------------------

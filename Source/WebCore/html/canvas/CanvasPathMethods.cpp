@@ -84,8 +84,9 @@ void CanvasPathMethods::quadraticCurveTo(float cpx, float cpy, float x, float y)
         m_path.moveTo(FloatPoint(cpx, cpy));
 
     FloatPoint p1 = FloatPoint(x, y);
-    if (p1 != m_path.currentPoint())
-        m_path.addQuadCurveTo(FloatPoint(cpx, cpy), p1);
+    FloatPoint cp = FloatPoint(cpx, cpy);
+    if (p1 != m_path.currentPoint() || p1 != cp)
+        m_path.addQuadCurveTo(cp, p1);
 }
 
 void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y)
@@ -98,8 +99,10 @@ void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float 
         m_path.moveTo(FloatPoint(cp1x, cp1y));
 
     FloatPoint p1 = FloatPoint(x, y);
-    if (p1 != m_path.currentPoint())
-        m_path.addBezierCurveTo(FloatPoint(cp1x, cp1y), FloatPoint(cp2x, cp2y), p1);
+    FloatPoint cp1 = FloatPoint(cp1x, cp1y);
+    FloatPoint cp2 = FloatPoint(cp2x, cp2y);
+    if (p1 != m_path.currentPoint() || p1 != cp1 ||  p1 != cp2)
+        m_path.addBezierCurveTo(cp1, cp2, p1);
 }
 
 void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, ExceptionCode& ec)

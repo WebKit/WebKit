@@ -935,6 +935,9 @@ canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
 canvas/philip/tests/2d.line.miter.lineedge.html
 canvas/philip/tests/2d.strokeRect.zero.4.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=107118
+fast/canvas/canvas-quadratic-same-endpoint.html
+
 # --- Compositing ----
 css3/filters/composited-during-transition-layertree.html
 
