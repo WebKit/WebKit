@@ -1,3 +1,14 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Make it possible to compile WebKit2 Qt related files without access to internal WK2 C++ API
+        https://bugs.webkit.org/show_bug.cgi?id=108472
+
+        Reviewed by Andreas Kling.
+
+        When linking WebKit2, also link the WebKit2QML module.
+
+        * Source/api.pri:
+
 2013-01-30  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [HarfBuzz] Remove the HarfBuzz-old code

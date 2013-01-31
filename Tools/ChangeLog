@@ -1,3 +1,16 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Make it possible to compile WebKit2 Qt related files without access to internal WK2 C++ API
+        https://bugs.webkit.org/show_bug.cgi?id=108472
+
+        Reviewed by Andreas Kling.
+
+        Add a new module to the qmake build system that represents the part of the WebKit2 Qt integration
+        that doesn't depend on WebKit2 internals.
+
+        * qmake/mkspecs/features/webkit_modules.prf:
+        * qmake/mkspecs/modules/webkit2qml.prf: Copied from Source/WebKit2/WebKit2.pro.
+
 2013-01-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove dead transitional code from WebViewImpl

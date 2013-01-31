@@ -30,7 +30,6 @@
 #include "WKStringQt.h"
 #include "WKURL.h"
 #include "WKURLQt.h"
-#include "WebBackForwardList.h"
 
 #include "qwebnavigationhistory_p_p.h"
 #include <QString>
@@ -39,7 +38,9 @@
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBackForwardListItem.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKPage.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
 

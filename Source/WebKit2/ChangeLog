@@ -1,5 +1,23 @@
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Make it possible to compile WebKit2 Qt related files without access to internal WK2 C++ API
+        https://bugs.webkit.org/show_bug.cgi?id=108472
+
+        Reviewed by Andreas Kling.
+
+        Add a new module to the qmake build system that represents the part of the WebKit2 Qt integration
+        that doesn't depend on WebKit2 internals.
+
+        Changed qwebnavigationhistory.cpp to not use any internal headers and compile it as part of the
+        internals-free module.
+
+        * Target.pri:
+        * UIProcess/API/qt/qwebnavigationhistory.cpp:
+        * WebKit2.pro:
+        * WebKit2QML.pri: Added.
+
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
         Unreviewed trivial build fix: Add missing virtual destructor to
         LayerTreeRendererClient. Otherwise the build with -Werror breaks, which
         complains (rightly so) that we're deleting a sub-class where the super class
