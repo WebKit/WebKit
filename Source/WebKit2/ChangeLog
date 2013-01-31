@@ -1,3 +1,36 @@
+2013-01-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Add a call to the page UI client to determine if a plug-in should load
+        https://bugs.webkit.org/show_bug.cgi?id=108407
+        <rdar://problem/13066332>
+
+        Reviewed by Anders Carlsson.
+
+        This patch adds a client call to the WKPageUIClient to be called to determine
+        whether or not a plug-in should load.
+
+        * UIProcess/API/C/WKPage.h: Add shouldLoadPlugin.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath): Moved from WebProcessProxy, and added a call to
+            m_uiClient.shouldInstantiatePlugin.
+        * UIProcess/WebPageProxy.h:
+        * UIProcss/WebPageProxy.messages.in: Moved GetPluginPath from WebProcessProxy to WebPageProxy.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginPath): Moved to WebPageProxy.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::shouldInstantiatePlugin): Return that we should load the plug-in if
+            the client function isn't defined, and call the function if it is.
+        * UIProcess/WebUIClient.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Add an entry for the new
+            client function.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Send the message to the WebPageProxy, not the WebProcessProxy.
+        (WebKit::WebPage::canPluginHandleResponse): Made a member function, so it can call sendSync, and
+            send the message to the WebPageProxy, not the WebProcessProxy.
+        * WebProcess/WebPage/WebPage.h:
+
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
         Use a Vector for IPC attachments

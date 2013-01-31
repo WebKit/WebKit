@@ -501,9 +501,9 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 {
     String pluginPath;
     uint32_t pluginLoadPolicy;
-    if (!WebProcess::shared().connection()->sendSync(
-            Messages::WebProcessProxy::GetPluginPath(parameters.mimeType, parameters.url.string()),
-            Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0)) {
+    if (!sendSync(
+            Messages::WebPageProxy::GetPluginPath(parameters.mimeType, parameters.url.string()),
+            Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy))) {
         return 0;
     }
 
@@ -3666,13 +3666,13 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
     frameView->setScrollingPerformanceLoggingEnabled(enabled);
 }
 
-static bool canPluginHandleResponse(const ResourceResponse& response)
+bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String pluginPath;
     uint32_t pluginLoadPolicy;
     
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
+    if (!sendSync(Messages::WebPageProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy)))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
@@ -3681,7 +3681,7 @@ static bool canPluginHandleResponse(const ResourceResponse& response)
 #endif
 }
 
-bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const
+bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& response)
 {
     if (!m_mimeTypesWithCustomRepresentations.contains(response.mimeType()))
         return false;

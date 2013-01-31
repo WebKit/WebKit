@@ -438,4 +438,12 @@ bool WebUIClient::hideColorPicker(WebPageProxy* page)
 }
 #endif
 
+bool WebUIClient::shouldInstantiatePlugin(WebPageProxy* page, const String& identifier, const String& displayName)
+{
+    if (!m_client.shouldInstantiatePlugin)
+        return true;
+
+    return m_client.shouldInstantiatePlugin(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), m_client.clientInfo);
+}
+
 } // namespace WebKit

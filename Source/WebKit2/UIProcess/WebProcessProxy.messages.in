@@ -36,7 +36,6 @@ messages -> WebProcessProxy LegacyReceiver {
     # Plugin messages.
 #if ENABLE(NETSCAPE_PLUGIN_API)
     GetPlugins(uint64_t requestID, bool refresh) DispatchOnConnectionQueue
-    GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, uint32_t pluginLoadPolicy)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
     GetPluginProcessConnection(WTF::String pluginPath, uint32_t processType) -> (CoreIPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed

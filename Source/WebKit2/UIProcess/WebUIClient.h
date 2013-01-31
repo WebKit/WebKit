@@ -121,6 +121,8 @@ public:
     bool showColorPicker(WebPageProxy*, const String&, WebColorPickerResultListenerProxy*);
     bool hideColorPicker(WebPageProxy*);
 #endif
+
+    bool shouldInstantiatePlugin(WebPageProxy*, const String& identifier, const String& displayName);
 };
 
 } // namespace WebKit

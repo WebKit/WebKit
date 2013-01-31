@@ -351,23 +351,6 @@ void WebProcessProxy::getPlugins(CoreIPC::Connection*, uint64_t requestID, bool 
     pluginWorkQueue().dispatch(bind(&WebProcessProxy::handleGetPlugins, this, requestID, refresh));
 }
 
-void WebProcessProxy::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, uint32_t& pluginLoadPolicy)
-{
-    MESSAGE_CHECK_URL(urlString);
-
-    String newMimeType = mimeType.lower();
-
-    pluginLoadPolicy = PluginModuleLoadNormally;
-    PluginModuleInfo plugin = m_context->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
-    if (!plugin.path)
-        return;
-
-    pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
-    if (pluginLoadPolicy != PluginModuleLoadNormally)
-        return;
-
-    pluginPath = plugin.path;
-}
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(PLUGIN_PROCESS)
