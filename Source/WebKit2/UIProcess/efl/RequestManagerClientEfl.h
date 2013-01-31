@@ -26,9 +26,9 @@
 #ifndef RequestManagerClientEfl_h
 #define RequestManagerClientEfl_h
 
-#include "WKRetainPtr.h"
 #include "ewk_context_private.h"
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +38,7 @@ namespace WebKit {
 class RequestManagerClientEfl {
 public:
     ~RequestManagerClientEfl();
-    static PassOwnPtr<RequestManagerClientEfl> create(EwkContext* context)
+    static PassOwnPtr<RequestManagerClientEfl> create(WKContextRef context)
     {
         return adoptPtr(new RequestManagerClientEfl(context));
     }
@@ -46,7 +46,7 @@ public:
     void registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
 
 private:
-    explicit RequestManagerClientEfl(EwkContext*);
+    explicit RequestManagerClientEfl(WKContextRef);
 
     static void didReceiveURIRequest(WKSoupRequestManagerRef, WKURLRef, WKPageRef, uint64_t requestID, const void* clientInfo);
 

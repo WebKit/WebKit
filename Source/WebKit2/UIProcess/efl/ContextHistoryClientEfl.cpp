@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ContextHistoryClientEfl.h"
 
-#include "DownloadProxy.h"
 #include "EwkView.h"
 #include "WKAPICast.h"
 #include "WKContext.h"
@@ -106,7 +105,7 @@ void ContextHistoryClientEfl::populateVisitedLinks(WKContextRef, const void* cli
     historyClient->m_populateVisitedLinks(historyClient->m_userData);
 }
 
-ContextHistoryClientEfl::ContextHistoryClientEfl(PassRefPtr<WebContext> context)
+ContextHistoryClientEfl::ContextHistoryClientEfl(WKContextRef context)
     : m_context(context)
     , m_userData(0)
     , m_navigate(0)
@@ -129,12 +128,12 @@ ContextHistoryClientEfl::ContextHistoryClientEfl(PassRefPtr<WebContext> context)
     wkHistoryClient.didUpdateHistoryTitle = didUpdateHistoryTitle;
     wkHistoryClient.populateVisitedLinks = populateVisitedLinks;
 
-    m_context->initializeHistoryClient(&wkHistoryClient);
+    WKContextSetHistoryClient(m_context.get(), &wkHistoryClient);
 }
 
 ContextHistoryClientEfl::~ContextHistoryClientEfl()
 {
-    m_context->initializeHistoryClient(0);
+    WKContextSetHistoryClient(m_context.get(), 0);
 }
 
 void ContextHistoryClientEfl::setCallbacks(Ewk_History_Navigation_Cb navigate, Ewk_History_Client_Redirection_Cb clientRedirect, Ewk_History_Server_Redirection_Cb serverRedirect, Ewk_History_Title_Update_Cb titleUpdate, Ewk_History_Populate_Visited_Links_Cb populateVisitedLinks, void* data)

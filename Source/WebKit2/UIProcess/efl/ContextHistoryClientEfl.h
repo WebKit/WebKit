@@ -26,16 +26,16 @@
 #ifndef ContextHistoryClientEfl_h
 #define ContextHistoryClientEfl_h
 
-#include "WebContext.h"
 #include "ewk_context.h"
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
 class ContextHistoryClientEfl {
 public:
-    static PassOwnPtr<ContextHistoryClientEfl> create(PassRefPtr<WebContext> context)
+    static PassOwnPtr<ContextHistoryClientEfl> create(WKContextRef context)
     {
         return adoptPtr(new ContextHistoryClientEfl(context));
     }
@@ -45,7 +45,7 @@ public:
     void setCallbacks(Ewk_History_Navigation_Cb, Ewk_History_Client_Redirection_Cb, Ewk_History_Server_Redirection_Cb, Ewk_History_Title_Update_Cb, Ewk_History_Populate_Visited_Links_Cb, void*);
 
 private:
-    explicit ContextHistoryClientEfl(PassRefPtr<WebContext>);
+    explicit ContextHistoryClientEfl(WKContextRef);
 
     static void didNavigateWithNavigationData(WKContextRef, WKPageRef, WKNavigationDataRef, WKFrameRef, const void*);
     static void didPerformClientRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef, WKFrameRef, const void*);
@@ -53,7 +53,7 @@ private:
     static void didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef, WKURLRef, WKFrameRef, const void*);
     static void populateVisitedLinks(WKContextRef, const void*);
 
-    RefPtr<WebContext> m_context;
+    WKRetainPtr<WKContextRef> m_context;
     void* m_userData;
     Ewk_History_Navigation_Cb m_navigate;
     Ewk_History_Client_Redirection_Cb m_clientRedirect;

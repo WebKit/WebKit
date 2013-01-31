@@ -117,7 +117,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     downloadManager->unregisterDownloadJob(wkDownload);
 }
 
-DownloadManagerEfl::DownloadManagerEfl(EwkContext* context)
+DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     : m_context(context)
 {
     WKContextDownloadClient wkDownloadClient;
@@ -133,12 +133,12 @@ DownloadManagerEfl::DownloadManagerEfl(EwkContext* context)
     wkDownloadClient.didFail = didFail;
     wkDownloadClient.didFinish = didFinish;
 
-    WKContextSetDownloadClient(toAPI(context->webContext().get()), &wkDownloadClient);
+    WKContextSetDownloadClient(m_context.get(), &wkDownloadClient);
 }
 
 DownloadManagerEfl::~DownloadManagerEfl()
 {
-    WKContextSetDownloadClient(toAPI(m_context->webContext().get()), 0);
+    WKContextSetDownloadClient(m_context.get(), 0);
 }
 
 void DownloadManagerEfl::registerDownloadJob(WKDownloadRef download, EwkView* viewImpl)

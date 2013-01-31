@@ -28,7 +28,6 @@
 
 #include "WKContextSoup.h"
 #include "WKSoupRequestManager.h"
-#include "WebSoupRequestManagerProxy.h"
 #include "ewk_context_private.h"
 #include "ewk_url_scheme_request_private.h"
 
@@ -66,10 +65,10 @@ void RequestManagerClientEfl::didReceiveURIRequest(WKSoupRequestManagerRef soupR
     handler.callback(schemeRequest.get(), handler.userData);
 }
 
-RequestManagerClientEfl::RequestManagerClientEfl(EwkContext* context)
-    : m_soupRequestManager(WKContextGetSoupRequestManager(toAPI(context->webContext().get())))
+RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
+    : m_soupRequestManager(WKContextGetSoupRequestManager(context))
 {
-    ASSERT(context);
+    ASSERT(m_soupRequestManager);
 
     WKSoupRequestManagerClient wkRequestManagerClient;
     memset(&wkRequestManagerClient, 0, sizeof(WKSoupRequestManagerClient));
@@ -90,7 +89,7 @@ void RequestManagerClientEfl::registerURLSchemeHandler(const String& scheme, Ewk
     ASSERT(callback);
 
     m_urlSchemeHandlers.set(scheme, EwkUrlSchemeHandler(callback, userData));
-    toImpl(m_soupRequestManager.get())->registerURIScheme(scheme);
+    WKSoupRequestManagerRegisterURIScheme(m_soupRequestManager.get(), adoptWK(toCopiedAPI(scheme)).get());
 }
 
 } // namespace WebKit
