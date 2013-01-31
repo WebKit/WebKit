@@ -360,7 +360,7 @@ private:
     virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-
+    virtual bool isFocusableByClickOnLabel() const OVERRIDE;
     virtual bool isInRange() const;
     virtual bool isOutOfRange() const;
 

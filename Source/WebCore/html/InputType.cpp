@@ -547,6 +547,11 @@ bool InputType::hasCustomFocusLogic() const
     return true;
 }
 
+bool InputType::isFocusableByClickOnLabel() const
+{
+    return isMouseFocusable();
+}
+
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return element()->isTextFormControlKeyboardFocusable(event);

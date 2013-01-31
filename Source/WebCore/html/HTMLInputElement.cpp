@@ -1232,6 +1232,11 @@ bool HTMLInputElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || attribute.name() == formactionAttr || HTMLTextFormControlElement::isURLAttribute(attribute);
 }
 
+bool HTMLInputElement::isFocusableByClickOnLabel() const
+{
+    return m_inputType->isFocusableByClickOnLabel();
+}
+
 String HTMLInputElement::defaultValue() const
 {
     return fastGetAttribute(valueAttr);

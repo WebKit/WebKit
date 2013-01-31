@@ -52,6 +52,7 @@ private:
     virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual bool isMouseFocusable() const OVERRIDE;
 
     // DateTimeChooserClient functions:
     virtual void didChooseValue(const String&) OVERRIDE;

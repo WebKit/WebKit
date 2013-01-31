@@ -283,6 +283,11 @@ bool BaseMultipleFieldsDateAndTimeInputType::hasBadInput() const
     return element()->value().isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->anyEditableFieldsHaveValues();
 }
 
+bool BaseMultipleFieldsDateAndTimeInputType::isFocusableByClickOnLabel() const
+{
+    return element()->isTextFormControlFocusable();
+}
+
 bool BaseMultipleFieldsDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     return false;

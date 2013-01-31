@@ -107,6 +107,7 @@ public:
 #endif
 
     virtual bool isLabelable() const { return false; }
+    virtual bool isFocusableByClickOnLabel() const;
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document*, ConstructionType);

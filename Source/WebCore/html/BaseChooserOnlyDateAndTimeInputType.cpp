@@ -131,5 +131,10 @@ void BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
     BaseClickableWithKeyInputType::accessKeyAction(element(), sendMouseEvents);
 }
 
+bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
+{
+    return element()->isTextFormControlFocusable();
+}
+
 }
 #endif
