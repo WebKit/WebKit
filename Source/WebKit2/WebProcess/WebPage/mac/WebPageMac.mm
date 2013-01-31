@@ -52,6 +52,7 @@
 #import <WebCore/NetworkingContext.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PluginDocument.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
@@ -470,6 +471,14 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     Frame* frame = m_page->mainFrame();
     if (!frame)
         return;
+
+    if (frame->document()->isPluginDocument()) {
+        PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+        PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+
+        if (pluginView->performDictionaryLookupAtLocation(floatPoint))
+            return;
+    }
 
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);

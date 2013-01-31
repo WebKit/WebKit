@@ -265,6 +265,8 @@ public:
 
     virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const = 0;
 
+    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
+
 protected:
     Plugin();
 

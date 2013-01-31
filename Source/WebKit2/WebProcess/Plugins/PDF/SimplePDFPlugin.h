@@ -178,6 +178,7 @@ protected:
     virtual bool findString(const String&, WebCore::FindOptions, unsigned) OVERRIDE { return false; }
 
     virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const OVERRIDE;
+    virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE { return false; }
 
     WebCore::IntSize m_scrollOffset;
 

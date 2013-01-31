@@ -939,6 +939,16 @@ bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, u
     return matchCount > 0;
 }
 
+bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
+{
+    PDFSelection* lookupSelection = [m_pdfLayerController.get() getSelectionForWordAtPoint:convertFromPluginToPDFView(IntPoint(point))];
+
+    if ([[lookupSelection string] length])
+        [m_pdfLayerController.get() searchInDictionaryWithSelection:lookupSelection];
+
+    return true;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN)

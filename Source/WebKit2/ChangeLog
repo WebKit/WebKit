@@ -1,3 +1,27 @@
+2013-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Should respond to three-finger tap for dictionary definitions
+        https://bugs.webkit.org/show_bug.cgi?id=108418
+        <rdar://problem/13121409>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Add default implementation of performDictionaryLookupAtLocation.
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add getSelectionForWordAtPoint and searchInDictionaryWithSelection.
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Add performDictionaryLookupAtLocation.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Grab a PDFSelection representing the word encompassing the given point, and
+        throw up a dictionary popover.
+        (WebKit::PDFPlugin::performDictionaryLookupAtLocation):
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:  Add default implementation of performDictionaryLookupAtLocation.
+        * WebProcess/Plugins/Plugin.h:  Add performDictionaryLookupAtLocation.
+        * WebProcess/Plugins/PluginProxy.h: Add default implementation of performDictionaryLookupAtLocation.
+        * WebProcess/Plugins/PluginView.cpp: 
+        (WebKit::PluginView::performDictionaryLookupAtLocation): Forward performDictionaryLookupAtLocation to the plugin.
+        * WebProcess/Plugins/PluginView.h: Add performDictionaryLookupAtLocation.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Intercept performDictionaryLookupAtLocation, and give
+        the main-frame plugin (if it exists) a chance to handle it.
+
 2013-01-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WK2] Cleanup MessageID parameter after r141332

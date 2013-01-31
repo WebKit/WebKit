@@ -89,6 +89,7 @@
 - (PDFSelection *)searchSelection;
 - (void)setSearchSelection:(PDFSelection *)selection;
 - (void)gotoSelection:(PDFSelection *)selection;
+- (PDFSelection *)getSelectionForWordAtPoint:(CGPoint)point;
 
 - (void)copySelection;
 - (void)selectAll;
@@ -99,5 +100,7 @@
 - (BOOL)hudEnabled;
 
 - (CGRect)boundsForAnnotation:(PDFAnnotation *)annotation;
+
+- (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
 
 @end

@@ -100,6 +100,7 @@ public:
     bool shouldAllowScripting();
 
     bool getResourceData(const unsigned char*& bytes, unsigned& length) const;
+    bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
