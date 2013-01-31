@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spell check selects the misspelled word on context click. " +
+            "To test manually, type 'wellcome home.' and context-click on 'wellcome'. " +
+            "The test succeeds when 'wellcome' is selected after the context click.");
+
+initSpellTest("destination", "wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Context click on "wellcome" to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+
+    window.getSelection().removeAllRanges();
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Context click on "home" to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    // Context click should not select correctly spelled words with "win" editing behavior.
+    shouldBeEqualToString("window.getSelection().toString()", "");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "<separator>");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

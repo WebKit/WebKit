@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Punctuation marks should be treated as whitespace: spelling should ignore them. " +
+            "To test manually, type 'wellcome!', select 'wellcome!', and context-click on the selection. " +
+            "The test succeeds when the context menu has spell check suggestions.");
+
+initSpellTest("destination", "wellcome!", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Select the text "wellcome!" with the exclamation mark.
+    var range = document.createRange();
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, 9);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome!");
+
+    // Context click to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome!");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

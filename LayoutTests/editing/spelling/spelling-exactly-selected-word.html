@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spelling should work when the user selects the misspelled word exactly. " +
+            "To test manually, type 'wellcome home.', select 'wellcome', and context-click on the selection. " +
+            "The test succeeds when the context menu shows spelling suggestions.");
+
+initSpellTest("destination", "wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Select the misspelled word without surrounding whitespace or punctuation.
+    var wordRange = document.createRange();
+    wordRange.setStart(textNode, 0);
+    wordRange.setEnd(textNode, 8);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(wordRange);
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
+
+    // Context click on "wellcome" to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+    
+    // Select a correctly spelled word without surrounding whitespace or punctuation.
+    wordRange.setStart(textNode, 9);
+    wordRange.setEnd(textNode, 13);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(wordRange);
+    shouldBeEqualToString("window.getSelection().toString()", "home");
+
+    // Context click on "home" to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    shouldBeEqualToString("window.getSelection().toString()", "home");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "<separator>");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

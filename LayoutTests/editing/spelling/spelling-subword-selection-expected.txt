@@ -1,0 +1,15 @@
+Spelling should be disabled when user selects a part of misspelling. To test manually, type 'wellcome home.' select 'llco', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is ""
+PASS window.getSelection().toString() is "llco"
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is "llco"
+PASS contextMenuElements[contextMenuElements.length - 1] is "<separator>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+wellcome home.

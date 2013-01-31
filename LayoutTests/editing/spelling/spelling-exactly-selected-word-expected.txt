@@ -1,0 +1,18 @@
+Spelling should work when the user selects the misspelled word exactly. To test manually, type 'wellcome home.', select 'wellcome', and context-click on the selection. The test succeeds when the context menu shows spelling suggestions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is ""
+PASS window.getSelection().toString() is "wellcome"
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is "wellcome"
+PASS contextMenuElements[contextMenuElements.length - 1] is "welcome"
+PASS window.getSelection().toString() is "home"
+PASS window.getSelection().toString() is "home"
+PASS contextMenuElements[contextMenuElements.length - 1] is "<separator>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+wellcome home.

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Underscores should be treated as whitespace: spelling should ignore them. " +
+            "To test manually, type 'Hi, _wellcome_ home.', select '_wellcome_', and context-click on the selection. " +
+            "The test succeeds when the context menu has spell check suggestions.");
+
+initSpellTest("destination", "Hi, _wellcome_ home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Select the text "_wellcome_".
+    var rangeWithUnderscores = document.createRange();
+    rangeWithUnderscores.setStart(textNode, 4);
+    rangeWithUnderscores.setEnd(textNode, 14);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(rangeWithUnderscores);
+
+    shouldBeEqualToString("window.getSelection().toString()", "_wellcome_");
+
+    // Context click on "_wellcome_" to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "_wellcome_");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

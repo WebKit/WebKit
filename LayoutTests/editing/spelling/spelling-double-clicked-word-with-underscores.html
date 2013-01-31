@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spelling should work for double-clicked misspelled words with underscores. " +
+            "To test manually, type 'wellcome_ home.', double-click on 'wellcome_', and context-click on the selection. " +
+            "The test succeeds when the context menu shows spell check suggestions.");
+
+initSpellTest("destination", "wellcome_ home.",  function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Double-click the misspelled word without the trailing whitespace.
+    testRunner.setSelectTrailingWhitespaceEnabled(false);
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome_");
+
+    // Context click on "wellcome_" to show the context menu.
+    x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome_");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+
+    window.getSelection().removeAllRanges();
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Double-click the misspelled word with the trailing whitespace.
+    testRunner.setSelectTrailingWhitespaceEnabled(true);
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome_ ");
+
+    // Context click on "wellcome_ " to show the context menu.
+    x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome_ ");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

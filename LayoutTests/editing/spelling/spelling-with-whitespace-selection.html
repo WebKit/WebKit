@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spelling should ignore whitespace. " +
+            "To test manually, type 'hello, wellcome home.', select ' wellcome ', and context-click on the selection. " +
+            "The test succeeds when the context menu has spell check suggestions.");
+
+initSpellTest("destination", "hello, wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+
+    // Select the text " wellcome " with surrounding whitespace.
+    var rangeWithWhitespace = document.createRange();
+    rangeWithWhitespace.setStart(textNode, 6);
+    rangeWithWhitespace.setEnd(textNode, 16);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(rangeWithWhitespace);
+
+    shouldBeEqualToString("window.getSelection().toString()", " wellcome ");
+
+    // Context click on " wellcome " to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", " wellcome ");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "welcome");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

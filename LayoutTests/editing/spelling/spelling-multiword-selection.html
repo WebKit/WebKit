@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spelling should be disabled when user selects multiple words that are not a single misspelling. " +
+            "To test manually, type 'wellcome home.', select 'wellcome home', and context-click on the selection. " +
+            "The test suceeds when the context menu has no spell check suggestions.");
+
+initSpellTest("destination", "wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Select the text "wellcome home".
+    var multiWordRange = document.createRange();
+    multiWordRange.setStart(textNode, 0);
+    multiWordRange.setEnd(textNode, 13);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(multiWordRange);
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome home");
+
+    // Context click to show the context menu.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuElements = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome home");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "<separator>");
+});
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
