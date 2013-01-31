@@ -110,9 +110,11 @@ using namespace std;
 +(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
 @end
 
+#if USE(APPKIT)
 @interface NSSound (Details)
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
+#endif
 
 static void runTest(const string& testPathOrURL);
 
@@ -860,7 +862,9 @@ void dumpRenderTree(int argc, const char *argv[])
     if (forceComplexText)
         [WebView _setAlwaysUsesComplexTextCodePath:YES];
 
+#if USE(APPKIT)
     [NSSound _setAlertType:0];
+#endif
 
     WebView *webView = createWebViewAndOffscreenWindow();
     mainFrame = [webView mainFrame];
