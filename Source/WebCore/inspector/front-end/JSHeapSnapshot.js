@@ -322,12 +322,12 @@ WebInspector.JSHeapSnapshotNode.prototype = {
         var type = this.type();
         switch (type) {
         case "hidden":
-            return WebInspector.UIString("(system)");
+            return "(system)";
         case "object":
         case "native":
             return this.name();
         case "code":
-            return WebInspector.UIString("(compiled code)");
+            return "(compiled code)";
         default:
             return "(" + type + ")";
         }

@@ -89,6 +89,18 @@ InspectorTest.completeTest = function()
     this.sendCommand("Runtime.evaluate", { "expression": "closeTest();"} );
 }
 
+
+/**
+ * @param {string} scriptName
+ */
+InspectorTest.importScript = function(scriptName)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", scriptName, false);
+    xhr.send(null);
+    window.eval(xhr.responseText);
+}
+
 window.addEventListener("message", function(event) {
     try {
         eval(event.data);
