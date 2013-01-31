@@ -4402,6 +4402,13 @@ bool RenderBox::hasRelativeLogicalHeight() const
             || style()->logicalMaxHeight().isPercent();
 }
 
+bool RenderBox::hasViewportPercentageLogicalHeight() const
+{
+    return style()->logicalHeight().isViewportPercentage()
+        || style()->logicalMinHeight().isViewportPercentage()
+        || style()->logicalMaxHeight().isViewportPercentage();
+}
+
 static void markBoxForRelayoutAfterSplit(RenderBox* box)
 {
     // FIXME: The table code should handle that automatically. If not,
