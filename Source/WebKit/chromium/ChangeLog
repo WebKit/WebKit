@@ -1,3 +1,11 @@
+2013-01-31  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        WebViewTest.SetCompositionFromExistingText failing after r141479.
+
+        * tests/WebViewTest.cpp:
+
 2013-01-31  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Rework page scale factor limits initialization
