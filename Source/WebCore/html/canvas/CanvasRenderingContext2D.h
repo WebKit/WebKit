@@ -49,6 +49,9 @@ namespace WebCore {
 class CanvasGradient;
 class CanvasPattern;
 class CanvasStyle;
+#if ENABLE(CANVAS_PATH)
+class DOMPath;
+#endif
 class FloatRect;
 class GraphicsContext;
 class HTMLCanvasElement;
@@ -137,6 +140,10 @@ public:
 
     void beginPath();
 
+#if ENABLE(CANVAS_PATH)
+    PassRefPtr<DOMPath> currentPath();
+    void setCurrentPath(DOMPath*);
+#endif
     void fill(const String& winding = "nonzero");
     void stroke();
     void clip(const String& winding = "nonzero");
@@ -324,7 +331,7 @@ private:
     virtual bool is2d() const OVERRIDE { return true; }
     virtual bool isAccelerated() const OVERRIDE;
 
-    virtual bool transformIsInvertible() { return state().m_invertibleCTM; }
+    virtual bool isTransformInvertible() const { return state().m_invertibleCTM; }
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const OVERRIDE;

@@ -39,9 +39,18 @@ class DOMPath : public RefCounted<DOMPath>, public CanvasPathMethods {
     WTF_MAKE_NONCOPYABLE(DOMPath); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<DOMPath> create() { return adoptRef(new DOMPath); }
+    static PassRefPtr<DOMPath> create(const Path& path) { return adoptRef(new DOMPath(path)); }
+
+    const Path& path() const { return m_path; }
+
     virtual ~DOMPath() { }
 private:
     DOMPath() : CanvasPathMethods() { }
+    DOMPath(const Path& path)
+        : CanvasPathMethods()
+    {
+        m_path = path;
+    }
 };
 }
 #endif

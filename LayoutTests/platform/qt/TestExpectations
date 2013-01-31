@@ -90,6 +90,9 @@ fast/forms/input-in-table-cell-no-value.html
 # ENABLE_GAMEPAD not enabled.
 gamepad/
 
+# Remove from list after enabling CANVAS_PATH
+fast/canvas/canvas-currentPath.html
+
 # ENABLE(INPUT_SPEECH) is disabled.
 fast/speech
 

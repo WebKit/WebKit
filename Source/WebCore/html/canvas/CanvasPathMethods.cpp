@@ -55,7 +55,7 @@ void CanvasPathMethods::moveTo(float x, float y)
 {
     if (!isfinite(x) || !isfinite(y))
         return;
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
     m_path.moveTo(FloatPoint(x, y));
 }
@@ -64,7 +64,7 @@ void CanvasPathMethods::lineTo(float x, float y)
 {
     if (!isfinite(x) || !isfinite(y))
         return;
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
 
     FloatPoint p1 = FloatPoint(x, y);
@@ -78,7 +78,7 @@ void CanvasPathMethods::quadraticCurveTo(float cpx, float cpy, float x, float y)
 {
     if (!isfinite(cpx) || !isfinite(cpy) || !isfinite(x) || !isfinite(y))
         return;
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cpx, cpy));
@@ -92,7 +92,7 @@ void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float 
 {
     if (!isfinite(cp1x) || !isfinite(cp1y) || !isfinite(cp2x) || !isfinite(cp2y) || !isfinite(x) || !isfinite(y))
         return;
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cp1x, cp1y));
@@ -113,7 +113,7 @@ void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, E
         return;
     }
 
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
 
     FloatPoint p1 = FloatPoint(x1, y1);
@@ -144,7 +144,7 @@ void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool 
         return;
     }
 
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
 
     // If 'sa' and 'ea' differ by more than 2Pi, just add a circle starting/ending at 'sa'.
@@ -162,7 +162,7 @@ void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool 
 
 void CanvasPathMethods::rect(float x, float y, float width, float height)
 {
-    if (!transformIsInvertible())
+    if (!isTransformInvertible())
         return;
 
     if (!isfinite(x) || !isfinite(y) || !isfinite(width) || !isfinite(height))

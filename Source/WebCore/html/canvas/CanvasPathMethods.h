@@ -51,8 +51,8 @@ public:
     void arcTo(float x0, float y0, float x1, float y1, float radius, ExceptionCode&);
     void arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode&);
     void rect(float x, float y, float width, float height);
-    
-    virtual bool transformIsInvertible() { return true; }
+
+    virtual bool isTransformInvertible() const { return true; }
 
 protected:
     CanvasPathMethods() { }

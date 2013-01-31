@@ -1369,6 +1369,9 @@ webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
 
+# Remove from list after enabling CANVAS_PATH
+webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
+
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
 
