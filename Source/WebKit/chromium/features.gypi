@@ -204,7 +204,7 @@
           'ENABLE_WEB_AUDIO=1',
         ],
       }],
-      ['OS=="linux"', {
+      ['OS=="linux" or OS=="mac"', {
         'feature_defines': [
           'ENABLE_BINDING_INTEGRITY=1',
         ],
