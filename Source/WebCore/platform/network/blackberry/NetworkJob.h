@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,12 @@ public:
     void handleNotifyStatusReceived(int status, const String& message);
     virtual void notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
-    virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType, BlackBerry::Platform::NetworkRequest::AuthScheme, const char* realm, AuthResult, bool requireCredentials);
+    virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType,
+        BlackBerry::Platform::NetworkRequest::AuthProtocol,
+        BlackBerry::Platform::NetworkRequest::AuthScheme,
+        const char* realm,
+        AuthResult,
+        bool requireCredentials);
     // notifyStringHeaderReceived exists only to resolve ambiguity between char* and String parameters
     void notifyStringHeaderReceived(const String& key, const String& value);
     void handleNotifyHeaderReceived(const String& key, const String& value);
@@ -135,13 +140,16 @@ private:
     bool sendRequestWithCredentials(ProtectionSpaceServerType, ProtectionSpaceAuthenticationScheme, const String& realm, bool requireCredentials = true);
 
     void storeCredentials();
-
+    void storeCredentials(AuthenticationChallenge&);
     void purgeCredentials();
+    void purgeCredentials(AuthenticationChallenge&);
 
     bool isError(int statusCode) const
     {
         return statusCode < 0 || (400 <= statusCode && statusCode < 600);
     }
+
+    void updateCurrentWebChallenge(const AuthenticationChallenge&, bool allowOverwrite = true);
 
 private:
     int m_playerId;

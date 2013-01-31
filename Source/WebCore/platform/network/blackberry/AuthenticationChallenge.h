@@ -39,6 +39,13 @@ public:
     void setStored(bool isStored) { m_isStored = isStored; }
     bool isStored() const { return m_isStored; }
 
+    bool hasCredentials() const
+    {
+        if (isNull())
+            return false;
+        return !proposedCredential().isEmpty();
+    }
+
 private:
     // Describes if attached credentials are stored in CredentialStorage.
     bool m_isStored;

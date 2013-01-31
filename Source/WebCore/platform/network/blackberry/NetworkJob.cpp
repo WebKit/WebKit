@@ -44,6 +44,8 @@
 #include <network/MultipartStream.h>
 #include <network/NetworkStreamFactory.h>
 
+using BlackBerry::Platform::NetworkRequest;
+
 namespace WebCore {
 
 static const int s_redirectMaximum = 10;
@@ -268,32 +270,45 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
-void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, BlackBerry::Platform::NetworkRequest::AuthScheme authScheme, const char* realm, AuthResult result, bool requireCredentials)
+void NetworkJob::notifyAuthReceived(NetworkRequest::AuthType authType, NetworkRequest::AuthProtocol authProtocol, NetworkRequest::AuthScheme authScheme, const char* realm, AuthResult result, bool requireCredentials)
 {
-    using BlackBerry::Platform::NetworkRequest;
-
     ProtectionSpaceServerType serverType;
     switch (authType) {
-    case NetworkRequest::AuthTypeHTTP:
-        serverType = ProtectionSpaceServerHTTP;
+    case NetworkRequest::AuthTypeHost:
+        switch (authProtocol) {
+        case NetworkRequest::AuthProtocolHTTP:
+            serverType = ProtectionSpaceServerHTTP;
+            break;
+        case NetworkRequest::AuthProtocolHTTPS:
+            serverType = ProtectionSpaceServerHTTPS;
+            break;
+        case NetworkRequest::AuthProtocolFTP:
+            serverType = ProtectionSpaceServerFTP;
+            break;
+        case NetworkRequest::AuthProtocolFTPS:
+            serverType = ProtectionSpaceServerFTPS;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
+        }
         break;
-    case NetworkRequest::AuthTypeHTTPS:
-        serverType = ProtectionSpaceServerHTTPS;
-        break;
-    case NetworkRequest::AuthTypeFTP:
-        serverType = ProtectionSpaceServerFTP;
-        break;
-    case NetworkRequest::AuthTypeFTPS:
-        serverType = ProtectionSpaceServerFTPS;
-        break;
-    case NetworkRequest::AuthTypeProxyHTTP:
-        serverType = ProtectionSpaceProxyHTTP;
-        break;
-    case NetworkRequest::AuthTypeProxyHTTPS:
-        serverType = ProtectionSpaceProxyHTTPS;
-        break;
-    case NetworkRequest::AuthTypeProxyFTP:
-        serverType = ProtectionSpaceProxyFTP;
+    case NetworkRequest::AuthTypeProxy:
+        switch (authProtocol) {
+        case NetworkRequest::AuthProtocolHTTP:
+            serverType = ProtectionSpaceProxyHTTP;
+            break;
+        case NetworkRequest::AuthProtocolHTTPS:
+            serverType = ProtectionSpaceProxyHTTPS;
+            break;
+        case NetworkRequest::AuthProtocolFTP:
+        case NetworkRequest::AuthProtocolFTPS:
+            serverType = ProtectionSpaceProxyFTP;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
+        }
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -329,16 +344,12 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         purgeCredentials();
     else {
         // Update the credentials that will be stored to match the scheme that was actually used
-        AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
-        if (!challenge.isNull()) {
+        AuthenticationChallenge& challenge = authType == NetworkRequest::AuthTypeProxy ? m_handle->getInternal()->m_proxyWebChallenge : m_handle->getInternal()->m_hostWebChallenge;
+        if (challenge.hasCredentials()) {
             const ProtectionSpace& oldSpace = challenge.protectionSpace();
             if (oldSpace.authenticationScheme() != scheme && oldSpace.serverType() == serverType) {
                 ProtectionSpace newSpace(oldSpace.host(), oldSpace.port(), oldSpace.serverType(), oldSpace.realm(), scheme);
-                m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(newSpace,
-                                                                                         challenge.proposedCredential(),
-                                                                                         challenge.previousFailureCount(),
-                                                                                         challenge.failureResponse(),
-                                                                                         challenge.error());
+                updateCurrentWebChallenge(AuthenticationChallenge(newSpace, challenge.proposedCredential(), challenge.previousFailureCount(), challenge.failureResponse(), challenge.error()));
             }
         }
         storeCredentials();
@@ -653,12 +664,13 @@ bool NetworkJob::handleRedirect()
         newRequest.clearHTTPContentType();
     }
 
-    if (!m_handle->getInternal()->m_currentWebChallenge.isNull()) {
-        // If this request is challenged, store the credentials now because the credential is correct (otherwise, it won't get here).
-        storeCredentials();
-        // Do not send existing credentials with the new request.
-        m_handle->getInternal()->m_currentWebChallenge.nullify();
-    }
+    // If this request is challenged, store the credentials now (if they are null this will do nothing)
+    storeCredentials();
+
+    // Do not send existing credentials with the new request.
+    m_handle->getInternal()->m_currentWebChallenge.nullify();
+    m_handle->getInternal()->m_proxyWebChallenge.nullify();
+    m_handle->getInternal()->m_hostWebChallenge.nullify();
 
     return startNewJobWithRequest(newRequest, true);
 }
@@ -817,16 +829,16 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     Credential credential;
     if (!requireCredentials) {
         // Don't overwrite any existing credentials with the empty credential
-        if (m_handle->getInternal()->m_currentWebChallenge.isNull())
-            m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
+        updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()), /* allowOverwrite */ false);
     } else if (!(credential = CredentialStorage::get(protectionSpace)).isEmpty()
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
             || !(credential = CredentialStorage::getFromPersistentStorage(protectionSpace)).isEmpty()
 #endif
             ) {
         // First search the CredentialStorage and Persistent Credential Storage
-        m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
-        m_handle->getInternal()->m_currentWebChallenge.setStored(true);
+        AuthenticationChallenge challenge(protectionSpace, credential, 0, m_response, ResourceError());
+        challenge.setStored(true);
+        updateCurrentWebChallenge(challenge);
     } else {
         if (m_handle->firstRequest().targetType() == ResourceRequest::TargetIsFavicon) {
             // The favicon loading is triggerred after the main resource has been loaded
@@ -856,7 +868,8 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             if (!m_frame || !m_frame->page())
                 return false;
 
-            m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
+            // DO overwrite any existing credentials with the empty credential
+            updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()));
 
             m_isAuthenticationChallenging = true;
             updateDeferLoadingCount(1);
@@ -868,7 +881,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
         credential = Credential(username, password, CredentialPersistenceForSession);
 
-        m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
+        updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()));
     }
 
     notifyChallengeResult(newURL, protectionSpace, AuthenticationChallengeSuccess, credential);
@@ -880,7 +893,12 @@ void NetworkJob::storeCredentials()
     if (!m_handle)
         return;
 
-    AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
+    storeCredentials(m_handle->getInternal()->m_hostWebChallenge);
+    storeCredentials(m_handle->getInternal()->m_proxyWebChallenge);
+}
+
+void NetworkJob::storeCredentials(AuthenticationChallenge& challenge)
+{
     if (challenge.isNull())
         return;
 
@@ -922,7 +940,12 @@ void NetworkJob::purgeCredentials()
     if (!m_handle)
         return;
 
-    AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
+    purgeCredentials(m_handle->getInternal()->m_hostWebChallenge);
+    purgeCredentials(m_handle->getInternal()->m_proxyWebChallenge);
+}
+
+void NetworkJob::purgeCredentials(AuthenticationChallenge& challenge)
+{
     if (challenge.isNull())
         return;
 
@@ -979,8 +1002,7 @@ void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& p
     if (result != AuthenticationChallengeSuccess)
         return;
 
-    if (m_handle->getInternal()->m_currentWebChallenge.isNull())
-        m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
+    updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()), /* allowOverwrite */ false);
 
     ResourceRequest newRequest = m_handle->firstRequest();
     newRequest.setURL(url);
@@ -999,6 +1021,19 @@ void NetworkJob::willDetachPage()
 {
     if (m_frame && !m_cancelled)
         cancelJob();
+}
+
+void NetworkJob::updateCurrentWebChallenge(const AuthenticationChallenge& challenge, bool allowOverwrite)
+{
+    if (allowOverwrite || !m_handle->getInternal()->m_currentWebChallenge.hasCredentials())
+        m_handle->getInternal()->m_currentWebChallenge = challenge;
+    if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP || challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTPS) {
+        if (allowOverwrite || !m_handle->getInternal()->m_proxyWebChallenge.hasCredentials())
+            m_handle->getInternal()->m_proxyWebChallenge = challenge;
+    } else {
+        if (allowOverwrite || !m_handle->getInternal()->m_hostWebChallenge.hasCredentials())
+            m_handle->getInternal()->m_hostWebChallenge = challenge;
+    }
 }
 
 } // namespace WebCore
