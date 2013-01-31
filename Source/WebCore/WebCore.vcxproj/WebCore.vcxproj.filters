@@ -5625,6 +5625,9 @@
     <ClCompile Include="..\html\WeekInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp">
+      <Filter>html\parser</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\parser\BackgroundHTMLParser.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>

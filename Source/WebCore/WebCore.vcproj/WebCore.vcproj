@@ -64757,6 +64757,14 @@
 				Name="parser"
 				>
 				<File
+					RelativePath="..\html\parser\BackgroundHTMLInputStream.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\BackgroundHTMLInputStream.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\BackgroundHTMLParser.cpp"
 					>
 				</File>

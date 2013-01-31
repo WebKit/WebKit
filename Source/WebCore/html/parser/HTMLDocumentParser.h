@@ -26,6 +26,7 @@
 #ifndef HTMLDocumentParser_h
 #define HTMLDocumentParser_h
 
+#include "BackgroundHTMLInputStream.h"
 #include "CachedResourceClient.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
@@ -82,7 +83,11 @@ public:
     virtual void resumeScheduledTasks();
 
 #if ENABLE(THREADED_HTML_PARSER)
-    void didReceiveTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream>);
+    struct ParsedChunk {
+        OwnPtr<CompactHTMLTokenStream> tokens;
+        HTMLInputCheckpoint checkpoint;
+    };
+    void didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
 #endif
 
 protected:
@@ -125,7 +130,7 @@ private:
     void startBackgroundParser();
     void stopBackgroundParser();
     void didFailSpeculation(PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
-    void processTokensFromBackgroundParser(PassOwnPtr<CompactHTMLTokenStream>);
+    void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
 #endif
 
     enum SynchronousMode {
@@ -172,7 +177,8 @@ private:
     XSSAuditor m_xssAuditor;
 
 #if ENABLE(THREADED_HTML_PARSER)
-    Deque<OwnPtr<CompactHTMLTokenStream> > m_pendingTokens;
+    OwnPtr<ParsedChunk> m_currentChunk;
+    Deque<OwnPtr<ParsedChunk> > m_speculations;
     WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
 #endif
 

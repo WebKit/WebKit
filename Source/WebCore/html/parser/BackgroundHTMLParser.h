@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_HTML_PARSER)
 
+#include "BackgroundHTMLInputStream.h"
 #include "CompactHTMLToken.h"
 #include "HTMLParserOptions.h"
 #include "HTMLToken.h"
@@ -43,6 +44,7 @@ class BackgroundHTMLParser {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void append(const String&);
+    void resumeFrom(const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
     void finish();
 
     static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
@@ -53,6 +55,7 @@ public:
     static void createPartial(ParserIdentifier, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&);
     static void stopPartial(ParserIdentifier);
     static void appendPartial(ParserIdentifier, const String& input);
+    static void resumeFromPartial(ParserIdentifier, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
     static void finishPartial(ParserIdentifier);
 
 private:
@@ -65,7 +68,7 @@ private:
     void sendTokensToMainThread();
 
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
-    SegmentedString m_input;
+    BackgroundHTMLInputStream m_input;
     OwnPtr<HTMLToken> m_token;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;

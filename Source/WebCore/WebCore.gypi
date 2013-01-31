@@ -3348,6 +3348,8 @@
             'html/canvas/WebGLVertexArrayObjectOES.h',
             'html/parser/BackgroundHTMLParser.cpp',
             'html/parser/BackgroundHTMLParser.h',
+            'html/parser/BackgroundHTMLInputStream.cpp',
+            'html/parser/BackgroundHTMLInputStream.h',
             'html/parser/CSSPreloadScanner.cpp',
             'html/parser/CSSPreloadScanner.h',
             'html/parser/CompactHTMLToken.cpp',

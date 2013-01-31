@@ -4865,6 +4865,7 @@
     <ClCompile Include="..\html\ValidationMessage.cpp" />
     <ClCompile Include="..\html\ValidityState.cpp" />
     <ClCompile Include="..\html\WeekInputType.cpp" />
+    <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp" />
     <ClCompile Include="..\html\parser\BackgroundHTMLParser.cpp" />
     <ClCompile Include="..\html\parser\CompactHTMLToken.cpp" />
     <ClCompile Include="..\html\parser\CSSPreloadScanner.cpp" />
