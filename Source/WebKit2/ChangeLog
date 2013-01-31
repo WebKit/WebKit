@@ -1,3 +1,14 @@
+2013-01-31  Mike West  <mkwst@chromium.org>
+
+        Cleanup: Use ScriptExecutionContext::topOrigin when relevant.
+        https://bugs.webkit.org/show_bug.cgi?id=108476
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::storageBlockingStateChanged):
+        (WebKit::PluginView::isPrivateBrowsingEnabled):
+
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
         Get rid of IncomingMessage

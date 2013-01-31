@@ -47,7 +47,7 @@ PassRefPtr<Database> DOMWindowWebDatabase::openDatabase(DOMWindow* window, const
 
     RefPtr<Database> database = 0;
     DatabaseManager& dbManager = DatabaseManager::manager();
-    if (dbManager.isAvailable() && window->document()->securityOrigin()->canAccessDatabase(window->document()->topDocument()->securityOrigin()))
+    if (dbManager.isAvailable() && window->document()->securityOrigin()->canAccessDatabase(window->document()->topOrigin()))
         database = dbManager.openDatabase(window->document(), name, version, displayName, estimatedSize, creationCallback, ec);
 
     if (!database && !ec)

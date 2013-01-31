@@ -279,10 +279,7 @@ void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const Strin
     GroupSettings* settings = 0;
     if (document->page())
         settings = document->page()->group().groupSettings();
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode,
-                                                                         document->contentSecurityPolicy()->deprecatedHeader(),
-                                                                         document->contentSecurityPolicy()->deprecatedHeaderType(),
-                                                                         document->topDocument()->securityOrigin());
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode, document->contentSecurityPolicy()->deprecatedHeader(), document->contentSecurityPolicy()->deprecatedHeaderType(), document->topOrigin());
     workerThreadCreated(thread);
     thread->start();
     InspectorInstrumentation::didStartWorkerContext(m_scriptExecutionContext.get(), this, scriptURL);

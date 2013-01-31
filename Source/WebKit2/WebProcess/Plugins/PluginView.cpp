@@ -634,7 +634,7 @@ void PluginView::storageBlockingStateChanged()
     if (!m_isInitialized || !m_plugin)
         return;
 
-    bool storageBlockingPolicy = !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin());
+    bool storageBlockingPolicy = !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin());
 
     m_plugin->storageBlockingStateChanged(storageBlockingPolicy);
 }
@@ -1440,7 +1440,7 @@ bool PluginView::isPrivateBrowsingEnabled()
     if (!frame())
         return true;
 
-    if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin()))
+    if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin()))
         return true;
 
     Settings* settings = frame()->settings();
