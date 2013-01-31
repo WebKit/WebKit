@@ -843,6 +843,12 @@ static void prepareConsistentTestingEnvironment()
     allocateGlobalControllers();
     
     makeLargeMallocFailSilently();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    static id assertion = [[[NSProcessInfo processInfo] beginSuspensionOfSystemBehaviors:NSSystemBehaviorCommonBehaviors
+        reason:@"DumpRenderTree should not be subject to process suppression"] retain];
+    ASSERT_UNUSED(assertion, assertion);
+#endif
 }
 
 void dumpRenderTree(int argc, const char *argv[])
