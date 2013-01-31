@@ -41,7 +41,6 @@
 #include "TextEncoding.h"
 #include "V8Binding.h"
 #include "V8RecursionScope.h"
-#include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "v8.h"
@@ -53,6 +52,11 @@
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/AtomicString.h>
+
+#if ENABLE(VIDEO)
+#include "MediaPlayerPrivateChromium.h"
+#include "WebMediaPlayerClientImpl.h"
+#endif
 
 #if OS(DARWIN)
 #include "WebSystemInterface.h"
@@ -143,6 +147,10 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
     // the initialization thread-safe, but given that so many code paths use
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
+
+#if ENABLE(VIDEO)
+    WebCore::MediaPlayerPrivate::setMediaEngineRegisterSelfFunction(WebKit::WebMediaPlayerClientImpl::registerSelf);
+#endif
 }
 
 

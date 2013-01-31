@@ -37,13 +37,16 @@
 
 namespace WebCore {
 
+typedef void MediaEngineRegisterSelf(MediaEngineRegistrar);
+
 class MediaPlayerPrivate {
 public:
     static void registerMediaEngine(MediaEngineRegistrar);
+    static void setMediaEngineRegisterSelfFunction(MediaEngineRegisterSelf*);
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO)
 
 #endif // MediaPlayerPrivateChromium_h

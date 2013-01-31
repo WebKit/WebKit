@@ -33,13 +33,19 @@
 
 #if ENABLE(VIDEO)
 
-#include "WebMediaPlayerClientImpl.h"
-
 namespace WebCore {
+
+static MediaEngineRegisterSelf* s_registerSelfFunction = 0;
 
 void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    WebKit::WebMediaPlayerClientImpl::registerSelf(registrar);
+    ASSERT(s_registerSelfFunction);
+    s_registerSelfFunction(registrar);
+}
+
+void MediaPlayerPrivate::setMediaEngineRegisterSelfFunction(MediaEngineRegisterSelf* registerSelfFunction)
+{
+    s_registerSelfFunction = registerSelfFunction;
 }
 
 } // namespace WebCore

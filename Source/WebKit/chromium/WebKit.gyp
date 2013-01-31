@@ -400,7 +400,6 @@
                 'src/mac/WebSubstringUtil.mm',
                 'src/LocalFileSystemChromium.cpp',
                 'src/LocalizedStrings.cpp',
-                'src/MediaPlayerPrivateChromium.cpp',
                 'src/NotificationPresenterImpl.h',
                 'src/NotificationPresenterImpl.cpp',
                 'src/painting/ContinuousPainter.h',
