@@ -1,3 +1,30 @@
+2013-01-30  Julie Parent  <jparent@chromium.org>
+
+        Add a concept of dashboard parameters that invalidate others
+        https://bugs.webkit.org/show_bug.cgi?id=108362
+
+        Reviewed by Dirk Pranke.
+
+        There are certain parameters to the dashboards, that when selected,
+        invalidate others, such as selecting the test type invalidates the
+        builder group. Add this concept to dashboard_base and allow specifc
+        dashboard to add their own invalidating parameters.
+        
+        The result is that when the user takes a specific action, like changing
+        the test type, the builder would get reset to the default for the new
+        test type, rather than erroring or not matching the query param, as is
+        the current behavior.
+        
+        Also deletes some unused code (selectBuilder).
+        
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (invalidateQueryParameters):
+        (setQueryParameter):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
 2013-01-30  Kiran Muppala  <cmuppala@apple.com>
 
         Disable process suppression of DumpRenderTree on Mac

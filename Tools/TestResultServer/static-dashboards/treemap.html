@@ -293,7 +293,12 @@ function handleValidHashParameter(key, value)
 
 g_defaultDashboardSpecificStateValues = {
     treemapfocus: '',
-}
+};
+
+DB_SPECIFIC_INVALIDATING_PARAMETERS = {
+    'testType': 'builder',
+    'group': 'builder'
+};
 
 function handleQueryParameterChange(params)
 {

@@ -94,6 +94,12 @@ var FAILURE_EXPECTATIONS_ = {
     'Z': 1
 };
 
+// Map of parameter to other parameter it invalidates.
+var CROSS_DB_INVALIDATING_PARAMETERS = {
+    'testType': 'group'
+};
+var DB_SPECIFIC_INVALIDATING_PARAMETERS;
+
 // Keys in the JSON files.
 var WONTFIX_COUNTS_KEY = 'wontfixCounts';
 var FIXABLE_COUNTS_KEY = 'fixableCounts';
@@ -530,19 +536,36 @@ function combinedDashboardState()
     return combinedState;    
 }
 
+function invalidateQueryParameters(queryParamsAsState) {
+    for (var key in queryParamsAsState) {
+        if (key in CROSS_DB_INVALIDATING_PARAMETERS)
+            delete g_crossDashboardState[CROSS_DB_INVALIDATING_PARAMETERS[key]];
+        if (key in DB_SPECIFIC_INVALIDATING_PARAMETERS)
+            delete g_currentState[DB_SPECIFIC_INVALIDATING_PARAMETERS[key]];
+    }
+}
+
 // Sets the page state. Takes varargs of key, value pairs.
 function setQueryParameter(var_args)
 {
-    var state = combinedDashboardState();
+    var queryParamsAsState = {};
     for (var i = 0; i < arguments.length; i += 2) {
         var key = arguments[i];
-        state[key] = arguments[i + 1];
+        queryParamsAsState[key] = arguments[i + 1];
     }
+
+    invalidateQueryParameters(queryParamsAsState);
+
+    var newState = combinedDashboardState();
+    for (var key in queryParamsAsState) {
+        newState[key] = queryParamsAsState[key];
+    }
+
     // Note: We use window.location.hash rather that window.location.replace
     // because of bugs in Chrome where extra entries were getting created
     // when back button was pressed and full page navigation was occuring.
     // FIXME: file those bugs.
-    window.location.hash = permaLinkURLHash(state);
+    window.location.hash = permaLinkURLHash(newState);
 }
 
 function permaLinkURLHash(opt_state)
@@ -686,11 +709,6 @@ function htmlForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNo
     if (opt_extraHtml)
         html += opt_extraHtml;
     return html + '</div>';
-}
-
-function selectBuilder(builder)
-{
-    setQueryParameter('builder', builder);
 }
 
 function loadDashboard(fileName)

@@ -722,3 +722,15 @@ test('TestTrie', 3, function() {
     }, "foo/bar");
     deepEqual(leafsOfPartialTrieTraversal, expectedLeafs);
 });
+
+test('changeTestTypeInvalidatesGroup', 1, function() {
+    resetGlobals();
+    var originalGroup = '@ToT - chromium.org';
+    var originalTestType = 'layout-tests';
+    loadBuildersList(originalGroup, originalTestType);
+    g_crossDashboardState.group = originalGroup;
+    g_crossDashboardState.testType = originalTestType;
+
+    invalidateQueryParameters({'testType': 'ui_tests'});
+    notEqual(g_crossDashboardState.group, originalGroup, "group should have been invalidated");   
+});
