@@ -38,7 +38,7 @@ WheelEventInit::WheelEventInit()
 }
 
 WheelEvent::WheelEvent()
-    : m_granularity(Pixel)
+    : m_deltaMode(DOMDeltaPixel)
     , m_directionInvertedFromDevice(false)
 {
 }
@@ -49,11 +49,9 @@ WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializ
 {
 }
 
-WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
-                       Granularity granularity, PassRefPtr<AbstractView> view,
-                       const IntPoint& screenLocation, const IntPoint& pageLocation,
-                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                       bool directionInvertedFromDevice)
+WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta, DeltaMode deltaMode,
+    PassRefPtr<AbstractView> view, const IntPoint& screenLocation, const IntPoint& pageLocation,
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice)
     : MouseEvent(eventNames().mousewheelEvent,
                  true, true, view, 0, screenLocation.x(), screenLocation.y(),
                  pageLocation.x(), pageLocation.y(),
@@ -63,7 +61,7 @@ WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                  ctrlKey, altKey, shiftKey, metaKey, 0, 0, 0, false)
     , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * TickMultiplier), static_cast<int>(wheelTicks.y() * TickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
-    , m_granularity(granularity)
+    , m_deltaMode(deltaMode)
     , m_directionInvertedFromDevice(directionInvertedFromDevice)
 {
 }
@@ -87,7 +85,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     m_wheelDelta = IntPoint(rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier);
     
     m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
-    m_granularity = Pixel;
+    m_deltaMode = DOMDeltaPixel;
     m_directionInvertedFromDevice = false;
 
     initCoordinates(IntPoint(pageX, pageY));
@@ -111,9 +109,9 @@ bool WheelEvent::isMouseEvent() const
     return false;
 }
 
-inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
+inline static WheelEvent::DeltaMode deltaMode(const PlatformWheelEvent& event)
 {
-    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;
+    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOMDeltaPage : WheelEvent::DOMDeltaPixel;
 }
 
 PassRefPtr<WheelEventDispatchMediator> WheelEventDispatchMediator::create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
@@ -127,8 +125,8 @@ WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent&
         return;
 
     setEvent(WheelEvent::create(FloatPoint(event.wheelTicksX(), event.wheelTicksY()), FloatPoint(event.deltaX(), event.deltaY()),
-                                granularity(event), view, event.globalPosition(), event.position(),
-                                event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.directionInvertedFromDevice()));
+        deltaMode(event), view, event.globalPosition(), event.position(),
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.directionInvertedFromDevice()));
 }
 
 WheelEvent* WheelEventDispatchMediator::event() const

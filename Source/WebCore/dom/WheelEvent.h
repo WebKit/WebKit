@@ -41,7 +41,7 @@ class WheelEvent : public MouseEvent {
 public:
     enum { TickMultiplier = 120 };
 
-    enum Granularity { Pixel, Line, Page };
+    enum DeltaMode { DOMDeltaPixel, DOMDeltaLine, DOMDeltaPage };
 
     static PassRefPtr<WheelEvent> create()
     {
@@ -54,11 +54,11 @@ public:
     }
 
     static PassRefPtr<WheelEvent> create(const FloatPoint& wheelTicks,
-        const FloatPoint& rawDelta, Granularity granularity, PassRefPtr<AbstractView> view,
+        const FloatPoint& rawDelta, DeltaMode deltaMode, PassRefPtr<AbstractView> view,
         const IntPoint& screenLocation, const IntPoint& pageLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice)
     {
-        return adoptRef(new WheelEvent(wheelTicks, rawDelta, granularity, view,
+        return adoptRef(new WheelEvent(wheelTicks, rawDelta, deltaMode, view,
         screenLocation, pageLocation, ctrlKey, altKey, shiftKey, metaKey, directionInvertedFromDevice));
     }
 
@@ -75,7 +75,7 @@ public:
     int wheelDeltaY() const { return m_wheelDelta.y(); }
     int rawDeltaX() const { return m_rawDelta.x(); }
     int rawDeltaY() const { return m_rawDelta.y(); }
-    Granularity granularity() const { return m_granularity; }
+    DeltaMode deltaMode() const { return m_deltaMode; }
 
     bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
     // Needed for Objective-C legacy support
@@ -88,13 +88,13 @@ private:
     WheelEvent();
     WheelEvent(const AtomicString&, const WheelEventInit&);
     WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
-        Granularity, PassRefPtr<AbstractView>,
+        DeltaMode, PassRefPtr<AbstractView>,
         const IntPoint& screenLocation, const IntPoint& pageLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice);
 
     IntPoint m_wheelDelta;
     IntPoint m_rawDelta;
-    Granularity m_granularity;
+    DeltaMode m_deltaMode;
     bool m_directionInvertedFromDevice;
 };
 

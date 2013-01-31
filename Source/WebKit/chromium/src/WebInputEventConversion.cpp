@@ -517,7 +517,7 @@ WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const Widget* widget, const
     // The 120 is from WheelEvent::initWheelEvent().
     wheelTicksX = static_cast<float>(event.wheelDeltaX()) / 120;
     wheelTicksY = static_cast<float>(event.wheelDeltaY()) / 120;
-    scrollByPage = event.granularity() == WheelEvent::Page;
+    scrollByPage = event.deltaMode() == WheelEvent::DOMDeltaPage;
 }
 
 WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
