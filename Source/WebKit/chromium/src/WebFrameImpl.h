@@ -89,6 +89,7 @@ public:
     virtual int contentsPreferredWidth() const;
     virtual int documentElementScrollHeight() const;
     virtual bool hasVisibleContent() const;
+    virtual WebRect visibleContentRect() const;
     virtual bool hasHorizontalScrollbar() const;
     virtual bool hasVerticalScrollbar() const;
     virtual WebView* view() const;

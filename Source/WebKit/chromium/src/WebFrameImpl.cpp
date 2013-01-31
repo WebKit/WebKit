@@ -645,6 +645,11 @@ bool WebFrameImpl::hasVisibleContent() const
     return frame()->view()->visibleWidth() > 0 && frame()->view()->visibleHeight() > 0;
 }
 
+WebRect WebFrameImpl::visibleContentRect() const
+{
+    return frame()->view()->visibleContentRect();
+}
+
 bool WebFrameImpl::hasHorizontalScrollbar() const
 {
     return frame() && frame()->view() && frame()->view()->horizontalScrollbar();

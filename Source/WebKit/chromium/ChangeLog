@@ -1,3 +1,17 @@
+2013-01-30  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Add WebFrame::visibleContentRect()
+        https://bugs.webkit.org/show_bug.cgi?id=108311
+
+        Reviewed by James Robinson.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::visibleContentRect):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2013-01-30  Kentaro Hara  <haraken@chromium.org>
 
         Implement KeyboardEvent constructor
