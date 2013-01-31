@@ -127,6 +127,11 @@
                         'public/mac',
                     ],
                 }],
+                [ 'os_posix==1 and OS!="mac" and OS!="android" and OS!="ios" and linux_use_tcmalloc==1', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/base/allocator/allocator.gyp:allocator',
+                    ],
+                }],
             ],
         }                
     ], # targets
