@@ -244,6 +244,9 @@ public:
     bool isBackingStoreEnabled() const;
     void setBackingStoreEnabled(bool);
 
+    bool applyDeviceScaleFactorInCompositor() const;
+    void setApplyPageScaleFactorInCompositor(bool);
+
 private:
     WebSettingsPrivate* m_private;
     WebSettings();

@@ -1,3 +1,26 @@
+2013-01-31  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Bing Images viewport causes layout "fun"
+        https://bugs.webkit.org/show_bug.cgi?id=108393
+
+        Reviewed by Yong Li.
+        Internally reviewed by Arvid Nilsson and partially reviewed by Konrad Piascik.
+
+        PR: 277855
+        Set applyPageScaleFactorInCompositor settting to false by default.
+        Scale down chrome window rect to density-independent pixels.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::applyDeviceScaleFactorInCompositor):
+        (BlackBerry::WebKit::WebSettings::setApplyPageScaleFactorInCompositor):
+        * Api/WebSettings.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::windowRect):
+
 2013-01-31  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: provide new bundle APIs to allow bundle clients to be notified of pasteboard access.

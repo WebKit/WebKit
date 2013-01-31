@@ -36,6 +36,7 @@ namespace BlackBerry {
 namespace WebKit {
 
 DEFINE_STATIC_LOCAL(String, BlackBerryAllowCrossSiteRequests, (ASCIILiteral("BlackBerryAllowCrossSiteRequests")));
+DEFINE_STATIC_LOCAL(String, BlackBerryApplyDeviceScaleFactorInCompositor, (ASCIILiteral("BlackBerryApplyDeviceScaleFactorInCompositor")));
 DEFINE_STATIC_LOCAL(String, BlackBerryAsynchronousSpellChecking, (ASCIILiteral("BlackBerryAsynchronousSpellChecking")));
 DEFINE_STATIC_LOCAL(String, BlackBerryBackgroundColor, (ASCIILiteral("BlackBerryBackgroundColor")));
 DEFINE_STATIC_LOCAL(String, BlackBerryCookiesEnabled, (ASCIILiteral("BlackBerryCookiesEnabled")));
@@ -179,6 +180,7 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(BlackBerryCredentialAutofillEnabled, false);
     settings->m_private->setBoolean(BlackBerryFormAutofillEnabled, false);
     settings->m_private->setBoolean(BlackBerryAsynchronousSpellChecking, true);
+    settings->m_private->setBoolean(BlackBerryApplyDeviceScaleFactorInCompositor, false);
 
     if (BlackBerry::Platform::DeviceInfo::instance()->isMobile()) {
         WebCore::FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
@@ -840,6 +842,16 @@ double WebSettings::devicePixelRatio() const
 void WebSettings::setDevicePixelRatio(double ratio)
 {
     m_private->setDouble(BlackBerryDevicePixelRatio, ratio);
+}
+
+bool WebSettings::applyDeviceScaleFactorInCompositor() const
+{
+    return m_private->getBoolean(BlackBerryApplyDeviceScaleFactorInCompositor);
+}
+
+void WebSettings::setApplyPageScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
+{
+    m_private->setBoolean(BlackBerryApplyDeviceScaleFactorInCompositor, applyDeviceScaleFactorInCompositor);
 }
 
 } // namespace WebKit

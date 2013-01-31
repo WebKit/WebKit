@@ -6003,6 +6003,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 
     coreSettings->setShouldUseCrossOriginProtocolCheck(!webSettings->allowCrossSiteRequests());
     coreSettings->setWebSecurityEnabled(!webSettings->allowCrossSiteRequests());
+    coreSettings->setApplyPageScaleFactorInCompositor(webSettings->applyDeviceScaleFactorInCompositor());
 
     cookieManager().setPrivateMode(webSettings->isPrivateBrowsingEnabled());
 

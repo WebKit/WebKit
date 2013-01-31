@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +21,11 @@
 #include "PlatformScreen.h"
 
 #include "FloatRect.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "NotImplemented.h"
+#include "Page.h"
+#include "Settings.h"
 #include "Widget.h"
 
 #include <BlackBerryPlatformScreen.h>
@@ -42,14 +47,29 @@ int screenDepth(Widget*)
     return 24;
 }
 
+// Use logical (density-independent) pixels instead of physical screen pixels.
+static FloatRect toUserSpace(FloatRect rect, Widget* widget)
+{
+    if (widget->isFrameView()) {
+        Page* page = static_cast<FrameView*>(widget)->frame()->page();
+        if (page && !page->settings()->applyDeviceScaleFactorInCompositor())
+            rect.scale(1 / page->deviceScaleFactor());
+    }
+    return rect;
+}
+
 FloatRect screenAvailableRect(Widget* widget)
 {
-    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())));
+    if (!widget)
+        return FloatRect();
+    return toUserSpace(IntRect(IntPoint::zero(), IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())), widget);
 }
 
 FloatRect screenRect(Widget* widget)
 {
-    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())));
+    if (!widget)
+        return FloatRect();
+    return toUserSpace(IntRect(IntPoint::zero(), IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())), widget);
 }
 
 void screenColorProfile(ColorProfile&)
