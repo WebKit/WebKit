@@ -51,6 +51,8 @@
 #include "ScriptProfiler.h"
 #include "ScriptState.h"
 
+using WebCore::TypeBuilder::Array;
+using WebCore::TypeBuilder::Canvas::ResourceId;
 using WebCore::TypeBuilder::Canvas::ResourceInfo;
 using WebCore::TypeBuilder::Canvas::ResourceState;
 using WebCore::TypeBuilder::Canvas::TraceLog;
@@ -114,7 +116,7 @@ void InspectorCanvasAgent::disable(ErrorString*)
     m_framesWithUninstrumentedCanvases.clear();
 }
 
-void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
+void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const TraceLogId& traceLogId)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
@@ -148,35 +150,35 @@ void InspectorCanvasAgent::startCapturing(ErrorString* errorString, const FrameI
         module.startCapturing(errorString, traceLogId);
 }
 
-void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String& traceLogId)
+void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const TraceLogId& traceLogId)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.stopCapturing(errorString, traceLogId);
 }
 
-void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TraceLog>& traceLog)
+void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const TraceLogId& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TraceLog>& traceLog)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.traceLog(errorString, traceLogId, startOffset, maxLength, &traceLog);
 }
 
-void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, RefPtr<ResourceState>& result)
+void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const TraceLogId& traceLogId, int stepNo, RefPtr<ResourceState>& result)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
         module.replayTraceLog(errorString, traceLogId, stepNo, &result);
 }
 
-void InspectorCanvasAgent::getResourceInfo(ErrorString* errorString, const String& resourceId, RefPtr<ResourceInfo>& result)
+void InspectorCanvasAgent::getResourceInfo(ErrorString* errorString, const ResourceId& resourceId, RefPtr<ResourceInfo>& result)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, resourceId);
     if (!module.hasNoValue())
         module.resourceInfo(errorString, resourceId, &result);
 }
 
-void InspectorCanvasAgent::getResourceState(ErrorString* errorString, const String& traceLogId, const String& resourceId, RefPtr<ResourceState>& result)
+void InspectorCanvasAgent::getResourceState(ErrorString* errorString, const TraceLogId& traceLogId, const ResourceId& resourceId, RefPtr<ResourceState>& result)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, traceLogId);
     if (!module.hasNoValue())
@@ -302,11 +304,16 @@ void InspectorCanvasAgent::frameNavigated(Frame* frame)
 {
     if (!m_enabled)
         return;
-    if (frame == m_pageAgent->mainFrame())
+    if (frame == m_pageAgent->mainFrame()) {
         m_framesWithUninstrumentedCanvases.clear();
-    else {
+        m_frontend->traceLogsRemoved(0, 0);
+    } else {
         while (frame) {
             m_framesWithUninstrumentedCanvases.remove(frame);
+            if (m_pageAgent->hasIdForFrame(frame)) {
+                String frameId = m_pageAgent->frameId(frame);
+                m_frontend->traceLogsRemoved(&frameId, 0);
+            }
             frame = frame->tree()->traverseNext();
         }
     }

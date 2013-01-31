@@ -3419,6 +3419,14 @@
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing a canvas with a context." }
                 ],
                 "description": "Fired when a canvas context has been created in the given frame. The context may not be instrumented (see hasUninstrumentedCanvases command)."
+            },
+            {
+                "name": "traceLogsRemoved",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "If given, trace logs from the given frame were removed." },
+                    { "name": "traceLogId", "$ref": "TraceLogId", "optional": true, "description": "If given, trace log with the given ID was removed." }
+                ],
+                "description": "Fired when a set of trace logs were removed from the backend. If no parameters are given, all trace logs were removed."
             }
         ]
     },

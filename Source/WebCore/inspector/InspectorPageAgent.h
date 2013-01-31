@@ -165,6 +165,7 @@ public:
     String createIdentifier();
     Frame* frameForId(const String& frameId);
     String frameId(Frame*);
+    bool hasIdForFrame(Frame*) const;
     String loaderId(DocumentLoader*);
     Frame* assertFrame(ErrorString*, const String& frameId);
     String scriptPreprocessor() { return m_scriptPreprocessor; }

@@ -879,6 +879,11 @@ String InspectorPageAgent::frameId(Frame* frame)
     return identifier;
 }
 
+bool InspectorPageAgent::hasIdForFrame(Frame* frame) const
+{
+    return frame && m_frameToIdentifier.contains(frame);
+}
+
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
     if (!loader)

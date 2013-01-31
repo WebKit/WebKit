@@ -5,7 +5,8 @@ InspectorTest.enableCanvasAgent = function(callback)
     var dispatcher = InspectorBackend._domainDispatchers["Canvas"];
     if (!dispatcher) {
         InspectorBackend.registerCanvasDispatcher({
-            contextCreated: function() {}
+            contextCreated: function() {},
+            traceLogsRemoved: function() {}
         });
     }
 

@@ -456,7 +456,8 @@ WebInspector.CanvasProfileType.prototype = {
      */
     _runSingleFrameCapturing: function(profilesPanel)
     {
-        CanvasAgent.captureFrame(this._selectedFrameId(), this._didStartCapturingFrame.bind(this, profilesPanel));
+        var frameId = this._selectedFrameId();
+        CanvasAgent.captureFrame(frameId, this._didStartCapturingFrame.bind(this, profilesPanel, frameId));
     },
 
     /**
@@ -464,7 +465,8 @@ WebInspector.CanvasProfileType.prototype = {
      */
     _startFrameCapturing: function(profilesPanel)
     {
-        CanvasAgent.startCapturing(this._selectedFrameId(), this._didStartCapturingFrame.bind(this, profilesPanel));
+        var frameId = this._selectedFrameId();
+        CanvasAgent.startCapturing(frameId, this._didStartCapturingFrame.bind(this, profilesPanel, frameId));
     },
 
     _stopFrameCapturing: function()
@@ -483,14 +485,15 @@ WebInspector.CanvasProfileType.prototype = {
 
     /**
      * @param {WebInspector.ProfilesPanel} profilesPanel
+     * @param {string|undefined} frameId
      * @param {?Protocol.Error} error
      * @param {CanvasAgent.TraceLogId} traceLogId
      */
-    _didStartCapturingFrame: function(profilesPanel, error, traceLogId)
+    _didStartCapturingFrame: function(profilesPanel, frameId, error, traceLogId)
     {
         if (error || this._lastProfileHeader && this._lastProfileHeader.traceLogId() === traceLogId)
             return;
-        var profileHeader = new WebInspector.CanvasProfileHeader(this, WebInspector.UIString("Trace Log %d", this._nextProfileUid), this._nextProfileUid, traceLogId);
+        var profileHeader = new WebInspector.CanvasProfileHeader(this, WebInspector.UIString("Trace Log %d", this._nextProfileUid), this._nextProfileUid, traceLogId, frameId);
         ++this._nextProfileUid;
         this._lastProfileHeader = profileHeader;
         profilesPanel.addProfileHeader(profileHeader);
@@ -640,6 +643,28 @@ WebInspector.CanvasProfileType.prototype = {
     },
 
     /**
+     * @param {NetworkAgent.FrameId=} frameId
+     * @param {CanvasAgent.TraceLogId=} traceLogId
+     */
+    _traceLogsRemoved: function(frameId, traceLogId)
+    {
+        var sidebarElementsToDelete = [];
+        var sidebarElements = /** @type {!Array.<WebInspector.ProfileSidebarTreeElement>} */ ((this.treeElement && this.treeElement.children) || []);
+        for (var i = 0, n = sidebarElements.length; i < n; ++i) {
+            var header = /** @type {WebInspector.CanvasProfileHeader} */ (sidebarElements[i].profile);
+            if (!header)
+                continue;
+            if (frameId && frameId !== header.frameId())
+                continue;
+            if (traceLogId && traceLogId !== header.traceLogId())
+                continue;
+            sidebarElementsToDelete.push(sidebarElements[i]);
+        }
+        for (var i = 0, n = sidebarElementsToDelete.length; i < n; ++i)
+            sidebarElementsToDelete[i].ondelete();
+    },
+
+    /**
      * @return {string|undefined}
      */
     _selectedFrameId: function()
@@ -675,6 +700,15 @@ WebInspector.CanvasDispatcher.prototype = {
     contextCreated: function(frameId)
     {
         this._profileType._contextCreated(frameId);
+    },
+
+    /**
+     * @param {NetworkAgent.FrameId=} frameId
+     * @param {CanvasAgent.TraceLogId=} traceLogId
+     */
+    traceLogsRemoved: function(frameId, traceLogId)
+    {
+        this._profileType._traceLogsRemoved(frameId, traceLogId);
     }
 }
 
@@ -685,12 +719,14 @@ WebInspector.CanvasDispatcher.prototype = {
  * @param {string} title
  * @param {number=} uid
  * @param {CanvasAgent.TraceLogId=} traceLogId
+ * @param {NetworkAgent.FrameId=} frameId
  */
-WebInspector.CanvasProfileHeader = function(type, title, uid, traceLogId)
+WebInspector.CanvasProfileHeader = function(type, title, uid, traceLogId, frameId)
 {
     WebInspector.ProfileHeader.call(this, type, title, uid);
     /** @type {CanvasAgent.TraceLogId} */
     this._traceLogId = traceLogId || "";
+    this._frameId = frameId;
     this._alive = true;
     this._traceLogSize = 0;
 }
@@ -705,7 +741,16 @@ WebInspector.CanvasProfileHeader.prototype = {
     },
 
     /**
+     * @return {NetworkAgent.FrameId|undefined}
+     */
+    frameId: function()
+    {
+        return this._frameId;
+    },
+
+    /**
      * @override
+     * @return {WebInspector.ProfileSidebarTreeElement}
      */
     createSidebarTreeElement: function()
     {

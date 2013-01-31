@@ -79,15 +79,15 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void dropTraceLog(ErrorString*, const String&);
+    virtual void dropTraceLog(ErrorString*, const TypeBuilder::Canvas::TraceLogId&);
     virtual void hasUninstrumentedCanvases(ErrorString*, bool*);
     virtual void captureFrame(ErrorString*, const TypeBuilder::Network::FrameId*, TypeBuilder::Canvas::TraceLogId*);
     virtual void startCapturing(ErrorString*, const TypeBuilder::Network::FrameId*, TypeBuilder::Canvas::TraceLogId*);
-    virtual void stopCapturing(ErrorString*, const String&);
-    virtual void getTraceLog(ErrorString*, const String&, const int*, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>&);
-    virtual void replayTraceLog(ErrorString*, const String&, int, RefPtr<TypeBuilder::Canvas::ResourceState>&);
-    virtual void getResourceInfo(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::ResourceInfo>&);
-    virtual void getResourceState(ErrorString*, const String&, const String&, RefPtr<TypeBuilder::Canvas::ResourceState>&);
+    virtual void stopCapturing(ErrorString*, const TypeBuilder::Canvas::TraceLogId&);
+    virtual void getTraceLog(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, const int*, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>&);
+    virtual void replayTraceLog(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, int, RefPtr<TypeBuilder::Canvas::ResourceState>&);
+    virtual void getResourceInfo(ErrorString*, const TypeBuilder::Canvas::ResourceId&, RefPtr<TypeBuilder::Canvas::ResourceInfo>&);
+    virtual void getResourceState(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, const TypeBuilder::Canvas::ResourceId&, RefPtr<TypeBuilder::Canvas::ResourceState>&);
 
 private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, InspectorPageAgent*, InjectedScriptManager*);
