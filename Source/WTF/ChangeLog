@@ -1,3 +1,21 @@
+2013-01-31  Mark Lam  <mark.lam@apple.com>
+
+        Abstraction for hiding enum class.
+        https://bugs.webkit.org/show_bug.cgi?id=108533
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h:
+        * wtf/EnumClass.h: Copied from Source/WTF/wtf/TypeSafeEnum.h.
+        (WTF::EnumClass::EnumClass):
+        (WTF::EnumClass::operator==):
+        (WTF::EnumClass::operator!=):
+        (WTF::EnumClass::operator<):
+        (WTF::EnumClass::operator<=):
+        (WTF::EnumClass::operator>):
+        (WTF::EnumClass::operator>=):
+        * wtf/TypeSafeEnum.h: Removed.
+
 2013-01-31  Andreas Kling  <akling@apple.com>
 
         Vector should consult allocator about ideal size when choosing capacity.
