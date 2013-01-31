@@ -51,8 +51,8 @@ ArgumentDecoder::~ArgumentDecoder()
 #if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the mach ports in cases of failure.
 #else
-    Deque<Attachment>::iterator end = m_attachments.end();
-    for (Deque<Attachment>::iterator it = m_attachments.begin(); it != end; ++it)
+    Vector<Attachment>::iterator end = m_attachments.end();
+    for (Vector<Attachment>::iterator it = m_attachments.begin(); it != end; ++it)
         it->dispose();
 #endif
 }

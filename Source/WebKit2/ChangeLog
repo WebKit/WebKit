@@ -1,3 +1,13 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial Unix build fix.
+
+        Use Vector<> instead of Deque<> when iterating
+        over m_attachments in the USE(UNIX_DOMAIN_SOCKETS)
+        case.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+
 2013-01-30  Brian Weinstein  <bweinstein@apple.com>
 
         Add a call to the page UI client to determine if a plug-in should load
