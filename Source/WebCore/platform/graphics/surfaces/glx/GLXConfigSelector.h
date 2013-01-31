@@ -39,7 +39,6 @@ public:
     GLXConfigSelector(Display* xDisplay, bool supportsXRenderExtension)
         : m_pbufferFBConfig(0)
         , m_surfaceContextFBConfig(0)
-        , m_visualInfo(0)
         , m_sharedDisplay(xDisplay)
         , m_supportsXRenderExtension(supportsXRenderExtension)
     {
@@ -49,9 +48,12 @@ public:
     {
     }
 
-    XVisualInfo* visualInfo() const
+    XVisualInfo* visualInfo()
     {
-        return m_visualInfo;
+        if (!surfaceContextConfig())
+            return 0;
+
+        return glXGetVisualFromFBConfig(m_sharedDisplay, m_surfaceContextFBConfig);
     }
 
     GLXFBConfig pBufferContextConfig()
@@ -69,10 +71,9 @@ public:
             };
 
             int numAvailableConfigs;
-            GLXFBConfig* temp = glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs);
+            OwnPtrX11<GLXFBConfig> temp(glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs));
             if (numAvailableConfigs)
                 m_pbufferFBConfig = temp[0];
-            XFree(temp);
         }
 
         return m_pbufferFBConfig;
@@ -80,23 +81,8 @@ public:
 
     GLXFBConfig surfaceContextConfig()
     {
-        if (!m_surfaceContextFBConfig) {
-            static int attributes[] = {
-                GLX_LEVEL, 0,
-                GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-                GLX_RENDER_TYPE,   GLX_RGBA_BIT,
-                GLX_RED_SIZE,      1,
-                GLX_GREEN_SIZE,    1,
-                GLX_BLUE_SIZE,     1,
-                GLX_ALPHA_SIZE,    1,
-                GLX_DEPTH_SIZE,    1,
-                GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
-                GLX_DOUBLEBUFFER,  True,
-                None
-            };
-
-            m_surfaceContextFBConfig = createConfig(attributes);
-        }
+        if (!m_surfaceContextFBConfig)
+            createSurfaceConfig();
 
         return m_surfaceContextFBConfig;
     }
@@ -108,56 +94,57 @@ public:
     }
 
 private:
-    GLXFBConfig createConfig(const int attributes[])
+    void createSurfaceConfig()
     {
+        static int attributes[] = {
+            GLX_LEVEL, 0,
+            GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+            GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+            GLX_RED_SIZE,      1,
+            GLX_GREEN_SIZE,    1,
+            GLX_BLUE_SIZE,     1,
+            GLX_ALPHA_SIZE,    1,
+            GLX_DEPTH_SIZE,    1,
+            GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+            GLX_DOUBLEBUFFER,  True,
+            None
+        };
+
         int numAvailableConfigs;
-        m_visualInfo = 0;
-        GLXFBConfig* temp = glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs);
+        OwnPtrX11<GLXFBConfig> temp(glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs));
 
-        if (!numAvailableConfigs)
-            return 0;
+        if (!numAvailableConfigs) {
+            m_surfaceContextFBConfig = 0;
+            return;
+        }
 
-        GLXFBConfig selectedConfig = 0;
-        bool found = false;
-
+        OwnPtrX11<XVisualInfo> scopedVisualInfo;
         for (int i = 0; i < numAvailableConfigs; ++i) {
-            if (m_visualInfo)
-                XFree(m_visualInfo);
-
-            m_visualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[i]);
-            if (!m_visualInfo)
+            scopedVisualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[i]);
+            if (!scopedVisualInfo.get())
                 continue;
 #if USE(GRAPHICS_SURFACE)
             if (m_supportsXRenderExtension) {
-                XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedDisplay, m_visualInfo->visual);
+                XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedDisplay, scopedVisualInfo->visual);
                 if (format && format->direct.alphaMask > 0) {
-                    selectedConfig = temp[i];
-                    found = true;
+                    m_surfaceContextFBConfig = temp[i];
                     break;
                 }
-            } else if (m_visualInfo->depth == 32) {
-#else
-            if (m_visualInfo->depth == 32) {
+            }
 #endif
-                selectedConfig = temp[i];
-                found = true;
+            if (!m_surfaceContextFBConfig && scopedVisualInfo->depth == 32) {
+                m_surfaceContextFBConfig = temp[i];
+                break;
             }
         }
 
         // Did not find any visual supporting alpha, select the first available config.
-        if (!found) {
-            selectedConfig = temp[0];
-            m_visualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[0]);
-        }
-
-        XFree(temp);
-
-        return selectedConfig;
+        if (!m_surfaceContextFBConfig)
+            m_surfaceContextFBConfig = temp[0];
     }
 
     GLXFBConfig m_pbufferFBConfig;
     GLXFBConfig m_surfaceContextFBConfig;
-    XVisualInfo* m_visualInfo;
     Display* m_sharedDisplay;
     bool m_supportsXRenderExtension;
 };

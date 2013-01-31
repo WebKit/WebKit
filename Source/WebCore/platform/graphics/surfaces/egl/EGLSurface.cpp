@@ -57,12 +57,7 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
         return;
     }
 
-    if (!m_nativeResource->setVisualId(visualId)) {
-        destroy();
-        return;
-    }
-
-    m_nativeResource->createOffscreenWindow(&m_bufferHandle);
+    m_nativeResource->createOffScreenWindow(&m_bufferHandle, visualId);
 
     if (!m_bufferHandle) {
         destroy();

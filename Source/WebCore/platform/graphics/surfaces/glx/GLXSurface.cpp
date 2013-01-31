@@ -45,14 +45,14 @@ GLXTransportSurface::GLXTransportSurface()
     }
 
     m_configSelector = adoptPtr(new GLXConfigSelector(m_sharedDisplay, m_nativeResource->isXRenderExtensionSupported()));
+    OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo());
 
-    if (!configuration()) {
+    if (!visInfo.get()) {
         destroy();
         return;
     }
 
-    m_nativeResource->setVisualInfo(m_configSelector->visualInfo());
-    m_nativeResource->createOffscreenWindow(&m_bufferHandle);
+    m_nativeResource->createOffScreenWindow(&m_bufferHandle, *visInfo.get());
 
     if (!m_bufferHandle) {
         destroy();

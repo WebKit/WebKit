@@ -34,17 +34,12 @@ SharedX11Resources* SharedX11Resources::m_staticSharedResource = 0;
 
 X11OffScreenWindow::X11OffScreenWindow()
     : m_sharedResources(0)
-    , m_configVisualInfo(0)
 {
     m_sharedResources = SharedX11Resources::create();
 }
 
 X11OffScreenWindow::~X11OffScreenWindow()
 {
-    if (m_configVisualInfo) {
-        XFree(m_configVisualInfo);
-        m_configVisualInfo = 0;
-    }
 }
 
 void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, const uint32_t windowId)
@@ -53,7 +48,8 @@ void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, const uint32_t win
     XFlush(m_sharedResources->x11Display());
 }
 
-void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
+#if USE(GRAPHICS_SURFACE)
+void X11OffScreenWindow::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& visInfo, const IntSize& size)
 {
     if (!m_sharedResources)
         return;
@@ -62,7 +58,7 @@ void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
     if (!display)
         return;
 
-    if (!m_configVisualInfo) {
+    if (!visInfo.visual) {
         LOG_ERROR("Failed to find valid XVisual.");
         return;
     }
@@ -71,13 +67,14 @@ void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
     if (!xWindow)
         return;
 
-    Colormap cmap = XCreateColormap(display, xWindow, m_configVisualInfo->visual, AllocNone);
+    Colormap cmap = XCreateColormap(display, xWindow, visInfo.visual, AllocNone);
     XSetWindowAttributes attribute;
     attribute.background_pixel = WhitePixel(display, 0);
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
+    attribute.event_mask = ResizeRedirectMask;
     uint32_t tempHandleId;
-    tempHandleId = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, m_configVisualInfo->depth, InputOutput, m_configVisualInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
+    tempHandleId = XCreateWindow(display, xWindow, 0, 0, size.width(), size.height(), 0, visInfo.depth, InputOutput, visInfo.visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
     if (!tempHandleId) {
         LOG_ERROR("Failed to create offscreen window.");
@@ -86,12 +83,51 @@ void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
 
     XSetWindowBackgroundPixmap(display, tempHandleId, 0);
     XCompositeRedirectWindow(display, tempHandleId, CompositeRedirectManual);
+    XMapWindow(display, tempHandleId);
     *handleId = tempHandleId;
-
-    if (m_sharedResources->isXRenderExtensionSupported())
-        XMapWindow(display, tempHandleId);
-
 }
+
+#if USE(EGL)
+void X11OffScreenWindow::createOffScreenWindow(uint32_t* handleId, const EGLint id, const IntSize& size)
+{
+    VisualID visualId = static_cast<VisualID>(id);
+
+    if (!visualId)
+        return;
+
+    // EGL has suggested a visual id, so get the rest of the visual info for that id.
+    XVisualInfo visualInfoTemplate;
+    memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
+    visualInfoTemplate.visualid = visualId;
+    int matchingCount = 0;
+    OwnPtrX11<XVisualInfo> matchingVisuals = adoptPtr(XGetVisualInfo(m_sharedResources->x11Display(), VisualIDMask, &visualInfoTemplate, &matchingCount));
+    XVisualInfo* foundVisual = 0;
+
+    if (matchingVisuals) {
+        for (int i = 0; i< matchingCount; i++) {
+            XVisualInfo* temp = &matchingVisuals[i];
+
+            if (m_sharedResources->isXRenderExtensionSupported()) {
+                XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedResources->x11Display(), temp->visual);
+                if (format && format->direct.alphaMask > 0) {
+                    foundVisual = temp;
+                    break;
+                }
+            }
+
+            if (temp->depth == 32) {
+                foundVisual = temp;
+                break;
+            }
+        }
+
+        if (foundVisual)
+            createOffScreenWindow(handleId, *foundVisual, size);
+    }
+}
+#endif
+
+#endif
 
 void X11OffScreenWindow::destroyWindow(const uint32_t windowId)
 {
@@ -108,65 +144,6 @@ void X11OffScreenWindow::destroyWindow(const uint32_t windowId)
 Display* X11OffScreenWindow::nativeSharedDisplay() const
 {
     return m_sharedResources->x11Display();
-}
-
-#if USE(EGL)
-bool X11OffScreenWindow::setVisualId(const EGLint id)
-{
-    VisualID visualId = static_cast<VisualID>(id);
-
-    if (!visualId)
-        return false;
-
-    // EGL has suggested a visual id, so get the rest of the visual info for that id.
-    XVisualInfo visualInfoTemplate;
-    memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
-    visualInfoTemplate.visualid = visualId;
-
-    XVisualInfo* chosenVisualInfo;
-    int matchingCount = 0;
-    chosenVisualInfo = XGetVisualInfo(m_sharedResources->x11Display(), VisualIDMask, &visualInfoTemplate, &matchingCount);
-    if (chosenVisualInfo) {
-#if USE(GRAPHICS_SURFACE)
-        if (m_sharedResources->isXRenderExtensionSupported()) {
-            XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedResources->x11Display(), chosenVisualInfo->visual);
-            if (format && format->direct.alphaMask > 0) {
-                m_configVisualInfo = chosenVisualInfo;
-                return true;
-            }
-        }
-#endif
-        if (chosenVisualInfo->depth == 32) {
-            m_configVisualInfo = chosenVisualInfo;
-            return true;
-        }
-    }
-
-    if (!m_configVisualInfo) {
-        memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
-        XVisualInfo* matchingVisuals;
-        int matchingCount = 0;
-
-        visualInfoTemplate.depth = chosenVisualInfo->depth;
-        matchingVisuals = XGetVisualInfo(m_sharedResources->x11Display(), VisualDepthMask, &visualInfoTemplate, &matchingCount);
-
-        if (matchingVisuals) {
-            m_configVisualInfo = &matchingVisuals[0];
-            XFree(matchingVisuals);
-            return true;
-        }
-    }
-
-    if (!m_configVisualInfo)
-        LOG_ERROR("Failed to retrieve XVisual Info.");
-
-    return false;
-}
-#endif
-
-void X11OffScreenWindow::setVisualInfo(XVisualInfo* visInfo)
-{
-    m_configVisualInfo = visInfo;
 }
 
 bool X11OffScreenWindow::isXRenderExtensionSupported() const

@@ -29,13 +29,18 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "IntRect.h"
+#include "OwnPtrX11.h"
 
-#include <opengl/GLDefs.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 #if USE(GRAPHICS_SURFACE)
+
+#if USE(EGL)
+#include <opengl/GLDefs.h>
+#endif
+
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
 #endif
@@ -143,19 +148,19 @@ class X11OffScreenWindow {
 public:
     X11OffScreenWindow();
     virtual ~X11OffScreenWindow();
-    void createOffscreenWindow(uint32_t*);
+#if USE(GRAPHICS_SURFACE)
+    void createOffScreenWindow(uint32_t*, const XVisualInfo&, const IntSize& = IntSize(1, 1));
+#if USE(EGL)
+    void createOffScreenWindow(uint32_t*, const EGLint, const IntSize& = IntSize(1, 1));
+#endif
+#endif
     void destroyWindow(const uint32_t);
     void reSizeWindow(const IntRect&, const uint32_t);
     Display* nativeSharedDisplay() const;
-#if USE(EGL)
-    bool setVisualId(const EGLint);
-#endif
-    void setVisualInfo(XVisualInfo*);
     bool isXRenderExtensionSupported() const;
 
 private:
     RefPtr<SharedX11Resources> m_sharedResources;
-    XVisualInfo* m_configVisualInfo;
 };
 
 }
