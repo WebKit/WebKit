@@ -27,7 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-
+import os
+import platform
+import sys
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.system.executive import ScriptError
@@ -77,17 +79,21 @@ class RunTests(AbstractStep):
             except ScriptError, e:
                 _log.info("Error running webkit_unit_tests: %s" % e.message_with_output())
 
+
         _log.info("Running run-webkit-tests")
         args = self._tool.deprecated_port().run_webkit_tests_command()
         if self._options.non_interactive:
             args.extend([
                 "--no-new-test-results",
                 "--no-show-results",
-                "--skip-failing-tests",
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
                 "--quiet",
             ])
 
+        if sys.platform != "cygwin":
+            args.append("--skip-failing-test")
         if self._options.quiet:
             args.append("--quiet")
+
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
+        
