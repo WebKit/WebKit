@@ -86,7 +86,13 @@ class TestRunner:
 
     def __init__(self, options, tests=[]):
         self._options = options
-        self._programs_path = common.build_path("Programs")
+
+        if options.debug:
+            build_type = 'Debug'
+        else:
+            build_type = 'Release'
+
+        self._programs_path = common.build_path(build_type, "Programs")
         self._tests = self._get_tests(tests)
         self._skipped_tests = TestRunner.SKIPPED
         if not sys.stdout.isatty():

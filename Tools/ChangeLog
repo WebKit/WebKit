@@ -1,3 +1,18 @@
+2013-01-31  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] run-gtk-tests does not respect the -d argument
+        https://bugs.webkit.org/show_bug.cgi?id=107822
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): use the value for the debug option to decide what
+        build_type to request a path for.
+        * gtk/common.py:
+        (get_build_path): now accepts a build_type argument instead of trying both
+        Release and Debug in order, defaults to release.
+        (build_path): takes and passes a build_type argument, no default value.
+
 2013-01-31  Christophe Dumez  <dchris@gmail.com>
 
         Update Christophe Dumez's email address
