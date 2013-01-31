@@ -52,6 +52,7 @@ class CoordinatedLayerInfo;
 
 class LayerTreeRendererClient {
 public:
+    virtual ~LayerTreeRendererClient() { }
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void animationFrameReady() = 0;
 #endif
