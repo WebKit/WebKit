@@ -292,6 +292,9 @@ typedef bool (*WKBundlePageShouldDeleteRangeCallback)(WKBundlePageRef page, WKBu
 typedef bool (*WKBundlePageShouldChangeSelectedRange)(WKBundlePageRef page, WKBundleRangeHandleRef fromRange, WKBundleRangeHandleRef toRange, WKAffinityType affinity, bool stillSelecting, const void* clientInfo);
 typedef bool (*WKBundlePageShouldApplyStyle)(WKBundlePageRef page, WKBundleCSSStyleDeclarationRef style, WKBundleRangeHandleRef range, const void* clientInfo);
 typedef void (*WKBundlePageEditingNotification)(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo);
+typedef void (*WKBundlePageWillWriteToPasteboard)(WKBundlePageRef page, WKBundleRangeHandleRef range,  const void* clientInfo);
+typedef void (*WKBundlePageGetPasteboardDataForRange)(WKBundlePageRef page, WKBundleRangeHandleRef range, WKArrayRef* pasteboardTypes, WKArrayRef* pasteboardData, const void* clientInfo);
+typedef void (*WKBundlePageDidWriteToPasteboard)(WKBundlePageRef page, const void* clientInfo);
 
 struct WKBundlePageEditorClient {
     int                                                                 version;
@@ -307,10 +310,14 @@ struct WKBundlePageEditorClient {
     WKBundlePageEditingNotification                                     didEndEditing;
     WKBundlePageEditingNotification                                     didChange;
     WKBundlePageEditingNotification                                     didChangeSelection;
+    // Version 1.
+    WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
+    WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
+    WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
 };
 typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
 
-enum { kWKBundlePageEditorClientCurrentVersion = 0 };
+enum { kWKBundlePageEditorClientCurrentVersion = 1 };
 
 // Form client
 typedef void (*WKBundlePageTextFieldDidBeginEditingCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKBundleFrameRef frame, const void* clientInfo);

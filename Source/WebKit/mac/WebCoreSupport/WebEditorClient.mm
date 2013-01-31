@@ -311,6 +311,16 @@ void WebEditorClient::didWriteSelectionToPasteboard()
     [[m_webView _editingDelegateForwarder] webView:m_webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
+void WebEditorClient::willWriteSelectionToPasteboard(WebCore::Range*)
+{
+    // Not implemented WebKit, only WebKit2.
+}
+
+void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData)
+{
+    // Not implemented WebKit, only WebKit2.
+}
+
 void WebEditorClient::didSetSelectionTypesForPasteboard()
 {
     [[m_webView _editingDelegateForwarder] webView:m_webView didSetSelectionTypesForPasteboard:[NSPasteboard generalPasteboard]];

@@ -182,10 +182,19 @@ void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, b
     if (converter)
         attributedString = [converter.get() attributedString];
     
-    const Vector<String> types = !pasteboardTypes.isEmpty() ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+    Vector<String> types = !pasteboardTypes.isEmpty() ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+
+    Vector<String> clientTypes;
+    Vector<RefPtr<SharedBuffer> > clientData;
+    frame->editor()->client()->getClientPasteboardDataForRange(frame->editor()->selectedRange().get(), clientTypes, clientData);
+    types.append(clientTypes);
+
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
-    
+
+    for (size_t i = 0; i < clientTypes.size(); ++i)
+        platformStrategies()->pasteboardStrategy()->setBufferForType(clientData[i], clientTypes[i], m_pasteboardName);
+
     // Put HTML on the pasteboard.
     if (types.contains(WebArchivePboardType))
         platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, WebArchivePboardType), WebArchivePboardType, m_pasteboardName);

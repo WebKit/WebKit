@@ -57,6 +57,8 @@ public:
         TypeURLRequest,
         TypeURLResponse,
         TypeUserContentURLPattern,
+        TypeWebArchive,
+        TypeWebArchiveResource,
 
         // Base numeric types
         TypeBoolean,

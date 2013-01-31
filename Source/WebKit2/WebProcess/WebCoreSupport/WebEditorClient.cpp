@@ -220,7 +220,17 @@ void WebEditorClient::didEndEditing()
 
 void WebEditorClient::didWriteSelectionToPasteboard()
 {
-    notImplemented();
+    m_page->injectedBundleEditorClient().didWriteToPasteboard(m_page);
+}
+
+void WebEditorClient::willWriteSelectionToPasteboard(Range* range)
+{
+    m_page->injectedBundleEditorClient().willWriteToPasteboard(m_page, range);
+}
+
+void WebEditorClient::getClientPasteboardDataForRange(Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer> >& pasteboardData)
+{
+    m_page->injectedBundleEditorClient().getPasteboardDataForRange(m_page, range, pasteboardTypes, pasteboardData);
 }
 
 void WebEditorClient::didSetSelectionTypesForPasteboard()

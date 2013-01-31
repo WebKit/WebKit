@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "WKBundlePage.h"
 #include <WebCore/EditorInsertAction.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/TextAffinity.h>
 #include <wtf/Forward.h>
 
@@ -36,6 +37,7 @@ namespace WebCore {
     class CSSStyleDeclaration;
     class Node;
     class Range;
+    class SharedBuffer;
 }
 
 namespace WebKit {
@@ -56,6 +58,9 @@ public:
     void didEndEditing(WebPage*, StringImpl* notificationName);
     void didChange(WebPage*, StringImpl* notificationName);
     void didChangeSelection(WebPage*, StringImpl* notificationName);
+    void willWriteToPasteboard(WebPage*, WebCore::Range*);
+    void getPasteboardDataForRange(WebPage*, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData);
+    void didWriteToPasteboard(WebPage*);
 };
 
 } // namespace WebKit

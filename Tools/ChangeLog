@@ -1,3 +1,29 @@
+2013-01-31  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: provide new bundle APIs to allow bundle clients to be notified of pasteboard access.
+        https://bugs.webkit.org/show_bug.cgi?id=108396.
+        <rdar://problem/12920461>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Adding new WebKit2 test with relevant bundle, to test the new APIs.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PasteboardNotifications.mm: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::setInjectedBundleClient):
+        * TestWebKitAPI/Tests/WebKit2/PasteboardNotifications_Bundle.cpp: Added.
+        (PasteboardNotificationsTest):
+        (TestWebKitAPI::willWriteToPasteboard):
+        (TestWebKitAPI::getPasteboardDataForRange):
+        (TestWebKitAPI::didWriteToPasteboard):
+        (TestWebKitAPI::PasteboardNotificationsTest::PasteboardNotificationsTest):
+        (TestWebKitAPI::PasteboardNotificationsTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/execCopy.html: Added.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: Updated to reflect
+        changes in InjectedBundleEditorClient.
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2013-01-31  Rouslan Solomakhin  <rouslan@chromium.org>
 
         [Chromium] Add two-word misspelling to mock spellchecker

@@ -52,6 +52,7 @@ class HTMLElement;
 class KeyboardEvent;
 class Node;
 class Range;
+class SharedBuffer;
 class SpellChecker;
 class StylePropertySet;
 class TextCheckerClient;
@@ -89,7 +90,9 @@ public:
     virtual void respondToChangedContents() = 0;
     virtual void respondToChangedSelection(Frame*) = 0;
     virtual void didEndEditing() = 0;
+    virtual void willWriteSelectionToPasteboard(Range*) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
+    virtual void getClientPasteboardDataForRange(Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer> >& pasteboardData) = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
     
     virtual void registerUndoStep(PassRefPtr<UndoStep>) = 0;

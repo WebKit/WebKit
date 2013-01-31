@@ -26,10 +26,13 @@
 #include "config.h"
 #include "InjectedBundlePageEditorClient.h"
 
+#include "ImmutableArray.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WKString.h"
+#include "WebData.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -123,6 +126,56 @@ void InjectedBundlePageEditorClient::didChangeSelection(WebPage* page, StringImp
 {
     if (m_client.didChangeSelection)
         m_client.didChangeSelection(toAPI(page), toAPI(notificationName), m_client.clientInfo);
+}
+
+void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage* page, Range* range)
+{
+    if (m_client.willWriteToPasteboard) {
+        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
+        m_client.willWriteToPasteboard(toAPI(page), toAPI(rangeHandle.get()), m_client.clientInfo);
+    }
+}
+
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer> >& pasteboardData)
+{
+    if (m_client.getPasteboardDataForRange) {
+        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
+        WKArrayRef types = 0;
+        WKArrayRef data = 0;
+        m_client.getPasteboardDataForRange(toAPI(page), toAPI(rangeHandle.get()), &types, &data, m_client.clientInfo);
+        RefPtr<ImmutableArray> typesArray = adoptRef(toImpl(types));
+        RefPtr<ImmutableArray> dataArray = adoptRef(toImpl(data));
+
+        pasteboardTypes.clear();
+        pasteboardData.clear();
+
+        if (!typesArray || !dataArray)
+            return;
+
+        ASSERT(typesArray->size() == dataArray->size());
+
+        size_t size = typesArray->size();
+        for (size_t i = 0; i < size; ++i) {
+            WebString* type = typesArray->at<WebString>(i);
+            if (type)
+                pasteboardTypes.append(type->string());
+        }
+
+        size = dataArray->size();
+        for (size_t i = 0; i < size; ++i) {
+            WebData* item = dataArray->at<WebData>(i);
+            if (item) {
+                RefPtr<SharedBuffer> buffer = SharedBuffer::create(item->bytes(), item->size());
+                pasteboardData.append(buffer);
+            }
+        }
+    }
+}
+
+void InjectedBundlePageEditorClient::didWriteToPasteboard(WebPage* page)
+{
+    if (m_client.didWriteToPasteboard)
+        m_client.didWriteToPasteboard(toAPI(page), m_client.clientInfo);
 }
 
 } // namespace WebKit

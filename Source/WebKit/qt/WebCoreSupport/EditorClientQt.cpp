@@ -233,6 +233,14 @@ void EditorClientQt::didWriteSelectionToPasteboard()
 {
 }
 
+void EditorClientQt::willWriteSelectionToPasteboard(Range*)
+{
+}
+
+void EditorClientQt::getClientPasteboardDataForRange(Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer> >& pasteboardData)
+{
+}
+
 void EditorClientQt::didSetSelectionTypesForPasteboard()
 {
 }

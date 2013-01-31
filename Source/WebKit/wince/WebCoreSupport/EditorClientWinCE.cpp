@@ -139,6 +139,16 @@ void EditorClientWinCE::didWriteSelectionToPasteboard()
     notImplemented();
 }
 
+void EditorClientWinCE::willWriteSelectionToPasteboard(WebCore::Range*)
+{
+    notImplemented();
+}
+
+void EditorClientWinCE::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData)
+{
+    notImplemented();
+}
+
 void EditorClientWinCE::didSetSelectionTypesForPasteboard()
 {
     notImplemented();

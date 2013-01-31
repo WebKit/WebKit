@@ -77,6 +77,11 @@ const size_t APIClientTraits<WKBundlePageFormClient>::interfaceSizesByVersion[] 
     sizeof(WKBundlePageFormClient)
 };
 
+const size_t APIClientTraits<WKBundlePageEditorClient>::interfaceSizesByVersion[] = {
+    offsetof(WKBundlePageEditorClient, willWriteToPasteboard),
+    sizeof(WKBundlePageEditorClient)
+};
+
 const size_t APIClientTraits<WKBundlePageUIClient>::interfaceSizesByVersion[] = {
     offsetof(WKBundlePageUIClient, didReachApplicationCacheOriginQuota),
     sizeof(WKBundlePageUIClient)

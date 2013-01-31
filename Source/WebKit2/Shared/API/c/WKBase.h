@@ -78,6 +78,8 @@ typedef const struct OpaqueWKURL* WKURLRef;
 typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
 typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
 typedef const struct OpaqueWKUserContentURLPattern* WKUserContentURLPatternRef;
+typedef const struct OpaqueWKWebArchive* WKWebArchiveRef;
+typedef const struct OpaqueWKWebArchiveResource* WKWebArchiveResourceRef;
 
 enum WKUserContentInjectedFrames {
     kWKInjectInAllFrames,

@@ -1,3 +1,18 @@
+2013-01-31  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: provide new bundle APIs to allow bundle clients to be notified of pasteboard access.
+        https://bugs.webkit.org/show_bug.cgi?id=108396.
+        <rdar://problem/12920461>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds stub implementation for WebKit of the new EditorClient methods.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::willWriteSelectionToPasteboard):
+        (WebKit::EditorClientImpl::getClientPasteboardDataForRange):
+        * src/EditorClientImpl.h:
+
 2013-01-31  Chris Hopman  <cjhopman@chromium.org>
 
         [chromium] Make selection handling work in applyPageScaleInCompositor mode

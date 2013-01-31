@@ -62,6 +62,8 @@ class ImmutableArray;
 class ImmutableDictionary;
 class MutableArray;
 class MutableDictionary;
+class WebArchive;
+class WebArchiveResource;
 class WebCertificateInfo;
 class WebConnection;
 class WebContextMenuItem;
@@ -109,6 +111,11 @@ WK_ADD_API_MAPPING(WKURLRef, WebURL)
 WK_ADD_API_MAPPING(WKURLRequestRef, WebURLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, WebURLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, WebUserContentURLPattern)
+
+#if PLATFORM(MAC)
+WK_ADD_API_MAPPING(WKWebArchiveRef, WebArchive)
+WK_ADD_API_MAPPING(WKWebArchiveResourceRef, WebArchiveResource)
+#endif
 
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType*>::APIType>
 class ProxyingRefPtr {

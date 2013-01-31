@@ -273,6 +273,7 @@ public:
 
     void didBeginEditing();
     void didEndEditing();
+    void willWriteSelectionToPasteboard(PassRefPtr<Range>);
     void didWriteSelectionToPasteboard();
     
     void showFontPanel();
