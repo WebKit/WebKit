@@ -38,7 +38,8 @@
 }
 
 .text-editor-token-highlight {
-    outline: 1px solid gray;
+    border: 1px solid gray;
+    border-radius: 3px;
 }
 
 .text-editor-contents .inner-container {

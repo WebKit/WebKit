@@ -73,6 +73,7 @@ InspectorTest.dumpEditorHTML = function(textEditor, mainPanelOnly)
 {
     var element = mainPanelOnly ? textEditor._mainPanel.element : textEditor.element;
     var dumpedHTML = element.innerHTML.replace(/<div/g, "\n<div");
+    var dumpedHTML = dumpedHTML.replace(/height: [0-9]+/g, "height: <number>");
     InspectorTest.addResult(dumpedHTML);
 };
 

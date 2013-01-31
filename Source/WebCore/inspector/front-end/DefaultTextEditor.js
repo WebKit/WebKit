@@ -1933,7 +1933,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             highlightSpan.addStyleClass(cssClass);
             highlightSpan.style.left = (metrics[i].left - extraWidth) + "px";
             highlightSpan.style.width = (metrics[i].width + extraWidth * 2) + "px";
-            highlightSpan.textContent = " ";
+            highlightSpan.style.height = metrics[i].height + "px";
             highlightSpan.addStyleClass("text-editor-overlay-highlight");
             lineRow.insertBefore(highlightSpan, lineRow.decorationsElement);
         }
@@ -2830,6 +2830,7 @@ WebInspector.TextEditorMainPanel.RangeHighlightDescriptor.prototype = {
 WebInspector.TextEditorMainPanel.ElementMetrics = function(element)
 {
     this.width = element.offsetWidth;
+    this.height = element.offsetHeight;
     this.left = element.offsetLeft;
 }
 
