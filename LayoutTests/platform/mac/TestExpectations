@@ -1194,9 +1194,6 @@ webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
-# TileCache tests that don't apply to WK1 (they are re-enabled via the WK2 TestExpectations file)
-platform/mac/tiled-drawing/ [ Skip ]
-
 # Can't hide scrollbars in WK1
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 

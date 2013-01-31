@@ -402,10 +402,6 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 ########################################
 ### START OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 
-# Tiled drawing is supported on WK2 but not on Lion
-platform/mac/tiled-drawing/ [ Pass ]
-[ Lion ] platform/mac/tiled-drawing/ [ Skip ]
-
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 
