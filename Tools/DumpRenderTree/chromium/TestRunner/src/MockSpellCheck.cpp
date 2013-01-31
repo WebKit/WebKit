@@ -81,7 +81,7 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
         // extracted word if this word is a known misspelled word.
         // (See the comment in MockSpellCheck::initializeIfNeeded() why we use a
         // misspelled-word table.)
-        for (int i = 0; i < m_misspelledWords.size(); ++i) {
+        for (size_t i = 0; i < m_misspelledWords.size(); ++i) {
             wordLength = static_cast<int>(m_misspelledWords.at(i).length()) > maxWordLength ? maxWordLength : static_cast<int>(m_misspelledWords.at(i).length());
             word = stringText.substring(wordOffset, wordLength);
             if (word == m_misspelledWords.at(i) && (static_cast<int>(stringText.length()) == wordOffset + wordLength || isNotASCIIAlpha(stringText[wordOffset + wordLength]))) {

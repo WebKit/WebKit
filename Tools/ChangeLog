@@ -1,3 +1,12 @@
+2013-01-31  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Win build fix after http://trac.webkit.org/changeset/141471.
+
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.cpp:
+        (MockSpellCheck::spellCheckWord):
+
 2013-01-31  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: provide new bundle APIs to allow bundle clients to be notified of pasteboard access.
