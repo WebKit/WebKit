@@ -3187,7 +3187,7 @@ WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
         const WordRegex = WebInspector.TextEditorMainPanel.TokenHighlighter._WordRegex;
         var line = this._textModel.line(range.startLine);
         var leftBound = range.startColumn === 0 || NonWordChar.test(line.charAt(range.startColumn - 1));
-        var rightBound = range.endColumn === line.length - 1 || NonWordChar.test(line.charAt(range.endColumn));
+        var rightBound = range.endColumn === line.length || NonWordChar.test(line.charAt(range.endColumn));
         return leftBound && rightBound && WordRegex.test(selectedText);
     }
 }

@@ -6,13 +6,14 @@
 function test()
 {
     function findElement(collection, elem) {
+        // length
         for(var i = 0; i < collection.length; ++i)
             if (collection[i] === elem)
                 return i;
         return null;
     }
 
-    var steps = [step2, step1]; // reversed order
+    var steps = [step3, step2, step1]; // reversed order
     function selectionChangeListener()
     {
         if (steps.length)
@@ -45,6 +46,14 @@ function test()
     }
 
     function step2()
+    {
+        InspectorTest.addResult("=========== After selecting '" + textEditor._textModel.copyRange(range) + "' ===========");
+        InspectorTest.dumpEditorHTML(textEditor, true);
+        range = new WebInspector.TextRange(1, 11, 1, 17);
+        textEditor.setSelection(range);
+    }
+
+    function step3()
     {
         InspectorTest.addResult("=========== After selecting '" + textEditor._textModel.copyRange(range) + "' ===========");
         InspectorTest.dumpEditorHTML(textEditor, true);
