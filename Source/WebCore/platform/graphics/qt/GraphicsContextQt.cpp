@@ -821,10 +821,10 @@ IntRect GraphicsContext::clipBounds() const
     QPainter* p = m_data->p();
     QRectF clipRect;
 
+    clipRect = p->transform().inverted().mapRect(p->window());
+
     if (p->hasClipping())
-        clipRect = m_data->clipBoundingRect();
-    else
-        clipRect = p->transform().inverted().mapRect(p->window());
+        clipRect = clipRect.intersected(m_data->clipBoundingRect());
 
     return enclosingIntRect(clipRect);
 }
