@@ -1,3 +1,9 @@
+2013-01-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Bump Chromium dependency to 179332
+
+        * DEPS:
+
 2013-01-31  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move MediaPlayerPrivateChromium to WebCore
