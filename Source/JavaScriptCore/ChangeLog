@@ -1,3 +1,18 @@
+2013-01-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG bytecode parser should have more assertions about the status of local accesses
+        https://bugs.webkit.org/show_bug.cgi?id=108417
+
+        Reviewed by Mark Hahnenberg.
+        
+        Assert some things that we already know to be true, just to reassure ourselves that they are true.
+        This is meant as a prerequisite for https://bugs.webkit.org/show_bug.cgi?id=108414, which will
+        make these rules even stricter.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+
 2013-01-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: JSContext's dealloc causes ASSERT due to ordering of releases

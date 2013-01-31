@@ -299,7 +299,8 @@ private:
                     node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), node));
                     m_currentBlock->variablesAtTail.local(operand) = node;
                     return node;
-                }
+                } else
+                    ASSERT(node->op() == SetLocal);
             }
             
             ASSERT(node->op() != Flush);
@@ -314,6 +315,10 @@ private:
                 // Make sure we link to the Phi node, not to the GetLocal.
                 if (node->op() == GetLocal)
                     node = node->child1().node();
+                else
+                    ASSERT(node->op() == SetLocal);
+                
+                ASSERT(node->op() == SetLocal || node->op() == Phi);
                 
                 Node* newGetLocal = injectLazyOperandSpeculation(
                     addToGraph(GetLocal, OpInfo(node->variableAccessData()), node));
@@ -380,7 +385,8 @@ private:
                     node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), node));
                     m_currentBlock->variablesAtTail.argument(argument) = node;
                     return node;
-                }
+                } else
+                    ASSERT(node->op() == SetLocal || node->op() == SetArgument);
             }
             
             ASSERT(node->op() != Flush);
@@ -400,6 +406,9 @@ private:
             if (isCaptured) {
                 if (node->op() == GetLocal)
                     node = node->child1().node();
+                else
+                    ASSERT(node->op() == SetLocal || node->op() == SetArgument);
+                ASSERT(node->op() == SetLocal || node->op() == SetArgument || node->op() == Phi);
                 return injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(node->variableAccessData()), node));
             }
             
