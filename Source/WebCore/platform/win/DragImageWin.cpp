@@ -108,6 +108,8 @@ const float DragLinkUrlFontSize = 10;
 
 static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
 {
+    Font result;
+#if !OS(WINCE)
     NONCLIENTMETRICS metrics;
     metrics.cbSize = sizeof(metrics);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
@@ -121,8 +123,9 @@ static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);
-    Font result = Font(description, 0, 0); 
+    result = Font(description, 0, 0);
     result.update(0);
+#endif
     return result;
 }
 
