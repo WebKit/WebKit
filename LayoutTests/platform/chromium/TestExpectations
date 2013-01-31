@@ -3110,9 +3110,6 @@ webkit.org/b/81697 fast/notifications/notifications-without-permission.html [ Fa
 
 webkit.org/b/81732 fast/js/integer-division-neg2tothe32-by-neg1.html [ Crash Pass ]
 
-# Old test, has been flaky on and off on all platforms since at least r111389
-webkit.org/b/81801 fast/forms/basic-textareas.html [ Failure Pass ]
-
 webkit.org/b/81803 [ Mac ] platform/chromium/compositing/rubberbanding/transform-overhang-e.html [ ImageOnlyFailure Pass ]
 webkit.org/b/81803 [ Mac ] platform/chromium/compositing/rubberbanding/transform-overhang-n.html [ ImageOnlyFailure Pass ]
 webkit.org/b/81803 [ Mac ] platform/chromium/compositing/rubberbanding/transform-overhang-ne.html [ ImageOnlyFailure Pass ]
@@ -4359,6 +4356,7 @@ webkit.org/b/108383 [ Mac Win ] fast/forms/basic-textareas.html [ ImageOnlyFailu
 webkit.org/b/108383 [ Mac Win ] fast/forms/form-element-geometry.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/linebox-overflow-in-textarea-padding.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/negativeLineHeight.html [ ImageOnlyFailure ]
+webkit.org/b/108383 [ Mac Win ] fast/forms/placeholder-position.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/textAreaLineHeight.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/textarea-align.html [ ImageOnlyFailure ]
 webkit.org/b/108383 [ Mac Win ] fast/forms/textarea-placeholder-pseudo-style.html [ ImageOnlyFailure ]
