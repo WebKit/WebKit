@@ -1159,6 +1159,7 @@ sub GenerateNormalAttrSetter
     my $v8InterfaceName = "V8$interfaceName";
     my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
+    my $attrType = $attribute->signature->type;
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
@@ -1203,7 +1204,6 @@ END
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(info.Holder());
 END
     } else {
-        my $attrType = $attribute->signature->type;
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         if ($reflect && $codeGenerator->InheritsInterface($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
@@ -1243,6 +1243,21 @@ END
         } else {
             push(@implContentDecls, "    $nativeType v = $value;\n");
         }
+    }
+
+    if ($codeGenerator->IsEnumType($attrType)) {
+        # setter ignores invalid enumeration values
+        my @enumValues = $codeGenerator->ValidEnumValues($attrType);
+        my @validEqualities = ();
+        foreach my $enumValue (@enumValues) {
+            push(@validEqualities, "string == \"$enumValue\"");
+        }
+        my $enumValidationExpression = join(" || ", @validEqualities);
+        push(@implContentDecls, <<END);
+    String string = v;
+    if (!($enumValidationExpression))
+        return;
+END
     }
 
     my $result = "v";
@@ -3862,8 +3877,8 @@ sub GetNativeType
     return "unsigned long long" if $type eq "unsigned long long";
     return "bool" if $type eq "boolean";
 
-    return "V8StringResource" if $type eq "DOMString" and $isParameter;
-    return "String" if $type eq "DOMString";
+    return "V8StringResource" if ($type eq "DOMString" or $codeGenerator->IsEnumType($type)) and $isParameter;
+    return "String" if $type eq "DOMString" or $codeGenerator->IsEnumType($type);
 
     return "Range::CompareHow" if $type eq "CompareHow";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
@@ -3947,6 +3962,10 @@ sub JSValueToNative
     return "toDOMStringList($value, $getIsolate)" if $type eq "DOMStringList";
 
     if ($type eq "DOMString") {
+        return $value;
+    }
+
+    if ($codeGenerator->IsEnumType($type)) {
         return $value;
     }
 
@@ -4226,7 +4245,7 @@ sub NativeToJSValue
     return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type);
     return "$value.v8Value()" if $nativeType eq "ScriptValue";
 
-    if ($codeGenerator->IsStringType($type)) {
+    if ($codeGenerator->IsStringType($type) or $codeGenerator->IsEnumType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
             return "v8StringOrNull($value, $getIsolate$returnHandleTypeArg)" if $conv eq "Null";
@@ -4353,7 +4372,7 @@ sub ConvertToV8StringResource
     my $suffix = shift;
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8StringResource/;
-    if ($signature->type eq "DOMString") {
+    if ($signature->type eq "DOMString" or $codeGenerator->IsEnumType($signature->type)) {
         my $macro = "V8TRYCATCH_FOR_V8STRINGRESOURCE";
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"

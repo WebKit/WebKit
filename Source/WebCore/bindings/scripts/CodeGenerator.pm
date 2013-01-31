@@ -53,6 +53,8 @@ my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
+my %enumTypeHash = ();
+
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
@@ -122,6 +124,8 @@ sub ProcessDocument
 
     my $ifaceName = "CodeGenerator" . $useGenerator;
     require $ifaceName . ".pm";
+
+    %enumTypeHash = map { $_->name => $_->values } @{$useDocument->enumerations};
 
     # Dynamically load external code generation perl module
     $codeGenerator = $ifaceName->new($object, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose, $targetIdlFilePath);
@@ -350,6 +354,23 @@ sub IsStringType
     return 0;
 }
 
+sub IsEnumType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if exists $enumTypeHash{$type};
+    return 0;
+}
+
+sub ValidEnumValues
+{
+    my $object = shift;
+    my $type = shift;
+
+    return @{$enumTypeHash{$type}};
+}
+
 sub IsNonPointerType
 {
     my $object = shift;
@@ -397,6 +418,7 @@ sub IsRefPtrType
     return 0 if $object->GetArrayType($type);
     return 0 if $object->GetSequenceType($type);
     return 0 if $type eq "DOMString";
+    return 0 if $object->IsEnumType($type);
 
     return 1;
 }

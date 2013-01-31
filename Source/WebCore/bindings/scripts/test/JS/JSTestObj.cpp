@@ -36,6 +36,7 @@
 #include "JSSVGPoint.h"
 #include "JSScriptProfile.h"
 #include "JSTestCallback.h"
+#include "JSTestEnumType.h"
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
 #include "JSa.h"
@@ -50,6 +51,7 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
+#include "TestEnumType.h"
 #include "TestObj.h"
 #include "bool.h"
 #include <runtime/Error.h>
@@ -81,6 +83,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { "readOnlyLongAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyLongAttr), (intptr_t)0, NoIntrinsic },
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0, NoIntrinsic },
     { "readOnlyTestObjAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyTestObjAttr), (intptr_t)0, NoIntrinsic },
+    { "enumAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnumAttr), (intptr_t)setJSTestObjEnumAttr, NoIntrinsic },
     { "shortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjShortAttr), (intptr_t)setJSTestObjShortAttr, NoIntrinsic },
     { "unsignedShortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedShortAttr), (intptr_t)setJSTestObjUnsignedShortAttr, NoIntrinsic },
     { "longAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongAttr), (intptr_t)setJSTestObjLongAttr, NoIntrinsic },
@@ -438,6 +441,16 @@ JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, Proper
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
+}
+
+
+JSValue jsTestObjEnumAttr(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->enumAttr()));
+    return result;
 }
 
 
@@ -977,6 +990,15 @@ void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue
 {
     UNUSED_PARAM(exec);
     TestObj::setStaticStringAttr(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+}
+
+
+void setJSTestObjEnumAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    impl->setEnumAttr(toTestEnumType(value));
 }
 
 

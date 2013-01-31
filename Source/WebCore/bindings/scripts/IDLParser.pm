@@ -35,8 +35,9 @@ use constant EmptyToken => 5;
 
 # Used to represent a parsed IDL document
 struct( idlDocument => {
-    interfaces => '@',  # All parsed interfaces
-    fileName => '$'  # file name
+    interfaces => '@', # All parsed interfaces
+    enumerations => '@', # All parsed enumerations
+    fileName => '$', # file name
 });
 
 # Used to represent 'interface' blocks
@@ -84,6 +85,12 @@ struct( domConstant => {
     type => '$',      # Type of data
     value => '$',      # Constant value
     extendedAttributes => '$', # Extended attributes
+});
+
+# Used to represent 'enum' definitions
+struct( domEnum => {
+    name => '$', # Enumeration identifier
+    values => '@', # Enumeration values (list of unique strings)
 });
 
 struct( Token => {
@@ -165,17 +172,19 @@ sub Parse
     };
     die $@ . " in $fileName" if $@;
 
-    die "No document found" unless @definitions;
+    die "No definitions founds" unless @definitions;
 
-    my $document;
-    if ($#definitions == 0 && ref($definitions[0]) eq "idlDocument") {
-        $document = $definitions[0];
-    } else {
-        $document = idlDocument->new();
-        push(@{$document->interfaces}, @definitions);
-    }
-
+    my $document = idlDocument->new();
     $document->fileName($fileName);
+    foreach my $definition (@definitions) {
+        if (ref($definition) eq "domInterface") {
+            push(@{$document->interfaces}, $definition);
+        } elsif (ref($definition) eq "domEnum") {
+            push(@{$document->enumerations}, $definition);
+        } else {
+            die "Unrecognized IDL definition kind: \"" . ref($definition) . "\"";
+        }
+    }
     return $document;
 }
 
@@ -251,6 +260,16 @@ sub getTokenInternal
         return $token;
     }
     die "Failed in tokenizing at " . $self->{Line};
+}
+
+sub unquoteString
+{
+    my $self = shift;
+    my $quotedString = shift;
+    if ($quotedString =~ /^"([^"]*)"$/) {
+        return $1;
+    }
+    die "Failed to parse string (" . $quotedString . ") at " . $self->{Line};
 }
 
 my $nextAttributeOld_1 = '^(attribute|inherit|readonly)$';
@@ -632,17 +651,20 @@ sub parseInheritance
 sub parseEnum
 {
     my $self = shift;
-    my $extendedAttributeList = shift;
+    my $extendedAttributeList = shift; # ignored: Extended attributes are not applicable to enumerations
 
     my $next = $self->nextToken();
     if ($next->value() eq "enum") {
+        my $enum = domEnum->new();
         $self->assertTokenValue($self->getToken(), "enum", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        my $enumNameToken = $self->getToken();
+        $self->assertTokenType($enumNameToken, IdentifierToken);
+        $enum->name($enumNameToken->value());
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $self->parseEnumValueList();
+        push(@{$enum->values}, @{$self->parseEnumValueList()});
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        return $enum;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -650,24 +672,35 @@ sub parseEnum
 sub parseEnumValueList
 {
     my $self = shift;
+    my @values = ();
     my $next = $self->nextToken();
     if ($next->type() == StringToken) {
-        $self->assertTokenType($self->getToken(), StringToken);
-        $self->parseEnumValues();
-        return;
+        my $enumValueToken = $self->getToken();
+        $self->assertTokenType($enumValueToken, StringToken);
+        my $enumValue = $self->unquoteString($enumValueToken->value());
+        push(@values, $enumValue);
+        push(@values, @{$self->parseEnumValues()});
+        return \@values;
     }
+    # value list must be non-empty
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
 sub parseEnumValues
 {
     my $self = shift;
+    my @values = ();
     my $next = $self->nextToken();
     if ($next->value() eq ",") {
         $self->assertTokenValue($self->getToken(), ",", __LINE__);
-        $self->assertTokenType($self->getToken(), StringToken);
-        $self->parseEnumValues();
+        my $enumValueToken = $self->getToken();
+        $self->assertTokenType($enumValueToken, StringToken);
+        my $enumValue = $self->unquoteString($enumValueToken->value());
+        push(@values, $enumValue);
+        push(@values, @{$self->parseEnumValues()});
+        return \@values;
     }
+    return \@values; # empty list (end of enumeration-values)
 }
 
 sub parseCallbackRest
@@ -2187,14 +2220,16 @@ sub parseEnumOld
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "enum") {
+        my $enum = domEnum->new();
         $self->assertTokenValue($self->getToken(), "enum", __LINE__);
-        $self->parseExtendedAttributeListAllowEmpty();
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        my $enumNameToken = $self->getToken();
+        $self->assertTokenType($enumNameToken, IdentifierToken);
+        $enum->name($enumNameToken->value());
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $self->parseEnumValueList();
+        push(@{$enum->values}, @{$self->parseEnumValueList()});
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        return;
+        return $enum;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

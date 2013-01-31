@@ -228,6 +228,8 @@ JSC::JSValue jsTestObjConstructorStaticReadOnlyLongAttr(JSC::ExecState*, JSC::JS
 JSC::JSValue jsTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 void setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjConstructorTestSubObj(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::JSValue jsTestObjEnumAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestObjEnumAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjShortAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 void setJSTestObjShortAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjUnsignedShortAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
