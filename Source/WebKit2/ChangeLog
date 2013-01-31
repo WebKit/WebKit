@@ -1,3 +1,16 @@
+2013-01-31  Seulgi Kim  <seulgikim@company100.net>
+
+        Coordinated Graphics: view the debug border/repaint count of the non composited layer.
+        https://bugs.webkit.org/show_bug.cgi?id=108401
+
+        Reviewed by Noam Rosenthal.
+
+        Make non-compositing layer draw debug border and show repaint counter
+        accroding to settings.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+
 2013-01-31  Paweł Forysiuk  <tuxator@o2.pl>
 
         InjectedBundle is being built even with --disable-webkit2

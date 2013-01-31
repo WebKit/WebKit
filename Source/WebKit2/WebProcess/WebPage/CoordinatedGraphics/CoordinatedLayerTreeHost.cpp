@@ -114,6 +114,9 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setSize(m_webPage->size());
 
+    m_nonCompositedContentLayer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
+    m_nonCompositedContentLayer->setShowRepaintCounter(m_webPage->corePage()->settings()->showRepaintCounter());
+
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
