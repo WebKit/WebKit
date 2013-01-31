@@ -1390,7 +1390,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         var highlightDescriptor = new WebInspector.TextEditorMainPanel.RegexHighlightDescriptor(new RegExp(regex, "g"), cssClass);
         this._highlightDescriptors.push(highlightDescriptor);
-        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
+        this._repaintLineRowsAffectedByHighlightDescriptors([highlightDescriptor]);
         return highlightDescriptor;
     },
 
@@ -1400,7 +1400,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     removeHighlight: function(highlightDescriptor)
     {
         this._highlightDescriptors.remove(highlightDescriptor);
-        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
+        this._repaintLineRowsAffectedByHighlightDescriptors([highlightDescriptor]);
     },
 
     /**
@@ -1411,14 +1411,14 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         var highlightDescriptor = new WebInspector.TextEditorMainPanel.RangeHighlightDescriptor(range, cssClass);
         this._highlightDescriptors.push(highlightDescriptor);
-        this._repaintLineRowsAffectedByHighlightDescriptor(highlightDescriptor);
+        this._repaintLineRowsAffectedByHighlightDescriptors([highlightDescriptor]);
         return highlightDescriptor;
     },
 
     /**
-     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
+     * @param {Array.<WebInspector.TextEditorMainPanel.HighlightDescriptor>} highlightDescriptors
      */
-    _repaintLineRowsAffectedByHighlightDescriptor: function(highlightDescriptor)
+    _repaintLineRowsAffectedByHighlightDescriptors: function(highlightDescriptors)
     {
         var visibleFrom = this.scrollTop();
         var visibleTo = visibleFrom + this.clientHeight();
@@ -1433,8 +1433,12 @@ WebInspector.TextEditorMainPanel.prototype = {
             for (var lineNumber = chunk.startLine; lineNumber < chunk.startLine + chunk.linesCount; ++lineNumber) {
                 var lineRow = chunk.expandedLineRow(lineNumber);
                 var line = this._textModel.line(lineNumber);
-                if (highlightDescriptor.affectsLine(lineNumber, line))
-                    affectedLineRows.push(lineRow);
+                for(var j = 0; j < highlightDescriptors.length; ++j) {
+                    if (highlightDescriptors[j].affectsLine(lineNumber, line)) {
+                        affectedLineRows.push(lineRow);
+                        break;
+                    }
+                }
             }
         }
         if (affectedLineRows.length === 0)
@@ -1442,6 +1446,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         var selection = this.selection();
         this._paintLineRows(affectedLineRows);
         this._restoreSelection(selection);
+    },
+
+    resize: function()
+    {
+        WebInspector.TextEditorChunkedPanel.prototype.resize.call(this);
+        this._repaintLineRowsAffectedByHighlightDescriptors(this._highlightDescriptors);
     },
 
     wasShown: function()
