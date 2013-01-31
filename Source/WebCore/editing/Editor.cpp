@@ -1776,7 +1776,14 @@ Vector<String> Editor::guessesForMisspelledWord(const String& word) const
 Vector<String> Editor::guessesForMisspelledOrUngrammatical(bool& misspelled, bool& ungrammatical)
 {
     if (unifiedTextCheckerEnabled()) {
-        RefPtr<Range> range = frame()->selection()->toNormalizedRange();
+        RefPtr<Range> range;
+        FrameSelection* frameSelection = frame()->selection();
+        if (frameSelection->isCaret() && behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
+            VisibleSelection wordSelection = VisibleSelection(frameSelection->base());
+            wordSelection.expandUsingGranularity(WordGranularity);
+            range = wordSelection.toNormalizedRange();
+        } else
+            range = frameSelection->toNormalizedRange();
         if (!range)
             return Vector<String>();
         return TextCheckingHelper(client(), range).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
