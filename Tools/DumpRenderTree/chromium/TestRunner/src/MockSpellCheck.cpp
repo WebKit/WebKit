@@ -58,7 +58,7 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
 
     // Convert to a String because we store String instances in
     // m_misspelledWords and WebString has no find().
-    WTF::String stringText(text.data(), text.length());
+    String stringText(text.data(), text.length());
     int skippedLength = 0;
 
     while (!stringText.isEmpty()) {
@@ -69,26 +69,33 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
         // (This is a simple version of our SpellCheckWordIterator class.)
         // If the given string doesn't include any ASCII characters, we can treat the
         // string as valid one.
-        // Unfortunately, This implementation splits a contraction, i.e. "isn't" is
-        // split into two pieces "isn" and "t". This is OK because webkit tests
-        // don't have misspelled contractions.
         int wordOffset = stringText.find(isASCIIAlpha);
         if (wordOffset == -1)
             return true;
-        int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
-        int wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
+        int maxWordLength = static_cast<int>(stringText.length()) - wordOffset;
+        int wordLength;
+        String word;
 
         // Look up our misspelled-word table to check if the extracted word is a
         // known misspelled word, and return the offset and the length of the
         // extracted word if this word is a known misspelled word.
         // (See the comment in MockSpellCheck::initializeIfNeeded() why we use a
         // misspelled-word table.)
-        WTF::String word = stringText.substring(wordOffset, wordLength);
-        if (m_misspelledWords.contains(word)) {
-            *misspelledOffset = wordOffset + skippedLength;
-            *misspelledLength = wordLength;
-            break;
+        for (int i = 0; i < m_misspelledWords.size(); ++i) {
+            wordLength = static_cast<int>(m_misspelledWords.at(i).length()) > maxWordLength ? maxWordLength : static_cast<int>(m_misspelledWords.at(i).length());
+            word = stringText.substring(wordOffset, wordLength);
+            if (word == m_misspelledWords.at(i) && (static_cast<int>(stringText.length()) == wordOffset + wordLength || isNotASCIIAlpha(stringText[wordOffset + wordLength]))) {
+                *misspelledOffset = wordOffset + skippedLength;
+                *misspelledLength = wordLength;
+                break;
+            }
         }
+
+        if (*misspelledLength > 0)
+            break;
+
+        int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
+        wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
 
         ASSERT(0 < wordOffset + wordLength);
         stringText = stringText.substring(wordOffset + wordLength);
@@ -151,12 +158,13 @@ bool MockSpellCheck::initializeIfNeeded()
         "ifmmp",
         "qwertyuiopasd",
         "qwertyuiopasdf",
+        "upper case",
         "wellcome"
     };
 
     m_misspelledWords.clear();
     for (size_t i = 0; i < arraysize(misspelledWords); ++i)
-        m_misspelledWords.add(WTF::String::fromUTF8(misspelledWords[i]), false);
+        m_misspelledWords.append(String::fromUTF8(misspelledWords[i]));
 
     // Mark as initialized to prevent this object from being initialized twice
     // or more.

@@ -33,8 +33,7 @@
 
 #include "Platform/chromium/public/WebString.h"
 #include "Platform/chromium/public/WebVector.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 // A mock implementation of a spell-checker used for WebKit tests.
@@ -71,7 +70,7 @@ private:
     bool initializeIfNeeded();
 
     // A table that consists of misspelled words.
-    HashMap<WTF::String, bool> m_misspelledWords;
+    Vector<String> m_misspelledWords;
 
     // A flag representing whether or not this object is initialized.
     bool m_initialized;
