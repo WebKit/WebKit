@@ -39,8 +39,6 @@
 #include "V8MessagePort.h"
 #include <wtf/ArrayBuffer.h>
 
-#if ENABLE(WEB_INTENTS)
-
 namespace WebCore {
 
 v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& args)
@@ -84,6 +82,5 @@ v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& a
     return wrapper;
 }
 
-} // namespace WebCore
 
-#endif
+} // namespace WebCore

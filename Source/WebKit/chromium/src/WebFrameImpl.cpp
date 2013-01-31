@@ -83,6 +83,8 @@
 #include "DOMWindow.h"
 #include "DOMWindowIntents.h"
 #include "DOMWrapperWorld.h"
+#include "DeliveredIntent.h"
+#include "DeliveredIntentClientImpl.h"
 #include "DirectoryEntry.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -194,11 +196,6 @@
 #include <public/WebVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
-
-#if ENABLE(WEB_INTENTS)
-#include "DeliveredIntent.h"
-#include "DeliveredIntentClientImpl.h"
-#endif
 
 using namespace WebCore;
 

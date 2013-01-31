@@ -130,7 +130,7 @@
       'ENABLE_VIDEO_TRACK=1',
       'ENABLE_VIEWPORT=1',
       'ENABLE_WEBGL=1',
-      'ENABLE_WEB_INTENTS=<(enable_web_intents)',
+      'ENABLE_WEB_INTENTS=1',
       'ENABLE_WEB_SOCKETS=1',
       'ENABLE_WEB_TIMING=1',
       'ENABLE_WORKERS=1',
@@ -229,6 +229,11 @@
       ['OS=="win" or OS=="android" or use_x11==1', {
         'feature_defines': [
           'ENABLE_OPENTYPE_VERTICAL=1',
+        ],
+      }],
+      ['enable_web_intents==1', {
+        'feature_defines': [
+          'ENABLE_WEB_INTENTS=1',
         ],
       }],
       ['enable_web_intents_tag==1', {

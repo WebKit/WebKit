@@ -1,3 +1,15 @@
+2013-01-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141358.
+        http://trac.webkit.org/changeset/141358
+        https://bugs.webkit.org/show_bug.cgi?id=108421
+
+        breaks android builder (Requested by morrita on #webkit).
+
+        * WebKit.gyp:
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+
 2013-01-30  Nico Weber  <thakis@chromium.org>
 
         [chromium] Build webkit with enable_web_intents set to 0.
