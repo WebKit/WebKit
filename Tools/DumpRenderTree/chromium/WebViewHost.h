@@ -207,7 +207,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void runModalAlertDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalConfirmDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalPromptDialog(WebKit::WebFrame*, const WebKit::WebString& message, const WebKit::WebString& defaultValue, WebKit::WebString* actualValue);
-    virtual bool runModalBeforeUnloadDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
     virtual void didUpdateLayout();
     virtual void navigateBackForwardSoon(int offset);
@@ -301,8 +300,6 @@ private:
     private:
         CallbackMethodType m_callback;
     };
-
-    WebTestRunner::WebTestRunner* testRunner() const;
 
     // Called the title of the page changes.
     // Can be used to update the title of the window.

@@ -236,11 +236,6 @@ bool WebViewHost::runModalPromptDialog(WebFrame* frame, const WebString& message
     return true;
 }
 
-bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString& message)
-{
-    return !testRunner()->shouldStayOnPageAfterHandlingBeforeUnload();
-}
-
 void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
     m_lastContextMenuData = adoptPtr(new WebContextMenuData(contextMenuData));
@@ -1133,11 +1128,6 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
 }
 
 // Private functions ----------------------------------------------------------
-
-::WebTestRunner::WebTestRunner* WebViewHost::testRunner() const
-{
-    return m_shell->testRunner();
-}
 
 void WebViewHost::updateForCommittedLoad(WebFrame* frame, bool isNewNavigation)
 {

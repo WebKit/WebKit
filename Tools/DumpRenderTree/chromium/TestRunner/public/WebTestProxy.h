@@ -465,8 +465,7 @@ public:
     }
     virtual bool runModalBeforeUnloadDialog(WebKit::WebFrame* frame, const WebKit::WebString& message)
     {
-        WebTestProxyBase::runModalBeforeUnloadDialog(frame, message);
-        return Base::runModalBeforeUnloadDialog(frame, message);
+        return WebTestProxyBase::runModalBeforeUnloadDialog(frame, message);
     }
     virtual WebKit::WebNavigationPolicy decidePolicyForNavigation(WebKit::WebFrame* frame, const WebKit::WebURLRequest& request, WebKit::WebNavigationType type, const WebKit::WebNode& originatingNode, WebKit::WebNavigationPolicy defaultPolicy, bool isRedirect)
     {

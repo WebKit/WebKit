@@ -975,7 +975,9 @@ bool WebTestProxyBase::runModalPromptDialog(WebFrame* frame, const WebString& me
 bool WebTestProxyBase::runModalBeforeUnloadDialog(WebFrame*, const WebString& message)
 {
     m_delegate->printMessage(string("CONFIRM NAVIGATION: ") + message.utf8().data() + "\n");
-    return true;
+    if (!m_testInterfaces->testRunner())
+        return true;
+    return !m_testInterfaces->testRunner()->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
 void WebTestProxyBase::locationChangeDone(WebFrame* frame)
