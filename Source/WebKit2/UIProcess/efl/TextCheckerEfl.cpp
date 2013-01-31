@@ -124,39 +124,6 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 #endif
 }
 
-#if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
-{
-    Vector<TextCheckingResult> paragraphCheckingResult;
-#if ENABLE(SPELLCHECK)
-    if (checkingTypes & TextCheckingTypeSpelling) {
-        int offset = 0;
-        while (offset < length) {
-            int32_t misspellingLocation = -1;
-            int32_t misspellingLength = 0;
-            checkSpellingOfString(spellDocumentTag, text + offset, length - offset, misspellingLocation, misspellingLength);
-            if (!misspellingLength)
-                break;
-
-            TextCheckingResult misspellingResult;
-            misspellingResult.type = TextCheckingTypeSpelling;
-            misspellingResult.location = offset + misspellingLocation;
-            misspellingResult.length = misspellingLength;
-            paragraphCheckingResult.append(misspellingResult);
-
-            offset += misspellingLocation + misspellingLength;
-        }
-    }
-#else
-    UNUSED_PARAM(spellDocumentTag);
-    UNUSED_PARAM(text);
-    UNUSED_PARAM(length);
-    UNUSED_PARAM(checkingTypes);
-#endif
-    return paragraphCheckingResult;
-}
-#endif
-
 void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
 #if ENABLE(SPELLCHECK)

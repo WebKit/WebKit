@@ -1,3 +1,16 @@
+2013-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141110.
+        http://trac.webkit.org/changeset/141110
+        https://bugs.webkit.org/show_bug.cgi?id=108349
+
+        This patch broke WK2-EFL unit tests (Requested by grzegorz on
+        #webkit).
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+
 2013-01-31  Jae Hyun Park  <jae.park@company100.net>
 
         Coordinated Graphics : Remove WebCoordinatedSurface dependency from CoordinatedSurface

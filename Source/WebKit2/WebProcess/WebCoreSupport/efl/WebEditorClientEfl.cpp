@@ -60,9 +60,4 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
-{
-    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
-}
-
 }
