@@ -1,3 +1,14 @@
+2013-01-31  Christophe Dumez  <dchris@gmail.com>
+
+        Update Christophe Dumez's email address
+        https://bugs.webkit.org/show_bug.cgi?id=108453
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update my email address in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-31  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move runModalBeforeUnloadDialog to TestRunner library
