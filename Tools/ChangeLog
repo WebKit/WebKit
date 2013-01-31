@@ -1,5 +1,16 @@
 2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Disable force_static_libs_as_shared in developer builds if wk2 is enabled
+
+        Reviewed by Jocelyn Turcotte.
+
+        This is a temporary workaround during the development of #108471, where we move files around
+        but some link time dependencies might remain.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Make it possible to compile WebKit2 Qt related files without access to internal WK2 C++ API
         https://bugs.webkit.org/show_bug.cgi?id=108472
 
