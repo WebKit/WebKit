@@ -1,3 +1,19 @@
+2013-01-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Add a StringTypeAdapter for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=108338
+
+        Reviewed by Benjamin Poulain.
+
+        Add StringTypeAdapter for ASCIILiteral type so that concatenation of an
+        ASCIILiteral and a String using + operator is efficiently handled.
+
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringOperators.h:
+        (WTF::operator+): Inline some of the operator+ functions that were not
+        yet.
+        (WTF):
+
 2013-01-30  David Kilzer  <ddkilzer@apple.com>
 
         Upstream iOS build file changes for WTF

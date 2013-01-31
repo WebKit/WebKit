@@ -164,8 +164,7 @@ public:
 
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
+        StringImpl::copyChars(destination, m_buffer, m_length);
     }
 
 private:
@@ -259,8 +258,35 @@ public:
 
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
+        StringImpl::copyChars(destination, m_buffer, m_length);
+    }
+
+private:
+    const LChar* m_buffer;
+    unsigned m_length;
+};
+
+template<>
+class StringTypeAdapter<ASCIILiteral> {
+public:
+    StringTypeAdapter<ASCIILiteral>(ASCIILiteral buffer)
+        : m_buffer(reinterpret_cast<const LChar*>(static_cast<const char*>(buffer)))
+        , m_length(strlen(buffer))
+    {
+    }
+
+    size_t length() { return m_length; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        memcpy(destination, m_buffer, static_cast<size_t>(m_length));
+    }
+
+    void writeTo(UChar* destination)
+    {
+        StringImpl::copyChars(destination, m_buffer, m_length);
     }
 
 private:

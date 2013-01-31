@@ -112,7 +112,7 @@ inline StringAppend<const char*, AtomicString> operator+(const char* string1, co
 }
 
 template<typename U, typename V>
-StringAppend<const char*, StringAppend<U, V> > operator+(const char* string1, const StringAppend<U, V>& string2)
+inline StringAppend<const char*, StringAppend<U, V> > operator+(const char* string1, const StringAppend<U, V>& string2)
 {
     return StringAppend<const char*, StringAppend<U, V> >(string1, string2);
 }
@@ -128,9 +128,25 @@ inline StringAppend<const UChar*, AtomicString> operator+(const UChar* string1, 
 }
 
 template<typename U, typename V>
-StringAppend<const UChar*, StringAppend<U, V> > operator+(const UChar* string1, const StringAppend<U, V>& string2)
+inline StringAppend<const UChar*, StringAppend<U, V> > operator+(const UChar* string1, const StringAppend<U, V>& string2)
 {
     return StringAppend<const UChar*, StringAppend<U, V> >(string1, string2);
+}
+
+inline StringAppend<ASCIILiteral, String> operator+(const ASCIILiteral& string1, const String& string2)
+{
+    return StringAppend<ASCIILiteral, String>(string1, string2);
+}
+
+inline StringAppend<ASCIILiteral, AtomicString> operator+(const ASCIILiteral& string1, const AtomicString& string2)
+{
+    return StringAppend<ASCIILiteral, AtomicString>(string1, string2);
+}
+
+template<typename U, typename V>
+inline StringAppend<ASCIILiteral, StringAppend<U, V> > operator+(const ASCIILiteral& string1, const StringAppend<U, V>& string2)
+{
+    return StringAppend<ASCIILiteral, StringAppend<U, V> >(string1, string2);
 }
 
 template<typename T>
