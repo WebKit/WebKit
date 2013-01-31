@@ -1,3 +1,15 @@
+2013-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION (r141402): incorrectly set injected bundle path when running GTK unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=108496
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Add the build type as a member on the TestRunner interface.
+        (TestRunner._setup_testing_environment): Use the build type member to determine correct path
+        to the injected bundle.
+
 2013-01-31  Christophe Dumez  <dchris@gmail.com>
 
         [EFL] Disable Web Intents
