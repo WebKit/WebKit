@@ -332,6 +332,8 @@ void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
 
 void V8GCController::minorGCPrologue()
 {
+    TRACE_EVENT_BEGIN0("v8", "GC");
+
     if (isMainThreadOrGCThread() && m_edenNodes) {
         for (size_t i = 0; i < m_edenNodes->size(); i++) {
             ASSERT(!m_edenNodes->at(i)->wrapper().IsEmpty());
@@ -374,6 +376,7 @@ void V8GCController::gcEpilogue(v8::GCType type, v8::GCCallbackFlags flags)
 
 void V8GCController::minorGCEpilogue()
 {
+    TRACE_EVENT_END0("v8", "GC");
 }
 
 void V8GCController::majorGCEpilogue()
