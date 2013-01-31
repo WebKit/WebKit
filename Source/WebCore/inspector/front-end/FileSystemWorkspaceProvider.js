@@ -44,6 +44,8 @@ WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel)
     this._isolatedFileSystemModel.mapping().addEventListener(WebInspector.FileSystemMapping.Events.FileSystemRemoved, this._fileSystemRemoved, this);
 }
 
+WebInspector.FileSystemWorkspaceProvider._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
+
 WebInspector.FileSystemWorkspaceProvider.prototype = {
     /**
      * @param {string} uri
@@ -120,7 +122,7 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         if (extensionIndex !== -1)
             extension = fileName.substring(extensionIndex + 1);
         var contentType = WebInspector.resourceTypes.Other;
-        if (extension === "js")
+        if (WebInspector.FileSystemWorkspaceProvider._scriptExtensions[extension])
             return WebInspector.resourceTypes.Script;
         if (extension === "css")
             return WebInspector.resourceTypes.Stylesheet;
