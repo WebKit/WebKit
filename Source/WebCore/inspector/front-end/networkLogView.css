@@ -69,7 +69,7 @@
     height: 41px;
 }
 
-.network-log-grid.data-grid tr.offscreen td {
+.network-log-grid.data-grid tr.offscreen > td > div {
     display: none;
 }
 
