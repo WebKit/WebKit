@@ -53,6 +53,10 @@
 #include "JSDOMWindow.h"
 #endif
 
+#if ENABLE(SQL_DATABASE)
+#include "DatabaseContext.h"
+#endif
+
 namespace WTF {
 
 template<> struct SequenceMemoryInstrumentationTraits<WebCore::ContextDestructionObserver*> {
@@ -439,6 +443,14 @@ JSC::JSGlobalData* ScriptExecutionContext::globalData()
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+#endif
+
+#if ENABLE(SQL_DATABASE)
+void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)
+{
+    ASSERT(!m_databaseContext);
+    m_databaseContext = databaseContext;
 }
 #endif
 

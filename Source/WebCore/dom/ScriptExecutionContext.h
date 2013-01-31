@@ -51,6 +51,7 @@
 namespace WebCore {
 
 class CachedScript;
+class DatabaseContext;
 class DOMTimer;
 class EventListener;
 class EventQueue;
@@ -171,6 +172,10 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+#if ENABLE(SQL_DATABASE)
+    void setDatabaseContext(DatabaseContext*);
+#endif
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -226,6 +231,10 @@ private:
 #if ENABLE(BLOB)
     OwnPtr<PublicURLManager> m_publicURLManager;
     RefPtr<FileThread> m_fileThread;
+#endif
+
+#if ENABLE(SQL_DATABASE)
+    RefPtr<DatabaseContext> m_databaseContext;
 #endif
 };
 

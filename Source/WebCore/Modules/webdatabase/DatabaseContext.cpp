@@ -39,10 +39,62 @@
 #include "Document.h"
 #include "Page.h"
 #include "SchemeRegistry.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 
 namespace WebCore {
+
+// How the DatabaseContext Life-Cycle works?
+// ========================================
+// ... in other words, who's keeping the DatabaseContext alive and how long does
+// it need to stay alive?
+//
+// The DatabaseContext is referenced from RefPtrs in:
+// 1. ScriptExecutionContext
+// 2. Database
+//
+// At Birth:
+// ========
+// We create a DatabaseContext only when there is a need i.e. the script tries to
+// open a Database via DatabaseManager::openDatabase().
+//
+// The DatabaseContext constructor will call setDatabaseContext() on the
+// the ScriptExecutionContext. This sets the RefPtr in the ScriptExecutionContext
+// for keeping the DatabaseContext alive. Since the DatabaseContext is only
+// created from the script thread, it is safe for the constructor to call
+// ScriptExecutionContext::setDatabaseContext().
+//
+// Once a DatabaseContext is associated with a ScriptExecutionContext, it will
+// live until after the ScriptExecutionContext destructs. This is true even if
+// we don't succeed in opening any Databases for that context. When we do
+// succeed in opening Databases for this ScriptExecutionContext, the Database
+// will re-use the same DatabaseContext.
+//
+// At Shutdown:
+// ===========
+// During shutdown, the DatabaseContext needs to:
+// 1. "outlive" the ScriptExecutionContext.
+//    - This is needed because the DatabaseContext needs to remove itself from the
+//      ScriptExecutionContext's ActiveDOMObject list and ContextDestructionObserver
+//      list. This removal needs to be executed on the script's thread. Hence, we
+//      rely on the ScriptExecutionContext's shutdown process to call
+//      stop() and contextDestroyed() to give us a chance to clean these up from
+//      the script thread.
+//
+// 2. "outlive" the Databases.
+//    - This is because they may make use of the DatabaseContext to execute a close
+//      task and shutdown in an orderly manner. When the Databases are destructed,
+//      they will deref the DatabaseContext from the DatabaseThread.
+//
+// During shutdown, the ScriptExecutionContext is shutting down on the script thread
+// while the Databases are shutting down on the DatabaseThread. Hence, there can be
+// a race condition as to whether the ScriptExecutionContext or the Databases
+// destruct first.
+//
+// The RefPtrs in the Databases and ScriptExecutionContext will ensure that the
+// DatabaseContext will outlive both regardless of which of the 2 destructs first.
+
 
 DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
@@ -52,6 +104,8 @@ DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
 {
     // ActiveDOMObject expects this to be called to set internal flags.
     suspendIfNeeded();
+
+    context->setDatabaseContext(this);
 
     // For debug accounting only. We must do this before we register the
     // instance. The assertions assume this.
