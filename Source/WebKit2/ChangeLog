@@ -5,6 +5,8 @@
 
         Reviewed by Sam Weinig.
 
+        We don't need to use a Deque for attachments - we can just deserialize the attachments backwards instead.
+
         * Platform/CoreIPC/ArgumentDecoder.cpp:
         (CoreIPC::ArgumentDecoder::create):
         (CoreIPC::ArgumentDecoder::ArgumentDecoder):
