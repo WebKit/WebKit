@@ -729,7 +729,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 void DrawingAreaImpl::didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, messageID, decoder);
+        m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
 }
 #endif
 

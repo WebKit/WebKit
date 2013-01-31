@@ -87,7 +87,7 @@ public:
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
 
     virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);

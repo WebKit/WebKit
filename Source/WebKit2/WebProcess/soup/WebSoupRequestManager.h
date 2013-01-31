@@ -49,7 +49,7 @@ public:
 
 private:
     // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didHandleURIRequest(const CoreIPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
     void didReceiveURIRequestData(const CoreIPC::DataReference&, uint64_t requestID);

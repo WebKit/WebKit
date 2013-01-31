@@ -1,3 +1,39 @@
+2013-01-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Cleanup MessageID parameter after r141332
+        https://bugs.webkit.org/show_bug.cgi?id=108419
+
+        Unreviewed to fix build breaks.
+
+        r141332 didn't remove MessageID parameter on some features.
+        (battery, vibration, coordinate graphics, network info and so on)
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage):
+        * UIProcess/WebBatteryManagerProxy.h:
+        (WebBatteryManagerProxy):
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        (WebNetworkInfoManagerProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/WebVibrationProxy.h:
+        (WebVibrationProxy):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+        * WebProcess/Battery/WebBatteryManager.h:
+        (WebBatteryManager):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.h:
+        (WebNetworkInfoManager):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didReceiveCoordinatedLayerTreeHostMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/soup/WebSoupRequestManager.h:
+        (WebSoupRequestManager):
+
 2013-01-30  Anders Carlsson  <andersca@apple.com>
 
         Remove MessageID from MessageSender

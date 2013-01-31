@@ -76,7 +76,7 @@ public:
     void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-    void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void updateViewport();
     void renderNextFrame();
     void didChangeScrollPosition(const WebCore::FloatPoint& position);
