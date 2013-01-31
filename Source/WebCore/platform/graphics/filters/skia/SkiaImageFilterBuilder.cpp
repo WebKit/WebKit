@@ -39,8 +39,8 @@ namespace {
 void getBrightnessMatrix(float amount, SkScalar matrix[20])
 {
     memset(matrix, 0, 20 * sizeof(SkScalar));
-    matrix[0] = matrix[6] = matrix[12] = matrix[18] = 1;
-    matrix[4] = matrix[9] = matrix[14] = amount * 255;
+    matrix[0] = matrix[6] = matrix[12] = amount;
+    matrix[18] = 1;
 }
 
 void getContrastMatrix(float amount, SkScalar matrix[20])
