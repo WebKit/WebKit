@@ -349,6 +349,8 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
 void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
 {
     m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
+    if (m_layerTreeView)
+        m_layerTreeView->setSurfaceReady();
 }
 
 WebLayerTreeView* WebViewHost::layerTreeView()
@@ -1012,7 +1014,6 @@ void WebViewHost::setWebWidget(WebKit::WebWidget* widget)
     m_webWidget = widget;
     webView()->setSpellCheckClient(proxy()->spellCheckClient());
     webView()->setPrerendererClient(this);
-    webView()->setCompositorSurfaceReady();
 }
 
 WebView* WebViewHost::webView() const
