@@ -1799,15 +1799,16 @@ static WebGestureEvent fatTap(int x, int y)
     return event;
 }
 
-TEST_F(WebFrameTest, DISABLED_DisambiguationPopup)
+TEST_F(WebFrameTest, DisambiguationPopup)
 {
-    registerMockedHttpURLLoad("disambiguation_popup.html");
+    const std::string htmlFile = "disambiguation_popup.html";
+    registerMockedHttpURLLoad(htmlFile);
 
     DisambiguationPopupTestWebViewClient client;
 
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
-    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup.html", true, 0, &client));
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile, true, 0, &client));
     webViewImpl->resize(WebSize(1000, 1000));
     webViewImpl->layout();
 
@@ -1860,15 +1861,16 @@ TEST_F(WebFrameTest, DisambiguationPopupNoContainer)
     EXPECT_FALSE(client.triggered());
 }
 
-TEST_F(WebFrameTest, DISABLED_DisambiguationPopupMobileSite)
+TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
 {
-    registerMockedHttpURLLoad("disambiguation_popup_mobile_site.html");
+    const std::string htmlFile = "disambiguation_popup_mobile_site.html";
+    registerMockedHttpURLLoad(htmlFile);
 
     DisambiguationPopupTestWebViewClient client;
 
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
-    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup.html", true, 0, &client));
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile, true, 0, &client));
     webViewImpl->resize(WebSize(1000, 1000));
     webViewImpl->layout();
 
