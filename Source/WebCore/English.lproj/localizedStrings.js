@@ -394,6 +394,7 @@ localizedStrings["Lat = "] = "Lat = ";
 localizedStrings["Latency"] = "Latency";
 localizedStrings["Lon = "] = "Lon = ";
 localizedStrings["Response Time"] = "Response Time";
+localizedStrings["Set-Cookies"] = "Set-Cookies";
 localizedStrings["Start"] = "Start";
 localizedStrings["Start CPU profiling."] = "Start CPU profiling.";
 localizedStrings["Start CSS selector profiling."] = "Start CSS selector profiling.";
