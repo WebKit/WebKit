@@ -64972,6 +64972,14 @@
 					RelativePath="..\html\parser\XSSAuditor.h"
 					>
 				</File>
+				<File
+					RelativePath="..\html\parser\XSSAuditorDelegate.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\XSSAuditorDelegate.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="shadow"

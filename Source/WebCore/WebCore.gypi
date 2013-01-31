@@ -3400,6 +3400,8 @@
             'html/parser/TextViewSourceParser.h',
             'html/parser/XSSAuditor.cpp',
             'html/parser/XSSAuditor.h',
+            'html/parser/XSSAuditorDelegate.cpp',
+            'html/parser/XSSAuditorDelegate.h',
             'html/shadow/PickerIndicatorElement.cpp',
             'html/shadow/PickerIndicatorElement.h',
             'html/shadow/ContentDistributor.cpp',

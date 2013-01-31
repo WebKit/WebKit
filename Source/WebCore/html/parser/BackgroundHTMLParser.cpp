@@ -164,6 +164,7 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 void BackgroundHTMLParser::pumpTokenizer()
 {
     while (m_tokenizer->nextToken(m_input.current(), *m_token.get())) {
+        // FIXME: Call m_xssAuditor.filterToken(m_token) and put resulting DidBlockScriptRequest into CompactHTMLToken.
         m_pendingTokens->append(CompactHTMLToken(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn())));
         m_token->clear();
 
