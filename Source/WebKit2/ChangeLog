@@ -1,3 +1,16 @@
+2013-01-31  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial build fix: Pre C++11 the use of
+        >> in nested templates is ambiguous in the grammar and
+        requires the insertion of a space here. Since these files are
+        not Mac specific we don't require C++11 yet and a space
+        fixes the build.
+
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Shared/ChildProcessProxy.h:
+        (ChildProcessProxy):
+
 2013-01-31  Christophe Dumez  <dchris@gmail.com>
 
         [EFL] Disable Web Intents

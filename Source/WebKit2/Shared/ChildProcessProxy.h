@@ -70,7 +70,7 @@ private:
 
     bool sendMessage(PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
-    Vector<std::pair<OwnPtr<CoreIPC::MessageEncoder>, unsigned>> m_pendingMessages;
+    Vector<std::pair<OwnPtr<CoreIPC::MessageEncoder>, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<CoreIPC::Connection> m_connection;
     CoreIPC::Connection::QueueClient* m_queueClient;

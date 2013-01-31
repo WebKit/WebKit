@@ -288,7 +288,7 @@ private:
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
-    Deque<OwnPtr<MessageEncoder>> m_outgoingMessages;
+    Deque<OwnPtr<MessageEncoder> > m_outgoingMessages;
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;
