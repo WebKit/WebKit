@@ -120,6 +120,7 @@ public:
     virtual void goToOffset(int) { }
     virtual void reload() { }
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }
+    virtual bool allowExternalPages() { return false; }
 };
 
 }

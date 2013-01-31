@@ -176,7 +176,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual int windowCount() OVERRIDE;
     virtual void goToOffset(int) OVERRIDE;
     virtual void reload() OVERRIDE;
-    void loadURLForFrame(const WebKit::WebURL&, const std::string& frameName) OVERRIDE;
+    virtual void loadURLForFrame(const WebKit::WebURL&, const std::string& frameName) OVERRIDE;
+    virtual bool allowExternalPages() OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -263,7 +264,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
         WebKit::WebNavigationType, const WebKit::WebNode&,
         WebKit::WebNavigationPolicy, bool isRedirect);
     virtual bool canHandleRequest(WebKit::WebFrame*, const WebKit::WebURLRequest&);
-    virtual WebKit::WebURLError cannotHandleRequestError(WebKit::WebFrame*, const WebKit::WebURLRequest&);
     virtual WebKit::WebURLError cancelledError(WebKit::WebFrame*, const WebKit::WebURLRequest&);
     virtual void unableToImplementPolicyWithError(WebKit::WebFrame*, const WebKit::WebURLError&);
     virtual void didCreateDataSource(WebKit::WebFrame*, WebKit::WebDataSource*);

@@ -32,6 +32,7 @@
 #define WebTestProxy_h
 
 #include "Platform/chromium/public/WebRect.h"
+#include "Platform/chromium/public/WebURLError.h"
 #include "WebKit/chromium/public/WebAccessibilityNotification.h"
 #include "WebKit/chromium/public/WebDragOperation.h"
 #include "WebKit/chromium/public/WebEditingAction.h"
@@ -45,6 +46,7 @@
 namespace WebKit {
 class WebAccessibilityObject;
 class WebCachedURLRequest;
+class WebDataSource;
 class WebDragData;
 class WebFrame;
 class WebImage;
@@ -63,7 +65,6 @@ class WebView;
 struct WebConsoleMessage;
 struct WebPoint;
 struct WebSize;
-struct WebURLError;
 struct WebWindowFeatures;
 }
 
@@ -137,6 +138,9 @@ protected:
     void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL& insecureURL, bool didBlockEntirePage);
     void assignIdentifierToRequest(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest&);
     void willRequestResource(WebKit::WebFrame*, const WebKit::WebCachedURLRequest&);
+    bool canHandleRequest(WebKit::WebFrame*, const WebKit::WebURLRequest&);
+    WebKit::WebURLError cannotHandleRequestError(WebKit::WebFrame*, const WebKit::WebURLRequest&);
+    void didCreateDataSource(WebKit::WebFrame*, WebKit::WebDataSource*);
     void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse& redirectResponse);
     void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
     void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
@@ -396,6 +400,21 @@ public:
     {
         WebTestProxyBase::willRequestResource(frame, request);
         Base::willRequestResource(frame, request);
+    }
+    virtual bool canHandleRequest(WebKit::WebFrame* frame, const WebKit::WebURLRequest& request)
+    {
+        if (!WebTestProxyBase::canHandleRequest(frame, request))
+            return false;
+        return Base::canHandleRequest(frame, request);
+    }
+    virtual WebKit::WebURLError cannotHandleRequestError(WebKit::WebFrame* frame, const WebKit::WebURLRequest& request)
+    {
+        return WebTestProxyBase::cannotHandleRequestError(frame, request);
+    }
+    virtual void didCreateDataSource(WebKit::WebFrame* frame, WebKit::WebDataSource* ds)
+    {
+        WebTestProxyBase::didCreateDataSource(frame, ds);
+        Base::didCreateDataSource(frame, ds);
     }
     virtual void willSendRequest(WebKit::WebFrame* frame, unsigned identifier, WebKit::WebURLRequest& request, const WebKit::WebURLResponse& redirectResponse)
     {

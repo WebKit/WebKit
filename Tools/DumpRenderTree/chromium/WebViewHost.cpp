@@ -582,21 +582,7 @@ WebNavigationPolicy WebViewHost::decidePolicyForNavigation(
 
 bool WebViewHost::canHandleRequest(WebFrame*, const WebURLRequest& request)
 {
-    GURL url = request.url();
-    // Just reject the scheme used in
-    // LayoutTests/http/tests/misc/redirect-to-external-url.html
-    return !url.SchemeIs("spaceballs");
-}
-
-WebURLError WebViewHost::cannotHandleRequestError(WebFrame*, const WebURLRequest& request)
-{
-    WebURLError error;
-    // A WebKit layout test expects the following values.
-    // unableToImplementPolicyWithError() below prints them.
-    error.domain = WebString::fromUTF8("WebKitErrorDomain");
-    error.reason = 101;
-    error.unreachableURL = request.url();
-    return error;
+    return true;
 }
 
 WebURLError WebViewHost::cancelledError(WebFrame*, const WebURLRequest& request)
@@ -611,8 +597,6 @@ void WebViewHost::unableToImplementPolicyWithError(WebFrame* frame, const WebURL
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 {
     ds->setExtraData(m_pendingExtraData.leakPtr());
-    if (!testRunner()->deferMainResourceDataLoad())
-        ds->setDeferMainResourceDataLoad(false);
 }
 
 void WebViewHost::didCommitProvisionalLoad(WebFrame* frame, bool isNewNavigation)
@@ -637,47 +621,12 @@ void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
     updateForCommittedLoad(frame, isNewNavigation);
 }
 
-static void blockRequest(WebURLRequest& request)
-{
-    request.setURL(WebURL());
-}
-
-static bool isLocalhost(const string& host)
-{
-    return host == "127.0.0.1" || host == "localhost";
-}
-
-static bool hostIsUsedBySomeTestsToGenerateError(const string& host)
-{
-    return host == "255.255.255.255";
-}
-
-void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
+void WebViewHost::willSendRequest(WebFrame* frame, unsigned, WebURLRequest& request, const WebURLResponse&)
 {
     if (request.url().isEmpty())
         return;
 
-    // Need to use GURL for host() and SchemeIs()
-    GURL url = request.url();
-    string requestURL = url.possibly_invalid_spec();
-
-    GURL mainDocumentURL = request.firstPartyForCookies();
-
     request.setExtraData(webkit_support::CreateWebURLRequestExtraData(frame->document().referrerPolicy()));
-
-    string host = url.host();
-    if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))) {
-        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host)
-            && ((!mainDocumentURL.SchemeIs("http") && !mainDocumentURL.SchemeIs("https")) || isLocalhost(mainDocumentURL.host()))
-            && !m_shell->allowExternalPages()) {
-            printf("Blocked access to external URL %s\n", requestURL.c_str());
-            blockRequest(request);
-            return;
-        }
-    }
-
-    // Set the new substituted URL.
-    request.setURL(webkit_support::RewriteLayoutTestsURL(request.url().spec()));
 }
 
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
@@ -1021,6 +970,11 @@ void WebViewHost::loadURLForFrame(const WebURL& url, const string& frameName)
         return;
     TestShell::resizeWindowForTest(this, url);
     navigationController()->loadEntry(TestNavigationEntry::create(-1, url, WebString(), WebString::fromUTF8(frameName)).get());
+}
+
+bool WebViewHost::allowExternalPages()
+{
+    return m_shell->allowExternalPages();
 }
 
 // Public functions -----------------------------------------------------------

@@ -37,6 +37,7 @@
 #include "WebAccessibilityObject.h"
 #include "WebCachedURLRequest.h"
 #include "WebConsoleMessage.h"
+#include "WebDataSource.h"
 #include "WebElement.h"
 #include "WebEventSender.h"
 #include "WebFrame.h"
@@ -186,6 +187,16 @@ string URLDescription(const GURL& url)
 void blockRequest(WebURLRequest& request)
 {
     request.setURL(WebURL());
+}
+
+bool isLocalhost(const string& host)
+{
+    return host == "127.0.0.1" || host == "localhost";
+}
+
+bool hostIsUsedBySomeTestsToGenerateError(const string& host)
+{
+    return host == "255.255.255.255";
 }
 
 // Used to write a platform neutral file:/// URL by only taking the filename
@@ -782,6 +793,31 @@ void WebTestProxyBase::willRequestResource(WebFrame* frame, const WebKit::WebCac
     }
 }
 
+bool WebTestProxyBase::canHandleRequest(WebFrame*, const WebURLRequest& request)
+{
+    GURL url = request.url();
+    // Just reject the scheme used in
+    // LayoutTests/http/tests/misc/redirect-to-external-url.html
+    return !url.SchemeIs("spaceballs");
+}
+
+WebURLError WebTestProxyBase::cannotHandleRequestError(WebFrame*, const WebURLRequest& request)
+{
+    WebURLError error;
+    // A WebKit layout test expects the following values.
+    // unableToImplementPolicyWithError() below prints them.
+    error.domain = WebString::fromUTF8("WebKitErrorDomain");
+    error.reason = 101;
+    error.unreachableURL = request.url();
+    return error;
+}
+
+void WebTestProxyBase::didCreateDataSource(WebFrame*, WebDataSource* ds)
+{
+    if (m_testInterfaces->testRunner() && !m_testInterfaces->testRunner()->deferMainResourceDataLoad())
+        ds->setDeferMainResourceDataLoad(false);
+}
+
 void WebTestProxyBase::willSendRequest(WebFrame*, unsigned identifier, WebKit::WebURLRequest& request, const WebKit::WebURLResponse& redirectResponse)
 {
     // Need to use GURL for host() and SchemeIs()
@@ -822,6 +858,20 @@ void WebTestProxyBase::willSendRequest(WebFrame*, unsigned identifier, WebKit::W
         for (set<string>::const_iterator header = clearHeaders->begin(); header != clearHeaders->end(); ++header)
             request.clearHTTPHeaderField(WebString::fromUTF8(*header));
     }
+
+    string host = url.host();
+    if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))) {
+        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host)
+            && ((!mainDocumentURL.SchemeIs("http") && !mainDocumentURL.SchemeIs("https")) || isLocalhost(mainDocumentURL.host()))
+            && !m_delegate->allowExternalPages()) {
+            m_delegate->printMessage(string("Blocked access to external URL ") + requestURL + "\n");
+            blockRequest(request);
+            return;
+        }
+    }
+
+    // Set the new substituted URL.
+    request.setURL(m_delegate->rewriteLayoutTestsURL(request.url().spec()));
 }
 
 void WebTestProxyBase::didReceiveResponse(WebFrame*, unsigned identifier, const WebKit::WebURLResponse& response)
