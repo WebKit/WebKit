@@ -887,6 +887,16 @@ void NetworkJob::storeCredentials()
     if (challenge.isStored())
         return;
 
+    // Obviously we can't have successfully authenticated with empty credentials. (To store empty
+    // credentials, use purgeCredentials.)
+
+    // FIXME: We should assert here, but there is one path (when the credentials are read from the
+    // proxy config entirely in the platform layer) where storeCredentials is called with an empty
+    // challenge. The credentials should be passed back from the platform layer for storage in this
+    // case - see PR 287791.
+    if (challenge.proposedCredential().user().isEmpty() || challenge.proposedCredential().password().isEmpty())
+        return;
+
     CredentialStorage::set(challenge.proposedCredential(), challenge.protectionSpace(), m_response.url());
     challenge.setStored(true);
 
