@@ -28,7 +28,6 @@
 
 #include "ArgumentCoder.h"
 #include "Attachment.h"
-#include <wtf/Deque.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
@@ -93,12 +92,8 @@ public:
 
     bool removeAttachment(Attachment&);
 
-#ifndef NDEBUG
-    void debug();
-#endif
-
 protected:
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque<Attachment>&);
+    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&);
 
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
@@ -115,7 +110,7 @@ private:
     uint8_t* m_bufferPos;
     uint8_t* m_bufferEnd;
 
-    Deque<Attachment> m_attachments;
+    Vector<Attachment> m_attachments;
 };
 
 } // namespace CoreIPC

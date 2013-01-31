@@ -1,3 +1,25 @@
+2013-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Use a Vector for IPC attachments
+        https://bugs.webkit.org/show_bug.cgi?id=108517
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::create):
+        (CoreIPC::ArgumentDecoder::ArgumentDecoder):
+        (CoreIPC::ArgumentDecoder::removeAttachment):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (ArgumentDecoder):
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::create):
+        (CoreIPC::MessageDecoder::MessageDecoder):
+        * Platform/CoreIPC/MessageDecoder.h:
+        (MessageDecoder):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::createMessageDecoder):
+
 2013-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Disable ENABLE_FULLSCREEN_API on iOS

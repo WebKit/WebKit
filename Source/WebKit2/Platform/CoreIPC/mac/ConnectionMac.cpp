@@ -299,8 +299,6 @@ static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header
     mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
     ASSERT(numDescriptors);
 
-    // Build attachment list
-    Deque<Attachment> attachments;
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
 
     // If the message body was sent out-of-line, don't treat the last descriptor
@@ -308,17 +306,19 @@ static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header
     if (messageBodyIsOOL)
         --numDescriptors;
 
+    // Build attachment list
+    Vector<Attachment> attachments(numDescriptors);
+
     for (mach_msg_size_t i = 0; i < numDescriptors; ++i) {
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
 
         switch (descriptor->type.type) {
         case MACH_MSG_PORT_DESCRIPTOR:
-            attachments.append(Attachment(descriptor->port.name, descriptor->port.disposition));
+            attachments[numDescriptors - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
             descriptorData += sizeof(mach_msg_port_descriptor_t);
             break;
         case MACH_MSG_OOL_DESCRIPTOR:
-            attachments.append(Attachment(descriptor->out_of_line.address, descriptor->out_of_line.size,
-                                          descriptor->out_of_line.copy, descriptor->out_of_line.deallocate));
+            attachments[numDescriptors - i - 1] = Attachment(descriptor->out_of_line.address, descriptor->out_of_line.size, descriptor->out_of_line.copy, descriptor->out_of_line.deallocate);
             descriptorData += sizeof(mach_msg_ool_descriptor_t);
             break;
         default:

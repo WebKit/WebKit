@@ -36,7 +36,7 @@ class DataReference;
 class MessageDecoder : public ArgumentDecoder {
 public:
     static PassOwnPtr<MessageDecoder> create(const DataReference& buffer);
-    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Deque<Attachment>&);
+    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Vector<Attachment>&);
     virtual ~MessageDecoder();
 
     StringReference messageReceiverName() const { return m_messageReceiverName; }
@@ -46,7 +46,7 @@ public:
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
 private:
-    MessageDecoder(const DataReference& buffer, Deque<Attachment>&);
+    MessageDecoder(const DataReference& buffer, Vector<Attachment>&);
 
     uint8_t m_messageFlags;
     StringReference m_messageReceiverName;

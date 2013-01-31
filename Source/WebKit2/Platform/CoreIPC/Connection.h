@@ -33,6 +33,7 @@
 #include "MessageEncoder.h"
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
+#include <wtf/Deque.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>

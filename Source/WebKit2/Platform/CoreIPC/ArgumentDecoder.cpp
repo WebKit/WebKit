@@ -33,11 +33,11 @@ namespace CoreIPC {
 
 PassOwnPtr<ArgumentDecoder> ArgumentDecoder::create(const uint8_t* buffer, size_t bufferSize)
 {
-    Deque<Attachment> attachments;
+    Vector<Attachment> attachments;
     return adoptPtr(new ArgumentDecoder(buffer, bufferSize, attachments));
 }
 
-ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque<Attachment>& attachments)
+ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>& attachments)
 {
     initialize(buffer, bufferSize);
 
@@ -224,17 +224,9 @@ bool ArgumentDecoder::removeAttachment(Attachment& attachment)
     if (m_attachments.isEmpty())
         return false;
 
-    attachment = m_attachments.takeFirst();
+    attachment = m_attachments.last();
+    m_attachments.removeLast();
     return true;
 }
-
-#ifndef NDEBUG
-void ArgumentDecoder::debug()
-{
-    printf("ArgumentDecoder::debug()\n");
-    printf("Number of Attachments: %d\n", (int)m_attachments.size());
-    printf("Size of buffer: %d\n", (int)(m_bufferEnd - m_buffer));
-}
-#endif
 
 } // namespace CoreIPC
