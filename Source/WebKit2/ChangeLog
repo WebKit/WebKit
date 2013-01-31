@@ -1,3 +1,10 @@
+2013-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix.
+        Removing build targets for Web Intents files that were removed in r141448.
+
+        * GNUmakefile.list.am:
+
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
         Remove Web Intents code from WebKit2

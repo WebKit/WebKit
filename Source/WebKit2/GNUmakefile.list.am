@@ -67,8 +67,6 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKGrammarDetail.h \
 	$(WebKit2)/UIProcess/API/C/WKHitTestResult.h \
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
-	$(WebKit2)/UIProcess/API/C/WKIntentData.h \
-	$(WebKit2)/UIProcess/API/C/WKIntentServiceInfo.h \
 	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
 	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
@@ -416,10 +414,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/ImmutableArray.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
-	Source/WebKit2/Shared/IntentData.cpp \
-	Source/WebKit2/Shared/IntentData.h \
-	Source/WebKit2/Shared/IntentServiceInfo.cpp \
-	Source/WebKit2/Shared/IntentServiceInfo.h \
 	Source/WebKit2/Shared/LayerTreeContext.h \
 	Source/WebKit2/Shared/MutableArray.cpp \
 	Source/WebKit2/Shared/MutableArray.h \
@@ -505,8 +499,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebHitTestResult.h \
 	Source/WebKit2/Shared/WebImage.cpp \
 	Source/WebKit2/Shared/WebImage.h \
-	Source/WebKit2/Shared/WebIntentServiceInfo.cpp \
-	Source/WebKit2/Shared/WebIntentServiceInfo.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
 	Source/WebKit2/Shared/WebKit2Initialize.cpp \
 	Source/WebKit2/Shared/WebKit2Initialize.h \
@@ -605,10 +597,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKIconDatabase.h \
 	Source/WebKit2/UIProcess/API/C/WKInspector.cpp \
 	Source/WebKit2/UIProcess/API/C/WKInspector.h \
-	Source/WebKit2/UIProcess/API/C/WKIntentData.cpp \
-	Source/WebKit2/UIProcess/API/C/WKIntentData.h \
-	Source/WebKit2/UIProcess/API/C/WKIntentServiceInfo.cpp \
-	Source/WebKit2/UIProcess/API/C/WKIntentServiceInfo.h \
 	Source/WebKit2/UIProcess/API/C/WKKeyValueStorageManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKKeyValueStorageManager.h \
 	Source/WebKit2/UIProcess/API/C/WKMediaCacheManager.cpp \
@@ -932,8 +920,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebIconDatabaseClient.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
-	Source/WebKit2/UIProcess/WebIntentData.cpp \
-	Source/WebKit2/UIProcess/WebIntentData.h \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
@@ -1023,10 +1009,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInitialize.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.h \
-	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp \
-	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntent.h \
-	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp \
-	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -1067,10 +1049,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntent.cpp \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntent.h \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp \
-	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntentRequest.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
