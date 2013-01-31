@@ -161,7 +161,7 @@ public:
     // In the future we might want a more generic way to handle sync or async messages directly
     // on the work queue, for example if we want to handle them on some other thread we could avoid
     // handling the message on the client thread first.
-    typedef void (*DidCloseOnConnectionWorkQueueCallback)(WorkQueue&, Connection*);
+    typedef void (*DidCloseOnConnectionWorkQueueCallback)(WorkQueue*, Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
 
     void addQueueClient(QueueClient*);
@@ -234,7 +234,7 @@ private:
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
 
     bool m_isConnected;
-    WorkQueue m_connectionQueue;
+    RefPtr<WorkQueue> m_connectionQueue;
     WebCore::RunLoop* m_clientRunLoop;
 
     Vector<QueueClient*> m_connectionQueueClients;

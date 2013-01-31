@@ -58,11 +58,9 @@ typedef gboolean (*GSourceFunc) (gpointer data);
 #include <Ecore.h>
 #endif
 
-class WorkQueue {
-    WTF_MAKE_NONCOPYABLE(WorkQueue);
-
+class WorkQueue : public ThreadSafeRefCounted<WorkQueue> {
 public:
-    explicit WorkQueue(const char* name);
+    static PassRefPtr<WorkQueue> create(const char* name);
     ~WorkQueue();
 
     // Will dispatch the given function to run as soon as possible.
@@ -70,8 +68,6 @@ public:
 
     // Will dispatch the given function after the given delay (in seconds).
     void dispatchAfterDelay(const Function<void()>&, double delay);
-
-    void invalidate();
 
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
@@ -92,9 +88,7 @@ public:
 #endif
 
 private:
-    // FIXME: Use an atomic boolean here instead.
-    Mutex m_isValidMutex;
-    bool m_isValid;
+    explicit WorkQueue(const char* name);
 
     void platformInitialize(const char* name);
     void platformInvalidate();

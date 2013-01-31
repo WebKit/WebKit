@@ -31,11 +31,9 @@
 
 namespace WebKit {
 
-static WorkQueue& processLauncherWorkQueue()
+static WorkQueue* processLauncherWorkQueue()
 {
-    // Give in to VisualStudio and its 31 character thread name limit and shorten the thread name to ProcLauncher instead of class name.
-    // See createThread() in Threading.cpp.
-    DEFINE_STATIC_LOCAL(WorkQueue, processLauncherWorkQueue, ("com.apple.WebKit.ProcLauncher"));
+    static WorkQueue* processLauncherWorkQueue = WorkQueue::create("com.apple.WebKit.ProcessLauncher").leakRef();
     return processLauncherWorkQueue;
 }
 
@@ -46,7 +44,7 @@ ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOpti
 {
     // Launch the process.
     m_isLaunching = true;
-    processLauncherWorkQueue().dispatch(bind(&ProcessLauncher::launchProcess, this));
+    processLauncherWorkQueue()->dispatch(bind(&ProcessLauncher::launchProcess, this));
 }
 
 void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier processIdentifier, CoreIPC::Connection::Identifier identifier)

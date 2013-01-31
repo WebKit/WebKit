@@ -222,7 +222,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_shouldExitOnSyncMessageSendFailure(false)
     , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
-    , m_connectionQueue("com.apple.CoreIPC.ReceiveQueue")
+    , m_connectionQueue(WorkQueue::create("com.apple.CoreIPC.ReceiveQueue"))
     , m_clientRunLoop(clientRunLoop)
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
@@ -238,8 +238,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
 Connection::~Connection()
 {
     ASSERT(!isValid());
-
-    m_connectionQueue.invalidate();
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)
@@ -258,12 +256,12 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 void Connection::addQueueClient(QueueClient* queueClient)
 {
-    m_connectionQueue.dispatch(WTF::bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
 }
 
 void Connection::removeQueueClient(QueueClient* queueClient)
 {
-    m_connectionQueue.dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
 }
 
 void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
@@ -296,7 +294,7 @@ void Connection::invalidate()
     // Reset the client.
     m_client = 0;
 
-    m_connectionQueue.dispatch(WTF::bind(&Connection::platformInvalidate, this));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::platformInvalidate, this));
 }
 
 void Connection::markCurrentlyDispatchedMessageAsInvalid()
@@ -336,7 +334,7 @@ bool Connection::sendMessage(PassOwnPtr<MessageEncoder> encoder, unsigned messag
     }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
-    m_connectionQueue.dispatch(WTF::bind(&Connection::sendOutgoingMessages, this));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::sendOutgoingMessages, this));
     return true;
 }
 
@@ -617,7 +615,7 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
 {
-    m_connectionQueue.dispatch(WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::connectionDidClose, this));
 }
 
 void Connection::connectionDidClose()
@@ -639,7 +637,7 @@ void Connection::connectionDidClose()
     }
 
     if (m_didCloseOnConnectionWorkQueueCallback)
-        m_didCloseOnConnectionWorkQueueCallback(m_connectionQueue, this);
+        m_didCloseOnConnectionWorkQueueCallback(m_connectionQueue.get(), this);
 
     m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchConnectionDidClose, this));
 }

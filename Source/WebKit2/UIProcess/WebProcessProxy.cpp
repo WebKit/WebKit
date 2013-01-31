@@ -89,10 +89,10 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-static WorkQueue& pluginWorkQueue()
+static WorkQueue* pluginWorkQueue()
 {
-    DEFINE_STATIC_LOCAL(WorkQueue, queue, ("com.apple.CoreIPC.PluginQueue"));
-    return queue;
+    static WorkQueue* pluginWorkQueue = WorkQueue::create("com.apple.WebKit.PluginQueue").leakRef();
+    return pluginWorkQueue;
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -348,7 +348,7 @@ void WebProcessProxy::handleGetPlugins(uint64_t requestID, bool refresh)
 
 void WebProcessProxy::getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh)
 {
-    pluginWorkQueue().dispatch(bind(&WebProcessProxy::handleGetPlugins, this, requestID, refresh));
+    pluginWorkQueue()->dispatch(bind(&WebProcessProxy::handleGetPlugins, this, requestID, refresh));
 }
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

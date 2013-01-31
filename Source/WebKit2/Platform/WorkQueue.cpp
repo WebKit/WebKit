@@ -26,26 +26,17 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+PassRefPtr<WorkQueue> WorkQueue::create(const char* name)
+{
+    return adoptRef(new WorkQueue(name));
+}
+
 WorkQueue::WorkQueue(const char* name)
-    : m_isValid(true)
 {
     platformInitialize(name);
 }
 
 WorkQueue::~WorkQueue()
 {
-#if !ASSERT_DISABLED
-    MutexLocker locker(m_isValidMutex);
-    ASSERT(!m_isValid);
-#endif
-}
-
-void WorkQueue::invalidate()
-{
-    {
-        MutexLocker locker(m_isValidMutex);
-        m_isValid = false;
-    }
-
     platformInvalidate();
 }

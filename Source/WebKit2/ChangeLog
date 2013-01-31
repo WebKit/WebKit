@@ -1,3 +1,47 @@
+2013-01-31  Anders Carlsson  <andersca@apple.com>
+
+        WorkQueue should be a ref-counted class
+        https://bugs.webkit.org/show_bug.cgi?id=108544
+
+        Reviewed by Sam Weinig.
+
+        Make WorkQueue a ref-counted class that's implicitly ref()'d when dispatching a function to it, and then
+        implicitly deref()'d when the function is done executing. This matches the behavior of dispatch queues,
+        and ensures that the WorkQueue object won't go away while dispatched functions are running.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        (CoreIPC::Connection::~Connection):
+        (CoreIPC::Connection::addQueueClient):
+        (CoreIPC::Connection::removeQueueClient):
+        (CoreIPC::Connection::invalidate):
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+        (CoreIPC::Connection::connectionDidClose):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::createDataAvailableSource):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::initializeDeadNameSource):
+        * Platform/WorkQueue.cpp:
+        (WorkQueue::create):
+        (WorkQueue::WorkQueue):
+        (WorkQueue::~WorkQueue):
+        * Platform/WorkQueue.h:
+        (WorkQueue):
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::processLauncherWorkQueue):
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::pluginWorkQueue):
+        (WebKit::WebProcessProxy::getPlugins):
+
 2013-01-31  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Fix build after removal of MessageID.h
