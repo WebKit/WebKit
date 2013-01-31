@@ -609,8 +609,11 @@ WebInspector.ProfilesPanel.prototype = {
 
         // No other item will be selected if there aren't any other profiles, so
         // make sure that view gets cleared when the last profile is removed.
-        if (!this._profiles.length)
-            this.closeVisibleView();
+        if (!sidebarParent.children.length) {
+            this.profilesItemTreeElement.select();
+            this._showLauncherView();
+            sidebarParent.hidden = true;
+        }
     },
 
     /**
