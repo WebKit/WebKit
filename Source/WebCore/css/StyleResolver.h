@@ -132,6 +132,27 @@ enum RuleMatchingBehavior {
     MatchOnlyUserAgentRules,
 };
 
+class InspectorCSSOMWrappers {
+public:
+    // WARNING. This will construct CSSOM wrappers for all style rules and cache them in a map for significant memory cost.
+    // It is here to support inspector. Don't use for any regular engine functions.
+    CSSStyleRule* getWrapperForRuleInSheets(StyleRule*, DocumentStyleSheetCollection*);
+    void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
+private:
+    template <class ListType>
+    void collect(ListType*);
+
+    void collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents*);
+    void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&);
+    void collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection*);
+
+    HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
+    HashSet<RefPtr<CSSStyleSheet> > m_styleSheetCSSOMWrapperSet;
+};
+
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
 class StyleResolver {
     WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
@@ -275,10 +296,6 @@ public:
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
     void invalidateMatchedPropertiesCache();
-    
-    // WARNING. This will construct CSSOM wrappers for all style rules and cache then in a map for significant memory cost.
-    // It is here to support inspector. Don't use for any regular engine functions.
-    CSSStyleRule* ensureFullCSSOMWrapperForInspector(StyleRule*);
 
 #if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, FilterOperations& outOperations);
@@ -444,6 +461,7 @@ public:
     static Length convertToFloatLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, double multiplier = 1);
 
     CSSToStyleMap* styleMap() { return &m_styleMap; }
+    InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
     
@@ -535,9 +553,6 @@ private:
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
     const StyleBuilder& m_styleBuilder;
-    
-    HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
-    HashSet<RefPtr<CSSStyleSheet> > m_styleSheetCSSOMWrapperSet;
 
 #if ENABLE(CSS_SHADERS)
     bool m_hasPendingShaders;
@@ -549,6 +564,7 @@ private:
 
     OwnPtr<StyleScopeResolver> m_scopeResolver;
     CSSToStyleMap m_styleMap;
+    InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
     friend class StyleBuilder;
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);

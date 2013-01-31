@@ -228,8 +228,6 @@ RenderStyle* StyleResolver::s_styleNotYetAvailable;
 
 static void loadFullDefaultStyle();
 static void loadSimpleDefaultStyle();
-template <class ListType>
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >&, ListType*);
 
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
@@ -394,8 +392,7 @@ void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefP
 #endif
 
         m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
-        if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
-            collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, cssSheet);
+        m_inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
     }
     m_authorStyle->shrinkToFit();
     collectFeatures();
@@ -2675,8 +2672,14 @@ String StyleResolver::pageName(int /* pageIndex */) const
     return "";
 }
 
+void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet* styleSheet)
+{
+    if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
+        collect(styleSheet);
+}
+
 template <class ListType>
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, ListType* listType)
+void InspectorCSSOMWrappers::collect(ListType* listType)
 {
     if (!listType)
         return;
@@ -2685,28 +2688,28 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
         CSSRule* cssRule = listType->item(i);
         switch (cssRule->type()) {
         case CSSRule::IMPORT_RULE:
-            collectCSSOMWrappers(wrapperMap, static_cast<CSSImportRule*>(cssRule)->styleSheet());
+            collect(static_cast<CSSImportRule*>(cssRule)->styleSheet());
             break;
         case CSSRule::MEDIA_RULE:
-            collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule));
+            collect(static_cast<CSSMediaRule*>(cssRule));
             break;
 #if ENABLE(CSS3_CONDITIONAL_RULES)
         case CSSRule::SUPPORTS_RULE:
-            collectCSSOMWrappers(wrapperMap, static_cast<CSSSupportsRule*>(cssRule));
+            collectCSSOMWrappers(static_cast<CSSSupportsRule*>(cssRule));
             break;
 #endif
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
-            collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule));
+            collect(static_cast<WebKitCSSRegionRule*>(cssRule));
             break;
 #endif
 #if ENABLE(SHADOW_DOM)
         case CSSRule::HOST_RULE:
-            collectCSSOMWrappers(wrapperMap, static_cast<CSSHostRule*>(cssRule));
+            collect(static_cast<CSSHostRule*>(cssRule));
             break;
 #endif
         case CSSRule::STYLE_RULE:
-            wrapperMap.add(static_cast<CSSStyleRule*>(cssRule)->styleRule(), static_cast<CSSStyleRule*>(cssRule));
+            m_styleRuleToCSSOMWrapperMap.add(static_cast<CSSStyleRule*>(cssRule)->styleRule(), static_cast<CSSStyleRule*>(cssRule));
             break;
         default:
             break;
@@ -2714,43 +2717,50 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
     }
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents* styleSheet)
+void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents* styleSheet)
 {
     if (!styleSheet)
         return;
     RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(styleSheet);
     sheetWrapperSet.add(styleSheetWrapper);
-    collectCSSOMWrappers(wrapperMap, styleSheetWrapper.get());
+    collect(styleSheetWrapper.get());
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, const Vector<RefPtr<CSSStyleSheet> >& sheets)
+void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i)
-        collectCSSOMWrappers(wrapperMap, sheets[i].get());
+        collect(sheets[i].get());
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, DocumentStyleSheetCollection* styleSheetCollection)
+void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection* styleSheetCollection)
 {
-    collectCSSOMWrappers(wrapperMap, styleSheetCollection->activeAuthorStyleSheets());
-    collectCSSOMWrappers(wrapperMap, styleSheetCollection->pageUserSheet());
-    collectCSSOMWrappers(wrapperMap, styleSheetCollection->injectedUserStyleSheets());
-    collectCSSOMWrappers(wrapperMap, styleSheetCollection->documentUserStyleSheets());
+    collectFromStyleSheets(styleSheetCollection->activeAuthorStyleSheets());
+    collect(styleSheetCollection->pageUserSheet());
+    collectFromStyleSheets(styleSheetCollection->injectedUserStyleSheets());
+    collectFromStyleSheets(styleSheetCollection->documentUserStyleSheets());
 }
 
-CSSStyleRule* StyleResolver::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, DocumentStyleSheetCollection* styleSheetCollection)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, simpleDefaultStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, defaultStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, quirksStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, svgStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, mathMLStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, mediaControlsStyleSheet);
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, fullscreenStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, simpleDefaultStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, defaultStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, quirksStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, svgStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, mathMLStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, mediaControlsStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, fullscreenStyleSheet);
 
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, document()->styleSheetCollection());
+        collectFromDocumentStyleSheetCollection(styleSheetCollection);
     }
     return m_styleRuleToCSSOMWrapperMap.get(rule).get();
+}
+
+void InspectorCSSOMWrappers::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(m_styleRuleToCSSOMWrapperMap);
+    info.addMember(m_styleSheetCSSOMWrapperSet);
 }
 
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
@@ -5462,8 +5472,7 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_fontSelector);
     info.addMember(m_viewportDependentMediaQueryResults);
     info.ignoreMember(m_styleBuilder);
-    info.addMember(m_styleRuleToCSSOMWrapperMap);
-    info.addMember(m_styleSheetCSSOMWrapperSet);
+    info.addMember(m_inspectorCSSOMWrappers);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     info.addMember(m_pendingSVGDocuments);
 #endif

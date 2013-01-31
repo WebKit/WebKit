@@ -959,7 +959,7 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> InspectorCSSAgent::stopSelectorPro
 void InspectorCSSAgent::willMatchRule(StyleRule* rule, StyleResolver* styleResolver)
 {
     if (m_currentSelectorProfile)
-        m_currentSelectorProfile->startSelector(styleResolver->ensureFullCSSOMWrapperForInspector(rule));
+        m_currentSelectorProfile->startSelector(styleResolver->inspectorCSSOMWrappers().getWrapperForRuleInSheets(rule, styleResolver->document()->styleSheetCollection()));
 }
 
 void InspectorCSSAgent::didMatchRule(bool matched)
@@ -971,7 +971,7 @@ void InspectorCSSAgent::didMatchRule(bool matched)
 void InspectorCSSAgent::willProcessRule(StyleRule* rule, StyleResolver* styleResolver)
 {
     if (m_currentSelectorProfile)
-        m_currentSelectorProfile->startSelector(styleResolver->ensureFullCSSOMWrapperForInspector(rule));
+        m_currentSelectorProfile->startSelector(styleResolver->inspectorCSSOMWrappers().getWrapperForRuleInSheets(rule, styleResolver->document()->styleSheetCollection()));
 }
 
 void InspectorCSSAgent::didProcessRule()
@@ -1125,7 +1125,7 @@ PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSS
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
     // FIXME: This could be factored better. StyleResolver::styleRulesForElement should return a StyleRule vector, not a CSSRuleList.
     if (!rule->parentStyleSheet()) {
-        rule = styleResolver->ensureFullCSSOMWrapperForInspector(rule->styleRule());
+        rule = styleResolver->inspectorCSSOMWrappers().getWrapperForRuleInSheets(rule->styleRule(), styleResolver->document()->styleSheetCollection());
         if (!rule)
             return 0;
     }
