@@ -1,5 +1,38 @@
 2013-02-01  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Make QWebHistory unit tests more robust
+
+        Reviewed by Jocelyn Turcotten.
+
+        The tests were using a QEventLoop::exec() call to verify the emission
+        of the loadFinished() signal after calling for example back() or forward().
+        However sometimes the call to back() may emit the signal immediately and
+        sometimes async, causing instabilities in test runs. The call to exec()
+        also means that if there was a bug then the rest would hang forever because
+        exec() has no timeout.
+
+        This patch introduces a simple SignalBarrier class that solves both issues:
+
+        (1) ensureSignalEmitted() supports the immediate signal emission case as well
+        as the async one.
+
+        (2) Through the use of QSignalSpy's wait() there's an actual timeout.
+
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::init):
+        (tst_QWebHistory::cleanup):
+        (tst_QWebHistory::back):
+        (tst_QWebHistory::forward):
+        (tst_QWebHistory::goToItem):
+        (tst_QWebHistory::serialize_2):
+        * tests/util.h:
+        (waitForSignal):
+        (SignalBarrier):
+        (SignalBarrier::SignalBarrier):
+        (SignalBarrier::ensureSignalEmitted):
+
+2013-02-01  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Fix hanging deleteQWebViewTwice test
 
         Reviewed by Allan Sandfeld Jensen.

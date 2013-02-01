@@ -38,7 +38,7 @@
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
-static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
+static inline bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
 {
     QEventLoop loop;
     QObject::connect(obj, signal, &loop, SLOT(quit()));
@@ -52,5 +52,30 @@ static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
     loop.exec();
     return timeoutSpy.isEmpty();
 }
+
+/**
+ * Just like QSignalSpy but facilitates sync and async
+ * signal emission. For example if you want to verify that
+ * page->foo() emitted a signal, it could be that the
+ * implementation decides to emit the signal asynchronously
+ * - in which case we want to spin a local event loop until
+ * emission - or that the call to foo() emits it right away.
+ */
+class SignalBarrier : private QSignalSpy
+{
+public:
+    SignalBarrier(const QObject* obj, const char* aSignal)
+        : QSignalSpy(obj, aSignal)
+    { }
+
+    bool ensureSignalEmitted()
+    {
+        bool result = count() > 0;
+        if (!result)
+            result = wait();
+        clear();
+        return result;
+    }
+};
 
 #define W_QSKIP(a, b) QSKIP(a)
