@@ -1214,22 +1214,19 @@ ol.watch-expressions > li.hovered {
 
 .object-info-state-note {
     display: none;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     background-color: rgb(179, 203, 247);
     color: white;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 3px;
     line-height: 13px;
-    margin: 0 8px;
+    margin: 0 6px;
+    font-size: 9px;
 }
 
 .object-info-state-note::before {
     content: "i";
-}
-
-.object-info-state-note:hover {
-    background-color: rgb(52, 115, 231);
 }
 
 .section.expanded .object-info-state-note {
