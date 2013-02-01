@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class FloatSize;
 class ScrollableArea;
 class Scrollbar;
 
