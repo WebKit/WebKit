@@ -41,14 +41,14 @@ namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::DragData> {
     static void encode(ArgumentEncoder&, const WebCore::DragData&);
-    static bool decode(ArgumentDecoder*, WebCore::DragData&);
+    static bool decode(ArgumentDecoder&, WebCore::DragData&);
 };
 
 void encode(ArgumentEncoder&, GtkPrintSettings*);
-bool decode(ArgumentDecoder*, GRefPtr<GtkPrintSettings>&);
+bool decode(ArgumentDecoder&, GRefPtr<GtkPrintSettings>&);
 
 void encode(ArgumentEncoder&, GtkPageSetup*);
-bool decode(ArgumentDecoder*, GRefPtr<GtkPageSetup>&);
+bool decode(ArgumentDecoder&, GRefPtr<GtkPageSetup>&);
 
 } // namespace CoreIPC
 

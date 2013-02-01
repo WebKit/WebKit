@@ -1,5 +1,26 @@
 2013-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Gtk] [WK2] Fix build after r141619
+        https://bugs.webkit.org/show_bug.cgi?id=108687
+
+        Reviewed by Benjamin Poulain.
+
+        Take a reference instead of a pointer for decoding functions.
+
+        * Platform/gtk/SharedMemoryGtk.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (CoreIPC::decodeImage):
+        (CoreIPC::decodeDataObject):
+        (CoreIPC::::decode):
+        (CoreIPC::decodeGKeyFile):
+        (CoreIPC::decode):
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/LayerTreeContextGtk.cpp:
+        (WebKit::LayerTreeContext::decode):
+
+2013-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [EFL] [WK2] Fix build after r141619
         https://bugs.webkit.org/show_bug.cgi?id=108683
 
