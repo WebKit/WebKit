@@ -48,6 +48,8 @@ private:
     virtual bool isRenderGrid() const OVERRIDE { return true; }
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
+    LayoutUnit computePreferredTrackWidth(const Length&, size_t) const;
+
     enum TrackSizingDirection { ForColumns, ForRows };
     void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks);
     LayoutUnit computeUsedBreadthOfMinLength(TrackSizingDirection, const Length&) const;

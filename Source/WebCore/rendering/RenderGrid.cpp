@@ -142,17 +142,8 @@ void RenderGrid::computePreferredLogicalWidths()
     const Vector<GridTrackSize>& trackStyles = style()->gridColumns();
 
     for (size_t i = 0; i < trackStyles.size(); ++i) {
-        const Length& minTrackLength = trackStyles[i].minTrackBreadth();
-        const Length& maxTrackLength = trackStyles[i].maxTrackBreadth();
-        // FIXME: Handle only one fixed length properly (e.g minmax(100px, max-content)).
-        if (!minTrackLength.isFixed() || !maxTrackLength.isFixed()) {
-            notImplemented();
-            continue;
-        }
-
-        LayoutUnit minTrackBreadth = minTrackLength.intValue();
-        LayoutUnit maxTrackBreadth = maxTrackLength.intValue();
-
+        LayoutUnit minTrackBreadth = computePreferredTrackWidth(trackStyles[i].minTrackBreadth(), i);
+        LayoutUnit maxTrackBreadth = computePreferredTrackWidth(trackStyles[i].maxTrackBreadth(), i);
         maxTrackBreadth = std::max(maxTrackBreadth, minTrackBreadth);
 
         m_minPreferredLogicalWidth += minTrackBreadth;
@@ -168,6 +159,46 @@ void RenderGrid::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth += borderAndPaddingInInlineDirection;
 
     setPreferredLogicalWidthsDirty(false);
+}
+
+LayoutUnit RenderGrid::computePreferredTrackWidth(const Length& length, size_t trackIndex) const
+{
+    if (length.isFixed()) {
+        // Grid areas don't have borders, margins or paddings so we don't need to account for them.
+        return length.intValue();
+    }
+
+    if (length.isMinContent()) {
+        LayoutUnit minContentSize = 0;
+        // FIXME: It's inefficient to iterate over our grid items. We should be able to
+        // get the subset of grid items in the current row / column faster.
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            size_t cellIndex = resolveGridPosition(ForColumns, child);
+            if (cellIndex != trackIndex)
+                continue;
+
+            // FIXME: We should include the child's fixed margins like RenderFlexibleBox.
+            minContentSize = std::max(minContentSize, child->minPreferredLogicalWidth());
+        }
+        return minContentSize;
+    }
+
+    if (length.isMaxContent()) {
+        LayoutUnit maxContentSize = 0;
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            size_t cellIndex = resolveGridPosition(ForColumns, child);
+            if (cellIndex != trackIndex)
+                continue;
+
+            // FIXME: We should include the child's fixed margins like RenderFlexibleBox.
+            maxContentSize = std::max(maxContentSize, child->maxPreferredLogicalWidth());
+        }
+        return maxContentSize;
+    }
+
+    // FIXME: css3-sizing mentions that we should resolve "definite sizes"
+    // (including <percentage> and calc()) but we don't do it elsewhere.
+    return 0;
 }
 
 void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks)

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel=stylesheet>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel=stylesheet>
+<style>
+.gridMinContentFixed {
+    -webkit-grid-columns: minmax(-webkit-min-content, 40px) minmax(-webkit-min-content, 40px);
+    -webkit-grid-rows: 10px;
+    font: 10px/1 Ahem;
+}
+
+.gridFixedMinContent {
+    -webkit-grid-columns: minmax(30px, -webkit-min-content) minmax(30px, -webkit-min-content);
+    -webkit-grid-rows: 10px;
+    font: 10px/1 Ahem;
+}
+
+.gridFixedMaxContent {
+    -webkit-grid-columns: minmax(40px, -webkit-max-content) minmax(40px, -webkit-max-content);
+    -webkit-grid-rows: 10px;
+    font: 10px/1 Ahem;
+}
+
+.gridFixedFixed {
+    -webkit-grid-columns: minmax(30px, 40px) minmax(30px, 40px);
+    -webkit-grid-rows: 10px;
+}
+
+.gridAutoContent {
+    -webkit-grid-columns: auto auto;
+    -webkit-grid-rows: 10px;
+    font: 10px/1 Ahem;
+}
+</style>
+</head>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+<body>
+<p>This test checks that the grid element's preferred logical widths are properly computed with different combinations of minmax().</p>
+<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="40">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="80">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
+    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+</div>
+<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="100">
+    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+</div>
+<div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="160">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridFixedFixed min-content" data-expected-height="10" data-expected-width="60"></div>
+<div class="grid gridFixedFixed max-content" data-expected-height="10" data-expected-width="80"></div>
+<div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="40">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="160">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+
+</body>
+</html>
