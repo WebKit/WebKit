@@ -1,5 +1,12 @@
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Fix webkitpy tests since a build_style is not specified in some cases.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
+2013-02-01  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Re-try enabling Win-EWS tests for the third time. 
         https://bugs.webkit.org/show_bug.cgi?id=107968
 

@@ -90,10 +90,13 @@ class RunTests(AbstractStep):
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
             ])
 
-            if self._options.build_style == "release":
-                args.append("--release")
-            elif self._options.build_style == "debug":
-                args.append("--debug")
+            try:
+                if self._options.build_style == "release":
+                    args.append("--release")
+                elif self._options.build_style == "debug":
+                    args.append("--debug")
+            except:
+                pass
 
             # old-run-webkit-tests does not support --skip-failing-tests
             # Using --quiet one Windows fails when we try to use /dev/null, disabling for now until we find a fix
