@@ -1,3 +1,15 @@
+2013-02-01  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        offlineasm BaseIndex handling is broken on ARM due to MIPS changes
+        https://bugs.webkit.org/show_bug.cgi?id=108261
+
+        Reviewed by Filip Pizlo.
+
+        offlineasm BaseIndex handling fix on MIPS.
+
+        * offlineasm/mips.rb:
+        * offlineasm/risc.rb:
+
 2013-02-01  Geoffrey Garen  <ggaren@apple.com>
 
         Removed an unused function: JSGlobalObject::createFunctionExecutableFromGlobalCode

@@ -312,8 +312,23 @@ end
 # Specialization of lowering of malformed BaseIndex addresses.
 #
 
+class Node
+    def mipsLowerMalformedAddressesRecurse(list, topLevelNode, &block)
+        mapChildren {
+            | subNode |
+            subNode.mipsLowerMalformedAddressesRecurse(list, topLevelNode, &block)
+        }
+    end
+end
+
+class Address
+    def mipsLowerMalformedAddressesRecurse(list, node, &block)
+        riscLowerMalformedAddressesRecurse(list, node, &block)
+    end
+end
+
 class BaseIndex
-    def BROKEN_riscLowerMalformedAddressesRecurse(list, node, &block)
+    def mipsLowerMalformedAddressesRecurse(list, node, &block)
         if scaleShift == 0
             tmp0 = Tmp.new(codeOrigin, :gpr)
             list << Instruction.new(codeOrigin, "addp", [base, index, tmp0])
@@ -325,6 +340,21 @@ class BaseIndex
             Address.new(codeOrigin, tmp0, Immediate.new(codeOrigin, offset.value));
         end
     end
+end
+
+class AbsoluteAddress
+    def mipsLowerMalformedAddressesRecurse(list, node, &block)
+        riscLowerMalformedAddressesRecurse(list, node, &block)
+    end
+end
+
+def mipsLowerMalformedAddresses(list, &block)
+    newList = []
+    list.each {
+        | node |
+        newList << node.mipsLowerMalformedAddressesRecurse(newList, node, &block)
+    }
+    newList
 end
 
 #
@@ -532,7 +562,7 @@ class Sequence
         result = riscLowerSimpleBranchOps(result)
         result = riscLowerHardBranchOps(result)
         result = riscLowerShiftOps(result)
-        result = riscLowerMalformedAddresses(result) {
+        result = mipsLowerMalformedAddresses(result) {
             | node, address |
             if address.is_a? Address
                 (-0xffff..0xffff).include? address.offset.value

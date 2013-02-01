@@ -187,7 +187,7 @@ class Node
 end
 
 class Address
-    def riscLowerMalformedAddressesRecurse(list, node)
+    def riscLowerMalformedAddressesRecurse(list, node, &block)
         return self if yield node, self
 
         tmp = Tmp.new(codeOrigin, :gpr)
@@ -208,7 +208,7 @@ class BaseIndex
 end
 
 class AbsoluteAddress
-    def riscLowerMalformedAddressesRecurse(list, node)
+    def riscLowerMalformedAddressesRecurse(list, node, &block)
         return self if yield node, self
         
         tmp = Tmp.new(codeOrigin, :gpr)
