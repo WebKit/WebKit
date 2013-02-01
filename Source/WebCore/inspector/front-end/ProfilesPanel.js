@@ -184,27 +184,45 @@ WebInspector.ProfileHeader.prototype = {
         throw new Error("Not implemented.");
     },
 
+    reset: function()
+    {
+    },
+
     /**
      * @param {Function} callback
      */
-    load: function(callback) { },
+    load: function(callback)
+    {
+    },
 
     /**
      * @return {boolean}
      */
-    canSaveToFile: function() { return false; },
+    canSaveToFile: function()
+    {
+        return false;
+    },
 
-    saveToFile: function() { throw new Error("Needs implemented"); },
+    saveToFile: function()
+    {
+        throw new Error("Needs implemented");
+    },
 
     /**
      * @param {File} file
      */
-    loadFromFile: function(file) { throw new Error("Needs implemented"); },
+    loadFromFile: function(file)
+    {
+        throw new Error("Needs implemented");
+    },
 
     /**
      * @return {boolean}
      */
-    fromFile: function() { return this._fromFile; }
+    fromFile: function()
+    {
+        return this._fromFile;
+    }
 }
 
 /**
@@ -264,6 +282,7 @@ WebInspector.ProfilesPanel = function()
     this._profileViewStatusBarItemsContainer = document.createElement("div");
     this._profileViewStatusBarItemsContainer.className = "status-bar-items";
 
+    /** @type {!Array.<!WebInspector.ProfileHeader>} */
     this._profiles = [];
     this._profilerEnabled = !Capabilities.profilerCausesRecompilation;
 
@@ -400,6 +419,7 @@ WebInspector.ProfilesPanel.prototype = {
                 if ("dispose" in view)
                     view.dispose();
             }
+            this._profiles[i].reset();
         }
         delete this.visibleView;
 
@@ -594,6 +614,7 @@ WebInspector.ProfilesPanel.prototype = {
             if (this._profiles[i].uid === profile.uid) {
                 profile = this._profiles[i];
                 this._profiles.splice(i, 1);
+                profile.reset();
                 break;
             }
         }

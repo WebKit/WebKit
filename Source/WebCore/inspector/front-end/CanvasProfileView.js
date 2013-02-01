@@ -103,7 +103,6 @@ WebInspector.CanvasProfileView.prototype = {
     {
         this._logGridNodes = [];
         this._linkifier.reset();
-        CanvasAgent.dropTraceLog(this._traceLogId);
     },
 
     get statusBarItems()
@@ -764,6 +763,15 @@ WebInspector.CanvasProfileHeader.prototype = {
     createView: function(profilesPanel)
     {
         return new WebInspector.CanvasProfileView(this);
+    },
+
+    /**
+     * @override
+     */
+    reset: function()
+    {
+        if (this._traceLogId)
+            CanvasAgent.dropTraceLog(this._traceLogId);
     },
 
     /**
