@@ -176,6 +176,7 @@ XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
     , m_shouldAllowCDATA(false)
     , m_scriptTagNestingLevel(0)
 {
+    ASSERT(isMainThread());
     ASSERT(m_parser);
     if (Frame* frame = parser->document()->frame()) {
         if (Settings* settings = frame->settings())
@@ -185,11 +186,14 @@ XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
     // we want to reference might not all have been constructed yet.
 }
 
-void XSSAuditor::init()
+void XSSAuditor::init(Document* document)
 {
     const size_t miniumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
     const int suffixTreeDepth = 5;
 
+    ASSERT(isMainThread());
+    if (m_state == Initialized)
+        return;
     ASSERT(m_state == Uninitialized);
     m_state = Initialized;
 
@@ -198,12 +202,12 @@ void XSSAuditor::init()
 
     // In theory, the Document could have detached from the Frame after the
     // XSSAuditor was constructed.
-    if (!m_parser->document()->frame()) {
+    if (!document->frame()) {
         m_isEnabled = false;
         return;
     }
 
-    const KURL& url = m_parser->document()->url();
+    const KURL& url = document->url();
 
     if (url.isEmpty()) {
         // The URL can be empty when opening a new browser window or calling window.open("").
@@ -216,13 +220,13 @@ void XSSAuditor::init()
         return;
     }
 
-    TextResourceDecoder* decoder = m_parser->document()->decoder();
+    TextResourceDecoder* decoder = document->decoder();
     m_decodedURL = fullyDecodeString(url.string(), decoder);
     if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
     String httpBodyAsString;
-    if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
+    if (DocumentLoader* documentLoader = document->frame()->loader()->documentLoader()) {
         DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
         String headerValue = documentLoader->response().httpHeaderField(XSSProtectionHeader);
         String errorDetails;
@@ -231,8 +235,8 @@ void XSSAuditor::init()
         m_xssProtection = parseXSSProtectionHeader(headerValue, errorDetails, errorPosition, reportURL);
 
         if ((m_xssProtection == XSSProtectionEnabled || m_xssProtection == XSSProtectionBlockEnabled) && !reportURL.isEmpty()) {
-            m_reportURL = m_parser->document()->completeURL(reportURL);
-            if (MixedContentChecker::isMixedContent(m_parser->document()->securityOrigin(), m_reportURL)) {
+            m_reportURL = document->completeURL(reportURL);
+            if (MixedContentChecker::isMixedContent(document->securityOrigin(), m_reportURL)) {
                 errorDetails = "insecure reporting URL for secure page";
                 m_xssProtection = XSSProtectionInvalid;
                 m_reportURL = KURL();
@@ -240,7 +244,7 @@ void XSSAuditor::init()
         }
 
         if (m_xssProtection == XSSProtectionInvalid) {
-            m_parser->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
+            document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
             m_xssProtection = XSSProtectionEnabled;
         }
 
@@ -271,9 +275,6 @@ void XSSAuditor::init()
 
 PassOwnPtr<DidBlockScriptRequest> XSSAuditor::filterToken(HTMLToken& token)
 {
-    if (m_state == Uninitialized)
-        init();
-   
     ASSERT(m_state == Initialized);
     if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
         return nullptr;

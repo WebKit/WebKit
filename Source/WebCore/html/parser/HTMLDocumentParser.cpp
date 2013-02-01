@@ -364,6 +364,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_input.current().currentLine().zeroBasedInt());
 
+    m_xssAuditor.init(document());
+
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
             m_sourceTracker.start(m_input, m_tokenizer.get(), token());
