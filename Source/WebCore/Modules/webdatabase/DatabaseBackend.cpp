@@ -287,6 +287,10 @@ public:
     ~DoneCreatingDatabaseOnExitCaller()
     {
 #if !PLATFORM(CHROMIUM)
+        // m_ec is not used in cross-platform code path. We don't have a macro for unused member variables,
+        // so just using UNUSED_PARAM.
+        // FIXME: Refactor the code to avoid the need for such wildly different behaviors.
+        UNUSED_PARAM(m_ec);
         DatabaseTracker::tracker().doneCreatingDatabase(m_database);
 #else
         if (m_ec == INVALID_STATE_ERR)
@@ -296,7 +300,7 @@ public:
     }
 private:
     DatabaseBackend* m_database;
-    ExceptionCode& m_ec;
+    ExceptionCode& m_ec; // This is a reference to a local variable in performOpenAndVerify(), so appropriate action could be taken based on its value at function exit time.
 };
 
 bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec, String& errorMessage)
