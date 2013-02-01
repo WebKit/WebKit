@@ -389,7 +389,7 @@ public:
     void lazyAttach(ShouldSetAttached = SetAttached);
     void lazyReattach(ShouldSetAttached = SetAttached);
 
-    virtual void setFocus(bool flag = true);
+    virtual void setFocus(bool flag);
     virtual void setActive(bool flag = true, bool pause = false);
     virtual void setHovered(bool flag = true);
 

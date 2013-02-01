@@ -57,7 +57,7 @@ private:
     virtual bool isMouseFocusable() const;
     virtual bool isFocusable() const;
     virtual void updateFocusAppearance(bool /*restorePreviousSelection*/);
-    virtual void setFocus(bool);
+    virtual void setFocus(bool) OVERRIDE;
 
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;

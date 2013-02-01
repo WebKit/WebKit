@@ -56,7 +56,7 @@ protected:
 
 private:
     virtual bool supportsFocus() const;
-    virtual void setFocus(bool);
+    virtual void setFocus(bool) OVERRIDE;
     
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual bool isFrameElementBase() const { return true; }

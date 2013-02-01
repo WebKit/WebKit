@@ -109,7 +109,7 @@ public:
     virtual void attach() OVERRIDE;
     virtual void detach() OVERRIDE;
     virtual LayoutRect boundingBox() const OVERRIDE;
-    virtual void setFocus(bool = true) OVERRIDE;
+    virtual void setFocus(bool) OVERRIDE;
     virtual void setActive(bool active = true, bool pause = false) OVERRIDE;
     virtual void setHovered(bool = true) OVERRIDE;
     virtual void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange) OVERRIDE;
