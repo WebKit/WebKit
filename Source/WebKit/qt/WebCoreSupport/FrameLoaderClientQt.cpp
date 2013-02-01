@@ -1436,6 +1436,7 @@ public:
     }
     virtual void hide()
     {
+        Widget::hide();
         if (platformWidget())
             widgetAdapter()->setVisible(false);
     }
