@@ -167,6 +167,8 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate(v8::Iso
 
 bool V8TestNamedConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
     return GetRawTemplate(isolate)->HasInstance(value);
 }
 
