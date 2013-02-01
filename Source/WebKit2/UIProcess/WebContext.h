@@ -422,7 +422,7 @@ private:
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
 
-    StorageManager m_storageManager;
+    RefPtr<StorageManager> m_storageManager;
 
     typedef HashMap<AtomicString, RefPtr<WebContextSupplement> > WebContextSupplementMap;
     WebContextSupplementMap m_supplements;

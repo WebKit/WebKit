@@ -28,6 +28,11 @@
 
 namespace WebKit {
 
+PassRefPtr<StorageManager> StorageManager::create()
+{
+    return adoptRef(new StorageManager);
+}
+
 StorageManager::StorageManager()
 {
 }

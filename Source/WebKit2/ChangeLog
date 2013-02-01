@@ -1,5 +1,25 @@
 2013-01-31  Anders Carlsson  <andersca@apple.com>
 
+        StorageManager should be ref-counted
+        https://bugs.webkit.org/show_bug.cgi?id=108553
+
+        Reviewed by Beth Dakin.
+
+        It's likely we'd want to have the storage manager outlive its context at times, so make it
+        reference counted.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::create):
+        (WebKit):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebContext.h:
+        (WebContext):
+
+2013-01-31  Anders Carlsson  <andersca@apple.com>
+
         WorkQueue should be a ref-counted class
         https://bugs.webkit.org/show_bug.cgi?id=108544
 

@@ -26,14 +26,18 @@
 #ifndef StorageManager_h
 #define StorageManager_h
 
+#include <wtf/PassRefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebKit {
 
-class StorageManager {
+class StorageManager : public ThreadSafeRefCounted<StorageManager> {
 public:
-    StorageManager();
+    static PassRefPtr<StorageManager> create();
     ~StorageManager();
 
 private:
+    StorageManager();
 };
 
 } // namespace WebKit
