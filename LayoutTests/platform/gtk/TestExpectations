@@ -1421,7 +1421,13 @@ webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure 
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
 
 webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Failure ]
-webkit.org/b/108363 fullscreen/video-specified-size.html [ Failure ]
+webkit.org/b/108363 fullscreen/video-specified-size.html [ Timeout ]
+webkit.org/b/108363 fullscreen/full-screen-no-style-sharing.html [ Timeout ]
+webkit.org/b/108363 fullscreen/full-screen-stacking-context.html [ Timeout ]
+webkit.org/b/108363 fullscreen/video-controls-drag.html [ Timeout ]
+webkit.org/b/108363 fullscreen/full-screen-crash-offsetLeft.html [ Timeout ]
+webkit.org/b/108363 fullscreen/video-controls-override.html [ Timeout ]
+webkit.org/b/108363 fast/regions/full-screen-video-from-region.html [ Timeout ]
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
