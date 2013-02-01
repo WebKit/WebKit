@@ -1824,6 +1824,8 @@ TEST_F(WebFrameTest, DisambiguationPopup)
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile, true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->resize(WebSize(1000, 1000));
     webViewImpl->layout();
 
@@ -1868,6 +1870,8 @@ TEST_F(WebFrameTest, DisambiguationPopupNoContainer)
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup_no_container.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->resize(WebSize(1000, 1000));
     webViewImpl->layout();
 
@@ -1886,6 +1890,8 @@ TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile, true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->resize(WebSize(1000, 1000));
     webViewImpl->layout();
 
@@ -1908,6 +1914,40 @@ TEST_F(WebFrameTest, DisambiguationPopupMobileSite)
         webViewImpl->handleInputEvent(fatTap(10 + i * 5, 590));
         EXPECT_FALSE(client.triggered());
     }
+}
+
+TEST_F(WebFrameTest, DisambiguationPopupBlacklist)
+{
+    const unsigned viewportWidth = 500;
+    const unsigned viewportHeight = 1000;
+    const unsigned divHeight = 100;
+    const std::string htmlFile = "disambiguation_popup_blacklist.html";
+    registerMockedHttpURLLoad(htmlFile);
+
+    DisambiguationPopupTestWebViewClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile, true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    // Click somewhere where the popup shouldn't appear.
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(viewportWidth / 2, 0));
+    EXPECT_FALSE(client.triggered());
+
+    // Click directly in between two container divs with click handlers, with children that don't handle clicks.
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(viewportWidth / 2, divHeight));
+    EXPECT_TRUE(client.triggered());
+
+    // The third div container should be blacklisted if you click on the link it contains.
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(viewportWidth / 2, divHeight * 3.25));
+    EXPECT_FALSE(client.triggered());
 }
 
 TEST_F(WebFrameTest, DisambiguationPopupPageScale)

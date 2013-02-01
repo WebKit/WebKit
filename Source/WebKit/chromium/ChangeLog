@@ -1,3 +1,20 @@
+2013-02-01  Dan Alcantara  <dfalcantara@chromium.org>
+
+        Touch disambiguation blacklist is not being queried properly
+        https://bugs.webkit.org/show_bug.cgi?id=108222
+
+        Reviewed by Adam Barth.
+
+        TEST=WebFrameTest::DisambiguationPopupBlacklist
+
+        Fix the blacklist so that we check it for the right nodes.
+        Add a test to check that the blacklist is being built and used
+        correctly.  Also update the other DisambiguationPopup tests to
+        use the new page scale method.
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/disambiguation_popup_blacklist.html: Added.
+
 2013-02-01  Eberhard Graether  <egraether@google.com>
 
         [chromium] only show checkboxes for FPS meter and continuous painting when compositing mode is forced
