@@ -1,0 +1,439 @@
+This test exercises a bunch of color composition with alpha blending. The top-left rectangles are the source images and bottom-right rectangles are the destination images.
+
+Tests for fill rect
+
+src 255, 0, 0, 255	src 255, 0, 0, 255	src 255, 0, 0, 255	src 0, 255, 0, 0	src 0, 255, 0, 1	src 255, 0, 0, 0	src 255, 0, 0, 127	src 255, 0, 0, 255	src 255, 0, 0, 127	src 127, 0, 0, 255	src 127, 0, 0, 127	src 255, 0, 0, 127	src 255, 127, 0, 32	src 255, 0, 0, 191	src 255, 0, 255, 191
+dst 0, 255, 0, 255	dst 0, 255, 0, 0	dst 0, 255, 0, 1	dst 255, 0, 0, 255	dst 255, 0, 0, 255	dst 0, 255, 0, 255	dst 0, 255, 0, 127	dst 0, 255, 0, 127	dst 0, 255, 0, 255	dst 0, 127, 0, 127	dst 0, 127, 0, 255	dst 255, 0, 0, 63	dst 255, 63, 0, 63	dst 0, 255, 0, 127	dst 0, 255, 255, 127
+source-over																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+source-in																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 255,0,0,255 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-in, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-in, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,64 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 255,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: source-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 128,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: source-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 126,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: source-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,32 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: source-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,127,0,8 actual: 0,0,0,0, composite type: source-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,96 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: source-in, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 255,0,255,96 actual: 0,0,0,0, composite type: source-in, source: 255,0,255,191, destination: 0,255,255,127
+source-out																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,64 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,128 actual: 255,0,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: source-out, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 127,0,0,128 actual: 127,0,0,255, composite type: source-out, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: source-out, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 126,0,0,127, composite type: source-out, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: source-out, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,96 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: source-out, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,132,0,25 actual: 255,128,0,32, composite type: source-out, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,96 actual: 255,0,0,191, composite type: source-out, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: source-out, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 255,0,255,96 actual: 255,0,255,191, composite type: source-out, source: 255,0,255,191, destination: 0,255,255,127
+source-atop																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-over																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-in																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,255 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-in, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-in, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,64 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,127 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,127 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: destination-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 0,126,0,127 actual: 0,0,0,0, composite type: destination-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: destination-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,128,0,127 actual: 0,0,0,0, composite type: destination-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: destination-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,32 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: destination-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,95,0,8 actual: 0,0,0,0, composite type: destination-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,96 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: destination-in, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 0,255,255,96 actual: 0,0,0,0, composite type: destination-in, source: 255,0,255,191, destination: 0,255,255,127
+destination-out																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-atop																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,255 actual: 255,0,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-atop, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-atop, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 126,126,0,127 actual: 255,0,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 128,127,0,255 actual: 255,0,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,127 actual: 255,0,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: destination-atop, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 63,63,0,255 actual: 127,0,0,255, composite type: destination-atop, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: destination-atop, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,126,0,127 actual: 126,0,0,127, composite type: destination-atop, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: destination-atop, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: destination-atop, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 126,126,0,191 actual: 255,0,0,191, composite type: destination-atop, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: destination-atop, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 126,126,255,191 actual: 255,0,255,191, composite type: destination-atop, source: 255,0,255,191, destination: 0,255,255,127
+lighter																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+copy																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+xor																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+Tests for path and fill
+
+src 255, 0, 0, 255	src 255, 0, 0, 255	src 255, 0, 0, 255	src 0, 255, 0, 0	src 0, 255, 0, 1	src 255, 0, 0, 0	src 255, 0, 0, 127	src 255, 0, 0, 255	src 255, 0, 0, 127	src 127, 0, 0, 255	src 127, 0, 0, 127	src 255, 0, 0, 127	src 255, 127, 0, 32	src 255, 0, 0, 191	src 255, 0, 255, 191
+dst 0, 255, 0, 255	dst 0, 255, 0, 0	dst 0, 255, 0, 1	dst 255, 0, 0, 255	dst 255, 0, 0, 255	dst 0, 255, 0, 255	dst 0, 255, 0, 127	dst 0, 255, 0, 127	dst 0, 255, 0, 255	dst 0, 127, 0, 127	dst 0, 127, 0, 255	dst 255, 0, 0, 63	dst 255, 63, 0, 63	dst 0, 255, 0, 127	dst 0, 255, 255, 127
+source-over																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+source-in																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 255,0,0,255 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-in, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-in, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,64 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 255,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: source-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 128,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: source-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 126,0,0,127 actual: 0,0,0,0, composite type: source-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: source-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,32 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: source-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,127,0,8 actual: 0,0,0,0, composite type: source-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,96 actual: 0,0,0,0, composite type: source-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: source-in, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 255,0,255,96 actual: 0,0,0,0, composite type: source-in, source: 255,0,255,191, destination: 0,255,255,127
+source-out																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: source-out, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,64 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,128 actual: 255,0,0,255, composite type: source-out, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: source-out, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 127,0,0,128 actual: 127,0,0,255, composite type: source-out, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: source-out, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,0,0,0 actual: 126,0,0,127, composite type: source-out, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: source-out, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,96 actual: 255,0,0,127, composite type: source-out, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: source-out, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,132,0,25 actual: 255,128,0,32, composite type: source-out, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: source-out, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 255,0,0,96 actual: 255,0,0,191, composite type: source-out, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: source-out, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 255,0,255,96 actual: 255,0,255,191, composite type: source-out, source: 255,0,255,191, destination: 0,255,255,127
+source-atop																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-over																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-in																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,255 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-in, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-in, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,64 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,127 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,127 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: destination-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 0,126,0,127 actual: 0,0,0,0, composite type: destination-in, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: destination-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,128,0,127 actual: 0,0,0,0, composite type: destination-in, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: destination-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected composition! expected: 255,0,0,32 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: destination-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected composition! expected: 255,95,0,8 actual: 0,0,0,0, composite type: destination-in, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 0,255,0,96 actual: 0,0,0,0, composite type: destination-in, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: destination-in, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 0,255,255,96 actual: 0,0,0,0, composite type: destination-in, source: 255,0,255,191, destination: 0,255,255,127
+destination-out																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+destination-atop																														
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,255 actual: 255,0,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,255
+PASS
+PASS
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-atop, source: 0,255,0,0, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,255, composite type: destination-atop, source: 0,255,0,1, destination: 255,0,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,0, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected composition! expected: 126,126,0,127 actual: 255,0,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected composition! expected: 128,127,0,255 actual: 255,0,0,255, composite type: destination-atop, source: 255,0,0,255, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,255, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected composition! expected: 0,255,0,127 actual: 255,0,0,127, composite type: destination-atop, source: 255,0,0,127, destination: 0,255,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 0,126,0,127, composite type: destination-atop, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected composition! expected: 63,63,0,255 actual: 127,0,0,255, composite type: destination-atop, source: 127,0,0,255, destination: 0,127,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,127,0,255, composite type: destination-atop, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected composition! expected: 0,126,0,127 actual: 126,0,0,127, composite type: destination-atop, source: 127,0,0,127, destination: 0,127,0,255
+Unexpected destination! expected: 0,0,0,0 actual: 255,0,0,63, composite type: destination-atop, source: 255,0,0,127, destination: 255,0,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 255,65,0,63, composite type: destination-atop, source: 255,127,0,32, destination: 255,63,0,63
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,0,127, composite type: destination-atop, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected composition! expected: 126,126,0,191 actual: 255,0,0,191, composite type: destination-atop, source: 255,0,0,191, destination: 0,255,0,127
+Unexpected destination! expected: 0,0,0,0 actual: 0,255,255,127, composite type: destination-atop, source: 255,0,255,191, destination: 0,255,255,127
+Unexpected composition! expected: 126,126,255,191 actual: 255,0,255,191, composite type: destination-atop, source: 255,0,255,191, destination: 0,255,255,127
+lighter																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+copy																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+xor																														
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+
