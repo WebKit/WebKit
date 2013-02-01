@@ -1319,7 +1319,12 @@ private:
     int m_count;
 };
 
+// This fails on Mac https://bugs.webkit.org/show_bug.cgi?id=108574
+#if OS(DARWIN)
+TEST_F(WebFrameTest, DISABLED_FindInPageMatchRects)
+#else
 TEST_F(WebFrameTest, FindInPageMatchRects)
+#endif
 {
     registerMockedHttpURLLoad("find_in_page.html");
     registerMockedHttpURLLoad("find_in_page_frame.html");
