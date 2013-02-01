@@ -319,13 +319,13 @@ sub determineArchitecture
         if ($architecture) {
             chomp $architecture;
         } else {
-            if (not defined $xcodeSDK or $xcodeSDK =~ /\/|macosx/) {
+            if (not defined $xcodeSDK or $xcodeSDK =~ /^(\/$|macosx)/) {
                 my $supports64Bit = `sysctl -n hw.optional.x86_64`;
                 chomp $supports64Bit;
                 $architecture = 'x86_64' if $supports64Bit;
-            } elsif ($xcodeSDK =~ /iphonesimulator/) {
+            } elsif ($xcodeSDK =~ /^iphonesimulator/) {
                 $architecture = 'i386';
-            } elsif ($xcodeSDK =~ /iphoneos/) {
+            } elsif ($xcodeSDK =~ /^iphoneos/) {
                 $architecture = 'armv7';
             }
         }
