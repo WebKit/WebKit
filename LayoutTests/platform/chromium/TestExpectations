@@ -3636,9 +3636,7 @@ webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 webkit.org/b/94002 [ Win7 Debug ] inspector/debugger/event-listener-breakpoints.html [ Pass Timeout Failure ]
 
 # Requires a rebaseline after webkit.org/b/108108 
-webkit.org/b/108108 svg/zoom/page/zoom-background-images.html [ ImageOnlyFailure Pass ]
 webkit.org/b/108108 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ ImageOnlyFailure Pass ]
-webkit.org/b/108108 svg/zoom/page/zoom-svg-as-background-with-relative-size.html [ ImageOnlyFailure Pass ]
 webkit.org/b/108108 fast/backgrounds/size/contain-and-cover-zoomed.html [ ImageOnlyFailure Pass ]
 
 # Flaky
