@@ -1,3 +1,28 @@
+2013-02-01  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] InputHandler status is not restored when page history goes back
+        https://bugs.webkit.org/show_bug.cgi?id=108448
+
+        Reviewed by Yong Li.
+
+        PR288406 Internally reviewed by Mike Fenton
+
+        When webpage goes back, it restores the old frame's selection and focused node,
+        but we don't save the InputHandler's status, it becomes non-input mode when page
+        goes back. When it restores the focus, since the new focus node is same as the old
+        document focused node, webcore will not notify client to update the input handler.
+
+        This patch updates the input handler's status by notifying it focus node changed.
+
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::restoreViewState):
+        (WebKit):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-01-31  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Bing Images viewport causes layout "fun"

@@ -1138,6 +1138,8 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     bool reflowChanged = shouldReflowBlock != m_webPagePrivate->m_shouldReflowBlock;
     bool orientationChanged = viewState.orientation % 180 != m_webPagePrivate->mainFrame()->orientation() % 180;
 
+    m_webPagePrivate->m_inputHandler->restoreViewState();
+
     if (!scrollChanged && !scaleChanged && !reflowChanged && !orientationChanged)
         return;
 

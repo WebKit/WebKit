@@ -154,6 +154,8 @@ public:
     void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
     void setSystemSpellCheckStatus(bool enabled) { m_spellCheckStatusConfirmed = true; m_globalSpellCheckStatus = enabled; }
 
+    void restoreViewState();
+
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
 

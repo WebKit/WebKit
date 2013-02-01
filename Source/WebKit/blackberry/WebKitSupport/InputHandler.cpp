@@ -2399,5 +2399,11 @@ int32_t InputHandler::commitText(spannable_string_t* spannableString, int32_t re
     return setSpannableTextAndRelativeCursor(spannableString, relativeCursorPosition, false /* markTextAsComposing */) ? 0 : -1;
 }
 
+void InputHandler::restoreViewState()
+{
+    setInputModeEnabled();
+    focusedNodeChanged();
+}
+
 }
 }
