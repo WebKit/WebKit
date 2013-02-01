@@ -204,20 +204,6 @@ InspectorTest.dumpScriptsNavigator = function(navigator)
     }
 };
 
-InspectorTest.dumpComboBoxFileSelector = function(comboBoxFileSelector)
-{
-    var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
-    InspectorTest.addResult("Dumping ComboBoxFileSelector:");
-    var select = comboBoxFileSelector._filesSelectElement;
-    for (var i = 0; i < select.length; ++i) {
-        var option = select[i];
-        var text = option.text.replace(/.*LayoutTests/, "LayoutTests");
-        text = text.replace(/\u00a0/g, " ").replace(/\u2026/g, "...");
-        var tooltip = option.title.replace(rootURL, "<root>/");
-        InspectorTest.addResult(text + (tooltip ? "(" + tooltip + ")" : ""));
-    }
-};
-
 InspectorTest.setBreakpoint = function(sourceFrame, lineNumber, condition, enabled)
 {
     sourceFrame._setBreakpoint(lineNumber, condition, enabled);

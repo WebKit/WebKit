@@ -10,21 +10,28 @@ function test()
     WebInspector._isMac = false;
     WebInspector.showPanel("scripts");
 
-    var navigatorFileSelector = new WebInspector.ScriptsNavigator();
+    var navigator = new WebInspector.ScriptsNavigator();
 
+    var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
         var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, url, WebInspector.resourceTypes.Script, null);
         uiSourceCode.isContentScript = isContentScript;
-        navigatorFileSelector.addUISourceCode(uiSourceCode);
+        navigator.addUISourceCode(uiSourceCode);
+        uiSourceCodes.push(uiSourceCode);
     }
 
-    function dumpScriptsList()
+    function dumpScriptsList(noReveal)
     {
         InspectorTest.addResult("");
         InspectorTest.addResult("WebInspector.settings.showScriptFolders = " + WebInspector.settings.showScriptFolders.get());
 
-        InspectorTest.dumpScriptsNavigator(navigatorFileSelector);
+        InspectorTest.dumpScriptsNavigator(navigator);
+        if (noReveal)
+            return;
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            navigator.revealUISourceCode(uiSourceCodes[i]);
+        InspectorTest.dumpScriptsNavigator(navigator);
     }
 
     var scripts = [
@@ -59,7 +66,7 @@ function test()
     try {
         dumpScriptsList();
         WebInspector.settings.showScriptFolders.set(false);
-        dumpScriptsList();
+        dumpScriptsList(true);
     } finally {
         WebInspector.settings.showScriptFolders.set(true);
     }

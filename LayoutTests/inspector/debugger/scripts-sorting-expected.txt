@@ -5,6 +5,19 @@ WebInspector.settings.showScriptFolders = true
 Dumping ScriptsNavigator 'Scripts' tab:
   bar.com
     foo/path
+  foo.com
+    _js/production
+    foo/path
+    i
+    i/js
+  *Non*URL*path
+Dumping ScriptsNavigator 'Content scripts' tab:
+  extension-name
+    folder
+  *Non*URL*path
+Dumping ScriptsNavigator 'Scripts' tab:
+  bar.com
+    foo/path
       bar.js?file=bar/zzz.js
       foo.js?file=bar/aaa.js
   foo.com
@@ -53,6 +66,19 @@ Dumping ScriptsNavigator 'Content scripts' tab:
   baz.js
 
 WebInspector.settings.showScriptFolders = true
+Dumping ScriptsNavigator 'Scripts' tab:
+  bar.com
+    foo/path
+  foo.com
+    _js/production
+    foo/path
+    i
+    i/js
+  *Non*URL*path
+Dumping ScriptsNavigator 'Content scripts' tab:
+  extension-name
+    folder
+  *Non*URL*path
 Dumping ScriptsNavigator 'Scripts' tab:
   bar.com
     foo/path

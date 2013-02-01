@@ -10,13 +10,15 @@ function test()
     WebInspector._isMac = false;
 
     WebInspector.showPanel("scripts");
-    var navigatorFileSelector = new WebInspector.ScriptsNavigator();
+    var navigator = new WebInspector.ScriptsNavigator();
 
+    var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
         var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, url, WebInspector.resourceTypes.Script, null);
         uiSourceCode.isContentScript = isContentScript;
-        navigatorFileSelector.addUISourceCode(uiSourceCode);
+        navigator.addUISourceCode(uiSourceCode);
+        uiSourceCodes.push(uiSourceCode);
     }
 
     var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
@@ -31,7 +33,10 @@ function test()
     addUISourceCode("?a=b", false);
     addUISourceCode("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
 
-    InspectorTest.dumpScriptsNavigator(navigatorFileSelector);
+    InspectorTest.dumpScriptsNavigator(navigator);
+    for (var i = 0; i < uiSourceCodes.length; ++i)
+        navigator.revealUISourceCode(uiSourceCodes[i]);
+    InspectorTest.dumpScriptsNavigator(navigator);
 
     InspectorTest.completeTest();
 }

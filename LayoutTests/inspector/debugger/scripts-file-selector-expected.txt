@@ -2,6 +2,16 @@ Tests scripts panel file selectors.
 
 Dumping ScriptsNavigator 'Scripts' tab:
   example.com
+  localhost
+    LayoutTests/inspector/debugger/foo/bar
+    LayoutTests/inspector/debugger/foo/baz
+  ?a=b
+  very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url
+Dumping ScriptsNavigator 'Content scripts' tab:
+  localhost
+    LayoutTests/inspector/debugger/foo/bar
+Dumping ScriptsNavigator 'Scripts' tab:
+  example.com
     ?a=b
   localhost
     LayoutTests/inspector/debugger/foo/bar

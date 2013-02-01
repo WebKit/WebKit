@@ -52,12 +52,17 @@ WebInspector.NavigatorView = function()
     this.element.appendChild(scriptsOutlineElement);
     this.setDefaultFocusedElement(this._scriptsTree.element);
 
+    /** @type {Object.<string, WebInspector.NavigatorFolderTreeElement>} */
     this._folderTreeElements = {};
-    this._scriptTreeElementsByUISourceCode = new Map();
+    /** @type {Object.<string, Array.<WebInspector.UISourceCode>>} */
+    this._folderTreeElementsUISourceCodes = {};
+    /** @type {Object.<string, WebInspector.UISourceCode>} */
+    this._uiSourceCodes = {};
+    /** @type {Object.<string, WebInspector.NavigatorSourceTreeElement>} */
+    this._scriptTreeElements = {};
 
     WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
 }
-
 
 WebInspector.NavigatorView.Events = {
     ItemSelected: "ItemSelected",
@@ -70,16 +75,42 @@ WebInspector.NavigatorView.prototype = {
      */
     addUISourceCode: function(uiSourceCode)
     {
-        if (this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
+        if (this._uiSourceCodes[uiSourceCode.uri()])
             return;
-
-        var scriptTreeElement = new WebInspector.NavigatorSourceTreeElement(this, uiSourceCode, "");
-        this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
-        this._updateScriptTitle(uiSourceCode);
-        this._addUISourceCodeListeners(uiSourceCode);
+        this._uiSourceCodes[uiSourceCode.uri()] = uiSourceCode;
 
         var folderTreeElement = this.getOrCreateFolderTreeElement(uiSourceCode);
-        folderTreeElement.appendChild(scriptTreeElement);
+        this._adoptUISourceCode(folderTreeElement, uiSourceCode);
+    },
+
+    _getOrCreateScriptTreeElement: function(uiSourceCode)
+    {
+        return this._getScriptTreeElement(uiSourceCode) || this._createScriptTreeElement(uiSourceCode);
+    },
+
+    _getScriptTreeElement: function(uiSourceCode)
+    {
+        return this._scriptTreeElements[uiSourceCode.uri()];
+    },
+
+    _createScriptTreeElement: function(uiSourceCode)
+    {
+        var scriptTreeElement = new WebInspector.NavigatorSourceTreeElement(this, uiSourceCode, "");
+        this._scriptTreeElements[uiSourceCode.uri()] = scriptTreeElement;
+        this._updateScriptTitle(uiSourceCode);
+        this._addUISourceCodeListeners(uiSourceCode);
+        return scriptTreeElement;
+    },
+
+    _removeScriptTreeElement: function(uiSourceCode)
+    {
+        var scriptTreeElement = this._scriptTreeElements[uiSourceCode.uri()];
+        if (!scriptTreeElement)
+            return;
+        if (scriptTreeElement.parent)
+            scriptTreeElement.parent.removeChild(scriptTreeElement);
+        delete this._scriptTreeElements[uiSourceCode.uri()];
+        this._removeUISourceCodeListeners(uiSourceCode);
     },
 
     _uiSourceCodeTitleChanged: function(event)
@@ -112,7 +143,7 @@ WebInspector.NavigatorView.prototype = {
      */
     _updateScriptTitle: function(uiSourceCode, ignoreIsDirty)
     {
-        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        var scriptTreeElement = this._getScriptTreeElement(uiSourceCode);
         if (!scriptTreeElement)
             return;
 
@@ -136,8 +167,7 @@ WebInspector.NavigatorView.prototype = {
      */
     isScriptSourceAdded: function(uiSourceCode)
     {
-        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
-        return !!scriptTreeElement;
+        return !!this._uiSourceCodes[uiSourceCode.uri()];
     },
 
     /**
@@ -150,7 +180,10 @@ WebInspector.NavigatorView.prototype = {
 
         this._lastSelectedUISourceCode = uiSourceCode;
 
-        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        var folderTreeElement = this.getOrCreateFolderTreeElement(uiSourceCode);
+        if (!folderTreeElement._populated && folderTreeElement.parent)
+            folderTreeElement.onpopulate();
+        var scriptTreeElement = this._getOrCreateScriptTreeElement(uiSourceCode);
         scriptTreeElement.revealAndSelect(true);
     },
 
@@ -170,20 +203,20 @@ WebInspector.NavigatorView.prototype = {
      */
     removeUISourceCode: function(uiSourceCode)
     {
-        var treeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        this._removeScriptTreeElement(uiSourceCode);
+        var treeElement = this.getOrCreateFolderTreeElement(uiSourceCode);
         while (treeElement) {
             var parent = treeElement.parent;
             if (parent) {
-                if (treeElement instanceof WebInspector.NavigatorFolderTreeElement)
-                    delete this._folderTreeElements[treeElement.folderIdentifier];
+                delete this._folderTreeElements[treeElement.folderIdentifier];
+                delete this._folderTreeElementsUISourceCodes[treeElement.folderIdentifier];
                 parent.removeChild(treeElement);
                 if (parent.children.length)
                     break;
             }
             treeElement = parent;
         }
-        this._scriptTreeElementsByUISourceCode.remove(uiSourceCode);
-        this._removeUISourceCodeListeners(uiSourceCode);
+        delete this._uiSourceCodes[uiSourceCode.uri()];
     },
 
     /**
@@ -232,7 +265,7 @@ WebInspector.NavigatorView.prototype = {
      */
     rename: function(uiSourceCode, callback)
     {
-        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        var scriptTreeElement = this._getScriptTreeElement[uiSourceCode.uri()];
         if (!scriptTreeElement)
             return;
 
@@ -278,7 +311,9 @@ WebInspector.NavigatorView.prototype = {
         this._scriptsTree.stopSearch();
         this._scriptsTree.removeChildren();
         this._folderTreeElements = {};
-        this._scriptTreeElementsByUISourceCode.clear();
+        this._folderTreeElementsUISourceCodes = {};
+        this._uiSourceCodes = {};
+        this._scriptTreeElements = {};
     },
 
     /**
@@ -288,10 +323,25 @@ WebInspector.NavigatorView.prototype = {
      */
     createFolderTreeElement: function(parentFolderElement, folderIdentifier, domain, folderName)
     {
-        var folderTreeElement = new WebInspector.NavigatorFolderTreeElement(folderIdentifier, domain, folderName);
-        parentFolderElement.appendChild(folderTreeElement);
+        var folderTreeElement = new WebInspector.NavigatorFolderTreeElement(this, folderIdentifier, domain, folderName);
         this._folderTreeElements[folderIdentifier] = folderTreeElement;
+        this._folderTreeElementsUISourceCodes[folderIdentifier] = [];
+        parentFolderElement.appendChild(folderTreeElement);
         return folderTreeElement;
+    },
+
+    /**
+     * @param {WebInspector.NavigatorFolderTreeElement} folderTreeElement
+     */
+    _populateFolderTreeElement: function(folderTreeElement)
+    {
+        if (folderTreeElement._populated)
+            return;
+        folderTreeElement._populated = true;
+        var uiSourceCodes = this._folderTreeElementsUISourceCodes[folderTreeElement.folderIdentifier];
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            this._addScriptTreeElement(folderTreeElement, uiSourceCodes[i]);
+        delete this._folderTreeElementsUISourceCodes[folderTreeElement.folderIdentifier];
     },
 
     /**
@@ -325,6 +375,21 @@ WebInspector.NavigatorView.prototype = {
             parentFolderElement = this._getOrCreateFolderTreeElement(domain, "");
         
         return this.createFolderTreeElement(parentFolderElement, folderIdentifier, domain, folderName);
+    },
+
+    _addScriptTreeElement: function(folderTreeElement, uiSourceCode)
+    {
+        var scriptTreeElement = this._getOrCreateScriptTreeElement(uiSourceCode);
+        folderTreeElement.appendChild(scriptTreeElement);
+    },
+
+    _adoptUISourceCode: function(folderTreeElement, uiSourceCode)
+    {
+        if (folderTreeElement._populated || !folderTreeElement.parent) {
+            this._addScriptTreeElement(folderTreeElement, uiSourceCode);
+            return;
+        }
+        this._folderTreeElementsUISourceCodes[folderTreeElement.folderIdentifier].push(uiSourceCode);
     },
 
     handleContextMenu: function(event, uiSourceCode)
@@ -499,12 +564,14 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.BaseNavigatorTreeElement}
+ * @param {WebInspector.NavigatorView} navigatorView
  * @param {string} folderIdentifier
  * @param {string} domain
  * @param {string} folderName
  */
-WebInspector.NavigatorFolderTreeElement = function(folderIdentifier, domain, folderName)
+WebInspector.NavigatorFolderTreeElement = function(navigatorView, folderIdentifier, domain, folderName)
 {
+    this._navigatorView = navigatorView;
     this._folderIdentifier = folderIdentifier;
     this._folderName = folderName;
     
@@ -532,6 +599,11 @@ WebInspector.NavigatorFolderTreeElement.prototype = {
         return this._folderName === "";
     },
     
+    onpopulate: function()
+    {
+        this._navigatorView._populateFolderTreeElement(this);
+    },
+
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
