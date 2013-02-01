@@ -135,7 +135,7 @@ namespace WebKit {
         virtual bool hasOpenedPopup() const;
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
         virtual bool supportsFullscreenForNode(const Node*);
         virtual void enterFullscreenForNode(Node*);
         virtual void exitFullscreenForNode(Node*);

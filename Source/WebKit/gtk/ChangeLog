@@ -1,3 +1,30 @@
+2013-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][GStreamer] FullscreenVideoControllerGtk implementation
+        https://bugs.webkit.org/show_bug.cgi?id=107398
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove the FullscreenVideoController as it moved to
+        FullscreenVideoControllerGStreamer and its Gtk subclass in
+        WebCore. Hook in NATIVE_FULLSCREEN_VIDEO in the ChromeClient in
+        the two possible scenarios, wether FULLSCREEN_API is enabled or not.
+
+        * GNUmakefile.am: Remove FullscreenVideoController.
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit):
+        (WebKit::ChromeClient::enterFullscreenForNode): Hook
+        NATIVE_FULLSCREEN_VIDEO support.
+        (WebKit::ChromeClient::exitFullscreenForNode): Ditto
+        (WebKit::ChromeClient::enterFullScreenForElement): Ditto
+        (WebKit::ChromeClient::exitFullScreenForElement): Ditto
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient):
+        * WebCoreSupport/FullscreenVideoController.cpp: Removed.
+        * WebCoreSupport/FullscreenVideoController.h: Removed.
+        * webkit/webkitwebview.cpp: Remove FullscreenVideoController support.
+        * webkit/webkitwebviewprivate.h: Ditto
+
 2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
 
         Editor::m_compositionNode not updated on HTMLInputElement::setValue()

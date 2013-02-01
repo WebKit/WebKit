@@ -5315,34 +5315,6 @@ webkit_web_view_get_snapshot(WebKitWebView* webView)
     return surface;
 }
 
-void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
-{
-    if (!node->hasTagName(HTMLNames::videoTag))
-        return;
-
-#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
-    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
-    WebKitWebViewPrivate* priv = webView->priv;
-
-    // First exit Fullscreen for the old mediaElement.
-    if (priv->fullscreenVideoController)
-        priv->fullscreenVideoController->exitFullscreen();
-
-    priv->fullscreenVideoController = new FullscreenVideoController;
-    priv->fullscreenVideoController->setMediaElement(videoElement);
-    priv->fullscreenVideoController->enterFullscreen();
-#endif
-}
-
-void webViewExitFullscreen(WebKitWebView* webView)
-{
-#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->fullscreenVideoController)
-        priv->fullscreenVideoController->exitFullscreen();
-#endif
-}
-
 #if ENABLE(ICONDATABASE)
 void webkitWebViewIconLoaded(WebKitFaviconDatabase* database, const char* frameURI, WebKitWebView* webView)
 {

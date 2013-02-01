@@ -77,6 +77,10 @@
 #include "DatabaseManager.h"
 #endif
 
+#if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
+#include "HTMLMediaElement.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -896,8 +900,7 @@ PassRefPtr<WebCore::SearchPopupMenu> ChromeClient::createSearchPopupMenu(WebCore
     return adoptRef(new SearchPopupMenuGtk(client));
 }
 
-#if ENABLE(VIDEO)
-
+#if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
 bool ChromeClient::supportsFullscreenForNode(const Node* node)
 {
     return node->hasTagName(HTMLNames::videoTag);
@@ -905,12 +908,28 @@ bool ChromeClient::supportsFullscreenForNode(const Node* node)
 
 void ChromeClient::enterFullscreenForNode(Node* node)
 {
-    webViewEnterFullscreen(m_webView, node);
+    if (!node)
+        return;
+
+    HTMLElement* element = static_cast<HTMLElement*>(node);
+    if (element && element->isMediaElement()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaElement->player() && mediaElement->player()->canEnterFullscreen())
+            mediaElement->player()->enterFullscreen();
+    }
 }
 
 void ChromeClient::exitFullscreenForNode(Node* node)
 {
-    webViewExitFullscreen(m_webView);
+    if (!node)
+        return;
+
+    HTMLElement* element = static_cast<HTMLElement*>(node);
+    if (element && element->isMediaElement()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaElement->player())
+            mediaElement->player()->exitFullscreen();
+    }
 }
 #endif
 
@@ -949,6 +968,19 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
     if (returnValue)
         return;
 
+#if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
+    if (element && element->isMediaElement()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaElement->player() && mediaElement->player()->canEnterFullscreen()) {
+            element->document()->webkitWillEnterFullScreenForElement(element);
+            mediaElement->player()->enterFullscreen();
+            m_fullScreenElement = element;
+            element->document()->webkitDidEnterFullScreenForElement(element);
+        }
+        return;
+    }
+#endif
+
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
     if (!widgetIsOnscreenToplevelWindow(window))
         return;
@@ -975,6 +1007,19 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
     g_signal_emit_by_name(m_webView, "leaving-fullscreen", kitElement.get(), &returnValue);
     if (returnValue)
         return;
+
+#if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
+    if (m_fullScreenElement && m_fullScreenElement->isMediaElement()) {
+        m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(m_fullScreenElement.get());
+        if (mediaElement->player()) {
+            mediaElement->player()->exitFullscreen();
+            m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+            m_fullScreenElement.clear();
+        }
+        return;
+    }
+#endif
 
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
     ASSERT(widgetIsOnscreenToplevelWindow(window));

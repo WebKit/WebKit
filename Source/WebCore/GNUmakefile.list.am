@@ -6082,6 +6082,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
+	Source/WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp \
+	Source/WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.h \
 	Source/WebCore/platform/graphics/gtk/IconGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/ImageBufferGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/ImageGtk.cpp \

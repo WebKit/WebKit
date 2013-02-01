@@ -23,6 +23,10 @@
 
 #include "FullscreenVideoControllerGStreamer.h"
 
+#if PLATFORM(GTK)
+#include "FullscreenVideoControllerGtk.h"
+#endif
+
 #include "GStreamerGWorld.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivateGStreamer.h"
@@ -44,6 +48,14 @@ void playerMuteChangedCallback(GObject *element, GParamSpec *pspec, FullscreenVi
     controller->muteChanged();
 }
 
+PassOwnPtr<FullscreenVideoControllerGStreamer> FullscreenVideoControllerGStreamer::create(MediaPlayerPrivateGStreamer* player)
+{
+#if PLATFORM(GTK)
+   return adoptPtr(new FullscreenVideoControllerGtk(player));
+#else
+   return nullptr;
+#endif
+}
 
 FullscreenVideoControllerGStreamer::FullscreenVideoControllerGStreamer(MediaPlayerPrivateGStreamer* player)
     : m_player(player)

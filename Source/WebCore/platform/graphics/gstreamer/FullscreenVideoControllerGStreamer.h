@@ -35,6 +35,7 @@ class MediaPlayerClient;
 class FullscreenVideoControllerGStreamer {
     WTF_MAKE_NONCOPYABLE(FullscreenVideoControllerGStreamer);
 public:
+    static PassOwnPtr<FullscreenVideoControllerGStreamer> create(MediaPlayerPrivateGStreamer* player);
     FullscreenVideoControllerGStreamer(MediaPlayerPrivateGStreamer*);
     virtual ~FullscreenVideoControllerGStreamer();
 

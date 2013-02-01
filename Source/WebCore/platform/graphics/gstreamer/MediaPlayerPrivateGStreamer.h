@@ -39,10 +39,7 @@ typedef struct _GstElement GstElement;
 
 namespace WebCore {
 
-#ifdef FullscreenVideoControllerClass
-class FullscreenVideoControllerClass;
-#endif
-
+class FullscreenVideoControllerGStreamer;
 class GraphicsContext;
 class IntSize;
 class IntRect;
@@ -207,9 +204,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
             RefPtr<GStreamerGWorld> m_gstGWorld;
-#ifdef FullscreenVideoControllerClass
-            OwnPtr<FullscreenVideoControllerClass> m_fullscreenVideoController;
-#endif
+            OwnPtr<FullscreenVideoControllerGStreamer> m_fullscreenVideoController;
 #endif
             guint m_volumeTimerHandler;
             guint m_muteTimerHandler;
