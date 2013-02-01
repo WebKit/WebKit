@@ -123,11 +123,11 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))))
         return constructor1Callback(args);
-    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()))))
         return constructor2Callback(args);
-    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate()))))
         return constructor3Callback(args);
     if (args.Length() == 1)
         return constructor4Callback(args);
@@ -184,9 +184,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestOverloadedConstructors::GetTemplate(v
     return templ;
 }
 
-bool V8TestOverloadedConstructors::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestOverloadedConstructors::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 

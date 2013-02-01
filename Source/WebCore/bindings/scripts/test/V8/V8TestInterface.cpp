@@ -345,9 +345,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate(v8::Isolate* i
     return templ;
 }
 
-bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> object)

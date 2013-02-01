@@ -161,9 +161,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestEventConstructor::GetTemplate(v8::Iso
     return templ;
 }
 
-bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 

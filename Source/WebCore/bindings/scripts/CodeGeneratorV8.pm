@@ -353,7 +353,7 @@ END
     }
 
     push(@headerContent, <<END);
-    static bool HasInstance(v8::Handle<v8::Value>);
+    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate* = 0);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate* = 0);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate* = 0);
     static ${nativeType}* toNative(v8::Handle<v8::Object> object)
@@ -1175,7 +1175,7 @@ sub GenerateNormalAttrSetter
     if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
         my $argType = $attribute->signature->type;
         if (IsWrapperType($argType)) {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
+            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value, info.GetIsolate())) {\n");
             push(@implContentDecls, "        throwTypeError(0, info.GetIsolate());\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
@@ -1426,9 +1426,9 @@ sub GenerateParametersCheckExpression
             }
         } elsif (IsWrapperType($type)) {
             if ($parameter->isNullable) {
-                push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))");
+                push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value, args.GetIsolate()))");
             } else {
-                push(@andExpression, "(V8${type}::HasInstance($value))");
+                push(@andExpression, "(V8${type}::HasInstance($value, args.GetIsolate()))");
             }
         }
 
@@ -1803,7 +1803,7 @@ sub GenerateParametersCheck
             if (IsWrapperType($argType)) {
                 $parameterCheckString .= "    Vector<$nativeElementType> $parameterName;\n";
                 $parameterCheckString .= "    for (int i = $paramIndex; i < args.Length(); ++i) {\n";
-                $parameterCheckString .= "        if (!V8${argType}::HasInstance(args[i]))\n";
+                $parameterCheckString .= "        if (!V8${argType}::HasInstance(args[i], args.GetIsolate()))\n";
                 $parameterCheckString .= "            return throwTypeError(0, args.GetIsolate());\n";
                 $parameterCheckString .= "        $parameterName.append(V8${argType}::toNative(v8::Handle<v8::Object>::Cast(args[i])));\n";
                 $parameterCheckString .= "    }\n";
@@ -1824,7 +1824,7 @@ sub GenerateParametersCheck
                 my $argValue = "args[$paramIndex]";
                 my $argType = $parameter->type;
                 if (IsWrapperType($argType)) {
-                    $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue))\n";
+                    $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue, args.GetIsolate()))\n";
                     $parameterCheckString .= "        return throwTypeError(0, args.GetIsolate());\n";
                 }
             }
@@ -3148,9 +3148,9 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate
     return templ;
 }
 
-bool ${v8InterfaceName}::HasInstance(v8::Handle<v8::Value> value)
+bool ${v8InterfaceName}::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 END

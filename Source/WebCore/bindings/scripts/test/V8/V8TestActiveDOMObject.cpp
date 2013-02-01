@@ -191,9 +191,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestActiveDOMObject::GetTemplate(v8::Isol
     return templ;
 }
 
-bool V8TestActiveDOMObject::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestActiveDOMObject::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 

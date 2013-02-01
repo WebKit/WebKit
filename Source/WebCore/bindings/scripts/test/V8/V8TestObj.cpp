@@ -1547,9 +1547,9 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
 
 static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
 {
-    if ((args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0])) && (args[1]->IsNull() || args[1]->IsUndefined() || args[1]->IsString() || args[1]->IsObject())))
+    if ((args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate())) && (args[1]->IsNull() || args[1]->IsUndefined() || args[1]->IsString() || args[1]->IsObject())))
         return overloadedMethod1Callback(args);
-    if ((args.Length() == 1 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0]))) || (args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate()))) || (args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate()))))
         return overloadedMethod2Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
         return overloadedMethod3Callback(args);
@@ -1557,11 +1557,11 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod4Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsFunction())))
         return overloadedMethod5Callback(args);
-    if ((args.Length() == 1 && (args[0]->IsNull() || V8DOMStringList::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (args[0]->IsNull() || V8DOMStringList::HasInstance(args[0], args.GetIsolate()))))
         return overloadedMethod6Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsArray())))
         return overloadedMethod7Callback(args);
-    if ((args.Length() == 1 && (V8TestObj::HasInstance(args[0]))))
+    if ((args.Length() == 1 && (V8TestObj::HasInstance(args[0], args.GetIsolate()))))
         return overloadedMethod8Callback(args);
     if ((args.Length() == 1 && (args[0]->IsArray())))
         return overloadedMethod9Callback(args);
@@ -1845,7 +1845,7 @@ static v8::Handle<v8::Value> variadicNodeMethodCallback(const v8::Arguments& arg
     V8TRYCATCH(Node*, head, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     Vector<RefPtr<Node> > tail;
     for (int i = 1; i < args.Length(); ++i) {
-        if (!V8Node::HasInstance(args[i]))
+        if (!V8Node::HasInstance(args[i], args.GetIsolate()))
             return throwTypeError(0, args.GetIsolate());
         tail.append(V8Node::toNative(v8::Handle<v8::Object>::Cast(args[i])));
     }
@@ -2241,9 +2241,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestObj::GetTemplate(v8::Isolate* isolate
     return templ;
 }
 
-bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestObj::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, TestObj* impl)

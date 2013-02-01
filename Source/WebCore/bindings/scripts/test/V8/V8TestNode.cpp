@@ -127,9 +127,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestNode::GetTemplate(v8::Isolate* isolat
     return templ;
 }
 
-bool V8TestNode::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestNode::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 EventTarget* V8TestNode::toEventTarget(v8::Handle<v8::Object> object)

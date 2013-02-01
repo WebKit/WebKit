@@ -302,9 +302,9 @@ v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetTe
     return templ;
 }
 
-bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> value)
+bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate()->HasInstance(value);
+    return GetRawTemplate(isolate)->HasInstance(value);
 }
 
 
