@@ -690,14 +690,12 @@ void DocumentLoader::cancelPendingSubstituteLoad(ResourceLoader* loader)
 }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
+bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request)
 {
-    if (request.url() == originalURL) {
-        if (ArchiveResource* resource = archiveResourceForURL(originalURL)) {
-            m_pendingSubstituteResources.set(loader, resource);
-            deliverSubstituteResourcesAfterDelay();
-            return true;
-        }
+    if (ArchiveResource* resource = archiveResourceForURL(request.url())) {
+        m_pendingSubstituteResources.set(loader, resource);
+        deliverSubstituteResourcesAfterDelay();
+        return true;
     }
 
     if (!m_archive)

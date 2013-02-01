@@ -142,7 +142,7 @@ namespace WebCore {
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const KURL&);
         SharedBuffer* parsedArchiveData() const;
 
-        bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
+        bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&);
 #endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
         // Return the ArchiveResource for the URL only when loading an Archive
