@@ -71,7 +71,7 @@ public:
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
     virtual float imageScaleFactor() const { return m_imageScaleFactor; }
-    virtual bool hasAlpha(const RenderObject*) const OVERRIDE;
+    virtual bool knownToBeOpaque(const RenderObject*) const OVERRIDE;
     virtual CachedImage* cachedImage() const OVERRIDE { return m_bestFitImage.get(); }
     
 private:

@@ -335,7 +335,7 @@ bool FillLayer::hasOpaqueImage(const RenderObject* renderer) const
         return true;
 
     if (m_composite == CompositeSourceOver)
-        return !m_image->hasAlpha(renderer);
+        return m_image->knownToBeOpaque(renderer);
 
     return false;
 }

@@ -52,9 +52,9 @@ StillImage::~StillImage()
         delete m_pixmap;
 }
 
-bool StillImage::currentFrameHasAlpha()
+bool StillImage::currentFrameKnownToBeOpaque()
 {
-    return m_pixmap->hasAlpha();
+    return !m_pixmap->hasAlpha();
 }
 
 IntSize StillImage::size() const

@@ -196,21 +196,21 @@ bool CSSImageGeneratorValue::isPending() const
     return false;
 }
 
-bool CSSImageGeneratorValue::hasAlpha(const RenderObject* renderer) const
+bool CSSImageGeneratorValue::knownToBeOpaque(const RenderObject* renderer) const
 {
     switch (classType()) {
     case CrossfadeClass:
-        return static_cast<const CSSCrossfadeValue*>(this)->hasAlpha(renderer);
+        return static_cast<const CSSCrossfadeValue*>(this)->knownToBeOpaque(renderer);
     case CanvasClass:
-        return true;
+        return false;
     case LinearGradientClass:
-        return static_cast<const CSSLinearGradientValue*>(this)->hasAlpha(renderer);
+        return static_cast<const CSSLinearGradientValue*>(this)->knownToBeOpaque(renderer);
     case RadialGradientClass:
-        return static_cast<const CSSRadialGradientValue*>(this)->hasAlpha(renderer);
+        return static_cast<const CSSRadialGradientValue*>(this)->knownToBeOpaque(renderer);
     default:
         ASSERT_NOT_REACHED();
     }
-    return true;
+    return false;
 }
 
 void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)

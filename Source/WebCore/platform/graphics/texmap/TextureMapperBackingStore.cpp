@@ -74,7 +74,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
         m_texture = textureMapper->createTexture();
-        m_texture->reset(targetRect.size(), image->currentFrameHasAlpha() ? BitmapTexture::SupportsAlpha : 0);
+        m_texture->reset(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
     }
 
     m_texture->updateContents(image, targetRect, sourceOffset, updateContentsFlag);
@@ -225,7 +225,7 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
 
 void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
-    createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), image->currentFrameHasAlpha());
+    createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), !image->currentFrameKnownToBeOpaque());
     for (size_t i = 0; i < m_tiles.size(); ++i)
         m_tiles[i].updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
 }

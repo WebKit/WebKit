@@ -550,14 +550,14 @@ TEST(PlatformContextSkiaTest, trackOpaqueImageTest)
         for (int x = 0; x < drawBitmap.width(); ++x)
             *drawBitmap.getAddr32(x, y) = 0xFFFFFFFF;
     RefPtr<BitmapImageSingleFrameSkia> opaqueImage = BitmapImageSingleFrameSkia::create(drawBitmap, true);
-    EXPECT_FALSE(opaqueImage->currentFrameHasAlpha());
+    EXPECT_TRUE(opaqueImage->currentFrameKnownToBeOpaque());
 
     drawBitmap.setIsOpaque(false);
     for (int y = 0; y < drawBitmap.height(); ++y)
         for (int x = 0; x < drawBitmap.width(); ++x)
             *drawBitmap.getAddr32(x, y) = 0x00000000;
     RefPtr<BitmapImageSingleFrameSkia> alphaImage = BitmapImageSingleFrameSkia::create(drawBitmap, true);
-    EXPECT_TRUE(alphaImage->currentFrameHasAlpha());
+    EXPECT_FALSE(alphaImage->currentFrameKnownToBeOpaque());
 
     context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
     EXPECT_EQ_RECT(IntRect(10, 10, 90, 90), platformContext.opaqueRegion().asRect());

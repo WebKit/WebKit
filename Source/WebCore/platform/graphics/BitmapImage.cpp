@@ -336,9 +336,9 @@ bool BitmapImage::frameHasAlphaAtIndex(size_t index)
     return m_source.frameHasAlphaAtIndex(index);
 }
 
-bool BitmapImage::currentFrameHasAlpha()
+bool BitmapImage::currentFrameKnownToBeOpaque()
 {
-    return frameHasAlphaAtIndex(currentFrame());
+    return !frameHasAlphaAtIndex(currentFrame());
 }
 
 ImageOrientation BitmapImage::currentFrameOrientation()

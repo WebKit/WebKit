@@ -499,12 +499,11 @@ bool RenderImage::backgroundIsObscured() const
     if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style()->hasPadding())
         return false;
 
-    // Check for bitmap image with alpha.
+    // Check for image with alpha.
     Image* image = m_imageResource->image().get();
-    if (!image || !image->isBitmapImage() || image->currentFrameHasAlpha())
+    if (!image)
         return false;
-        
-    return true;
+    return image->currentFrameKnownToBeOpaque();
 }
 
 LayoutUnit RenderImage::minimumReplacedHeight() const

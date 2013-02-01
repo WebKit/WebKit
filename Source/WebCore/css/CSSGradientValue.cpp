@@ -462,13 +462,13 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
-bool CSSGradientValue::hasAlpha(const RenderObject*) const
+bool CSSGradientValue::knownToBeOpaque(const RenderObject*) const
 {
     for (size_t i = 0; i < m_stops.size(); ++i) {
         if (m_stops[i].m_resolvedColor.hasAlpha())
-            return true;
+            return false;
     }
-    return false;
+    return true;
 }
 
 void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

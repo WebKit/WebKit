@@ -64,7 +64,10 @@ namespace WebCore {
 
         PDFDocumentImage();
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
-        
+
+        // FIXME: Implement this to be less conservative.
+        virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
+
         void setCurrentPage(int);
         int pageCount() const;
         void adjustCTM(GraphicsContext*) const;

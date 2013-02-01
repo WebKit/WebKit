@@ -116,9 +116,9 @@ PassRefPtr<Image> StyleCachedImageSet::image(RenderObject* renderer, const IntSi
     return m_bestFitImage->imageForRenderer(renderer);
 }
 
-bool StyleCachedImageSet::hasAlpha(const RenderObject* renderer) const
+bool StyleCachedImageSet::knownToBeOpaque(const RenderObject* renderer) const
 {
-    return m_bestFitImage->currentFrameHasAlpha(renderer);
+    return m_bestFitImage->currentFrameKnownToBeOpaque(renderer);
 }
 
 } // namespace WebCore

@@ -9,9 +9,9 @@ bool BitmapImageSingleFrameSkia::isBitmapImage() const
     return true;
 }
 
-bool BitmapImageSingleFrameSkia::currentFrameHasAlpha()
+bool BitmapImageSingleFrameSkia::currentFrameKnownToBeOpaque()
 {
-    return !m_nativeImage.bitmap().isOpaque();
+    return m_nativeImage.bitmap().isOpaque();
 }
 
 IntSize BitmapImageSingleFrameSkia::size() const

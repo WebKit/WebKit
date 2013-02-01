@@ -82,6 +82,9 @@ private:
 
     virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
 
+    // FIXME: Implement this to be less conservative.
+    virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
+
     SVGImage(ImageObserver*);
     virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
 

@@ -184,9 +184,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
     HashSet<TileIndex> finishedJobs;
     if (!renderJobs.isEmpty()) {
         if (Image* image = m_layer->contents()) {
-            bool isOpaque = false;
-            if (image->isBitmapImage())
-                isOpaque = !static_cast<BitmapImage*>(image)->currentFrameHasAlpha();
+            bool isOpaque = image->currentFrameKnownToBeOpaque();
             if (NativeImagePtr nativeImage = image->nativeImageForCurrentFrame()) {
                 SkBitmap bitmap = SkBitmap(nativeImage->bitmap());
                 addTextureJob(TextureJob::setContents(bitmap, isOpaque));
@@ -237,9 +235,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         return;
 
     if (Image* image = m_layer->contents()) {
-        bool isOpaque = false;
-        if (image->isBitmapImage())
-            isOpaque = !static_cast<BitmapImage*>(image)->currentFrameHasAlpha();
+        bool isOpaque = image->currentFrameKnownToBeOpaque();
         // No point in tiling an image layer, the image is already stored as an SkBitmap
         NativeImagePtr nativeImage = m_layer->contents()->nativeImageForCurrentFrame();
         if (nativeImage) {

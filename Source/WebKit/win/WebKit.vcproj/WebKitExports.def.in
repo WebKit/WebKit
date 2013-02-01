@@ -338,7 +338,7 @@ EXPORTS
         ??1BitmapImage@WebCore@@UAE@XZ
         ??0BitmapImage@WebCore@@IAE@PAVImageObserver@1@@Z
         ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
-        ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
+        ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ
         ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
 #if !ASSERT_DISABLED
         ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ 
@@ -725,7 +725,7 @@ EXPORTS
         ??1BitmapImage@WebCore@@UAE@XZ
         ??0BitmapImage@WebCore@@IAE@PAVImageObserver@1@@Z
         ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
-        ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
+        ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ
         ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
 #if !ASSERT_DISABLED
         ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ 
@@ -1111,7 +1111,7 @@ EXPORTS
         ??1BitmapImage@WebCore@@UAE@XZ
         ??0BitmapImage@WebCore@@IAE@PAVImageObserver@1@@Z
         ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
-        ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
+        ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ
         ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
 #if !ASSERT_DISABLED
         ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ 
@@ -1503,7 +1503,7 @@ EXPORTS
         ??1BitmapImage@WebCore@@UAE@XZ
         ??0BitmapImage@WebCore@@IAE@PAVImageObserver@1@@Z
         ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
-        ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
+        ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ
         ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
 #if !ASSERT_DISABLED
         ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ 

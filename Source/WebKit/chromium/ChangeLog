@@ -1,3 +1,18 @@
+2013-02-01  Philip Rogers  <pdr@google.com>
+
+        Change hasAlpha to isKnownToBeOpaque and correct the return value for SVG images.
+        https://bugs.webkit.org/show_bug.cgi?id=106966
+
+        Reviewed by Stephen White.
+
+        * tests/DragImageTest.cpp:
+        (WebCore::TestImage::currentFrameKnownToBeOpaque):
+        (TestImage):
+        * tests/ImageLayerChromiumTest.cpp:
+        (WebCore::TestImage::currentFrameKnownToBeOpaque):
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+
 2013-02-01  Nico Weber  <thakis@chromium.org>
 
         [chromium] Build webkit with enable_web_intents set to 0.

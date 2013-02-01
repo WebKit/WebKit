@@ -99,7 +99,7 @@ public:
 
     virtual bool isSVGImage() const { return false; }
     virtual bool isBitmapImage() const { return false; }
-    virtual bool currentFrameHasAlpha() { return false; }
+    virtual bool currentFrameKnownToBeOpaque() = 0;
 
     // Derived classes should override this if they can assure that 
     // the image contains only resources from its own security origin.

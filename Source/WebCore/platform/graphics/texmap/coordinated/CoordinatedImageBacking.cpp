@@ -101,7 +101,7 @@ void CoordinatedImageBacking::update()
         }
     }
 
-    m_surface = CoordinatedSurface::create(m_image->size(), m_image->currentFrameHasAlpha() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
+    m_surface = CoordinatedSurface::create(m_image->size(), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
     if (!m_surface) {
         m_isDirty = false;
         return;

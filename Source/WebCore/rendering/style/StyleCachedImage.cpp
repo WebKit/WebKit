@@ -106,9 +106,9 @@ PassRefPtr<Image> StyleCachedImage::image(RenderObject* renderer, const IntSize&
     return m_image->imageForRenderer(renderer);
 }
 
-bool StyleCachedImage::hasAlpha(const RenderObject* renderer) const
+bool StyleCachedImage::knownToBeOpaque(const RenderObject* renderer) const
 {
-    return m_image->currentFrameHasAlpha(renderer);
+    return m_image->currentFrameKnownToBeOpaque(renderer);
 }
 
 }

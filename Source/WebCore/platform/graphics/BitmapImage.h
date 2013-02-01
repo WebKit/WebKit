@@ -178,7 +178,7 @@ public:
 #endif
 
     virtual NativeImagePtr nativeImageForCurrentFrame();
-    virtual bool currentFrameHasAlpha();
+    virtual bool currentFrameKnownToBeOpaque() OVERRIDE;
 
     ImageOrientation currentFrameOrientation();
 

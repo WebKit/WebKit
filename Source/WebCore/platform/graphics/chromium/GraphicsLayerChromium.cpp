@@ -496,7 +496,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
             childrenChanged = true;
         }
         m_imageLayer->setBitmap(nativeImage->bitmap());
-        m_imageLayer->layer()->setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
+        m_imageLayer->layer()->setOpaque(image->currentFrameKnownToBeOpaque());
         updateContentsRect();
     } else {
         if (m_imageLayer) {

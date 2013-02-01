@@ -53,7 +53,7 @@ public:
 
     virtual bool isBitmapImage() const;
 
-    virtual bool currentFrameHasAlpha();
+    virtual bool currentFrameKnownToBeOpaque() OVERRIDE;
 
     virtual IntSize size() const;
 

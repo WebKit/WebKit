@@ -66,9 +66,9 @@ public:
         return true;
     }
 
-    virtual bool currentFrameHasAlpha()
+    virtual bool currentFrameKnownToBeOpaque()
     {
-        return !m_nativeImage->bitmap().isOpaque();
+        return m_nativeImage->bitmap().isOpaque();
     }
 
     virtual IntSize size() const

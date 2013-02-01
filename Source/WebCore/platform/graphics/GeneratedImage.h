@@ -57,6 +57,9 @@ protected:
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect) = 0;
 
+    // FIXME: Implement this to be less conservative.
+    virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
+
     GeneratedImage() { }
 
     IntSize m_size;

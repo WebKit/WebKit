@@ -44,7 +44,7 @@ namespace WebCore {
             return adoptRef(new StillImage(pixmap));
         }
 
-        virtual bool currentFrameHasAlpha();
+        virtual bool currentFrameKnownToBeOpaque();
 
         // FIXME: StillImages are underreporting decoded sizes and will be unable
         // to prune because these functions are not implemented yet.

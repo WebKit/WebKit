@@ -58,7 +58,7 @@ public:
     IntSize fixedSize(const RenderObject*);
 
     bool isPending() const;
-    bool hasAlpha(const RenderObject*) const;
+    bool knownToBeOpaque(const RenderObject*) const;
 
     void loadSubimages(CachedResourceLoader*);
 
