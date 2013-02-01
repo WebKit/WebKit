@@ -276,6 +276,7 @@ EventSender::EventSender()
     bindMethod("mouseMoveTo", &EventSender::mouseMoveTo);
     bindMethod("mouseScrollBy", &EventSender::mouseScrollBy);
     bindMethod("mouseUp", &EventSender::mouseUp);
+    bindMethod("mouseDragBegin", &EventSender::mouseDragBegin);
     bindMethod("releaseTouchPoint", &EventSender::releaseTouchPoint);
     bindMethod("scheduleAsynchronousClick", &EventSender::scheduleAsynchronousClick);
     bindMethod("scheduleAsynchronousKeyDown", &EventSender::scheduleAsynchronousKeyDown);
@@ -1042,6 +1043,15 @@ void EventSender::sendCurrentTouchEvent(const WebInputEvent::Type type)
         } else
             touchPoint->state = WebTouchPoint::StateStationary;
     }
+}
+
+void EventSender::mouseDragBegin(const CppArgumentList& arguments, CppVariant* result)
+{
+    WebMouseWheelEvent event;
+    initMouseEvent(WebInputEvent::MouseWheel, WebMouseEvent::ButtonNone, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
+    event.phase = WebMouseWheelEvent::PhaseBegan;
+    event.hasPreciseScrollingDeltas = true;
+    webview()->handleInputEvent(event);
 }
 
 void EventSender::handleMouseWheel(const CppArgumentList& arguments, CppVariant* result, bool continuous)

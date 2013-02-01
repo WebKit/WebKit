@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test rubber banding overhang drawing</title></head>
+<body>
+<div style="height:30px; background-color:black; width:100%"></div>
+<div id="info">This test requires DRT.</div>
+<script>
+    if (window.internals) {
+        document.getElementById('info').style.visibility = "hidden";
+        internals.settings.setMockScrollbarsEnabled(false);
+        eventSender.mouseMoveTo(10, 10);
+        eventSender.mouseDragBegin();
+        eventSender.mouseScrollBy(0, 50, false, true);
+    }
+</script>
+</body>
+</html>

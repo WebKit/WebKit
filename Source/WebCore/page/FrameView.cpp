@@ -3815,8 +3815,12 @@ void FrameView::removeChild(Widget* widget)
 
 bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    // Note that to allow for rubber-band over-scroll behavior, even non-scrollable views
+    // should handle wheel events.
+#if !ENABLE(RUBBER_BANDING)
     if (!isScrollable())
         return false;
+#endif
 
     if (delegatesScrolling()) {
         IntSize offset = scrollOffset();

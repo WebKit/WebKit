@@ -1,3 +1,20 @@
+2013-01-31  Christopher Cameron  <ccameron@chromium.org>
+
+        Fix rubber-band effect on non-scrollable pages
+        https://bugs.webkit.org/show_bug.cgi?id=107611
+
+        Add mouseWheelBegin function to EventSender to allow
+        event-based rubber-banding tests.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::EventSender):
+        (WebTestRunner::EventSender::mouseDragBegin):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (EventSender):
+
 2013-01-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] Notify the WebWidget when the WebViewHost is about to tear down compositing support
