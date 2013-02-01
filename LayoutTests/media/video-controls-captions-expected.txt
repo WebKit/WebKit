@@ -28,6 +28,23 @@ No text track cue with display id '-webkit-media-text-track-display' is currentl
 EXPECTED (captionsButtonCoordinates[0] <= '0') OK
 EXPECTED (captionsButtonCoordinates[1] <= '0') OK
 
+** Add non-default text track through HTML with unloadable URI **
+EXPECTED (track.readyState == '0') OK
+EXPECTED (track.track.mode == 'disabled') OK
+EXPECTED (video.textTracks.length == '1') OK
+
+** Caption button should be visible and enabled because we have a captions track.
+EXPECTED (captionsButtonCoordinates[0] > '0') OK
+EXPECTED (captionsButtonCoordinates[1] > '0') OK
+EXPECTED (captionsButtonElement.disabled == 'false') OK
+
+*** Click the CC button.
+** Track failed to load **
+
+** Caption button should not be visible as there are no caption tracks.
+EXPECTED (captionsButtonCoordinates[0] <= '0') OK
+EXPECTED (captionsButtonCoordinates[1] <= '0') OK
+
 ** Add a text track through JS to the video element **
 
 ** Caption button should be visible and enabled because we have a captions track.

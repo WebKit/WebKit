@@ -1331,7 +1331,8 @@ bool HTMLMediaElement::textTracksAreReady() const
     // in the disabled state when the element's resource selection algorithm last started now
     // have a text track readiness state of loaded or failed to load.
     for (unsigned i = 0; i < m_textTracksWhenResourceSelectionBegan.size(); ++i) {
-        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading)
+        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading
+            || m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::NotLoaded)
             return false;
     }
 
@@ -1343,6 +1344,12 @@ void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
     if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
         if (track->readinessState() != TextTrack::Loading)
             setReadyState(m_player->readyState());
+    } else {
+        // The track readiness state might have changed as a result of the user
+        // clicking the captions button. In this case, a check whether all the
+        // resources have failed loading should be done in order to hide the CC button.
+        if (hasMediaControls() && track->readinessState() == TextTrack::FailedToLoad)
+            mediaControls()->refreshClosedCaptionsButtonVisibility();
     }
 }
 
@@ -1841,8 +1848,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     if (shouldUpdateDisplayState) {
         updateDisplayState();
-        if (hasMediaControls())
+        if (hasMediaControls()) {
+            mediaControls()->refreshClosedCaptionsButtonVisibility();
             mediaControls()->updateStatusDisplay();
+        }
     }
 
     updatePlayState();
@@ -2901,6 +2910,9 @@ void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
     // in the markup have been added.
     if (!m_parsingInProgress)
         scheduleLoad(TextTrackResource);
+
+    if (hasMediaControls())
+        mediaControls()->closedCaptionTracksChanged();
 }
 
 void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
@@ -4126,6 +4138,9 @@ bool HTMLMediaElement::hasClosedCaptions() const
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && m_textTracks)
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        if (m_textTracks->item(i)->readinessState() == TextTrack::FailedToLoad)
+            continue;
+
         if (m_textTracks->item(i)->kind() == TextTrack::captionsKeyword()
             || m_textTracks->item(i)->kind() == TextTrack::subtitlesKeyword())
             return true;

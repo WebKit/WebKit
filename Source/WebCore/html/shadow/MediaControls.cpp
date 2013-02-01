@@ -109,12 +109,7 @@ void MediaControls::reset()
         }
     }
 
-    if (m_toggleClosedCaptionsButton) {
-        if (m_mediaController->hasClosedCaptions())
-            m_toggleClosedCaptionsButton->show();
-        else
-            m_toggleClosedCaptionsButton->hide();
-    }
+    refreshClosedCaptionsButtonVisibility();
 
     if (m_fullScreenButton) {
         if (m_mediaController->supportsFullscreen() && m_mediaController->hasVideo())
@@ -252,7 +247,7 @@ void MediaControls::changedClosedCaptionsVisibility()
         m_toggleClosedCaptionsButton->updateDisplayType();
 }
 
-void MediaControls::closedCaptionTracksChanged()
+void MediaControls::refreshClosedCaptionsButtonVisibility()
 {
     if (!m_toggleClosedCaptionsButton)
         return;
@@ -261,6 +256,11 @@ void MediaControls::closedCaptionTracksChanged()
         m_toggleClosedCaptionsButton->show();
     else
         m_toggleClosedCaptionsButton->hide();
+}
+
+void MediaControls::closedCaptionTracksChanged()
+{
+    refreshClosedCaptionsButtonVisibility();
 }
 
 void MediaControls::enteredFullscreen()

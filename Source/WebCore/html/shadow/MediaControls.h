@@ -88,6 +88,7 @@ class MediaControls : public HTMLDivElement {
     virtual void changedVolume();
 
     virtual void changedClosedCaptionsVisibility();
+    virtual void refreshClosedCaptionsButtonVisibility();
     virtual void toggleClosedCaptionTrackList() { }
     virtual void closedCaptionTracksChanged();
 

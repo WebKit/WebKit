@@ -9,6 +9,7 @@
     <script>
         var captionsButtonElement;
         var captionsButtonCoordinates;
+        var track;
 
         function addTextTrackThroughJS()
         {
@@ -16,6 +17,24 @@
             consoleWrite("** Add a text track through JS to the video element **");
             var t = video.addTextTrack('captions', 'English', 'en');
             t.addCue(new TextTrackCue(0.0, 10.0, 'Some random caption text'));
+        }
+
+        function addUnloadableHTMLTrackElement()
+        {
+            consoleWrite("");
+            consoleWrite("** Add non-default text track through HTML with unloadable URI **");
+
+            track = document.createElement("track");
+            track.setAttribute("kind", "captions");
+            track.setAttribute("srclang", "en");
+            track.setAttribute("src", "invalid.vtt");
+
+            track.addEventListener("error", trackError);
+
+            video.appendChild(track);
+            testExpected("track.readyState", HTMLTrackElement.NONE);
+            testExpected("track.track.mode", "disabled");
+            testExpected("video.textTracks.length", 1);
         }
 
         function removeHTMLTrackElement()
@@ -100,11 +119,24 @@
             removeHTMLTrackElement();
             testClosedCaptionsButtonVisibility(false);
 
+            addUnloadableHTMLTrackElement();
+            testClosedCaptionsButtonVisibility(true);
+
+            consoleWrite("");
+            clickCCButton();
+        }
+
+        function trackError()
+        {
+            consoleWrite("** Track failed to load **");
+            testClosedCaptionsButtonVisibility(false);
+
             addTextTrackThroughJS();
             testClosedCaptionsButtonVisibility(true);
 
             endTest();
         }
+
 
         function loaded()
         {
