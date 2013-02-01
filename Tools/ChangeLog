@@ -1,3 +1,25 @@
+2013-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        buildbot should not rely on webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=107379
+
+        Reviewed by Eric Seidel.
+
+        Move all Python files used in buildbot configuration into BuildSlaveSupport directory.
+        Once this patch is landed, we can stop restarting the master on webkitpy changes.
+
+        * BuildSlaveSupport/build.webkit.org-config/committer_auth.py:
+        * BuildSlaveSupport/build.webkit.org-config/htdigestparser.py: Copied from Tools/Scripts/webkitpy/common/net/htdigestparser.py.
+        * BuildSlaveSupport/build.webkit.org-config/htdigestparser_unittest.py: Copied from Tools/Scripts/webkitpy/common/net/htdigestparser_unittest.py.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py: Copied from Tools/Scripts/webkitpy/common/config/build.py.
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py: Copied from Tools/Scripts/webkitpy/common/config/build_unittest.py.
+        (ShouldBuildTest.test_should_build):
+        * Scripts/webkitpy/common/config/build.py: Removed.
+        * Scripts/webkitpy/common/config/build_unittest.py: Removed.
+        * Scripts/webkitpy/common/net/htdigestparser.py: Removed.
+        * Scripts/webkitpy/common/net/htdigestparser_unittest.py: Removed.
+
 2013-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141349.

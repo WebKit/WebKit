@@ -27,7 +27,7 @@ import buildbot.status.web.auth
 import json
 import zope.interface
 
-from webkitpy.common.net.htdigestparser import HTDigestParser
+from htdigestparser import HTDigestParser
 
 
 class Error(Exception):

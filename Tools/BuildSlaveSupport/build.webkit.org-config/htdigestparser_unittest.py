@@ -24,7 +24,7 @@ import StringIO
 import os
 import unittest2 as unittest
 
-from webkitpy.common.net.htdigestparser import HTDigestParser
+from htdigestparser import HTDigestParser
 
 
 class HTDigestParserTest(unittest.TestCase):
@@ -80,3 +80,12 @@ user2:realm 2:14f827686fa97778f02fe1314a3337c8
 user3:realm 1:1817fc8a24119cc57fbafc8a630ea5a5
 user3:realm 3:a05f5a2335e9d87bbe75bbe5e53248f0
 """)
+
+
+# FIXME: We should run this file as part of test-rm .
+# Unfortunately test-rm  currently requires that unittests
+# be located in a directory with a valid module name.
+# 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
+# so for now this is a stand-alone test harness.
+if __name__ == '__main__':
+    unittest.main()

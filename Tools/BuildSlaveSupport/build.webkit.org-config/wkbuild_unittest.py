@@ -22,7 +22,7 @@
 
 import unittest2 as unittest
 
-from webkitpy.common.config import build
+import wkbuild
 
 
 class ShouldBuildTest(unittest.TestCase):
@@ -60,7 +60,15 @@ class ShouldBuildTest(unittest.TestCase):
     def test_should_build(self):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
-            # build._should_file_trigger_build is implemented for them.
+            # wkbuild._should_file_trigger_build is implemented for them.
             for platform in ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]:
                 should_build = platform in platforms or "*" in platforms
-                self.assertEqual(build.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
+                self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
+
+# FIXME: We should run this file as part of test-rm .
+# Unfortunately test-rm  currently requires that unittests
+# be located in a directory with a valid module name.
+# 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
+# so for now this is a stand-alone test harness.
+if __name__ == '__main__':
+    unittest.main()
