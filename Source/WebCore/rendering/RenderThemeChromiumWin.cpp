@@ -346,7 +346,8 @@ bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& 
 
 static int menuListButtonWidth()
 {
-    static int width = isRunningLayoutTest() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
+    static int width = isRunningLayoutTest() ? kStandardMenuListButtonWidth : 
+        IntSize(WebKit::Platform::current()->themeEngine()->getSize(SBP_ARROWBTN)).width();
     return width;
 }
 

@@ -83,6 +83,8 @@ public:
     virtual void paintProgressBar(
         WebCanvas*, const WebRect& barRect, const WebRect& valueRect,
         bool determinate, double animatedSeconds) { }
+
+    virtual WebSize getSize(int part) = 0;
 };
 
 } // namespace WebKit

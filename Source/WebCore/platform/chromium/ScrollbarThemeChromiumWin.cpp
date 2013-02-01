@@ -66,7 +66,7 @@ int ScrollbarThemeChromiumWin::scrollbarThickness(ScrollbarControlSize controlSi
     if (!thickness) {
         if (isRunningLayoutTest())
             return kMacScrollbarSize[controlSize];
-        thickness = GetSystemMetrics(SM_CXVSCROLL);
+        thickness = IntSize(WebKit::Platform::current()->themeEngine()->getSize(SBP_ARROWBTN)).width();
     }
     return thickness;
 }
@@ -109,7 +109,6 @@ void ScrollbarThemeChromiumWin::paintTrackPiece(GraphicsContext* gc, ScrollbarTh
     WebKit::WebCanvas* canvas = gc->platformContext()->canvas();
     // Draw the track area before/after the thumb on the scroll bar.
     WebKit::Platform::current()->themeEngine()->paintScrollbarTrack(canvas, partId, getThemeState(scrollbar, partType), getClassicThemeState(scrollbar, partType), WebKit::WebRect(rect), WebKit::WebRect(alignRect));
-
 }
 
 void ScrollbarThemeChromiumWin::paintButton(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
