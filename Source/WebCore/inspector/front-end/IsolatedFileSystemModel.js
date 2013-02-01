@@ -126,6 +126,7 @@ WebInspector.IsolatedFileSystemModel.prototype = {
             for (var i = 0; i < callbacks.length; ++i)
                 callbacks[i](this._isolatedFileSystem(fileSystemPath));
         }
+        delete this._pendingFileSystemRequests;
     },
 
     /**
