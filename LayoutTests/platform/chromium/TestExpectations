@@ -4355,3 +4355,4 @@ webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ F
 
 webkit.org/b/108424 media/video-error-does-not-exist.html [ Failure Crash ]
 webkit.org/b/108566 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
+webkit.org/b/108594 [ Debug ] tables/table-section-overflow-clip-crash.html [ Crash ]
