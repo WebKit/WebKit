@@ -63,7 +63,7 @@ PASS StripSpaces(String.prototype.link.toString()) is "functionlink(){[nativecod
 PASS StripSpaces(Boolean.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
 PASS StripSpaces(Boolean.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
 PASS StripSpaces(Number.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
-FAIL StripSpaces(Number.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was function(locales,options){returnformatNumber(newnumberFormat(locales,options),this)}.
+FAIL StripSpaces(Number.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was function(locales,options){varnumberFormat=cachedOrNewService('numberformat',locales,options)returnformatNumber(numberFormat,this)}.
 PASS StripSpaces(Number.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
 PASS StripSpaces(Number.prototype.toFixed.toString()) is "functiontoFixed(){[nativecode]}"
 PASS StripSpaces(Number.prototype.toExponential.toString()) is "functiontoExponential(){[nativecode]}"
@@ -90,9 +90,9 @@ PASS StripSpaces(Date.prototype.toString.toString()) is "functiontoString(){[nat
 PASS StripSpaces(Date.prototype.toUTCString.toString()) is "functiontoUTCString(){[nativecode]}"
 PASS StripSpaces(Date.prototype.toDateString.toString()) is "functiontoDateString(){[nativecode]}"
 PASS StripSpaces(Date.prototype.toTimeString.toString()) is "functiontoTimeString(){[nativecode]}"
-FAIL StripSpaces(Date.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'any','all')}.
-FAIL StripSpaces(Date.prototype.toLocaleDateString.toString()) should be functiontoLocaleDateString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'date','date')}.
-FAIL StripSpaces(Date.prototype.toLocaleTimeString.toString()) should be functiontoLocaleTimeString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'time','time')}.
+FAIL StripSpaces(Date.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'any','all','dateformatall')}.
+FAIL StripSpaces(Date.prototype.toLocaleDateString.toString()) should be functiontoLocaleDateString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'date','date','dateformatdate')}.
+FAIL StripSpaces(Date.prototype.toLocaleTimeString.toString()) should be functiontoLocaleTimeString(){[nativecode]}. Was function(locales,options){returntoLocaleDateTime(this,locales,options,'time','time','dateformattime')}.
 PASS StripSpaces(Date.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
 PASS StripSpaces(Date.prototype.getTime.toString()) is "functiongetTime(){[nativecode]}"
 PASS StripSpaces(Date.prototype.getFullYear.toString()) is "functiongetFullYear(){[nativecode]}"
