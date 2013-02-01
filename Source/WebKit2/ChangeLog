@@ -1,3 +1,16 @@
+2013-02-01  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [EFL][WK2] MiniBrowser segfaults on loading google.com
+        https://bugs.webkit.org/show_bug.cgi?id=108597
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::processMessage):
+        oolMessageBody should be properly initialized before it is used.
+
+        This patch also adds omitted break statement.
+
 2013-01-31  Jae Hyun Park  <jae.park@company100.net>
 
         [Qt] Add MessageFlags.h in Target.pri

@@ -222,6 +222,7 @@ bool Connection::processMessage()
             case Attachment::SocketType:
                 if (!attachmentInfo[i].isNull())
                     attachmentFileDescriptorCount++;
+                break;
             case Attachment::Uninitialized:
             default:
                 ASSERT_NOT_REACHED();
@@ -237,48 +238,46 @@ bool Connection::processMessage()
     AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
     RefPtr<WebKit::SharedMemory> oolMessageBody;
 
-    if (attachmentCount) {
-        size_t fdIndex = 0;
-        for (size_t i = 0; i < attachmentCount; ++i) {
-            int fd = -1;
-            switch (attachmentInfo[i].getType()) {
-            case Attachment::MappedMemoryType:
-                if (!attachmentInfo[i].isNull())
-                    fd = m_fileDescriptors[fdIndex++];
-                attachments[attachmentCount - i - 1] = Attachment(fd, attachmentInfo[i].getSize());
-                break;
-            case Attachment::SocketType:
-                if (!attachmentInfo[i].isNull())
-                    fd = m_fileDescriptors[fdIndex++];
-                attachments[attachmentCount - i - 1] = Attachment(fd);
-                break;
-            case Attachment::Uninitialized:
-                attachments[attachmentCount - i - 1] = Attachment();
-            default:
-                break;
-            }
-        }
-
-        if (messageInfo.isMessageBodyIsOutOfLine()) {
-            ASSERT(messageInfo.bodySize());
-
-            if (attachmentInfo[attachmentCount].isNull()) {
-                ASSERT_NOT_REACHED();
-                return false;
-            }
-
-            WebKit::SharedMemory::Handle handle;
-            handle.adoptFromAttachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize());
-
-            oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
-            if (!oolMessageBody) {
-                ASSERT_NOT_REACHED();
-                return false;
-            }
+    size_t fdIndex = 0;
+    for (size_t i = 0; i < attachmentCount; ++i) {
+        int fd = -1;
+        switch (attachmentInfo[i].getType()) {
+        case Attachment::MappedMemoryType:
+            if (!attachmentInfo[i].isNull())
+                fd = m_fileDescriptors[fdIndex++];
+            attachments[attachmentCount - i - 1] = Attachment(fd, attachmentInfo[i].getSize());
+            break;
+        case Attachment::SocketType:
+            if (!attachmentInfo[i].isNull())
+                fd = m_fileDescriptors[fdIndex++];
+            attachments[attachmentCount - i - 1] = Attachment(fd);
+            break;
+        case Attachment::Uninitialized:
+            attachments[attachmentCount - i - 1] = Attachment();
+        default:
+            break;
         }
     }
 
-    ASSERT(attachments.size() == messageInfo.isMessageBodyIsOutOfLine() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount());
+    if (messageInfo.isMessageBodyIsOutOfLine()) {
+        ASSERT(messageInfo.bodySize());
+
+        if (attachmentInfo[attachmentCount].isNull()) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+
+        WebKit::SharedMemory::Handle handle;
+        handle.adoptFromAttachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].getSize());
+
+        oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
+        if (!oolMessageBody) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+    }
+
+    ASSERT(attachments.size() == (messageInfo.isMessageBodyIsOutOfLine() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount()));
 
     uint8_t* messageBody = messageData;
     if (messageInfo.isMessageBodyIsOutOfLine())
