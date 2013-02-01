@@ -1,3 +1,11 @@
+2013-02-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Re-try enabling Win-EWS tests for the third time. 
+        https://bugs.webkit.org/show_bug.cgi?id=107968
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-01-31  Roger Fong  <roger_fong@apple.com>
 
         Fix test scripts for EWS bots to get them running once and for all.
