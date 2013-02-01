@@ -160,7 +160,7 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
     case SolidStroke:
 #if ENABLE(CSS3_TEXT)
     case DoubleStroke:
-    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=93507 - Needs platform support.
+    case WavyStroke:
 #endif
         return Qt::SolidLine;
         break;
@@ -410,7 +410,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     case SolidStroke:
 #if ENABLE(CSS3_TEXT)
     case DoubleStroke:
-    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=93507 - Needs platform support.
+    case WavyStroke:
 #endif
         break;
     case DottedStroke: {
@@ -474,12 +474,85 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         p->setPen(pen);
     }
 
+#if ENABLE(CSS3_TEXT)
+    if (style == WavyStroke) {
+        const float step = 2 * width; // Make wave height equal to two times strokeThickness().
+        const float flat = width; // Set size of flat lines between diagonal lines.
+        short signal = -1;
+        QPainterPath path;
+        float x1, y1, x2, y2;
+
+        if (isVerticalLine) {
+            x1 = x2 = p1.x();
+
+            // Make sure (x1, y1) < (x2, y2)
+            if (p1.y() < p2.y()) {
+                y1 = p1.y();
+                y2 = p2.y();
+            } else {
+                y1 = p2.y();
+                y2 = p1.y();
+            }
+
+            // Qt interprets geometric units as end-point inclusive, while WebCore interprets geometric units as endpoint exclusive.
+            // This means we need to subtract one from the endpoint, or the line will be painted one pixel too long.
+            y2 -= 1;
+            path.moveTo(x1 + signal * step, y1);
+            float y = y1 + 2 * step;
+
+            while (y <= y2) {
+                signal = -signal;
+                path.lineTo(x1 + signal * step, y);
+                path.lineTo(x1 + signal * step, y + flat); // Draw flat line between diagonal lines.
+                y += 2 * step + flat;
+            }
+        } else {
+            y1 = y2 = p1.y();
+
+            // Make sure (x1, y1) < (x2, y2)
+            if (p1.x() < p2.x()) {
+                x1 = p1.x();
+                x2 = p2.x();
+            } else {
+                x1 = p2.x();
+                x2 = p1.x();
+            }
+
+            // Qt interprets geometric units as end-point inclusive, while WebCore interprets geometric units as endpoint exclusive.
+            // This means we need to subtract one from the endpoint, or the line will be painted one pixel too long.
+            x2 -= 1;
+            path.moveTo(x1, y1 + signal * step);
+            float x = x1 + 2 * step;
+
+            while (x <= x2) {
+                signal = -signal;
+                path.lineTo(x, y1 + signal * step);
+                path.lineTo(x + flat, y1 + signal * step); // Draw flat line between diagonal lines.
+                x += 2 * step + flat;
+            }
+        }
+
+        // The last point created by the while loops above may not be the end
+        // point, so complete the wave by connecting the end point.
+        path.lineTo(x2, y2);
+        QPen pen = p->pen();
+        pen.setJoinStyle(Qt::BevelJoin); // A bevelled line join is more suitable for wavy than miter or round.
+        pen.setWidth(width);
+        const bool oldAntiAliasing = p->testRenderHint(QPainter::Antialiasing);
+        p->setRenderHint(QPainter::Antialiasing, true); // AntiAliasing is needed for diagonal lines of wavy stroke
+        p->strokePath(path, pen);
+        p->setRenderHint(QPainter::Antialiasing, oldAntiAliasing);
+    } else {
+#endif // CSS3_TEXT
     // Qt interprets geometric units as end-point inclusive, while WebCore interprets geomtric units as endpoint exclusive.
     // This means we need to subtract one from the endpoint, or the line will be painted one pixel too long.
     if (p1.x() == p2.x())
         p->drawLine(p1, p2 - FloatSize(0, 1));
     else
         p->drawLine(p1, p2 - FloatSize(1, 0));
+#if ENABLE(CSS3_TEXT)
+    }
+#endif // CSS3_TEXT
 
     if (patWidth)
         p->restore();
