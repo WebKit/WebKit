@@ -45,7 +45,7 @@ public:
     CFArrayRef certificateChain() const { return m_certificateChain.get(); }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& t);
+    static bool decode(CoreIPC::ArgumentDecoder&, PlatformCertificateInfo&);
 
 #ifndef NDEBUG
     void dump() const;

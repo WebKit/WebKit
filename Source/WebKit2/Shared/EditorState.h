@@ -78,7 +78,7 @@ struct EditorState {
 #endif
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, EditorState&);
+    static bool decode(CoreIPC::ArgumentDecoder&, EditorState&);
 };
 
 }

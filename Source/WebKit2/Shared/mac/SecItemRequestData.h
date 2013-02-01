@@ -50,7 +50,7 @@ public:
     SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, SecItemRequestData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, SecItemRequestData&);
 
     Type type() const { return m_type; }
 

@@ -218,7 +218,7 @@ struct WebPreferencesStore {
     WebPreferencesStore();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebPreferencesStore&);
+    static bool decode(CoreIPC::ArgumentDecoder&, WebPreferencesStore&);
 
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
 

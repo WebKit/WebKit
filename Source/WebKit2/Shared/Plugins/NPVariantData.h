@@ -101,7 +101,7 @@ public:
     }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, NPVariantData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, NPVariantData&);
 
 private:
     uint32_t m_type;

@@ -68,7 +68,7 @@ public:
     }
 
     void encode(ArgumentEncoder&) const;
-    static bool decode(ArgumentDecoder*, StringReference&);
+    static bool decode(ArgumentDecoder&, StringReference&);
 
     struct Hash {
         static unsigned hash(const StringReference& a);

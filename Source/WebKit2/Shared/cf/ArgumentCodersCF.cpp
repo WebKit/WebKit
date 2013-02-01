@@ -147,10 +147,10 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
     ASSERT_NOT_REACHED();
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
 {
     CFType type;
-    if (!decoder->decodeEnum(type))
+    if (!decoder.decodeEnum(type))
         return false;
 
     switch (type) {
@@ -256,10 +256,10 @@ void encode(ArgumentEncoder& encoder, CFArrayRef array)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFArrayRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFArrayRef>& result)
 {
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
@@ -281,10 +281,10 @@ void encode(ArgumentEncoder& encoder, CFBooleanRef boolean)
     encoder << static_cast<bool>(CFBooleanGetValue(boolean));
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFBooleanRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFBooleanRef>& result)
 {
     bool boolean;
-    if (!decoder->decode(boolean))
+    if (!decoder.decode(boolean))
         return false;
 
     result.adoptCF(boolean ? kCFBooleanTrue : kCFBooleanFalse);
@@ -299,10 +299,10 @@ void encode(ArgumentEncoder& encoder, CFDataRef data)
     encoder << CoreIPC::DataReference(bytePtr, length);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFDataRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFDataRef>& result)
 {
     CoreIPC::DataReference dataReference;
-    if (!decoder->decode(dataReference))
+    if (!decoder.decode(dataReference))
         return false;
 
     result.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
@@ -314,10 +314,10 @@ void encode(ArgumentEncoder& encoder, CFDateRef date)
     encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFDateRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFDateRef>& result)
 {
     double absoluteTime;
-    if (!decoder->decode(absoluteTime))
+    if (!decoder.decode(absoluteTime))
         return false;
 
     result.adoptCF(CFDateCreate(0, absoluteTime));
@@ -348,10 +348,10 @@ void encode(ArgumentEncoder& encoder, CFDictionaryRef dictionary)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFDictionaryRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFDictionaryRef>& result)
 {
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -432,14 +432,14 @@ static size_t sizeForNumberType(CFNumberType numberType)
     return 0;
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFNumberRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFNumberRef>& result)
 {
     CFNumberType numberType;
-    if (!decoder->decodeEnum(numberType))
+    if (!decoder.decodeEnum(numberType))
         return false;
 
     CoreIPC::DataReference dataReference;
-    if (!decoder->decode(dataReference))
+    if (!decoder.decode(dataReference))
         return false;
 
     size_t neededBufferSize = sizeForNumberType(numberType);
@@ -472,17 +472,17 @@ void encode(ArgumentEncoder& encoder, CFStringRef string)
     encoder << CoreIPC::DataReference(buffer);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFStringRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
 {
     CFStringEncoding encoding;
-    if (!decoder->decodeEnum(encoding))
+    if (!decoder.decodeEnum(encoding))
         return false;
 
     if (!CFStringIsEncodingAvailable(encoding))
         return false;
     
     CoreIPC::DataReference dataReference;
-    if (!decoder->decode(dataReference))
+    if (!decoder.decode(dataReference))
         return false;
 
     CFStringRef string = CFStringCreateWithBytes(0, dataReference.data(), dataReference.size(), encoding, false);
@@ -503,11 +503,11 @@ void encode(ArgumentEncoder& encoder, CFURLRef url)
     encode(encoder, CFURLGetString(url));
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<CFURLRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
 {
     RetainPtr<CFURLRef> baseURL;
     bool hasBaseURL;
-    if (!decoder->decode(hasBaseURL))
+    if (!decoder.decode(hasBaseURL))
         return false;
     if (hasBaseURL) {
         if (!decode(decoder, baseURL))
@@ -543,7 +543,7 @@ void encode(ArgumentEncoder& encoder, SecCertificateRef certificate)
     encode(encoder, data.get());
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<SecCertificateRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
@@ -562,7 +562,7 @@ void encode(ArgumentEncoder& encoder, SecKeychainItemRef keychainItem)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<SecKeychainItemRef>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!CoreIPC::decode(decoder, data))

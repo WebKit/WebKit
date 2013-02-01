@@ -40,19 +40,19 @@ void WebPageGroupData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << userScripts;
 }
 
-bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder* decoder, WebPageGroupData& data)
+bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder& decoder, WebPageGroupData& data)
 {
-    if (!decoder->decode(data.identifer))
+    if (!decoder.decode(data.identifer))
         return false;
-    if (!decoder->decode(data.pageGroupID))
+    if (!decoder.decode(data.pageGroupID))
         return false;
-    if (!decoder->decode(data.visibleToInjectedBundle))
+    if (!decoder.decode(data.visibleToInjectedBundle))
         return false;
-    if (!decoder->decode(data.visibleToHistoryClient))
+    if (!decoder.decode(data.visibleToHistoryClient))
         return false;
-    if (!decoder->decode(data.userStyleSheets))
+    if (!decoder.decode(data.userStyleSheets))
         return false;
-    if (!decoder->decode(data.userScripts))
+    if (!decoder.decode(data.userScripts))
         return false;
     return true;
 }

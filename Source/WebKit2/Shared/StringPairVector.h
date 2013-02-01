@@ -50,9 +50,9 @@ public:
         encoder << m_stringPairVector;
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, StringPairVector& stringPairVector)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, StringPairVector& stringPairVector)
     {
-        return decoder->decode(stringPairVector.m_stringPairVector);
+        return decoder.decode(stringPairVector.m_stringPairVector);
     }
 
     const Vector<std::pair<String, String> >& stringPairVector() const { return m_stringPairVector; }

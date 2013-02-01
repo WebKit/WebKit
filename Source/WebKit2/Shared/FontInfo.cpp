@@ -45,11 +45,11 @@ void FontInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool FontInfo::decode(CoreIPC::ArgumentDecoder* decoder, FontInfo& fontInfo)
+bool FontInfo::decode(CoreIPC::ArgumentDecoder& decoder, FontInfo& fontInfo)
 {    
 #if PLATFORM(MAC)
     bool hasFontAttributeDictionary;
-    if (!decoder->decode(hasFontAttributeDictionary))
+    if (!decoder.decode(hasFontAttributeDictionary))
         return false;
 
     if (!hasFontAttributeDictionary)

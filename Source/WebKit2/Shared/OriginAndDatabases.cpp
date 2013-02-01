@@ -42,15 +42,15 @@ void OriginAndDatabases::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << databases;
 }
 
-bool OriginAndDatabases::decode(CoreIPC::ArgumentDecoder* decoder, OriginAndDatabases& originAndDatabases)
+bool OriginAndDatabases::decode(CoreIPC::ArgumentDecoder& decoder, OriginAndDatabases& originAndDatabases)
 {
-    if (!decoder->decode(originAndDatabases.originIdentifier))
+    if (!decoder.decode(originAndDatabases.originIdentifier))
         return false;
-    if (!decoder->decode(originAndDatabases.originQuota))
+    if (!decoder.decode(originAndDatabases.originQuota))
         return false;
-    if (!decoder->decode(originAndDatabases.originUsage))
+    if (!decoder.decode(originAndDatabases.originUsage))
         return false;
-    if (!decoder->decode(originAndDatabases.databases))
+    if (!decoder.decode(originAndDatabases.databases))
         return false;
 
     return true;

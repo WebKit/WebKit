@@ -114,30 +114,30 @@ void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_submenu;
 }
 
-bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMenuItemData& item)
+bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder& decoder, WebContextMenuItemData& item)
 {
     WebCore::ContextMenuItemType type;
-    if (!decoder->decodeEnum(type))
+    if (!decoder.decodeEnum(type))
         return false;
 
     WebCore::ContextMenuAction action;
-    if (!decoder->decodeEnum(action))
+    if (!decoder.decodeEnum(action))
         return false;
 
     String title;
-    if (!decoder->decode(title))
+    if (!decoder.decode(title))
         return false;
 
     bool checked;
-    if (!decoder->decode(checked))
+    if (!decoder.decode(checked))
         return false;
 
     bool enabled;
-    if (!decoder->decode(enabled))
+    if (!decoder.decode(enabled))
         return false;
 
     Vector<WebContextMenuItemData> submenu;
-    if (!decoder->decode(submenu))
+    if (!decoder.decode(submenu))
         return false;
 
     switch (type) {

@@ -80,7 +80,7 @@ public:
 #endif
 
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, Parameters&);
+        static bool decode(CoreIPC::ArgumentDecoder&, Parameters&);
     };
 
     // Sets the active plug-in controller and initializes the plug-in.

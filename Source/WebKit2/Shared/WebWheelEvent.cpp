@@ -88,32 +88,32 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
+bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebWheelEvent& t)
 {
     if (!WebEvent::decode(decoder, t))
         return false;
-    if (!decoder->decode(t.m_position))
+    if (!decoder.decode(t.m_position))
         return false;
-    if (!decoder->decode(t.m_globalPosition))
+    if (!decoder.decode(t.m_globalPosition))
         return false;
-    if (!decoder->decode(t.m_delta))
+    if (!decoder.decode(t.m_delta))
         return false;
-    if (!decoder->decode(t.m_wheelTicks))
+    if (!decoder.decode(t.m_wheelTicks))
         return false;
-    if (!decoder->decode(t.m_granularity))
+    if (!decoder.decode(t.m_granularity))
         return false;
-    if (!decoder->decode(t.m_directionInvertedFromDevice))
+    if (!decoder.decode(t.m_directionInvertedFromDevice))
         return false;
 #if PLATFORM(MAC)
-    if (!decoder->decode(t.m_phase))
+    if (!decoder.decode(t.m_phase))
         return false;
-    if (!decoder->decode(t.m_momentumPhase))
+    if (!decoder.decode(t.m_momentumPhase))
         return false;
-    if (!decoder->decode(t.m_hasPreciseScrollingDeltas))
+    if (!decoder.decode(t.m_hasPreciseScrollingDeltas))
         return false;
-    if (!decoder->decode(t.m_scrollCount))
+    if (!decoder.decode(t.m_scrollCount))
         return false;
-    if (!decoder->decode(t.m_unacceleratedScrollingDelta))
+    if (!decoder.decode(t.m_unacceleratedScrollingDelta))
         return false;
 #endif
     return true;

@@ -39,7 +39,7 @@ public:
 
     struct Data {
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, Data&);
+        static bool decode(CoreIPC::ArgumentDecoder&, Data&);
 
         double timestamp;
         double latitude;

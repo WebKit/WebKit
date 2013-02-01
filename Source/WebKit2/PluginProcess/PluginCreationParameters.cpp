@@ -61,34 +61,34 @@ void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool PluginCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginCreationParameters& result)
+bool PluginCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, PluginCreationParameters& result)
 {
-    if (!decoder->decode(result.pluginInstanceID) || !result.pluginInstanceID)
+    if (!decoder.decode(result.pluginInstanceID) || !result.pluginInstanceID)
         return false;
 
-    if (!decoder->decode(result.windowNPObjectID))
+    if (!decoder.decode(result.windowNPObjectID))
         return false;
 
-    if (!decoder->decode(result.parameters))
+    if (!decoder.decode(result.parameters))
         return false;
 
-    if (!decoder->decode(result.userAgent))
+    if (!decoder.decode(result.userAgent))
         return false;
 
-    if (!decoder->decode(result.contentsScaleFactor))
+    if (!decoder.decode(result.contentsScaleFactor))
         return false;
 
-    if (!decoder->decode(result.isPrivateBrowsingEnabled))
+    if (!decoder.decode(result.isPrivateBrowsingEnabled))
         return false;
 
-    if (!decoder->decode(result.asynchronousCreationIncomplete))
+    if (!decoder.decode(result.asynchronousCreationIncomplete))
         return false;
 
-    if (!decoder->decode(result.artificialPluginInitializationDelayEnabled))
+    if (!decoder.decode(result.artificialPluginInitializationDelayEnabled))
         return false;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (!decoder->decode(result.isAcceleratedCompositingEnabled))
+    if (!decoder.decode(result.isAcceleratedCompositingEnabled))
         return false;
 #endif
 

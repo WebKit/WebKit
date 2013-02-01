@@ -63,17 +63,17 @@ void WebGestureEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_delta;
 }
 
-bool WebGestureEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebGestureEvent& t)
+bool WebGestureEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebGestureEvent& t)
 {
     if (!WebEvent::decode(decoder, t))
         return false;
-    if (!decoder->decode(t.m_position))
+    if (!decoder.decode(t.m_position))
         return false;
-    if (!decoder->decode(t.m_globalPosition))
+    if (!decoder.decode(t.m_globalPosition))
         return false;
-    if (!decoder->decode(t.m_area))
+    if (!decoder.decode(t.m_area))
         return false;
-    if (!decoder->decode(t.m_delta))
+    if (!decoder.decode(t.m_delta))
         return false;
     return true;
 }

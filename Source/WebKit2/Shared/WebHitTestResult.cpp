@@ -47,17 +47,17 @@ void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << isScrollbar;
 }
 
-bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTestResult::Data& hitTestResultData)
+bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
 {
-    if (!decoder->decode(hitTestResultData.absoluteImageURL)
-        || !decoder->decode(hitTestResultData.absolutePDFURL)
-        || !decoder->decode(hitTestResultData.absoluteLinkURL)
-        || !decoder->decode(hitTestResultData.absoluteMediaURL)
-        || !decoder->decode(hitTestResultData.linkLabel)
-        || !decoder->decode(hitTestResultData.linkTitle)
-        || !decoder->decode(hitTestResultData.isContentEditable)
-        || !decoder->decode(hitTestResultData.elementBoundingBox)
-        || !decoder->decode(hitTestResultData.isScrollbar))
+    if (!decoder.decode(hitTestResultData.absoluteImageURL)
+        || !decoder.decode(hitTestResultData.absolutePDFURL)
+        || !decoder.decode(hitTestResultData.absoluteLinkURL)
+        || !decoder.decode(hitTestResultData.absoluteMediaURL)
+        || !decoder.decode(hitTestResultData.linkLabel)
+        || !decoder.decode(hitTestResultData.linkTitle)
+        || !decoder.decode(hitTestResultData.isContentEditable)
+        || !decoder.decode(hitTestResultData.elementBoundingBox)
+        || !decoder.decode(hitTestResultData.isScrollbar))
         return false;
 
     return true;

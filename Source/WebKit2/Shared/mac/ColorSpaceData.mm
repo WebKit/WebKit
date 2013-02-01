@@ -60,10 +60,10 @@ void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(Null);
 }
 
-bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder* decoder, ColorSpaceData& colorSpaceData)
+bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder& decoder, ColorSpaceData& colorSpaceData)
 {
     EncodedDataType dataType;
-    if (!decoder->decodeEnum(dataType))
+    if (!decoder.decodeEnum(dataType))
         return false;
 
     switch (dataType) {

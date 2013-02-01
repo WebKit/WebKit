@@ -48,7 +48,7 @@ public:
     NetworkResourceLoadParameters(ResourceLoadIdentifier, uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, NetworkResourceLoadParameters&);
+    static bool decode(CoreIPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
 
     ResourceLoadIdentifier identifier() const { return m_identifier; }
     uint64_t webPageID() const { return m_webPageID; }

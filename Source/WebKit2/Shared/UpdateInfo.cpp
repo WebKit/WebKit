@@ -43,25 +43,25 @@ void UpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << bitmapOffset;
 }
 
-bool UpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, UpdateInfo& result)
+bool UpdateInfo::decode(CoreIPC::ArgumentDecoder& decoder, UpdateInfo& result)
 {
-    if (!decoder->decode(result.viewSize))
+    if (!decoder.decode(result.viewSize))
         return false;
-    if (!decoder->decode(result.deviceScaleFactor))
+    if (!decoder.decode(result.deviceScaleFactor))
         return false;
-    if (!decoder->decode(result.scrollRect))
+    if (!decoder.decode(result.scrollRect))
         return false;
-    if (!decoder->decode(result.scrollOffset))
+    if (!decoder.decode(result.scrollOffset))
         return false;
-    if (!decoder->decode(result.updateRectBounds))
+    if (!decoder.decode(result.updateRectBounds))
         return false;
-    if (!decoder->decode(result.updateRects))
+    if (!decoder.decode(result.updateRects))
         return false;
-    if (!decoder->decode(result.updateScaleFactor))
+    if (!decoder.decode(result.updateScaleFactor))
         return false;
-    if (!decoder->decode(result.bitmapHandle))
+    if (!decoder.decode(result.bitmapHandle))
         return false;
-    if (!decoder->decode(result.bitmapOffset))
+    if (!decoder.decode(result.bitmapOffset))
         return false;
 
     return true;

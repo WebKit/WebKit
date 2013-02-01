@@ -50,10 +50,10 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
     CoreIPC::encode(encoder, dictionary.get());
 }
 
-bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
 {
     bool requestIsPresent;
-    if (!decoder->decode(requestIsPresent))
+    if (!decoder.decode(requestIsPresent))
         return false;
 
     if (!requestIsPresent) {
@@ -85,10 +85,10 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encode
     CoreIPC::encode(encoder, dictionary.get());
 }
 
-bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
 {
     bool responseIsPresent;
-    if (!decoder->decode(responseIsPresent))
+    if (!decoder.decode(responseIsPresent))
         return false;
 
     if (!responseIsPresent) {
@@ -147,10 +147,10 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
     encoder << PlatformCertificateInfo((CFArrayRef)peerCertificateChain);
 }
 
-bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
 {
     bool errorIsNull;
-    if (!decoder->decode(errorIsNull))
+    if (!decoder.decode(errorIsNull))
         return false;
     
     if (errorIsNull) {
@@ -159,19 +159,19 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, 
     }
 
     String domain;
-    if (!decoder->decode(domain))
+    if (!decoder.decode(domain))
         return false;
 
     int64_t code;
-    if (!decoder->decode(code))
+    if (!decoder.decode(code))
         return false;
 
     HashMap<String, String> stringUserInfoMap;
-    if (!decoder->decode(stringUserInfoMap))
+    if (!decoder.decode(stringUserInfoMap))
         return false;
 
     PlatformCertificateInfo certificate;
-    if (!decoder->decode(certificate))
+    if (!decoder.decode(certificate))
         return false;
 
     NSUInteger userInfoSize = stringUserInfoMap.size();
@@ -199,12 +199,12 @@ void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder& encoder, const Keyp
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
-bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder* decoder, KeypressCommand& keypressCommand)
+bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCommand& keypressCommand)
 {
-    if (!decoder->decode(keypressCommand.commandName))
+    if (!decoder.decode(keypressCommand.commandName))
         return false;
 
-    if (!decoder->decode(keypressCommand.text))
+    if (!decoder.decode(keypressCommand.text))
         return false;
 
     return true;

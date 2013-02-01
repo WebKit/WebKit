@@ -40,10 +40,10 @@ void AttributedString::encode(CoreIPC::ArgumentEncoder& encoder) const
     CoreIPC::encode(encoder, string.get());
 }
 
-bool AttributedString::decode(CoreIPC::ArgumentDecoder* decoder, AttributedString& attributedString)
+bool AttributedString::decode(CoreIPC::ArgumentDecoder& decoder, AttributedString& attributedString)
 {
     bool isNull;
-    if (!decoder->decode(isNull))
+    if (!decoder.decode(isNull))
         return false;
     if (isNull)
         return true;

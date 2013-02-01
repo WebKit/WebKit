@@ -76,15 +76,15 @@ void NPIdentifierData::encode(CoreIPC::ArgumentEncoder& encoder) const
         encoder << m_number;
 }
 
-bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder* decoder, NPIdentifierData& result)
+bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder& decoder, NPIdentifierData& result)
 {
-    if (!decoder->decode(result.m_isString))
+    if (!decoder.decode(result.m_isString))
         return false;
         
     if (result.m_isString)
-        return decoder->decode(result.m_string);
+        return decoder.decode(result.m_string);
 
-    return decoder->decode(result.m_number);
+    return decoder.decode(result.m_number);
 }
 
 } // namespace WebKit

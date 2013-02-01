@@ -35,47 +35,47 @@ class ArgumentDecoder;
 
 // id
 void encode(ArgumentEncoder&, id);
-bool decode(ArgumentDecoder*, RetainPtr<id>&);
+bool decode(ArgumentDecoder&, RetainPtr<id>&);
 
 // NSAttributedString
 void encode(ArgumentEncoder&, NSAttributedString *);
-bool decode(ArgumentDecoder*, RetainPtr<NSAttributedString>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSAttributedString>&);
 
 #if USE(APPKIT)
 // NSColor
 void encode(ArgumentEncoder&, NSColor *);
-bool decode(ArgumentDecoder*, RetainPtr<NSColor>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSColor>&);
 #endif
 
 // NSDictionary
 void encode(ArgumentEncoder&, NSDictionary *);
-bool decode(ArgumentDecoder*, RetainPtr<NSDictionary>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSDictionary>&);
 
 // NSArray
 void encode(ArgumentEncoder&, NSArray *);
-bool decode(ArgumentDecoder*, RetainPtr<NSArray>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSArray>&);
 
 #if USE(APPKIT)
 // NSFont
 void encode(ArgumentEncoder&, NSFont *);
-bool decode(ArgumentDecoder*, RetainPtr<NSFont>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSFont>&);
 #endif
 
 // NSNumber
 void encode(ArgumentEncoder&, NSNumber *);
-bool decode(ArgumentDecoder*, RetainPtr<NSNumber>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSNumber>&);
 
 // NSString
 void encode(ArgumentEncoder&, NSString *);
-bool decode(ArgumentDecoder*, RetainPtr<NSString>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSString>&);
 
 // NSDate
 void encode(ArgumentEncoder&, NSDate *);
-bool decode(ArgumentDecoder*, RetainPtr<NSDate>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSDate>&);
 
 // NSData
 void encode(ArgumentEncoder&, NSData *);
-bool decode(ArgumentDecoder*, RetainPtr<NSData>&);
+bool decode(ArgumentDecoder&, RetainPtr<NSData>&);
 
 } // namespace CoreIPC
 

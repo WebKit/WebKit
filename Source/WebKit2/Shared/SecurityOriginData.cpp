@@ -42,13 +42,13 @@ void SecurityOriginData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << port;
 }
 
-bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder* decoder, SecurityOriginData& securityOriginData)
+bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder& decoder, SecurityOriginData& securityOriginData)
 {
-    if (!decoder->decode(securityOriginData.protocol))
+    if (!decoder.decode(securityOriginData.protocol))
         return false;
-    if (!decoder->decode(securityOriginData.host))
+    if (!decoder.decode(securityOriginData.host))
         return false;
-    if (!decoder->decode(securityOriginData.port))
+    if (!decoder.decode(securityOriginData.port))
         return false;
 
     return true;

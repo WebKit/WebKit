@@ -39,7 +39,7 @@ template<typename T> struct ArgumentCoder {
         t.encode(encoder);
     }
 
-    static bool decode(ArgumentDecoder* decoder, T& t)
+    static bool decode(ArgumentDecoder& decoder, T& t)
     {
         return T::decode(decoder, t);
     }

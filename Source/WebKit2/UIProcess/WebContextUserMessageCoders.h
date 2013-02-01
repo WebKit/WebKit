@@ -107,7 +107,7 @@ public:
     {
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebContextUserMessageDecoder& coder)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebContextUserMessageDecoder& coder)
     {
         APIObject::Type type = APIObject::TypeNull;
         if (!Base::baseDecode(decoder, coder, type))
@@ -119,21 +119,21 @@ public:
         switch (type) {
         case APIObject::TypeBundlePage: {
             uint64_t pageID;
-            if (!decoder->decode(pageID))
+            if (!decoder.decode(pageID))
                 return false;
             coder.m_root = coder.m_process->webPage(pageID);
             break;
         }
         case APIObject::TypeBundleFrame: {
             uint64_t frameID;
-            if (!decoder->decode(frameID))
+            if (!decoder.decode(frameID))
                 return false;
             coder.m_root = coder.m_process->webFrame(frameID);
             break;
         }
         case APIObject::TypeBundlePageGroup: {
             uint64_t pageGroupID;
-            if (!decoder->decode(pageGroupID))
+            if (!decoder.decode(pageGroupID))
                 return false;
             coder.m_root = WebPageGroup::get(pageGroupID);
             break;
@@ -142,7 +142,7 @@ public:
         case APIObject::TypeObjCObjectGraph: {
             RefPtr<ObjCObjectGraph> objectGraph;
             WebContextObjCObjectGraphDecoder objectGraphDecoder(objectGraph, coder.m_process);
-            if (!decoder->decode(objectGraphDecoder))
+            if (!decoder.decode(objectGraphDecoder))
                 return false;
             coder.m_root = objectGraph.get();
             break;

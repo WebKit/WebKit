@@ -87,7 +87,7 @@ public:
     // Generic type decode function.
     template<typename T> bool decode(T& t)
     {
-        return ArgumentCoder<T>::decode(this, t);
+        return ArgumentCoder<T>::decode(*this, t);
     }
 
     bool removeAttachment(Attachment&);

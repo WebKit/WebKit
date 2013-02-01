@@ -36,9 +36,9 @@ void DataReference::encode(ArgumentEncoder& encoder) const
     encoder.encodeVariableLengthByteArray(*this);
 }
 
-bool DataReference::decode(ArgumentDecoder* decoder, DataReference& dataReference)
+bool DataReference::decode(ArgumentDecoder& decoder, DataReference& dataReference)
 {
-    return decoder->decodeVariableLengthByteArray(dataReference);
+    return decoder.decodeVariableLengthByteArray(dataReference);
 }
 
 } // namespace CoreIPC

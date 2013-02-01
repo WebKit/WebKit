@@ -160,10 +160,10 @@ protected:
 template<typename Owner>
 class ObjCObjectGraphDecoder {
 public:
-    static bool baseDecode(CoreIPC::ArgumentDecoder* decoder, Owner& coder, WebKitNSType& type)
+    static bool baseDecode(CoreIPC::ArgumentDecoder& decoder, Owner& coder, WebKitNSType& type)
     {
         uint32_t typeAsUInt32;
-        if (!decoder->decode(typeAsUInt32))
+        if (!decoder.decode(typeAsUInt32))
             return false;
 
         type = static_cast<WebKitNSType>(typeAsUInt32);
@@ -178,14 +178,14 @@ public:
         }
         case NSArrayType: {
             uint64_t size;
-            if (!decoder->decode(size))
+            if (!decoder.decode(size))
                 return false;
 
             RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
             for (uint64_t i = 0; i < size; ++i) {
                 RetainPtr<id> value;
                 Owner messageCoder(coder, value);
-                if (!decoder->decode(messageCoder))
+                if (!decoder.decode(messageCoder))
                     return false;
 
                 [array.get() addObject:value.get()];
@@ -196,7 +196,7 @@ public:
         }
         case NSDictionaryType: {
             uint64_t size;
-            if (!decoder->decode(size))
+            if (!decoder.decode(size))
                 return false;
 
             RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
@@ -204,12 +204,12 @@ public:
                 // Try to decode the key name.
                 RetainPtr<id> key;
                 Owner keyMessageCoder(coder, key);
-                if (!decoder->decode(keyMessageCoder))
+                if (!decoder.decode(keyMessageCoder))
                     return false;
 
                 RetainPtr<id> value;
                 Owner valueMessageCoder(coder, value);
-                if (!decoder->decode(valueMessageCoder))
+                if (!decoder.decode(valueMessageCoder))
                     return false;
 
                 [dictionary.get() setObject:value.get() forKey:key.get()];
@@ -306,7 +306,7 @@ public:
     {
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebContextObjCObjectGraphDecoderImpl& coder)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebContextObjCObjectGraphDecoderImpl& coder)
     {
         WebKitNSType type = NullType;
         if (!Base::baseDecode(decoder, coder, type))
@@ -324,7 +324,7 @@ public:
 #if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
             uint64_t pageID;
-            if (!decoder->decode(pageID))
+            if (!decoder.decode(pageID))
                 return false;
 
             WebPageProxy* webPage = coder.m_process->webPage(pageID);
@@ -397,7 +397,7 @@ public:
     {
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, InjectedBundleObjCObjectGraphDecoderImpl& coder)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, InjectedBundleObjCObjectGraphDecoderImpl& coder)
     {
         WebKitNSType type = NullType;
         if (!Base::baseDecode(decoder, coder, type))
@@ -415,7 +415,7 @@ public:
 #if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
             uint64_t pageID;
-            if (!decoder->decode(pageID))
+            if (!decoder.decode(pageID))
                 return false;
 
             WebPage* webPage = coder.m_process->webPage(pageID);
@@ -456,11 +456,11 @@ WebContextObjCObjectGraphDecoder::WebContextObjCObjectGraphDecoder(RefPtr<ObjCOb
 {
 }
 
-bool WebContextObjCObjectGraphDecoder::decode(CoreIPC::ArgumentDecoder* decoder, WebContextObjCObjectGraphDecoder& coder)
+bool WebContextObjCObjectGraphDecoder::decode(CoreIPC::ArgumentDecoder& decoder, WebContextObjCObjectGraphDecoder& coder)
 {
     RetainPtr<id> root;
     WebContextObjCObjectGraphDecoderImpl coderImpl(root, coder.m_process);
-    if (!decoder->decode(coderImpl))
+    if (!decoder.decode(coderImpl))
         return false;
 
     coder.m_objectGraph = ObjCObjectGraph::create(root.get());
@@ -483,11 +483,11 @@ InjectedBundleObjCObjectGraphDecoder::InjectedBundleObjCObjectGraphDecoder(RefPt
 {
 }
 
-bool InjectedBundleObjCObjectGraphDecoder::decode(CoreIPC::ArgumentDecoder* decoder, InjectedBundleObjCObjectGraphDecoder& coder)
+bool InjectedBundleObjCObjectGraphDecoder::decode(CoreIPC::ArgumentDecoder& decoder, InjectedBundleObjCObjectGraphDecoder& coder)
 {
     RetainPtr<id> root;
     InjectedBundleObjCObjectGraphDecoderImpl coderImpl(root, coder.m_process);
-    if (!decoder->decode(coderImpl))
+    if (!decoder.decode(coderImpl))
         return false;
 
     coder.m_objectGraph = ObjCObjectGraph::create(root.get());

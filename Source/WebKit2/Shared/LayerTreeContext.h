@@ -48,7 +48,7 @@ public:
     ~LayerTreeContext();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&);
+    static bool decode(CoreIPC::ArgumentDecoder&, LayerTreeContext&);
 
     bool isEmpty() const;
 

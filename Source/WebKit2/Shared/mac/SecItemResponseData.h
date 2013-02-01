@@ -41,7 +41,7 @@ public:
     SecItemResponseData(OSStatus, CFTypeRef result);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, SecItemResponseData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, SecItemResponseData&);
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }

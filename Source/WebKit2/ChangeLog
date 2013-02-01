@@ -1,3 +1,256 @@
+2013-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Message decoding functions should take a MessageDecoder reference
+        https://bugs.webkit.org/show_bug.cgi?id=108669
+
+        Reviewed by Andreas Kling.
+
+        Message encoding functions already take a reference instead of a pointer, so
+        make the decoding functions take a reference as well.
+
+        * Platform/CoreIPC/ArgumentCoder.h:
+        (CoreIPC::ArgumentCoder::decode):
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::decodeStringText):
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::SimpleArgumentCoder::decode):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::decode):
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments0::decode):
+        (CoreIPC::Arguments1::decode):
+        (CoreIPC::Arguments2::decode):
+        (CoreIPC::Arguments3::decode):
+        (CoreIPC::Arguments4::decode):
+        (CoreIPC::Arguments5::decode):
+        (CoreIPC::Arguments6::decode):
+        (CoreIPC::Arguments7::decode):
+        (CoreIPC::Arguments8::decode):
+        (CoreIPC::Arguments10::decode):
+        * Platform/CoreIPC/Attachment.cpp:
+        (CoreIPC::Attachment::decode):
+        * Platform/CoreIPC/Attachment.h:
+        (Attachment):
+        * Platform/CoreIPC/DataReference.cpp:
+        (CoreIPC::DataReference::decode):
+        * Platform/CoreIPC/DataReference.h:
+        (DataReference):
+        * Platform/CoreIPC/StringReference.cpp:
+        (CoreIPC::StringReference::decode):
+        * Platform/CoreIPC/StringReference.h:
+        (StringReference):
+        * Platform/CoreIPC/mac/MachPort.h:
+        (CoreIPC::MachPort::decode):
+        * Platform/SharedMemory.h:
+        (Handle):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        (PluginCreationParameters):
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h:
+        (DictionaryPopupInfo):
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (EditorState):
+        * Shared/FontInfo.cpp:
+        (WebKit::FontInfo::decode):
+        * Shared/FontInfo.h:
+        (FontInfo):
+        * Shared/LayerTreeContext.h:
+        (LayerTreeContext):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        (NetworkProcessCreationParameters):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (NetworkResourceLoadParameters):
+        * Shared/OriginAndDatabases.cpp:
+        (WebKit::OriginAndDatabases::decode):
+        * Shared/OriginAndDatabases.h:
+        (OriginAndDatabases):
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        (PlatformPopupMenuData):
+        * Shared/Plugins/NPIdentifierData.cpp:
+        (WebKit::NPIdentifierData::decode):
+        * Shared/Plugins/NPIdentifierData.h:
+        (NPIdentifierData):
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::decode):
+        * Shared/Plugins/NPVariantData.h:
+        (NPVariantData):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::decode):
+        * Shared/PrintInfo.h:
+        (PrintInfo):
+        * Shared/SandboxExtension.h:
+        (Handle):
+        (HandleArray):
+        (WebKit::SandboxExtension::Handle::decode):
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::decode):
+        * Shared/SecurityOriginData.h:
+        (SecurityOriginData):
+        * Shared/SessionState.cpp:
+        (WebKit::SessionState::decode):
+        * Shared/SessionState.h:
+        (SessionState):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::decode):
+        * Shared/ShareableBitmap.h:
+        (Handle):
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::Handle::decode):
+        * Shared/ShareableResource.h:
+        (Handle):
+        * Shared/SharedWorkerProcessCreationParameters.cpp:
+        (WebKit::SharedWorkerProcessCreationParameters::decode):
+        * Shared/SharedWorkerProcessCreationParameters.h:
+        (SharedWorkerProcessCreationParameters):
+        * Shared/StatisticsData.cpp:
+        (WebKit::StatisticsData::decode):
+        * Shared/StatisticsData.h:
+        (StatisticsData):
+        * Shared/StringPairVector.h:
+        (WebKit::StringPairVector::decode):
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::decode):
+        * Shared/UpdateInfo.h:
+        (UpdateInfo):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::decode):
+        * Shared/WebContextMenuItemData.h:
+        (WebContextMenuItemData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::decodeImage):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::decode):
+        * Shared/WebEvent.h:
+        (WebEvent):
+        (WebMouseEvent):
+        (WebWheelEvent):
+        (WebKeyboardEvent):
+        (WebGestureEvent):
+        (WebPlatformTouchPoint):
+        (WebTouchEvent):
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::Data::decode):
+        * Shared/WebGeolocationPosition.h:
+        (Data):
+        * Shared/WebGestureEvent.cpp:
+        (WebKit::WebGestureEvent::decode):
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::decode):
+        * Shared/WebHitTestResult.h:
+        (Data):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebNavigationDataStore.h:
+        (WebKit::WebNavigationDataStore::decode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        (WebPageGroupData):
+        * Shared/WebPlatformTouchPoint.cpp:
+        (WebKit::WebPlatformTouchPoint::decode):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPopupItem.h:
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        (WebPreferencesStore):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::decode):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::decode):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+        (CoreIPC):
+        * Shared/mac/ArgumentCodersMac.h:
+        (CoreIPC):
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::decode):
+        * Shared/mac/AttributedString.h:
+        (AttributedString):
+        * Shared/mac/AttributedString.mm:
+        (WebKit::AttributedString::decode):
+        * Shared/mac/ColorSpaceData.h:
+        (ColorSpaceData):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::decode):
+        * Shared/mac/LayerTreeContextMac.mm:
+        (WebKit::LayerTreeContext::decode):
+        * Shared/mac/ObjCObjectGraphCoders.h:
+        (WebContextObjCObjectGraphDecoder):
+        (InjectedBundleObjCObjectGraphDecoder):
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::ObjCObjectGraphDecoder::baseDecode):
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::decode):
+        (WebKit::InjectedBundleObjCObjectGraphDecoderImpl::decode):
+        (WebKit::WebContextObjCObjectGraphDecoder::decode):
+        (WebKit::InjectedBundleObjCObjectGraphDecoder::decode):
+        * Shared/mac/PlatformCertificateInfo.h:
+        (PlatformCertificateInfo):
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit::PlatformCertificateInfo::decode):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (LayerProperties):
+        (RemoteLayerTreeTransaction):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::decode):
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemRequestData.h:
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::decode):
+        * Shared/mac/SecItemResponseData.h:
+        (SecItemResponseData):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::decodePlatformData):
+        (CoreIPC::::decode):
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/Plugins/Plugin.h:
+        (Parameters):
+
 2013-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Adapt WorkQueueGtk to the latest changes in WebKit2 after r141497

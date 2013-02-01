@@ -60,16 +60,16 @@ void SecItemRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
         CoreIPC::encode(encoder, m_attributesToMatch.get());
 }
 
-bool SecItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemRequestData& secItemRequestData)
+bool SecItemRequestData::decode(CoreIPC::ArgumentDecoder& decoder, SecItemRequestData& secItemRequestData)
 {    
-    if (!decoder->decodeEnum(secItemRequestData.m_type))
+    if (!decoder.decodeEnum(secItemRequestData.m_type))
         return false;
 
     if (!CoreIPC::decode(decoder, secItemRequestData.m_queryDictionary))
         return false;
     
     bool expectAttributes;
-    if (!decoder->decode(expectAttributes))
+    if (!decoder.decode(expectAttributes))
         return false;
     
     if (expectAttributes && !CoreIPC::decode(decoder, secItemRequestData.m_attributesToMatch))

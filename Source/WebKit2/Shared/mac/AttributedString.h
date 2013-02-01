@@ -39,7 +39,7 @@ namespace WebKit {
 
 struct AttributedString {
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, AttributedString&);
+    static bool decode(CoreIPC::ArgumentDecoder&, AttributedString&);
     
     RetainPtr<NSAttributedString> string;
 };

@@ -37,10 +37,10 @@ void ArgumentCoder<AtomicString>::encode(ArgumentEncoder& encoder, const AtomicS
     encoder << atomicString.string();
 }
 
-bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder* decoder, AtomicString& atomicString)
+bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder& decoder, AtomicString& atomicString)
 {
     String string;
-    if (!decoder->decode(string))
+    if (!decoder.decode(string))
         return false;
 
     atomicString = string;
@@ -60,10 +60,10 @@ void ArgumentCoder<CString>::encode(ArgumentEncoder& encoder, const CString& str
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
 }
 
-bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
+bool ArgumentCoder<CString>::decode(ArgumentDecoder& decoder, CString& result)
 {
     uint32_t length;
-    if (!decoder->decode(length))
+    if (!decoder.decode(length))
         return false;
 
     if (length == std::numeric_limits<uint32_t>::max()) {
@@ -73,14 +73,14 @@ bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder->bufferIsLargeEnoughToContain<char>(length)) {
-        decoder->markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<char>(length)) {
+        decoder.markInvalid();
         return false;
     }
 
     char* buffer;
     CString string = CString::newUninitialized(length, buffer);
-    if (!decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
         return false;
 
     result = string;
@@ -108,27 +108,27 @@ void ArgumentCoder<String>::encode(ArgumentEncoder& encoder, const String& strin
 }
 
 template <typename CharacterType>
-static inline bool decodeStringText(ArgumentDecoder* decoder, uint32_t length, String& result)
+static inline bool decodeStringText(ArgumentDecoder& decoder, uint32_t length, String& result)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder->bufferIsLargeEnoughToContain<CharacterType>(length)) {
-        decoder->markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length)) {
+        decoder.markInvalid();
         return false;
     }
     
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), __alignof(CharacterType)))
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), __alignof(CharacterType)))
         return false;
     
     result = string;
     return true;    
 }
 
-bool ArgumentCoder<String>::decode(ArgumentDecoder* decoder, String& result)
+bool ArgumentCoder<String>::decode(ArgumentDecoder& decoder, String& result)
 {
     uint32_t length;
-    if (!decoder->decode(length))
+    if (!decoder.decode(length))
         return false;
 
     if (length == std::numeric_limits<uint32_t>::max()) {
@@ -139,7 +139,7 @@ bool ArgumentCoder<String>::decode(ArgumentDecoder* decoder, String& result)
 
     bool is8Bit;
 
-    if (!decoder->decode(is8Bit))
+    if (!decoder.decode(is8Bit))
         return false;
 
     if (is8Bit)

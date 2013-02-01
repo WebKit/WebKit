@@ -41,13 +41,13 @@ void ShareableResource::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_size;
 }
 
-bool ShareableResource::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+bool ShareableResource::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
 {
-    if (!decoder->decode(handle.m_handle))
+    if (!decoder.decode(handle.m_handle))
         return false;
-    if (!decoder->decode(handle.m_offset))
+    if (!decoder.decode(handle.m_offset))
         return false;
-    if (!decoder->decode(handle.m_size))
+    if (!decoder.decode(handle.m_size))
         return false;
     return true;
 }

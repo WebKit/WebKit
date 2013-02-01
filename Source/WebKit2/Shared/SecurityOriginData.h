@@ -41,7 +41,7 @@ typedef GenericCallback<WKArrayRef> ArrayCallback;
 
 struct SecurityOriginData {
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, SecurityOriginData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, SecurityOriginData&);
 
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
     // host, and port.

@@ -62,17 +62,17 @@ void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
     m_port = MACH_PORT_NULL;
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
 {
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);
 
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     CoreIPC::MachPort machPort;
-    if (!decoder->decode(machPort))
+    if (!decoder.decode(machPort))
         return false;
     
     handle.m_size = size;

@@ -42,13 +42,13 @@ struct WebNavigationDataStore {
         encoder << originalRequest;
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder* decoder, WebNavigationDataStore& store)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebNavigationDataStore& store)
     {
-        if (!decoder->decode(store.url))
+        if (!decoder.decode(store.url))
             return false;
-        if (!decoder->decode(store.title))
+        if (!decoder.decode(store.title))
             return false;
-        if (!decoder->decode(store.originalRequest))
+        if (!decoder.decode(store.originalRequest))
             return false;
         return true;
     }

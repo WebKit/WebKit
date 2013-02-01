@@ -41,7 +41,7 @@ struct PlatformPopupMenuData {
     PlatformPopupMenuData();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, PlatformPopupMenuData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, PlatformPopupMenuData&);
 
 #if PLATFORM(MAC)
     FontInfo fontInfo;

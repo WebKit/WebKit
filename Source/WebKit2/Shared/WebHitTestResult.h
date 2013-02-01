@@ -89,7 +89,7 @@ public:
         }
 
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, WebHitTestResult::Data&);
+        static bool decode(CoreIPC::ArgumentDecoder&, WebHitTestResult::Data&);
     };
 
     static PassRefPtr<WebHitTestResult> create(const WebHitTestResult::Data&);

@@ -46,14 +46,14 @@ void SharedWorkerProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& enc
 #endif
 }
 
-bool SharedWorkerProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, SharedWorkerProcessCreationParameters& result)
+bool SharedWorkerProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, SharedWorkerProcessCreationParameters& result)
 {
-    if (!decoder->decode(result.minimumLifetime))
+    if (!decoder.decode(result.minimumLifetime))
         return false;
-    if (!decoder->decode(result.terminationTimeout))
+    if (!decoder.decode(result.terminationTimeout))
         return false;
 #if PLATFORM(MAC)
-    if (!decoder->decode(result.parentProcessName))
+    if (!decoder.decode(result.parentProcessName))
         return false;
 #endif
 

@@ -58,7 +58,7 @@ public:
         bool isNull() const;
 
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
+        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
 
 #if USE(UNIX_DOMAIN_SOCKETS)
         CoreIPC::Attachment releaseToAttachment() const;

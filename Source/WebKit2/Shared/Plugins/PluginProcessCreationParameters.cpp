@@ -48,18 +48,18 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) 
 #endif
 }
 
-bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters& result)
+bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, PluginProcessCreationParameters& result)
 {
-    if (!decoder->decodeEnum(result.processType))
+    if (!decoder.decodeEnum(result.processType))
         return false;
-    if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
+    if (!decoder.decode(result.supportsAsynchronousPluginInitialization))
         return false;
-    if (!decoder->decode(result.minimumLifetime))
+    if (!decoder.decode(result.minimumLifetime))
         return false;
-    if (!decoder->decode(result.terminationTimeout))
+    if (!decoder.decode(result.terminationTimeout))
         return false;
 #if PLATFORM(MAC)
-    if (!decoder->decode(result.acceleratedCompositingPort))
+    if (!decoder.decode(result.acceleratedCompositingPort))
         return false;
 #endif
 

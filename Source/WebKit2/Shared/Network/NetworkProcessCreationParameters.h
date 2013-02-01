@@ -44,7 +44,7 @@ struct NetworkProcessCreationParameters {
     NetworkProcessCreationParameters();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, NetworkProcessCreationParameters&);
+    static bool decode(CoreIPC::ArgumentDecoder&, NetworkProcessCreationParameters&);
 
     bool privateBrowsingEnabled;
     CacheModel cacheModel;

@@ -46,7 +46,7 @@ public:
         unsigned size() const { return m_size; }
 
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
+        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
 
     private:
         friend class ShareableResource;

@@ -79,42 +79,42 @@ void WebPopupItem::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_isSelected;
 }
 
-bool WebPopupItem::decode(CoreIPC::ArgumentDecoder* decoder, WebPopupItem& item)
+bool WebPopupItem::decode(CoreIPC::ArgumentDecoder& decoder, WebPopupItem& item)
 {
     Type type;
-    if (!decoder->decodeEnum(type))
+    if (!decoder.decodeEnum(type))
         return false;
 
     String text;
-    if (!decoder->decode(text))
+    if (!decoder.decode(text))
         return false;
     
     TextDirection textDirection;
-    if (!decoder->decodeEnum(textDirection))
+    if (!decoder.decodeEnum(textDirection))
         return false;
 
     bool hasTextDirectionOverride;
-    if (!decoder->decode(hasTextDirectionOverride))
+    if (!decoder.decode(hasTextDirectionOverride))
         return false;
 
     String toolTip;
-    if (!decoder->decode(toolTip))
+    if (!decoder.decode(toolTip))
         return false;
 
     String accessibilityText;
-    if (!decoder->decode(accessibilityText))
+    if (!decoder.decode(accessibilityText))
         return false;
 
     bool isEnabled;
-    if (!decoder->decode(isEnabled))
+    if (!decoder.decode(isEnabled))
         return false;
 
     bool isLabel;
-    if (!decoder->decode(isLabel))
+    if (!decoder.decode(isLabel))
         return false;
 
     bool isSelected;
-    if (!decoder->decode(isSelected))
+    if (!decoder.decode(isSelected))
         return false;
 
     item = WebPopupItem(type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected);

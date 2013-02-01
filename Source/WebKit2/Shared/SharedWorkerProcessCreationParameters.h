@@ -45,7 +45,7 @@ struct SharedWorkerProcessCreationParameters {
     SharedWorkerProcessCreationParameters();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, SharedWorkerProcessCreationParameters&);
+    static bool decode(CoreIPC::ArgumentDecoder&, SharedWorkerProcessCreationParameters&);
 
     double minimumLifetime;
     double terminationTimeout;

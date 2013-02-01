@@ -55,13 +55,13 @@ void PrintInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool PrintInfo::decode(CoreIPC::ArgumentDecoder* decoder, PrintInfo& info)
+bool PrintInfo::decode(CoreIPC::ArgumentDecoder& decoder, PrintInfo& info)
 {
-    if (!decoder->decode(info.pageSetupScaleFactor))
+    if (!decoder.decode(info.pageSetupScaleFactor))
         return false;
-    if (!decoder->decode(info.availablePaperWidth))
+    if (!decoder.decode(info.availablePaperWidth))
         return false;
-    if (!decoder->decode(info.availablePaperHeight))
+    if (!decoder.decode(info.availablePaperHeight))
         return false;
 
 #if PLATFORM(GTK)

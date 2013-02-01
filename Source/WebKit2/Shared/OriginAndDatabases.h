@@ -41,7 +41,7 @@ namespace WebKit {
 
 struct OriginAndDatabases {
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, OriginAndDatabases&);
+    static bool decode(CoreIPC::ArgumentDecoder&, OriginAndDatabases&);
 
     String originIdentifier;
     uint64_t originQuota;

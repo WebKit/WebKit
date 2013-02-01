@@ -59,10 +59,10 @@ void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     CoreIPC::encode(encoder, m_certificateChain.get());
 }
 
-bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& c)
+bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, PlatformCertificateInfo& c)
 {
     bool hasCertificateChain;
-    if (!decoder->decode(hasCertificateChain))
+    if (!decoder.decode(hasCertificateChain))
         return false;
 
     if (!hasCertificateChain)

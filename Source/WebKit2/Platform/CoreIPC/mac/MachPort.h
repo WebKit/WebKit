@@ -51,10 +51,10 @@ public:
         encoder << Attachment(m_port, m_disposition);
     }
 
-    static bool decode(ArgumentDecoder* decoder, MachPort& p)
+    static bool decode(ArgumentDecoder& decoder, MachPort& p)
     {
         Attachment attachment;
-        if (!decoder->decode(attachment))
+        if (!decoder.decode(attachment))
             return false;
         
         p.m_port = attachment.port();

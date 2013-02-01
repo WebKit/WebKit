@@ -56,54 +56,54 @@ void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool EditorState::decode(CoreIPC::ArgumentDecoder* decoder, EditorState& result)
+bool EditorState::decode(CoreIPC::ArgumentDecoder& decoder, EditorState& result)
 {
-    if (!decoder->decode(result.shouldIgnoreCompositionSelectionChange))
+    if (!decoder.decode(result.shouldIgnoreCompositionSelectionChange))
         return false;
 
-    if (!decoder->decode(result.selectionIsNone))
+    if (!decoder.decode(result.selectionIsNone))
         return false;
 
-    if (!decoder->decode(result.selectionIsRange))
+    if (!decoder.decode(result.selectionIsRange))
         return false;
 
-    if (!decoder->decode(result.isContentEditable))
+    if (!decoder.decode(result.isContentEditable))
         return false;
 
-    if (!decoder->decode(result.isContentRichlyEditable))
+    if (!decoder.decode(result.isContentRichlyEditable))
         return false;
 
-    if (!decoder->decode(result.isInPasswordField))
+    if (!decoder.decode(result.isInPasswordField))
         return false;
 
-    if (!decoder->decode(result.hasComposition))
+    if (!decoder.decode(result.hasComposition))
         return false;
 
 #if PLATFORM(QT)
-    if (!decoder->decode(result.cursorPosition))
+    if (!decoder.decode(result.cursorPosition))
         return false;
 
-    if (!decoder->decode(result.anchorPosition))
+    if (!decoder.decode(result.anchorPosition))
         return false;
 
-    if (!decoder->decode(result.editorRect))
+    if (!decoder.decode(result.editorRect))
         return false;
 
-    if (!decoder->decode(result.compositionRect))
+    if (!decoder.decode(result.compositionRect))
         return false;
 
-    if (!decoder->decode(result.inputMethodHints))
+    if (!decoder.decode(result.inputMethodHints))
         return false;
 
-    if (!decoder->decode(result.selectedText))
+    if (!decoder.decode(result.selectedText))
         return false;
 
-    if (!decoder->decode(result.surroundingText))
+    if (!decoder.decode(result.surroundingText))
         return false;
 #endif
 
 #if PLATFORM(QT) || PLATFORM(GTK)
-    if (!decoder->decode(result.cursorRect))
+    if (!decoder.decode(result.cursorRect))
         return false;
 #endif
 

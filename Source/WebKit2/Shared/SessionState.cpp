@@ -35,9 +35,9 @@ template<typename T> struct ArgumentCoder<RefPtr<T> > {
         item->encode(encoder);
     }
 
-    static bool decode(ArgumentDecoder* decoder, RefPtr<T>& item)
+    static bool decode(ArgumentDecoder& decoder, RefPtr<T>& item)
     {
-        item = T::decode(*decoder);
+        item = T::decode(decoder);
         return item;
     }
 };
@@ -70,11 +70,11 @@ void SessionState::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_currentIndex;
 }
 
-bool SessionState::decode(CoreIPC::ArgumentDecoder* decoder, SessionState& state)
+bool SessionState::decode(CoreIPC::ArgumentDecoder& decoder, SessionState& state)
 {
-    if (!decoder->decode(state.m_list))
+    if (!decoder.decode(state.m_list))
         return false;
-    if (!decoder->decode(state.m_currentIndex))
+    if (!decoder.decode(state.m_currentIndex))
         return false;
     return true;
 }

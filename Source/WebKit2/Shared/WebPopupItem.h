@@ -47,7 +47,7 @@ struct WebPopupItem {
     WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebPopupItem&);
+    static bool decode(CoreIPC::ArgumentDecoder&, WebPopupItem&);
 
     Type m_type;
     String m_text;

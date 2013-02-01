@@ -44,10 +44,10 @@ void StringReference::encode(ArgumentEncoder& encoder) const
     encoder << DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size);
 }
 
-bool StringReference::decode(ArgumentDecoder* decoder, StringReference& result)
+bool StringReference::decode(ArgumentDecoder& decoder, StringReference& result)
 {
     DataReference dataReference;
-    if (!decoder->decode(dataReference))
+    if (!decoder.decode(dataReference))
         return false;
 
     result.m_data = reinterpret_cast<const char*>(dataReference.data());

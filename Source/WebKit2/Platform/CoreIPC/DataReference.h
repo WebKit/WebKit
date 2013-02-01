@@ -73,7 +73,7 @@ public:
     }
 
     void encode(ArgumentEncoder&) const;
-    static bool decode(ArgumentDecoder* decoder, DataReference& dataReference);
+    static bool decode(ArgumentDecoder&, DataReference&);
 
 private:
     const uint8_t* m_data;

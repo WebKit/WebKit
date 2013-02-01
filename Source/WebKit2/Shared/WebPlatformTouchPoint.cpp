@@ -68,21 +68,21 @@ void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_force;
 }
 
-bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& result)
+bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
 {
-    if (!decoder->decode(result.m_id))
+    if (!decoder.decode(result.m_id))
         return false;
-    if (!decoder->decode(result.m_state))
+    if (!decoder.decode(result.m_state))
         return false;
-    if (!decoder->decode(result.m_screenPosition))
+    if (!decoder.decode(result.m_screenPosition))
         return false;
-    if (!decoder->decode(result.m_position))
+    if (!decoder.decode(result.m_position))
         return false;
-    if (!decoder->decode(result.m_radius))
+    if (!decoder.decode(result.m_radius))
         return false;
-    if (!decoder->decode(result.m_rotationAngle))
+    if (!decoder.decode(result.m_rotationAngle))
         return false;
-    if (!decoder->decode(result.m_force))
+    if (!decoder.decode(result.m_force))
         return false;
 
     return true;

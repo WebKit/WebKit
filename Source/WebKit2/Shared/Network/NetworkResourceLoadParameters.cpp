@@ -105,47 +105,47 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encode(m_inPrivateBrowsingMode);
 }
 
-bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkResourceLoadParameters& result)
+bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
 {
-    if (!decoder->decode(result.m_identifier))
+    if (!decoder.decode(result.m_identifier))
         return false;
 
-    if (!decoder->decode(result.m_webPageID))
+    if (!decoder.decode(result.m_webPageID))
         return false;
 
-    if (!decoder->decode(result.m_webFrameID))
+    if (!decoder.decode(result.m_webFrameID))
         return false;
 
-    if (!decoder->decode(result.m_request))
+    if (!decoder.decode(result.m_request))
         return false;
 
     bool hasHTTPBody;
-    if (!decoder->decode(hasHTTPBody))
+    if (!decoder.decode(hasHTTPBody))
         return false;
 
     if (hasHTTPBody) {
         CoreIPC::DataReference formData;
-        if (!decoder->decode(formData))
+        if (!decoder.decode(formData))
             return false;
         DecoderAdapter httpBodyDecoderAdapter(formData.data(), formData.size());
         result.m_request.setHTTPBody(FormData::decode(httpBodyDecoderAdapter));
 
-        if (!decoder->decode(result.m_requestBodySandboxExtensions))
+        if (!decoder.decode(result.m_requestBodySandboxExtensions))
             return false;
     }
 
     if (result.m_request.url().isLocalFile()) {
-        if (!decoder->decode(result.m_resourceSandboxExtension))
+        if (!decoder.decode(result.m_resourceSandboxExtension))
             return false;
     }
 
-    if (!decoder->decodeEnum(result.m_priority))
+    if (!decoder.decodeEnum(result.m_priority))
         return false;
-    if (!decoder->decodeEnum(result.m_contentSniffingPolicy))
+    if (!decoder.decodeEnum(result.m_contentSniffingPolicy))
         return false;
-    if (!decoder->decodeEnum(result.m_allowStoredCredentials))
+    if (!decoder.decodeEnum(result.m_allowStoredCredentials))
         return false;
-    if (!decoder->decode(result.m_inPrivateBrowsingMode))
+    if (!decoder.decode(result.m_inPrivateBrowsingMode))
         return false;
 
     return true;

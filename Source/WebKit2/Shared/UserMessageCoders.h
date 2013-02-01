@@ -260,10 +260,10 @@ protected:
 template<typename Owner>
 class UserMessageDecoder {
 public:
-    static bool baseDecode(CoreIPC::ArgumentDecoder* decoder, Owner& coder, APIObject::Type& type)
+    static bool baseDecode(CoreIPC::ArgumentDecoder& decoder, Owner& coder, APIObject::Type& type)
     {
         uint32_t typeAsUInt32;
-        if (!decoder->decode(typeAsUInt32))
+        if (!decoder.decode(typeAsUInt32))
             return false;
 
         type = static_cast<APIObject::Type>(typeAsUInt32);
@@ -271,14 +271,14 @@ public:
         switch (type) {
         case APIObject::TypeArray: {
             uint64_t size;
-            if (!decoder->decode(size))
+            if (!decoder.decode(size))
                 return false;
 
             Vector<RefPtr<APIObject> > vector;
             for (size_t i = 0; i < size; ++i) {
                 RefPtr<APIObject> element;
                 Owner messageCoder(coder, element);
-                if (!decoder->decode(messageCoder))
+                if (!decoder.decode(messageCoder))
                     return false;
                 vector.append(element.release());
             }
@@ -288,18 +288,18 @@ public:
         }
         case APIObject::TypeDictionary: {
             uint64_t size;
-            if (!decoder->decode(size))
+            if (!decoder.decode(size))
                 return false;
 
             ImmutableDictionary::MapType map;
             for (size_t i = 0; i < size; ++i) {
                 String key;
-                if (!decoder->decode(key))
+                if (!decoder.decode(key))
                     return false;
 
                 RefPtr<APIObject> element;
                 Owner messageCoder(coder, element);
-                if (!decoder->decode(messageCoder))
+                if (!decoder.decode(messageCoder))
                     return false;
 
                 ImmutableDictionary::MapType::AddResult result = map.set(key, element.release());
@@ -312,14 +312,14 @@ public:
         }
         case APIObject::TypeString: {
             String string;
-            if (!decoder->decode(string))
+            if (!decoder.decode(string))
                 return false;
             coder.m_root = WebString::create(string);
             break;
         }
         case APIObject::TypeSerializedScriptValue: {
             CoreIPC::DataReference dataReference;
-            if (!decoder->decode(dataReference))
+            if (!decoder.decode(dataReference))
                 return false;
             
             Vector<uint8_t> vector = dataReference.vector();
@@ -328,21 +328,21 @@ public:
         }
         case APIObject::TypeDouble: {
             double value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             coder.m_root = WebDouble::create(value);
             break;
         }
         case APIObject::TypeUInt64: {
             uint64_t value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             coder.m_root = WebUInt64::create(value);
             break;
         }
         case APIObject::TypeBoolean: {
             bool value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             coder.m_root = WebBoolean::create(value);
             break;
@@ -350,9 +350,9 @@ public:
         case APIObject::TypeSize: {
             double width;
             double height;
-            if (!decoder->decode(width))
+            if (!decoder.decode(width))
                 return false;
-            if (!decoder->decode(height))
+            if (!decoder.decode(height))
                 return false;
             coder.m_root = WebSize::create(WKSizeMake(width, height));
             break;
@@ -360,9 +360,9 @@ public:
         case APIObject::TypePoint: {
             double x;
             double y;
-            if (!decoder->decode(x))
+            if (!decoder.decode(x))
                 return false;
-            if (!decoder->decode(y))
+            if (!decoder.decode(y))
                 return false;
             coder.m_root = WebPoint::create(WKPointMake(x, y));
             break;
@@ -372,13 +372,13 @@ public:
             double y;
             double width;
             double height;
-            if (!decoder->decode(x))
+            if (!decoder.decode(x))
                 return false;
-            if (!decoder->decode(y))
+            if (!decoder.decode(y))
                 return false;
-            if (!decoder->decode(width))
+            if (!decoder.decode(width))
                 return false;
-            if (!decoder->decode(height))
+            if (!decoder.decode(height))
                 return false;
             coder.m_root = WebRect::create(WKRectMake(x, y, width, height));
             break;
@@ -395,28 +395,28 @@ public:
             RefPtr<APIObject> positiveZOrderList;
 
             Owner rendererCoder(coder, renderer);
-            if (!decoder->decode(rendererCoder))
+            if (!decoder.decode(rendererCoder))
                 return false;
             if (renderer->type() != APIObject::TypeRenderObject)
                 return false;
-            if (!decoder->decode(isReflection))
+            if (!decoder.decode(isReflection))
                 return false;
-            if (!decoder->decode(isClipping))
+            if (!decoder.decode(isClipping))
                 return false;
-            if (!decoder->decode(isClipped))
+            if (!decoder.decode(isClipped))
                 return false;
-            if (!decoder->decode(compositingLayerTypeAsUInt32))
+            if (!decoder.decode(compositingLayerTypeAsUInt32))
                 return false;
-            if (!decoder->decode(absoluteBoundingBox))
+            if (!decoder.decode(absoluteBoundingBox))
                 return false;
             Owner negativeZOrderListCoder(coder, negativeZOrderList);
-            if (!decoder->decode(negativeZOrderListCoder))
+            if (!decoder.decode(negativeZOrderListCoder))
                 return false;
             Owner normalFlowListCoder(coder, normalFlowList);
-            if (!decoder->decode(normalFlowListCoder))
+            if (!decoder.decode(normalFlowListCoder))
                 return false;
             Owner positiveZOrderListCoder(coder, positiveZOrderList);
-            if (!decoder->decode(positiveZOrderListCoder))
+            if (!decoder.decode(positiveZOrderListCoder))
                 return false;
             coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
                 absoluteBoundingBox, static_pointer_cast<MutableArray>(negativeZOrderList), static_pointer_cast<MutableArray>(normalFlowList),
@@ -432,21 +432,21 @@ public:
             WebCore::IntRect frameRect;
             RefPtr<APIObject> children;
             
-            if (!decoder->decode(name))
+            if (!decoder.decode(name))
                 return false;
-            if (!decoder->decode(elementTagName))
+            if (!decoder.decode(elementTagName))
                 return false;
-            if (!decoder->decode(elementID))
+            if (!decoder.decode(elementID))
                 return false;
             Owner classNamesCoder(coder, elementClassNames);
-            if (!decoder->decode(classNamesCoder))
+            if (!decoder.decode(classNamesCoder))
                 return false;
-            if (!decoder->decode(absolutePosition))
+            if (!decoder.decode(absolutePosition))
                 return false;
-            if (!decoder->decode(frameRect))
+            if (!decoder.decode(frameRect))
                 return false;
             Owner messageCoder(coder, children);
-            if (!decoder->decode(messageCoder))
+            if (!decoder.decode(messageCoder))
                 return false;
             if (children && children->type() != APIObject::TypeArray)
                 return false;
@@ -455,42 +455,42 @@ public:
         }
         case APIObject::TypeURL: {
             String string;
-            if (!decoder->decode(string))
+            if (!decoder.decode(string))
                 return false;
             coder.m_root = WebURL::create(string);
             break;
         }
         case APIObject::TypeURLRequest: {
             WebCore::ResourceRequest request;
-            if (!decoder->decode(request))
+            if (!decoder.decode(request))
                 return false;
             coder.m_root = WebURLRequest::create(request);
             break;
         }
         case APIObject::TypeURLResponse: {
             WebCore::ResourceResponse response;
-            if (!decoder->decode(response))
+            if (!decoder.decode(response))
                 return false;
             coder.m_root = WebURLResponse::create(response);
             break;
         }
         case APIObject::TypeUserContentURLPattern: {
             String string;
-            if (!decoder->decode(string))
+            if (!decoder.decode(string))
                 return false;
             coder.m_root = WebUserContentURLPattern::create(string);
             break;
         }
         case APIObject::TypeImage: {
             bool didEncode = false;
-            if (!decoder->decode(didEncode))
+            if (!decoder.decode(didEncode))
                 return false;
 
             if (!didEncode)
                 break;
 
             ShareableBitmap::Handle handle;
-            if (!decoder->decode(handle))
+            if (!decoder.decode(handle))
                 return false;
 
             coder.m_root = WebImage::create(ShareableBitmap::create(handle));
@@ -498,21 +498,21 @@ public:
         }
         case APIObject::TypeData: {
             CoreIPC::DataReference dataReference;
-            if (!decoder->decode(dataReference))
+            if (!decoder.decode(dataReference))
                 return false;
             coder.m_root = WebData::create(dataReference.data(), dataReference.size());
             break;
         }
         case APIObject::TypeCertificateInfo: {
             PlatformCertificateInfo platformCertificateInfo;
-            if (!decoder->decode(platformCertificateInfo))
+            if (!decoder.decode(platformCertificateInfo))
                 return false;
             coder.m_root = WebCertificateInfo::create(platformCertificateInfo);
             break;
         }
         case APIObject::TypeError: {
             WebCore::ResourceError resourceError;
-            if (!decoder->decode(resourceError))
+            if (!decoder.decode(resourceError))
                 return false;
             coder.m_root = WebError::create(resourceError);
             break;

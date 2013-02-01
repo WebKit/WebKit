@@ -49,16 +49,16 @@ void SecItemResponseData::encode(CoreIPC::ArgumentEncoder& encoder) const
         CoreIPC::encode(encoder, m_resultObject.get());
 }
 
-bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemResponseData& secItemResponseData)
+bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder& decoder, SecItemResponseData& secItemResponseData)
 {
     int64_t resultCode;
-    if (!decoder->decode(resultCode))
+    if (!decoder.decode(resultCode))
         return false;
     secItemResponseData.m_resultCode = (OSStatus)resultCode;
     secItemResponseData.m_resultObject = 0;
 
     bool expectResultObject;
-    if (!decoder->decode(expectResultObject))
+    if (!decoder.decode(expectResultObject))
         return false;
 
     if (expectResultObject && !CoreIPC::decode(decoder, secItemResponseData.m_resultObject))

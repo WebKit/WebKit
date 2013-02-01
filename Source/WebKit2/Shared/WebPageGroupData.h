@@ -40,7 +40,7 @@ namespace WebKit {
 
 struct WebPageGroupData {
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebPageGroupData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, WebPageGroupData&);
 
     String identifer;
     uint64_t pageGroupID;

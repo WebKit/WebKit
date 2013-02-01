@@ -54,7 +54,7 @@ public:
         LayerProperties();
 
         void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder*, LayerProperties&);
+        static bool decode(CoreIPC::ArgumentDecoder&, LayerProperties&);
 
         unsigned changedProperties;
 
@@ -68,7 +68,7 @@ public:
     ~RemoteLayerTreeTransaction();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, RemoteLayerTreeTransaction&);
+    static bool decode(CoreIPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
 
     uint64_t rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(uint64_t rootLayerID);

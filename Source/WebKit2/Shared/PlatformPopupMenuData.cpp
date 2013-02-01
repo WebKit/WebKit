@@ -49,15 +49,15 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPopupMenuData& data)
+bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder& decoder, PlatformPopupMenuData& data)
 {
 #if PLATFORM(MAC)
-    if (!decoder->decode(data.fontInfo))
+    if (!decoder.decode(data.fontInfo))
         return false;
-    if (!decoder->decode(data.shouldPopOver))
+    if (!decoder.decode(data.shouldPopOver))
         return false;
 #elif PLATFORM(QT)
-    if (!decoder->decode(data.multipleSelections))
+    if (!decoder.decode(data.multipleSelections))
         return false;
 #else
     UNUSED_PARAM(decoder);

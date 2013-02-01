@@ -113,117 +113,117 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << plugInAutoStartOrigins;
 }
 
-bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebProcessCreationParameters& parameters)
+bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebProcessCreationParameters& parameters)
 {
-    if (!decoder->decode(parameters.injectedBundlePath))
+    if (!decoder.decode(parameters.injectedBundlePath))
         return false;
-    if (!decoder->decode(parameters.injectedBundlePathExtensionHandle))
+    if (!decoder.decode(parameters.injectedBundlePathExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.applicationCacheDirectory))
+    if (!decoder.decode(parameters.applicationCacheDirectory))
         return false;
-    if (!decoder->decode(parameters.applicationCacheDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.applicationCacheDirectoryExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.databaseDirectory))
+    if (!decoder.decode(parameters.databaseDirectory))
         return false;
-    if (!decoder->decode(parameters.databaseDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.databaseDirectoryExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.localStorageDirectory))
+    if (!decoder.decode(parameters.localStorageDirectory))
         return false;
-    if (!decoder->decode(parameters.localStorageDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.localStorageDirectoryExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.diskCacheDirectory))
+    if (!decoder.decode(parameters.diskCacheDirectory))
         return false;
-    if (!decoder->decode(parameters.diskCacheDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.diskCacheDirectoryExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.cookieStorageDirectory))
+    if (!decoder.decode(parameters.cookieStorageDirectory))
         return false;
-    if (!decoder->decode(parameters.cookieStorageDirectoryExtensionHandle))
+    if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
+    if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegisteredAsSecure))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsSecure))
         return false;
-    if (!decoder->decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
+    if (!decoder.decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegisteredAsLocal))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsLocal))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegisteredAsNoAccess))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsNoAccess))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegisteredAsDisplayIsolated))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsDisplayIsolated))
         return false;
-    if (!decoder->decode(parameters.urlSchemesRegisteredAsCORSEnabled))
+    if (!decoder.decode(parameters.urlSchemesRegisteredAsCORSEnabled))
         return false;
 #if ENABLE(CUSTOM_PROTOCOLS)
-    if (!decoder->decode(parameters.urlSchemesRegisteredForCustomProtocols))
+    if (!decoder.decode(parameters.urlSchemesRegisteredForCustomProtocols))
         return false;
 #endif
 #if USE(SOUP)
-    if (!decoder->decode(parameters.urlSchemesRegistered))
+    if (!decoder.decode(parameters.urlSchemesRegistered))
         return false;
-    if (!decoder->decode(parameters.cookiePersistentStoragePath))
+    if (!decoder.decode(parameters.cookiePersistentStoragePath))
         return false;
-    if (!decoder->decode(parameters.cookiePersistentStorageType))
+    if (!decoder.decode(parameters.cookiePersistentStorageType))
         return false;
-    if (!decoder->decodeEnum(parameters.cookieAcceptPolicy))
+    if (!decoder.decodeEnum(parameters.cookieAcceptPolicy))
         return false;
-    if (!decoder->decode(parameters.ignoreTLSErrors))
+    if (!decoder.decode(parameters.ignoreTLSErrors))
         return false;
 #endif
-    if (!decoder->decodeEnum(parameters.cacheModel))
+    if (!decoder.decodeEnum(parameters.cacheModel))
         return false;
-    if (!decoder->decode(parameters.shouldTrackVisitedLinks))
+    if (!decoder.decode(parameters.shouldTrackVisitedLinks))
         return false;
-    if (!decoder->decode(parameters.shouldAlwaysUseComplexTextCodePath))
+    if (!decoder.decode(parameters.shouldAlwaysUseComplexTextCodePath))
         return false;
-    if (!decoder->decode(parameters.shouldUseFontSmoothing))
+    if (!decoder.decode(parameters.shouldUseFontSmoothing))
         return false;
-    if (!decoder->decode(parameters.iconDatabaseEnabled))
+    if (!decoder.decode(parameters.iconDatabaseEnabled))
         return false;
-    if (!decoder->decode(parameters.terminationTimeout))
+    if (!decoder.decode(parameters.terminationTimeout))
         return false;
-    if (!decoder->decode(parameters.languages))
+    if (!decoder.decode(parameters.languages))
         return false;
-    if (!decoder->decode(parameters.textCheckerState))
+    if (!decoder.decode(parameters.textCheckerState))
         return false;
-    if (!decoder->decode(parameters.fullKeyboardAccessEnabled))
+    if (!decoder.decode(parameters.fullKeyboardAccessEnabled))
         return false;
-    if (!decoder->decode(parameters.defaultRequestTimeoutInterval))
+    if (!decoder.decode(parameters.defaultRequestTimeoutInterval))
         return false;
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    if (!decoder->decode(parameters.uiProcessBundleIdentifier))
+    if (!decoder.decode(parameters.uiProcessBundleIdentifier))
         return false;
 #endif
 
 #if PLATFORM(MAC)
-    if (!decoder->decode(parameters.presenterApplicationPid))
+    if (!decoder.decode(parameters.presenterApplicationPid))
         return false;
-    if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))
+    if (!decoder.decode(parameters.nsURLCacheMemoryCapacity))
         return false;
-    if (!decoder->decode(parameters.nsURLCacheDiskCapacity))
+    if (!decoder.decode(parameters.nsURLCacheDiskCapacity))
         return false;
-    if (!decoder->decode(parameters.acceleratedCompositingPort))
+    if (!decoder.decode(parameters.acceleratedCompositingPort))
         return false;
-    if (!decoder->decode(parameters.uiProcessBundleResourcePath))
+    if (!decoder.decode(parameters.uiProcessBundleResourcePath))
         return false;
-    if (!decoder->decode(parameters.uiProcessBundleResourcePathExtensionHandle))
+    if (!decoder.decode(parameters.uiProcessBundleResourcePathExtensionHandle))
         return false;
-    if (!decoder->decode(parameters.shouldForceScreenFontSubstitution))
+    if (!decoder.decode(parameters.shouldForceScreenFontSubstitution))
         return false;
-    if (!decoder->decode(parameters.shouldEnableKerningAndLigaturesByDefault))
+    if (!decoder.decode(parameters.shouldEnableKerningAndLigaturesByDefault))
         return false;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (!decoder->decode(parameters.notificationPermissions))
+    if (!decoder.decode(parameters.notificationPermissions))
         return false;
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
-    if (!decoder->decode(parameters.usesNetworkProcess))
+    if (!decoder.decode(parameters.usesNetworkProcess))
         return false;
 #endif
 
-    if (!decoder->decode(parameters.plugInAutoStartOrigins))
+    if (!decoder.decode(parameters.plugInAutoStartOrigins))
         return false;
 
     return true;

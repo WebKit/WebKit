@@ -47,12 +47,12 @@ void WebTouchEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_touchPoints;
 }
 
-bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& result)
+bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebTouchEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;
 
-    if (!decoder->decode(result.m_touchPoints))
+    if (!decoder.decode(result.m_touchPoints))
         return false;
 
     return true;

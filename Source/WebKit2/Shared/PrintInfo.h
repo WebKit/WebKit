@@ -64,7 +64,7 @@ struct PrintInfo {
 #endif
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, PrintInfo&);
+    static bool decode(CoreIPC::ArgumentDecoder&, PrintInfo&);
 };
 
 }

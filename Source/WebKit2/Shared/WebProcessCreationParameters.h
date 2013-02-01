@@ -53,7 +53,7 @@ struct WebProcessCreationParameters {
     WebProcessCreationParameters();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebProcessCreationParameters&);
+    static bool decode(CoreIPC::ArgumentDecoder&, WebProcessCreationParameters&);
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;

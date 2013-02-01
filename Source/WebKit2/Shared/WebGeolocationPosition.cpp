@@ -56,7 +56,7 @@ void WebGeolocationPosition::Data::encode(CoreIPC::ArgumentEncoder& encoder) con
     CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::encode(encoder, *this);
 }
 
-bool WebGeolocationPosition::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& data)
+bool WebGeolocationPosition::Data::decode(CoreIPC::ArgumentDecoder& decoder, Data& data)
 {
     return CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::decode(decoder, data);
 }

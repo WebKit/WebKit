@@ -47,15 +47,15 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPopupInfo& result)
+bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder& decoder, DictionaryPopupInfo& result)
 {
-    if (!decoder->decode(result.origin))
+    if (!decoder.decode(result.origin))
         return false;
-    if (!decoder->decodeEnum(result.type))
+    if (!decoder.decodeEnum(result.type))
         return false;
 #if PLATFORM(MAC)
     bool hadOptions;
-    if (!decoder->decode(hadOptions))
+    if (!decoder.decode(hadOptions))
         return false;
     if (hadOptions) {
         if (!CoreIPC::decode(decoder, result.options))

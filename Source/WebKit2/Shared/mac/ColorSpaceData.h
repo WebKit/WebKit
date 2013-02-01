@@ -37,7 +37,7 @@ namespace WebKit {
 
 struct ColorSpaceData {
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, ColorSpaceData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, ColorSpaceData&);
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;
 };

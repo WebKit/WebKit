@@ -129,10 +129,10 @@ void encode(ArgumentEncoder& encoder, id object)
     ASSERT_NOT_REACHED();
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<id>& result)
 {
     NSType type;
-    if (!decoder->decodeEnum(type))
+    if (!decoder.decodeEnum(type))
         return false;
 
     switch (type) {
@@ -244,7 +244,7 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSAttributedString>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
 {
     RetainPtr<NSString> plainString;
     if (!CoreIPC::decode(decoder, plainString))
@@ -255,16 +255,16 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSAttributedString>& result)
     RetainPtr<NSMutableAttributedString> resultString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:plainString.get()]);
 
     uint64_t rangeCount;
-    if (!decoder->decode(rangeCount))
+    if (!decoder.decode(rangeCount))
         return false;
 
     while (rangeCount--) {
         uint64_t rangeLocation;
         uint64_t rangeLength;
         RetainPtr<NSDictionary> attributes;
-        if (!decoder->decode(rangeLocation))
+        if (!decoder.decode(rangeLocation))
             return false;
-        if (!decoder->decode(rangeLength))
+        if (!decoder.decode(rangeLength))
             return false;
 
         ASSERT(rangeLocation + rangeLength > rangeLocation);
@@ -287,10 +287,10 @@ void encode(ArgumentEncoder& encoder, NSColor *color)
     encoder << colorFromNSColor(color);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSColor>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSColor>& result)
 {
     Color color;
-    if (!decoder->decode(color))
+    if (!decoder.decode(color))
         return false;
 
     result = nsColor(color);
@@ -324,10 +324,10 @@ void encode(ArgumentEncoder& encoder, NSDictionary *dictionary)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSDictionary>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSDictionary>& result)
 {
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     RetainPtr<NSMutableDictionary> dictionary(AdoptNS, [[NSMutableDictionary alloc] initWithCapacity:size]);
@@ -355,7 +355,7 @@ void encode(ArgumentEncoder& encoder, NSFont *font)
     encode(encoder, [[font fontDescriptor] fontAttributes]);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSFont>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSFont>& result)
 {
     RetainPtr<NSDictionary> fontAttributes;
     if (!decode(decoder, fontAttributes))
@@ -373,7 +373,7 @@ void encode(ArgumentEncoder& encoder, NSNumber *number)
     encode(encoder, (CFNumberRef)number);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSNumber>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSNumber>& result)
 {
     RetainPtr<CFNumberRef> number;
     if (!decode(decoder, number))
@@ -388,7 +388,7 @@ void encode(ArgumentEncoder& encoder, NSString *string)
     encode(encoder, (CFStringRef)string);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSString>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSString>& result)
 {
     RetainPtr<CFStringRef> string;
     if (!decode(decoder, string))
@@ -414,10 +414,10 @@ void encode(ArgumentEncoder& encoder, NSArray *array)
     }
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSArray>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSArray>& result)
 {
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
@@ -438,7 +438,7 @@ void encode(ArgumentEncoder& encoder, NSDate *date)
     encode(encoder, (CFDateRef)date);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSDate>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSDate>& result)
 {
     RetainPtr<CFDateRef> date;
     if (!decode(decoder, date))
@@ -453,7 +453,7 @@ void encode(ArgumentEncoder& encoder, NSData *data)
     encode(encoder, (CFDataRef)data);
 }
 
-bool decode(ArgumentDecoder* decoder, RetainPtr<NSData>& result)
+bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
 {
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))

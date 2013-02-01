@@ -60,18 +60,18 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
         encoder << size;
 }
 
-bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder* decoder, LayerProperties& result)
+bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
 {
-    if (!decoder->decode(result.changedProperties))
+    if (!decoder.decode(result.changedProperties))
         return false;
 
     if (result.changedProperties & NameChanged) {
-        if (!decoder->decode(result.name))
+        if (!decoder.decode(result.name))
             return false;
     }
 
     if (result.changedProperties & ChildrenChanged) {
-        if (!decoder->decode(result.children))
+        if (!decoder.decode(result.children))
             return false;
 
         for (auto layerID: result.children) {
@@ -81,12 +81,12 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
     }
 
     if (result.changedProperties & PositionChanged) {
-        if (!decoder->decode(result.position))
+        if (!decoder.decode(result.position))
             return false;
     }
 
     if (result.changedProperties & SizeChanged) {
-        if (!decoder->decode(result.size))
+        if (!decoder.decode(result.size))
             return false;
     }
     return true;
@@ -107,17 +107,17 @@ void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_destroyedLayerIDs;
 }
 
-bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder* decoder, RemoteLayerTreeTransaction& result)
+bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
 {
-    if (!decoder->decode(result.m_rootLayerID))
+    if (!decoder.decode(result.m_rootLayerID))
         return false;
     if (!result.m_rootLayerID)
         return false;
 
-    if (!decoder->decode(result.m_changedLayerProperties))
+    if (!decoder.decode(result.m_changedLayerProperties))
         return false;
 
-    if (!decoder->decode(result.m_destroyedLayerIDs))
+    if (!decoder.decode(result.m_destroyedLayerIDs))
         return false;
     for (uint64_t layerID: result.m_destroyedLayerIDs) {
         if (!layerID)

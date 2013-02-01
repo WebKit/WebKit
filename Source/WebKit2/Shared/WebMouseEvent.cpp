@@ -69,24 +69,24 @@ void WebMouseEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_clickCount;
 }
 
-bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebMouseEvent& result)
+bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebMouseEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;
 
-    if (!decoder->decode(result.m_button))
+    if (!decoder.decode(result.m_button))
         return false;
-    if (!decoder->decode(result.m_position))
+    if (!decoder.decode(result.m_position))
         return false;
-    if (!decoder->decode(result.m_globalPosition))
+    if (!decoder.decode(result.m_globalPosition))
         return false;
-    if (!decoder->decode(result.m_deltaX))
+    if (!decoder.decode(result.m_deltaX))
         return false;
-    if (!decoder->decode(result.m_deltaY))
+    if (!decoder.decode(result.m_deltaY))
         return false;
-    if (!decoder->decode(result.m_deltaZ))
+    if (!decoder.decode(result.m_deltaZ))
         return false;
-    if (!decoder->decode(result.m_clickCount))
+    if (!decoder.decode(result.m_clickCount))
         return false;
 
     return true;

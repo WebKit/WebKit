@@ -53,13 +53,13 @@ void WebEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_timestamp;
 }
 
-bool WebEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebEvent& result)
+bool WebEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebEvent& result)
 {
-    if (!decoder->decode(result.m_type))
+    if (!decoder.decode(result.m_type))
         return false;
-    if (!decoder->decode(result.m_modifiers))
+    if (!decoder.decode(result.m_modifiers))
         return false;
-    if (!decoder->decode(result.m_timestamp))
+    if (!decoder.decode(result.m_timestamp))
         return false;
     return true;
 }
