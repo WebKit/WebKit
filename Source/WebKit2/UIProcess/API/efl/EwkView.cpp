@@ -117,7 +117,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     , m_pendingSurfaceResize(false)
 #endif
     , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))
-    , m_pageProxy(m_context->webContext()->createWebPage(m_pageClient.get(), pageGroup.get()))
+    , m_pageProxy(toImpl(m_context->wkContext())->createWebPage(m_pageClient.get(), pageGroup.get()))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))

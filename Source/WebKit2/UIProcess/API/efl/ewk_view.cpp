@@ -533,7 +533,7 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
  */
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkView::ViewBehavior behavior)
 {
-    return createEwkView(canvas, createEwkViewSmartClass(), contextRef ? EwkContext::create(toImpl(contextRef)) : EwkContext::defaultContext(), pageGroupRef, behavior);
+    return createEwkView(canvas, createEwkViewSmartClass(), contextRef ? EwkContext::create(contextRef) : EwkContext::defaultContext(), pageGroupRef, behavior);
 }
 
 Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context)

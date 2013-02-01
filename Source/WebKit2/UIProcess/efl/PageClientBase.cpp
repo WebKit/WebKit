@@ -27,6 +27,7 @@
 #include "PageClientBase.h"
 
 #include "CoordinatedLayerTreeHostProxy.h"
+#include "DownloadManagerEfl.h"
 #include "DrawingAreaProxyImpl.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"

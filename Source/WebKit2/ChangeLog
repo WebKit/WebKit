@@ -1,3 +1,30 @@
+2013-02-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] EwkContext should be based on C WK2 API
+        https://bugs.webkit.org/show_bug.cgi?id=107666
+
+        Reviewed by Andreas Kling.
+
+        EwkContext should be based on C WK2 API so that API layering is not violated.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::create):
+        (EwkContext::cookieManager):
+        (EwkContext::ensureFaviconDatabase):
+        (EwkContext::setFaviconDatabaseDirectoryPath):
+        (EwkContext::addVisitedLink):
+        (EwkContext::setCacheModel):
+        (EwkContext::cacheModel):
+        (EwkContext::setAdditionalPluginPath):
+        (EwkContext::clearResourceCache):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+
 2013-02-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_auth_request
