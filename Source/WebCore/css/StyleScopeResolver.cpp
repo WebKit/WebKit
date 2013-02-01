@@ -101,7 +101,7 @@ void StyleScopeResolver::setupStack(const ContainerNode* parent)
 
     m_stack.shrink(0);
     int authorStyleBoundsIndex = 0;
-    for (const ContainerNode* scope = parent; scope; scope = scope->parentOrHostNode()) {
+    for (const ContainerNode* scope = parent; scope; scope = scope->parentOrShadowHostNode()) {
         RuleSet* ruleSet = ruleSetFor(scope);
         if (ruleSet)
             m_stack.append(StackFrame(scope, authorStyleBoundsIndex, ruleSet));
@@ -147,7 +147,7 @@ void StyleScopeResolver::pop(const ContainerNode* scope)
             m_stack.removeLast();
         if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
             --m_stackParentBoundsIndex;
-        m_stackParent = scope->parentOrHostNode();
+        m_stackParent = scope->parentOrShadowHostNode();
     }
 }
 

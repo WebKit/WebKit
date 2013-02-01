@@ -407,7 +407,7 @@ void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefP
 
 void StyleResolver::pushParentElement(Element* parent)
 {
-    const ContainerNode* parentsParent = parent->parentOrHostElement();
+    const ContainerNode* parentsParent = parent->parentOrShadowHostElement();
 
     // We are not always invoked consistently. For example, script execution can cause us to enter
     // style recalc in the middle of tree building. We may also be invoked from somewhere within the tree.
@@ -420,7 +420,7 @@ void StyleResolver::pushParentElement(Element* parent)
 
     // Note: We mustn't skip ShadowRoot nodes for the scope stack.
     if (m_scopeResolver)
-        m_scopeResolver->push(parent, parent->parentOrHostNode());
+        m_scopeResolver->push(parent, parent->parentOrShadowHostNode());
 }
 
 void StyleResolver::popParentElement(Element* parent)

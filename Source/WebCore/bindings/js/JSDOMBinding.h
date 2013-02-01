@@ -218,8 +218,8 @@ enum ParameterDefaultPolicy {
         if (node->inDocument())
             return node->document();
 
-        while (node->parentOrHostNode())
-            node = node->parentOrHostNode();
+        while (node->parentOrShadowHostNode())
+            node = node->parentOrShadowHostNode();
         return node;
     }
 

@@ -791,7 +791,7 @@ static String nodePosition(Node* node)
     Element* body = node->document()->body();
     Node* parent;
     for (Node* n = node; n; n = parent) {
-        parent = n->parentOrHostNode();
+        parent = n->parentOrShadowHostNode();
         if (n != node)
             result.appendLiteral(" of ");
         if (parent) {

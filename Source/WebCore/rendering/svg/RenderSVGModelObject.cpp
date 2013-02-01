@@ -140,7 +140,7 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
         if (currentElement == stopAtElement)
             break;
 
-        current = current->parentOrHostNode();
+        current = current->parentOrShadowHostNode();
     }
 }
 

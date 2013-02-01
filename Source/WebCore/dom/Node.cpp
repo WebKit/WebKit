@@ -810,7 +810,7 @@ inline void Node::setStyleChange(StyleChangeType changeType)
 
 inline void Node::markAncestorsWithChildNeedsStyleRecalc()
 {
-    for (ContainerNode* p = parentOrHostNode(); p && !p->childNeedsStyleRecalc(); p = p->parentOrHostNode())
+    for (ContainerNode* p = parentOrShadowHostNode(); p && !p->childNeedsStyleRecalc(); p = p->parentOrShadowHostNode())
         p->setChildNeedsStyleRecalc();
 
     if (document()->childNeedsStyleRecalc())
@@ -1035,7 +1035,7 @@ bool Node::contains(const Node* node) const
 
 bool Node::containsIncludingShadowDOM(const Node* node) const
 {
-    for (; node; node = node->parentOrHostNode()) {
+    for (; node; node = node->parentOrShadowHostNode()) {
         if (node == this)
             return true;
     }
@@ -1051,7 +1051,7 @@ bool Node::containsIncludingHostElements(const Node* node) const
         if (node->isDocumentFragment() && static_cast<const DocumentFragment*>(node)->isTemplateContent())
             node = static_cast<const TemplateContentDocumentFragment*>(node)->host();
         else
-            node = node->parentOrHostNode();
+            node = node->parentOrShadowHostNode();
     }
     return false;
 #else
@@ -1196,7 +1196,7 @@ ContainerNode* Node::parentNodeForRenderingAndStyle()
 
 RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)
 {
-    return parentOrHostNode() ? parentOrHostNode()->computedStyle(pseudoElementSpecifier) : 0;
+    return parentOrShadowHostNode() ? parentOrShadowHostNode()->computedStyle(pseudoElementSpecifier) : 0;
 }
 
 int Node::maxCharacterOffset() const
@@ -1219,7 +1219,7 @@ bool Node::canStartSelection() const
         if (style->userDrag() == DRAG_ELEMENT && style->userSelect() == SELECT_NONE)
             return false;
     }
-    return parentOrHostNode() ? parentOrHostNode()->canStartSelection() : true;
+    return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
 }
 
 Element* Node::shadowHost() const
@@ -1264,9 +1264,9 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
     return parent && !parent->isShadowRoot() ? parent : 0;
 }
 
-Element* Node::parentOrHostElement() const
+Element* Node::parentOrShadowHostElement() const
 {
-    ContainerNode* parent = parentOrHostNode();
+    ContainerNode* parent = parentOrShadowHostNode();
     if (!parent)
         return 0;
 
@@ -1901,9 +1901,9 @@ void Node::showNodePathForThis() const
 {
     Vector<const Node*, 16> chain;
     const Node* node = this;
-    while (node->parentOrHostNode()) {
+    while (node->parentOrShadowHostNode()) {
         chain.append(node);
-        node = node->parentOrHostNode();
+        node = node->parentOrShadowHostNode();
     }
     for (unsigned index = chain.size(); index > 0; --index) {
         const Node* node = chain[index - 1];
@@ -1958,7 +1958,7 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
 
         StringBuilder indent;
         indent.append(baseIndent);
-        for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrHostNode())
+        for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrShadowHostNode())
             indent.append('\t');
         fprintf(stderr, "%s", indent.toString().utf8().data());
         node->showNode();
@@ -1975,8 +1975,8 @@ void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, co
 {
     const Node* rootNode;
     const Node* node = this;
-    while (node->parentOrHostNode() && !node->hasTagName(bodyTag))
-        node = node->parentOrHostNode();
+    while (node->parentOrShadowHostNode() && !node->hasTagName(bodyTag))
+        node = node->parentOrShadowHostNode();
     rootNode = node;
 
     String startingIndent;
@@ -1997,9 +1997,9 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
     strncpy(buffer, result.utf8().data(), length - 1);
 }
 
-static ContainerNode* parentOrHostOrFrameOwner(const Node* node)
+static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
 {
-    ContainerNode* parent = node->parentOrHostNode();
+    ContainerNode* parent = node->parentOrShadowHostNode();
     if (!parent && node->document() && node->document()->frame())
         parent = node->document()->frame()->ownerElement();
     return parent;
@@ -2027,8 +2027,8 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
 void Node::showTreeForThisAcrossFrame() const
 {
     Node* rootNode = const_cast<Node*>(this);
-    while (parentOrHostOrFrameOwner(rootNode))
-        rootNode = parentOrHostOrFrameOwner(rootNode);
+    while (parentOrShadowHostOrFrameOwner(rootNode))
+        rootNode = parentOrShadowHostOrFrameOwner(rootNode);
     showSubTreeAcrossFrame(rootNode, this, "");
 }
 
@@ -2061,7 +2061,7 @@ void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
 
 Node* Node::enclosingLinkEventParentOrSelf()
 {
-    for (Node* node = this; node; node = node->parentOrHostNode()) {
+    for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
         // For imagemaps, the enclosing link node is the associated area element not the image itself.
         // So we don't let images be the enclosingLinkNode, even though isLink sometimes returns true
         // for them.
@@ -2490,7 +2490,7 @@ void Node::defaultEventHandler(Event* event)
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;
         while (startNode && !startNode->renderer())
-            startNode = startNode->parentOrHostNode();
+            startNode = startNode->parentOrShadowHostNode();
         
         if (startNode && startNode->renderer())
             if (Frame* frame = document()->frame())
@@ -2583,7 +2583,7 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentOrHostNode);
+    info.addMember(m_parentOrShadowHostNode);
     info.addMember(m_treeScope);
     info.addMember(m_next);
     info.addMember(m_previous);
@@ -2627,7 +2627,7 @@ void Node::updateAncestorConnectedSubframeCountForRemoval() const
     if (!count)
         return;
 
-    for (Node* node = parentOrHostNode(); node; node = node->parentOrHostNode())
+    for (Node* node = parentOrShadowHostNode(); node; node = node->parentOrShadowHostNode())
         node->decrementConnectedSubframeCount(count);
 }
 
@@ -2638,7 +2638,7 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
     if (!count)
         return;
 
-    for (Node* node = parentOrHostNode(); node; node = node->parentOrHostNode())
+    for (Node* node = parentOrShadowHostNode(); node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount(count);
 }
 

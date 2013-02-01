@@ -1885,7 +1885,7 @@ void FrameSelection::setFocusedNodeIfNeeded()
                 m_frame->page()->focusController()->setFocusedNode(target, m_frame);
                 return;
             }
-            target = target->parentOrHostNode(); 
+            target = target->parentOrShadowHostNode();
         }
         m_frame->document()->setFocusedNode(0);
     }

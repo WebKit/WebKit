@@ -238,7 +238,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
         Node* const node = intersectedNodes.item(i);
         Vector<Node*> visitedNodes;
         Node* respondingNode = 0;
-        for (Node* visitedNode = node; visitedNode; visitedNode = visitedNode->parentOrHostNode()) {
+        for (Node* visitedNode = node; visitedNode; visitedNode = visitedNode->parentOrShadowHostNode()) {
             // Check if we already have a result for a common ancestor from another candidate.
             respondingNode = responderMap.get(visitedNode);
             if (respondingNode)
@@ -248,7 +248,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
             if (nodeFilter(visitedNode)) {
                 respondingNode = visitedNode;
                 // Continue the iteration to collect the ancestors of the responder, which we will need later.
-                for (visitedNode = visitedNode->parentOrHostNode(); visitedNode; visitedNode = visitedNode->parentOrHostNode()) {
+                for (visitedNode = visitedNode->parentOrShadowHostNode(); visitedNode; visitedNode = visitedNode->parentOrShadowHostNode()) {
                     HashSet<Node*>::AddResult addResult = ancestorsToRespondersSet.add(visitedNode);
                     if (!addResult.isNewEntry)
                         break;
@@ -281,7 +281,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
             continue;
         if (candidate->isContentEditable()) {
             Node* replacement = candidate;
-            Node* parent = candidate->parentOrHostNode();
+            Node* parent = candidate->parentOrShadowHostNode();
             while (parent && parent->isContentEditable()) {
                 replacement = parent;
                 if (editableAncestors.contains(replacement)) {
@@ -289,7 +289,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
                     break;
                 }
                 editableAncestors.add(replacement);
-                parent = parent->parentOrHostNode();
+                parent = parent->parentOrShadowHostNode();
             }
             candidate = replacement;
         }

@@ -1768,7 +1768,7 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
 #endif
         // Find the node to highlight. This is not the same as the node responding the tap gesture, because many
         // pages has a global click handler and we do not want to highlight the body.
-        for (Node* node = adjustedNode; node; node = node->parentOrHostNode()) {
+        for (Node* node = adjustedNode; node; node = node->parentOrShadowHostNode()) {
             if (node->isDocumentNode() || node->isFrameOwnerElement())
                 break;
 

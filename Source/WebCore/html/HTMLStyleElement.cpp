@@ -238,11 +238,11 @@ Element* HTMLStyleElement::scopingElement() const
     // FIXME: This probably needs to be refined for scoped stylesheets within shadow DOM.
     // As written, such a stylesheet could style the host element, as well as children of the host.
     // OTOH, this paves the way for a :bound-element implementation.
-    ContainerNode* parentOrHost = parentOrHostNode();
-    if (!parentOrHost || !parentOrHost->isElementNode())
+    ContainerNode* parentOrShadowHost = parentOrShadowHostNode();
+    if (!parentOrShadowHost || !parentOrShadowHost->isElementNode())
         return 0;
 
-    return toElement(parentOrHost);
+    return toElement(parentOrShadowHost);
 }
 
 void HTMLStyleElement::dispatchPendingLoadEvents()

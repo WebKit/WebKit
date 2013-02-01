@@ -153,7 +153,7 @@ static inline HTMLVideoElement* descendentVideoElement(Node* node)
 static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 {
     while (node && !node->hasTagName(videoTag))
-        node = node->parentOrHostNode();
+        node = node->parentOrShadowHostNode();
 
     return static_cast<HTMLVideoElement*>(node);
 }

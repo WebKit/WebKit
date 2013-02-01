@@ -172,7 +172,7 @@ Node* V8GCController::opaqueRootForGC(Node* node)
         node = ownerElement;
     }
 
-    while (Node* parent = node->parentOrHostNode())
+    while (Node* parent = node->parentOrShadowHostNode())
         node = parent;
 
     return node;

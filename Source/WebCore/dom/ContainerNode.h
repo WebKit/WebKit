@@ -266,7 +266,7 @@ inline bool Node::needsShadowTreeWalker() const
 {
     if (getFlag(NeedsShadowTreeWalkerFlag))
         return true;
-    ContainerNode* parent = parentOrHostNode();
+    ContainerNode* parent = parentOrShadowHostNode();
     return parent && parent->getFlag(NeedsShadowTreeWalkerFlag);
 }
 

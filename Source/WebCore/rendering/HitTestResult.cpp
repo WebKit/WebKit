@@ -268,14 +268,14 @@ void HitTestResult::setToNonShadowAncestor()
 void HitTestResult::setInnerNode(Node* n)
 {
     if (n && n->isPseudoElement())
-        n = n->parentOrHostNode();
+        n = n->parentOrShadowHostNode();
     m_innerNode = n;
 }
     
 void HitTestResult::setInnerNonSharedNode(Node* n)
 {
     if (n && n->isPseudoElement())
-        n = n->parentOrHostNode();
+        n = n->parentOrShadowHostNode();
     m_innerNonSharedNode = n;
 }
 

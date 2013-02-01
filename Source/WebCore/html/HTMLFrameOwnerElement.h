@@ -93,7 +93,7 @@ public:
 
     static bool canLoadFrame(HTMLFrameOwnerElement* owner)
     {
-        for (Node* node = owner; node; node = node->parentOrHostNode()) {
+        for (Node* node = owner; node; node = node->parentOrShadowHostNode()) {
             if (disabledSubtreeRoots().contains(node))
                 return false;
         }

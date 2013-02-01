@@ -177,7 +177,7 @@ unsigned BitStack::size() const
 static unsigned depthCrossingShadowBoundaries(Node* node)
 {
     unsigned depth = 0;
-    for (Node* parent = node->parentOrHostNode(); parent; parent = parent->parentOrHostNode())
+    for (Node* parent = node->parentOrShadowHostNode(); parent; parent = parent->parentOrShadowHostNode())
         ++depth;
     return depth;
 }
@@ -193,7 +193,7 @@ static Node* nextInPreOrderCrossingShadowBoundaries(Node* rangeEndContainer, int
         if (Node* next = rangeEndContainer->childNode(rangeEndOffset))
             return next;
     }
-    for (Node* node = rangeEndContainer; node; node = node->parentOrHostNode()) {
+    for (Node* node = rangeEndContainer; node; node = node->parentOrShadowHostNode()) {
         if (Node* next = node->nextSibling())
             return next;
     }
@@ -231,7 +231,7 @@ static void setUpFullyClippedStack(BitStack& stack, Node* node)
 {
     // Put the nodes in a vector so we can iterate in reverse order.
     Vector<Node*, 100> ancestry;
-    for (Node* parent = node->parentOrHostNode(); parent; parent = parent->parentOrHostNode())
+    for (Node* parent = node->parentOrShadowHostNode(); parent; parent = parent->parentOrShadowHostNode())
         ancestry.append(parent);
 
     // Call pushFullyClippedState on each node starting with the earliest ancestor.
@@ -427,14 +427,14 @@ void TextIterator::advance()
             next = m_node->nextSibling();
             if (!next) {
                 bool pastEnd = NodeTraversal::next(m_node) == m_pastEndNode;
-                Node* parentNode = m_node->parentOrHostNode();
+                Node* parentNode = m_node->parentOrShadowHostNode();
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     m_node = parentNode;
                     m_fullyClippedStack.pop();
-                    parentNode = m_node->parentOrHostNode();
+                    parentNode = m_node->parentOrShadowHostNode();
                     if (haveRenderer)
                         exitNode();
                     if (m_positionNode) {
@@ -1235,7 +1235,7 @@ void SimplifiedBackwardsTextIterator::advance()
 
             // Exit all other containers.
             while (!m_node->previousSibling()) {
-                if (!advanceRespectingRange(m_node->parentOrHostNode()))
+                if (!advanceRespectingRange(m_node->parentOrShadowHostNode()))
                     break;
                 m_fullyClippedStack.pop();
                 exitNode();

@@ -122,7 +122,7 @@ bool SVGStyledElement::rendererIsNeeded(const NodeRenderingContext& context)
     // Spec: SVG allows inclusion of elements from foreign namespaces anywhere
     // with the SVG content. In general, the SVG user agent will include the unknown
     // elements in the DOM but will otherwise ignore unknown elements. 
-    if (!parentOrHostElement() || parentOrHostElement()->isSVGElement())
+    if (!parentOrShadowHostElement() || parentOrShadowHostElement()->isSVGElement())
         return StyledElement::rendererIsNeeded(context);
 
     return false;

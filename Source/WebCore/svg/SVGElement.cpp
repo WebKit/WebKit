@@ -121,7 +121,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
     // If we're living in a shadow tree, we're a <svg> element that got created as replacement
     // for a <symbol> element or a cloned <svg> element in the referenced tree. In that case
     // we're always an inner <svg> element.
-    if (isInShadowTree() && parentOrHostElement() && parentOrHostElement()->isSVGElement())
+    if (isInShadowTree() && parentOrShadowHostElement() && parentOrShadowHostElement()->isSVGElement())
         return false;
 
     // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
@@ -187,12 +187,12 @@ void SVGElement::removedFrom(ContainerNode* rootParent)
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    ContainerNode* n = parentOrHostNode();
+    ContainerNode* n = parentOrShadowHostNode();
     while (n) {
         if (n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElement*>(n);
 
-        n = n->parentOrHostNode();
+        n = n->parentOrShadowHostNode();
     }
 
     return 0;
@@ -202,12 +202,12 @@ SVGElement* SVGElement::viewportElement() const
 {
     // This function needs shadow tree support - as RenderSVGContainer uses this function
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
-    ContainerNode* n = parentOrHostNode();
+    ContainerNode* n = parentOrShadowHostNode();
     while (n) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag))
             return static_cast<SVGElement*>(n);
 
-        n = n->parentOrHostNode();
+        n = n->parentOrShadowHostNode();
     }
 
     return 0;
@@ -441,7 +441,7 @@ static bool hasLoadListener(Element* element)
     if (element->hasEventListeners(eventNames().loadEvent))
         return true;
 
-    for (element = element->parentOrHostElement(); element; element = element->parentOrHostElement()) {
+    for (element = element->parentOrShadowHostElement(); element; element = element->parentOrShadowHostElement()) {
         const EventListenerVector& entry = element->getEventListeners(eventNames().loadEvent);
         for (size_t i = 0; i < entry.size(); ++i) {
             if (entry[i].useCapture)
@@ -458,7 +458,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
     while (currentTarget && currentTarget->haveLoadedRequiredResources()) {
         RefPtr<Element> parent;
         if (sendParentLoadEvents)
-            parent = currentTarget->parentOrHostElement(); // save the next parent to dispatch too incase dispatching the event changes the tree
+            parent = currentTarget->parentOrShadowHostElement(); // save the next parent to dispatch too incase dispatching the event changes the tree
         if (hasLoadListener(currentTarget.get()))
             currentTarget->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
@@ -585,7 +585,7 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
         return document()->styleResolver()->styleForElement(this);
 
     RenderStyle* style = 0;
-    if (Element* parent = parentOrHostElement()) {
+    if (Element* parent = parentOrShadowHostElement()) {
         if (RenderObject* renderer = parent->renderer())
             style = renderer->style();
     }
@@ -617,7 +617,7 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
         return Element::computedStyle(pseudoElementSpecifier);
 
     RenderStyle* parentStyle = 0;
-    if (Element* parent = parentOrHostElement()) {
+    if (Element* parent = parentOrShadowHostElement()) {
         if (RenderObject* renderer = parent->renderer())
             parentStyle = renderer->style();
     }

@@ -802,7 +802,7 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
     // Push this node as the firs element.
     ancestors.append(node);
     if (includeAncestors) {
-        for (ContainerNode* ancestor = node->parentOrHostNode(); ancestor; ancestor = ancestor->parentOrHostNode())
+        for (ContainerNode* ancestor = node->parentOrShadowHostNode(); ancestor; ancestor = ancestor->parentOrShadowHostNode())
             ancestors.append(ancestor);
     }
 

@@ -859,7 +859,7 @@ inline Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* inse
     ASSERT(insertionPoint->inDocument() || isContainerNode());
     if (insertionPoint->inDocument())
         setFlag(InDocumentFlag);
-    if (parentOrHostNode()->isInShadowTree())
+    if (parentOrShadowHostNode()->isInShadowTree())
         setFlag(IsInShadowTreeFlag);
     return InsertionDone;
 }

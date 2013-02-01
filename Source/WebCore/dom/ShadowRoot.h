@@ -64,7 +64,7 @@ public:
     virtual bool resetStyleInheritance() const OVERRIDE { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
-    Element* host() const { return toElement(parentOrHostNode()); }
+    Element* host() const { return toElement(parentOrShadowHostNode()); }
     ElementShadow* owner() const { return host() ? host()->shadow() : 0; }
 
     String innerHTML() const;

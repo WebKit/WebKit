@@ -108,7 +108,7 @@ inline void removeDetachedChildrenInContainer(GenericNodeContainer* container)
 template<class GenericNode, class GenericNodeContainer>
 inline void appendChildToContainer(GenericNode* child, GenericNodeContainer* container)
 {
-    child->setParentOrHostNode(container);
+    child->setParentOrShadowHostNode(container);
 
     GenericNode* lastChild = container->lastChild();
     if (lastChild) {
@@ -164,7 +164,7 @@ namespace Private {
             next = n->nextSibling();
             n->setPreviousSibling(0);
             n->setNextSibling(0);
-            n->setParentOrHostNode(0);
+            n->setParentOrShadowHostNode(0);
 
             if (!n->refCount()) {
 #ifndef NDEBUG

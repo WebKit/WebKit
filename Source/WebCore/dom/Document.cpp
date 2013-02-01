@@ -5852,7 +5852,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
     // If it hasn't, we do not need to do anything.
     Node* newHoverNode = innerElementInDocument;
     while (newHoverNode && !newHoverNode->renderer())
-        newHoverNode = newHoverNode->parentOrHostNode();
+        newHoverNode = newHoverNode->parentOrShadowHostNode();
 
     // Update our current hover node.
     setHoverNode(newHoverNode);

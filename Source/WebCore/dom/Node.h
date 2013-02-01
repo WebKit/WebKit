@@ -275,10 +275,9 @@ public:
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent, shadow tree host.
-    // FIXME: These methods should be renamed parentOrShadowHost*
-    ContainerNode* parentOrHostNode() const;
-    Element* parentOrHostElement() const;
-    void setParentOrHostNode(ContainerNode*);
+    ContainerNode* parentOrShadowHostNode() const;
+    Element* parentOrShadowHostElement() const;
+    void setParentOrShadowHostNode(ContainerNode*);
     Node* highestAncestor() const;
 
     // Use when it's guaranteed to that shadowHost is 0.
@@ -778,7 +777,7 @@ private:
     friend class TreeShared<Node>;
 
     void removedLastRef();
-    bool hasTreeSharedParent() const { return !!parentOrHostNode(); }
+    bool hasTreeSharedParent() const { return !!parentOrShadowHostNode(); }
 
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
@@ -812,7 +811,7 @@ private:
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
     mutable uint32_t m_nodeFlags;
-    ContainerNode* m_parentOrHostNode;
+    ContainerNode* m_parentOrShadowHostNode;
     TreeScope* m_treeScope;
     Node* m_previous;
     Node* m_next;
@@ -848,27 +847,27 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
         urls.add(url);
 }
 
-inline void Node::setParentOrHostNode(ContainerNode* parent)
+inline void Node::setParentOrShadowHostNode(ContainerNode* parent)
 {
     ASSERT(isMainThread());
-    m_parentOrHostNode = parent;
+    m_parentOrShadowHostNode = parent;
 }
 
-inline ContainerNode* Node::parentOrHostNode() const
+inline ContainerNode* Node::parentOrShadowHostNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    return m_parentOrHostNode;
+    return m_parentOrShadowHostNode;
 }
 
 inline ContainerNode* Node::parentNode() const
 {
-    return isShadowRoot() ? 0 : parentOrHostNode();
+    return isShadowRoot() ? 0 : parentOrShadowHostNode();
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());
-    return parentOrHostNode();
+    return parentOrShadowHostNode();
 }
 
 inline void Node::reattach()

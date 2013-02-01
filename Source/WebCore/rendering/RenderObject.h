@@ -611,7 +611,7 @@ public:
     // Returns the styled node that caused the generation of this renderer.
     // This is the same as node() except for renderers of :before and :after
     // pseudo elements for which their parent node is returned.
-    Node* generatingNode() const { return isPseudoElement() ? node()->parentOrHostNode() : node(); }
+    Node* generatingNode() const { return isPseudoElement() ? node()->parentOrShadowHostNode() : node(); }
 
     Document* document() const { return m_node->document(); }
     Frame* frame() const { return document()->frame(); }

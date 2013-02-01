@@ -2268,7 +2268,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                     
                 break;
             }
-            node = node->parentOrHostNode();
+            node = node->parentOrShadowHostNode();
         }
 
         // Only change the focus when clicking scrollbars if it can transfered to a mouse focusable node.

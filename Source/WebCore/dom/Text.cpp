@@ -253,8 +253,8 @@ static bool isSVGShadowText(Text* text)
 
 static bool isSVGText(Text* text)
 {
-    Node* parentOrHostNode = text->parentOrHostNode();
-    return parentOrHostNode->isSVGElement() && !parentOrHostNode->hasTagName(SVGNames::foreignObjectTag);
+    Node* parentOrShadowHostNode = text->parentOrShadowHostNode();
+    return parentOrShadowHostNode->isSVGElement() && !parentOrShadowHostNode->hasTagName(SVGNames::foreignObjectTag);
 }
 #endif
 

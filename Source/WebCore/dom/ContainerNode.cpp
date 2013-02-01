@@ -236,7 +236,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrHostNode());
+    ASSERT(refCount() || parentOrShadowHostNode());
 
     RefPtr<Node> protect(this);
 
@@ -319,7 +319,7 @@ void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
         ASSERT(m_firstChild == nextChild);
         m_firstChild = newChild;
     }
-    newChild->setParentOrHostNode(this);
+    newChild->setParentOrShadowHostNode(this);
     newChild->setPreviousSibling(prev);
     newChild->setNextSibling(nextChild);
 }
@@ -352,7 +352,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrHostNode());
+    ASSERT(refCount() || parentOrShadowHostNode());
 
     RefPtr<Node> protect(this);
 
@@ -474,7 +474,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrHostNode());
+    ASSERT(refCount() || parentOrShadowHostNode());
 
     RefPtr<Node> protect(this);
 
@@ -551,7 +551,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
 
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);
-    oldChild->setParentOrHostNode(0);
+    oldChild->setParentOrShadowHostNode(0);
 
     document()->adoptIfNeeded(oldChild);
 }
@@ -608,7 +608,7 @@ void ContainerNode::removeChildren()
                 // this discrepancy between removeChild() and its optimized version removeChildren().
                 n->setPreviousSibling(0);
                 n->setNextSibling(0);
-                n->setParentOrHostNode(0);
+                n->setParentOrShadowHostNode(0);
                 document()->adoptIfNeeded(n.get());
 
                 m_firstChild = next;
@@ -645,7 +645,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrHostNode());
+    ASSERT(refCount() || parentOrShadowHostNode());
 
     ec = 0;
 

@@ -58,13 +58,13 @@ PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId != NOPSEUDO);
-    setParentOrHostNode(parent);
+    setParentOrShadowHostNode(parent);
     setHasCustomCallbacks();
 }
 
 PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
 {
-    return parentOrHostElement()->renderer()->getCachedPseudoStyle(m_pseudoId);
+    return parentOrShadowHostElement()->renderer()->getCachedPseudoStyle(m_pseudoId);
 }
 
 void PseudoElement::attach()
