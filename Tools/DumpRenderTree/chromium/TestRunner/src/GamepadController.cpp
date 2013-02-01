@@ -30,7 +30,7 @@
 
 #include "config.h"
 #include "GamepadController.h"
-#include "TestDelegate.h"
+#include "WebTestDelegate.h"
 
 using namespace WebKit;
 
@@ -56,7 +56,7 @@ void GamepadController::bindToJavascript(WebFrame* frame, const WebString& class
     CppBoundClass::bindToJavascript(frame, classname);
 }
 
-void GamepadController::setDelegate(TestDelegate* delegate)
+void GamepadController::setDelegate(WebTestDelegate* delegate)
 {
     m_delegate = delegate;
 }

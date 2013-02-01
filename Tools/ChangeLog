@@ -1,3 +1,122 @@
+2013-02-01  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move ownership of TestRunner object to TestInterfaces
+        https://bugs.webkit.org/show_bug.cgi?id=108464
+
+        Reviewed by Adam Barth.
+
+        Before, TestShell owned the class. This also removes the last include
+        from DumpRenderTree to TestRunner/src.
+
+        This also deletes TestDelegate and uses WebTestDelegate everywhere
+        instead.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebTestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebKit):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.h:
+        (WebTestRunner):
+        (WebTestRunner::AccessibilityController::setDelegate):
+        (AccessibilityController):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::makeMenuItemStringsFor):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::setDelegate):
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.cpp:
+        (WebTestRunner::GamepadController::setDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.h:
+        (WebTestRunner):
+        (GamepadController):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h: Removed.
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+        (WebTestRunner::TestInterfaces::~TestInterfaces):
+        (WebTestRunner::TestInterfaces::setWebView):
+        (WebTestRunner::TestInterfaces::setDelegate):
+        (WebTestRunner::TestInterfaces::bindTo):
+        (WebTestRunner::TestInterfaces::resetAll):
+        (WebTestRunner):
+        (WebTestRunner::TestInterfaces::setTestIsRunning):
+        (WebTestRunner::TestInterfaces::testRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (WebTestRunner):
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebKit):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::Internal::testRunner):
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::setDelegate):
+        (WebTestRunner::WebTestInterfaces::Internal::setTestIsRunning):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestRunner.cpp: Added.
+        (WebTestRunner):
+        (WebTestRunner::WebTestRunner::WebTestRunner):
+        (WebTestRunner::WebTestRunner::shouldDumpEditingCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpAsText):
+        (WebTestRunner::WebTestRunner::setShouldDumpAsText):
+        (WebTestRunner::WebTestRunner::shouldGeneratePixelResults):
+        (WebTestRunner::WebTestRunner::setShouldGeneratePixelResults):
+        (WebTestRunner::WebTestRunner::shouldDumpChildFrameScrollPositions):
+        (WebTestRunner::WebTestRunner::shouldDumpChildFramesAsText):
+        (WebTestRunner::WebTestRunner::shouldDumpAsAudio):
+        (WebTestRunner::WebTestRunner::audioData):
+        (WebTestRunner::WebTestRunner::shouldDumpFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::setShouldDumpFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpUserGestureInFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::stopProvisionalFrameLoads):
+        (WebTestRunner::WebTestRunner::shouldDumpTitleChanges):
+        (WebTestRunner::WebTestRunner::shouldDumpCreateView):
+        (WebTestRunner::WebTestRunner::canOpenWindows):
+        (WebTestRunner::WebTestRunner::shouldDumpResourceLoadCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpResourceRequestCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpResourceResponseMIMETypes):
+        (WebTestRunner::WebTestRunner::webPermissions):
+        (WebTestRunner::WebTestRunner::shouldDumpStatusCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpProgressFinishedCallback):
+        (WebTestRunner::WebTestRunner::shouldDumpBackForwardList):
+        (WebTestRunner::WebTestRunner::deferMainResourceDataLoad):
+        (WebTestRunner::WebTestRunner::shouldDumpSelectionRect):
+        (WebTestRunner::WebTestRunner::testRepaint):
+        (WebTestRunner::WebTestRunner::sweepHorizontally):
+        (WebTestRunner::WebTestRunner::isPrinting):
+        (WebTestRunner::WebTestRunner::shouldStayOnPageAfterHandlingBeforeUnload):
+        (WebTestRunner::WebTestRunner::setTitleTextDirection):
+        (WebTestRunner::WebTestRunner::httpHeadersToClear):
+        (WebTestRunner::WebTestRunner::shouldBlockRedirects):
+        (WebTestRunner::WebTestRunner::willSendRequestShouldReturnNull):
+        (WebTestRunner::WebTestRunner::setTopLoadingFrame):
+        (WebTestRunner::WebTestRunner::topLoadingFrame):
+        (WebTestRunner::WebTestRunner::policyDelegateDone):
+        (WebTestRunner::WebTestRunner::policyDelegateEnabled):
+        (WebTestRunner::WebTestRunner::policyDelegateIsPermissive):
+        (WebTestRunner::WebTestRunner::policyDelegateShouldNotifyDone):
+        (WebTestRunner::WebTestRunner::shouldInterceptPostMessage):
+        (WebTestRunner::WebTestRunner::isSmartInsertDeleteEnabled):
+        (WebTestRunner::WebTestRunner::isSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        (TestShell::runFileTest):
+        (TestShell::resetTestController):
+        (TestShell::dump):
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::testRunner):
+        (TestShell):
+
 2013-02-01  Alan Cutter  <alancutter@chromium.org>
 
         PatchLog process durations are increasing linearly with time (faulty data logging)

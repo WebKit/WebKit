@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebTestInterfaces.h"
 
-#include "TestDelegate.h"
 #include "TestInterfaces.h"
 #include "WebAccessibilityController.h"
 #include "WebEventSender.h"
@@ -47,7 +46,7 @@ using WebKit::WebView;
 
 namespace WebTestRunner {
 
-class WebTestInterfaces::Internal : public TestDelegate {
+class WebTestInterfaces::Internal {
 public:
     Internal();
     virtual ~Internal();
@@ -59,21 +58,7 @@ public:
     WebView* webView() const { return m_webView; }
     WebAccessibilityController* accessibilityController() { return &m_accessibilityController; }
     WebEventSender* eventSender() { return &m_eventSender; }
-    WebTestRunner* testRunner() { return m_testRunner; }
-    void setTestRunner(WebTestRunner* testRunner) { m_testRunner = testRunner; }
-
-    // TestDelegate implementation.
-    virtual void clearContextMenuData();
-    virtual void clearEditCommand();
-    virtual void setEditCommand(const std::string& name, const std::string& value);
-    virtual WebContextMenuData* lastContextMenuData() const;
-    virtual void setGamepadData(const WebGamepads&);
-    virtual void printMessage(const std::string& message);
-    virtual void postTask(WebTask*);
-    virtual void postDelayedTask(WebTask*, long long ms);
-    virtual WebString registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames);
-    virtual long long getCurrentTimeInMillisecond();
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path);
+    WebTestRunner* testRunner() { return &m_testRunner; }
 
 private:
     TestInterfaces m_interfaces;
@@ -81,8 +66,7 @@ private:
     WebView* m_webView;
     WebAccessibilityController m_accessibilityController;
     WebEventSender m_eventSender;
-    WebTestRunner* m_testRunner;
-    WebTestDelegate* m_delegate;
+    WebTestRunner m_testRunner;
 };
 
 WebTestInterfaces::Internal::Internal()
@@ -90,8 +74,7 @@ WebTestInterfaces::Internal::Internal()
     , m_webView(0)
     , m_accessibilityController(m_interfaces.accessibilityController())
     , m_eventSender(m_interfaces.eventSender())
-    , m_testRunner(0)
-    , m_delegate(0)
+    , m_testRunner(m_interfaces.testRunner())
 {
 }
 
@@ -101,13 +84,7 @@ WebTestInterfaces::Internal::~Internal()
 
 void WebTestInterfaces::Internal::setDelegate(WebTestDelegate* delegate)
 {
-    if (delegate) {
-        m_delegate = delegate;
-        m_interfaces.setDelegate(this);
-    } else {
-        m_delegate = 0;
-        m_interfaces.setDelegate(0);
-    }
+    m_interfaces.setDelegate(delegate);
 }
 
 void WebTestInterfaces::Internal::setWebView(WebView* webView)
@@ -118,63 +95,7 @@ void WebTestInterfaces::Internal::setWebView(WebView* webView)
 
 void WebTestInterfaces::Internal::setTestIsRunning(bool running)
 {
-    if (m_testRunner)
-        m_testRunner->setTestIsRunning(running);
-}
-
-void WebTestInterfaces::Internal::clearContextMenuData()
-{
-    m_delegate->clearContextMenuData();
-}
-
-void WebTestInterfaces::Internal::clearEditCommand()
-{
-    m_delegate->clearEditCommand();
-}
-
-void WebTestInterfaces::Internal::setEditCommand(const std::string& name, const std::string& value)
-{
-    m_delegate->setEditCommand(name, value);
-}
-
-WebContextMenuData* WebTestInterfaces::Internal::lastContextMenuData() const
-{
-    return m_delegate->lastContextMenuData();
-}
-
-void WebTestInterfaces::Internal::setGamepadData(const WebGamepads& pads)
-{
-    m_delegate->setGamepadData(pads);
-}
-
-void WebTestInterfaces::Internal::printMessage(const std::string& message)
-{
-    m_delegate->printMessage(message);
-}
-
-void WebTestInterfaces::Internal::postTask(WebTask* task)
-{
-    m_delegate->postTask(task);
-}
-
-void WebTestInterfaces::Internal::postDelayedTask(WebTask* task, long long ms)
-{
-    m_delegate->postDelayedTask(task, ms);
-}
-
-WebString WebTestInterfaces::Internal::registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames)
-{
-    return m_delegate->registerIsolatedFileSystem(absoluteFilenames);
-}
-
-long long WebTestInterfaces::Internal::getCurrentTimeInMillisecond()
-{
-    return m_delegate->getCurrentTimeInMillisecond();
-}
-
-WebKit::WebString WebTestInterfaces::Internal::getAbsoluteWebStringFromUTF8Path(const std::string& path)
-{
-    return m_delegate->getAbsoluteWebStringFromUTF8Path(path);
+    m_interfaces.setTestIsRunning(running);
 }
 
 WebTestInterfaces::WebTestInterfaces()
@@ -230,11 +151,6 @@ WebEventSender* WebTestInterfaces::eventSender()
 WebTestRunner* WebTestInterfaces::testRunner()
 {
     return m_internal->testRunner();
-}
-
-void WebTestInterfaces::setTestRunner(WebTestRunner* testRunner)
-{
-    m_internal->setTestRunner(testRunner);
 }
 
 }

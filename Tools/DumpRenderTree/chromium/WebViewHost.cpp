@@ -913,7 +913,7 @@ void WebViewHost::displayInvalidatedRegion()
 
 void WebViewHost::testFinished()
 {
-    m_shell->testFinished();
+    m_shell->testFinished(this);
 }
 
 void WebViewHost::testTimedOut()

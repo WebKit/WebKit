@@ -58,8 +58,6 @@ public:
     WebAccessibilityController* accessibilityController();
     WebEventSender* eventSender();
     WebTestRunner* testRunner();
-    // FIXME: Remove this once TestRunner is complete.
-    void setTestRunner(WebTestRunner*);
 
 private:
     class Internal;

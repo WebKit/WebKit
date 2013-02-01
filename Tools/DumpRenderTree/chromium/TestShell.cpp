@@ -47,6 +47,7 @@
 #include "WebScriptController.h"
 #include "WebSettings.h"
 #include "WebTestProxy.h"
+#include "WebTestRunner.h"
 #include "WebView.h"
 #include "WebViewHost.h"
 #include "skia/ext/platform_canvas.h"
@@ -161,9 +162,6 @@ void TestShell::initialize()
 {
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     m_devToolsTestInterfaces = adoptPtr(new WebTestInterfaces());
-    m_testRunner = adoptPtr(new TestRunner());
-    m_testInterfaces->setTestRunner(m_testRunner.get());
-    m_devToolsTestInterfaces->setTestRunner(m_testRunner.get());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -187,8 +185,6 @@ void TestShell::createMainWindow()
     m_webView = m_webViewHost->webView();
     m_testInterfaces->setDelegate(m_webViewHost.get());
     m_testInterfaces->setWebView(m_webView);
-    m_testRunner->setDelegate(m_webViewHost.get());
-    m_testRunner->setWebView(m_webView);
     m_drtDevToolsAgent->setWebView(m_webView);
 }
 
@@ -198,8 +194,6 @@ TestShell::~TestShell()
     m_testInterfaces->setWebView(0);
     m_devToolsTestInterfaces->setDelegate(0);
     m_devToolsTestInterfaces->setWebView(0);
-    m_testRunner->setDelegate(0);
-    m_testRunner->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
     if (m_webViewHost)
         m_webViewHost->shutdown();
@@ -235,6 +229,8 @@ void TestShell::closeDevTools()
         m_devTools->webView()->settings()->setMemoryInfoEnabled(false);
         m_drtDevToolsAgent->reset();
         m_drtDevToolsClient.clear();
+        m_devToolsTestInterfaces->setDelegate(0);
+        m_devToolsTestInterfaces->setWebView(0);
         closeWindow(m_devTools);
         m_devTools = 0;
     }
@@ -266,11 +262,11 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
     m_params = params;
     string testUrl = m_params.testUrl.spec();
 
-    m_testRunner->setShouldGeneratePixelResults(shouldDumpPixels);
+    m_testInterfaces->testRunner()->setShouldGeneratePixelResults(shouldDumpPixels);
 
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
-        m_testRunner->setShouldDumpFrameLoadCallbacks(true);
+        m_testInterfaces->testRunner()->setShouldDumpFrameLoadCallbacks(true);
 
     if (testUrl.find("compositing/") != string::npos || testUrl.find("compositing\\") != string::npos) {
         if (!m_softwareCompositingEnabled)
@@ -283,8 +279,8 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
 
     if (testUrl.find("/dumpAsText/") != string::npos
         || testUrl.find("\\dumpAsText\\") != string::npos) {
-        m_testRunner->setShouldDumpAsText(true);
-        m_testRunner->setShouldGeneratePixelResults(false);
+        m_testInterfaces->testRunner()->setShouldDumpAsText(true);
+        m_testInterfaces->testRunner()->setShouldGeneratePixelResults(false);
     }
 
     if (testUrl.find("/inspector/") != string::npos
@@ -325,7 +321,6 @@ void TestShell::resetTestController()
     resetWebSettings(*webView());
     m_testInterfaces->resetAll();
     m_devToolsTestInterfaces->resetAll();
-    m_testRunner->reset();
     m_webViewHost->reset();
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
@@ -390,8 +385,11 @@ void TestShell::setFocus(WebWidget* widget, bool enable)
     }
 }
 
-void TestShell::testFinished()
+void TestShell::testFinished(WebViewHost* host)
 {
+    if (host == m_devTools)
+        return;
+
     if (!m_testIsPending)
         return;
     m_testIsPending = false;
@@ -404,7 +402,7 @@ void TestShell::testFinished()
 void TestShell::testTimedOut()
 {
     m_printer.handleTimedOut();
-    testFinished();
+    testFinished(webViewHost());
 }
 
 static string dumpDocumentText(WebFrame* frame)
@@ -579,14 +577,14 @@ void TestShell::dump()
     WebFrame* frame = m_webView->mainFrame();
     if (!frame)
         return;
-    bool shouldDumpAsText = m_testRunner->shouldDumpAsText();
-    bool shouldDumpAsAudio = m_testRunner->shouldDumpAsAudio();
-    bool shouldGeneratePixelResults = m_testRunner->shouldGeneratePixelResults();
-    bool shouldDumpAsPrinted = m_testRunner->isPrinting();
+    bool shouldDumpAsText = m_testInterfaces->testRunner()->shouldDumpAsText();
+    bool shouldDumpAsAudio = m_testInterfaces->testRunner()->shouldDumpAsAudio();
+    bool shouldGeneratePixelResults = m_testInterfaces->testRunner()->shouldGeneratePixelResults();
+    bool shouldDumpAsPrinted = m_testInterfaces->testRunner()->isPrinting();
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
-        const WebKit::WebArrayBufferView* webArrayBufferView = m_testRunner->audioData();
+        const WebKit::WebArrayBufferView* webArrayBufferView = m_testInterfaces->testRunner()->audioData();
         m_printer.handleAudio(webArrayBufferView->baseAddress(), webArrayBufferView->byteLength());
         m_printer.handleAudioFooter();
         m_printer.handleTestFooter(true);
@@ -610,7 +608,7 @@ void TestShell::dump()
             }
         }
         if (shouldDumpAsText) {
-            bool recursive = m_testRunner->shouldDumpChildFramesAsText();
+            bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFramesAsText();
             string dataUtf8 = shouldDumpAsPrinted ? dumpFramesAsPrintedText(frame, recursive) : dumpFramesAsText(frame, recursive);
             if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
                 FATAL("Short write to stdout, disk full?\n");
@@ -621,10 +619,10 @@ void TestShell::dump()
             if (m_params.debugRenderTree)
                 renderTextBehavior |= WebFrame::RenderAsTextDebug;
             printf("%s", frame->renderTreeAsText(renderTextBehavior).utf8().data());
-            bool recursive = m_testRunner->shouldDumpChildFrameScrollPositions();
+            bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFrameScrollPositions();
             dumpFrameScrollPosition(frame, recursive);
         }
-        if (m_testRunner->shouldDumpBackForwardList())
+        if (m_testInterfaces->testRunner()->shouldDumpBackForwardList())
             printf("%s", dumpAllBackForwardLists().c_str());
     }
     if (dumpedAnything && m_params.printSeparators)
@@ -636,18 +634,18 @@ void TestShell::dump()
         // stdout.
         dumpedAnything = true;
         m_webView->layout();
-        if (m_testRunner->testRepaint()) {
+        if (m_testInterfaces->testRunner()->testRepaint()) {
             WebSize viewSize = m_webView->size();
             int width = viewSize.width;
             int height = viewSize.height;
-            if (m_testRunner->sweepHorizontally()) {
+            if (m_testInterfaces->testRunner()->sweepHorizontally()) {
                 for (WebRect column(0, 0, 1, height); column.x < width; column.x++)
                     m_webViewHost->paintRect(column);
             } else {
                 for (WebRect line(0, 0, width, 1); line.y < height; line.y++)
                     m_webViewHost->paintRect(line);
             }
-        } else if (m_testRunner->isPrinting())
+        } else if (m_testInterfaces->testRunner()->isPrinting())
             m_webViewHost->paintPagesWithBoundaries();
         else
             m_webViewHost->paintInvalidatedRegion();
@@ -655,7 +653,7 @@ void TestShell::dump()
         // See if we need to draw the selection bounds rect. Selection bounds
         // rect is the rect enclosing the (possibly transformed) selection.
         // The rect should be drawn after everything is laid out and painted.
-        if (m_testRunner->shouldDumpSelectionRect()) {
+        if (m_testInterfaces->testRunner()->shouldDumpSelectionRect()) {
             // If there is a selection rect - draw a red 1px border enclosing rect
             WebRect wr = frame->selectionBoundsRect();
             if (!wr.isEmpty()) {
@@ -752,8 +750,6 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
         m_devToolsTestInterfaces->bindTo(frame);
     else
         m_testInterfaces->bindTo(frame);
-    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
-    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
 }
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)

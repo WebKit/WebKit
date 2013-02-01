@@ -50,13 +50,13 @@ class WebView;
 
 namespace WebTestRunner {
 
-class TestDelegate;
+class WebTestDelegate;
 
 class EventSender : public CppBoundClass {
 public:
     EventSender();
 
-    void setDelegate(TestDelegate* delegate) { m_delegate = delegate; }
+    void setDelegate(WebTestDelegate* delegate) { m_delegate = delegate; }
     void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     // Resets some static variable state.
@@ -170,7 +170,7 @@ private:
 
     WebTaskList m_taskList;
 
-    TestDelegate* m_delegate;
+    WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
 
     // Location of the touch point that initiated a gesture.

@@ -153,11 +153,9 @@ void TestRunner::WorkQueue::addWork(WorkItem* work)
 
 TestRunner::TestRunner()
     : m_testIsRunning(false)
-    , m_closeRemainingWindows(true)
     , m_workQueue(this)
     , m_delegate(0)
     , m_webView(0)
-    , m_topLoadingFrame(0)
     , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
     , m_webPermissions(adoptPtr(new WebPermissions))
 {
@@ -386,11 +384,13 @@ void TestRunner::reset()
     WebFontRendering::setSubpixelPositioning(false);
 #endif
 
-    // Reset the default quota for each origin to 5MB
-    m_delegate->setDatabaseQuota(5 * 1024 * 1024);
-    m_delegate->setDeviceScaleFactor(1);
-    m_delegate->setAcceptAllCookies(false);
-    m_delegate->setLocale("");
+    if (m_delegate) {
+        // Reset the default quota for each origin to 5MB
+        m_delegate->setDatabaseQuota(5 * 1024 * 1024);
+        m_delegate->setDeviceScaleFactor(1);
+        m_delegate->setAcceptAllCookies(false);
+        m_delegate->setLocale("");
+    }
 
     m_dumpEditingCallbacks = false;
     m_dumpAsText = false;
@@ -440,7 +440,7 @@ void TestRunner::reset()
     m_taskList.revokeAll();
     m_workQueue.reset();
 
-    if (m_closeRemainingWindows)
+    if (m_closeRemainingWindows && m_delegate)
         m_delegate->closeRemainingWindows();
     else
         m_closeRemainingWindows = true;

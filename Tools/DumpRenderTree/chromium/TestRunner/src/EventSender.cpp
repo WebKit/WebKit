@@ -45,10 +45,10 @@
 
 #include "KeyCodeMapping.h"
 #include "MockSpellCheck.h"
-#include "TestDelegate.h"
 #include "WebContextMenuData.h"
 #include "WebDragOperation.h"
 #include "WebEventSender.h"
+#include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"
 #include <public/WebDragData.h>
@@ -127,7 +127,7 @@ inline bool outsideMultiClickRadius(const WebPoint& a, const WebPoint& b)
 // dependent (e.g., dragging has a timeout vs selection).
 uint32 timeOffsetMs = 0;
 
-double getCurrentEventTimeSec(TestDelegate* delegate)
+double getCurrentEventTimeSec(WebTestDelegate* delegate)
 {
     return (delegate->getCurrentTimeInMillisecond() + timeOffsetMs) / 1000.0;
 }
@@ -813,7 +813,7 @@ void EventSender::replaySavedEvents()
 //   also makes sense. This function is doing such for some flags.
 // - Some test even checks actual string content. So providing it would be also helpful.
 //
-static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu, TestDelegate* delegate)
+static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu, WebTestDelegate* delegate)
 {
     // These constants are based on Safari's context menu because tests are made for it.
     static const char* nonEditableMenuStrings[] = { "Back", "Reload Page", "Open in Dashbaord", "<separator>", "View Source", "Save Page As", "Print Page", "Inspect Element", 0 };

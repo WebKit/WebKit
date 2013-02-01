@@ -96,6 +96,7 @@
             'chromium/TestRunner/src/WebTestInterfaces.cpp',
             'chromium/TestRunner/src/WebTestPlugin.cpp',
             'chromium/TestRunner/src/WebTestProxy.cpp',
+            'chromium/TestRunner/src/WebTestRunner.cpp',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

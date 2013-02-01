@@ -34,6 +34,7 @@
 #include "AccessibilityControllerChromium.h"
 #include "EventSender.h"
 #include "GamepadController.h"
+#include "TestRunner.h"
 #include "TextInputController.h"
 #include <public/WebString.h>
 
@@ -49,6 +50,7 @@ TestInterfaces::TestInterfaces()
     m_eventSender = adoptPtr(new EventSender());
     m_gamepadController = adoptPtr(new GamepadController());
     m_textInputController = adoptPtr(new TextInputController());
+    m_testRunner = adoptPtr(new TestRunner());
 }
 
 TestInterfaces::~TestInterfaces()
@@ -57,11 +59,13 @@ TestInterfaces::~TestInterfaces()
     m_eventSender->setWebView(0);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(0);
+    m_testRunner->setWebView(0);
 
     m_accessibilityController->setDelegate(0);
     m_eventSender->setDelegate(0);
     m_gamepadController->setDelegate(0);
-    // m_textInputController doesn't depend on TestDelegate.
+    // m_textInputController doesn't depend on WebTestDelegate.
+    m_testRunner->setDelegate(0);
 }
 
 void TestInterfaces::setWebView(WebView* webView)
@@ -70,14 +74,16 @@ void TestInterfaces::setWebView(WebView* webView)
     m_eventSender->setWebView(webView);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(webView);
+    m_testRunner->setWebView(webView);
 }
 
-void TestInterfaces::setDelegate(TestDelegate* delegate)
+void TestInterfaces::setDelegate(WebTestDelegate* delegate)
 {
     m_accessibilityController->setDelegate(delegate);
     m_eventSender->setDelegate(delegate);
     m_gamepadController->setDelegate(delegate);
-    // m_textInputController doesn't depend on TestDelegate.
+    // m_textInputController doesn't depend on WebTestDelegate.
+    m_testRunner->setDelegate(delegate);
 }
 
 void TestInterfaces::bindTo(WebFrame* frame)
@@ -86,6 +92,8 @@ void TestInterfaces::bindTo(WebFrame* frame)
     m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
     m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
     m_textInputController->bindToJavascript(frame, WebString::fromUTF8("textInputController"));
+    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
+    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
 }
 
 void TestInterfaces::resetAll()
@@ -94,6 +102,12 @@ void TestInterfaces::resetAll()
     m_eventSender->reset();
     m_gamepadController->reset();
     // m_textInputController doesn't have any state to reset.
+    m_testRunner->reset();
+}
+
+void TestInterfaces::setTestIsRunning(bool running)
+{
+    m_testRunner->setTestIsRunning(running);
 }
 
 AccessibilityController* TestInterfaces::accessibilityController()
@@ -104,6 +118,11 @@ AccessibilityController* TestInterfaces::accessibilityController()
 EventSender* TestInterfaces::eventSender()
 {
     return m_eventSender.get();
+}
+
+TestRunner* TestInterfaces::testRunner()
+{
+    return m_testRunner.get();
 }
 
 }
