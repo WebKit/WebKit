@@ -1368,6 +1368,7 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 
 # Remove from list after enabling CANVAS_PATH
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
 
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]

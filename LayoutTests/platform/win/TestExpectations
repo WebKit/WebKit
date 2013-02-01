@@ -46,6 +46,7 @@ css3/filters/custom
 
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-currentPath.html
+fast/canvas/canvas-path-constructors.html
 
 # Needs rebaseline after bug 97217 is fixed
 # https://bugs.webkit.org/show_bug.cgi?id=97325

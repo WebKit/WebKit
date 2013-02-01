@@ -30,6 +30,9 @@
 
 #if ENABLE(CANVAS_PATH)
 #include "CanvasPathMethods.h"
+#if ENABLE(SVG)
+#include "SVGPathUtilities.h"
+#endif
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -39,6 +42,9 @@ class DOMPath : public RefCounted<DOMPath>, public CanvasPathMethods {
     WTF_MAKE_NONCOPYABLE(DOMPath); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<DOMPath> create() { return adoptRef(new DOMPath); }
+    static PassRefPtr<DOMPath> create(const String& pathData) { return adoptRef(new DOMPath(pathData)); }
+    static PassRefPtr<DOMPath> create(DOMPath* path) { return adoptRef(new DOMPath(path)); }
+
     static PassRefPtr<DOMPath> create(const Path& path) { return adoptRef(new DOMPath(path)); }
 
     const Path& path() const { return m_path; }
@@ -51,6 +57,18 @@ private:
     {
         m_path = path;
     }
+    DOMPath(DOMPath* path)
+        : CanvasPathMethods()
+    {
+        m_path = path->path();
+    }
+#if ENABLE(SVG)
+    DOMPath(const String& pathData)
+        : CanvasPathMethods()
+    {
+        buildPathFromString(pathData, m_path);
+    }
+#endif
 };
 }
 #endif

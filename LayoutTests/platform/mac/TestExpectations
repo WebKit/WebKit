@@ -143,6 +143,7 @@ http/tests/security/no-indexeddb-from-sandbox.html
 
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-currentPath.html
+fast/canvas/canvas-path-constructors.html
 
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion
