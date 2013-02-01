@@ -434,8 +434,7 @@ TEST_F(WebViewTest, ExtendSelectionAndDelete)
     webView->close();
 }
 
-// Disabled, https://bugs.webkit.org/show_bug.cgi?id=108543
-TEST_F(WebViewTest, DISABLED_SetCompositionFromExistingText)
+TEST_F(WebViewTest, SetCompositionFromExistingText)
 {
     URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("input_field_populated.html"));
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
