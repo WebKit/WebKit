@@ -94,9 +94,14 @@ String.prototype.escapeCharacters = function(chars)
     return result;
 }
 
+String.regexSpecialCharacters = function()
+{
+    return "^[]{}()\\.$*+?|-,";
+}
+
 String.prototype.escapeForRegExp = function()
 {
-    return this.escapeCharacters("^[]{}()\\.$*+?|");
+    return this.escapeCharacters(String.regexSpecialCharacters);
 }
 
 String.prototype.escapeHTML = function()
@@ -643,7 +648,7 @@ function createSearchRegex(query, caseSensitive, isRegex)
 function createPlainTextSearchRegex(query, flags)
 {
     // This should be kept the same as the one in ContentSearchUtils.cpp.
-    var regexSpecialCharacters = "[](){}+-*.,?\\^$|";
+    var regexSpecialCharacters = String.regexSpecialCharacters();
     var regex = "";
     for (var i = 0; i < query.length; ++i) {
         var c = query.charAt(i);
