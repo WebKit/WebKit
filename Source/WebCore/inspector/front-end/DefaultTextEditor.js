@@ -1943,15 +1943,14 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _appendOverlayHighlight: function(lineRow, highlight)
     {
-        const extraWidth = 1;
         var metrics = highlight.metrics;
         var cssClass = highlight.cssClass;
         for(var i = 0; i < metrics.length; ++i) {
             var highlightSpan = document.createElement("span");
             highlightSpan._isOverlayHighlightElement = true;
             highlightSpan.addStyleClass(cssClass);
-            highlightSpan.style.left = (metrics[i].left - extraWidth) + "px";
-            highlightSpan.style.width = (metrics[i].width + extraWidth * 2) + "px";
+            highlightSpan.style.left = metrics[i].left + "px";
+            highlightSpan.style.width = metrics[i].width + "px";
             highlightSpan.style.height = metrics[i].height + "px";
             highlightSpan.addStyleClass("text-editor-overlay-highlight");
             lineRow.insertBefore(highlightSpan, lineRow.decorationsElement);
