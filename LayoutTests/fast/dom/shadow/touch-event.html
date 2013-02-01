@@ -23,7 +23,7 @@ var target = shadowRoot2.getElementById('target');
 
 var touchTargetsForHost1;
 host1.addEventListener('touchstart', function(e) {
-    touchTargetForHost1 = e.touches[0].target;
+    touchTargetForHost1 = e.targetTouches[0].target;
 });
 
 var touchstartFiredInShadowDOM = false;
@@ -33,7 +33,7 @@ target.addEventListener('touchstart', function(e) {
 
 var touchTargetForInput1;
 input1.addEventListener('touchstart', function(e) {
-    touchTargetForInput1 = e.touches[1].target;
+    touchTargetForInput1 = e.targetTouches[0].target;
 });
 
 eventSender.clearTouchPoints();
