@@ -1003,6 +1003,7 @@ void WebViewHost::shutdown()
          it < m_popupmenus.end(); ++it)
         (*it)->close();
 
+    webWidget()->willCloseLayerTreeView();
     m_layerTreeView.clear();
     webWidget()->close();
     m_webWidget = 0;
