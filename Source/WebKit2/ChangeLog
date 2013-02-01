@@ -1,3 +1,46 @@
+2013-01-31  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Move CoordinatedGraphics related files to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=108149
+
+        Reviewed by Noam Rosenthal.
+
+        This patch moves Coordinated Graphics related code to WebCore. To
+        implement Threaded Coordinated Graphics, most of Coordianted Graphics
+        code should be shared. Therefore, they should reside in WebCore instead of
+        WebKit2.
+
+        When moving to WebCore, two renamings have been done.
+
+        1. Rename LayerTreeRenderer to CoordinatedGraphicsScene.
+
+        2. Rename WebCustomFilterProgram and WebCustomFilterOperation to
+        CoordinatedCustomFilterProgram and CoordinatedCustomFilterOperation,
+        respectively.
+
+        No new tests, covered by existing tests.
+
+        * CMakeLists.txt:
+        * Scripts/webkit2/messages.py:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Target.pri:
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        * UIProcess/API/qt/raw/qrawwebview_p.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * UIProcess/efl/PageClientBase.cpp:
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        * UIProcess/qt/QtWebPageSGNode.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-01-31  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Another attempt to fix build after recent WebKit2 changes

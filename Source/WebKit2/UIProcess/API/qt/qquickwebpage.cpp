@@ -22,7 +22,6 @@
 #include "qquickwebpage_p.h"
 
 #include "CoordinatedLayerTreeHostProxy.h"
-#include "LayerTreeRenderer.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageSGNode.h"
 #include "TransformationMatrix.h"
@@ -31,6 +30,7 @@
 #include "qquickwebview_p.h"
 #include "qwebkittest_p.h"
 #include <QQuickWindow>
+#include <WebCore/CoordinatedGraphicsScene.h>
 
 using namespace WebKit;
 
@@ -71,8 +71,8 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
     if (!webPageProxy->drawingArea())
         return;
 
-    if (coordinatedLayerTreeHostProxy()->layerTreeRenderer())
-        coordinatedLayerTreeHostProxy()->layerTreeRenderer()->paintToGraphicsContext(painter);
+    if (coordinatedLayerTreeHostProxy()->coordinatedGraphicsScene())
+        coordinatedLayerTreeHostProxy()->coordinatedGraphicsScene()->paintToGraphicsContext(painter);
 }
 
 CoordinatedLayerTreeHostProxy* QQuickWebPagePrivate::coordinatedLayerTreeHostProxy()
@@ -88,7 +88,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!d->webPageProxy->drawingArea())
         return oldNode;
 
-    LayerTreeRenderer* renderer = d->coordinatedLayerTreeHostProxy()->layerTreeRenderer();
+    WebCore::CoordinatedGraphicsScene* scene = d->coordinatedLayerTreeHostProxy()->coordinatedGraphicsScene();
 
     QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
 
@@ -105,7 +105,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!node)
         node = new QtWebPageSGNode;
 
-    node->setRenderer(renderer);
+    node->setCoordinatedGraphicsScene(scene);
 
     node->setScale(d->contentsScale);
     node->setDevicePixelRatio(window->devicePixelRatio());

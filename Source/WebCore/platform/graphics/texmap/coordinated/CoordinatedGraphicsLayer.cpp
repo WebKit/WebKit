@@ -25,8 +25,6 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsLayer.h"
 
-#include "BackingStore.h"
-#include "CoordinatedLayerTreeHostProxyMessages.h"
 #include "CoordinatedTile.h"
 #include "FloatQuad.h"
 #include "Frame.h"
@@ -35,15 +33,12 @@
 #include "GraphicsLayer.h"
 #include "Page.h"
 #include "TextureMapperPlatformLayer.h"
-#include "WebPage.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #ifndef NDEBUG
 #include <wtf/TemporaryChange.h>
 #endif
 #include <wtf/text/CString.h>
-
-using namespace WebKit;
 
 namespace WebCore {
 
@@ -433,8 +428,8 @@ bool CoordinatedGraphicsLayer::shouldDirectlyCompositeImage(Image* image) const
     if (!image || !image->isBitmapImage())
         return false;
 
-    enum { kMaxDimenstionForDirectCompositing = 2000 };
-    if (image->width() > kMaxDimenstionForDirectCompositing || image->height() > kMaxDimenstionForDirectCompositing)
+    enum { MaxDimenstionForDirectCompositing = 2000 };
+    if (image->width() > MaxDimenstionForDirectCompositing || image->height() > MaxDimenstionForDirectCompositing)
         return false;
 
     return true;
@@ -796,7 +791,7 @@ PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const I
     return m_coordinator->beginContentUpdate(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset);
 }
 
-void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges());
@@ -862,7 +857,7 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::setCoordinator(WebKit::CoordinatedGraphicsLayerClient* coordinator)
+void CoordinatedGraphicsLayer::setCoordinator(CoordinatedGraphicsLayerClient* coordinator)
 {
     m_coordinator = coordinator;
 }
@@ -1057,5 +1052,5 @@ void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer<CoordinatedGraph
 {
     client()->notifyAnimationStarted(this, m_lastAnimationStartTime);
 }
-}
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)

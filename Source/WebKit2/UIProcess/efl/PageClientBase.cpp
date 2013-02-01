@@ -30,7 +30,6 @@
 #include "DrawingAreaProxyImpl.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
-#include "LayerTreeRenderer.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
 #include "TextureMapper.h"

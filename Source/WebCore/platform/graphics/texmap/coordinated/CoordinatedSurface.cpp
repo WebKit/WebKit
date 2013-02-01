@@ -28,7 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-namespace WebKit {
+namespace WebCore {
 
 CoordinatedSurface::Factory* CoordinatedSurface::s_factory = 0;
 
@@ -37,12 +37,12 @@ void CoordinatedSurface::setFactory(CoordinatedSurface::Factory factory)
     s_factory = factory;
 }
 
-PassRefPtr<CoordinatedSurface> CoordinatedSurface::create(const WebCore::IntSize& size, Flags flags)
+PassRefPtr<CoordinatedSurface> CoordinatedSurface::create(const IntSize& size, Flags flags)
 {
     ASSERT(s_factory);
     return s_factory(size, flags);
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

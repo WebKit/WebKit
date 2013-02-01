@@ -30,9 +30,9 @@
 
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "EwkView.h"
-#include "LayerTreeRenderer.h"
 #include "PageViewportController.h"
 #include "TransformationMatrix.h"
+#include <WebCore/CoordinatedGraphicsScene.h>
 
 using namespace WebCore;
 
@@ -56,7 +56,7 @@ DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
 
 void PageViewportControllerClientEfl::setRendererActive(bool active)
 {
-    drawingArea()->coordinatedLayerTreeHostProxy()->layerTreeRenderer()->setActive(active);
+    drawingArea()->coordinatedLayerTreeHostProxy()->coordinatedGraphicsScene()->setActive(active);
 }
 
 void PageViewportControllerClientEfl::updateViewportSize()

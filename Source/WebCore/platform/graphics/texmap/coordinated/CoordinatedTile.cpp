@@ -33,9 +33,7 @@
 #include "SurfaceUpdateInfo.h"
 #include "TiledBackingStoreClient.h"
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 static const uint32_t InvalidCoordinatedTileID = 0;
 
@@ -129,15 +127,15 @@ CoordinatedTileBackend::CoordinatedTileBackend(CoordinatedTileClient* client)
 {
 }
 
-PassRefPtr<WebCore::Tile> CoordinatedTileBackend::createTile(WebCore::TiledBackingStore* tiledBackingStore, const WebCore::Tile::Coordinate& tileCoordinate)
+PassRefPtr<Tile> CoordinatedTileBackend::createTile(TiledBackingStore* tiledBackingStore, const Tile::Coordinate& tileCoordinate)
 {
     return CoordinatedTile::create(m_client, tiledBackingStore, tileCoordinate);
 }
 
-void CoordinatedTileBackend::paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&)
+void CoordinatedTileBackend::paintCheckerPattern(GraphicsContext*, const FloatRect&)
 {
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(TILED_BACKING_STORE)

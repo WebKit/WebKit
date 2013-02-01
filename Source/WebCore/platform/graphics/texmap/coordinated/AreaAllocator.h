@@ -20,13 +20,14 @@
 #ifndef AreaAllocator_h
 #define AreaAllocator_h
 
-#include <IntPoint.h>
-#include <IntRect.h>
-#include <IntSize.h>
+#include "IntPoint.h"
+#include "IntRect.h"
+#include "IntSize.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
 namespace WebCore {
+
 inline int nextPowerOfTwo(int number)
 {
     // This is a fast trick to get nextPowerOfTwo for an integer.
@@ -44,55 +45,52 @@ inline IntSize nextPowerOfTwo(const IntSize& size)
 {
     return IntSize(nextPowerOfTwo(size.width()), nextPowerOfTwo(size.height()));
 }
-} // namespace WebCore
-
-namespace WebKit {
 
 class AreaAllocator {
 public:
-    explicit AreaAllocator(const WebCore::IntSize&);
+    explicit AreaAllocator(const IntSize&);
     virtual ~AreaAllocator();
 
-    WebCore::IntSize size() const { return m_size; }
+    IntSize size() const { return m_size; }
 
-    WebCore::IntSize minimumAllocation() const { return m_minAlloc; }
-    void setMinimumAllocation(const WebCore::IntSize& size) { m_minAlloc = size; }
+    IntSize minimumAllocation() const { return m_minAlloc; }
+    void setMinimumAllocation(const IntSize& size) { m_minAlloc = size; }
 
-    WebCore::IntSize margin() const { return m_margin; }
-    void setMargin(const WebCore::IntSize &margin) { m_margin = margin; }
+    IntSize margin() const { return m_margin; }
+    void setMargin(const IntSize &margin) { m_margin = margin; }
 
-    virtual void expand(const WebCore::IntSize&);
-    void expandBy(const WebCore::IntSize&);
+    virtual void expand(const IntSize&);
+    void expandBy(const IntSize&);
 
-    virtual WebCore::IntRect allocate(const WebCore::IntSize&) = 0;
-    virtual void release(const WebCore::IntRect&);
+    virtual IntRect allocate(const IntSize&) = 0;
+    virtual void release(const IntRect&);
 
     virtual int overhead() const;
 
 protected:
-    WebCore::IntSize m_size;
-    WebCore::IntSize m_minAlloc;
-    WebCore::IntSize m_margin;
+    IntSize m_size;
+    IntSize m_minAlloc;
+    IntSize m_margin;
 
-    WebCore::IntSize roundAllocation(const WebCore::IntSize&) const;
+    IntSize roundAllocation(const IntSize&) const;
 };
 
 class GeneralAreaAllocator : public AreaAllocator {
 public:
-    explicit GeneralAreaAllocator(const WebCore::IntSize&);
+    explicit GeneralAreaAllocator(const IntSize&);
     virtual ~GeneralAreaAllocator();
 
-    void expand(const WebCore::IntSize&);
-    WebCore::IntRect allocate(const WebCore::IntSize&);
-    void release(const WebCore::IntRect&);
+    void expand(const IntSize&);
+    IntRect allocate(const IntSize&);
+    void release(const IntRect&);
     int overhead() const;
 
 private:
     enum Split { SplitOnX, SplitOnY };
 
     struct Node {
-        WebCore::IntRect rect;
-        WebCore::IntSize largestFree;
+        IntRect rect;
+        IntSize largestFree;
         Node* parent;
         Node* left;
         Node* right;
@@ -102,12 +100,12 @@ private:
     int m_nodeCount;
 
     static void freeNode(Node*);
-    WebCore::IntPoint allocateFromNode(const WebCore::IntSize&, Node*);
+    IntPoint allocateFromNode(const IntSize&, Node*);
     Node* splitNode(Node*, Split);
     static void updateLargestFree(Node*);
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
 

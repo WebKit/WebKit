@@ -23,9 +23,9 @@
 
 #include "AreaAllocator.h"
 
-namespace WebKit {
+namespace WebCore {
 
-AreaAllocator::AreaAllocator(const WebCore::IntSize& size)
+AreaAllocator::AreaAllocator(const IntSize& size)
     : m_size(size)
     , m_minAlloc(1, 1)
     , m_margin(0, 0)
@@ -36,17 +36,17 @@ AreaAllocator::~AreaAllocator()
 {
 }
 
-void AreaAllocator::expand(const WebCore::IntSize& size)
+void AreaAllocator::expand(const IntSize& size)
 {
     m_size = m_size.expandedTo(size);
 }
 
-void AreaAllocator::expandBy(const WebCore::IntSize& size)
+void AreaAllocator::expandBy(const IntSize& size)
 {
     m_size += size;
 }
 
-void AreaAllocator::release(const WebCore::IntRect&)
+void AreaAllocator::release(const IntRect&)
 {
 }
 
@@ -55,7 +55,7 @@ int AreaAllocator::overhead() const
     return 0;
 }
 
-WebCore::IntSize AreaAllocator::roundAllocation(const WebCore::IntSize& size) const
+IntSize AreaAllocator::roundAllocation(const IntSize& size) const
 {
     int width = size.width() + m_margin.width();
     int height = size.height() + m_margin.height();
@@ -66,20 +66,20 @@ WebCore::IntSize AreaAllocator::roundAllocation(const WebCore::IntSize& size) co
     if (extra)
         height += m_minAlloc.height() - extra;
 
-    return WebCore::IntSize(width, height);
+    return IntSize(width, height);
 }
 
-GeneralAreaAllocator::GeneralAreaAllocator(const WebCore::IntSize& size)
-    : AreaAllocator(WebCore::nextPowerOfTwo(size))
+GeneralAreaAllocator::GeneralAreaAllocator(const IntSize& size)
+    : AreaAllocator(nextPowerOfTwo(size))
 {
     m_root = new Node();
-    m_root->rect = WebCore::IntRect(0, 0, m_size.width(), m_size.height());
+    m_root->rect = IntRect(0, 0, m_size.width(), m_size.height());
     m_root->largestFree = m_size;
     m_root->parent = 0;
     m_root->left = 0;
     m_root->right = 0;
     m_nodeCount = 1;
-    setMinimumAllocation(WebCore::IntSize(8, 8));
+    setMinimumAllocation(IntSize(8, 8));
 }
 
 GeneralAreaAllocator::~GeneralAreaAllocator()
@@ -96,16 +96,16 @@ void GeneralAreaAllocator::freeNode(Node* node)
     delete node;
 }
 
-void GeneralAreaAllocator::expand(const WebCore::IntSize& size)
+void GeneralAreaAllocator::expand(const IntSize& size)
 {
-    AreaAllocator::expand(WebCore::nextPowerOfTwo(size));
+    AreaAllocator::expand(nextPowerOfTwo(size));
 
     if (m_root->rect.size() == m_size)
         return; // No change.
 
     if (!m_root->left && m_root->largestFree.width() > 0) {
         // No allocations have occurred, so just adjust the root size.
-        m_root->rect = WebCore::IntRect(0, 0, m_size.width(), m_size.height());
+        m_root->rect = IntRect(0, 0, m_size.width(), m_size.height());
         m_root->largestFree = m_size;
         return;
     }
@@ -136,14 +136,14 @@ void GeneralAreaAllocator::expand(const WebCore::IntSize& size)
         right->right = 0;
         right->largestFree = m_root->rect.size();
         if (split == SplitOnX) {
-            parent->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y(),
+            parent->rect = IntRect(m_root->rect.x(), m_root->rect.y(),
                 m_root->rect.width() * 2, m_root->rect.height());
-            right->rect = WebCore::IntRect(m_root->rect.x() + m_root->rect.width(), m_root->rect.y(),
+            right->rect = IntRect(m_root->rect.x() + m_root->rect.width(), m_root->rect.y(),
                 m_root->rect.width(), m_root->rect.height());
         } else {
-            parent->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y(),
+            parent->rect = IntRect(m_root->rect.x(), m_root->rect.y(),
                 m_root->rect.width(), m_root->rect.height() * 2);
-            right->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y() + m_root->rect.width(),
+            right->rect = IntRect(m_root->rect.x(), m_root->rect.y() + m_root->rect.width(),
                 m_root->rect.width(), m_root->rect.height());
         }
         split = (split == SplitOnX ? SplitOnY : SplitOnX);
@@ -152,26 +152,26 @@ void GeneralAreaAllocator::expand(const WebCore::IntSize& size)
     updateLargestFree(oldRoot);
 }
 
-static inline bool fitsWithin(const WebCore::IntSize& size1, const WebCore::IntSize& size2)
+static inline bool fitsWithin(const IntSize& size1, const IntSize& size2)
 {
     return size1.width() <= size2.width() && size1.height() <= size2.height();
 }
 
-WebCore::IntRect GeneralAreaAllocator::allocate(const WebCore::IntSize& size)
+IntRect GeneralAreaAllocator::allocate(const IntSize& size)
 {
-    WebCore::IntSize rounded = roundAllocation(size);
-    rounded = WebCore::nextPowerOfTwo(rounded);
+    IntSize rounded = roundAllocation(size);
+    rounded = nextPowerOfTwo(rounded);
     if (rounded.width() <= 0 || rounded.width() > m_size.width()
         || rounded.height() <= 0 || rounded.height() > m_size.height())
-        return WebCore::IntRect();
+        return IntRect();
 
-    WebCore::IntPoint point = allocateFromNode(rounded, m_root);
+    IntPoint point = allocateFromNode(rounded, m_root);
     if (point.x() >= 0)
-        return WebCore::IntRect(point, size);
-    return WebCore::IntRect();
+        return IntRect(point, size);
+    return IntRect();
 }
 
-WebCore::IntPoint GeneralAreaAllocator::allocateFromNode(const WebCore::IntSize& size, Node* node)
+IntPoint GeneralAreaAllocator::allocateFromNode(const IntSize& size, Node* node)
 {
     // Find the best node to insert into, which should be
     // a node with the least amount of unused space that is
@@ -187,7 +187,7 @@ WebCore::IntPoint GeneralAreaAllocator::allocateFromNode(const WebCore::IntSize&
                     || left->largestFree.height() < right->largestFree.height()) {
                     // The largestFree values may be a little oversized,
                     // so try the left sub-tree and then the right sub-tree.
-                    WebCore::IntPoint point = allocateFromNode(size, left);
+                    IntPoint point = allocateFromNode(size, left);
                     if (point.x() >= 0)
                         return point;
                     return allocateFromNode(size, right);
@@ -199,11 +199,11 @@ WebCore::IntPoint GeneralAreaAllocator::allocateFromNode(const WebCore::IntSize&
             node = right;
         else if (left || right) {
             // Neither sub-node has enough space to allocate from.
-            return WebCore::IntPoint(-1, -1);
+            return IntPoint(-1, -1);
         } else if (fitsWithin(size, node->largestFree)) {
             // Do we need to split this node into smaller pieces?
             Split split;
-            if (fitsWithin(WebCore::IntSize(size.width() * 2, size.height() * 2), node->largestFree)) {
+            if (fitsWithin(IntSize(size.width() * 2, size.height() * 2), node->largestFree)) {
                 // Split in either direction: choose the inverse of
                 // the parent node's split direction to try to balance
                 // out the wasted space as further subdivisions happen.
@@ -216,15 +216,15 @@ WebCore::IntPoint GeneralAreaAllocator::allocateFromNode(const WebCore::IntSize&
                     split = SplitOnX;
                 else
                     split = SplitOnY;
-            } else if (fitsWithin(WebCore::IntSize(size.width() * 2, size.height()), node->largestFree)) {
+            } else if (fitsWithin(IntSize(size.width() * 2, size.height()), node->largestFree)) {
                 // Split along the X direction.
                 split = SplitOnX;
-            } else if (fitsWithin(WebCore::IntSize(size.width(), size.height() * 2), node->largestFree)) {
+            } else if (fitsWithin(IntSize(size.width(), size.height() * 2), node->largestFree)) {
                 // Split along the Y direction.
                 split = SplitOnY;
             } else {
                 // Cannot split further - allocate this node.
-                node->largestFree = WebCore::IntSize(0, 0);
+                node->largestFree = IntSize(0, 0);
                 updateLargestFree(node);
                 return node->rect.location();
             }
@@ -236,7 +236,7 @@ WebCore::IntPoint GeneralAreaAllocator::allocateFromNode(const WebCore::IntSize&
             break;
         }
     }
-    return WebCore::IntPoint(-1, -1);
+    return IntPoint(-1, -1);
 }
 
 GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode
@@ -255,14 +255,14 @@ GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode
     node->right = right;
 
     if (split == SplitOnX) {
-        left->rect = WebCore::IntRect(node->rect.x(), node->rect.y(),
+        left->rect = IntRect(node->rect.x(), node->rect.y(),
             node->rect.width() / 2, node->rect.height());
-        right->rect = WebCore::IntRect(left->rect.maxX(), node->rect.y(),
+        right->rect = IntRect(left->rect.maxX(), node->rect.y(),
             node->rect.width() / 2, node->rect.height());
     } else {
-        left->rect = WebCore::IntRect(node->rect.x(), node->rect.y(),
+        left->rect = IntRect(node->rect.x(), node->rect.y(),
             node->rect.width(), node->rect.height() / 2);
-        right->rect = WebCore::IntRect(node->rect.x(), left->rect.maxY(),
+        right->rect = IntRect(node->rect.x(), left->rect.maxY(),
             node->rect.width(), node->rect.height() / 2);
     }
 
@@ -275,18 +275,18 @@ GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode
 void GeneralAreaAllocator::updateLargestFree(Node* node)
 {
     while ((node = node->parent)) {
-        node->largestFree = WebCore::IntSize(
+        node->largestFree = IntSize(
             std::max(node->left->largestFree.width(), node->right->largestFree.width()),
             std::max(node->left->largestFree.height(), node->right->largestFree.height())
             );
     }
 }
 
-void GeneralAreaAllocator::release(const WebCore::IntRect& rect)
+void GeneralAreaAllocator::release(const IntRect& rect)
 {
     // Locate the node that contains the allocated region.
     Node* node = m_root;
-    WebCore::IntPoint point = rect.location();
+    IntPoint point = rect.location();
     while (node) {
         if (node->left && node->left->rect.contains(point))
             node = node->left;
@@ -330,6 +330,6 @@ int GeneralAreaAllocator::overhead() const
     return m_nodeCount * sizeof(Node);
 }
 
-} // namespace
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

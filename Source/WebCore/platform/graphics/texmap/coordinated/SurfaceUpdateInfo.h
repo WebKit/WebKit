@@ -22,10 +22,10 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/IntRect.h>
+#include "IntRect.h"
 #include <wtf/Noncopyable.h>
 
-namespace WebKit {
+namespace WebCore {
 
 class SurfaceUpdateInfo {
     WTF_MAKE_NONCOPYABLE(SurfaceUpdateInfo);
@@ -34,7 +34,7 @@ public:
     SurfaceUpdateInfo() { }
 
     // The rect to be updated.
-    WebCore::IntRect updateRect;
+    IntRect updateRect;
 
     // The page scale factor used to render this update.
     float scaleFactor;
@@ -43,10 +43,10 @@ public:
     uint32_t atlasID;
 
     // The offset in the bitmap where the rendered contents are.
-    WebCore::IntPoint surfaceOffset;
+    IntPoint surfaceOffset;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
 

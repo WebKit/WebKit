@@ -27,9 +27,7 @@
 #include "IntRect.h"
 #include <wtf/MathExtras.h>
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSurface::Flags flags)
     : m_client(client)
@@ -64,7 +62,7 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator.clear();
 }
 
-PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(uint32_t& atlasID, const WebCore::IntSize& size, IntPoint& offset)
+PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(uint32_t& atlasID, const IntSize& size, IntPoint& offset)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();
@@ -92,5 +90,5 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(uint32_t
     return graphicsContext.release();
 }
 
-}
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)

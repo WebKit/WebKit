@@ -30,63 +30,56 @@
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "RunLoop.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
-#include "UpdateInfo.h"
-#include "WebProcess.h"
 #if USE(GRAPHICS_SURFACE)
-#include <WebCore/GraphicsSurfaceToken.h>
+#include "GraphicsSurfaceToken.h"
 #endif
-#include <WebCore/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(COORDINATED_GRAPHICS)
+
 namespace WebCore {
 class CoordinatedGraphicsLayer;
 class GraphicsLayerAnimations;
-}
-
-namespace WebKit {
 
 class CoordinatedGraphicsLayerClient {
 public:
     virtual bool isFlushingLayerChanges() const = 0;
 
     // CoordinatedTileClient
-    virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
+    virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
     virtual void removeTile(CoordinatedLayerID, uint32_t tileID) = 0;
 
-    virtual WebCore::FloatRect visibleContentsRect() const = 0;
-    virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) = 0;
+    virtual FloatRect visibleContentsRect() const = 0;
+    virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(Image*) = 0;
     virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&) = 0;
     virtual void syncLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&) = 0;
 #if ENABLE(CSS_FILTERS)
-    virtual void syncLayerFilters(CoordinatedLayerID, const WebCore::FilterOperations&) = 0;
+    virtual void syncLayerFilters(CoordinatedLayerID, const FilterOperations&) = 0;
 #endif
 #if USE(GRAPHICS_SURFACE)
-    virtual void createCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) = 0;
-    virtual void syncCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) = 0;
+    virtual void createCanvas(CoordinatedLayerID, PlatformLayer*) = 0;
+    virtual void syncCanvas(CoordinatedLayerID, PlatformLayer*) = 0;
     virtual void destroyCanvas(CoordinatedLayerID) = 0;
 #endif
 
     virtual void setLayerRepaintCount(CoordinatedLayerID, int) = 0;
 
-    virtual void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
+    virtual void setLayerAnimations(CoordinatedLayerID, const GraphicsLayerAnimations&) = 0;
 
-    virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
+    virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, IntPoint&) = 0;
 };
-}
-
-namespace WebCore {
 
 class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
-    , public WebKit::CoordinatedImageBacking::Host
-    , public WebKit::CoordinatedTileClient {
+    , public CoordinatedImageBacking::Host
+    , public CoordinatedTileClient {
 public:
     explicit CoordinatedGraphicsLayer(GraphicsLayerClient*);
     virtual ~CoordinatedGraphicsLayer();
@@ -142,7 +135,7 @@ public:
 
     void setRootLayer(bool);
 
-    WebKit::CoordinatedLayerID id() const;
+    CoordinatedLayerID id() const;
 
     void setFixedToViewport(bool isFixed) { m_fixedToViewport = isFixed; }
 
@@ -158,12 +151,12 @@ public:
     virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE;
 
     // CoordinatedTileClient
-    virtual void createTile(uint32_t tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
-    virtual void updateTile(uint32_t tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
     virtual void removeTile(uint32_t tileID) OVERRIDE;
     virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, uint32_t& atlasID, IntPoint&) OVERRIDE;
 
-    void setCoordinator(WebKit::CoordinatedGraphicsLayerClient*);
+    void setCoordinator(CoordinatedGraphicsLayerClient*);
 
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
@@ -223,8 +216,8 @@ private:
 
     void animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*);
 
-    WebKit::CoordinatedLayerID m_id;
-    WebKit::CoordinatedLayerInfo m_layerInfo;
+    CoordinatedLayerID m_id;
+    CoordinatedLayerInfo m_layerInfo;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
     FloatSize m_pixelAlignmentOffset;
@@ -249,13 +242,13 @@ private:
     unsigned m_pendingCanvasOperation : 3;
 #endif
 
-    WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
+    CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;
     OwnPtr<TiledBackingStore> m_previousBackingStore;
 
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
-    RefPtr<WebKit::CoordinatedImageBacking> m_coordinatedImageBacking;
+    RefPtr<CoordinatedImageBacking> m_coordinatedImageBacking;
 
     PlatformLayer* m_canvasPlatformLayer;
 #if USE(GRAPHICS_SURFACE)
@@ -269,7 +262,7 @@ private:
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer*);
 
-}
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)
 
-#endif // CoordinatedGraphicsLayer_H
+#endif // CoordinatedGraphicsLayer_h

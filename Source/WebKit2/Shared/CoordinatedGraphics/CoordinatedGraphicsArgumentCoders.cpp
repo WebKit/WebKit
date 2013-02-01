@@ -29,11 +29,10 @@
 #include "CoordinatedGraphicsArgumentCoders.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedLayerInfo.h"
-#include "SurfaceUpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Animation.h>
 #include <WebCore/Color.h>
+#include <WebCore/CoordinatedLayerInfo.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/IdentityTransformOperation.h>
@@ -45,6 +44,7 @@
 #include <WebCore/RotateTransformOperation.h>
 #include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/SkewTransformOperation.h>
+#include <WebCore/SurfaceUpdateInfo.h>
 #include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
@@ -54,9 +54,9 @@
 #endif
 
 #if ENABLE(CSS_SHADERS)
-#include "WebCustomFilterOperation.h"
-#include "WebCustomFilterProgram.h"
 #include "WebCustomFilterProgramProxy.h"
+#include <WebCore/CoordinatedCustomFilterOperation.h>
+#include <WebCore/CoordinatedCustomFilterProgram.h>
 #include <WebCore/CustomFilterArrayParameter.h>
 #include <WebCore/CustomFilterConstants.h>
 #include <WebCore/CustomFilterNumberParameter.h>
@@ -73,7 +73,9 @@
 #endif
 
 using namespace WebCore;
+#if ENABLE(CSS_SHADERS)
 using namespace WebKit;
+#endif
 
 namespace CoreIPC {
 
@@ -329,7 +331,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 return false;
 
             // At this point the Shaders are already validated, so we just use WebCustomFilterOperation for transportation.
-            filter = WebCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns, meshType);
+            filter = CoordinatedCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns, meshType);
             break;
         }
 #endif

@@ -371,6 +371,7 @@ def headers_for_type(type):
     special_cases = {
         'WTF::String': ['<wtf/text/WTFString.h>'],
         'WebCore::CompositionUnderline': ['<WebCore/Editor.h>'],
+        'WebCore::CoordinatedLayerID': ['<WebCore/CoordinatedLayerInfo.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::GraphicsLayerAnimations': ['<WebCore/GraphicsLayerAnimation.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
@@ -379,7 +380,6 @@ def headers_for_type(type):
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
-        'WebKit::CoordinatedLayerID': ['"CoordinatedLayerInfo.h"'],
         'WebKit::InjectedBundleUserMessageEncoder': [],
         'WebKit::WebContextUserMessageEncoder': [],
         'WebKit::WebGestureEvent': ['"WebEvent.h"'],

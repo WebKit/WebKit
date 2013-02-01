@@ -19,7 +19,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 messages -> CoordinatedLayerTreeHostProxy LegacyReceiver {
-    SetCompositingLayerState(uint32_t id, WebKit::CoordinatedLayerInfo layerInfo)
+    SetCompositingLayerState(uint32_t id, WebCore::CoordinatedLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
 #if ENABLE(CSS_FILTERS)
     SetCompositingLayerFilters(uint32_t id, WebCore::FilterOperations filters)
@@ -31,8 +31,8 @@ messages -> CoordinatedLayerTreeHostProxy LegacyReceiver {
     SetRootCompositingLayer(uint32_t id)
     CreateCompositingLayers(Vector<uint32_t> ids)
     DeleteCompositingLayers(Vector<uint32_t> ids)
-    CreateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebKit::SurfaceUpdateInfo updateInfo)
-    UpdateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebKit::SurfaceUpdateInfo updateInfo)
+    CreateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebCore::SurfaceUpdateInfo updateInfo)
+    UpdateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebCore::SurfaceUpdateInfo updateInfo)
     RemoveTileForLayer(uint32_t layerID, uint32_t tileID)
     CreateUpdateAtlas(uint32_t atlasID, WebKit::WebCoordinatedSurface::Handle handle)
     RemoveUpdateAtlas(uint32_t atlasID)

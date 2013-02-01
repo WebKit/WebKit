@@ -220,7 +220,6 @@ set(WebKit2_SOURCES
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
-    Shared/CoordinatedGraphics/CoordinatedSurface.cpp
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
 
@@ -345,9 +344,7 @@ set(WebKit2_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
-    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
-    UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
     UIProcess/Downloads/DownloadProxyMap.cpp
@@ -494,12 +491,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
-    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 )
 
 set(WebKit2_MESSAGES_IN_FILES

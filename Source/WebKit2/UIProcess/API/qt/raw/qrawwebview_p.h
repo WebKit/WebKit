@@ -47,8 +47,8 @@ QT_END_NAMESPACE
 
 class QRawWebViewPrivate;
 
-namespace WebKit {
-class LayerTreeRenderer;
+namespace WebCore {
+class CoordinatedGraphicsScene;
 }
 
 class QRawWebViewClient {
@@ -101,7 +101,7 @@ public:
     void sendTouchEvent(QTouchEvent*);
 
 private:
-    WebKit::LayerTreeRenderer* layerTreeRenderer() const;
+    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene() const;
 
     QRawWebViewPrivate* d;
 };

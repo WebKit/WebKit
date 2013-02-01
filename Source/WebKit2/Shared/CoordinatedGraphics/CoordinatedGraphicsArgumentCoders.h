@@ -32,11 +32,13 @@
 #include "ArgumentCoders.h"
 
 namespace WebCore {
+class SurfaceUpdateInfo;
 class FloatPoint3D;
 class GraphicsLayerAnimation;
 class GraphicsLayerAnimations;
 class TransformationMatrix;
 class TransformOperations;
+struct CoordinatedLayerInfo;
 struct Length;
 
 #if ENABLE(CSS_FILTERS)
@@ -50,11 +52,6 @@ class CustomFilterProgramInfo;
 #if USE(GRAPHICS_SURFACE)
 struct GraphicsSurfaceToken;
 #endif
-}
-
-namespace WebKit {
-struct CoordinatedLayerInfo;
-class SurfaceUpdateInfo;
 }
 
 namespace CoreIPC {
@@ -110,14 +107,14 @@ template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
 };
 #endif
 
-template<> struct ArgumentCoder<WebKit::CoordinatedLayerInfo> {
-    static void encode(ArgumentEncoder&, const WebKit::CoordinatedLayerInfo&);
-    static bool decode(ArgumentDecoder*, WebKit::CoordinatedLayerInfo&);
+template<> struct ArgumentCoder<WebCore::CoordinatedLayerInfo> {
+    static void encode(ArgumentEncoder&, const WebCore::CoordinatedLayerInfo&);
+    static bool decode(ArgumentDecoder*, WebCore::CoordinatedLayerInfo&);
 };
 
-template<> struct ArgumentCoder<WebKit::SurfaceUpdateInfo> {
-    static void encode(ArgumentEncoder&, const WebKit::SurfaceUpdateInfo&);
-    static bool decode(ArgumentDecoder*, WebKit::SurfaceUpdateInfo&);
+template<> struct ArgumentCoder<WebCore::SurfaceUpdateInfo> {
+    static void encode(ArgumentEncoder&, const WebCore::SurfaceUpdateInfo&);
+    static bool decode(ArgumentDecoder*, WebCore::SurfaceUpdateInfo&);
 };
 
 } // namespace CoreIPC

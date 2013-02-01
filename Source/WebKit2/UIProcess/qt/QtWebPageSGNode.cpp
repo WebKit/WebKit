@@ -21,11 +21,11 @@
 #include "config.h"
 #include "QtWebPageSGNode.h"
 
-#include "LayerTreeRenderer.h"
 #include <QtGui/QPolygonF>
 #include <QtQuick/QQuickItem>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGSimpleRectNode>
+#include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/TransformationMatrix.h>
 #include <private/qsgrendernode_p.h>
 
@@ -35,10 +35,10 @@ namespace WebKit {
 
 class ContentsSGNode : public QSGRenderNode {
 public:
-    ContentsSGNode(PassRefPtr<LayerTreeRenderer> renderer)
-        : m_renderer(renderer)
+    ContentsSGNode(PassRefPtr<CoordinatedGraphicsScene> scene)
+        : m_scene(scene)
     {
-        layerTreeRenderer()->setActive(true);
+        coordinatedGraphicsScene()->setActive(true);
     }
 
     virtual StateFlags changedStates()
@@ -62,12 +62,12 @@ public:
         bool mirrored = projection && (*projection)(0, 0) * (*projection)(1, 1) - (*projection)(0, 1) * (*projection)(1, 0) > 0;
 
         // FIXME: Support non-rectangular clippings.
-        layerTreeRenderer()->paintToCurrentGLContext(renderMatrix, inheritedOpacity(), clipRect(), mirrored ? TextureMapper::PaintingMirrored : 0);
+        coordinatedGraphicsScene()->paintToCurrentGLContext(renderMatrix, inheritedOpacity(), clipRect(), mirrored ? TextureMapper::PaintingMirrored : 0);
     }
 
     ~ContentsSGNode()
     {
-        layerTreeRenderer()->purgeGLResources();
+        coordinatedGraphicsScene()->purgeGLResources();
     }
 
     const QtWebPageSGNode* pageNode() const
@@ -77,7 +77,7 @@ public:
         return parent;
     }
 
-    LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
+    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene() const { return m_scene.get(); }
 
 private:
     QRectF clipRect() const
@@ -126,7 +126,7 @@ private:
         return resultRect;
     }
 
-    RefPtr<LayerTreeRenderer> m_renderer;
+    RefPtr<WebCore::CoordinatedGraphicsScene> m_scene;
 };
 
 QtWebPageSGNode::QtWebPageSGNode()
@@ -150,13 +150,13 @@ void QtWebPageSGNode::setScale(float scale)
     setMatrix(matrix);
 }
 
-void QtWebPageSGNode::setRenderer(PassRefPtr<LayerTreeRenderer> renderer)
+void QtWebPageSGNode::setCoordinatedGraphicsScene(PassRefPtr<WebCore::CoordinatedGraphicsScene> scene)
 {
-    if (m_contentsNode && m_contentsNode->layerTreeRenderer() == renderer)
+    if (m_contentsNode && m_contentsNode->coordinatedGraphicsScene() == scene)
         return;
 
     delete m_contentsNode;
-    m_contentsNode = new ContentsSGNode(renderer);
+    m_contentsNode = new ContentsSGNode(scene);
     // This sets the parent node of the content to QtWebPageSGNode.
     appendChildNode(m_contentsNode);
 }

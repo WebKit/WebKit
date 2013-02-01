@@ -84,7 +84,7 @@ public:
     virtual bool setFilters(const FilterOperations&);
 #endif
 
-    // FIXME: It will be removed after removing dependency of LayerTreeRenderer on GraphicsLayerTextureMapper.
+    // FIXME: It will be removed after removing dependency of CoordinatedGraphicsScene on GraphicsLayerTextureMapper.
     void setHasOwnBackingStore(bool b) { m_hasOwnBackingStore = b; }
     void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
 

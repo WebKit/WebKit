@@ -26,11 +26,9 @@
 #include "TextureMapper.h"
 #include "TextureMapperGL.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
+void CoordinatedBackingStoreTile::swapBuffers(TextureMapper* textureMapper)
 {
     if (!m_surface)
         return;
@@ -103,7 +101,7 @@ PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
     return PassRefPtr<BitmapTexture>();
 }
 
-void CoordinatedBackingStore::setSize(const WebCore::FloatSize& size)
+void CoordinatedBackingStore::setSize(const FloatSize& size)
 {
     m_size = size;
 }
@@ -186,5 +184,5 @@ void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
         it->value.swapBuffers(textureMapper);
 }
 
-} // namespace WebKit
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)

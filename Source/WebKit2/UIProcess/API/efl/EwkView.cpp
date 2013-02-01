@@ -27,7 +27,6 @@
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "InputMethodContextEfl.h"
-#include "LayerTreeRenderer.h"
 #include "PageClientBase.h"
 #include "PageClientDefaultImpl.h"
 #include "PageClientLegacyImpl.h"
@@ -62,6 +61,7 @@
 #include <Ecore_X.h>
 #include <Edje.h>
 #include <WebCore/CairoUtilitiesEfl.h>
+#include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/Cursor.h>
 #include <WebKit2/WKImageCairo.h>
 
@@ -362,7 +362,7 @@ AffineTransform EwkView::transformToScreen() const
 }
 
 #if USE(COORDINATED_GRAPHICS)
-LayerTreeRenderer* EwkView::layerTreeRenderer()
+CoordinatedGraphicsScene* EwkView::coordinatedGraphicsScene()
 {
     DrawingAreaProxy* drawingArea = page()->drawingArea();
     if (!drawingArea)
@@ -372,7 +372,7 @@ LayerTreeRenderer* EwkView::layerTreeRenderer()
     if (!coordinatedLayerTreeHostProxy)
         return 0;
 
-    return coordinatedLayerTreeHostProxy->layerTreeRenderer();
+    return coordinatedLayerTreeHostProxy->coordinatedGraphicsScene();
 }
 #endif
 
@@ -394,14 +394,14 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
 
-    LayerTreeRenderer* renderer = layerTreeRenderer();
-    if (!renderer)
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
         return;
 
-    renderer->setActive(true);
-    renderer->setDrawsBackground(m_setDrawsBackground);
+    scene->setActive(true);
+    scene->setDrawsBackground(m_setDrawsBackground);
     if (m_isHardwareAccelerated) {
-        renderer->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
+        scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
         // sd->image is tied to a native surface. The native surface is in the parent's coordinates,
         // so we need to account for the viewport position when calling evas_object_image_data_update_add.
         evas_object_image_data_update_add(sd->image, viewport.x(), viewport.y(), viewport.width(), viewport.height());
@@ -414,7 +414,7 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
         cairo_scale(graphicsContext.get(), pageScaleFactor(), pageScaleFactor());
         cairo_scale(graphicsContext.get(), deviceScaleFactor(), deviceScaleFactor());
-        renderer->paintToGraphicsContext(graphicsContext.get());
+        scene->paintToGraphicsContext(graphicsContext.get());
         evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());
     }
 #endif
@@ -695,7 +695,7 @@ bool EwkView::createGLSurface(const IntSize& viewSize)
 
 bool EwkView::enterAcceleratedCompositingMode()
 {
-    layerTreeRenderer()->setActive(true);
+    coordinatedGraphicsScene()->setActive(true);
 
     if (!m_isHardwareAccelerated)
         return true;

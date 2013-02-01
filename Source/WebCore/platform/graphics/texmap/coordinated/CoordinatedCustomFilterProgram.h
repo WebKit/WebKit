@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCustomFilterProgram_h
-#define WebCustomFilterProgram_h
+#ifndef CoordinatedCustomFilterProgram_h
+#define CoordinatedCustomFilterProgram_h
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(CSS_SHADERS)
-#include <WebCore/CustomFilterConstants.h>
-#include <WebCore/CustomFilterProgram.h>
+#include "CustomFilterConstants.h"
+#include "CustomFilterProgram.h"
 
-namespace WebKit {
+namespace WebCore {
 
-class WebCustomFilterProgram : public WebCore::CustomFilterProgram {
+class CoordinatedCustomFilterProgram : public CustomFilterProgram {
 public:
-    static PassRefPtr<WebCustomFilterProgram> create(String vertexShaderString, String m_fragmentShaderString, WebCore::CustomFilterProgramType programType, WebCore::CustomFilterProgramMixSettings mixSettings, WebCore::CustomFilterMeshType meshType)
+    static PassRefPtr<CoordinatedCustomFilterProgram> create(String vertexShaderString, String m_fragmentShaderString, CustomFilterProgramType programType, CustomFilterProgramMixSettings mixSettings, CustomFilterMeshType meshType)
     {
-        return adoptRef(new WebCustomFilterProgram(vertexShaderString, m_fragmentShaderString, programType, mixSettings, meshType));
+        return adoptRef(new CoordinatedCustomFilterProgram(vertexShaderString, m_fragmentShaderString, programType, mixSettings, meshType));
     }
 
     virtual bool isLoaded() const OVERRIDE { return true; }
@@ -47,8 +47,8 @@ public:
         if (!CustomFilterProgram::operator==(o))
             return false;
 
-        // The following cast is ugly, but WebCustomFilterProgram is the single implementation of CustomFilterProgram on UI Process.
-        const WebCustomFilterProgram* other = static_cast<const WebCustomFilterProgram*>(&o);
+        // The following cast is ugly, but CoordinatedCustomFilterProgram is the single implementation of CustomFilterProgram on UI Process.
+        const CoordinatedCustomFilterProgram* other = static_cast<const CoordinatedCustomFilterProgram*>(&o);
         return m_vertexShaderString == other->vertexShaderString() && m_fragmentShaderString == other->fragmentShaderString();
     }
 
@@ -60,8 +60,8 @@ protected:
     virtual void didRemoveLastClient() OVERRIDE { }
 
 private:
-    WebCustomFilterProgram(String vertexShaderString, String fragmentShaderString, WebCore::CustomFilterProgramType programType, WebCore::CustomFilterProgramMixSettings mixSettings, WebCore::CustomFilterMeshType meshType)
-        : WebCore::CustomFilterProgram(programType, mixSettings, meshType)
+    CoordinatedCustomFilterProgram(String vertexShaderString, String fragmentShaderString, CustomFilterProgramType programType, CustomFilterProgramMixSettings mixSettings, CustomFilterMeshType meshType)
+        : CustomFilterProgram(programType, mixSettings, meshType)
         , m_vertexShaderString(vertexShaderString)
         , m_fragmentShaderString(fragmentShaderString)
     {
@@ -71,8 +71,8 @@ private:
     String m_fragmentShaderString;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS) && ENABLE(CSS_SHADERS)
 
-#endif // WebCustomFilterProgram_h
+#endif // CoordinatedCustomFilterProgram_h

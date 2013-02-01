@@ -31,11 +31,9 @@
 #include "CoordinatedLayerTreeHost.h"
 
 #include "CoordinatedGraphicsArgumentCoders.h"
-#include "CoordinatedGraphicsLayer.h"
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #include "DrawingAreaImpl.h"
 #include "GraphicsContext.h"
-#include "SurfaceUpdateInfo.h"
 #include "WebCoordinatedSurface.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -49,6 +47,7 @@
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SurfaceUpdateInfo.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <wtf/TemporaryChange.h>
 
@@ -710,13 +709,13 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
     return true;
 }
 
-void CoordinatedLayerTreeHost::createTile(CoordinatedLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void CoordinatedLayerTreeHost::createTile(CoordinatedLayerID layerID, uint32_t tileID, const WebCore::SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateTileForLayer(layerID, tileID, tileRect, updateInfo));
 }
 
-void CoordinatedLayerTreeHost::updateTile(CoordinatedLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void CoordinatedLayerTreeHost::updateTile(CoordinatedLayerID layerID, uint32_t tileID, const WebCore::SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::UpdateTileForLayer(layerID, tileID, tileRect, updateInfo));

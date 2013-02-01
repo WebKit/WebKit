@@ -30,9 +30,7 @@
 
 #include "GraphicsContext.h"
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(Image* image)
 {
@@ -156,10 +154,10 @@ void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
     }
 }
 
-void CoordinatedImageBacking::clearContentsTimerFired(WebCore::Timer<CoordinatedImageBacking>*)
+void CoordinatedImageBacking::clearContentsTimerFired(Timer<CoordinatedImageBacking>*)
 {
     m_coordinator->clearImageBackingContents(id());
 }
 
-}
+} // namespace WebCore
 #endif

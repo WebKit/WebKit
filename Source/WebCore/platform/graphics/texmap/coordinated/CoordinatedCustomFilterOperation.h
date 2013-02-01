@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WebCustomFilterOperation_h
-#define WebCustomFilterOperation_h
+#ifndef CoordinatedCustomFilterOperation_h
+#define CoordinatedCustomFilterOperation_h
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterOperation.h"
@@ -40,17 +40,17 @@ namespace WebCore {
 // it will just store the programId and no CustomFilterProgram instance. The receiver is supposed to
 // iterate on this structure and inject the right CustomFilterPrograms.
 
-class WebCustomFilterOperation : public CustomFilterOperation {
+class CoordinatedCustomFilterOperation : public CustomFilterOperation {
 public:
-    static PassRefPtr<WebCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
+    static PassRefPtr<CoordinatedCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
     {
-        return adoptRef(new WebCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns, meshType));
+        return adoptRef(new CoordinatedCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns, meshType));
     }
 
     int programID() const { return m_programID; }
 
 private:
-    WebCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
+    CoordinatedCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
         : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshType)
         , m_programID(programID)
     {
@@ -63,4 +63,4 @@ private:
 
 #endif // ENABLE(CSS_SHADERS)
 
-#endif // CustomFilterOperation_h
+#endif // CoordinatedCustomFilterOperation_h

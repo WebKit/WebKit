@@ -135,11 +135,7 @@ HEADERS += \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h \
-    Shared/CoordinatedGraphics/CoordinatedLayerInfo.h \
-    Shared/CoordinatedGraphics/CoordinatedSurface.h \
-    Shared/CoordinatedGraphics/SurfaceUpdateInfo.h \
     Shared/CoordinatedGraphics/WebCoordinatedSurface.h \
-    Shared/CoordinatedGraphics/WebCustomFilterProgram.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
     Shared/Plugins/NPRemoteObjectMap.h \
     Shared/Plugins/NPIdentifierData.h \
@@ -210,9 +206,7 @@ HEADERS += \
     UIProcess/Authentication/WebProtectionSpace.h \
     UIProcess/BackingStore.h \
     UIProcess/Downloads/DownloadProxy.h \
-    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h \
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h \
-    UIProcess/CoordinatedGraphics/LayerTreeRenderer.h \
     UIProcess/DefaultUndoController.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/DrawingAreaProxyImpl.h \
@@ -363,12 +357,7 @@ HEADERS += \
     WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/EventDispatcher.h \
     WebProcess/WebPage/FindController.h \
-    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h \
-    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h \
     WebProcess/WebPage/TapHighlightController.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
@@ -503,7 +492,6 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp \
-    Shared/CoordinatedGraphics/CoordinatedSurface.cpp \
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp \
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp \
     Shared/qt/ArgumentCodersQt.cpp \
@@ -565,9 +553,7 @@ SOURCES += \
     UIProcess/Authentication/WebProtectionSpace.cpp \
     UIProcess/BackingStore.cpp \
     UIProcess/qt/BackingStoreQt.cpp \
-    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp \
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp \
-    UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp \
     UIProcess/DefaultUndoController.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/Downloads/DownloadProxyMap.cpp \
@@ -744,12 +730,7 @@ SOURCES += \
     WebProcess/WebPage/EncoderAdapter.cpp \
     WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \

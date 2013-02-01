@@ -26,12 +26,10 @@
 #include "IntSize.h"
 
 #if USE(COORDINATED_GRAPHICS)
+
 namespace WebCore {
 class GraphicsContext;
 class IntPoint;
-}
-
-namespace WebKit {
 
 class UpdateAtlasClient {
 public:
@@ -45,10 +43,10 @@ public:
     UpdateAtlas(UpdateAtlasClient*, int dimension, CoordinatedSurface::Flags);
     ~UpdateAtlas();
 
-    inline WebCore::IntSize size() const { return m_surface->size(); }
+    inline IntSize size() const { return m_surface->size(); }
 
     // Returns a null pointer of there is no available buffer.
-    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(uint32_t& atlasID, const WebCore::IntSize&, WebCore::IntPoint& offset);
+    PassOwnPtr<GraphicsContext> beginPaintingOnAvailableBuffer(uint32_t& atlasID, const IntSize&, IntPoint& offset);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
@@ -75,6 +73,6 @@ private:
     uint32_t m_ID;
 };
 
-}
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)
 #endif // UpdateAtlas_h

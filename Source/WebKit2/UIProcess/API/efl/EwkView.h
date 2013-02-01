@@ -68,10 +68,6 @@ class WebPopupMenuProxyEfl;
 #if ENABLE(VIBRATION)
 class VibrationClientEfl;
 #endif
-
-#if USE(COORDINATED_GRAPHICS)
-class LayerTreeRenderer;
-#endif
 }
 
 namespace WebCore {
@@ -79,6 +75,9 @@ class AffineTransform;
 class Color;
 class Cursor;
 class IntSize;
+#if USE(COORDINATED_GRAPHICS)
+class CoordinatedGraphicsScene;
+#endif
 }
 
 class EwkContext;
@@ -219,7 +218,7 @@ private:
     void displayTimerFired(WebCore::Timer<EwkView>*);
 
 #if USE(COORDINATED_GRAPHICS)
-    WebKit::LayerTreeRenderer* layerTreeRenderer();
+    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
 #endif
 
     void informIconChange();

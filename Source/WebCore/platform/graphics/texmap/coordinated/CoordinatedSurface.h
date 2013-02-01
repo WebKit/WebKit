@@ -30,9 +30,6 @@
 namespace WebCore {
 class BitmapTexture;
 class GraphicsContext;
-}
-
-namespace WebKit {
 
 class CoordinatedSurface : public ThreadSafeRefCounted<CoordinatedSurface> {
 public:
@@ -42,20 +39,20 @@ public:
     };
     typedef unsigned Flags;
 
-    typedef PassRefPtr<CoordinatedSurface> Factory(const WebCore::IntSize&, Flags);
+    typedef PassRefPtr<CoordinatedSurface> Factory(const IntSize&, Flags);
     static void setFactory(Factory);
-    static PassRefPtr<CoordinatedSurface> create(const WebCore::IntSize&, Flags);
+    static PassRefPtr<CoordinatedSurface> create(const IntSize&, Flags);
 
     virtual ~CoordinatedSurface() { }
 
     bool supportsAlpha() const { return flags() & SupportsAlpha; }
-    virtual WebCore::IntSize size() const = 0;
+    virtual IntSize size() const = 0;
 
     // Create a graphics context that can be used to paint into the backing store.
-    virtual PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&) = 0;
+    virtual PassOwnPtr<GraphicsContext> createGraphicsContext(const IntRect&) = 0;
 
 #if USE(TEXTURE_MAPPER)
-    virtual void copyToTexture(PassRefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset) = 0;
+    virtual void copyToTexture(PassRefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) = 0;
 #endif
 
 protected:
@@ -65,7 +62,7 @@ private:
     static CoordinatedSurface::Factory* s_factory;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif
+#endif // USE(COORDINATED_GRAPHICS)
 #endif // CoordinatedSurface_h

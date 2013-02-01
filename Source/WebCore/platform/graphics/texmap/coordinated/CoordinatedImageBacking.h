@@ -31,11 +31,11 @@
 #include "CoordinatedLayerInfo.h"
 #include "CoordinatedSurface.h"
 #include "Image.h"
-#include <WebCore/Timer.h>
+#include "Timer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace WebKit {
+namespace WebCore {
 
 class CoordinatedImageBacking : public RefCounted<CoordinatedImageBacking> {
 public:
@@ -52,10 +52,10 @@ public:
         virtual bool imageBackingVisible() = 0;
     };
 
-    static PassRefPtr<CoordinatedImageBacking> create(Coordinator*, PassRefPtr<WebCore::Image>);
+    static PassRefPtr<CoordinatedImageBacking> create(Coordinator*, PassRefPtr<Image>);
     virtual ~CoordinatedImageBacking();
 
-    static CoordinatedImageBackingID getCoordinatedImageBackingID(WebCore::Image*);
+    static CoordinatedImageBackingID getCoordinatedImageBackingID(Image*);
     CoordinatedImageBackingID id() const { return m_id; }
 
     void addHost(Host*);
@@ -68,28 +68,28 @@ public:
     void update();
 
 private:
-    CoordinatedImageBacking(Coordinator*, PassRefPtr<WebCore::Image>);
+    CoordinatedImageBacking(Coordinator*, PassRefPtr<Image>);
 
     void releaseSurfaceIfNeeded();
     void updateVisibilityIfNeeded(bool& changedToVisible);
-    void clearContentsTimerFired(WebCore::Timer<CoordinatedImageBacking>*);
+    void clearContentsTimerFired(Timer<CoordinatedImageBacking>*);
 
     Coordinator* m_coordinator;
-    RefPtr<WebCore::Image> m_image;
-    WebCore::NativeImagePtr m_nativeImagePtr;
+    RefPtr<Image> m_image;
+    NativeImagePtr m_nativeImagePtr;
     CoordinatedImageBackingID m_id;
     Vector<Host*> m_hosts;
 
     RefPtr<CoordinatedSurface> m_surface;
 
-    WebCore::Timer<CoordinatedImageBacking> m_clearContentsTimer;
+    Timer<CoordinatedImageBacking> m_clearContentsTimer;
 
     bool m_isDirty;
     bool m_isVisible;
 
 };
 
-}
-#endif
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)
 
-#endif // CoordinatedImageBacking_H
+#endif // CoordinatedImageBacking_h

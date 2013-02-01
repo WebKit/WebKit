@@ -28,7 +28,7 @@
 #include "IntRect.h"
 #include "TransformationMatrix.h"
 
-namespace WebKit {
+namespace WebCore {
 
 typedef uint32_t CoordinatedLayerID;
 enum { InvalidCoordinatedLayerID = 0 };
@@ -50,15 +50,15 @@ struct CoordinatedLayerInfo {
     CoordinatedLayerID mask;
     CoordinatedImageBackingID imageID;
 
-    WebCore::FloatPoint pos;
-    WebCore::FloatPoint3D anchorPoint;
-    WebCore::FloatSize size;
-    WebCore::TransformationMatrix transform;
-    WebCore::TransformationMatrix childrenTransform;
-    WebCore::IntRect contentsRect;
+    FloatPoint pos;
+    FloatPoint3D anchorPoint;
+    FloatSize size;
+    TransformationMatrix transform;
+    TransformationMatrix childrenTransform;
+    IntRect contentsRect;
     float opacity;
-    WebCore::Color solidColor;
-    WebCore::Color debugBorderColor;
+    Color solidColor;
+    Color debugBorderColor;
     float debugBorderWidth;
 
     union {
@@ -78,7 +78,7 @@ struct CoordinatedLayerInfo {
     };
 };
 
-}
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
 
