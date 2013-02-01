@@ -99,7 +99,7 @@ unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
 
 bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef animationName, WKStringRef elementID, double time)
 {
-    return toImpl(frameRef)->pauseAnimationOnElementWithId(toWTFString(animationName), toWTFString(elementID), time);
+    return toImpl(frameRef)->pauseAnimationOnElementWithId(AtomicString(toWTFString(animationName)), toWTFString(elementID), time);
 }
 
 bool WKBundleFramePauseTransitionOnElementWithId(WKBundleFrameRef frameRef, WKStringRef propertyName, WKStringRef elementID, double time)

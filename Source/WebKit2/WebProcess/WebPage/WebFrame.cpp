@@ -430,7 +430,7 @@ unsigned WebFrame::numberOfActiveAnimations() const
     return controller->numberOfActiveAnimations(m_coreFrame->document());
 }
 
-bool WebFrame::pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time)
+bool WebFrame::pauseAnimationOnElementWithId(const AtomicString& animationName, const String& elementID, double time)
 {
     if (!m_coreFrame)
         return false;

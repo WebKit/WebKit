@@ -87,7 +87,7 @@ public:
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
 
-    bool pauseAnimationAtTime(RenderObject*, const String& name, double t);
+    bool pauseAnimationAtTime(RenderObject*, const AtomicString& name, double t);
     bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
     unsigned numberOfActiveAnimations(Document*) const;
 

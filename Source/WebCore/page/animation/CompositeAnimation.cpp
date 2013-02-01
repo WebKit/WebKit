@@ -478,9 +478,6 @@ bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool accele
 
 bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t)
 {
-    if (!name)
-        return false;
-
     m_keyframeAnimations.checkConsistency();
 
     RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name.impl());

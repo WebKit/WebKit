@@ -320,7 +320,7 @@ void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
     updateAnimationTimer();
 }
 
-bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, const String& name, double t)
+bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, const AtomicString& name, double t)
 {
     if (!renderer)
         return false;
@@ -561,7 +561,7 @@ void AnimationController::notifyAnimationStarted(RenderObject*, double startTime
     m_data->receivedStartTimeResponse(startTime);
 }
 
-bool AnimationController::pauseAnimationAtTime(RenderObject* renderer, const String& name, double t)
+bool AnimationController::pauseAnimationAtTime(RenderObject* renderer, const AtomicString& name, double t)
 {
     return m_data->pauseAnimationAtTime(renderer, name, t);
 }

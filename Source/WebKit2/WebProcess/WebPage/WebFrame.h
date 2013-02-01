@@ -116,7 +116,7 @@ public:
     static String markerText(JSObjectRef element);
 
     unsigned numberOfActiveAnimations() const;
-    bool pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time);
+    bool pauseAnimationOnElementWithId(const AtomicString& animationName, const String& elementID, double time);
     bool pauseTransitionOnElementWithId(const String& propertyName, const String& elementID, double time);
     void suspendAnimations();
     void resumeAnimations();

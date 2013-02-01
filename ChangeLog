@@ -1,3 +1,12 @@
+2013-02-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Clean the String->AtomicString conversion for AnimationController::pauseAnimationAtTime
+        https://bugs.webkit.org/show_bug.cgi?id=108558
+
+        Reviewed by Dean Jackson.
+
+        * Source/autotools/symbols.filter:
+
 2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WTFURL source files to the build
