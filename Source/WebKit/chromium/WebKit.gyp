@@ -782,6 +782,19 @@
                         }],
                     ],
                 }],
+                ['enable_web_intents==0', {
+                  'sources!': [
+                    'public/WebDeliveredIntentClient.h',
+                    'public/WebIntent.h',
+                    'public/WebIntentRequest.h',
+                    'public/WebIntentServiceInfo.h',
+                    'src/DeliveredIntentClientImpl.cpp',
+                    'src/DeliveredIntentClientImpl.h',
+                    'src/WebIntent.cpp',
+                    'src/WebIntentRequest.cpp',
+                    'src/WebIntentServiceInfo.cpp',
+                  ],
+                }],
                 ['use_default_render_theme==1', {
                     'include_dirs': [
                         'public/default',

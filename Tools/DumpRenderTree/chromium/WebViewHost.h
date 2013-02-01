@@ -125,8 +125,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebURL rewriteLayoutTestsURL(const std::string&) OVERRIDE;
     virtual WebTestRunner::WebPreferences* preferences() OVERRIDE;
     virtual void applyPreferences() OVERRIDE;
+#if ENABLE(WEB_INTENTS)
     virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) OVERRIDE;
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() OVERRIDE;
+#endif
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) OVERRIDE;
     virtual std::string normalizeLayoutTestURL(const std::string&) OVERRIDE;
     virtual void setClientWindowRect(const WebKit::WebRect&) OVERRIDE;
@@ -390,8 +392,10 @@ private:
     } m_pointerLockPlannedResult;
 #endif
 
+#if ENABLE(WEB_INTENTS)
     // For web intents: holds the current request, if any.
     WebKit::WebIntentRequest m_currentRequest;
+#endif
 
     OwnPtr<WebKit::WebLayerTreeView> m_layerTreeView;
 };

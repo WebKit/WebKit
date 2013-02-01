@@ -274,9 +274,11 @@ TestRunner::TestRunner()
     bindMethod("setWillSendRequestReturnsNull", &TestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &TestRunner::setWillSendRequestReturnsNullOnRedirect);
 
+#if ENABLE(WEB_INTENTS)
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
     bindMethod("deliverWebIntent", &TestRunner::deliverWebIntent);
+#endif
 
     // The following methods interact with the WebTestDelegate.
     bindMethod("showWebInspector", &TestRunner::showWebInspector);
