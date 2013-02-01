@@ -1,3 +1,14 @@
+2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
+
+        Editor::m_compositionNode not updated on HTMLInputElement::setValue()
+        https://bugs.webkit.org/show_bug.cgi?id=107737
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::respondToChangedSelection):
+            Adding a call to the newly refactored method.
+
 2013-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141479.

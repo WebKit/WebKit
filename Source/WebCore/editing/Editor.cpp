@@ -1343,6 +1343,17 @@ void Editor::cancelComposition()
     setComposition(emptyString(), CancelComposition);
 }
 
+bool Editor::cancelCompositionIfSelectionIsInvalid()
+{
+    unsigned start;
+    unsigned end;
+    if (!hasComposition() || ignoreCompositionSelectionChange() || getCompositionSelection(start, end))
+        return false;
+
+    cancelComposition();
+    return true;
+}
+
 void Editor::confirmComposition(const String& text)
 {
     setComposition(text, ConfirmComposition);
