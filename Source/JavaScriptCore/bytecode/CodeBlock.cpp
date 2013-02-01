@@ -1820,9 +1820,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (size_t size = unlinkedCodeBlock->numberOfResolveOperations())
         m_resolveOperations.grow(size);
     size_t putToBaseCount = unlinkedCodeBlock->numberOfPutToBaseOperations();
-    m_putToBaseOperations.reserveInitialCapacity(putToBaseCount);
+    m_putToBaseOperations.reserveCapacity(putToBaseCount);
     for (size_t i = 0; i < putToBaseCount; ++i)
-        m_putToBaseOperations.uncheckedAppend(PutToBaseOperation(isStrictMode()));
+        m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
+
+    ASSERT(m_putToBaseOperations.capacity() == putToBaseCount);
 
     // Copy and translate the UnlinkedInstructions
     size_t instructionCount = unlinkedCodeBlock->instructions().size();

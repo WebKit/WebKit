@@ -237,15 +237,6 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 namespace WTF {
 
-size_t fastMallocGoodSize(size_t bytes)
-{
-#if OS(DARWIN)
-    return malloc_good_size(bytes);
-#else
-    return bytes;
-#endif
-}
-
 TryMallocReturnValue tryFastMalloc(size_t n) 
 {
     ASSERT(!isForbidden());
@@ -1034,11 +1025,6 @@ static size_t AllocationSize(size_t bytes) {
     // Small object: find the size class to which it belongs
     return ByteSizeForClass(SizeClass(bytes));
   }
-}
-
-size_t fastMallocGoodSize(size_t bytes)
-{
-    return AllocationSize(bytes);
 }
 
 // Information kept for a span (a contiguous run of pages).

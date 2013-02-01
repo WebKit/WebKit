@@ -1,3 +1,11 @@
+2013-01-31  Jessie Berlin  <jberlin@apple.com>
+
+        Rolling out r141407 because it is causing crashes under
+        WTF::TCMalloc_Central_FreeList::FetchFromSpans() in Release builds.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
 2013-01-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: JSContext exception property causes reference cycle
