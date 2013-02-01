@@ -2137,7 +2137,9 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             VisibleSelection selectionToReplace(rangeToReplace.get(), DOWNSTREAM);
 
             // adding links should be done only immediately after they are typed
-            if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
+            int resultEnd = resultLocation + resultLength;
+            if (result->type == TextCheckingTypeLink
+                && (selectionOffset > resultEnd + 1 || selectionOffset <= resultLocation))
                 continue;
 
             if (!(shouldPerformReplacement || shouldCheckForCorrection || shouldMarkLink) || !doReplacement)

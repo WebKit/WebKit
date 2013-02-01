@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<textarea id="editor" cols="50" rows="5">
+</textarea>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setAutomaticLinkDetectionEnabled(true);
+}
+
+description('This test demonstrates that smart link doesn\'t erroneously trigger when the user moves the caret immediately before an URL.');
+
+debug('To manually run this test, disable "Check Spelling While Typing" and enable "Smart Link". The caret should be shown immediately after "zz" below:');
+debug('');
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('InsertText', false, 'http://webkit.org/');
+getSelection().modify('move', 'backward', 'lineBoundary');
+document.execCommand('InsertText', false, 'zz');
+document.execCommand('InsertText', false, ' ');
+
+shouldBe('editor.selectionStart', '3');
+shouldBe('editor.selectionEnd', '3');
+
+editor.style.display = 'none';
+
+</script>
+</body>
+</html>
