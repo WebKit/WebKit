@@ -1,3 +1,10 @@
+2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r180131.  Requested by
+        "Florin Malita" <fmalita@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-01  Alexis Menard  <alexis@webkit.org>
 
         Enable unprefixed CSS transitions by default.
