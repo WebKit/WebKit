@@ -166,7 +166,7 @@ static String selectMisspellingAsync(Frame* selectedFrame, Vector<DocumentMarker
         selectionRange = selection.toNormalizedRange();
     }
 
-    if (!WebCore::areRangesEqual(markerRange.get(), selectionRange.get()))
+    if (markerRange->text().stripWhiteSpace() != selectionRange->text().stripWhiteSpace())
         return String();
 
     return markerRange->text();
