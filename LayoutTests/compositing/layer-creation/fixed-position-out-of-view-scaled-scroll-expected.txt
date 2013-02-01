@@ -4,6 +4,7 @@ Not scaled:
   (children 1
     (GraphicsLayer
       (bounds 785.00 1016.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position 600.00 100.00)
@@ -24,6 +25,7 @@ Scale=0.5:
     (GraphicsLayer
       (anchor 0.00 0.00)
       (bounds 800.00 1016.00)
+      (contentsOpaque 1)
       (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 4
         (GraphicsLayer
@@ -52,6 +54,7 @@ Scale=1.5:
     (GraphicsLayer
       (anchor 0.00 0.00)
       (bounds 848.00 1016.00)
+      (contentsOpaque 1)
       (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 1
         (GraphicsLayer

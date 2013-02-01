@@ -5,6 +5,7 @@ Test CSS clip with composited layers. Left and right sides should look the same.
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position 25.00 35.00)

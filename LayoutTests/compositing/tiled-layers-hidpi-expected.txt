@@ -3,6 +3,7 @@
   (children 1
     (GraphicsLayer
       (bounds 1808.00 585.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)

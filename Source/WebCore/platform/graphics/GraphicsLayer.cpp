@@ -610,6 +610,11 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(usingTiledLayer " << m_usingTiledLayer << ")\n";
     }
 
+    if (m_contentsOpaque) {
+        writeIndent(ts, indent + 1);
+        ts << "(contentsOpaque " << m_contentsOpaque << ")\n";
+    }
+
     if (m_preserves3D) {
         writeIndent(ts, indent + 1);
         ts << "(preserves3D " << m_preserves3D << ")\n";

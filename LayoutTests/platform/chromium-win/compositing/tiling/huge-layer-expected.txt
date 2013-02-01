@@ -5,6 +5,7 @@ The yellow box should be large enough to scroll off the bottom. There should be 
   (children 1
     (GraphicsLayer
       (bounds 785.00 5116.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 72.00)

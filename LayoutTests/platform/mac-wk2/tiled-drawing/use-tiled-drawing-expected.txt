@@ -4,6 +4,7 @@
   (children 1
     (GraphicsLayer
       (bounds 1208.00 2021.00)
+      (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
       (visible rect 0.00, 0.00 785.00 x 585.00)

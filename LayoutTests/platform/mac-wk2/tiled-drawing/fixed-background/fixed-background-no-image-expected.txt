@@ -3,6 +3,7 @@
   (children 1
     (GraphicsLayer
       (bounds 785.00 1700.00)
+      (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
       (tile cache coverage 0, 0 785 x 1700)

@@ -8,6 +8,7 @@ Initial
   (children 1
     (GraphicsLayer
       (bounds 785.00 622.00)
+      (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -54,6 +55,7 @@ After step 1
   (children 1
     (GraphicsLayer
       (bounds 785.00 1301.00)
+      (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -99,6 +101,7 @@ After step 2
   (children 1
     (GraphicsLayer
       (bounds 785.00 1965.00)
+      (contentsOpaque 1)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)

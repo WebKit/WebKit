@@ -10,6 +10,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 4
         (GraphicsLayer
           (position 8.00 50.00)

@@ -18,6 +18,7 @@
       (bounds 812.00 600.00)
       (opacity 1.00)
       (usingTiledLayer 0)
+      (contentsOpaque 1)
       (preserves3D 0)
       (drawsContent 0)
       (backfaceVisibility visible)

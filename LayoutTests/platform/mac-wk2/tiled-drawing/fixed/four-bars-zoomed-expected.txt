@@ -28,6 +28,7 @@
     (GraphicsLayer
       (anchor 0.00 0.00)
       (bounds 785.00 2221.00)
+      (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])

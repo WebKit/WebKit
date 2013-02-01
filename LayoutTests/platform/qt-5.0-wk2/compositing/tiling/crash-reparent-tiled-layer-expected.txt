@@ -5,6 +5,7 @@ From https://bugs.webkit.org/show_bug.cgi?id=44629. The parent is a tiled layer.
   (children 1
     (GraphicsLayer
       (bounds 785.00 5113.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 70.00)

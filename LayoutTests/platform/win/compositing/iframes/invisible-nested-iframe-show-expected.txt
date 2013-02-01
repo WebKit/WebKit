@@ -5,6 +5,7 @@
     (GraphicsLayer
       (position -12.00 -12.00)
       (bounds 812.00 612.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 30.00 214.00)

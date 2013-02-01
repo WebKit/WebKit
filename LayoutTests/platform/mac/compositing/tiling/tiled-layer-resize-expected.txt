@@ -4,6 +4,7 @@ Tiled layer
   (children 1
     (GraphicsLayer
       (bounds 808.00 2121.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
