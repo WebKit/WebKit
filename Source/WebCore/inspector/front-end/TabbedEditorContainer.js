@@ -460,6 +460,7 @@ WebInspector.TabbedEditorContainer.HistoryItem.prototype = {
 WebInspector.TabbedEditorContainer.History = function(items)
 {
     this._items = items;
+    this._rebuildItemIndex();
 }
 
 /**
@@ -481,11 +482,17 @@ WebInspector.TabbedEditorContainer.History.prototype = {
      */
     index: function(url)
     {
-        for (var i = 0; i < this._items.length; ++i) {
-            if (this._items[i].url === url)
-                return i;
-        }
+        var index = this._itemsIndex[url];
+        if (typeof index === "number")
+            return index;
         return -1;
+    },
+
+    _rebuildItemIndex: function()
+    {
+        this._itemsIndex = {};
+        for (var i = 0; i < this._items.length; ++i)
+            this._itemsIndex[this._items[i].url] = i;
     },
 
     /**
@@ -548,6 +555,7 @@ WebInspector.TabbedEditorContainer.History.prototype = {
             } else
                 item = new WebInspector.TabbedEditorContainer.HistoryItem(urls[i]);
             this._items.unshift(item);
+            this._rebuildItemIndex();
         }
     },
 
@@ -557,8 +565,10 @@ WebInspector.TabbedEditorContainer.History.prototype = {
     remove: function(url)
     {
         var index = this.index(url);
-        if (index !== -1)
+        if (index !== -1) {
             this._items.splice(index, 1);
+            this._rebuildItemIndex();
+        }
     },
     
     /**
