@@ -293,7 +293,10 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
-    return m_client->runBeforeUnloadConfirmPanel(message, frame);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, message);
+    bool ok = m_client->runBeforeUnloadConfirmPanel(message, frame);
+    InspectorInstrumentation::didRunJavaScriptDialog(cookie);
+    return ok;
 }
 
 void Chrome::closeWindowSoon()
@@ -312,7 +315,11 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 
     ASSERT(frame);
     notifyPopupOpeningObservers();
-    m_client->runJavaScriptAlert(frame, frame->displayStringModifiedByEncoding(message));
+    String displayMessage = frame->displayStringModifiedByEncoding(message);
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayMessage);
+    m_client->runJavaScriptAlert(frame, displayMessage);
+    InspectorInstrumentation::didRunJavaScriptDialog(cookie);
 }
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
@@ -326,7 +333,12 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
     ASSERT(frame);
     notifyPopupOpeningObservers();
-    return m_client->runJavaScriptConfirm(frame, frame->displayStringModifiedByEncoding(message));
+    String displayMessage = frame->displayStringModifiedByEncoding(message);
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayMessage);
+    bool ok = m_client->runJavaScriptConfirm(frame, displayMessage);
+    InspectorInstrumentation::didRunJavaScriptDialog(cookie);
+    return ok;
 }
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
@@ -340,7 +352,11 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
 
     ASSERT(frame);
     notifyPopupOpeningObservers();
-    bool ok = m_client->runJavaScriptPrompt(frame, frame->displayStringModifiedByEncoding(prompt), frame->displayStringModifiedByEncoding(defaultValue), result);
+    String displayPrompt = frame->displayStringModifiedByEncoding(prompt);
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayPrompt);
+    bool ok = m_client->runJavaScriptPrompt(frame, displayPrompt, frame->displayStringModifiedByEncoding(defaultValue), result);
+    InspectorInstrumentation::didRunJavaScriptDialog(cookie);
 
     if (ok)
         result = frame->displayStringModifiedByEncoding(result);

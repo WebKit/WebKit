@@ -211,6 +211,13 @@ bool InspectorClientImpl::captureScreenshot(String* data)
     return false;
 }
 
+bool InspectorClientImpl::handleJavaScriptDialog(bool accept)
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        return agent->handleJavaScriptDialog(accept);
+    return false;
+}
+
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
 {
     return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());

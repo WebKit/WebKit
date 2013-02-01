@@ -89,6 +89,8 @@ public:
 
     virtual bool captureScreenshot(WTF::String* data);
 
+    virtual bool handleJavaScriptDialog(bool accept);
+
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 

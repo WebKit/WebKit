@@ -1,0 +1,43 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+window.addEventListener("beforeunload", onBeforeUnload);
+
+function onBeforeUnload()
+{
+    return "beforeunload";
+}
+
+function test()
+{
+    InspectorTest.eventHandler["Page.javascriptDialogOpening"] = onOpening;
+    InspectorTest.eventHandler["Page.javascriptDialogClosed"] = onClosed;
+    InspectorTest.sendCommand("Page.enable", {});
+
+    function onOpening(event)
+    {
+        InspectorTest.log("Opening with message: " + event.params.message);
+    }
+    function onClosed()
+    {
+        InspectorTest.log("Closed");
+    }
+
+    InspectorTest.sendCommand("Page.navigate", { "url": "nosuchurl" });
+    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "alert('alert')" });
+    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "confirm('confirm')" });
+    InspectorTest.sendCommand("Runtime.evaluate", { "expression": "prompt('prompt')" }, onDone);
+
+    function onDone()
+    {
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

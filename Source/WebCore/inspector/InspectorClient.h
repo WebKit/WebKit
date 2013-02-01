@@ -86,6 +86,8 @@ public:
 
     virtual bool captureScreenshot(String*) { return false; }
 
+    virtual bool handleJavaScriptDialog(bool) { return false; }
+
     static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 

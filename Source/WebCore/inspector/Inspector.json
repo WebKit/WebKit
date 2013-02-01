@@ -480,6 +480,14 @@
                     { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
                 ],
                 "hidden": true
+            },
+            {
+                "name": "handleJavaScriptDialog",
+                "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
+                "parameters": [
+                    { "name": "accept", "type": "boolean", "description": "Whether to accept or dismiss the dialog." }
+                ],
+                "hidden": true
             }
         ],
         "events": [
@@ -542,6 +550,19 @@
                 "parameters": [
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
                 ],
+                "hidden": true
+            },
+            {
+                "name": "javascriptDialogOpening",
+                "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.",
+                "parameters": [
+                    { "name": "message", "type": "string", "description": "Message that will be displayed by the dialog." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "javascriptDialogClosed",
+                "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.",
                 "hidden": true
             }
         ]

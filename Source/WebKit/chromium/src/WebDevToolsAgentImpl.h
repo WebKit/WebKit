@@ -113,6 +113,8 @@ public:
 
     virtual bool captureScreenshot(WTF::String* data);
 
+    virtual bool handleJavaScriptDialog(bool accept);
+
     int hostId() { return m_hostId; }
 
     // WebPageOverlay

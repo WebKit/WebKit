@@ -215,6 +215,8 @@ public:
     static void frameStoppedLoading(Frame*);
     static void frameScheduledNavigation(Frame*, double delay);
     static void frameClearedScheduledNavigation(Frame*);
+    static InspectorInstrumentationCookie willRunJavaScriptDialog(Page*, const String& message);
+    static void didRunJavaScriptDialog(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResource(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
@@ -418,6 +420,8 @@ private:
     static void frameStoppedLoadingImpl(InstrumentingAgents*, Frame*);
     static void frameScheduledNavigationImpl(InstrumentingAgents*, Frame*, double delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents*, Frame*);
+    static InspectorInstrumentationCookie willRunJavaScriptDialogImpl(InstrumentingAgents*, const String& message);
+    static void didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResourceImpl(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine, Frame*);
@@ -1709,6 +1713,30 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame* fra
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameClearedScheduledNavigationImpl(instrumentingAgents, frame);
+#endif
+}
+
+inline InspectorInstrumentationCookie InspectorInstrumentation::willRunJavaScriptDialog(Page* page, const String& message)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        return willRunJavaScriptDialogImpl(instrumentingAgents, message);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(message);
+#endif
+    return InspectorInstrumentationCookie();
+}
+
+inline void InspectorInstrumentation::didRunJavaScriptDialog(const InspectorInstrumentationCookie& cookie)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (cookie.isValid())
+        didRunJavaScriptDialogImpl(cookie);
+#else
+    UNUSED_PARAM(cookie);
 #endif
 }
 

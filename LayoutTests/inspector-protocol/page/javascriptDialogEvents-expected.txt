@@ -1,0 +1,13 @@
+CONFIRM NAVIGATION: beforeunload
+ALERT: alert
+CONFIRM: confirm
+PROMPT: prompt, default text: 
+Opening with message: beforeunload
+Closed
+Opening with message: alert
+Closed
+Opening with message: confirm
+Closed
+Opening with message: prompt
+Closed
+

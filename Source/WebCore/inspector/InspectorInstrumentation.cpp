@@ -977,6 +977,19 @@ void InspectorInstrumentation::frameClearedScheduledNavigationImpl(Instrumenting
         inspectorPageAgent->frameClearedScheduledNavigation(frame);
 }
 
+InspectorInstrumentationCookie InspectorInstrumentation::willRunJavaScriptDialogImpl(InstrumentingAgents* instrumentingAgents, const String& message)
+{
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+        inspectorPageAgent->willRunJavaScriptDialog(message);
+    return InspectorInstrumentationCookie(instrumentingAgents, 0);
+}
+
+void InspectorInstrumentation::didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie& cookie)
+{
+    if (InspectorPageAgent* inspectorPageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
+        inspectorPageAgent->didRunJavaScriptDialog();
+}
+
 void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource* cachedResource)
 {
     if (!instrumentingAgentsSet)

@@ -1,3 +1,31 @@
+2013-02-01  Ken Kania  <kkania@chromium.org>
+
+        Web Inspector: Add support for handling modal dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=107883
+
+        Reviewed by Pavel Feldman.
+
+        Introduce support for being notified when a JavaScript modal dialog
+        is opening and closing, as well as a new command for accepting or
+        dismissing the dialog.
+
+        * public/WebDevToolsAgent.h:
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::handleJavaScriptDialog):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (BrowserDataHintStringValues):
+        (WebKit::WebDevToolsAgentImpl::captureScreenshot):
+        (WebKit::WebDevToolsAgentImpl::handleJavaScriptDialog):
+        (WebKit):
+        (WebKit::browserHintToString):
+        (WebKit::browserHintFromString):
+        (WebKit::WebDevToolsAgent::patchWithBrowserData):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
 2013-02-01  Dan Alcantara  <dfalcantara@chromium.org>
 
         Touch disambiguation blacklist is not being queried properly

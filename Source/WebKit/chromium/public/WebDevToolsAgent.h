@@ -51,8 +51,10 @@ class WebDevToolsAgent {
 public:
     // Hint for the browser on the data it should prepare for message patching.
     enum BrowserDataHint {
-        BrowserDataHintNone = 0,
-        BrowserDataHintScreenshot = 1,
+        BrowserDataHintNone,
+        BrowserDataHintScreenshot,
+        BrowserDataHintAcceptJavaScriptDialog,
+        BrowserDataHintDismissJavaScriptDialog,
     };
 
     virtual ~WebDevToolsAgent() {}
