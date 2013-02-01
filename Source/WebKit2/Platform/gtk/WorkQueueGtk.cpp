@@ -42,10 +42,6 @@ public:
         , m_cancellable(cancellable)
     {
     }
-    ~EventSource()
-    {
-        m_workQueue->deref();
-    }
 
     void cancel()
     {
@@ -91,7 +87,7 @@ public:
    
 public:
     Function<void()> m_function;
-    WorkQueue* m_workQueue;
+    RefPtr<WorkQueue> m_workQueue;
     GCancellable* m_cancellable;
 };
 
@@ -203,7 +199,6 @@ void WorkQueue::dispatchOnSource(GSource* dispatchSource, const Function<void()>
 
 void WorkQueue::dispatch(const Function<void()>& function)
 {
-    ref();
     GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
     ASSERT(dispatchSource);
     g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
@@ -213,7 +208,6 @@ void WorkQueue::dispatch(const Function<void()>& function)
 
 void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
-    ref();
     GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(delay * 1000)));
     ASSERT(dispatchSource);
 
@@ -222,7 +216,6 @@ void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double dela
 
 void WorkQueue::dispatchOnTermination(WebKit::PlatformProcessIdentifier process, const Function<void()>& function)
 {
-    ref();
     GRefPtr<GSource> dispatchSource = adoptGRef(g_child_watch_source_new(process));
     ASSERT(dispatchSource);
 

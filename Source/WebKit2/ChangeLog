@@ -1,3 +1,17 @@
+2013-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Adapt WorkQueueGtk to the latest changes in WebKit2 after r141497
+        https://bugs.webkit.org/show_bug.cgi?id=108607
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::executeEventSource): Remove the is valid
+        work queue check.
+        (WorkQueue::EventSource): WorkQueue is now refcounted, so keep a
+        reference when a new job is scheduled and unref it when it
+        finishes.
+
 2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141319.
