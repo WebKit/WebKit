@@ -5481,11 +5481,15 @@ void WebView::resetIME(Frame* targetFrame)
 void WebView::updateSelectionForIME()
 {
     Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (!targetFrame || !targetFrame->editor()->hasComposition())
+        return;
     
-    if (!targetFrame)
+    if (targetFrame->editor()->ignoreCompositionSelectionChange())
         return;
 
-    if (!targetFrame->editor()->cancelCompositionIfSelectionIsInvalid())
+    unsigned start;
+    unsigned end;
+    if (!targetFrame->editor()->getCompositionSelection(start, end))
         resetIME(targetFrame);
 }
 

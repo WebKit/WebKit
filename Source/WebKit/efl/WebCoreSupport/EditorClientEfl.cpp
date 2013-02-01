@@ -152,7 +152,14 @@ void EditorClientEfl::respondToChangedSelection(Frame* coreFrame)
     Evas_Object* webFrame = EWKPrivate::kitFrame(coreFrame);
     ewk_frame_editor_client_selection_changed(webFrame);
 
-    coreFrame->editor()->cancelCompositionIfSelectionIsInvalid();
+    if (!coreFrame->editor()->hasComposition() || coreFrame->editor()->ignoreCompositionSelectionChange())
+        return;
+
+    unsigned start;
+    unsigned end;
+
+    if (!coreFrame->editor()->getCompositionSelection(start, end))
+        coreFrame->editor()->cancelComposition();
 }
 
 void EditorClientEfl::didEndEditing()

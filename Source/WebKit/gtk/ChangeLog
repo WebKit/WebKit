@@ -1,3 +1,14 @@
+2013-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141479.
+        http://trac.webkit.org/changeset/141479
+        https://bugs.webkit.org/show_bug.cgi?id=108564
+
+        breaks chromium test (Requested by morrita on #webkit).
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::respondToChangedSelection):
+
 2013-01-31  Aurimas Liutikas  <aurimas@chromium.org>
 
         Editor::m_compositionNode not updated on HTMLInputElement::setValue()

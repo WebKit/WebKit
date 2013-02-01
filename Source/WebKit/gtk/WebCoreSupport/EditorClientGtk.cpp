@@ -262,7 +262,12 @@ void EditorClient::respondToChangedSelection(Frame* frame)
     setSelectionPrimaryClipboardIfNeeded(m_webView);
 #endif
 
-    if (frame->editor()->cancelCompositionIfSelectionIsInvalid())
+    if (!frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
+        return;
+
+    unsigned start;
+    unsigned end;
+    if (!frame->editor()->getCompositionSelection(start, end))
         m_webView->priv->imFilter.resetContext();
 }
 

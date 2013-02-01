@@ -1105,6 +1105,8 @@ crbug.com/64733 editing/text-iterator/findString.html [ Failure ]
 # Selection is wrong.
 crbug.com/64938 editing/selection/5354455-1.html [ Failure ]
 
+webkit.org/b/55560 editing/input/setting-input-value-cancel-ime-composition.html [ Failure ]
+
 # New test added in r82159
 crbug.com/77706 editing/spelling/grammar.html [ Failure ]
 
