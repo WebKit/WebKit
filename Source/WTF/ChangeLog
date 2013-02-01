@@ -1,3 +1,16 @@
+2013-02-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r137709
+        https://bugs.webkit.org/show_bug.cgi?id=105767
+
+        Do not pass functions as const references to
+        templated arguments to make the compiler happy.
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearch):
+        (WTF::tryBinarySearch):
+        (WTF::approximateBinarySearch):
+
 2013-01-31  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: replace nodeName argument with className

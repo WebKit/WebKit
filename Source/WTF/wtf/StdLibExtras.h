@@ -223,38 +223,38 @@ inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType
 
 // If the element is not found, crash if asserts are enabled, and behave like approximateBinarySearch in release builds.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
-inline ArrayElementType* binarySearch(ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+inline ArrayElementType* binarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMustBePresentInArray>(array, size, key, extractKey);
 }
 
 // Return zero if the element is not found.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
-inline ArrayElementType* tryBinarySearch(ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+inline ArrayElementType* tryBinarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMightNotBePresentInArray>(array, size, key, extractKey);
 }
 
 // Return the element that is either to the left, or the right, of where the element would have been found.
-template<typename ArrayElementType, typename KeyType, typename ExtractKey, typename ArrayType>
-inline ArrayElementType* approximateBinarySearch(ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
+inline ArrayElementType* approximateBinarySearch(ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, ReturnAdjacentElementIfKeyIsNotPresent>(array, size, key, extractKey);
 }
 
 // Variants of the above that use const.
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
-inline ArrayElementType* binarySearch(const ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+inline ArrayElementType* binarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMustBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
 template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
-inline ArrayElementType* tryBinarySearch(const ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+inline ArrayElementType* tryBinarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, KeyMightNotBePresentInArray>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
-template<typename ArrayElementType, typename KeyType, typename ExtractKey, typename ArrayType>
-inline ArrayElementType* approximateBinarySearch(const ArrayType& array, size_t size, KeyType key, const ExtractKey& extractKey = ExtractKey())
+template<typename ArrayElementType, typename KeyType, typename ArrayType, typename ExtractKey>
+inline ArrayElementType* approximateBinarySearch(const ArrayType& array, size_t size, KeyType key, ExtractKey extractKey = ExtractKey())
 {
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, ReturnAdjacentElementIfKeyIsNotPresent>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
