@@ -83,11 +83,21 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
 void RenderMathMLOperator::computePreferredLogicalWidths() 
 {
     ASSERT(preferredLogicalWidthsDirty());
+
+#ifndef NDEBUG
+    // FIXME: Remove the setNeedsLayoutIsForbidden calls once mathml stops modifying the render tree here.
+    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
+    setNeedsLayoutIsForbidden(false);
+#endif
     
     // Check for an uninitialized operator.
     if (!firstChild())
         updateFromElement();
-    
+
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
+#endif
+
     RenderMathMLBlock::computePreferredLogicalWidths();
 }
 

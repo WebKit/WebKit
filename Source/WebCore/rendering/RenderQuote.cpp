@@ -250,9 +250,24 @@ void RenderQuote::updateText()
 
 void RenderQuote::computePreferredLogicalWidths(float lead)
 {
+#ifndef NDEBUG
+    // FIXME: We shouldn't be modifying the tree in computePreferredLogicalWidths.
+    // Instead, we should properly hook the appropriate changes in the DOM and modify
+    // the render tree then. When that's done, we also won't need to override
+    // computePreferredLogicalWidths at all.
+    // https://bugs.webkit.org/show_bug.cgi?id=104829
+    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
+    setNeedsLayoutIsForbidden(false);
+#endif
+
     if (!m_attached)
         attachQuote();
     setTextInternal(originalText());
+
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
+#endif
+
     RenderText::computePreferredLogicalWidths(lead);
 }
 
