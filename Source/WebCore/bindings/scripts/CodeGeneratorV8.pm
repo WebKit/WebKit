@@ -785,7 +785,7 @@ sub GenerateDomainSafeFunctionGetter
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -815,7 +815,7 @@ sub GenerateDomainSafeFunctionSetter
     push(@implContentDecls, <<END);
 static void ${interfaceName}DomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty())
         return;
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
@@ -909,7 +909,7 @@ END
         } else {
             # perform lookup first
             push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty())
         return v8Undefined();
 END
@@ -2198,7 +2198,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(${v8InterfaceName}::internalFieldCount);
     result->SetClassName(v8::String::NewSymbol("${interfaceName}"));
-    result->Inherit(${v8InterfaceName}::GetTemplate());
+    result->Inherit(${v8InterfaceName}::GetTemplate(isolate));
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
     return cachedTemplate;
@@ -2648,7 +2648,7 @@ sub GenerateImplementation
         my $parent = $_;
         AddToImplIncludes("V8${parent}.h");
         $parentClass = "V8" . $parent;
-        $parentClassTemplate = $parentClass . "::GetTemplate()";
+        $parentClassTemplate = $parentClass . "::GetTemplate(isolate)";
         last;
     }
 

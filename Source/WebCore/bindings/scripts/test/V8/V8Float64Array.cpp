@@ -110,7 +110,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(), V8Float64Array::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(isolate), V8Float64Array::internalFieldCount,
         0, 0,
         V8Float64ArrayCallbacks, WTF_ARRAY_LENGTH(V8Float64ArrayCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
