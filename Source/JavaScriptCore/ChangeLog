@@ -1,3 +1,9 @@
+2013-01-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
 2013-01-31  Jessie Berlin  <jberlin@apple.com>
 
         Rolling out r141407 because it is causing crashes under
