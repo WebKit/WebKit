@@ -30,11 +30,11 @@
 #if USE(WTFURL)
 
 #include <wtf/DataLog.h>
-#include <wtf/RawURLBuffer.h>
-#include <wtf/URLComponent.h>
-#include <wtf/URLUtil.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringImpl.h>
+#include <wtf/url/src/RawURLBuffer.h>
+#include <wtf/url/src/URLComponent.h>
+#include <wtf/url/src/URLUtil.h>
 
 namespace WTF {
 

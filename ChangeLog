@@ -1,3 +1,13 @@
+2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add WTFURL source files to the build
+        https://bugs.webkit.org/show_bug.cgi?id=108215
+
+        Reviewed by Benjamin Poulain.
+
+        * Source/autotools/symbols.filter: Force the export of the KURL::string() symbol.
+        This is required when using the WTFURL backend but otherwise doesn't affect the build.
+
 2013-02-01  Alexis Menard  <alexis@webkit.org>
 
         Enable unprefixed CSS transitions by default.

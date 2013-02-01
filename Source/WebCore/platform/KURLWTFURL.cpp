@@ -281,10 +281,12 @@ String KURL::baseAsString() const
 }
 
 // FIXME: Get rid of this function from KURL.
+#if PLATFORM(MAC) || PLATFORM(WIN)
 String KURL::fileSystemPath() const
 {
     return string();
 }
+#endif
 
 bool KURL::protocolIs(const char* testProtocol) const
 {

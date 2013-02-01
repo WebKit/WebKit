@@ -263,6 +263,39 @@ wtf_sources += \
     Source/WTF/wtf/unicode/glib/UnicodeGLib.cpp \
     Source/WTF/wtf/unicode/icu/CollatorICU.cpp \
     Source/WTF/wtf/unicode/icu/UnicodeIcu.h \
+    Source/WTF/wtf/url/api/ParsedURL.cpp \
+    Source/WTF/wtf/url/api/ParsedURL.h \
     Source/WTF/wtf/url/api/URLBuffer.h \
     Source/WTF/wtf/url/api/URLQueryCharsetConverter.h \
+    Source/WTF/wtf/url/api/URLString.cpp \
+    Source/WTF/wtf/url/api/URLString.h \
+    Source/WTF/wtf/url/src/RawURLBuffer.h \
+    Source/WTF/wtf/url/src/URLCanonEtc.cpp \
+    Source/WTF/wtf/url/src/URLCanonFilesystemurl.cpp \
+    Source/WTF/wtf/url/src/URLCanonFileurl.cpp \
+    Source/WTF/wtf/url/src/URLCanonHost.cpp \
+    Source/WTF/wtf/url/src/URLCanonICU.cpp \
+    Source/WTF/wtf/url/src/URLCanonInternal.cpp \
+    Source/WTF/wtf/url/src/URLCanonInternal.h \
+    Source/WTF/wtf/url/src/URLCanonIP.cpp \
+    Source/WTF/wtf/url/src/URLCanonMailto.cpp \
+    Source/WTF/wtf/url/src/URLCanonPath.cpp \
+    Source/WTF/wtf/url/src/URLCanonPathurl.cpp \
+    Source/WTF/wtf/url/src/URLCanonQuery.cpp \
+    Source/WTF/wtf/url/src/URLCanonRelative.cpp \
+    Source/WTF/wtf/url/src/URLCanonStdURL.cpp \
+    Source/WTF/wtf/url/src/URLCanon.h \
+    Source/WTF/wtf/url/src/URLCharacterTypes.cpp \
+    Source/WTF/wtf/url/src/URLCharacterTypes.h \
+    Source/WTF/wtf/url/src/URLComponent.h \
+    Source/WTF/wtf/url/src/URLFile.h \
+    Source/WTF/wtf/url/src/URLParse.cpp \
+    Source/WTF/wtf/url/src/URLParseFile.cpp \
+    Source/WTF/wtf/url/src/URLParseInternal.h \
+    Source/WTF/wtf/url/src/URLParse.h \
+    Source/WTF/wtf/url/src/URLSegments.cpp \
+    Source/WTF/wtf/url/src/URLSegments.h \
+    Source/WTF/wtf/url/src/URLUtil.cpp \
+    Source/WTF/wtf/url/src/URLUtil.h \
+    Source/WTF/wtf/url/src/URLUtilInternal.h \
     Source/WTF/wtf/win/OwnPtrWin.cpp
