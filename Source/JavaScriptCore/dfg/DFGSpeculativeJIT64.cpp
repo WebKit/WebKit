@@ -3805,7 +3805,7 @@ void SpeculativeJIT::compile(Node* node)
         
         if (isOtherSpeculation(node->child1()->prediction())) {
             JSValueOperand thisValue(this, node->child1());
-            GPRTemporary scratch(this, thisValue);
+            GPRTemporary scratch(this);
             GPRReg thisValueGPR = thisValue.gpr();
             GPRReg scratchGPR = scratch.gpr();
             
