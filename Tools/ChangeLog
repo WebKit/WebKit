@@ -1,3 +1,22 @@
+2013-02-01  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] MiniBrowser fullscreen signals support
+        https://bugs.webkit.org/show_bug.cgi?id=108005
+
+        Reviewed by Carlos Garcia Campos.
+
+        Shows a label for 2 seconds using overlay (if GTK >= 3.2.0) and hides
+        the toolbar when entering fullscreen. When leaving fullscreen the
+        label is hidden (if it's not hidden yet) and the toolbar is shown again.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (_BrowserWindow):
+        (fullScreenMessageTimeoutCallback):
+        (webViewEnterFullScreen):
+        (webViewLeaveFullScreen):
+        (browserWindowFinalize):
+        (browserWindowConstructed):
+
 2013-02-01  Alexis Menard  <alexis@webkit.org>
 
         Enable unprefixed CSS transitions by default.
