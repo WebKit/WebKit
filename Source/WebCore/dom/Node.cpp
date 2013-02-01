@@ -2583,16 +2583,16 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentOrShadowHostNode);
-    info.addMember(m_treeScope);
-    info.addMember(m_next);
-    info.addMember(m_previous);
-    info.addMember(this->renderer());
+    info.addMember(m_parentOrShadowHostNode, "parentOrShadowHostNode");
+    info.addMember(m_treeScope, "treeScope");
+    info.addMember(m_next, "next");
+    info.addMember(m_previous, "previous");
+    info.addMember(this->renderer(), "renderer");
     if (hasRareData()) {
         if (isElementNode())
-            info.addMember(static_cast<ElementRareData*>(rareData()));
+            info.addMember(static_cast<ElementRareData*>(rareData()), "elementRareData");
         else
-            info.addMember(rareData());
+            info.addMember(rareData(), "rareData");
     }
 }
 

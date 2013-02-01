@@ -1212,10 +1212,10 @@ void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : sizeForImmutableStylePropertySetWithPropertyCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS, actualSize);
     if (m_isMutable)
-        info.addMember(mutablePropertyVector());
+        info.addMember(mutablePropertyVector(), "mutablePropertyVector()");
     else {
         for (unsigned i = 0; i < propertyCount(); ++i)
-            info.addMember(propertyAt(i).value());
+            info.addMember(propertyAt(i).value(), "value");
     }
 }
 

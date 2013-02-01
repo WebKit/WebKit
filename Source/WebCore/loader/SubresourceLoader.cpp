@@ -103,9 +103,9 @@ void SubresourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     ResourceLoader::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_resource);
-    info.addMember(m_documentLoader);
-    info.addMember(m_requestCountTracker);
+    info.addMember(m_resource, "resource");
+    info.addMember(m_documentLoader, "documentLoader");
+    info.addMember(m_requestCountTracker, "requestCountTracker");
 }
 
 bool SubresourceLoader::init(const ResourceRequest& request)

@@ -4752,37 +4752,37 @@ void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     HTMLElement::reportMemoryUsage(memoryObjectInfo);
     ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_loadTimer);
-    info.addMember(m_progressEventTimer);
-    info.addMember(m_playbackProgressTimer);
-    info.addMember(m_playedTimeRanges);
-    info.addMember(m_asyncEventQueue);
-    info.addMember(m_currentSrc);
-    info.addMember(m_error);
-    info.addMember(m_currentSourceNode);
-    info.addMember(m_nextChildNodeToConsider);
-    info.addMember(m_player);
+    info.addMember(m_loadTimer, "loadTimer");
+    info.addMember(m_progressEventTimer, "progressEventTimer");
+    info.addMember(m_playbackProgressTimer, "playbackProgressTimer");
+    info.addMember(m_playedTimeRanges, "playedTimeRanges");
+    info.addMember(m_asyncEventQueue, "asyncEventQueue");
+    info.addMember(m_currentSrc, "currentSrc");
+    info.addMember(m_error, "error");
+    info.addMember(m_currentSourceNode, "currentSourceNode");
+    info.addMember(m_nextChildNodeToConsider, "nextChildNodeToConsider");
+    info.addMember(m_player, "player");
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    info.addMember(m_proxyWidget);
+    info.addMember(m_proxyWidget, "proxyWidget");
 #endif
 #if ENABLE(MEDIA_SOURCE)
-    info.addMember(m_mediaSourceURL);
-    info.addMember(m_mediaSource);
+    info.addMember(m_mediaSourceURL, "mediaSourceURL");
+    info.addMember(m_mediaSource, "mediaSource");
 #endif
 #if ENABLE(VIDEO_TRACK)
-    info.addMember(m_textTracks);
-    info.addMember(m_textTracksWhenResourceSelectionBegan);
-    info.addMember(m_cueTree);
-    info.addMember(m_currentlyActiveCues);
+    info.addMember(m_textTracks, "textTracks");
+    info.addMember(m_textTracksWhenResourceSelectionBegan, "textTracksWhenResourceSelectionBegan");
+    info.addMember(m_cueTree, "cueTree");
+    info.addMember(m_currentlyActiveCues, "currentlyActiveCues");
 #endif
-    info.addMember(m_mediaGroup);
-    info.addMember(m_mediaController);
+    info.addMember(m_mediaGroup, "mediaGroup");
+    info.addMember(m_mediaController, "mediaController");
 
 #if PLATFORM(MAC)
-    info.addMember(m_sleepDisabler);
+    info.addMember(m_sleepDisabler, "sleepDisabler");
 #endif
 #if ENABLE(WEB_AUDIO)
-    info.addMember(m_audioSourceNode);
+    info.addMember(m_audioSourceNode, "audioSourceNode");
 #endif
 
 }

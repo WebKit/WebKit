@@ -662,10 +662,10 @@ void InspectorResourceAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
     info.addWeakPointer(m_pageAgent);
     info.addWeakPointer(m_client);
     info.addWeakPointer(m_frontend);
-    info.addMember(m_userAgentOverride);
-    info.addMember(m_resourcesData);
-    info.addMember(m_pendingXHRReplayData);
-    info.addMember(m_styleRecalculationInitiator);
+    info.addMember(m_userAgentOverride, "userAgentOverride");
+    info.addMember(m_resourcesData, "resourcesData");
+    info.addMember(m_pendingXHRReplayData, "pendingXHRReplayData");
+    info.addMember(m_styleRecalculationInitiator, "styleRecalculationInitiator");
 }
 
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorCompositeState* state)

@@ -1851,9 +1851,9 @@ void RenderListMarker::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_text);
-    info.addMember(m_image);
-    info.addMember(m_listItem);
+    info.addMember(m_text, "text");
+    info.addMember(m_image, "image");
+    info.addMember(m_listItem, "listItem");
 }
 
 } // namespace WebCore

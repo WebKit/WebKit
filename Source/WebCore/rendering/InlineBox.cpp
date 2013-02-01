@@ -395,10 +395,10 @@ LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 void InlineBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
-    info.addMember(m_next);
-    info.addMember(m_prev);
-    info.addMember(m_parent);
-    info.addMember(m_renderer);
+    info.addMember(m_next, "next");
+    info.addMember(m_prev, "prev");
+    info.addMember(m_parent, "parent");
+    info.addMember(m_renderer, "renderer");
 
     info.setCustomAllocation(true);
 }

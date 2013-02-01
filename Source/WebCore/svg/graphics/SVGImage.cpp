@@ -320,9 +320,9 @@ void SVGImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
     Image::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_chromeClient);
-    info.addMember(m_page);
-    info.addMember(m_frameCache);
+    info.addMember(m_chromeClient, "chromeClient");
+    info.addMember(m_page, "page");
+    info.addMember(m_frameCache, "frameCache");
 }
 
 }

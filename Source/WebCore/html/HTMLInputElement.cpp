@@ -1966,12 +1966,12 @@ void HTMLInputElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     HTMLTextFormControlElement::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_name);
-    info.addMember(m_valueIfDirty);
-    info.addMember(m_suggestedValue);
-    info.addMember(m_inputType);
+    info.addMember(m_name, "name");
+    info.addMember(m_valueIfDirty, "valueIfDirty");
+    info.addMember(m_suggestedValue, "suggestedValue");
+    info.addMember(m_inputType, "inputType");
 #if ENABLE(DATALIST_ELEMENT)
-    info.addMember(m_listAttributeTargetObserver);
+    info.addMember(m_listAttributeTargetObserver, "listAttributeTargetObserver");
 #endif
 }
 

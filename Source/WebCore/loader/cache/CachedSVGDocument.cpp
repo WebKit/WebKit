@@ -75,8 +75,8 @@ void CachedSVGDocument::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceSVG);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_document);
-    info.addMember(m_decoder);
+    info.addMember(m_document, "document");
+    info.addMember(m_decoder, "decoder");
 }
 
 }

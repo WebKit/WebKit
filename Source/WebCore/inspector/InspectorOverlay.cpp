@@ -498,15 +498,15 @@ void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<Inspec
 void InspectorOverlay::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorOverlay);
-    info.addMember(m_page);
+    info.addMember(m_page, "page");
     info.addWeakPointer(m_client);
-    info.addMember(m_pausedInDebuggerMessage);
-    info.addMember(m_highlightNode);
-    info.addMember(m_nodeHighlightConfig);
-    info.addMember(m_highlightRect);
-    info.addMember(m_overlayPage);
-    info.addMember(m_rectHighlightConfig);
-    info.addMember(m_size);
+    info.addMember(m_pausedInDebuggerMessage, "pausedInDebuggerMessage");
+    info.addMember(m_highlightNode, "highlightNode");
+    info.addMember(m_nodeHighlightConfig, "nodeHighlightConfig");
+    info.addMember(m_highlightRect, "highlightRect");
+    info.addMember(m_overlayPage, "overlayPage");
+    info.addMember(m_rectHighlightConfig, "rectHighlightConfig");
+    info.addMember(m_size, "size");
 }
 
 void InspectorOverlay::freePage()

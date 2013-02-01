@@ -164,9 +164,9 @@ void CSSGroupingRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_groupRule);
-    info.addMember(m_childRuleCSSOMWrappers);
-    info.addMember(m_ruleListCSSOMWrapper);
+    info.addMember(m_groupRule, "groupRule");
+    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
+    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 } // namespace WebCore

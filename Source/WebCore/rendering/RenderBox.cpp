@@ -4472,7 +4472,7 @@ void RenderBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBoxModelObject::reportMemoryUsage(memoryObjectInfo);
     info.addWeakPointer(m_inlineBoxWrapper);
-    info.addMember(m_overflow);
+    info.addMember(m_overflow, "overflow");
 }
 
 void RenderBox::reportStaticMembersMemoryUsage(MemoryInstrumentation* memoryInstrumentation)

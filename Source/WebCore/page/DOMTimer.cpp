@@ -203,8 +203,8 @@ void DOMTimer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     SuspendableTimer::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_action);
-    info.addMember(m_userGestureToken);
+    info.addMember(m_action, "action");
+    info.addMember(m_userGestureToken, "userGestureToken");
 }
 
 } // namespace WebCore

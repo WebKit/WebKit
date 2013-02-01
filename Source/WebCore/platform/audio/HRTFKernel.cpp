@@ -136,7 +136,7 @@ PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1,
 void HRTFKernel::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
-    info.addMember(m_fftFrame);
+    info.addMember(m_fftFrame, "fftFrame");
 }
 
 } // namespace WebCore

@@ -112,8 +112,8 @@ void CrossfadeGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectIn
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     GeneratedImage::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_fromImage);
-    info.addMember(m_toImage);
+    info.addMember(m_fromImage, "fromImage");
+    info.addMember(m_toImage, "toImage");
 }
 
 }

@@ -129,7 +129,7 @@ CFDataRef ResourceBuffer::createCFData()
 void ResourceBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_sharedBuffer);
+    info.addMember(m_sharedBuffer, "sharedBuffer");
 }
 
 } // namespace WebCore

@@ -1274,30 +1274,30 @@ void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObje
     case CSS_VARIABLE_NAME:
 #endif
         // FIXME: detect other cases when m_value is StringImpl*
-        info.addMember(m_value.string);
+        info.addMember(m_value.string, "value.string");
         break;
     case CSS_COUNTER:
-        info.addMember(m_value.counter);
+        info.addMember(m_value.counter, "value.counter");
         break;
     case CSS_RECT:
-        info.addMember(m_value.rect);
+        info.addMember(m_value.rect, "value.rect");
         break;
     case CSS_QUAD:
-        info.addMember(m_value.quad);
+        info.addMember(m_value.quad, "value.quad");
         break;
     case CSS_PAIR:
-        info.addMember(m_value.pair);
+        info.addMember(m_value.pair, "value.pair");
         break;
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSS_DASHBOARD_REGION:
-        info.addMember(m_value.region);
+        info.addMember(m_value.region, "value.region");
         break;
 #endif
     case CSS_SHAPE:
-        info.addMember(m_value.shape);
+        info.addMember(m_value.shape, "value.shape");
         break;
     case CSS_CALC:
-        info.addMember(m_value.calc);
+        info.addMember(m_value.calc, "value.calc");
         break;
     default:
         break;

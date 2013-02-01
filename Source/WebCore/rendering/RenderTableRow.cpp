@@ -265,7 +265,7 @@ void RenderTableRow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_children);
+    info.addMember(m_children, "children");
 }
 
 } // namespace WebCore

@@ -121,8 +121,8 @@ PassOwnPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size,
 void ImageBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_data);
-    info.addMember(m_context);
+    info.addMember(m_data, "data");
+    info.addMember(m_context, "context");
 }
 
 }

@@ -277,11 +277,11 @@ const Vector<char>& SharedBuffer::buffer() const
 void SharedBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_buffer);
+    info.addMember(m_buffer, "buffer");
     for (unsigned i = 0; i < m_segments.size(); ++i)
-        info.addRawBuffer(m_segments[i], segmentSize);
-    info.addMember(m_segments);
-    info.addMember(m_purgeableBuffer);
+        info.addRawBuffer(m_segments[i], segmentSize, "RawBufferSegment", "segment");
+    info.addMember(m_segments, "segments");
+    info.addMember(m_purgeableBuffer, "purgeableBuffer");
 }
 
 unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) const

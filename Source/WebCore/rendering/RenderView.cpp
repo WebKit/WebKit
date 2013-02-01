@@ -1075,18 +1075,18 @@ void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addWeakPointer(m_frameView);
     info.addWeakPointer(m_selectionStart);
     info.addWeakPointer(m_selectionEnd);
-    info.addMember(m_widgets);
-    info.addMember(m_layoutState);
+    info.addMember(m_widgets, "widgets");
+    info.addMember(m_layoutState, "layoutState");
 #if USE(ACCELERATED_COMPOSITING)
-    info.addMember(m_compositor);
+    info.addMember(m_compositor, "compositor");
 #endif
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-    info.addMember(m_customFilterGlobalContext);
+    info.addMember(m_customFilterGlobalContext, "customFilterGlobalContext");
 #endif
-    info.addMember(m_flowThreadController);
-    info.addMember(m_intervalArena);
+    info.addMember(m_flowThreadController, "flowThreadController");
+    info.addMember(m_intervalArena, "intervalArena");
     info.addWeakPointer(m_renderQuoteHead);
-    info.addMember(m_legacyPrinting);
+    info.addMember(m_legacyPrinting, "legacyPrinting");
 }
 
 } // namespace WebCore

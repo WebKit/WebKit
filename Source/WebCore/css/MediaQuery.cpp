@@ -142,9 +142,9 @@ String MediaQuery::cssText() const
 void MediaQuery::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_mediaType);
-    info.addMember(m_expressions);
-    info.addMember(m_serializationCache);
+    info.addMember(m_mediaType, "mediaType");
+    info.addMember(m_expressions, "expressions");
+    info.addMember(m_serializationCache, "serializationCache");
 }
 
 } //namespace

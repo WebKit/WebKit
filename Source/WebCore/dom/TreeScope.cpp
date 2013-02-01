@@ -371,14 +371,14 @@ Node* TreeScope::focusedNode()
 void TreeScope::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_rootNode);
-    info.addMember(m_parentTreeScope);
-    info.addMember(m_elementsById);
-    info.addMember(m_imageMapsByName);
-    info.addMember(m_labelsByForAttribute);
-    info.addMember(m_idTargetObserverRegistry);
-    info.addMember(m_selection);
-    info.addMember(m_documentScope);
+    info.addMember(m_rootNode, "rootNode");
+    info.addMember(m_parentTreeScope, "parentTreeScope");
+    info.addMember(m_elementsById, "elementsById");
+    info.addMember(m_imageMapsByName, "imageMapsByName");
+    info.addMember(m_labelsByForAttribute, "labelsByForAttribute");
+    info.addMember(m_idTargetObserverRegistry, "idTargetObserverRegistry");
+    info.addMember(m_selection, "selection");
+    info.addMember(m_documentScope, "documentScope");
 
 }
 

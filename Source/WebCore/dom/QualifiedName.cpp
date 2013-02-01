@@ -153,17 +153,17 @@ const AtomicString& QualifiedName::localNameUpper() const
 void QualifiedName::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_impl);
+    info.addMember(m_impl, "impl");
 }
 
 
 void QualifiedName::QualifiedNameImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_prefix);
-    info.addMember(m_localName);
-    info.addMember(m_namespace);
-    info.addMember(m_localNameUpper);
+    info.addMember(m_prefix, "prefix");
+    info.addMember(m_localName, "localName");
+    info.addMember(m_namespace, "namespace");
+    info.addMember(m_localNameUpper, "localNameUpper");
 }
 
 unsigned QualifiedName::QualifiedNameImpl::computeHash() const

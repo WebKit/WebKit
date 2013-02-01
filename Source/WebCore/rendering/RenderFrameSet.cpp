@@ -819,18 +819,18 @@ void RenderFrameSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_children);
-    info.addMember(m_rows);
-    info.addMember(m_cols);
+    info.addMember(m_children, "children");
+    info.addMember(m_rows, "rows");
+    info.addMember(m_cols, "cols");
 }
 
 void RenderFrameSet::GridAxis::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
-    info.addMember(m_sizes);
-    info.addMember(m_deltas);
-    info.addMember(m_preventResize);
-    info.addMember(m_allowBorder);
+    info.addMember(m_sizes, "sizes");
+    info.addMember(m_deltas, "deltas");
+    info.addMember(m_preventResize, "preventResize");
+    info.addMember(m_allowBorder, "allowBorder");
 }
 
 } // namespace WebCore

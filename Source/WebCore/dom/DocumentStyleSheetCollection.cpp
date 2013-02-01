@@ -500,17 +500,17 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
 void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_pageUserSheet);
-    info.addMember(m_injectedUserStyleSheets);
-    info.addMember(m_injectedAuthorStyleSheets);
-    info.addMember(m_userStyleSheets);
-    info.addMember(m_authorStyleSheets);
-    info.addMember(m_activeAuthorStyleSheets);
-    info.addMember(m_styleSheetsForStyleSheetList);
-    info.addMember(m_styleSheetCandidateNodes);
-    info.addMember(m_preferredStylesheetSetName);
-    info.addMember(m_selectedStylesheetSetName);
-    info.addMember(m_document);
+    info.addMember(m_pageUserSheet, "pageUserSheet");
+    info.addMember(m_injectedUserStyleSheets, "injectedUserStyleSheets");
+    info.addMember(m_injectedAuthorStyleSheets, "injectedAuthorStyleSheets");
+    info.addMember(m_userStyleSheets, "userStyleSheets");
+    info.addMember(m_authorStyleSheets, "authorStyleSheets");
+    info.addMember(m_activeAuthorStyleSheets, "activeAuthorStyleSheets");
+    info.addMember(m_styleSheetsForStyleSheetList, "styleSheetsForStyleSheetList");
+    info.addMember(m_styleSheetCandidateNodes, "styleSheetCandidateNodes");
+    info.addMember(m_preferredStylesheetSetName, "preferredStylesheetSetName");
+    info.addMember(m_selectedStylesheetSetName, "selectedStylesheetSetName");
+    info.addMember(m_document, "document");
 }
 
 }

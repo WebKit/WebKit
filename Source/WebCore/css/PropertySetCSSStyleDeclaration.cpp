@@ -135,8 +135,8 @@ void PropertySetCSSStyleDeclaration::deref()
 void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_propertySet);
-    info.addMember(m_cssomCSSValueClones);
+    info.addMember(m_propertySet, "propertySet");
+    info.addMember(m_cssomCSSValueClones, "cssomCSSValueClones");
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const
@@ -376,14 +376,14 @@ void StyleRuleCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObj
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentRule);
+    info.addMember(m_parentRule, "parentRule");
 }
 
 void InlineCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_parentElement);
+    info.addMember(m_parentElement, "parentElement");
 }
 
 void InlineCSSStyleDeclaration::didMutate(MutationType type)

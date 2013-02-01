@@ -59,7 +59,7 @@ private:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_styleSheet);
+        info.addMember(m_styleSheet, "styleSheet");
     }
     
     CSSStyleSheet* m_styleSheet;
@@ -182,14 +182,14 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
 void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_contents);
-    info.addMember(m_title);
-    info.addMember(m_mediaQueries);
-    info.addMember(m_ownerNode);
-    info.addMember(m_ownerRule);
-    info.addMember(m_mediaCSSOMWrapper);
-    info.addMember(m_childRuleCSSOMWrappers);
-    info.addMember(m_ruleListCSSOMWrapper);
+    info.addMember(m_contents, "contents");
+    info.addMember(m_title, "title");
+    info.addMember(m_mediaQueries, "mediaQueries");
+    info.addMember(m_ownerNode, "ownerNode");
+    info.addMember(m_ownerRule, "ownerRule");
+    info.addMember(m_mediaCSSOMWrapper, "mediaCSSOMWrapper");
+    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
+    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

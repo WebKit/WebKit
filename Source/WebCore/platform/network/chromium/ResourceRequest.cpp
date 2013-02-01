@@ -64,7 +64,7 @@ void ResourceRequest::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
     ResourceRequestBase::reportMemoryUsageBase(memoryObjectInfo);
-    info.addMember(m_extraData);
+    info.addMember(m_extraData, "extraData");
 }
 
 } // namespace WebCore

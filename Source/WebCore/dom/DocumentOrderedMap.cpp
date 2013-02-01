@@ -163,8 +163,8 @@ Element* DocumentOrderedMap::getElementByLabelForAttribute(AtomicStringImpl* key
 void DocumentOrderedMap::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_map);
-    info.addMember(m_duplicateCounts);
+    info.addMember(m_map, "map");
+    info.addMember(m_duplicateCounts, "duplicateCounts");
 }
 
 } // namespace WebCore

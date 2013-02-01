@@ -572,14 +572,14 @@ void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 void ResourceResponseBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_url);
-    info.addMember(m_mimeType);
-    info.addMember(m_textEncodingName);
-    info.addMember(m_suggestedFilename);
-    info.addMember(m_httpStatusText);
-    info.addMember(m_httpHeaderFields);
-    info.addMember(m_resourceLoadTiming);
-    info.addMember(m_resourceLoadInfo);
+    info.addMember(m_url, "url");
+    info.addMember(m_mimeType, "mimeType");
+    info.addMember(m_textEncodingName, "textEncodingName");
+    info.addMember(m_suggestedFilename, "suggestedFilename");
+    info.addMember(m_httpStatusText, "httpStatusText");
+    info.addMember(m_httpHeaderFields, "httpHeaderFields");
+    info.addMember(m_resourceLoadTiming, "resourceLoadTiming");
+    info.addMember(m_resourceLoadInfo, "resourceLoadInfo");
 }
     
 bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResponse& b)

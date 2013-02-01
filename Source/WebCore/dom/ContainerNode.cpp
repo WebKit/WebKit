@@ -1055,6 +1055,13 @@ Node *ContainerNode::childNode(unsigned index) const
     return n;
 }
 
+void ContainerNode::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    Node::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_firstChild, "firstChild");
+    info.addMember(m_lastChild, "lastChild");
+}
 
 static void dispatchChildInsertionEvents(Node* child)
 {

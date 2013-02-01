@@ -867,15 +867,15 @@ void GraphicsLayerChromium::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Layers);
     GraphicsLayer::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_nameBase);
-    info.addMember(m_layer);
-    info.addMember(m_transformLayer);
-    info.addMember(m_imageLayer);
-    info.addMember(m_contentsLayer);
-    info.addMember(m_linkHighlight);
-    info.addMember(m_opaqueRectTrackingContentLayerDelegate);
-    info.addMember(m_animationIdMap);
-    info.addMember(m_scrollableArea);
+    info.addMember(m_nameBase, "nameBase");
+    info.addMember(m_layer, "layer");
+    info.addMember(m_transformLayer, "transformLayer");
+    info.addMember(m_imageLayer, "imageLayer");
+    info.addMember(m_contentsLayer, "contentsLayer");
+    info.addMember(m_linkHighlight, "linkHighlight");
+    info.addMember(m_opaqueRectTrackingContentLayerDelegate, "opaqueRectTrackingContentLayerDelegate");
+    info.addMember(m_animationIdMap, "animationIdMap");
+    info.addMember(m_scrollableArea, "scrollableArea");
 }
 
 } // namespace WebCore

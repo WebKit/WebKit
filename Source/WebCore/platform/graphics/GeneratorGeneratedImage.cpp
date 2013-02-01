@@ -90,9 +90,9 @@ void GeneratorGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectIn
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     GeneratedImage::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_generator);
-    info.addMember(m_cachedImageBuffer);
-    info.addMember(m_cacheTimer);
+    info.addMember(m_generator, "generator");
+    info.addMember(m_cachedImageBuffer, "cachedImageBuffer");
+    info.addMember(m_cacheTimer, "cacheTimer");
 }
 
 }

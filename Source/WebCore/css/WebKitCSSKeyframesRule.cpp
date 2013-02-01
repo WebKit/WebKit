@@ -90,8 +90,8 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_keyframes);
-    info.addMember(m_name);
+    info.addMember(m_keyframes, "keyframes");
+    info.addMember(m_name, "name");
 }
 
 WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes* keyframesRule, CSSStyleSheet* parent)
@@ -211,9 +211,9 @@ void WebKitCSSKeyframesRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_keyframesRule);
-    info.addMember(m_childRuleCSSOMWrappers);
-    info.addMember(m_ruleListCSSOMWrapper);
+    info.addMember(m_keyframesRule, "keyframesRule");
+    info.addMember(m_childRuleCSSOMWrappers, "childRuleCSSOMWrappers");
+    info.addMember(m_ruleListCSSOMWrapper, "ruleListCSSOMWrapper");
 }
 
 } // namespace WebCore

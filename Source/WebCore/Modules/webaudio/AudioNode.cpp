@@ -407,9 +407,9 @@ void AudioNode::finishDeref(RefType refType)
 void AudioNode::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Audio);
-    info.addMember(m_context);
-    info.addMember(m_inputs);
-    info.addMember(m_outputs);
+    info.addMember(m_context, "context");
+    info.addMember(m_inputs, "inputs");
+    info.addMember(m_outputs, "outputs");
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

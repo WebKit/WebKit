@@ -42,21 +42,20 @@ void reportMemoryUsage(const SkBitmap* const& image, WTF::MemoryObjectInfo* memo
 {
     WTF::MemoryClassInfo info(memoryObjectInfo, image);
     memoryObjectInfo->setClassName("SkBitmap");
-
     SkPixelRef* pixelRef = image->pixelRef();
-    info.addMember(pixelRef);
+    info.addMember(pixelRef, "pixelRef");
     if (pixelRef)
-        info.addRawBuffer(pixelRef->pixels(), image->getSize(), 0, "pixels");
+        info.addRawBuffer(pixelRef->pixels(), image->getSize(), "Pixels", "pixelRef");
 }
 
 void reportMemoryUsage(const SkDevice* const& device, WTF::MemoryObjectInfo* memoryObjectInfo)
 {
     WTF::MemoryClassInfo info(memoryObjectInfo, device);
-    info.addMember(const_cast<SkDevice*>(device)->accessBitmap(false));
+    info.addMember(const_cast<SkDevice*>(device)->accessBitmap(false), "bitmap");
 }
 
 void reportMemoryUsage(const SkCanvas* const& canvas, WTF::MemoryObjectInfo* memoryObjectInfo)
 {
     WTF::MemoryClassInfo info(memoryObjectInfo, canvas);
-    info.addMember(canvas->getDevice());
+    info.addMember(canvas->getDevice(), "canvas");
 }

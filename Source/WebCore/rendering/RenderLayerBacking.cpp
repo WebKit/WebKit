@@ -2195,18 +2195,18 @@ void RenderLayerBacking::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     info.addWeakPointer(m_owningLayer);
-    info.addMember(m_ancestorClippingLayer);
-    info.addMember(m_contentsContainmentLayer);
-    info.addMember(m_graphicsLayer);
-    info.addMember(m_foregroundLayer);
-    info.addMember(m_backgroundLayer);
-    info.addMember(m_childContainmentLayer);
-    info.addMember(m_maskLayer);
-    info.addMember(m_layerForHorizontalScrollbar);
-    info.addMember(m_layerForVerticalScrollbar);
-    info.addMember(m_layerForScrollCorner);
-    info.addMember(m_scrollingLayer);
-    info.addMember(m_scrollingContentsLayer);
+    info.addMember(m_ancestorClippingLayer, "ancestorClippingLayer");
+    info.addMember(m_contentsContainmentLayer, "contentsContainmentLayer");
+    info.addMember(m_graphicsLayer, "graphicsLayer");
+    info.addMember(m_foregroundLayer, "foregroundLayer");
+    info.addMember(m_backgroundLayer, "backgroundLayer");
+    info.addMember(m_childContainmentLayer, "childContainmentLayer");
+    info.addMember(m_maskLayer, "maskLayer");
+    info.addMember(m_layerForHorizontalScrollbar, "layerForHorizontalScrollbar");
+    info.addMember(m_layerForVerticalScrollbar, "layerForVerticalScrollbar");
+    info.addMember(m_layerForScrollCorner, "layerForScrollCorner");
+    info.addMember(m_scrollingLayer, "scrollingLayer");
+    info.addMember(m_scrollingContentsLayer, "scrollingContentsLayer");
 }
 
 } // namespace WebCore

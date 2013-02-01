@@ -342,8 +342,8 @@ void HRTFElevation::getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthI
 void HRTFElevation::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
-    info.addMember(m_kernelListL);
-    info.addMember(m_kernelListR);
+    info.addMember(m_kernelListL, "kernelListL");
+    info.addMember(m_kernelListR, "kernelListR");
 }
 
 } // namespace WebCore

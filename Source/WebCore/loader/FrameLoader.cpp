@@ -3304,21 +3304,21 @@ NetworkingContext* FrameLoader::networkingContext() const
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
-    info.addMember(m_frame);
+    info.addMember(m_frame, "frame");
     info.ignoreMember(m_client);
-    info.addMember(m_progressTracker);
-    info.addMember(m_documentLoader);
-    info.addMember(m_provisionalDocumentLoader);
-    info.addMember(m_policyDocumentLoader);
-    info.addMember(m_pendingStateObject);
-    info.addMember(m_submittedFormURL);
-    info.addMember(m_checkTimer);
-    info.addMember(m_opener);
-    info.addMember(m_openedFrames);
-    info.addMember(m_outgoingReferrer);
-    info.addMember(m_networkingContext);
-    info.addMember(m_previousUrl);
-    info.addMember(m_requestedHistoryItem);
+    info.addMember(m_progressTracker, "progressTracker");
+    info.addMember(m_documentLoader, "documentLoader");
+    info.addMember(m_provisionalDocumentLoader, "provisionalDocumentLoader");
+    info.addMember(m_policyDocumentLoader, "policyDocumentLoader");
+    info.addMember(m_pendingStateObject, "pendingStateObject");
+    info.addMember(m_submittedFormURL, "submittedFormURL");
+    info.addMember(m_checkTimer, "checkTimer");
+    info.addMember(m_opener, "opener");
+    info.addMember(m_openedFrames, "openedFrames");
+    info.addMember(m_outgoingReferrer, "outgoingReferrer");
+    info.addMember(m_networkingContext, "networkingContext");
+    info.addMember(m_previousUrl, "previousUrl");
+    info.addMember(m_requestedHistoryItem, "requestedHistoryItem");
 }
 
 bool FrameLoaderClient::hasHTMLView() const

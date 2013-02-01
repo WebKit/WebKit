@@ -203,10 +203,10 @@ void CachedFont::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceFont);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
 #if ENABLE(SVG_FONTS)
-    info.addMember(m_externalSVGDocument);
+    info.addMember(m_externalSVGDocument, "externalSVGDocument");
 #endif
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
-    info.addMember(m_fontData);
+    info.addMember(m_fontData, "fontData");
 #endif
 }
 

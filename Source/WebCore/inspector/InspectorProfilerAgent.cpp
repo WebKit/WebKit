@@ -495,12 +495,12 @@ void InspectorProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorProfilerAgent);
     InspectorBaseAgent<InspectorProfilerAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_consoleAgent);
-    info.addMember(m_injectedScriptManager);
+    info.addMember(m_consoleAgent, "consoleAgent");
+    info.addMember(m_injectedScriptManager, "injectedScriptManager");
     info.addWeakPointer(m_frontend);
-    info.addMember(m_profiles);
-    info.addMember(m_snapshots);
-    info.addMember(m_profileNameIdleTimeMap);
+    info.addMember(m_profiles, "profiles");
+    info.addMember(m_snapshots, "snapshots");
+    info.addMember(m_profileNameIdleTimeMap, "profileNameIdleTimeMap");
 }
 
 void InspectorProfilerAgent::willProcessTask()

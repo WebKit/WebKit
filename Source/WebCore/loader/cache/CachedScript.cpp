@@ -123,10 +123,10 @@ void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceScript);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_script);
-    info.addMember(m_decoder);
+    info.addMember(m_script, "script");
+    info.addMember(m_decoder, "decoder");
 #if USE(JSC)
-    info.addMember(m_sourceProviderCache);
+    info.addMember(m_sourceProviderCache, "sourceProviderCache");
 #endif
 }
 

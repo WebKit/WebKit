@@ -126,13 +126,13 @@ void ElementShadow::recalcStyle(Node::StyleChange change)
 void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_shadowRoots);
+    info.addMember(m_shadowRoots, "shadowRoots");
     ShadowRoot* shadowRoot = m_shadowRoots.head();
     while (shadowRoot) {
-        info.addMember(shadowRoot);
+        info.addMember(shadowRoot, "shadowRoot");
         shadowRoot = shadowRoot->next();
     }
-    info.addMember(m_distributor);
+    info.addMember(m_distributor, "distributor");
 }
 
 } // namespace

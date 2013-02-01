@@ -1621,8 +1621,8 @@ void RenderInline::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBoxModelObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_children);
-    info.addMember(m_lineBoxes);
+    info.addMember(m_children, "children");
+    info.addMember(m_lineBoxes, "lineBoxes");
 }
 
 } // namespace WebCore

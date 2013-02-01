@@ -89,8 +89,8 @@ void reportMemoryUsage(const struct RDFTContext* const& object, WTF::MemoryObjec
 
     // The size of buffers is counted the same way as it is counted in ff_rdft_init && ff_fft_init.
     size_t count = 1 << (proxyObject->nbits - 1);
-    info.addRawBuffer(proxyObject->fft.revtab, count * sizeof(uint16_t));
-    info.addRawBuffer(proxyObject->fft.tmpBuf, count * sizeof(FFTComplex));
+    info.addRawBuffer(proxyObject->fft.revtab, count * sizeof(uint16_t), "FFTBuffer", "revtab");
+    info.addRawBuffer(proxyObject->fft.tmpBuf, count * sizeof(FFTComplex), "FFTBuffer", "tmpBuf");
 }
 
 namespace WebCore {

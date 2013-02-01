@@ -165,15 +165,15 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
-    info.addMember(m_inlineStyle);
-    info.addMember(m_classNames);
-    info.addMember(m_idForStyleResolution);
+    info.addMember(m_inlineStyle, "inlineStyle");
+    info.addMember(m_classNames, "classNames");
+    info.addMember(m_idForStyleResolution, "idForStyleResolution");
     if (m_isMutable) {
-        info.addMember(presentationAttributeStyle());
-        info.addMember(mutableAttributeVector());
+        info.addMember(presentationAttributeStyle(), "presentationAttributeStyle()");
+        info.addMember(mutableAttributeVector(), "mutableAttributeVector");
     }
     for (unsigned i = 0, len = length(); i < len; i++)
-        info.addMember(*attributeItem(i));
+        info.addMember(*attributeItem(i), "*attributeItem");
 }
 
 size_t ElementAttributeData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const

@@ -5889,19 +5889,19 @@ void RenderLayer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addWeakPointer(m_next);
     info.addWeakPointer(m_first);
     info.addWeakPointer(m_last);
-    info.addMember(m_hBar);
-    info.addMember(m_vBar);
-    info.addMember(m_posZOrderList);
-    info.addMember(m_negZOrderList);
-    info.addMember(m_normalFlowList);
-    info.addMember(m_clipRectsCache);
-    info.addMember(m_marquee);
-    info.addMember(m_transform);
+    info.addMember(m_hBar, "hBar");
+    info.addMember(m_vBar, "vBar");
+    info.addMember(m_posZOrderList, "posZOrderList");
+    info.addMember(m_negZOrderList, "negZOrderList");
+    info.addMember(m_normalFlowList, "normalFlowList");
+    info.addMember(m_clipRectsCache, "clipRectsCache");
+    info.addMember(m_marquee, "marquee");
+    info.addMember(m_transform, "transform");
     info.addWeakPointer(m_reflection);
     info.addWeakPointer(m_scrollCorner);
     info.addWeakPointer(m_resizer);
 #if USE(ACCELERATED_COMPOSITING)
-    info.addMember(m_backing);
+    info.addMember(m_backing, "backing");
 #endif
     info.setCustomAllocation(true);
 }

@@ -292,18 +292,18 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
 void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(listStyleImage);
-    info.addMember(indent);
-    info.addMember(textShadow);
-    info.addMember(highlight);
-    info.addMember(cursorData);
-    info.addMember(hyphenationString);
-    info.addMember(locale);
-    info.addMember(textEmphasisCustomMark);
-    info.addMember(quotes);
-    info.addMember(m_lineGrid);
+    info.addMember(listStyleImage, "listStyleImage");
+    info.addMember(indent, "indent");
+    info.addMember(textShadow, "textShadow");
+    info.addMember(highlight, "highlight");
+    info.addMember(cursorData, "cursorData");
+    info.addMember(hyphenationString, "hyphenationString");
+    info.addMember(locale, "locale");
+    info.addMember(textEmphasisCustomMark, "textEmphasisCustomMark");
+    info.addMember(quotes, "quotes");
+    info.addMember(m_lineGrid, "lineGrid");
 #if ENABLE(CSS_VARIABLES)
-    info.addMember(m_variables);
+    info.addMember(m_variables, "variables");
 #endif
 }
 

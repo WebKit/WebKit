@@ -485,7 +485,7 @@ void HTMLFormControlElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     LabelableElement::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_validationMessage);
+    info.addMember(m_validationMessage, "validationMessage");
 }
 
 } // namespace Webcore

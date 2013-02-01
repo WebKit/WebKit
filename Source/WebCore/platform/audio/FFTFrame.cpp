@@ -258,43 +258,43 @@ void FFTFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
 #if USE_ACCELERATE_FFT
-    info.addMember(m_frame);
-    info.addMember(m_realData);
-    info.addMember(m_imagData);
+    info.addMember(m_frame, "frame");
+    info.addMember(m_realData, "realData");
+    info.addMember(m_imagData, "imagData");
 #else // !USE_ACCELERATE_FFT
 
 #if USE(WEBAUDIO_MKL)
-    info.addMember(m_handle);
-    info.addMember(m_complexData);
-    info.addMember(m_realData);
-    info.addMember(m_imagData);
+    info.addMember(m_handle, "handle");
+    info.addMember(m_complexData, "complexData");
+    info.addMember(m_realData, "realData");
+    info.addMember(m_imagData, "imagData");
 #endif // USE(WEBAUDIO_MKL)
 
 #if USE(WEBAUDIO_FFMPEG)
-    info.addMember(m_forwardContext);
-    info.addMember(m_inverseContext);
-    info.addMember(m_complexData);
-    info.addMember(m_realData);
-    info.addMember(m_imagData);
+    info.addMember(m_forwardContext, "forwardContext");
+    info.addMember(m_inverseContext, "inverseContext");
+    info.addMember(m_complexData, "complexData");
+    info.addMember(m_realData, "realData");
+    info.addMember(m_imagData, "imagData");
 #endif // USE(WEBAUDIO_FFMPEG)
 
 #if USE(WEBAUDIO_GSTREAMER)
 #ifndef GST_API_VERSION_1
     // The GstFFTF32 structure is exposed publicly in GStreamer 0.10 only.
-    info.addMember(m_fft);
-    info.addMember(m_inverseFft);
+    info.addMember(m_fft, "fft");
+    info.addMember(m_inverseFft, "inverseFft");
 #endif
-    info.addMember(m_complexData);
-    info.addMember(m_realData);
-    info.addMember(m_imagData);
+    info.addMember(m_complexData, "complexData");
+    info.addMember(m_realData, "realData");
+    info.addMember(m_imagData, "imagData");
 #endif // USE(WEBAUDIO_GSTREAMER)
 
 #if USE(WEBAUDIO_IPP)
-    info.addMember(m_buffer);
-    info.addMember(m_DFTSpec);
-    info.addMember(m_complexData);
-    info.addMember(m_realData);
-    info.addMember(m_imagData);
+    info.addMember(m_buffer, "buffer");
+    info.addMember(m_DFTSpec, "DFTSpec");
+    info.addMember(m_complexData, "complexData");
+    info.addMember(m_realData, "realData");
+    info.addMember(m_imagData, "imagData");
 #endif // USE(WEBAUDIO_IPP)
 
 #endif // !USE_ACCELERATE_FFT

@@ -81,6 +81,7 @@ private:
     Vector<const void*> m_roots;
 
     size_t m_edgeTypes[WTF::LastMemberTypeEntry];
+    int m_unknownClassNameId;
 };
 
 } // namespace WebCore

@@ -656,12 +656,12 @@ void HTMLCanvasElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     HTMLElement::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_observers);
-    info.addMember(m_context);
-    info.addMember(m_imageBuffer);
-    info.addMember(m_contextStateSaver);
-    info.addMember(m_presentedImage);
-    info.addMember(m_copiedImage);
+    info.addMember(m_observers, "observers");
+    info.addMember(m_context, "context");
+    info.addMember(m_imageBuffer, "imageBuffer");
+    info.addMember(m_contextStateSaver, "contextStateSaver");
+    info.addMember(m_presentedImage, "presentedImage");
+    info.addMember(m_copiedImage, "copiedImage");
 }
 
 }

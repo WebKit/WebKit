@@ -107,11 +107,11 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
 void CSSFontFaceSrcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_resource);
-    info.addMember(m_format);
+    info.addMember(m_resource, "resource");
+    info.addMember(m_format, "format");
     // FIXME: add m_cachedFont when MemoryCache is instrumented.
 #if ENABLE(SVG_FONTS)
-    info.addMember(m_svgFontFaceElement);
+    info.addMember(m_svgFontFaceElement, "svgFontFaceElement");
 #endif
 }
 

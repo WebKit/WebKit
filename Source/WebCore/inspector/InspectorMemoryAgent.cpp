@@ -378,7 +378,7 @@ public:
 private:
     virtual void visitJSExternalString(StringImpl* string)
     {
-        m_memoryClassInfo->addMember(string);
+        m_memoryClassInfo->addMember(string, "externalString");
     }
 
     mutable MemoryClassInfo* m_memoryClassInfo;
@@ -400,7 +400,7 @@ public:
 private:
     virtual void visitJSExternalArray(ArrayBufferView* arrayBufferView)
     {
-        m_memoryClassInfo->addMember(arrayBufferView);
+        m_memoryClassInfo->addMember(arrayBufferView, "externalArray");
     }
 
     mutable MemoryClassInfo* m_memoryClassInfo;
@@ -550,7 +550,7 @@ void InspectorMemoryAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Inspector);
     InspectorBaseAgent<InspectorMemoryAgent>::reportMemoryUsage(memoryObjectInfo);
     info.addWeakPointer(m_inspectorClient);
-    info.addMember(m_page);
+    info.addMember(m_page, "page");
 }
 
 void InspectorMemoryAgent::getProcessMemoryDistributionAsMap(bool reportGraph, RefPtr<InspectorObject>& graph, TypeNameToSizeMap* memoryInfo)

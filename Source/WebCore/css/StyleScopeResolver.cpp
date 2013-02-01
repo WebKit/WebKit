@@ -241,10 +241,10 @@ void StyleScopeResolver::matchHostRules(const Element* element, Vector<RuleSet*>
 void StyleScopeResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_authorStyles);
-    info.addMember(m_stack);
-    info.addMember(m_atHostRules);
-    info.addMember(m_stackParent);
+    info.addMember(m_authorStyles, "authorStyles");
+    info.addMember(m_stack, "stack");
+    info.addMember(m_atHostRules, "atHostRules");
+    info.addMember(m_stackParent, "stackParent");
 }
 
 }

@@ -320,29 +320,29 @@ void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObject
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
 #if ENABLE(DASHBOARD_SUPPORT)
-    info.addMember(m_dashboardRegions);
+    info.addMember(m_dashboardRegions, "dashboardRegions");
 #endif
-    info.addMember(m_deprecatedFlexibleBox);
-    info.addMember(m_flexibleBox);
-    info.addMember(m_marquee);
-    info.addMember(m_multiCol);
-    info.addMember(m_transform);
+    info.addMember(m_deprecatedFlexibleBox, "deprecatedFlexibleBox");
+    info.addMember(m_flexibleBox, "flexibleBox");
+    info.addMember(m_marquee, "marquee");
+    info.addMember(m_multiCol, "multiCol");
+    info.addMember(m_transform, "transform");
 #if ENABLE(CSS_FILTERS)
-    info.addMember(m_filter);
+    info.addMember(m_filter, "filter");
 #endif
-    info.addMember(m_grid);
-    info.addMember(m_gridItem);
-    info.addMember(m_content);
-    info.addMember(m_counterDirectives);
-    info.addMember(m_boxShadow);
-    info.addMember(m_boxReflect);
-    info.addMember(m_animations);
-    info.addMember(m_transitions);
-    info.addMember(m_shapeInside);
-    info.addMember(m_shapeOutside);
-    info.addMember(m_clipPath);
-    info.addMember(m_flowThread);
-    info.addMember(m_regionThread);
+    info.addMember(m_grid, "grid");
+    info.addMember(m_gridItem, "gridItem");
+    info.addMember(m_content, "content");
+    info.addMember(m_counterDirectives, "counterDirectives");
+    info.addMember(m_boxShadow, "boxShadow");
+    info.addMember(m_boxReflect, "boxReflect");
+    info.addMember(m_animations, "animations");
+    info.addMember(m_transitions, "transitions");
+    info.addMember(m_shapeInside, "shapeInside");
+    info.addMember(m_shapeOutside, "shapeOutside");
+    info.addMember(m_clipPath, "clipPath");
+    info.addMember(m_flowThread, "flowThread");
+    info.addMember(m_regionThread, "regionThread");
 
     info.ignoreMember(m_perspectiveOriginX);
     info.ignoreMember(m_perspectiveOriginY);

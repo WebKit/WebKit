@@ -223,7 +223,7 @@ void CSSCursorImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryOb
     m_imageValue->reportMemoryUsage(memoryObjectInfo);
     // No need to report m_image as it is counted as part of RenderArena.
 #if ENABLE(SVG)
-    info.addMember(m_referencedElements);
+    info.addMember(m_referencedElements, "referencedElements");
 #endif
 }
 

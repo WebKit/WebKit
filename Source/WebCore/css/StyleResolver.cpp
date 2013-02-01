@@ -5435,67 +5435,67 @@ void StyleResolver::collectFeatures()
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(properties);
+    info.addMember(properties, "properties");
 }
 
 void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(matchedProperties);
-    info.addMember(ranges);
-    info.addMember(renderStyle);
-    info.addMember(parentRenderStyle);
+    info.addMember(matchedProperties, "matchedProperties");
+    info.addMember(ranges, "ranges");
+    info.addMember(renderStyle, "renderStyle");
+    info.addMember(parentRenderStyle, "parentRenderStyle");
 }
 
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_expression);
+    info.addMember(m_expression, "expression");
 }
 
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_style);
-    info.addMember(m_authorStyle);
-    info.addMember(m_userStyle);
-    info.addMember(m_features);
-    info.addMember(m_siblingRuleSet);
-    info.addMember(m_uncommonAttributeRuleSet);
-    info.addMember(m_keyframesRuleMap);
-    info.addMember(m_matchedPropertiesCache);
-    info.addMember(m_matchedPropertiesCacheSweepTimer);
-    info.addMember(m_matchedRules);
+    info.addMember(m_style, "style");
+    info.addMember(m_authorStyle, "authorStyle");
+    info.addMember(m_userStyle, "userStyle");
+    info.addMember(m_features, "features");
+    info.addMember(m_siblingRuleSet, "siblingRuleSet");
+    info.addMember(m_uncommonAttributeRuleSet, "uncommonAttributeRuleSet");
+    info.addMember(m_keyframesRuleMap, "keyframesRuleMap");
+    info.addMember(m_matchedPropertiesCache, "matchedPropertiesCache");
+    info.addMember(m_matchedPropertiesCacheSweepTimer, "matchedPropertiesCacheSweepTimer");
+    info.addMember(m_matchedRules, "matchedRules");
 
-    info.addMember(m_ruleList);
-    info.addMember(m_pendingImageProperties);
-    info.addMember(m_medium);
-    info.addMember(m_rootDefaultStyle);
-    info.addMember(m_document);
+    info.addMember(m_ruleList, "ruleList");
+    info.addMember(m_pendingImageProperties, "pendingImageProperties");
+    info.addMember(m_medium, "medium");
+    info.addMember(m_rootDefaultStyle, "rootDefaultStyle");
+    info.addMember(m_document, "document");
 
     // FIXME: pointer to RenderStyle could point to an already deleted object.
     info.ignoreMember(m_parentStyle);
     info.ignoreMember(m_rootElementStyle);
 
-    info.addMember(m_element);
-    info.addMember(m_styledElement);
-    info.addMember(m_regionForStyling);
-    info.addMember(m_parentNode);
-    info.addMember(m_lineHeightValue);
-    info.addMember(m_fontSelector);
-    info.addMember(m_viewportDependentMediaQueryResults);
+    info.addMember(m_element, "element");
+    info.addMember(m_styledElement, "styledElement");
+    info.addMember(m_regionForStyling, "regionForStyling");
+    info.addMember(m_parentNode, "parentNode");
+    info.addMember(m_lineHeightValue, "lineHeightValue");
+    info.addMember(m_fontSelector, "fontSelector");
+    info.addMember(m_viewportDependentMediaQueryResults, "viewportDependentMediaQueryResults");
     info.ignoreMember(m_styleBuilder);
     info.addMember(m_inspectorCSSOMWrappers);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    info.addMember(m_pendingSVGDocuments);
+    info.addMember(m_pendingSVGDocuments, "pendingSVGDocuments");
 #endif
-    info.addMember(m_scopeResolver);
+    info.addMember(m_scopeResolver, "scopeResolver");
 
     // FIXME: move this to a place where it would be called only once?
-    info.addMember(defaultStyle);
-    info.addMember(defaultQuirksStyle);
-    info.addMember(defaultPrintStyle);
-    info.addMember(defaultViewSourceStyle);
+    info.addMember(defaultStyle, "defaultStyle");
+    info.addMember(defaultQuirksStyle, "defaultQuirksStyle");
+    info.addMember(defaultPrintStyle, "defaultPrintStyle");
+    info.addMember(defaultViewSourceStyle, "defaultViewSourceStyle");
 }
 
 } // namespace WebCore

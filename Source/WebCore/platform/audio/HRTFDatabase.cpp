@@ -124,7 +124,7 @@ unsigned HRTFDatabase::indexFromElevationAngle(double elevationAngle)
 void HRTFDatabase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
-    info.addMember(m_elevations);
+    info.addMember(m_elevations, "elevations");
 }
 
 } // namespace WebCore

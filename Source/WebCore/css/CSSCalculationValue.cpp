@@ -226,7 +226,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_value);
+        info.addMember(m_value, "value");
     }
     
 private:
@@ -324,8 +324,8 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addMember(m_leftSide);
-        info.addMember(m_rightSide);
+        info.addMember(m_leftSide, "leftSide");
+        info.addMember(m_rightSide, "rightSide");
     }
 
     static String buildCssText(const String& leftExpression, const String& rightExpression, CalcOperator op)

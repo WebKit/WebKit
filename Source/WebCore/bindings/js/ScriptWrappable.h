@@ -59,7 +59,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addMember(m_wrapper);
+        info.addMember(m_wrapper, "wrapper");
     }
 
 private:

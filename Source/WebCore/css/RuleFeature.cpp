@@ -89,11 +89,11 @@ void RuleFeatureSet::clear()
 void RuleFeatureSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(idsInRules);
-    info.addMember(classesInRules);
-    info.addMember(attrsInRules);
-    info.addMember(siblingRules);
-    info.addMember(uncommonAttributeRules);
+    info.addMember(idsInRules, "idsInRules");
+    info.addMember(classesInRules, "classesInRules");
+    info.addMember(attrsInRules, "attrsInRules");
+    info.addMember(siblingRules, "siblingRules");
+    info.addMember(uncommonAttributeRules, "uncommonAttributeRules");
 }
 
 } // namespace WebCore

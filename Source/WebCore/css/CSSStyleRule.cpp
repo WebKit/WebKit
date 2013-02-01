@@ -135,8 +135,8 @@ void CSSStyleRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_styleRule);
-    info.addMember(m_propertiesCSSOMWrapper);
+    info.addMember(m_styleRule, "styleRule");
+    info.addMember(m_propertiesCSSOMWrapper, "propertiesCSSOMWrapper");
 }
 
 } // namespace WebCore

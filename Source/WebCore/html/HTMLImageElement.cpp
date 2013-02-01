@@ -380,8 +380,8 @@ void HTMLImageElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     HTMLElement::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_imageLoader);
-    info.addMember(m_form);
+    info.addMember(m_imageLoader, "imageLoader");
+    info.addMember(m_form, "form");
 }
 
 }

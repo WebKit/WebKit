@@ -146,8 +146,8 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
 void SecurityContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_securityOrigin);
-    info.addMember(m_contentSecurityPolicy);
+    info.addMember(m_securityOrigin, "securityOrigin");
+    info.addMember(m_contentSecurityPolicy, "contentSecurityPolicy");
 }
 
 }

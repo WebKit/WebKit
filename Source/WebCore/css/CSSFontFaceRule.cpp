@@ -74,8 +74,8 @@ void CSSFontFaceRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_fontFaceRule);
-    info.addMember(m_propertiesCSSOMWrapper);
+    info.addMember(m_fontFaceRule, "fontFaceRule");
+    info.addMember(m_propertiesCSSOMWrapper, "propertiesCSSOMWrapper");
 }
 
 } // namespace WebCore

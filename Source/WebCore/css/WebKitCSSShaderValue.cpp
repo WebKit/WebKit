@@ -86,7 +86,7 @@ String WebKitCSSShaderValue::customCssText() const
 void WebKitCSSShaderValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_url);
+    info.addMember(m_url, "url");
 }
     
 } // namespace WebCore

@@ -76,7 +76,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-        info.addMember(m_map);
+        info.addMember(m_map, "map");
         info.ignoreMember(m_callback);
     }
 

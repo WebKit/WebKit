@@ -978,22 +978,22 @@ void AudioContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Audio);
     ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_destinationNode);
-    info.addMember(m_listener);
-    info.addMember(m_finishedNodes);
-    info.addMember(m_referencedNodes);
-    info.addMember(m_nodesMarkedForDeletion);
-    info.addMember(m_nodesToDelete);
-    info.addMember(m_dirtySummingJunctions);
-    info.addMember(m_dirtyAudioNodeOutputs);
-    info.addMember(m_automaticPullNodes);
-    info.addMember(m_renderingAutomaticPullNodes);
-    info.addMember(m_contextGraphMutex);
-    info.addMember(m_deferredFinishDerefList);
-    info.addMember(m_hrtfDatabaseLoader);
-    info.addMember(m_eventTargetData);
-    info.addMember(m_renderTarget);
-    info.addMember(m_audioDecoder);
+    info.addMember(m_destinationNode, "destinationNode");
+    info.addMember(m_listener, "listener");
+    info.addMember(m_finishedNodes, "finishedNodes");
+    info.addMember(m_referencedNodes, "referencedNodes");
+    info.addMember(m_nodesMarkedForDeletion, "nodesMarkedForDeletion");
+    info.addMember(m_nodesToDelete, "nodesToDelete");
+    info.addMember(m_dirtySummingJunctions, "dirtySummingJunctions");
+    info.addMember(m_dirtyAudioNodeOutputs, "dirtyAudioNodeOutputs");
+    info.addMember(m_automaticPullNodes, "automaticPullNodes");
+    info.addMember(m_renderingAutomaticPullNodes, "renderingAutomaticPullNodes");
+    info.addMember(m_contextGraphMutex, "contextGraphMutex");
+    info.addMember(m_deferredFinishDerefList, "deferredFinishDerefList");
+    info.addMember(m_hrtfDatabaseLoader, "hrtfDatabaseLoader");
+    info.addMember(m_eventTargetData, "eventTargetData");
+    info.addMember(m_renderTarget, "renderTarget");
+    info.addMember(m_audioDecoder, "audioDecoder");
 }
 
 } // namespace WebCore

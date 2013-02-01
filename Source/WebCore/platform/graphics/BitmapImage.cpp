@@ -579,9 +579,9 @@ void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     memoryObjectInfo->setClassName("BitmapImage");
     Image::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_source, "m_source");
-    info.addMember(m_frameTimer);
-    info.addMember(m_frames, "m_frames");
+    info.addMember(m_source, "source");
+    info.addMember(m_frameTimer, "frameTimer");
+    info.addMember(m_frames, "frames");
 }
 
 void FrameData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -589,11 +589,11 @@ void FrameData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     memoryObjectInfo->setClassName("FrameData");
 #if OS(WINCE) && !PLATFORM(QT)
-    info.addRawBuffer(m_frame.get(), m_frameBytes);
+    info.addRawBuffer(m_frame.get(), m_frameBytes, "NativeImage", "frame");
 #elif USE(SKIA)
-    info.addMember(m_frame, "m_frame");
+    info.addMember(m_frame, "frame");
 #else
-    info.addRawBuffer(m_frame, m_frameBytes, "m_frame");
+    info.addRawBuffer(m_frame, m_frameBytes, "NativeImage", "frame");
 #endif
 }
 

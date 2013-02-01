@@ -109,9 +109,9 @@ void DocumentEventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, S
 void DocumentEventQueue::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_pendingEventTimer);
-    info.addMember(m_queuedEvents);
-    info.addMember(m_nodesWithQueuedScrollEvents);
+    info.addMember(m_pendingEventTimer, "pendingEventTimer");
+    info.addMember(m_queuedEvents, "queuedEvents");
+    info.addMember(m_nodesWithQueuedScrollEvents, "nodesWithQueuedScrollEvents");
 }
 
 bool DocumentEventQueue::cancelEvent(Event* event)

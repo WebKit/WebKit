@@ -421,19 +421,19 @@ void FormData::removeGeneratedFilesIfNeeded()
 void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_boundary);
-    info.addMember(m_elements);
+    info.addMember(m_boundary, "boundary");
+    info.addMember(m_elements, "elements");
 }
 
 void FormDataElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addMember(m_data);
-    info.addMember(m_filename);
+    info.addMember(m_data, "data");
+    info.addMember(m_filename, "filename");
 #if ENABLE(BLOB)
-    info.addMember(m_url);
+    info.addMember(m_url, "url");
 #endif
-    info.addMember(m_generatedFilename);
+    info.addMember(m_generatedFilename, "generatedFilename");
 }
 
 static void encodeElement(Encoder& encoder, const FormDataElement& element)

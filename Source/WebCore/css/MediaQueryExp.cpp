@@ -244,9 +244,9 @@ String MediaQueryExp::serialize() const
 void MediaQueryExp::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_mediaFeature);
-    info.addMember(m_serializationCache);
-    info.addMember(m_value);
+    info.addMember(m_mediaFeature, "mediaFeature");
+    info.addMember(m_serializationCache, "serializationCache");
+    info.addMember(m_value, "value");
 }
 
 } // namespace

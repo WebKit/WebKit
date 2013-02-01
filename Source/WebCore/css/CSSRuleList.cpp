@@ -55,7 +55,7 @@ void StaticCSSRuleList::deref()
 void StaticCSSRuleList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_rules);
+    info.addMember(m_rules, "rules");
 }
 
 } // namespace WebCore

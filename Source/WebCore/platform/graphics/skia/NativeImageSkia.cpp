@@ -179,9 +179,9 @@ SkIRect NativeImageSkia::CachedImageInfo::rectInSubset(const SkIRect& otherScale
 void NativeImageSkia::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_image);
-    info.addMember(m_resizedImage);
-    info.addMember(m_cachedImageInfo);
+    info.addMember(m_image, "image");
+    info.addMember(m_resizedImage, "resizedImage");
+    info.addMember(m_cachedImageInfo, "cachedImageInfo");
 }
 
 void reportMemoryUsage(const NativeImageSkia* image, MemoryObjectInfo* memoryObjectInfo)

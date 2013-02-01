@@ -231,7 +231,7 @@ void ImageFrame::setStatus(FrameStatus status)
 void ImageFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_backingStore);
+    info.addMember(m_backingStore, "backingStore");
 }
 
 #endif
@@ -340,11 +340,11 @@ int ImageDecoder::scaledY(int origY, int searchStart)
 void ImageDecoder::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_data);
-    info.addMember(m_frameBufferCache);
-    info.addMember(m_colorProfile);
-    info.addMember(m_scaledColumns);
-    info.addMember(m_scaledRows);
+    info.addMember(m_data, "data");
+    info.addMember(m_frameBufferCache, "frameBufferCache");
+    info.addMember(m_colorProfile, "colorProfile");
+    info.addMember(m_scaledColumns, "scaledColumns");
+    info.addMember(m_scaledRows, "scaledRows");
 }
 
 }

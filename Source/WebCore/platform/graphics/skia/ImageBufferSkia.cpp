@@ -417,10 +417,10 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 void ImageBufferData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_canvas);
-    info.addMember(m_platformContext);
+    info.addMember(m_canvas, "canvas");
+    info.addMember(m_platformContext, "platformContext");
 #if USE(ACCELERATED_COMPOSITING)
-    info.addMember(m_layerBridge);
+    info.addMember(m_layerBridge, "layerBridge");
 #endif
 }
 

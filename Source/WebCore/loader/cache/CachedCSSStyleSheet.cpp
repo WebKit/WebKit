@@ -198,9 +198,9 @@ void CachedCSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceCSS);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_decoder);
-    info.addMember(m_parsedStyleSheetCache);
-    info.addMember(m_decodedSheetText);
+    info.addMember(m_decoder, "decoder");
+    info.addMember(m_parsedStyleSheetCache, "parsedStyleSheetCache");
+    info.addMember(m_decodedSheetText, "decodedSheetText");
 }
 
 }

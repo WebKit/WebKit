@@ -1927,11 +1927,11 @@ void KURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
 #if USE(GOOGLEURL)
-    info.addMember(m_url);
+    info.addMember(m_url, "url");
 #elif USE(WTFURL)
-    info.addMember(m_urlImpl);
+    info.addMember(m_urlImpl, "urlImpl");
 #else // !USE(GOOGLEURL)
-    info.addMember(m_string);
+    info.addMember(m_string, "string");
 #endif
 }
 

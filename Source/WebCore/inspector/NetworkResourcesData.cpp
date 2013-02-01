@@ -70,10 +70,10 @@ XHRReplayData::XHRReplayData(const String &method, const KURL& url, bool async, 
 void XHRReplayData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_method);
-    info.addMember(m_url);
-    info.addMember(m_formData);
-    info.addMember(m_headers);
+    info.addMember(m_method, "method");
+    info.addMember(m_url, "url");
+    info.addMember(m_formData, "formData");
+    info.addMember(m_headers, "headers");
 }
 
 // ResourceData
@@ -150,17 +150,17 @@ size_t NetworkResourcesData::ResourceData::decodeDataToContent()
 void NetworkResourcesData::ResourceData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_requestId);
-    info.addMember(m_loaderId);
-    info.addMember(m_frameId);
-    info.addMember(m_url);
-    info.addMember(m_content);
-    info.addMember(m_xhrReplayData);
-    info.addMember(m_dataBuffer);
-    info.addMember(m_textEncodingName);
-    info.addMember(m_decoder);
-    info.addMember(m_buffer);
-    info.addMember(m_cachedResource);
+    info.addMember(m_requestId, "requestId");
+    info.addMember(m_loaderId, "loaderId");
+    info.addMember(m_frameId, "frameId");
+    info.addMember(m_url, "url");
+    info.addMember(m_content, "content");
+    info.addMember(m_xhrReplayData, "xhrReplayData");
+    info.addMember(m_dataBuffer, "dataBuffer");
+    info.addMember(m_textEncodingName, "textEncodingName");
+    info.addMember(m_decoder, "decoder");
+    info.addMember(m_buffer, "buffer");
+    info.addMember(m_cachedResource, "cachedResource");
 }
 
 // NetworkResourcesData
@@ -411,9 +411,9 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
 void NetworkResourcesData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_requestIdsDeque);
-    info.addMember(m_reusedXHRReplayDataRequestIds);
-    info.addMember(m_requestIdToResourceDataMap);
+    info.addMember(m_requestIdsDeque, "requestIdsDeque");
+    info.addMember(m_reusedXHRReplayDataRequestIds, "reusedXHRReplayDataRequestIds");
+    info.addMember(m_requestIdToResourceDataMap, "requestIdToResourceDataMap");
 }
 
 } // namespace WebCore

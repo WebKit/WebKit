@@ -39,7 +39,7 @@ namespace WebCore {
 void CachedMetadata::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_serializedData);
+    info.addMember(m_serializedData, "serializedData");
 }
 
 } // namespace WebCore

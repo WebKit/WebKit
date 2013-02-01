@@ -98,6 +98,8 @@ HeapGraphSerializer::HeapGraphSerializer()
 
     m_edgeTypes[WTF::RefPtrMember] = m_strings.size();
     m_strings.append("countRef");
+
+    m_unknownClassNameId = addString("unknown");
 }
 
 HeapGraphSerializer::~HeapGraphSerializer()
@@ -109,7 +111,7 @@ void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
     HeapGraphNode node;
     node.m_type = addString(info.objectType());
     node.m_size = info.objectSize();
-    node.m_className = addString(info.className());
+    node.m_className = info.className().isEmpty() ? m_unknownClassNameId : addString(info.className());
     node.m_name = addString(info.name());
     // Node is always reported after its outgoing edges and leaves.
     node.m_edgeCount = m_edges.size() - m_lastReportedEdgeIndex;
@@ -191,13 +193,13 @@ PassRefPtr<InspectorObject> HeapGraphSerializer::serialize()
 void HeapGraphSerializer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Inspector);
-    info.addMember(m_stringToIndex);
-    info.addMember(m_strings);
-    info.addMember(m_objectToNodeIndex);
-    info.addMember(m_baseToRealAddress);
-    info.addMember(m_nodes);
-    info.addMember(m_edges);
-    info.addMember(m_roots);
+    info.addMember(m_stringToIndex, "stringToIndex");
+    info.addMember(m_strings, "strings");
+    info.addMember(m_objectToNodeIndex, "objectToNodeIndex");
+    info.addMember(m_baseToRealAddress, "baseToRealAddress");
+    info.addMember(m_nodes, "nodes");
+    info.addMember(m_edges, "edges");
+    info.addMember(m_roots, "roots");
 }
 
 int HeapGraphSerializer::addString(const String& string)

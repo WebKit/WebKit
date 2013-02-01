@@ -146,7 +146,7 @@ String CSSSelectorList::selectorsText() const
 void CSSSelectorList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addRawBuffer(m_selectorArray, length() * sizeof(CSSSelector));
+    info.addRawBuffer(m_selectorArray, length() * sizeof(CSSSelector), "CSSSelectors", "selectorArray");
 }
 
 template <typename Functor>

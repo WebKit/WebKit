@@ -135,7 +135,7 @@ HRTFDatabase* HRTFDatabaseLoader::defaultHRTFDatabase()
 void HRTFDatabaseLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
-    info.addMember(m_hrtfDatabase);
+    info.addMember(m_hrtfDatabase, "hrtfDatabase");
 }
 
 } // namespace WebCore

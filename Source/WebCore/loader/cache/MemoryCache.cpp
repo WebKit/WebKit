@@ -725,9 +725,9 @@ void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::MemoryCacheStructures);
     memoryObjectInfo->setClassName("MemoryCache");
-    info.addMember(m_resources);
-    info.addMember(m_allResources);
-    info.addMember(m_liveDecodedResources);
+    info.addMember(m_resources, "resources");
+    info.addMember(m_allResources, "allResources");
+    info.addMember(m_liveDecodedResources, "liveDecodedResources");
 }
 
 void MemoryCache::setDisabled(bool disabled)

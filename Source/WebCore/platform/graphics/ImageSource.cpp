@@ -210,7 +210,7 @@ unsigned ImageSource::frameBytesAtIndex(size_t index) const
 void ImageSource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_decoder);
+    info.addMember(m_decoder, "decoder");
 }
 
 }

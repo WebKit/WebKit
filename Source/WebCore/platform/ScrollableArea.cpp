@@ -424,7 +424,7 @@ IntRect ScrollableArea::visibleContentRect(bool includeScrollbars) const
 void ScrollableArea::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_scrollAnimator);
+    info.addMember(m_scrollAnimator, "scrollAnimator");
 }
 
 } // namespace WebCore

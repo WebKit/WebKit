@@ -1640,11 +1640,11 @@ void InlineFlowBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
     InlineBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_overflow);
-    info.addMember(m_firstChild);
-    info.addMember(m_lastChild);
-    info.addMember(m_prevLineBox);
-    info.addMember(m_nextLineBox);
+    info.addMember(m_overflow, "overflow");
+    info.addMember(m_firstChild, "firstChild");
+    info.addMember(m_lastChild, "lastChild");
+    info.addMember(m_prevLineBox, "prevLineBox");
+    info.addMember(m_nextLineBox, "nextLineBox");
 }
 
 } // namespace WebCore

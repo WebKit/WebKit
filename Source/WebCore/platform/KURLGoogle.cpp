@@ -394,10 +394,10 @@ const String& KURLGooglePrivate::string() const
 void KURLGooglePrivate::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_utf8);
-    info.addMember(m_string);
-    info.addMember(m_innerURL);
-    info.addMember(m_parsed);
+    info.addMember(m_utf8, "utf8");
+    info.addMember(m_string, "string");
+    info.addMember(m_innerURL, "innerURL");
+    info.addMember(m_parsed, "parsed");
 }
 // KURL ------------------------------------------------------------------------
 

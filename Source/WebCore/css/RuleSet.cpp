@@ -152,39 +152,32 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
 void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_rule);
-}
-
-static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap& atomicRuleMap)
-{
-    info->addMember(atomicRuleMap);
-    for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
-        info->addMember(*it->value);
+    info.addMember(m_rule, "rule");
 }
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    reportAtomRuleMap(&info, m_idRules);
-    reportAtomRuleMap(&info, m_classRules);
-    reportAtomRuleMap(&info, m_tagRules);
-    reportAtomRuleMap(&info, m_shadowPseudoElementRules);
-    info.addMember(m_linkPseudoClassRules);
+    info.addMember(m_idRules, "idRules");
+    info.addMember(m_classRules, "classRules");
+    info.addMember(m_tagRules, "tagRules");
+    info.addMember(m_shadowPseudoElementRules, "shadowPseudoElementRules");
+    info.addMember(m_linkPseudoClassRules, "linkPseudoClassRules");
 #if ENABLE(VIDEO_TRACK)
-    info.addMember(m_cuePseudoRules);
+    info.addMember(m_cuePseudoRules, "cuePseudoRules");
 #endif
-    info.addMember(m_focusPseudoClassRules);
-    info.addMember(m_universalRules);
-    info.addMember(m_pageRules);
-    info.addMember(m_regionSelectorsAndRuleSets);
-    info.addMember(m_features);
+    info.addMember(m_focusPseudoClassRules, "focusPseudoClassRules");
+    info.addMember(m_universalRules, "universalRules");
+    info.addMember(m_pageRules, "pageRules");
+    info.addMember(m_regionSelectorsAndRuleSets, "regionSelectorsAndRuleSets");
+    info.addMember(m_features, "features");
 }
 
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(ruleSet);
-    info.addMember(selector);
+    info.addMember(ruleSet, "ruleSet");
+    info.addMember(selector, "selector");
 }
 
 static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData& ruleData)

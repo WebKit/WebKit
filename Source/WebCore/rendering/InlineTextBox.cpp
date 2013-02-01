@@ -1460,8 +1460,8 @@ void InlineTextBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
     InlineBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_prevTextBox);
-    info.addMember(m_nextTextBox);
+    info.addMember(m_prevTextBox, "prevTextBox");
+    info.addMember(m_nextTextBox, "nextTextBox");
 }
 
 } // namespace WebCore

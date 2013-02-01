@@ -94,7 +94,7 @@ void LiveNodeListBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     NodeList::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_ownerNode);
+    info.addMember(m_ownerNode, "ownerNode");
     info.addWeakPointer(m_cachedItem);
 }
 

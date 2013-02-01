@@ -292,8 +292,8 @@ unsigned StyleRule::averageSizeInBytes()
 void StyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_properties);
-    info.addMember(m_selectorList);
+    info.addMember(m_properties, "properties");
+    info.addMember(m_selectorList, "selectorList");
 }
 
 StyleRule::StyleRule(int sourceLine)
@@ -355,8 +355,8 @@ void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
 void StyleRulePage::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_properties);
-    info.addMember(m_selectorList);
+    info.addMember(m_properties, "properties");
+    info.addMember(m_selectorList, "selectorList");
 }
 
 StyleRuleFontFace::StyleRuleFontFace()
@@ -389,7 +389,7 @@ void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
 void StyleRuleFontFace::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_properties);
+    info.addMember(m_properties, "properties");
 }
 
 
@@ -420,7 +420,7 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
 void StyleRuleGroup::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_childRules);
+    info.addMember(m_childRules, "childRules");
 }
 
 StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase> >& adoptRules)
@@ -439,7 +439,7 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
 void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_mediaQueries);
+    info.addMember(m_mediaQueries, "mediaQueries");
 }
 
 
@@ -474,7 +474,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 void StyleRuleRegion::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_selectorList);
+    info.addMember(m_selectorList, "selectorList");
 }
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -508,7 +508,7 @@ void StyleRuleViewport::setProperties(PassRefPtr<StylePropertySet> properties)
 void StyleRuleViewport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_properties);
+    info.addMember(m_properties, "properties");
 }
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 

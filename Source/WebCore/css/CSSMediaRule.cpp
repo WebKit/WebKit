@@ -84,7 +84,7 @@ void CSSMediaRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSGroupingRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_mediaCSSOMWrapper);
+    info.addMember(m_mediaCSSOMWrapper, "mediaCSSOMWrapper");
 }
 
 } // namespace WebCore

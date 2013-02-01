@@ -685,7 +685,7 @@ void HTMLTextFormControlElement::reportMemoryUsage(MemoryObjectInfo* memoryObjec
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     HTMLFormControlElementWithState::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_textAsOfLastFormControlChangeEvent);
+    info.addMember(m_textAsOfLastFormControlChangeEvent, "textAsOfLastFormControlChangeEvent");
 }
 
 } // namespace Webcore

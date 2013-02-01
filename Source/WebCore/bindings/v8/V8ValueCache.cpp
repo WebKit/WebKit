@@ -115,9 +115,9 @@ v8::Handle<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl,
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addMember(m_stringCache);
+    info.addMember(m_stringCache, "stringCache");
     info.ignoreMember(m_lastV8String);
-    info.addMember(m_lastStringImpl);
+    info.addMember(m_lastStringImpl, "lastStringImpl");
 }
 
 IntegerCache::IntegerCache()

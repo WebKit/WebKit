@@ -146,7 +146,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addRawBuffer(m_allocation, m_size * sizeof(T));
+        info.addRawBuffer(m_allocation, m_size * sizeof(T), "AudioArrayData", "allocation");
         info.ignoreMember(m_alignedData);
     }
 

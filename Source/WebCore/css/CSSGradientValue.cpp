@@ -48,8 +48,8 @@ namespace WebCore {
 void CSSGradientColorStop::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_position);
-    info.addMember(m_color);
+    info.addMember(m_position, "position");
+    info.addMember(m_color, "color");
 }
 
 PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
@@ -475,11 +475,11 @@ void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObject
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_firstX);
-    info.addMember(m_firstY);
-    info.addMember(m_secondX);
-    info.addMember(m_secondY);
-    info.addMember(m_stops);
+    info.addMember(m_firstX, "firstX");
+    info.addMember(m_firstY, "firstY");
+    info.addMember(m_secondX, "secondX");
+    info.addMember(m_secondY, "secondY");
+    info.addMember(m_stops, "stops");
 }
 
 String CSSLinearGradientValue::customCssText() const
@@ -727,7 +727,7 @@ void CSSLinearGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memor
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_angle);
+    info.addMember(m_angle, "angle");
 }
 
 String CSSRadialGradientValue::customCssText() const
@@ -1116,12 +1116,12 @@ void CSSRadialGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memor
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_firstRadius);
-    info.addMember(m_secondRadius);
-    info.addMember(m_shape);
-    info.addMember(m_sizingBehavior);
-    info.addMember(m_endHorizontalSize);
-    info.addMember(m_endVerticalSize);
+    info.addMember(m_firstRadius, "firstRadius");
+    info.addMember(m_secondRadius, "secondRadius");
+    info.addMember(m_shape, "shape");
+    info.addMember(m_sizingBehavior, "sizingBehavior");
+    info.addMember(m_endHorizontalSize, "endHorizontalSize");
+    info.addMember(m_endVerticalSize, "endVerticalSize");
 }
 
 } // namespace WebCore

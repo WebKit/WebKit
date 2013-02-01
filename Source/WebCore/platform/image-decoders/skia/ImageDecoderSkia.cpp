@@ -143,7 +143,7 @@ void ImageFrame::setStatus(FrameStatus status)
 void ImageFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_bitmap);
+    info.addMember(m_bitmap, "bitmap");
 }
 
 } // namespace WebCore

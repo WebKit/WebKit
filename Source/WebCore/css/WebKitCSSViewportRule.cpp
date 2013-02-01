@@ -90,8 +90,8 @@ void WebKitCSSViewportRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_viewportRule);
-    info.addMember(m_propertiesCSSOMWrapper);
+    info.addMember(m_viewportRule, "viewportRule");
+    info.addMember(m_propertiesCSSOMWrapper, "propertiesCSSOMWrapper");
 }
 
 } // namespace WebCore

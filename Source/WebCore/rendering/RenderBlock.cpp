@@ -7838,10 +7838,10 @@ void RenderBlock::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     RenderBox::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_floatingObjects);
-    info.addMember(m_rareData);
-    info.addMember(m_children);
-    info.addMember(m_lineBoxes);
+    info.addMember(m_floatingObjects, "floatingObjects");
+    info.addMember(m_rareData, "rareData");
+    info.addMember(m_children, "children");
+    info.addMember(m_lineBoxes, "lineBoxes");
 }
 
 void RenderBlock::reportStaticMembersMemoryUsage(MemoryInstrumentation* memoryInstrumentation)

@@ -88,11 +88,11 @@ void InspectorDOMStorageResource::unbind()
 void InspectorDOMStorageResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorDOMStorageResources);
-    info.addMember(m_storageArea);
-    info.addMember(m_frame);
+    info.addMember(m_storageArea, "storageArea");
+    info.addMember(m_frame, "frame");
     info.addWeakPointer(m_frontend);
-    info.addMember(m_id);
-    info.addPrivateBuffer(m_storageArea->memoryBytesUsedByCache());
+    info.addMember(m_id, "id");
+    info.addPrivateBuffer(m_storageArea->memoryBytesUsedByCache(), 0, "StorageAreaCache", "cache");
 }
 
 } // namespace WebCore
