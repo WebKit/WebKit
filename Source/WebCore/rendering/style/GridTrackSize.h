@@ -42,10 +42,10 @@ enum GridTrackSizeType {
 
 class GridTrackSize {
 public:
-    GridTrackSize()
+    GridTrackSize(LengthType type = Undefined)
         : m_type(LengthTrackSizing)
-        , m_minTrackBreadth(Undefined)
-        , m_maxTrackBreadth(Undefined)
+        , m_minTrackBreadth(type)
+        , m_maxTrackBreadth(type)
     {
     }
 
