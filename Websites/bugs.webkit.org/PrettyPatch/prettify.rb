@@ -1,8 +1,12 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'pathname'
+require 'webrick/htmlutils'
+
+$LOAD_PATH << Pathname.new(__FILE__).dirname.realpath.to_s
 
 require 'PrettyPatch'
-require 'optparse'
-require 'webrick/htmlutils'
 
 BACKTRACE_SEPARATOR = "\n\tfrom "
 

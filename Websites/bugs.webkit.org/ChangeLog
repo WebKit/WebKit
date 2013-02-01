@@ -1,3 +1,12 @@
+2013-02-01  Nathan de Vries  <ndevries@apple.com>
+
+        Allow prettify.rb to be run from any directory, and don't hard-code the system ruby path
+        https://bugs.webkit.org/show_bug.cgi?id=108569
+
+        Reviewed by Joseph Pecoraro.
+
+        * PrettyPatch/prettify.rb:
+
 2013-01-03  James Robinson  <jamesr@chromium.org>
 
         Avoid mixed content when expanding context in code review tool
