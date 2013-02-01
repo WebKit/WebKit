@@ -50,17 +50,17 @@ void QtNetworkReplyData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encode(m_dataHandle);
 }
 
-bool QtNetworkReplyData::decode(CoreIPC::ArgumentDecoder* decoder, QtNetworkReplyData& destination)
+bool QtNetworkReplyData::decode(CoreIPC::ArgumentDecoder& decoder, QtNetworkReplyData& destination)
 {
-    if (!decoder->decode(destination.m_urlString))
+    if (!decoder.decode(destination.m_urlString))
         return false;
-    if (!decoder->decode(destination.m_contentType))
+    if (!decoder.decode(destination.m_contentType))
         return false;
-    if (!decoder->decode(destination.m_contentLength))
+    if (!decoder.decode(destination.m_contentLength))
         return false;
-    if (!decoder->decode(destination.m_replyUuid))
+    if (!decoder.decode(destination.m_replyUuid))
         return false;
-    if (!decoder->decode(destination.m_dataHandle))
+    if (!decoder.decode(destination.m_dataHandle))
         return false;
     return true;
 }

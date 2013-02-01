@@ -1,3 +1,41 @@
+2013-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Fix build after r141619
+        https://bugs.webkit.org/show_bug.cgi?id=108680
+
+        Reviewed by Benjamin Poulain.
+
+        Take a reference instead of a pointer for decoding functions.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::decodeTimingFunction):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::Handle::decode):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        (Handle):
+        * Shared/qt/ArgumentCodersQt.cpp:
+        (CoreIPC::::decode):
+        * Shared/qt/ArgumentCodersQt.h:
+        (CoreIPC):
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::decode):
+        * Shared/qt/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::decode):
+        * Shared/qt/QtNetworkReplyData.cpp:
+        (WebKit::QtNetworkReplyData::decode):
+        * Shared/qt/QtNetworkReplyData.h:
+        (QtNetworkReplyData):
+        * Shared/qt/QtNetworkRequestData.cpp:
+        (WebKit::QtNetworkRequestData::decode):
+        * Shared/qt/QtNetworkRequestData.h:
+        (QtNetworkRequestData):
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::decodePlatformData):
+
 2013-02-01  Anders Carlsson  <andersca@apple.com>
 
         Message decoding functions should take a MessageDecoder reference

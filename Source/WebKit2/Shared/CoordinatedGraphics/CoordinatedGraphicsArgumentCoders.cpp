@@ -84,7 +84,7 @@ void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder& encoder, const FloatPo
     SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint3D);
 }
 
-bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder* decoder, FloatPoint3D& floatPoint3D)
+bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder& decoder, FloatPoint3D& floatPoint3D)
 {
     return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint3D);
 }
@@ -94,7 +94,7 @@ void ArgumentCoder<Length>::encode(ArgumentEncoder& encoder, const Length& lengt
     SimpleArgumentCoder<Length>::encode(encoder, length);
 }
 
-bool ArgumentCoder<Length>::decode(ArgumentDecoder* decoder, Length& length)
+bool ArgumentCoder<Length>::decode(ArgumentDecoder& decoder, Length& length)
 {
     return SimpleArgumentCoder<Length>::decode(decoder, length);
 }
@@ -104,7 +104,7 @@ void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const
     SimpleArgumentCoder<TransformationMatrix>::encode(encoder, transformationMatrix);
 }
 
-bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder* decoder, TransformationMatrix& transformationMatrix)
+bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, TransformationMatrix& transformationMatrix)
 {
     return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
 }
@@ -199,10 +199,10 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
     }
 }
 
-bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, WebCore::FilterOperations& filters)
+bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, WebCore::FilterOperations& filters)
 {
     uint32_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     Vector<RefPtr<FilterOperation> >& operations = filters.operations();
@@ -210,7 +210,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
     for (size_t i = 0; i < size; ++i) {
         FilterOperation::OperationType type;
         RefPtr<FilterOperation> filter;
-        if (!decoder->decodeEnum(type))
+        if (!decoder.decodeEnum(type))
             return false;
 
         switch (type) {
@@ -219,7 +219,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE: {
             double value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             filter = BasicColorMatrixFilterOperation::create(value, type);
             break;
@@ -229,7 +229,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY: {
             double value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             filter = BasicComponentTransferFilterOperation::create(value, type);
             break;
@@ -247,7 +247,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             Color color;
             if (!ArgumentCoder<IntPoint>::decode(decoder, location))
                 return false;
-            if (!decoder->decode(stdDeviation))
+            if (!decoder.decode(stdDeviation))
                 return false;
             if (!ArgumentCoder<Color>::decode(decoder, color))
                 return false;
@@ -263,34 +263,34 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             // FIXME: CustomFilterOperation should not need the meshType.
             // https://bugs.webkit.org/show_bug.cgi?id=102529
             CustomFilterMeshType meshType;
-            if (!decoder->decodeEnum(meshType))
+            if (!decoder.decodeEnum(meshType))
                 return false;
             int programID = 0;
-            if (!decoder->decode(programID))
+            if (!decoder.decode(programID))
                 return false;
 
             uint32_t parametersSize;
-            if (!decoder->decode(parametersSize))
+            if (!decoder.decode(parametersSize))
                 return false;
 
             CustomFilterParameterList parameters(parametersSize);
             for (size_t i = 0; i < parametersSize; ++i) {
                 String name;
                 CustomFilterParameter::ParameterType parameterType;
-                if (!decoder->decode(name))
+                if (!decoder.decode(name))
                     return false;
-                if (!decoder->decodeEnum(parameterType))
+                if (!decoder.decodeEnum(parameterType))
                     return false;
 
                 switch (parameterType) {
                 case CustomFilterParameter::ARRAY: {
                     RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name);
                     uint32_t arrayParameterSize;
-                    if (!decoder->decode(arrayParameterSize))
+                    if (!decoder.decode(arrayParameterSize))
                         return false;
                     double arrayParameterValue;
                     for (size_t j = 0; j < arrayParameterSize; ++j) {
-                        if (!decoder->decode(arrayParameterValue))
+                        if (!decoder.decode(arrayParameterValue))
                             return false;
                         arrayParameter->addValue(arrayParameterValue);
                     }
@@ -300,11 +300,11 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 case CustomFilterParameter::NUMBER: {
                     RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
                     uint32_t numberParameterSize;
-                    if (!decoder->decode(numberParameterSize))
+                    if (!decoder.decode(numberParameterSize))
                         return false;
                     double numberParameterValue;
                     for (size_t j = 0; j < numberParameterSize; ++j) {
-                        if (!decoder->decode(numberParameterValue))
+                        if (!decoder.decode(numberParameterValue))
                             return false;
                         numberParameter->addValue(numberParameterValue);
                     }
@@ -325,9 +325,9 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
 
             unsigned meshRows;
             unsigned meshColumns;
-            if (!decoder->decode(meshRows))
+            if (!decoder.decode(meshRows))
                 return false;
-            if (!decoder->decode(meshColumns))
+            if (!decoder.decode(meshColumns))
                 return false;
 
             // At this point the Shaders are already validated, so we just use WebCustomFilterOperation for transportation.
@@ -359,24 +359,24 @@ void ArgumentCoder<WebCore::CustomFilterProgramInfo>::encode(ArgumentEncoder& en
     encoder.encodeEnum(mixSettings.compositeOperator);
 }
 
-bool ArgumentCoder<WebCore::CustomFilterProgramInfo>::decode(ArgumentDecoder* decoder, CustomFilterProgramInfo& programInfo)
+bool ArgumentCoder<WebCore::CustomFilterProgramInfo>::decode(ArgumentDecoder& decoder, CustomFilterProgramInfo& programInfo)
 {
     String vertexShaderString;
     String fragmentShaderString;
     CustomFilterProgramType programType;
     CustomFilterMeshType meshType;
     CustomFilterProgramMixSettings mixSettings;
-    if (!decoder->decode(vertexShaderString))
+    if (!decoder.decode(vertexShaderString))
         return false;
-    if (!decoder->decode(fragmentShaderString))
+    if (!decoder.decode(fragmentShaderString))
         return false;
-    if (!decoder->decodeEnum(programType))
+    if (!decoder.decodeEnum(programType))
         return false;
-    if (!decoder->decodeEnum(meshType))
+    if (!decoder.decodeEnum(meshType))
         return false;
-    if (!decoder->decodeEnum(mixSettings.blendMode))
+    if (!decoder.decodeEnum(mixSettings.blendMode))
         return false;
-    if (!decoder->decodeEnum(mixSettings.compositeOperator))
+    if (!decoder.decodeEnum(mixSettings.compositeOperator))
         return false;
     programInfo = CustomFilterProgramInfo(vertexShaderString, fragmentShaderString, programType, mixSettings, meshType);
     return true;
@@ -442,15 +442,15 @@ void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const 
     }
 }
 
-bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, TransformOperations& transformOperations)
+bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder& decoder, TransformOperations& transformOperations)
 {
     uint32_t operationsSize;
-    if (!decoder->decode(operationsSize))
+    if (!decoder.decode(operationsSize))
         return false;
 
     for (size_t i = 0; i < operationsSize; ++i) {
         TransformOperation::OperationType operationType;
-        if (!decoder->decodeEnum(operationType))
+        if (!decoder.decodeEnum(operationType))
             return false;
 
         switch (operationType) {
@@ -460,11 +460,11 @@ bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, Transf
         case TransformOperation::SCALE_Z:
         case TransformOperation::SCALE_3D: {
             double x, y, z;
-            if (!decoder->decode(x))
+            if (!decoder.decode(x))
                 return false;
-            if (!decoder->decode(y))
+            if (!decoder.decode(y))
                 return false;
-            if (!decoder->decode(z))
+            if (!decoder.decode(z))
                 return false;
             transformOperations.operations().append(ScaleTransformOperation::create(x, y, z, operationType));
             break;
@@ -489,13 +489,13 @@ bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, Transf
         case TransformOperation::ROTATE_Y:
         case TransformOperation::ROTATE_3D: {
             double x, y, z, angle;
-            if (!decoder->decode(x))
+            if (!decoder.decode(x))
                 return false;
-            if (!decoder->decode(y))
+            if (!decoder.decode(y))
                 return false;
-            if (!decoder->decode(z))
+            if (!decoder.decode(z))
                 return false;
-            if (!decoder->decode(angle))
+            if (!decoder.decode(angle))
                 return false;
             transformOperations.operations().append(RotateTransformOperation::create(x, y, z, angle, operationType));
             break;
@@ -504,9 +504,9 @@ bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, Transf
         case TransformOperation::SKEW_Y:
         case TransformOperation::SKEW: {
             double angleX, angleY;
-            if (!decoder->decode(angleX))
+            if (!decoder.decode(angleX))
                 return false;
-            if (!decoder->decode(angleY))
+            if (!decoder.decode(angleY))
                 return false;
             transformOperations.operations().append(SkewTransformOperation::create(angleX, angleY, operationType));
             break;
@@ -576,10 +576,10 @@ static void encodeTimingFunction(ArgumentEncoder& encoder, const TimingFunction*
     }
 }
 
-bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timingFunction)
+bool decodeTimingFunction(ArgumentDecoder& decoder, RefPtr<TimingFunction>& timingFunction)
 {
     TimingFunction::TimingFunctionType type;
-    if (!decoder->decodeEnum(type))
+    if (!decoder.decodeEnum(type))
         return false;
 
     if (type == TimingFunction::TimingFunctionType(-1))
@@ -592,19 +592,19 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
     case TimingFunction::CubicBezierFunction: {
         double x1, y1, x2, y2;
         CubicBezierTimingFunction::TimingFunctionPreset bezierPreset;
-        if (!decoder->decodeEnum(bezierPreset))
+        if (!decoder.decodeEnum(bezierPreset))
             return false;
         if (bezierPreset != CubicBezierTimingFunction::Custom) {
             timingFunction = CubicBezierTimingFunction::create(bezierPreset);
             return true;
         }
-        if (!decoder->decode(x1))
+        if (!decoder.decode(x1))
             return false;
-        if (!decoder->decode(y1))
+        if (!decoder.decode(y1))
             return false;
-        if (!decoder->decode(x2))
+        if (!decoder.decode(x2))
             return false;
-        if (!decoder->decode(y2))
+        if (!decoder.decode(y2))
             return false;
 
         timingFunction = CubicBezierTimingFunction::create(x1, y1, x2, y2);
@@ -613,9 +613,9 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
     case TimingFunction::StepsFunction: {
         uint32_t numberOfSteps;
         bool stepAtStart;
-        if (!decoder->decode(numberOfSteps))
+        if (!decoder.decode(numberOfSteps))
             return false;
-        if (!decoder->decode(stepAtStart))
+        if (!decoder.decode(stepAtStart))
             return false;
 
         timingFunction = StepsTimingFunction::create(numberOfSteps, stepAtStart);
@@ -667,7 +667,7 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder& encoder, con
     }
 }
 
-bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, GraphicsLayerAnimation& animation)
+bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, GraphicsLayerAnimation& animation)
 {
     String name;
     IntSize boxSize;
@@ -683,25 +683,25 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
     RefPtr<TimingFunction> timingFunction;
     RefPtr<Animation> animationObject;
 
-    if (!decoder->decode(name))
+    if (!decoder.decode(name))
         return false;
-    if (!decoder->decode(boxSize))
+    if (!decoder.decode(boxSize))
         return false;
-    if (!decoder->decodeEnum(state))
+    if (!decoder.decodeEnum(state))
         return false;
-    if (!decoder->decode(startTime))
+    if (!decoder.decode(startTime))
         return false;
-    if (!decoder->decode(pauseTime))
+    if (!decoder.decode(pauseTime))
         return false;
-    if (!decoder->decode(listsMatch))
+    if (!decoder.decode(listsMatch))
         return false;
-    if (!decoder->decodeEnum(direction))
+    if (!decoder.decodeEnum(direction))
         return false;
-    if (!decoder->decode(fillMode))
+    if (!decoder.decode(fillMode))
         return false;
-    if (!decoder->decode(duration))
+    if (!decoder.decode(duration))
         return false;
-    if (!decoder->decode(iterationCount))
+    if (!decoder.decode(iterationCount))
         return false;
     if (!decodeTimingFunction(decoder, timingFunction))
         return false;
@@ -715,16 +715,16 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
         animationObject->setTimingFunction(timingFunction);
 
     AnimatedPropertyID property;
-    if (!decoder->decodeEnum(property))
+    if (!decoder.decodeEnum(property))
         return false;
     KeyframeValueList keyframes(property);
     unsigned keyframesSize;
-    if (!decoder->decode(keyframesSize))
+    if (!decoder.decode(keyframesSize))
         return false;
     for (unsigned i = 0; i < keyframesSize; ++i) {
         float keyTime;
         RefPtr<TimingFunction> timingFunction;
-        if (!decoder->decode(keyTime))
+        if (!decoder.decode(keyTime))
             return false;
         if (!decodeTimingFunction(decoder, timingFunction))
             return false;
@@ -732,14 +732,14 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
         switch (property) {
         case AnimatedPropertyOpacity: {
             float value;
-            if (!decoder->decode(value))
+            if (!decoder.decode(value))
                 return false;
             keyframes.insert(new FloatAnimationValue(keyTime, value, timingFunction));
             break;
         }
         case AnimatedPropertyWebkitTransform: {
             TransformOperations transform;
-            if (!decoder->decode(transform))
+            if (!decoder.decode(transform))
                 return false;
             keyframes.insert(new TransformAnimationValue(keyTime, &transform, timingFunction));
             break;
@@ -747,7 +747,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
 #if ENABLE(CSS_FILTERS)
         case AnimatedPropertyWebkitFilter: {
             FilterOperations filter;
-            if (!decoder->decode(filter))
+            if (!decoder.decode(filter))
                 return false;
             keyframes.insert(new FilterAnimationValue(keyTime, &filter, timingFunction));
             break;
@@ -769,9 +769,9 @@ void ArgumentCoder<GraphicsLayerAnimations>::encode(ArgumentEncoder& encoder, co
     encoder << animations.animations();
 }
 
-bool ArgumentCoder<GraphicsLayerAnimations>::decode(ArgumentDecoder* decoder, GraphicsLayerAnimations& animations)
+bool ArgumentCoder<GraphicsLayerAnimations>::decode(ArgumentDecoder& decoder, GraphicsLayerAnimations& animations)
 {
-    return decoder->decode(animations.animations());
+    return decoder.decode(animations.animations());
 }
 
 #if USE(GRAPHICS_SURFACE)
@@ -788,27 +788,27 @@ void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder& encod
 #endif
 }
 
-bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decoder, WebCore::GraphicsSurfaceToken& token)
+bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder& decoder, WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(WINDOWS)
     uint64_t frontBufferHandle;
-    if (!decoder->decode(frontBufferHandle))
+    if (!decoder.decode(frontBufferHandle))
         return false;
     token.frontBufferHandle = reinterpret_cast<GraphicsSurfaceToken::BufferHandle>(frontBufferHandle);
     uint64_t backBufferHandle;
-    if (!decoder->decode(backBufferHandle))
+    if (!decoder.decode(backBufferHandle))
         return false;
     token.backBufferHandle = reinterpret_cast<GraphicsSurfaceToken::BufferHandle>(backBufferHandle);
 #elif OS(DARWIN)
     Attachment frontAttachment, backAttachment;
-    if (!decoder->decode(frontAttachment))
+    if (!decoder.decode(frontAttachment))
         return false;
-    if (!decoder->decode(backAttachment))
+    if (!decoder.decode(backAttachment))
         return false;
 
     token = GraphicsSurfaceToken(frontAttachment.port(), backAttachment.port());
 #elif OS(LINUX)
-    if (!decoder->decode(token.frontBufferHandle))
+    if (!decoder.decode(token.frontBufferHandle))
         return false;
 #endif
     return true;
@@ -820,7 +820,7 @@ void ArgumentCoder<CoordinatedLayerInfo>::encode(ArgumentEncoder& encoder, const
     SimpleArgumentCoder<CoordinatedLayerInfo>::encode(encoder, coordinatedLayerInfo);
 }
 
-bool ArgumentCoder<CoordinatedLayerInfo>::decode(ArgumentDecoder* decoder, CoordinatedLayerInfo& coordinatedLayerInfo)
+bool ArgumentCoder<CoordinatedLayerInfo>::decode(ArgumentDecoder& decoder, CoordinatedLayerInfo& coordinatedLayerInfo)
 {
     return SimpleArgumentCoder<CoordinatedLayerInfo>::decode(decoder, coordinatedLayerInfo);
 }
@@ -830,7 +830,7 @@ void ArgumentCoder<SurfaceUpdateInfo>::encode(ArgumentEncoder& encoder, const Su
     SimpleArgumentCoder<SurfaceUpdateInfo>::encode(encoder, surfaceUpdateInfo);
 }
 
-bool ArgumentCoder<SurfaceUpdateInfo>::decode(ArgumentDecoder* decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
+bool ArgumentCoder<SurfaceUpdateInfo>::decode(ArgumentDecoder& decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
 {
     return SimpleArgumentCoder<SurfaceUpdateInfo>::decode(decoder, surfaceUpdateInfo);
 }

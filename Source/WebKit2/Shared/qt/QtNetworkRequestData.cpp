@@ -56,13 +56,13 @@ void QtNetworkRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encode(m_replyUuid);
 }
 
-bool QtNetworkRequestData::decode(CoreIPC::ArgumentDecoder* decoder, QtNetworkRequestData& destination)
+bool QtNetworkRequestData::decode(CoreIPC::ArgumentDecoder& decoder, QtNetworkRequestData& destination)
 {
-    if (!decoder->decode(destination.m_scheme))
+    if (!decoder.decode(destination.m_scheme))
         return false;
-    if (!decoder->decode(destination.m_urlString))
+    if (!decoder.decode(destination.m_urlString))
         return false;
-    if (!decoder->decode(destination.m_replyUuid))
+    if (!decoder.decode(destination.m_replyUuid))
         return false;
     return true;
 }

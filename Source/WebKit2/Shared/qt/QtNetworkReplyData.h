@@ -43,7 +43,7 @@ struct QtNetworkReplyData {
     QtNetworkReplyData();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, QtNetworkReplyData&);
+    static bool decode(CoreIPC::ArgumentDecoder&, QtNetworkReplyData&);
 
     WTF::String m_urlString;
 

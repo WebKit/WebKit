@@ -68,13 +68,13 @@ void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encode(releaseToAttachment());
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
 {
     ASSERT_ARG(handle, !handle.m_size);
     ASSERT_ARG(handle, handle.isNull());
 
     CoreIPC::Attachment attachment;
-    if (!decoder->decode(attachment))
+    if (!decoder.decode(attachment))
         return false;
 
     handle.adoptFromAttachment(attachment.releaseFileDescriptor(), attachment.size());

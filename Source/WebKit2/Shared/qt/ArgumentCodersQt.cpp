@@ -57,29 +57,29 @@ void ArgumentCoder<WebCore::DragData>::encode(ArgumentEncoder& encoder, const Dr
     encoder << map;
 }
 
-bool ArgumentCoder<WebCore::DragData>::decode(ArgumentDecoder* decoder, DragData& dragData)
+bool ArgumentCoder<WebCore::DragData>::decode(ArgumentDecoder& decoder, DragData& dragData)
 {
     IntPoint clientPosition;
     IntPoint globalPosition;
     uint64_t sourceOperationMask;
     uint64_t flags;
-    if (!decoder->decode(clientPosition))
+    if (!decoder.decode(clientPosition))
         return false;
-    if (!decoder->decode(globalPosition))
+    if (!decoder.decode(globalPosition))
         return false;
-    if (!decoder->decode(sourceOperationMask))
+    if (!decoder.decode(sourceOperationMask))
         return false;
-    if (!decoder->decode(flags))
+    if (!decoder.decode(flags))
         return false;
 
     bool hasPlatformData;
-    if (!decoder->decode(hasPlatformData))
+    if (!decoder.decode(hasPlatformData))
         return false;
 
     QMimeData* mimeData = 0;
     if (hasPlatformData) {
         MIMEDataHashMap map;
-        if (!decoder->decode(map))
+        if (!decoder.decode(map))
             return false;
 
         mimeData = new QMimeData;
