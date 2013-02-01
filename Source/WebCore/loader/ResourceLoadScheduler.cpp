@@ -332,10 +332,4 @@ bool ResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriority 
     return m_requestsLoading.size() >= (resourceLoadScheduler()->isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
-void ResourceLoadScheduler::startResourceLoader(ResourceLoader* loader)
-{
-    ASSERT(loader);
-    loader->start();
-}
-
 } // namespace WebCore

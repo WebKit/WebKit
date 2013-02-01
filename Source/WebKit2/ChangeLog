@@ -1,3 +1,21 @@
+2013-02-01  Brady Eidson  <beidson@apple.com>
+
+        Clean up WebArchive loading with the NetworkProcess
+        <rdar://problem/12695840> and https://bugs.webkit.org/show_bug.cgi?id=108673
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::servePendingRequestsForQueue):  Add new logging.
+        (WebKit::HostRecord::servePendingRequests): Tweak existing logging.
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests): Tweak existing logging.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Handle archive resource scheduling better,
+          and add new logging to better explore archive loading behavior in the future.
+
 2013-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Fix build after r141619

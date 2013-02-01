@@ -81,8 +81,6 @@ PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginS
 
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' priority %i", resourceLoader->url().string().utf8().data(), priority);
-
     ASSERT(resourceLoader);
     ASSERT(priority != ResourceLoadPriorityUnresolved);
     priority = ResourceLoadPriorityHighest;
@@ -90,15 +88,16 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     ResourceLoadIdentifier identifier = resourceLoader->identifier();
     ASSERT(identifier);
 
-    // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
-    if (resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
+    // If the DocumentLoader schedules this as an archive resource load,
+    // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
+    if (resourceLoader->documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader->request())) {
+        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader->url().string().utf8().data());
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
-        startResourceLoader(resourceLoader);
-
         return;
     }
-
     
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %i", resourceLoader->url().string().utf8().data(), priority);
+
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     bool privateBrowsingEnabled = resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled();

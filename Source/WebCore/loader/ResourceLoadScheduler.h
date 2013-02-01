@@ -66,7 +66,6 @@ protected:
     ResourceLoadScheduler();
     virtual ~ResourceLoadScheduler();
 
-    void startResourceLoader(ResourceLoader*);
     void notifyDidScheduleResourceRequest(ResourceLoader*);
 
 private:

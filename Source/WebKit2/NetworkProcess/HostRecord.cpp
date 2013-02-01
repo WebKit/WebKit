@@ -146,13 +146,14 @@ void HostRecord::servePendingRequestsForQueue(LoaderQueue& queue, ResourceLoadPr
         m_loadersInProgress.add(loader);
         queue.removeFirst();
 
+        LOG(NetworkScheduling, "(NetworkProcess) HostRecord::servePendingRequestsForQueue - Starting load of %s\n", loader->request().url().string().utf8().data());
         loader->start();
     }
 }
 
 void HostRecord::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(NetworkScheduling, "HostRecord::servePendingRequests Host name='%s'", name().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) HostRecord::servePendingRequests Host name='%s'", name().utf8().data());
 
     // We serve synchronous requests before any other requests to improve responsiveness in any
     // WebProcess that is waiting on a synchronous load.

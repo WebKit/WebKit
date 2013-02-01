@@ -117,7 +117,7 @@ void NetworkResourceLoadScheduler::receivedRedirect(SchedulableLoader* loader, c
 
 void NetworkResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::servePendingRequests Serving requests for up to %i hosts", m_hosts.size());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::servePendingRequests Serving requests for up to %i hosts with minimum priority %i", m_hosts.size(), minimumPriority);
 
     m_requestTimer.stop();
     
