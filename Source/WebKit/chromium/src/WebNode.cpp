@@ -261,6 +261,14 @@ WebPluginContainer* WebNode::pluginContainer() const
     return 0;
 }
 
+WebElement WebNode::shadowHost() const
+{
+    if (isNull())
+        return WebElement();
+    const Node* coreNode = constUnwrap<Node>();
+    return WebElement(coreNode->shadowHost());
+}
+
 WebNode::WebNode(const PassRefPtr<Node>& node)
     : m_private(node)
 {

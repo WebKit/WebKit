@@ -123,6 +123,7 @@ public:
     // Note: This method only works properly after layout has occurred.
     WEBKIT_EXPORT bool hasNonEmptyBoundingBox() const;
     WEBKIT_EXPORT WebPluginContainer* pluginContainer() const;
+    WEBKIT_EXPORT WebElement shadowHost() const;
 
     template<typename T> T to()
     {

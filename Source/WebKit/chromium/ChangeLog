@@ -1,3 +1,19 @@
+2013-02-01  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Expose WebNode::shadowHost()
+        https://bugs.webkit.org/show_bug.cgi?id=108681
+
+        Reviewed by Dimitri Glazkov.
+
+        BrowserPlugin needs to be able to check the event listeners attached to
+        <webview> and so we expose shadowHost to permit it to poke at the webview
+        node.
+
+        * public/WebNode.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::shadowHost):
+        (WebKit):
+
 2013-02-01  Rouslan Solomakhin  <rouslan@chromium.org>
 
         [Chromium] Ignore punctuation in spellcheck
