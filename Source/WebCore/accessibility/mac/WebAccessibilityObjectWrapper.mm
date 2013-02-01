@@ -1896,6 +1896,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // We should try the system default role description for all other roles.
     // If we get the same string back, then as a last resort, return unknown.
     NSString* defaultRoleDescription = NSAccessibilityRoleDescription(axRole, [self subrole]);
+    
+    // On earlier Mac versions (Lion), using a non-standard subrole would result in a role description
+    // being returned that looked like AXRole:AXSubrole. To make all platforms have the same role descriptions
+    // we should fallback on a role description ignoring the subrole in these cases.
+    if ([defaultRoleDescription isEqualToString:[NSString stringWithFormat:@"%@:%@", axRole, [self subrole]]])
+        defaultRoleDescription = NSAccessibilityRoleDescription(axRole, nil);
+    
     if (![defaultRoleDescription isEqualToString:axRole])
         return defaultRoleDescription;
 
