@@ -54,12 +54,12 @@
 #endif
 #include "HTMLInputElement.h"
 #include "IDBCursor.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionBackendInterface.h"
 #include "IconURL.h"
 #include "MediaPlayer.h"
 #include "MediaStreamSource.h"
@@ -95,12 +95,12 @@
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
 #include "WebIDBCursor.h"
+#include "WebIDBDatabase.h"
 #include "WebIDBDatabaseException.h"
 #include "WebIDBFactory.h"
 #include "WebIDBKey.h"
 #include "WebIDBKeyPath.h"
 #include "WebIDBMetadata.h"
-#include "WebIDBTransaction.h"
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -505,8 +505,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::NextNoDuplicate, IDBCursor::NEXT_NO_D
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Prev, IDBCursor::PREV);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::PrevNoDuplicate, IDBCursor::PREV_NO_DUPLICATE);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::PreemptiveTask, IDBDatabaseBackendInterface::PreemptiveTask);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::NormalTask, IDBDatabaseBackendInterface::NormalTask);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabase::PreemptiveTask, IDBDatabaseBackendInterface::PreemptiveTask);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabase::NormalTask, IDBDatabaseBackendInterface::NormalTask);
 #endif
 
 #if ENABLE(FILE_SYSTEM)

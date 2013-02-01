@@ -35,14 +35,12 @@
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabaseCallbacks.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKey.h"
 #include "WebIDBKeyRange.h"
 #include "WebIDBMetadata.h"
-#include "WebIDBTransactionImpl.h"
 
 using namespace WebCore;
 
@@ -58,11 +56,6 @@ WebIDBDatabaseImpl::~WebIDBDatabaseImpl()
 {
 }
 
-WebIDBMetadata WebIDBDatabaseImpl::metadata() const
-{
-    return m_databaseBackend->metadata();
-}
-
 void WebIDBDatabaseImpl::createObjectStore(long long transactionId, long long objectStoreId, const WebString& name, const WebIDBKeyPath& keyPath, bool autoIncrement)
 {
     m_databaseBackend->createObjectStore(transactionId, objectStoreId, name, keyPath, autoIncrement);
@@ -73,18 +66,6 @@ void WebIDBDatabaseImpl::deleteObjectStore(long long transactionId, long long ob
     m_databaseBackend->deleteObjectStore(transactionId, objectStoreId);
 }
 
-
-// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const WebVector<long long>& objectStoreIds, unsigned short mode)
-{
-    Vector<int64_t> objectStoreIdList(objectStoreIds.size());
-    for (size_t i = 0; i < objectStoreIds.size(); ++i)
-        objectStoreIdList[i] = objectStoreIds[i];
-    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->createTransaction(id, objectStoreIdList, static_cast<IDBTransaction::Mode>(mode));
-    if (!transaction)
-        return 0;
-    return new WebIDBTransactionImpl(transaction);
-}
 
 void WebIDBDatabaseImpl::createTransaction(long long id, WebIDBDatabaseCallbacks* callbacks, const WebVector<long long>& objectStoreIds, unsigned short mode)
 {

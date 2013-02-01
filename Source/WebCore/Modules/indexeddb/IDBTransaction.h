@@ -35,7 +35,6 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionCallbacks.h"
 #include "ScriptWrappable.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -44,12 +43,13 @@ namespace WebCore {
 
 class IDBCursor;
 class IDBDatabase;
+class IDBDatabaseBackendInterface;
+class IDBDatabaseError;
 class IDBObjectStore;
 class IDBOpenDBRequest;
-class IDBDatabaseBackendInterface;
 struct IDBObjectStoreMetadata;
 
-class IDBTransaction : public ScriptWrappable, public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
+class IDBTransaction : public ScriptWrappable, public RefCounted<IDBTransaction>, public EventTarget, public ActiveDOMObject {
 public:
     enum Mode {
         READ_ONLY = 0,
@@ -107,7 +107,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
-    // IDBTransactionCallbacks
     virtual void onAbort(PassRefPtr<IDBDatabaseError>);
     virtual void onComplete();
 
@@ -123,8 +122,8 @@ public:
     virtual bool canSuspend() const OVERRIDE;
     virtual void stop() OVERRIDE;
 
-    using RefCounted<IDBTransactionCallbacks>::ref;
-    using RefCounted<IDBTransactionCallbacks>::deref;
+    using RefCounted<IDBTransaction>::ref;
+    using RefCounted<IDBTransaction>::deref;
 
 private:
     IDBTransaction(ScriptExecutionContext*, int64_t, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata&);

@@ -769,8 +769,6 @@
             'Modules/indexeddb/IDBTransaction.h',
             'Modules/indexeddb/IDBTransactionBackendImpl.cpp',
             'Modules/indexeddb/IDBTransactionBackendImpl.h',
-            'Modules/indexeddb/IDBTransactionBackendInterface.h',
-            'Modules/indexeddb/IDBTransactionCallbacks.h',
             'Modules/indexeddb/IDBTransactionCoordinator.cpp',
             'Modules/indexeddb/IDBTransactionCoordinator.h',
             'Modules/indexeddb/IDBVersionChangeEvent.cpp',

@@ -3517,7 +3517,6 @@
 		9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59D15004EDA0048AF10 /* IDBTransaction.h */; };
 		9712A5F815004EDA0048AF10 /* IDBTransactionBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */; };
 		9712A5F915004EDA0048AF10 /* IDBTransactionBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */; };
-		9712A5FA15004EDA0048AF10 /* IDBTransactionBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A115004EDA0048AF10 /* IDBTransactionBackendInterface.h */; };
 		9712A5FB15004EDA0048AF10 /* IDBTransactionCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A215004EDA0048AF10 /* IDBTransactionCallbacks.h */; };
 		9712A5FC15004EDA0048AF10 /* IDBTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */; };
 		9712A5FD15004EDA0048AF10 /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */; };
@@ -10907,7 +10906,6 @@
 		9712A59E15004EDA0048AF10 /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBTransaction.idl; path = Modules/indexeddb/IDBTransaction.idl; sourceTree = "<group>"; };
 		9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionBackendImpl.cpp; path = Modules/indexeddb/IDBTransactionBackendImpl.cpp; sourceTree = "<group>"; };
 		9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionBackendImpl.h; path = Modules/indexeddb/IDBTransactionBackendImpl.h; sourceTree = "<group>"; };
-		9712A5A115004EDA0048AF10 /* IDBTransactionBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionBackendInterface.h; path = Modules/indexeddb/IDBTransactionBackendInterface.h; sourceTree = "<group>"; };
 		9712A5A215004EDA0048AF10 /* IDBTransactionCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionCallbacks.h; path = Modules/indexeddb/IDBTransactionCallbacks.h; sourceTree = "<group>"; };
 		9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionCoordinator.cpp; path = Modules/indexeddb/IDBTransactionCoordinator.cpp; sourceTree = "<group>"; };
 		9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionCoordinator.h; path = Modules/indexeddb/IDBTransactionCoordinator.h; sourceTree = "<group>"; };
@@ -18323,7 +18321,6 @@
 				9712A59E15004EDA0048AF10 /* IDBTransaction.idl */,
 				9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */,
 				9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */,
-				9712A5A115004EDA0048AF10 /* IDBTransactionBackendInterface.h */,
 				9712A5A215004EDA0048AF10 /* IDBTransactionCallbacks.h */,
 				9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */,
 				9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */,
@@ -24422,7 +24419,6 @@
 				9712A5F415004EDA0048AF10 /* IDBTracing.h in Headers */,
 				9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */,
 				9712A5F915004EDA0048AF10 /* IDBTransactionBackendImpl.h in Headers */,
-				9712A5FA15004EDA0048AF10 /* IDBTransactionBackendInterface.h in Headers */,
 				9712A5FB15004EDA0048AF10 /* IDBTransactionCallbacks.h in Headers */,
 				9712A5FD15004EDA0048AF10 /* IDBTransactionCoordinator.h in Headers */,
 				9712A5FF15004EDA0048AF10 /* IDBVersionChangeEvent.h in Headers */,

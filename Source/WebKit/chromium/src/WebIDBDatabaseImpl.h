@@ -31,7 +31,6 @@
 #include "IDBDatabaseCallbacksProxy.h"
 #include "WebExceptionCode.h"
 #include "WebIDBDatabase.h"
-#include "WebIDBTransaction.h"
 #include <public/WebCommon.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -43,7 +42,6 @@ namespace WebKit {
 class WebIDBDatabaseCallbacks;
 class WebIDBDatabaseError;
 class WebIDBDatabaseMetadata;
-class WebIDBTransaction;
 
 // See comment in WebIDBFactory for a high level overview these classes.
 class WebIDBDatabaseImpl : public WebIDBDatabase {
@@ -51,12 +49,8 @@ public:
     WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabaseBackendInterface>, WTF::PassRefPtr<IDBDatabaseCallbacksProxy>);
     virtual ~WebIDBDatabaseImpl();
 
-    virtual WebIDBMetadata metadata() const;
-
     virtual void createObjectStore(long long transactionId, long long objectStoreId, const WebString& name, const WebIDBKeyPath&, bool autoIncrement);
     virtual void deleteObjectStore(long long objectStoreId, long long transactionId);
-    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual WebIDBTransaction* createTransaction(long long id, const WebVector<long long>&, unsigned short mode);
     virtual void createTransaction(long long id, WebIDBDatabaseCallbacks*, const WebVector<long long>&, unsigned short mode);
     virtual void forceClose();
     virtual void close();

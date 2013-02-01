@@ -3065,8 +3065,7 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBObjectStore.h \
         Modules/indexeddb/IDBObjectStoreBackendImpl.h \
         Modules/indexeddb/IDBRequest.h \
-        Modules/indexeddb/IDBTransaction.h \
-        Modules/indexeddb/IDBTransactionBackendInterface.h
+        Modules/indexeddb/IDBTransaction.h
 
     SOURCES += \
         bindings/js/IDBBindingUtilities.cpp \

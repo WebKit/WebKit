@@ -41,7 +41,6 @@ class IDBBackingStore;
 class IDBDatabase;
 class IDBFactoryBackendImpl;
 class IDBTransactionBackendImpl;
-class IDBTransactionBackendInterface;
 class IDBTransactionCoordinator;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
@@ -60,13 +59,11 @@ public:
 
     void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
+    const IDBDatabaseMetadata& metadata() const { return m_metadata; }
 
     // IDBDatabaseBackendInterface
-    virtual IDBDatabaseMetadata metadata() const;
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
-    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode);
     virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>);
 

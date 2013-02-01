@@ -40,7 +40,6 @@ class IDBDatabaseCallbacks;
 class IDBKey;
 class IDBKeyPath;
 class IDBKeyRange;
-class IDBTransactionBackendInterface;
 struct IDBDatabaseMetadata;
 
 typedef int ExceptionCode;
@@ -52,11 +51,8 @@ class IDBDatabaseBackendInterface : public RefCounted<IDBDatabaseBackendInterfac
 public:
     virtual ~IDBDatabaseBackendInterface() { }
 
-    virtual IDBDatabaseMetadata metadata() const = 0;
-
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) = 0;
-    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode) = 0;
     virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode) = 0;
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>) = 0;
 

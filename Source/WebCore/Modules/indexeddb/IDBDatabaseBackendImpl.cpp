@@ -548,11 +548,6 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
     return m_backingStore;
 }
 
-IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
-{
-    return m_metadata;
-}
-
 void IDBDatabaseBackendImpl::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     IDB_TRACE("IDBDatabaseBackendImpl::createObjectStore");
@@ -1165,13 +1160,6 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         OwnPtr<PendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
         openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks(), pendingOpenCall->transactionId(), pendingOpenCall->version());
     }
-}
-
-// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 void IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)

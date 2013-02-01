@@ -33,7 +33,6 @@
 #include "IDBDatabaseCallbacks.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionBackendProxy.h"
 #include "WebDOMStringList.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
@@ -42,7 +41,6 @@
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKeyRange.h"
-#include "WebIDBTransaction.h"
 
 using namespace WebCore;
 
@@ -62,11 +60,6 @@ IDBDatabaseBackendProxy::~IDBDatabaseBackendProxy()
 {
 }
 
-IDBDatabaseMetadata IDBDatabaseBackendProxy::metadata() const
-{
-    return m_webIDBDatabase->metadata();
-}
-
 void IDBDatabaseBackendProxy::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     if (m_webIDBDatabase)
@@ -77,15 +70,6 @@ void IDBDatabaseBackendProxy::deleteObjectStore(int64_t transactionId, int64_t o
 {
     if (m_webIDBDatabase)
         m_webIDBDatabase->deleteObjectStore(transactionId, objectStoreId);
-}
-
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::createTransaction(int64_t id, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode)
-{
-    OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->createTransaction(id, objectStoreIds, mode));
-    if (!transaction)
-        return 0;
-
-    return IDBTransactionBackendProxy::create(transaction.release());
 }
 
 void IDBDatabaseBackendProxy::createTransaction(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)

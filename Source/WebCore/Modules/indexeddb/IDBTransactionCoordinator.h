@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class IDBTransactionBackendImpl;
-class IDBTransactionCallbacks;
 class IDBDatabaseBackendImpl;
 
 // Transactions are executed in the order the were created.

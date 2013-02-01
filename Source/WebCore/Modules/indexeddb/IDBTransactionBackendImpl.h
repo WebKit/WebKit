@@ -29,10 +29,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStore.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBTransaction.h"
-#include "IDBTransactionBackendInterface.h"
-#include "IDBTransactionCallbacks.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -41,20 +40,16 @@
 namespace WebCore {
 
 class IDBDatabaseBackendImpl;
+class IDBCursorBackendImpl;
+class IDBDatabaseCallbacks;
 
-class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
+class IDBTransactionBackendImpl : public RefCounted<IDBTransactionBackendImpl> {
 public:
     static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IDBTransaction::Mode, IDBDatabaseBackendImpl*);
-    static IDBTransactionBackendImpl* from(IDBTransactionBackendInterface* interface)
-    {
-        return static_cast<IDBTransactionBackendImpl*>(interface);
-    }
     virtual ~IDBTransactionBackendImpl();
 
-    // IDBTransactionBackendInterface
     virtual void abort();
     void commit();
-    virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { }
 
     class Operation {
     public:

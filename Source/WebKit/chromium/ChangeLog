@@ -1,3 +1,42 @@
+2013-01-31  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove old transaction backend bootstrap code
+        https://bugs.webkit.org/show_bug.cgi?id=103923
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove all deprecated WebKit APIs from
+        the IDB backend.
+
+        * WebKit.gyp:
+        * public/WebIDBCallbacks.h:
+        (WebKit):
+        * public/WebIDBDatabase.h:
+        (WebKit):
+        * public/WebIDBTransaction.h: Removed.
+        * public/WebIDBTransactionCallbacks.h: Removed.
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBTransactionBackendProxy.cpp: Removed.
+        * src/IDBTransactionBackendProxy.h: Removed.
+        * src/IDBTransactionCallbacksProxy.cpp: Removed.
+        * src/IDBTransactionCallbacksProxy.h: Removed.
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit):
+        * src/WebIDBDatabaseImpl.h:
+        (WebKit):
+        (WebIDBDatabaseImpl):
+        * src/WebIDBTransactionCallbacksImpl.cpp: Removed.
+        * src/WebIDBTransactionCallbacksImpl.h: Removed.
+        * src/WebIDBTransactionImpl.cpp: Removed.
+        * src/WebIDBTransactionImpl.h: Removed.
+        * tests/IDBAbortOnCorruptTest.cpp:
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-31  Rouslan Solomakhin  <rouslan@chromium.org>
 
         [Chromium] Select multi-word misspelling on context click

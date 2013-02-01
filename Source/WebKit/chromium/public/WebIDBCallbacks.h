@@ -38,7 +38,6 @@ class WebIDBDatabaseError;
 class WebIDBKey;
 class WebIDBKeyPath;
 class WebIDBIndex;
-class WebIDBTransaction;
 class WebSerializedScriptValue;
 struct WebIDBMetadata;
 
@@ -63,7 +62,6 @@ public:
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked(long long oldVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onUpgradeNeeded(long long oldVersion, WebIDBDatabase*, const WebIDBMetadata&) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

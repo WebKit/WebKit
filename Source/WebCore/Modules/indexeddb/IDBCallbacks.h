@@ -33,7 +33,6 @@
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
 #include <wtf/RefCounted.h>
 

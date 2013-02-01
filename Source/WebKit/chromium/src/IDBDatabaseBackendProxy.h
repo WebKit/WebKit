@@ -42,12 +42,8 @@ public:
     static PassRefPtr<WebCore::IDBDatabaseBackendInterface> create(PassOwnPtr<WebIDBDatabase>);
     virtual ~IDBDatabaseBackendProxy();
 
-    virtual WebCore::IDBDatabaseMetadata metadata() const;
-
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement);
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
-    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, WebCore::IDBTransaction::Mode);
     virtual void createTransaction(int64_t, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>&, unsigned short mode);
     virtual void close(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
 

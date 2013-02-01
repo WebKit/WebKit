@@ -34,13 +34,11 @@
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
-#include "IDBTransactionBackendProxy.h"
 #include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKey.h"
-#include "WebIDBTransaction.h"
 #include "WebSerializedScriptValue.h"
 
 using namespace WebCore;

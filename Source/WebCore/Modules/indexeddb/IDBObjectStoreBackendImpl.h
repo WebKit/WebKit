@@ -39,7 +39,6 @@ namespace WebCore {
 
 class IDBDatabaseBackendImpl;
 class IDBTransactionBackendImpl;
-class IDBTransactionBackendInterface;
 struct IDBObjectStoreMetadata;
 
 // FIXME: this namespace is temporary until we move its contents out to their own home.

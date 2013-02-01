@@ -138,8 +138,6 @@ public:
     virtual IDBDatabaseMetadata metadata() const { return IDBDatabaseMetadata(); }
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE { };
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) OVERRIDE { }
-    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, IDBTransaction::Mode) OVERRIDE { return 0; }
     virtual void createTransaction(int64_t, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, unsigned short mode) OVERRIDE { }
 
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>) OVERRIDE

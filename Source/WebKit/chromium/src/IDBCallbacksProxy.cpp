@@ -38,7 +38,6 @@
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBDatabaseError.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"
 #include "WebIDBDatabaseCallbacks.h"
@@ -46,7 +45,7 @@
 #include "WebIDBDatabaseException.h"
 #include "WebIDBDatabaseImpl.h"
 #include "WebIDBKey.h"
-#include "WebIDBTransactionImpl.h"
+#include "WebIDBMetadata.h"
 #include "WebSerializedScriptValue.h"
 
 using namespace WebCore;
