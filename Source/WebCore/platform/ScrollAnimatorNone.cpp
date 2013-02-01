@@ -475,6 +475,8 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 {
     stopAnimationTimerIfNeeded();
 
+    FloatSize delta = FloatSize(offset.x() - *m_horizontalData.m_currentPosition, offset.y() - *m_verticalData.m_currentPosition);
+
     m_horizontalData.reset();
     *m_horizontalData.m_currentPosition = offset.x();
     m_horizontalData.m_desiredPosition = offset.x();
@@ -483,7 +485,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
     *m_verticalData.m_currentPosition = offset.y();
     m_verticalData.m_desiredPosition = offset.y();
 
-    notifyPositionChanged();
+    notifyPositionChanged(delta);
 }
 
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
@@ -555,7 +557,7 @@ void ScrollAnimatorNone::animationTimerFired()
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT0("webkit", "ScrollAnimatorNone::notifyPositionChanged");
 #endif
-    notifyPositionChanged();
+    notifyPositionChanged(FloatSize());
 
     if (!continueAnimation)
         animationDidFinish();

@@ -35,6 +35,7 @@
 #include "ScrollTypes.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -94,14 +95,14 @@ public:
 
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
 
-    virtual void notifyContentAreaScrolled() { }
+    virtual void notifyContentAreaScrolled(const FloatSize& delta) { UNUSED_PARAM(delta); }
 
     virtual bool isRubberBandInProgress() const { return false; }
 
 protected:
     explicit ScrollAnimator(ScrollableArea*);
 
-    virtual void notifyPositionChanged();
+    virtual void notifyPositionChanged(const FloatSize& delta);
 
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce

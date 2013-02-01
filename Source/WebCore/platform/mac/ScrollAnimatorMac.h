@@ -65,7 +65,7 @@ public:
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
 
-    void sendContentAreaScrolledSoon();
+    void sendContentAreaScrolledSoon(const FloatSize& scrollDelta);
 
     void setVisibleScrollerThumbRect(const IntRect&);
 
@@ -83,6 +83,7 @@ private:
 
     void sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>*);
     Timer<ScrollAnimatorMac> m_sendContentAreaScrolledTimer;
+    FloatSize m_contentAreaScrolledTimerScrollDelta;
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
@@ -96,7 +97,7 @@ private:
     virtual void cancelAnimations();
     virtual void setIsActive();
     
-    virtual void notifyPositionChanged();
+    virtual void notifyPositionChanged(const FloatSize& delta);
     virtual void contentAreaWillPaint() const;
     virtual void mouseEnteredContentArea() const;
     virtual void mouseExitedContentArea() const;
@@ -121,7 +122,7 @@ private:
 
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
 
-    virtual void notifyContentAreaScrolled() OVERRIDE;
+    virtual void notifyContentAreaScrolled(const FloatSize& delta) OVERRIDE;
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 

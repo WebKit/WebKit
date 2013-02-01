@@ -59,6 +59,12 @@ static bool supportsExpansionTransitionProgress()
     return globalSupportsExpansionTransitionProgress;
 }
 
+static bool supportsContentAreaScrolledInDirection()
+{
+    static bool globalSupportsContentAreaScrolledInDirection = [NSClassFromString(@"NSScrollerImpPair") instancesRespondToSelector:@selector(contentAreaScrolledInDirection:)];
+    return globalSupportsContentAreaScrolledInDirection;
+}
+
 static ScrollbarThemeMac* macScrollbarTheme()
 {
     ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
@@ -714,9 +720,11 @@ void ScrollAnimatorMac::immediateScrollTo(const FloatPoint& newPosition)
     if (!positionChanged && !scrollableArea()->scrollOriginChanged())
         return;
 
+    FloatSize delta = FloatSize(adjustedPosition.x() - m_currentPosX, adjustedPosition.y() - m_currentPosY);
+
     m_currentPosX = adjustedPosition.x();
     m_currentPosY = adjustedPosition.y();
-    notifyPositionChanged();
+    notifyPositionChanged(delta);
 }
 
 bool ScrollAnimatorMac::isRubberBandInProgress() const
@@ -734,10 +742,10 @@ void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoin
     immediateScrollTo(newPosition);
 }
 
-void ScrollAnimatorMac::notifyPositionChanged()
+void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)
 {
-    notifyContentAreaScrolled();
-    ScrollAnimator::notifyPositionChanged();
+    notifyContentAreaScrolled(delta);
+    ScrollAnimator::notifyPositionChanged(delta);
 }
 
 void ScrollAnimatorMac::contentAreaWillPaint() const
@@ -969,7 +977,7 @@ bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scroll
     return [painter knobAlpha] > 0;
 }
 
-void ScrollAnimatorMac::notifyContentAreaScrolled()
+void ScrollAnimatorMac::notifyContentAreaScrolled(const FloatSize& delta)
 {
     if (!isScrollbarOverlayAPIAvailable())
         return;
@@ -978,7 +986,7 @@ void ScrollAnimatorMac::notifyContentAreaScrolled()
     // isn't really scrolling in that case. We should only pass the message on to the
     // ScrollbarPainterController when we're really scrolling on an active page.
     if (scrollableArea()->scrollbarsCanBeActive())
-        sendContentAreaScrolledSoon();
+        sendContentAreaScrolledSoon(delta);
 }
 
 void ScrollAnimatorMac::cancelAnimations()
@@ -1146,9 +1154,11 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
     if (newPos.x() == m_currentPosX && newPos.y() == m_currentPosY)
         return;
 
+    FloatSize adjustedDelta = FloatSize(newPos.x() - m_currentPosX, newPos.y() - m_currentPosY);
+
     m_currentPosX = newPos.x();
     m_currentPosY = newPos.y();
-    notifyPositionChanged();
+    notifyPositionChanged(adjustedDelta);
 }
 
 void ScrollAnimatorMac::startSnapRubberbandTimer()
@@ -1264,15 +1274,21 @@ void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>
     }
 }
 
-void ScrollAnimatorMac::sendContentAreaScrolledSoon()
+void ScrollAnimatorMac::sendContentAreaScrolledSoon(const FloatSize& delta)
 {
+    m_contentAreaScrolledTimerScrollDelta = delta;
+
     if (!m_sendContentAreaScrolledTimer.isActive())
         m_sendContentAreaScrolledTimer.startOneShot(0);
 }
 
 void ScrollAnimatorMac::sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>*)
 {
-    [m_scrollbarPainterController.get() contentAreaScrolled];
+    if (supportsContentAreaScrolledInDirection()) {
+        [m_scrollbarPainterController.get() contentAreaScrolledInDirection:NSMakePoint(m_contentAreaScrolledTimerScrollDelta.width(), m_contentAreaScrolledTimerScrollDelta.height())];
+        m_contentAreaScrolledTimerScrollDelta = FloatSize();
+    } else
+        [m_scrollbarPainterController.get() contentAreaScrolled];
 }
 
 void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)

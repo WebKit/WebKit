@@ -63,20 +63,22 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
 {
     float* currentPos = (orientation == HorizontalScrollbar) ? &m_currentPosX : &m_currentPosY;
     float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_scrollableArea->scrollSize(orientation))), 0.0f);
+    float delta = *currentPos - newPos;
     if (*currentPos == newPos)
         return false;
     *currentPos = newPos;
 
-    notifyPositionChanged();
+    notifyPositionChanged(orientation == HorizontalScrollbar ? FloatSize(delta, 0) : FloatSize(0, delta));
 
     return true;
 }
 
 void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
+    FloatSize delta = FloatSize(offset.x() - m_currentPosX, offset.y() - m_currentPosY);
     m_currentPosX = offset.x();
     m_currentPosY = offset.y();
-    notifyPositionChanged();
+    notifyPositionChanged(delta);
 }
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
@@ -139,8 +141,9 @@ FloatPoint ScrollAnimator::currentPosition() const
     return FloatPoint(m_currentPosX, m_currentPosY);
 }
 
-void ScrollAnimator::notifyPositionChanged()
+void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 {
+    UNUSED_PARAM(delta);
     m_scrollableArea->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
 

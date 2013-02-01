@@ -177,7 +177,7 @@ void ScrollableArea::scrollPositionChanged(const IntPoint& position)
     }
 
     if (scrollPosition() != oldPosition)
-        scrollAnimator()->notifyContentAreaScrolled();
+        scrollAnimator()->notifyContentAreaScrolled(scrollPosition() - oldPosition);
 }
 
 bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)

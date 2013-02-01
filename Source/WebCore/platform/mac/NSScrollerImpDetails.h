@@ -94,6 +94,7 @@ typedef NSInteger NSScrollerKnobStyle;
 - (NSScrollerStyle)scrollerStyle;
 - (void)setScrollerStyle:(NSScrollerStyle)scrollerStyle;
 - (void)contentAreaScrolled;
+- (void)contentAreaScrolledInDirection:(NSPoint)direction;
 - (void)contentAreaWillDraw;
 - (void)mouseEnteredContentArea;
 - (void)mouseExitedContentArea;
