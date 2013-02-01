@@ -1153,6 +1153,9 @@ webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
+# Needs a rebaseline after WK108429 lands.
+webkit.org/b/108429 svg/custom/text-ctm.svg [ Pass Failure ]
+
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
 # (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac

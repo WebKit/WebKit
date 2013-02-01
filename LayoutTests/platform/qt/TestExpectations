@@ -2445,6 +2445,9 @@ webkit.org/b/99870 svg/custom/pattern-with-transformation.svg [ Pass ImageOnlyFa
 webkit.org/b/99870 svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Pass ImageOnlyFailure ]
 webkit.org/b/99870 svg/custom/pattern-scaling.svg [ Pass ImageOnlyFailure Missing ]
 
+# Needs a rebaseline after WK108429 lands.
+webkit.org/b/108429 svg/custom/text-ctm.svg [ Pass Failure ]
+
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 

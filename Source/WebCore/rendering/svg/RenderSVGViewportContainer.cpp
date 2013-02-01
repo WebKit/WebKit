@@ -114,7 +114,6 @@ void RenderSVGViewportContainer::calcViewport()
     }
 
     if (oldViewport != m_viewport) {
-        m_didTransformToRootUpdate = true;
         setNeedsBoundariesUpdate();
         setNeedsTransformUpdate();
     }
@@ -122,6 +121,7 @@ void RenderSVGViewportContainer::calcViewport()
 
 bool RenderSVGViewportContainer::calculateLocalTransform() 
 {
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
     if (!m_needsTransformUpdate)
         return false;
     

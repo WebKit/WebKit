@@ -2054,6 +2054,9 @@ fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
 fast/forms/week-multiple-fields
 
+# Needs a rebaseline after WK108429 lands.
+svg/custom/text-ctm.svg
+
 # Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
 fast/block/float/avoidance-rtl.html
 fast/borders/border-radius-wide-border-01.html
