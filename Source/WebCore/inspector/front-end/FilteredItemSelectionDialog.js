@@ -150,7 +150,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         itemElement._titleSuffixElement = itemElement.createChild("span");
         itemElement._titleSuffixElement.textContent = this._delegate.itemSuffixAt(index);
         itemElement._subtitleElement = itemElement.createChild("div", "filtered-item-list-dialog-subtitle");
-        itemElement._subtitleElement.textContent = this._delegate.itemSubtitleAt(index);
+        itemElement._subtitleElement.textContent = this._delegate.itemSubtitleAt(index) || "\u200B";
         itemElement._index = index;
 
         var key = this._delegate.itemKeyAt(index);
@@ -285,7 +285,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     _onClick: function(event)
     {
-        var itemElement = event.target.enclosingNodeOrSelfWithClass("item");
+        var itemElement = event.target.enclosingNodeOrSelfWithClass("filtered-item-list-dialog-item");
         if (!itemElement)
             return;
         this._delegate.selectItem(itemElement._index, this._promptElement.value.trim());
@@ -298,7 +298,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             return;
         this._lastMouseX = event.pageX;
         this._lastMouseY = event.pageY;
-        var itemElement = event.target.enclosingNodeOrSelfWithClass("item");
+        var itemElement = event.target.enclosingNodeOrSelfWithClass("filtered-item-list-dialog-item");
         if (!itemElement)
             return;
         this._updateSelection(itemElement._index);
