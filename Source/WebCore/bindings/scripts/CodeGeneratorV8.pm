@@ -616,18 +616,11 @@ sub GetInternalFields
     my $interface = shift;
 
     my @customInternalFields = ();
-    # We can't ask whether a parent type has a given extendedAttribute,
-    # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
-    # FIXME: Simplify this when all EventTargets are subtypes of EventTarget.
-    if (!$codeGenerator->InheritsInterface($interface, "Node")
-        && ($interface->extendedAttributes->{"EventTarget"}
-            || $interface->extendedAttributes->{"IsWorkerContext"}
-            || $codeGenerator->InheritsInterface($interface, "AbstractWorker")
-            || $codeGenerator->InheritsInterface($interface, "EventTarget"))) {
+    if (!$codeGenerator->InheritsInterface($interface, "Node") &&
+        $codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
-
     return @customInternalFields;
 }
 
