@@ -40,7 +40,7 @@ template<typename ValueArg, typename HashArg, typename TraitsArg>
 void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* hashSet, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
-    info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
+    info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity(), 0, "ValueType[]", "data");
     SequenceMemoryInstrumentationTraits<ValueArg>::reportMemoryUsage(hashSet->begin(), hashSet->end(), info);
 }
 

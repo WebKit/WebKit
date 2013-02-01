@@ -41,7 +41,7 @@ void reportMemoryUsage(const Vector<T, inlineCapacity>* vector, MemoryObjectInfo
 {
     MemoryClassInfo info(memoryObjectInfo, vector);
     if (inlineCapacity < vector->capacity())
-        info.addRawBuffer(vector->data(), vector->capacity() * sizeof(T));
+        info.addRawBuffer(vector->data(), vector->capacity() * sizeof(T), "ValueType[]", "data");
     SequenceMemoryInstrumentationTraits<T>::reportMemoryUsage(vector->begin(), vector->end(), info);
 }
 

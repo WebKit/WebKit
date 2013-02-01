@@ -1,3 +1,29 @@
+2013-01-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: provide edge names and class names for WTF containers and strings
+        https://bugs.webkit.org/show_bug.cgi?id=107303
+
+        Reviewed by Yury Semikhatsky.
+
+        I'd like to use ValueType[] as className for the container data members
+        because class names of template parameters already present in the container class names.
+
+        * wtf/MemoryInstrumentationArrayBufferView.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashCountedSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashMap.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationListHashSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationSequence.h:
+        * wtf/MemoryInstrumentationString.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationVector.h:
+        (WTF::reportMemoryUsage):
+
 2013-02-01  Geoffrey Garen  <ggaren@apple.com>
 
         Added TriState to WTF and started using it in one place

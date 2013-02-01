@@ -41,7 +41,7 @@ void reportMemoryUsage(const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, M
 {
     MemoryClassInfo info(memoryObjectInfo, hashMap);
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
-    info.addPrivateBuffer(sizeof(typename HashMapType::ValueType) * hashMap->capacity());
+    info.addPrivateBuffer(sizeof(typename HashMapType::ValueType) * hashMap->capacity(), 0, "ValueType[]", "data");
 
     SequenceMemoryInstrumentationTraits<KeyArg>::reportMemoryUsage(hashMap->begin().keys(), hashMap->end().keys(), info);
     SequenceMemoryInstrumentationTraits<MappedArg>::reportMemoryUsage(hashMap->begin().values(), hashMap->end().values(), info);

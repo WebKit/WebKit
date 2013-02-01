@@ -58,7 +58,7 @@ struct SequenceMemoryInstrumentationTraits<NotConvertibleToInteger<ValueType> > 
     static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
     {
         while (iterator != end) {
-            info.addMember(*iterator);
+            info.addMember(*iterator, "item");
             ++iterator;
         }
     }
