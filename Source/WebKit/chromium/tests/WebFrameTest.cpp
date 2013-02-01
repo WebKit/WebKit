@@ -61,6 +61,7 @@
 #include <public/WebFloatRect.h>
 #include <public/WebURLResponse.h>
 #include <webkit/support/webkit_support.h>
+#include <wtf/Forward.h>
 
 using namespace WebKit;
 using WebCore::FloatRect;
