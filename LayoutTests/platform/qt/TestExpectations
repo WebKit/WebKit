@@ -290,6 +290,10 @@ inspector/debugger/live-edit-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=89652
 inspector/debugger/debugger-compile-and-run.html
 
+# [Qt] New inspector-protocol/page/javascriptDialogEvents.html started to fail r141555.
+# https://bugs.webkit.org/show_bug.cgi?id=108609
+inspector-protocol/page/javascriptDialogEvents.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=53003
 http/tests/inspector/compiler-source-mapping-debug.html
 
@@ -1195,6 +1199,8 @@ css3/filters/custom/effect-custom-parameters.html
 css3/filters/custom/filter-repaint-custom-clipped.html
 css3/filters/custom/filter-repaint-custom-rotated.html
 css3/filters/custom/filter-repaint-custom.html
+css3/filters/custom-with-at-rule-syntax/parsing-custom-function-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html
 
 # The following tests need further investigation:
 # https://bugs.webkit.org/show_bug.cgi?id=101531
@@ -1343,12 +1349,13 @@ svg/animations/animate-elem-08-t-drt.html
 # https://bugs.webkit.org/show_bug.cgi?id=82601
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
+ietestcenter/css3/valuesandunits/units-010.htm
+inspector/audits/audits-panel-functional.html
 svg/W3C-SVG-1.1/paths-data-03-f.svg
 svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
-ietestcenter/css3/valuesandunits/units-010.htm
 
 # [Qt] New inspector/console/console-filter-test.html fails on 32bit since r141269.
 # https://bugs.webkit.org/show_bug.cgi?id=108481
