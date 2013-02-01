@@ -5,6 +5,18 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        In overriding Widget::hide in QtPluginWidget, we forgot to call the
+        parent implementation, which as it turns, out does sensible stuff.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+
+2013-02-01  Pierre Rossi  <pierre.rossi@digia.com>
+
+        [Qt] visibility of embedded widget
+        https://bugs.webkit.org/show_bug.cgi?id=108327
+
+        Rubber-stamped by Simon Hausmann.
+
         In overriding Widget::show in QtPluginWidget, we forgot to call the
         parent implementation, which as it turns, out does sensible stuff.
 
