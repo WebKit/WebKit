@@ -383,7 +383,7 @@ WebInspector.NavigatorTreeOutline._treeElementsCompare = function compare(treeEl
     else {
         var title1 = treeElement1.titleText;
         var title2 = treeElement2.titleText;
-        result = title1.localeCompare(title2);
+        result = title1.compareTo(title2);
     }
     return result;
 }
