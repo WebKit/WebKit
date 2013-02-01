@@ -140,7 +140,7 @@ void Connection::platformInvalidate()
         return;
 
 #if PLATFORM(GTK)
-    m_connectionQueue.unregisterEventSourceHandler(m_socketDescriptor);
+    m_connectionQueue->unregisterEventSourceHandler(m_socketDescriptor);
 #endif
 
 #if PLATFORM(QT)
@@ -149,7 +149,7 @@ void Connection::platformInvalidate()
 #endif
 
 #if PLATFORM(EFL)
-    m_connectionQueue.unregisterSocketEventHandler(m_socketDescriptor);
+    m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
 #endif
 
     m_socketDescriptor = -1;
@@ -207,14 +207,12 @@ bool Connection::processMessage()
     if (m_readBufferSize < messageLength)
         return false;
 
-    Deque<Attachment> attachments;
-    AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
-    RefPtr<WebKit::SharedMemory> oolMessageBody;
-
     size_t attachmentFileDescriptorCount = 0;
     size_t attachmentCount = messageInfo.attachmentCount();
+    OwnArrayPtr<AttachmentInfo> attachmentInfo;
+
     if (attachmentCount) {
-        OwnArrayPtr<AttachmentInfo> attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachmentCount]);
+        attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachmentCount]);
         memcpy(attachmentInfo.get(), messageData, sizeof(AttachmentInfo) * attachmentCount);
         messageData += sizeof(AttachmentInfo) * attachmentCount;
 
@@ -226,13 +224,20 @@ bool Connection::processMessage()
                     attachmentFileDescriptorCount++;
             case Attachment::Uninitialized:
             default:
+                ASSERT_NOT_REACHED();
                 break;
             }
         }
 
         if (messageInfo.isMessageBodyIsOutOfLine())
             attachmentCount--;
+    }
 
+    Vector<Attachment> attachments(attachmentCount);
+    AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
+    RefPtr<WebKit::SharedMemory> oolMessageBody;
+
+    if (attachmentCount) {
         size_t fdIndex = 0;
         for (size_t i = 0; i < attachmentCount; ++i) {
             int fd = -1;
@@ -240,15 +245,15 @@ bool Connection::processMessage()
             case Attachment::MappedMemoryType:
                 if (!attachmentInfo[i].isNull())
                     fd = m_fileDescriptors[fdIndex++];
-                attachments.append(Attachment(fd, attachmentInfo[i].getSize()));
+                attachments[attachmentCount - i - 1] = Attachment(fd, attachmentInfo[i].getSize());
                 break;
             case Attachment::SocketType:
                 if (!attachmentInfo[i].isNull())
                     fd = m_fileDescriptors[fdIndex++];
-                attachments.append(Attachment(fd));
+                attachments[attachmentCount - i - 1] = Attachment(fd);
                 break;
             case Attachment::Uninitialized:
-                attachments.append(Attachment());
+                attachments[attachmentCount - i - 1] = Attachment();
             default:
                 break;
             }
@@ -418,17 +423,17 @@ bool Connection::open()
 
     m_isConnected = true;
 #if PLATFORM(QT)
-    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WTF::bind(&Connection::readyReadHandler, this));
+    m_socketNotifier = m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(GTK)
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WTF::bind(&Connection::connectionDidClose, this));
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this));
+    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(EFL)
-    m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
+    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
     // handler.
-    m_connectionQueue.dispatch(WTF::bind(&Connection::readyReadHandler, this));
+    m_connectionQueue->dispatch(WTF::bind(&Connection::readyReadHandler, this));
 
     return true;
 }
@@ -556,7 +561,7 @@ bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
 #if PLATFORM(QT)
 void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
 {
-    m_connectionQueue.dispatchOnTermination(process, WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->dispatchOnTermination(process, WTF::bind(&Connection::connectionDidClose, this));
 }
 #endif
 

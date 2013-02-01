@@ -1,3 +1,27 @@
+2013-01-31  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Another attempt to fix build after recent WebKit2 changes
+        https://bugs.webkit.org/show_bug.cgi?id=108548
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::processMessage): Change Deque to Vector and do similar
+        logic as on patch for https://bugs.webkit.org/show_bug.cgi?id=108517
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::setShouldCloseConnectionOnProcessTermination):
+        * Platform/qt/WorkQueueQt.cpp: Reflect changes on Qt WorkQueue to increase ref
+        count when the execution is started and decrease it when the work item is deleted,
+        following the logic on https://bugs.webkit.org/show_bug.cgi?id=108544
+        (WorkQueue::WorkItemQt::~WorkItemQt):
+        (WorkQueue::WorkItemQt::execute):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath): This function was moved from WebProcessProxy but
+        mac specific code was not protected properly: https://bugs.webkit.org/show_bug.cgi?id=108407
+
 2013-01-31  Changhun Kang  <temoochin@company100.net>
 
         Rename from parentOrHost* to parentOrShadowHost* in Node.h.

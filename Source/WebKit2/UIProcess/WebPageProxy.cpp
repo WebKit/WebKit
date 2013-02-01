@@ -1236,9 +1236,11 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
 
+#if PLATFORM(MAC)
     pluginLoadPolicy = m_uiClient.shouldInstantiatePlugin(this, plugin.bundleIdentifier, plugin.info.name) ? PluginModuleLoadNormally : PluginModuleBlocked;
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
+#endif
 
     pluginPath = plugin.path;
 }
