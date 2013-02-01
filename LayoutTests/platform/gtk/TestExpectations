@@ -521,6 +521,10 @@ webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Fa
 
 webkit.org/b/108365 http/tests/security/inactive-document-with-empty-security-origin.html [ Crash ]
 
+webkit.org/b/108682 [ Debug ] media/video-controls-fullscreen-volume.html [ Crash ]
+webkit.org/b/108682 [ Debug ] media/video-controls-visible-exiting-fullscreen.html [ Crash ]
+webkit.org/b/108682 [ Debug ] media/video-src.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
