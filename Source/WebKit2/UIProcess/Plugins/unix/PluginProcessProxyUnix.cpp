@@ -58,26 +58,6 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 {
 }
 
-static bool spawnProcessSync(char** argv, char** standardOutput, char** standardError, int* exitStatus)
-{
-    // If the disposition of SIGCHLD signal is set to SIG_IGN (default) then
-    // the signal will be ignored and g_spawn_sync() will not be able to return
-    // the status. As a consequence, we make sure that the disposition is set
-    // to SIG_DFL before calling g_spawn_sync().
-    struct sigaction defaultAction, oldAction;
-    defaultAction.sa_handler = SIG_DFL;
-    defaultAction.sa_flags = 0;
-    sigemptyset(&defaultAction.sa_mask);
-    sigaction(SIGCHLD, &defaultAction, &oldAction);
-
-    bool success = g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, standardOutput, standardError, exitStatus, 0);
-
-    // Restore SIGCHLD signal disposition.
-    sigaction(SIGCHLD, &oldAction, 0);
-
-    return success;
-}
-
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -92,8 +72,19 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     int status;
     char* stdOut = 0;
 
+    // If the disposition of SIGCLD signal is set to SIG_IGN (default)
+    // then the signal will be ignored and g_spawn_sync() will not be
+    // able to return the status.
+    // As a consequence, we make sure that the disposition is set to
+    // SIG_DFL before calling g_spawn_sync().
+    struct sigaction action;
+    sigaction(SIGCLD, 0, &action);
+    if (action.sa_handler == SIG_IGN) {
+        action.sa_handler = SIG_DFL;
+        sigaction(SIGCLD, &action, 0);
+    }
 
-    if (!spawnProcessSync(argv, &stdOut, 0, &status))
+    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
         return false;
 
     if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS || !stdOut) {

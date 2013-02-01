@@ -1,3 +1,15 @@
+2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141319.
+        http://trac.webkit.org/changeset/141319
+        https://bugs.webkit.org/show_bug.cgi?id=108629
+
+        This patch is causing the UIProcess to hang on GTK port when
+        loading plugins (Requested by chris-qBT_laptop on #webkit).
+
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
 2013-02-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] EwkContext should be based on C WK2 API
