@@ -1,3 +1,39 @@
+2013-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::CFGSimplificationPhase::keepOperandAlive() conflates liveness and availability
+        https://bugs.webkit.org/show_bug.cgi?id=108580
+
+        Reviewed by Oliver Hunt.
+        
+        This is a harmless bug in that it only results in us keeping a bit too many things
+        for OSR.  But it's worth fixing so that the code is consistent.
+
+        keepOperandAlive() is called when block A has a branch to blocks B and C, but the
+        A->B edge is proven to never be taken and we want to optimize the code to have A
+        unconditionally jump to C.  In that case, for the purposes of OSR, we need to
+        preserve the knowledge that the state that B expected to be live incoming from A
+        ought still to be live up to the point of where the A->B,C branch used to be.  The
+        way we keep things alive is by using the variablesAtTail of A (i.e., we use the
+        knowledge of in what manner A made state available to B and C).  The way we choose
+        which state should be kept alive ought to be chosen by the variablesAtHead of B
+        (i.e. the things B says it needs from its predecessors, including A), except that
+        keepOperandAlive() was previously just using variablesAtTail of A for this
+        purpose.
+        
+        The fix is to have keepOperandAlive() use both liveness and availability in its
+        logic. It should use liveness (i.e. B->variablesAtHead) to decide what to keep
+        alive, and it should use availability (i.e. A->variablesAtTail) to decide how to
+        keep it alive.
+        
+        This might be a microscopic win on some programs, but it's mainly intended to be
+        a code clean-up so that I don't end up scratching my head in confusion the next
+        time I look at this code.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (JSC::DFG::CFGSimplificationPhase::jettisonBlock):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+
 2013-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (r141192): Crash beneath cti_op_get_by_id_generic @ discussions.apple.com

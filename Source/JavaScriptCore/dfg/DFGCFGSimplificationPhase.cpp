@@ -258,20 +258,22 @@ private:
         m_graph.m_blocks[blockIndex].clear();
     }
     
-    void keepOperandAlive(BasicBlock* block, CodeOrigin codeOrigin, int operand)
+    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin codeOrigin, int operand)
     {
-        Node* node = block->variablesAtTail.operand(operand);
-        if (!node)
+        Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);
+        Node* availabilityNode = block->variablesAtTail.operand(operand);
+        if (!livenessNode)
             return;
-        if (node->variableAccessData()->isCaptured())
+        ASSERT(availabilityNode);
+        if (livenessNode->variableAccessData()->isCaptured())
             return;
-        if (node->op() == SetLocal)
-            node = node->child1().node();
-        if (!node->shouldGenerate())
+        if (availabilityNode->op() == SetLocal)
+            availabilityNode = availabilityNode->child1().node();
+        if (!availabilityNode->shouldGenerate())
             return;
-        ASSERT(node->op() != SetLocal);
+        ASSERT(availabilityNode->op() != SetLocal);
         block->appendNode(
-            m_graph, RefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, node);
+            m_graph, RefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, availabilityNode);
     }
     
     void fixPossibleGetLocal(BasicBlock* block, Edge& edge, bool changeRef)
@@ -354,9 +356,9 @@ private:
         BasicBlock* jettisonedBlock = m_graph.m_blocks[jettisonedBlockIndex].get();
         
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-            keepOperandAlive(block, boundaryCodeOrigin, argumentToOperand(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-            keepOperandAlive(block, boundaryCodeOrigin, i);
+            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, i);
         
         fixJettisonedPredecessors(blockIndex, jettisonedBlockIndex);
     }
@@ -573,9 +575,9 @@ private:
             // different path than secondBlock.
             
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-                keepOperandAlive(firstBlock, boundaryCodeOrigin, argumentToOperand(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-                keepOperandAlive(firstBlock, boundaryCodeOrigin, i);
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, i);
         }
         
         for (size_t i = 0; i < secondBlock->phis.size(); ++i)
