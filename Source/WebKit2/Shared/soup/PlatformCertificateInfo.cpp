@@ -78,17 +78,17 @@ void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encode(static_cast<uint32_t>(m_tlsErrors));
 }
 
-bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& certificateInfo)
+bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, PlatformCertificateInfo& certificateInfo)
 {
     bool hasCertificate;
-    if (!decoder->decode(hasCertificate))
+    if (!decoder.decode(hasCertificate))
         return false;
 
     if (!hasCertificate)
         return true;
 
     CoreIPC::DataReference certificateDataReference;
-    if (!decoder->decodeVariableLengthByteArray(certificateDataReference))
+    if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
         return false;
 
     GByteArray* certificateData = g_byte_array_sized_new(certificateDataReference.size());
@@ -100,7 +100,7 @@ bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, Platform
                                                                                "certificate", certificate.get(), NULL)));
 
     uint32_t tlsErrors;
-    if (!decoder->decode(tlsErrors))
+    if (!decoder.decode(tlsErrors))
         return false;
     certificateInfo.m_tlsErrors = static_cast<GTlsCertificateFlags>(tlsErrors);
 

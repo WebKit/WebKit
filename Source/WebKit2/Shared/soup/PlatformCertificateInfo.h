@@ -53,7 +53,7 @@ public:
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, PlatformCertificateInfo&);
+    static bool decode(CoreIPC::ArgumentDecoder&, PlatformCertificateInfo&);
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;

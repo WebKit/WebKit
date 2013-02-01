@@ -1,3 +1,31 @@
+2013-02-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [EFL] [WK2] Fix build after r141619
+        https://bugs.webkit.org/show_bug.cgi?id=108683
+
+        Reviewed by Benjamin Poulain.
+
+        Take a reference instead of a pointer for decoding functions.
+
+        * Shared/WebBatteryStatus.cpp:
+        (WebKit::WebBatteryStatus::Data::decode):
+        * Shared/WebBatteryStatus.h:
+        (Data):
+        * Shared/WebNetworkInfo.cpp:
+        (WebKit::WebNetworkInfo::Data::decode):
+        * Shared/WebNetworkInfo.h:
+        (Data):
+        * Shared/cairo/LayerTreeContextCairo.cpp:
+        (WebKit::LayerTreeContext::decode):
+        * Shared/efl/LayerTreeContextEfl.cpp:
+        (WebKit::LayerTreeContext::decode):
+        * Shared/soup/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::decode):
+        * Shared/soup/PlatformCertificateInfo.h:
+        (PlatformCertificateInfo):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::decodePlatformData):
+
 2013-02-01  Brady Eidson  <beidson@apple.com>
 
         Clean up WebArchive loading with the NetworkProcess
