@@ -4323,6 +4323,7 @@ webkit.org/b/107899 fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 webkit.org/b/107962 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
 webkit.org/b/107962 http/tests/loading/redirect-methods.html [ Failure ]
 webkit.org/b/107962 http/tests/cache/cached-main-resource.html [ Failure ]
+webkit.org/b/107962 http/tests/cache/iframe-304-crash.html [ Failure ]
 
 webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-first-fit-001.html [ ImageOnlyFailure ] 
 

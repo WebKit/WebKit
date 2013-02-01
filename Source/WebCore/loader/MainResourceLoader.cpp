@@ -433,7 +433,7 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
 
     m_response = r;
 
-    if (!loader())
+    if (m_identifierForLoadWithoutResourceLoader)
         frameLoader()->notifier()->dispatchDidReceiveResponse(documentLoader(), identifier(), m_response, 0);
 
     ASSERT(!m_waitingForContentPolicy);
@@ -503,7 +503,7 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
     }
 #endif
 
-    if (!loader())
+    if (m_identifierForLoadWithoutResourceLoader)
         frameLoader()->notifier()->dispatchDidReceiveData(documentLoader(), identifier(), data, length, -1);
 
     documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, -1, false);
@@ -535,7 +535,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<DocumentLoader> dl = documentLoader();
 
-    if (!loader()) {
+    if (m_identifierForLoadWithoutResourceLoader) {
         frameLoader()->notifier()->dispatchDidFinishLoading(documentLoader(), identifier(), finishTime);
         m_identifierForLoadWithoutResourceLoader = 0;
     }
