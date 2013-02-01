@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StorageManager.h"
 
+#include "StorageManagerMessages.h"
+
 namespace WebKit {
 
 PassRefPtr<StorageManager> StorageManager::create()
@@ -38,6 +40,20 @@ StorageManager::StorageManager()
 }
 
 StorageManager::~StorageManager()
+{
+}
+
+void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+{
+    if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName())
+        didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
+}
+
+void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
+{
+}
+
+void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID)
 {
 }
 

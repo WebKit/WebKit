@@ -53,6 +53,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/Plugins \
     $(WebKit2)/UIProcess/SharedWorkers \
+    $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/mac \
 #
 
@@ -75,6 +76,7 @@ MESSAGE_RECEIVERS = \
     PluginProxy \
     SharedWorkerProcess \
     SharedWorkerProcessProxy \
+    StorageManager \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \
     WebCookieManager \

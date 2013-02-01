@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageAreaProxy.h"
 
+#include <WebCore/Frame.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -44,6 +45,7 @@ StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy*, PassRefPtr<SecurityOr
 
 StorageAreaProxy::~StorageAreaProxy()
 {
+    // FIXME: Implement.
 }
 
 unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame) const
@@ -92,11 +94,9 @@ bool StorageAreaProxy::contains(const String& key, ExceptionCode&, Frame* source
     return false;
 }
 
-bool StorageAreaProxy::canAccessStorage(Frame*) const
+bool StorageAreaProxy::canAccessStorage(Frame* frame) const
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return false;
+    return frame && frame->page();
 }
 
 size_t StorageAreaProxy::memoryBytesUsedByCache() const
@@ -108,14 +108,12 @@ size_t StorageAreaProxy::memoryBytesUsedByCache() const
 
 void StorageAreaProxy::incrementAccessCount()
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
+    // Storage access is handled in the UI process, so there's nothing to do here.
 }
 
 void StorageAreaProxy::decrementAccessCount()
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
+    // Storage access is handled in the UI process, so there's nothing to do here.
 }
 
 void StorageAreaProxy::closeDatabaseIfIdle()

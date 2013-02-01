@@ -26,18 +26,29 @@
 #ifndef StorageManager_h
 #define StorageManager_h
 
+#include "Connection.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
+struct SecurityOriginData;
 
-class StorageManager : public ThreadSafeRefCounted<StorageManager> {
+class StorageManager : public ThreadSafeRefCounted<StorageManager>, public CoreIPC::Connection::QueueClient {
 public:
     static PassRefPtr<StorageManager> create();
     ~StorageManager();
 
 private:
     StorageManager();
+
+    // CoreIPC::Connection::QueueClient.
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage) OVERRIDE;
+
+    void didReceiveStorageManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+
+    // Message handlers.
+    void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
 };
 
 } // namespace WebKit
