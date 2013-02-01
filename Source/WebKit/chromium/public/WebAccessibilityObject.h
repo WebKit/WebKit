@@ -76,6 +76,9 @@ public:
     WEBKIT_EXPORT static void enableAccessibility();
     WEBKIT_EXPORT static bool accessibilityEnabled();
 
+    WEBKIT_EXPORT void startCachingComputedObjectAttributesUntilTreeMutates();
+    WEBKIT_EXPORT void stopCachingComputedObjectAttributes();
+
     WEBKIT_EXPORT int axID() const;
 
     // Update the underlying tree, and return true if this object is

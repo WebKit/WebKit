@@ -278,6 +278,8 @@ private:
     virtual bool ariaLiveRegionBusy() const;    
     
     bool inheritsPresentationalRole() const;
+
+    bool computeAccessibilityIsIgnored() const;
     
 #if ENABLE(MATHML)
     // All math elements return true for isMathElement().

@@ -1,3 +1,21 @@
+2013-02-01  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: memoize expensive computation during blocks where tree doesn't change
+        https://bugs.webkit.org/show_bug.cgi?id=106497
+
+        Reviewed by Ryosuke Niwa.
+
+        Expose two methods to enable and disable caching of
+        computed WebAccessibilityObject attributes, to speed up
+        batch read-only operations.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::startCachingComputedObjectAttributesUntilTreeMutates):
+        (WebKit):
+        (WebKit::WebAccessibilityObject::stopCachingComputedObjectAttributes):
+
 2013-02-01  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Expose WebNode::shadowHost()

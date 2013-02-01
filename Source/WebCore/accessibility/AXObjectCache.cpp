@@ -82,6 +82,24 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID id) const
+{
+    HashMap<AXID, CachedAXObjectAttributes>::const_iterator it = m_idMapping.find(id);
+    return it != m_idMapping.end() ? it->value.ignored : DefaultBehavior;
+}
+
+void AXComputedObjectAttributeCache::setIgnored(AXID id, AccessibilityObjectInclusion inclusion)
+{
+    HashMap<AXID, CachedAXObjectAttributes>::iterator it = m_idMapping.find(id);
+    if (it != m_idMapping.end())
+        it->value.ignored = inclusion;
+    else {
+        CachedAXObjectAttributes attributes;
+        attributes.ignored = inclusion;
+        m_idMapping.set(id, attributes);
+    }
+}
     
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
@@ -634,6 +652,8 @@ void AXObjectCache::postNotification(RenderObject* renderer, AXNotification noti
     if (!renderer)
         return;
     
+    stopCachingComputedObjectAttributes();
+
     // Get an accessibility object that already exists. One should not be created here
     // because a render update may be in progress and creating an AX object can re-trigger a layout
     RefPtr<AccessibilityObject> object = get(renderer);
@@ -653,6 +673,8 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, bo
     if (!node)
         return;
     
+    stopCachingComputedObjectAttributes();
+
     // Get an accessibility object that already exists. One should not be created here
     // because a render update may be in progress and creating an AX object can re-trigger a layout
     RefPtr<AccessibilityObject> object = get(node);
@@ -669,6 +691,8 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, bo
 
 void AXObjectCache::postNotification(AccessibilityObject* object, Document* document, AXNotification notification, bool postToElement, PostType postType)
 {
+    stopCachingComputedObjectAttributes();
+
     if (object && !postToElement)
         object = object->observableObject();
 
@@ -710,6 +734,8 @@ void AXObjectCache::nodeTextChangeNotification(Node* node, AXTextChange textChan
     if (!node)
         return;
 
+    stopCachingComputedObjectAttributes();
+
     // Delegate on the right platform
     AccessibilityObject* obj = getOrCreate(node);
     nodeTextChangePlatformNotification(obj, textChange, offset, text);
@@ -735,8 +761,10 @@ void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
         return;
     
     // We don't want to create a scroll view from this method, only update an existing one.
-    if (AccessibilityObject* scrollViewObject = get(view))
+    if (AccessibilityObject* scrollViewObject = get(view)) {
+        stopCachingComputedObjectAttributes();
         scrollViewObject->updateChildrenIfNecessary();
+    }
 }
     
 void AXObjectCache::handleAriaExpandedChange(Node* node)
@@ -753,6 +781,8 @@ void AXObjectCache::handleActiveDescendantChanged(Node* node)
 
 void AXObjectCache::handleAriaRoleChanged(Node* node)
 {
+    stopCachingComputedObjectAttributes();
+
     if (AccessibilityObject* obj = getOrCreate(node)) {
         obj->updateAccessibilityRole();
         obj->notifyIfIgnoredValueChanged();
@@ -802,6 +832,17 @@ void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
 {
     if (AccessibilityObject* obj = get(renderer))
         obj->notifyIfIgnoredValueChanged();
+}
+
+void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
+{
+    if (!m_computedObjectAttributeCache)
+        m_computedObjectAttributeCache = AXComputedObjectAttributeCache::create();
+}
+
+void AXObjectCache::stopCachingComputedObjectAttributes()
+{
+    m_computedObjectAttributeCache.clear();
 }
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)

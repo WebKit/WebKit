@@ -82,6 +82,16 @@ bool WebAccessibilityObject::accessibilityEnabled()
     return AXObjectCache::accessibilityEnabled();
 }
 
+void WebAccessibilityObject::startCachingComputedObjectAttributesUntilTreeMutates()
+{
+    m_private->axObjectCache()->startCachingComputedObjectAttributesUntilTreeMutates();
+}
+
+void WebAccessibilityObject::stopCachingComputedObjectAttributes()
+{
+    m_private->axObjectCache()->stopCachingComputedObjectAttributes();
+}
+
 bool WebAccessibilityObject::isDetached() const
 {
     if (m_private.isNull())

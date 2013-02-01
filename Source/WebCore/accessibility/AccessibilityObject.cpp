@@ -460,6 +460,8 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     if (!criteria)
         return;
 
+    axObjectCache()->startCachingComputedObjectAttributesUntilTreeMutates();
+
     // This search mechanism only searches the elements before/after the starting object.
     // It does this by stepping up the parent chain and at each level doing a DFS.
     
