@@ -1,3 +1,149 @@
+2013-02-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Structure should have a StructureRareData field to save space
+        https://bugs.webkit.org/show_bug.cgi?id=108659
+
+        Reviewed by Oliver Hunt.
+
+        Many of the fields in Structure are used in a subset of all total Structures; however, all Structures must 
+        pay the memory cost of those fields, regardless of whether they use them or not. Since we can have potentially 
+        many Structures on a single page (e.g. bing.com creates ~1500 Structures), it would be profitable to 
+        refactor Structure so that not every Structure has to pay the memory costs for these infrequently used fields.
+
+        To accomplish this, we can create a new StructureRareData class to house these seldom used fields which we 
+        can allocate on demand whenever a Structure requires it. This StructureRareData can itself be a JSCell, and 
+        can do all the marking of the fields for the Structure. The StructureRareData field will be part of a union 
+        with m_previous to minimize overhead. We'll add a new field to JSTypeInfo to indicate that the Structure has 
+        a StructureRareData field. During transitions, a Structure will clone its previous Structure's StructureRareData 
+        if it has one. There could be some potential for optimizing this process, but the initial implementation will 
+        be dumb since we'd be paying these overhead costs for each Structure anyways.
+
+        Initially we'll only put two fields in the StructureRareData to avoid a memory regression. Over time we'll 
+        continue to move fields from Structure to StructureRareData. Optimistically, this could potentially reduce our 
+        Structure memory footprint by up to around 75%. It could also clear the way for removing destructors from 
+        Structures (and into StructureRareData).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGRepatch.cpp: Includes for linking purposes.
+        * jit/JITStubs.cpp:
+        * jsc.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/JSCellInlines.h: Added ifdef guards.
+        * runtime/JSGlobalData.cpp: New Structure for StructureRareData class.
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSTypeInfo.h: New flag to indicate whether or not a Structure has a StructureRareData field.
+        (JSC::TypeInfo::flags):
+        (JSC::TypeInfo::structureHasRareData):
+        * runtime/ObjectPrototype.cpp:
+        * runtime/Structure.cpp: We use a combined WriteBarrier<JSCell> field m_previousOrRareData to avoid compiler issues.
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure): 
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::pin):
+        (JSC::Structure::allocateRareData): Handles allocating a brand new StructureRareData field.
+        (JSC::Structure::cloneRareDataFrom): Handles cloning a StructureRareData field from another. Used during Structure 
+        transitions.
+        (JSC::Structure::visitChildren): We no longer have to worry about marking m_objectToStringValue.
+        * runtime/Structure.h:
+        (JSC::Structure::previousID): Checks the structureHasRareData flag to see where it should get the previous Structure.
+        (JSC::Structure::objectToStringValue): Reads the value from the StructureRareData. If it doesn't exist, returns 0.
+        (JSC::Structure::setObjectToStringValue): Ensures that we have a StructureRareData field, then forwards the function 
+        call to it.
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::setPreviousID): Checks for StructureRareData and forwards if necessary.
+        (Structure):
+        (JSC::Structure::clearPreviousID): Ditto.
+        (JSC::Structure::create):
+        * runtime/StructureRareData.cpp: Added. All of the basic functionality of a JSCell with the fields that we've moved 
+        from Structure and the functions required to access/modify those fields as Structure would have done.
+        (JSC):
+        (JSC::StructureRareData::createStructure):
+        (JSC::StructureRareData::create):
+        (JSC::StructureRareData::clone):
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h: Added.
+        (JSC):
+        (StructureRareData):
+        * runtime/StructureRareDataInlines.h: Added.
+        (JSC):
+        (JSC::StructureRareData::previousID):
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::clearPreviousID):
+        (JSC::Structure::previous): Handles the ugly casting to get the value of the right type of m_previousOrRareData.
+        (JSC::Structure::rareData): Ditto.
+        (JSC::StructureRareData::objectToStringValue):
+        (JSC::StructureRareData::setObjectToStringValue):
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGRepatch.cpp:
+        * jit/JITStubs.cpp:
+        * jsc.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/JSCellInlines.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC):
+        (JSC::TypeInfo::flags):
+        (JSC::TypeInfo::structureHasRareData):
+        * runtime/ObjectPrototype.cpp:
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::pin):
+        (JSC::Structure::allocateRareData):
+        (JSC):
+        (JSC::Structure::cloneRareDataFrom):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        (JSC::Structure::previousID):
+        (JSC::Structure::objectToStringValue):
+        (JSC::Structure::setObjectToStringValue):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::setPreviousID):
+        (Structure):
+        (JSC::Structure::clearPreviousID):
+        (JSC::Structure::previous):
+        (JSC::Structure::rareData):
+        (JSC::Structure::create):
+        * runtime/StructureRareData.cpp: Added.
+        (JSC):
+        (JSC::StructureRareData::createStructure):
+        (JSC::StructureRareData::create):
+        (JSC::StructureRareData::clone):
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h: Added.
+        (JSC):
+        (StructureRareData):
+        * runtime/StructureRareDataInlines.h: Added.
+        (JSC):
+        (JSC::StructureRareData::previousID):
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::clearPreviousID):
+        (JSC::StructureRareData::objectToStringValue):
+        (JSC::StructureRareData::setObjectToStringValue):
+
 2013-02-01  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         offlineasm BaseIndex handling is broken on ARM due to MIPS changes

@@ -1338,6 +1338,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\StructureRareData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\StructureRareData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\StructureRareDataInlines.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\StructureTransitionTable.h"
 				>
 			</File>

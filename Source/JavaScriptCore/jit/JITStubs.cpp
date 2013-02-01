@@ -68,6 +68,7 @@
 #include "RepatchBuffer.h"
 #include "SamplingTool.h"
 #include "Strong.h"
+#include "StructureRareDataInlines.h"
 #include <wtf/StdLibExtras.h>
 #include <stdarg.h>
 #include <stdio.h>

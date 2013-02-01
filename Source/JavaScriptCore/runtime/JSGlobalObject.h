@@ -31,6 +31,7 @@
 #include "SpecialPointer.h"
 #include "StringPrototype.h"
 #include "StructureChain.h"
+#include "StructureRareDataInlines.h"
 #include "Watchpoint.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

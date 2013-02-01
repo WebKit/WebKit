@@ -37,6 +37,7 @@
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
 #include "RepatchBuffer.h"
+#include "StructureRareDataInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {

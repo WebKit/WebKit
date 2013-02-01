@@ -23,8 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef JSCellInlines_h
+#define JSCellInlines_h
+
 #include "CallFrame.h"
+#include "Handle.h"
 #include "JSCell.h"
+#include "JSObject.h"
+#include "JSString.h"
+#include "Structure.h"
 
 namespace JSC {
 
@@ -187,3 +194,4 @@ inline bool JSCell::toBoolean(ExecState* exec) const
 
 } // namespace JSC
 
+#endif // JSCellInlines_h

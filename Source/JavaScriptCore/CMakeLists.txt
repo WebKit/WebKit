@@ -290,6 +290,7 @@ set(JavaScriptCore_SOURCES
     runtime/StringPrototype.cpp
     runtime/StringRecursionChecker.cpp
     runtime/Structure.cpp
+    runtime/StructureRareData.cpp
     runtime/StructureChain.cpp
     runtime/SymbolTable.cpp
     runtime/TimeoutChecker.cpp

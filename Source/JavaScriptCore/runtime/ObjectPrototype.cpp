@@ -26,6 +26,7 @@
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "Operations.h"
+#include "StructureRareDataInlines.h"
 
 namespace JSC {
 

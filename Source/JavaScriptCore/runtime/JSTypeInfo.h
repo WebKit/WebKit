@@ -47,6 +47,7 @@ namespace JSC {
     static const unsigned OverridesGetPropertyNames = 1 << 8;
     static const unsigned ProhibitsPropertyCaching = 1 << 9;
     static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
+    static const unsigned StructureHasRareData = 1 << 11;
 
     class TypeInfo {
     public:
@@ -70,6 +71,7 @@ namespace JSC {
         bool isNumberObject() const { return type() == NumberObjectType; }
         bool isName() const { return type() == NameInstanceType; }
 
+        unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
         bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
         bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
         bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
@@ -81,6 +83,7 @@ namespace JSC {
         bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
         bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
         bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
+        bool structureHasRareData() const { return isSetOnFlags2(StructureHasRareData); }
 
         static ptrdiff_t flagsOffset()
         {

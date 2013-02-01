@@ -310,6 +310,7 @@ SOURCES += \
     runtime/StringRecursionChecker.cpp \
     runtime/StructureChain.cpp \
     runtime/Structure.cpp \
+    runtime/StructureRareData.cpp \
     runtime/SymbolTable.cpp \
     runtime/TimeoutChecker.cpp \
     tools/CodeProfile.cpp \

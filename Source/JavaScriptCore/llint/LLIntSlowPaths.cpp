@@ -49,6 +49,7 @@
 #include "LowLevelInterpreter.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
+#include "StructureRareDataInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace LLInt {

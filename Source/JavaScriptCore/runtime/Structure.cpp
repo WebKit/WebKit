@@ -31,6 +31,7 @@
 #include "Lookup.h"
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
+#include "StructureRareDataInlines.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -120,7 +121,7 @@ void Structure::dumpStatistics()
         switch (structure->m_transitionTable.size()) {
             case 0:
                 ++numberLeaf;
-               if (!structure->m_previous)
+                if (!structure->previousID())
                     ++numberSingletons;
                 break;
 
@@ -172,6 +173,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
 {
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
+    ASSERT(!typeInfo.structureHasRareData());
 }
 
 const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(Structure) };
@@ -242,7 +244,7 @@ void Structure::materializePropertyMap(JSGlobalData& globalData)
     while ((structure = structure->previousID())) {
         if (structure->m_isPinnedPropertyTable) {
             ASSERT(structure->m_propertyTable);
-            ASSERT(!structure->m_previous);
+            ASSERT(!structure->previousID());
 
             m_propertyTable = structure->m_propertyTable->copy(globalData, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
             break;
@@ -363,7 +365,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
     Structure* transition = create(globalData, structure);
 
     transition->m_cachedPrototypeChain.setMayBeNull(globalData, transition, structure->m_cachedPrototypeChain.get());
-    transition->m_previous.set(globalData, transition, structure);
+    transition->setPreviousID(globalData, transition, structure);
     transition->m_nameInPrevious = propertyName.uid();
     transition->m_attributesInPrevious = attributes;
     transition->m_specificValueInPrevious.setMayBeNull(globalData, transition, specificValue);
@@ -374,7 +376,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
         else
             transition->m_propertyTable = structure->m_propertyTable.release();
     } else {
-        if (structure->m_previous)
+        if (structure->previousID())
             transition->materializePropertyMap(globalData);
         else
             transition->createPropertyMap();
@@ -551,7 +553,7 @@ Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure*
     }
     
     Structure* transition = create(globalData, structure);
-    transition->m_previous.set(globalData, transition, structure);
+    transition->setPreviousID(globalData, transition, structure);
     transition->m_attributesInPrevious = attributes;
     transition->m_indexingType = indexingType;
     transition->m_offset = structure->m_offset;
@@ -563,7 +565,7 @@ Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure*
         else
             transition->m_propertyTable = structure->m_propertyTable.release();
     } else {
-        if (structure->m_previous)
+        if (structure->previousID())
             transition->materializePropertyMap(globalData);
         else
             transition->createPropertyMap();
@@ -670,8 +672,23 @@ void Structure::pin()
 {
     ASSERT(m_propertyTable);
     m_isPinnedPropertyTable = true;
-    m_previous.clear();
+    clearPreviousID();
     m_nameInPrevious.clear();
+}
+
+void Structure::allocateRareData(JSGlobalData& globalData)
+{
+    ASSERT(!typeInfo().structureHasRareData());
+    StructureRareData* rareData = StructureRareData::create(globalData, previous());
+    m_typeInfo = TypeInfo(typeInfo().type(), typeInfo().flags() | StructureHasRareData);
+    m_previousOrRareData.set(globalData, this, rareData);
+}
+
+void Structure::cloneRareDataFrom(JSGlobalData& globalData, const Structure* other)
+{
+    ASSERT(other->typeInfo().structureHasRareData());
+    StructureRareData* newRareData = StructureRareData::clone(globalData, other->rareData());
+    m_previousOrRareData.set(globalData, this, newRareData);
 }
 
 #if DUMP_PROPERTYMAP_STATS
@@ -840,7 +857,7 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_prototype);
         visitor.append(&thisObject->m_cachedPrototypeChain);
     }
-    visitor.append(&thisObject->m_previous);
+    visitor.append(&thisObject->m_previousOrRareData);
     visitor.append(&thisObject->m_specificValueInPrevious);
     visitor.append(&thisObject->m_enumerationCache);
     if (thisObject->m_propertyTable) {
@@ -848,7 +865,6 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
         for (PropertyTable::iterator ptr = thisObject->m_propertyTable->begin(); ptr != end; ++ptr)
             visitor.append(&ptr->specificValue);
     }
-    visitor.append(&thisObject->m_objectToStringValue);
 }
 
 bool Structure::prototypeChainMayInterceptStoreTo(JSGlobalData& globalData, PropertyName propertyName)
