@@ -251,9 +251,9 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     return result;
 }
 
-NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
+WritingDirection Editor::baseWritingDirectionForSelectionStart() const
 {
-    NSWritingDirection result = NSWritingDirectionLeftToRight;
+    WritingDirection result = LeftToRightWritingDirection;
 
     Position pos = m_frame->selection()->selection().visibleStart().deepEquivalent();
     Node* node = pos.deprecatedNode();
@@ -276,10 +276,10 @@ NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
         
     switch (style->direction()) {
         case LTR:
-            result = NSWritingDirectionLeftToRight;
+            result = LeftToRightWritingDirection;
             break;
         case RTL:
-            result = NSWritingDirectionRightToLeft;
+            result = RightToLeftWritingDirection;
             break;
     }
 

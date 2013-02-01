@@ -377,7 +377,7 @@ public:
 #if PLATFORM(MAC)
     const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
-    NSWritingDirection baseWritingDirectionForSelectionStart() const;
+    WritingDirection baseWritingDirectionForSelectionStart() const;
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     void writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
