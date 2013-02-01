@@ -45,12 +45,11 @@ public:
     static IDBFactory* indexedDB(ScriptExecutionContext*);
 
 private:
-    explicit WorkerContextIndexedDatabase(ScriptExecutionContext*);
+    WorkerContextIndexedDatabase();
 
     IDBFactory* indexedDB();
     static const char* supplementName();
 
-    ScriptExecutionContext* m_context;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
     RefPtr<IDBFactory> m_idbFactory;
 };

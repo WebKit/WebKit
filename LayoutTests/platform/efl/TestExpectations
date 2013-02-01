@@ -1125,6 +1125,7 @@ Bug(EFL) http/tests/security/cross-origin-indexeddb-allowed.html
 Bug(EFL) http/tests/security/cross-origin-indexeddb.html
 Bug(EFL) http/tests/security/cross-origin-worker-indexeddb-allowed.html
 Bug(EFL) http/tests/security/cross-origin-worker-indexeddb.html
+Bug(EFL) http/tests/security/no-indexeddb-from-sandbox.html
 
 # Quota API is not supported.
 Bug(EFL) storage/storageinfo-missing-arguments.html

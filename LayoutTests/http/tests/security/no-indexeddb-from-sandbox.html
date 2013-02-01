@@ -5,7 +5,15 @@ if (window.testRunner)
 <iframe sandbox="allow-scripts"
     src="data:text/html,
          <script>
-         var db = window.webkitIndexedDB;
-         alert(db ? 'FAIL' : 'PASS');
+             var db = window.webkitIndexedDB;
+             try {
+                 db.open('test');
+                 alert('FAIL: db.open() should throw a SECURITY_ERR in a sandbox.');
+             } catch (e) {
+                 if (e.code === DOMException.SECURITY_ERR)
+                     alert('PASS: db.open() threw a SECURITY_ERR!');
+                 else
+                     alert('FAIL: db.open() threw a ' + e.name);
+             }
          </script>"
      ></iframe>

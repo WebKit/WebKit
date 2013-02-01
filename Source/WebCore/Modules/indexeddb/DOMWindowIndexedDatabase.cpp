@@ -107,9 +107,6 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
     if (!page)
         return 0;
 
-    if (!document->securityOrigin()->canAccessDatabase())
-        return 0;
-
     if (!m_window->isCurrentlyDisplayedInFrame())
         return 0;
 
