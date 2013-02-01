@@ -1,3 +1,15 @@
+2013-02-01  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Skip hanging WebGL software fallback tests
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=105820.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::webglSoftwareFallbackVerticalOrientation):
+        (tst_QGraphicsWebView::webglSoftwareFallbackHorizontalOrientation):
+
 2013-02-01  Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] visibility of embedded widget

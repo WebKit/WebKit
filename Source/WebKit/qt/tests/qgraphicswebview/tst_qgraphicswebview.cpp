@@ -571,6 +571,7 @@ GraphicsView::GraphicsView()
 
 void tst_QGraphicsWebView::webglSoftwareFallbackVerticalOrientation()
 {
+    QSKIP("Hangs on X11 -- https://bugs.webkit.org/show_bug.cgi?id=105820");
     QSize canvasSize(100, 100);
     QImage reference(canvasSize, QImage::Format_ARGB32);
     reference.fill(0xFF00FF00);
@@ -590,6 +591,7 @@ void tst_QGraphicsWebView::webglSoftwareFallbackVerticalOrientation()
 
 void tst_QGraphicsWebView::webglSoftwareFallbackHorizontalOrientation()
 {
+    QSKIP("Hangs on X11 -- https://bugs.webkit.org/show_bug.cgi?id=105820");
     QSize canvasSize(100, 100);
     QImage reference(canvasSize, QImage::Format_ARGB32);
     reference.fill(0xFF00FF00);
