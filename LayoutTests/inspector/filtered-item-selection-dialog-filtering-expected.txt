@@ -9,7 +9,7 @@ Output:["a","bc"]
 Case sensitive matching
 Query:"aB"
 Input:["abc","acB"]
-Output:["abc","acB"]
+Output:["acB","abc"]
 
 Case insensitive matching
 Query:"ab"
@@ -29,7 +29,7 @@ Output:["^[]{}()\\.$*+?|"]
 Camel case matching
 Query:"fBaB"
 Input:["fooBarBaz","FooBarBaz","Foo_Bar_Baz","foo_bar_baz","foobarbaz","foobarBaz","afooBarBaz","aFooBarBaz","a fooBarBaz","fooBorBaz","fooBorCaz"]
-Output:["fooBarBaz","foo_bar_baz","foobarBaz","foobarbaz","FooBarBaz","Foo_Bar_Baz","a fooBarBaz","aFooBarBaz","afooBarBaz"]
+Output:["fooBarBaz","FooBarBaz","Foo_Bar_Baz","a fooBarBaz","aFooBarBaz","afooBarBaz","foo_bar_baz","foobarBaz","foobarbaz"]
 
 Underscore matching
 Query:"fO_ba_b"

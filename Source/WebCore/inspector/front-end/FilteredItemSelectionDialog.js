@@ -190,12 +190,14 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     /**
      * @param {string} query
+     * @param {boolean} ignoreCase
      * @param {boolean} camelCase
      * @return {RegExp}
      */
-    _createScoringRegex: function(query, camelCase)
+    _createScoringRegex: function(query, ignoreCase, camelCase)
     {
-        query = query.toUpperCase();
+        if (!camelCase || (camelCase && ignoreCase))
+            query = query.toUpperCase();
         var regexString = "";
         for (var i = 0; i < query.length; ++i) {
             var c = query.charAt(i);
@@ -220,8 +222,8 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         var ignoreCase = (query === query.toLowerCase());
 
         var filterRegex = query ? this._createSearchRegex(query) : null;
-        var camelCaseScoringRegex = query ? this._createScoringRegex(query, true) : null;
-        var underscoreScoringRegex = query ? this._createScoringRegex(query, false) : null;
+        var camelCaseScoringRegex = query ? this._createScoringRegex(query, ignoreCase, true) : null;
+        var underscoreScoringRegex = query ? this._createScoringRegex(query, ignoreCase, false) : null;
 
         var oldSelectedAbsoluteIndex = this._filteredItems[this._selectedIndexInFiltered];
         this._filteredItems = [];
