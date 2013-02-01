@@ -1763,10 +1763,11 @@ void WebPage::setMaximumScale(double maximumScale)
 
 double WebPagePrivate::maximumScale() const
 {
-    if (m_maximumScale >= zoomToFitScale() && m_maximumScale >= m_minimumScale && respectViewport())
-        return m_maximumScale;
+    double zoomToFitScale = this->zoomToFitScale();
+    if (m_maximumScale >= m_minimumScale && respectViewport())
+        return std::max(zoomToFitScale, m_maximumScale);
 
-    return hasVirtualViewport() ? std::max<double>(zoomToFitScale(), 4.0) : 4.0;
+    return hasVirtualViewport() ? std::max<double>(zoomToFitScale, 4.0) : 4.0;
 }
 
 double WebPage::maximumScale() const

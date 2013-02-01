@@ -1,3 +1,24 @@
+2013-02-01  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Zooming in during page load of non-scalable webpage results in fixed magnification
+        https://bugs.webkit.org/show_bug.cgi?id=108252
+
+        Reviewed by Yong Li.
+        Internally reviewed by Konrad Piascik.
+
+        PR: 284828
+        We got float layoutSize(342.284122, 521.448467) and
+        m_maximumScale(2.243750) after computing viewport meta based on the
+        device pixel ratio and laid out the contents at IntSize(342, 521).
+        Therefore, zoomToFitScale(2.245681) would be a bit larger than
+        m_maximumScale based on that contents size and resulted in
+        maximumScale()!=minimumScale(), which made the non-scalable page
+        scalable.
+        Return zoomToFitScale for maximumScale() in such kind of case.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::maximumScale):
+
 2013-02-01  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] InputHandler status is not restored when page history goes back
