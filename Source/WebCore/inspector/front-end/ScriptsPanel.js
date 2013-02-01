@@ -245,8 +245,8 @@ WebInspector.ScriptsPanel.prototype = {
         var projectName = uiSourceCode.project().name();
         if (uiSourceCode.project().isServiceProject())
             return;
-        this._editorContainer.addUISourceCode(uiSourceCode);
         this._navigator.addUISourceCode(uiSourceCode);
+        this._editorContainer.addUISourceCode(uiSourceCode);
         // Replace debugger script-based uiSourceCode with a network-based one.
         var currentUISourceCode = this._currentUISourceCode;
         if (currentUISourceCode && currentUISourceCode.project().isServiceProject() && currentUISourceCode !== uiSourceCode && currentUISourceCode.url === uiSourceCode.url) {

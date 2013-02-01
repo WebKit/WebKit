@@ -460,7 +460,6 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
         this._titleTextNode.textContent = this._titleText;
         this.titleElement.appendChild(this._titleTextNode);
         this.listItemElement.appendChild(this.titleElement);
-        this.expand();
     },
 
     onreveal: function()
@@ -536,10 +535,10 @@ WebInspector.NavigatorFolderTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
-        if (this.isDomain && this.titleText != WebInspector.inspectedPageDomain)
-            this.collapse();
-        else
+        if (this.isDomain && this.titleText === WebInspector.inspectedPageDomain)
             this.expand();
+        else
+            this.collapse();
     },
 
     __proto__: WebInspector.BaseNavigatorTreeElement.prototype
