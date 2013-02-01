@@ -566,6 +566,7 @@ editing/spelling/spelling-marker-description.html
 
 # WTR needs an implementation of setAutomaticLinkDetectionEnabled.
 # https://bugs.webkit.org/show_bug.cgi?id=87162
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html
 editing/inserting/typing-space-to-trigger-smart-link.html
 
 # No CORS support for media elements is implemented yet.
