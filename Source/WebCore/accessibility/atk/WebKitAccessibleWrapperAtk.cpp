@@ -1093,7 +1093,9 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
         if (axFirstChild)
             startNode = axFirstChild->node();
     }
-    if (!startNode)
+    // Getting the Position of a PseudoElement now triggers an assertion.
+    // This can occur when clicking on empty space in a render block.
+    if (!startNode || startNode->isPseudoElement())
         startNode = firstUnignoredParent->node();
 
     // Check if the node for the first parent object not ignoring
