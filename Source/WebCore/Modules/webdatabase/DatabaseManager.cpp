@@ -212,7 +212,6 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
     String errorMessage;
     if (!database->openAndVerifyVersion(!creationCallback, e, errorMessage)) {
         database->logErrorMessage(errorMessage);
-        removeOpenDatabase(database.get());
         return 0;
     }
 
@@ -244,9 +243,8 @@ PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContex
     RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(databaseContext, name, expectedVersion, displayName, estimatedSize));
 
     String errorMessage;
-    if (!database->performOpenAndVerify(!creationCallback, ec, errorMessage)) {
+    if (!database->openAndVerifyVersion(!creationCallback, ec, errorMessage)) {
         database->logErrorMessage(errorMessage);
-        removeOpenDatabase(database.get());
         return 0;
     }
 
@@ -360,16 +358,6 @@ void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* co
 bool DatabaseManager::canEstablishDatabase(ScriptExecutionContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     return m_server->canEstablishDatabase(context, name, displayName, estimatedSize);
-}
-
-void DatabaseManager::addOpenDatabase(DatabaseBackend* database)
-{
-    m_server->addOpenDatabase(database);
-}
-
-void DatabaseManager::removeOpenDatabase(DatabaseBackend* database)
-{
-    m_server->removeOpenDatabase(database);
 }
 
 void DatabaseManager::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)

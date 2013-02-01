@@ -112,8 +112,6 @@ public:
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
     bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
-    void addOpenDatabase(DatabaseBackend*);
-    void removeOpenDatabase(DatabaseBackend*);
 
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);

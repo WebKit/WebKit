@@ -38,6 +38,7 @@
 #include "DatabaseManager.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
+#include "DatabaseTracker.h"
 #include "Document.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -126,6 +127,9 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
         return false;
 
+#if PLATFORM(CHROMIUM)
+    DatabaseTracker::tracker().prepareToOpenDatabase(this);
+#endif
     bool success = false;
     OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, e, errorMessage, success);
     databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
@@ -171,7 +175,6 @@ void Database::close()
     RefPtr<Database> protect = this;
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
-    DatabaseManager::manager().removeOpenDatabase(this);
 }
 
 void Database::closeImmediately()

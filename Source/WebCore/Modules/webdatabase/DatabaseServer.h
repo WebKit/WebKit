@@ -71,8 +71,6 @@ public:
     virtual void interruptAllDatabasesForContext(const ScriptExecutionContext*);
 
     virtual bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
-    virtual void addOpenDatabase(DatabaseBackend*);
-    virtual void removeOpenDatabase(DatabaseBackend*);
 
     virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);

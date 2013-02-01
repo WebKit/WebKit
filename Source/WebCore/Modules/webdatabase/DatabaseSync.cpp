@@ -36,6 +36,7 @@
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
+#include "DatabaseTracker.h"
 #include "Logging.h"
 #include "SQLException.h"
 #include "SQLTransactionSync.h"
@@ -58,10 +59,8 @@ DatabaseSync::~DatabaseSync()
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
 
-    if (opened()) {
-        DatabaseManager::manager().removeOpenDatabase(this);
+    if (opened())
         closeDatabase();
-    }
 }
 
 void DatabaseSync::changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback> changeVersionCallback, ExceptionCode& ec)
@@ -149,6 +148,14 @@ void DatabaseSync::runTransaction(PassRefPtr<SQLTransactionSyncCallback> callbac
     setLastErrorMessage("");
 }
 
+bool DatabaseSync::openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode& ec, String& errorMessage)
+{
+#if PLATFORM(CHROMIUM)
+    DatabaseTracker::tracker().prepareToOpenDatabase(this);
+#endif
+    return performOpenAndVerify(setVersionInNewDatabase, ec, errorMessage);
+}
+
 void DatabaseSync::markAsDeletedAndClose()
 {
     // FIXME: need to do something similar to closeImmediately(), but in a sync way
@@ -183,7 +190,6 @@ void DatabaseSync::closeImmediately()
         return;
 
     logErrorMessage("forcibly closing database");
-    DatabaseManager::manager().removeOpenDatabase(this);
     closeDatabase();
 }
 

@@ -73,7 +73,6 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
 
 void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
         m_openDatabaseMap = adoptPtr(new DatabaseOriginMap);
@@ -93,8 +92,6 @@ void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
     }
 
     databaseSet->add(database);
-
-    DatabaseObserver::databaseOpened(database);
 }
 
 class NotifyDatabaseObserverOnCloseTask : public ScriptExecutionContext::Task {
@@ -151,6 +148,20 @@ void DatabaseTracker::removeOpenDatabase(DatabaseBackend* database)
         }
     }
 
+    if (!database->scriptExecutionContext()->isContextThread())
+        database->scriptExecutionContext()->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
+    else
+        DatabaseObserver::databaseClosed(database);
+}
+
+void DatabaseTracker::prepareToOpenDatabase(DatabaseBackend* database)
+{
+    ASSERT(database->scriptExecutionContext()->isContextThread());
+    DatabaseObserver::databaseOpened(database);
+}
+
+void DatabaseTracker::failedToOpenDatabase(DatabaseBackend* database)
+{
     if (!database->scriptExecutionContext()->isContextThread())
         database->scriptExecutionContext()->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
     else

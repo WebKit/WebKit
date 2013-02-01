@@ -112,6 +112,8 @@ public:
 
     bool hasEntryForOrigin(SecurityOrigin*);
 
+    void doneCreatingDatabase(DatabaseBackend*);
+
 private:
     bool hasEntryForOriginNoLock(SecurityOrigin* origin);
     String fullPathForDatabaseNoLock(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
@@ -170,9 +172,12 @@ private:
 
     static void scheduleForNotification();
     static void notifyDatabasesChanged(void*);
-#else
+#else // PLATFORM(CHROMIUM)
 public:
     void closeDatabasesImmediately(const String& originIdentifier, const String& name);
+
+    void prepareToOpenDatabase(DatabaseBackend*);
+    void failedToOpenDatabase(DatabaseBackend*);
 
 private:
     typedef HashSet<DatabaseBackend*> DatabaseSet;
@@ -184,7 +189,7 @@ private:
 
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
-#endif // !PLATFORM(CHROMIUM)
+#endif // PLATFORM(CHROMIUM)
 };
 
 } // namespace WebCore

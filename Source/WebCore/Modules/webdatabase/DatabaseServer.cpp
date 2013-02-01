@@ -151,16 +151,6 @@ bool DatabaseServer::canEstablishDatabase(ScriptExecutionContext* context, const
     return DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize);
 }
 
-void DatabaseServer::addOpenDatabase(DatabaseBackend* database)
-{
-    DatabaseTracker::tracker().addOpenDatabase(database);
-}
-
-void DatabaseServer::removeOpenDatabase(DatabaseBackend* database)
-{
-    DatabaseTracker::tracker().removeOpenDatabase(database);
-}
-
 void DatabaseServer::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     DatabaseTracker::tracker().setDatabaseDetails(origin, name, displayName, estimatedSize);

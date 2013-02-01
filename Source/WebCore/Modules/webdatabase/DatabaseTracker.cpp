@@ -492,6 +492,12 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, Securit
     return SQLiteFileSystem::getDatabaseFileSize(path);
 }
 
+void DatabaseTracker::doneCreatingDatabase(DatabaseBackend* database)
+{
+    MutexLocker lockDatabase(m_databaseGuard);
+    doneCreatingDatabase(database->securityOrigin(), database->stringIdentifier());
+}
+
 void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
 {
     if (!database)
@@ -526,9 +532,6 @@ void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
             originQuotaManager().addDatabase(database->securityOrigin(), database->stringIdentifier(), database->fileName());
         }
     }
-
-    MutexLocker lockDatabase(m_databaseGuard);
-    doneCreatingDatabase(database->securityOrigin(), database->stringIdentifier());
 }
 
 void DatabaseTracker::removeOpenDatabase(DatabaseBackend* database)

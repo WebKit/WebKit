@@ -77,6 +77,8 @@ private:
                  const String& displayName, unsigned long estimatedSize);
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 
+    bool openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&, String& errorMessage);
+
     String m_lastErrorMessage;
 
     friend class DatabaseManager;
