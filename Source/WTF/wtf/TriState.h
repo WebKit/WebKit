@@ -23,43 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PrototypeMap_h
-#define PrototypeMap_h
+#ifndef TriState_h
+#define TriState_h
 
-#include "WeakGCMap.h"
-#include <wtf/TriState.h>
+namespace WTF {
 
-namespace JSC {
-
-class JSObject;
-class Structure;
-
-// Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
-class PrototypeMap {
-public:
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    void addPrototype(JSObject*);
-    TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
-
-private:
-    WeakGCMap<JSObject*, JSObject> m_prototypes;
-    typedef WeakGCMap<std::pair<JSObject*, unsigned>, Structure> StructureMap;
-    StructureMap m_structures;
+enum TriState {
+    FalseTriState,
+    TrueTriState,
+    MixedTriState
 };
 
-inline TriState PrototypeMap::isPrototype(JSObject* object) const
-{
-    if (!m_prototypes.contains(object))
-        return FalseTriState;
-
-    // We know that 'object' was used as a prototype at one time, so be
-    // conservative and say that it might still be so. (It would be expensive
-    // to find out for sure, and we don't know of any cases where being precise
-    // would improve performance.)
-    return MixedTriState;
 }
 
-} // namespace JSC
+using WTF::TriState;
+using WTF::FalseTriState;
+using WTF::TrueTriState;
+using WTF::MixedTriState;
 
-#endif // PrototypeMap_h
+#endif // TriState_h

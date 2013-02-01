@@ -1,3 +1,16 @@
+2013-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Added TriState to WTF and started using it in one place
+        https://bugs.webkit.org/show_bug.cgi?id=108628
+
+        Reviewed by Beth Dakin.
+
+        Useful for expressing "maybe" conditions in a boolean context.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/TriState.h: Added.
+        (WTF):
+
 2013-02-01  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r137709

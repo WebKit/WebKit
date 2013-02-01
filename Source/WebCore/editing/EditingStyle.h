@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TriState.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,8 +57,6 @@ class RenderStyle;
 class StylePropertySet;
 class StyledElement;
 class VisibleSelection;
-
-enum TriState { FalseTriState, TrueTriState, MixedTriState };
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:

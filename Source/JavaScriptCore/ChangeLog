@@ -1,3 +1,19 @@
+2013-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Added TriState to WTF and started using it in one place
+        https://bugs.webkit.org/show_bug.cgi?id=108628
+
+        Reviewed by Beth Dakin.
+
+        * runtime/PrototypeMap.h:
+        (JSC::PrototypeMap::isPrototype): Use TriState instead of boolean. In
+        response to review feedback, this is an attempt to clarify that our
+        'true' condition is actually just a 'maybe'.
+
+        * runtime/PrototypeMap.h:
+        (PrototypeMap):
+        (JSC::PrototypeMap::isPrototype):
+
 2013-02-01  Alexis Menard  <alexis@webkit.org>
 
         Enable unprefixed CSS transitions by default.
