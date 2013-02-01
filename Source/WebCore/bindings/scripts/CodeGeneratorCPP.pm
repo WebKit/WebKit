@@ -205,7 +205,7 @@ sub SkipAttribute
                 or $attribute->signature->extendedAttributes->{"CustomGetter"};
 
     return 1 if $type =~ /Constructor$/;
-
+    return 1 if $attribute->isStatic;
     return 1 if $codeGenerator->IsTypedArrayType($type);
 
     if ($codeGenerator->GetArrayType($type)) {

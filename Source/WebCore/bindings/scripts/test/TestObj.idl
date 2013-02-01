@@ -40,11 +40,9 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     readonly attribute long            readOnlyLongAttr;
     readonly attribute DOMString       readOnlyStringAttr;
     readonly attribute TestObj         readOnlyTestObjAttr;
-#if defined(TESTING_JS) || defined(TESTING_V8)
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
-#endif
     attribute TestEnumType             enumAttr;
     attribute short                    shortAttr;
     attribute unsigned short           unsignedShortAttr;

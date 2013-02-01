@@ -179,6 +179,7 @@ sub SkipAttribute {
         return 1;
     }
 
+    return 1 if $attribute->isStatic;
     return 1 if $codeGenerator->IsTypedArrayType($propType);
 
     $codeGenerator->AssertNotSequenceType($propType);
