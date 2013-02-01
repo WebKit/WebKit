@@ -71,6 +71,9 @@ PASS document.createEvent('UIEvent').constructor === window.UIEvent is true
 PASS document.createEvent('UIEvents') instanceof window.UIEvent is true
 PASS document.createEvent('UIEvents') instanceof window.Event is true
 PASS document.createEvent('UIEvents').constructor === window.UIEvent is true
+PASS document.createEvent('TransitionEvent') instanceof window.TransitionEvent is true
+PASS document.createEvent('TransitionEvent') instanceof window.Event is true
+PASS document.createEvent('TransitionEvent').constructor === window.TransitionEvent is true
 PASS document.createEvent('WebKitAnimationEvent') instanceof window.WebKitAnimationEvent is true
 PASS document.createEvent('WebKitAnimationEvent') instanceof window.Event is true
 PASS document.createEvent('WebKitAnimationEvent').constructor === window.WebKitAnimationEvent is true

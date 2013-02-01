@@ -27,8 +27,6 @@
 #include "config.h"
 #include "TransitionEvent.h"
 
-#if ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)
-
 #include "EventNames.h"
 
 namespace WebCore {
@@ -84,5 +82,3 @@ const AtomicString& TransitionEvent::interfaceName() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)

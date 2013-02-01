@@ -297,9 +297,7 @@
     attribute EventListener onwebkitanimationiteration;
     attribute EventListener onwebkitanimationstart;
     attribute EventListener onwebkittransitionend;
-#if defined(ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED) && ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
     attribute EventListener ontransitionend;
-#endif
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
     attribute EventListener onorientationchange;
 #endif
@@ -556,7 +554,7 @@
     attribute PageTransitionEventConstructor PageTransitionEvent;
     attribute ProgressEventConstructor ProgressEvent;
     attribute TextEventConstructor TextEvent;
-    [Conditional=CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED] attribute TransitionEventConstructor TransitionEvent;
+    attribute TransitionEventConstructor TransitionEvent;
     attribute UIEventConstructor UIEvent;
     attribute WebKitAnimationEventConstructor WebKitAnimationEvent;
     attribute WebKitTransitionEventConstructor WebKitTransitionEvent;

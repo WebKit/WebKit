@@ -21,7 +21,7 @@ PageTransitionEvent
 PopStateEvent
 ProgressEvent
 TextEvent
-TransitionEvent conditional=CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
+TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
 WebKitAnimationEvent

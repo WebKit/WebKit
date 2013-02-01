@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)
-
 #ifndef TransitionEvent_h
 #define TransitionEvent_h
 
@@ -78,4 +76,3 @@ private:
 
 #endif // TransitionEvent_h
 
-#endif // ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)

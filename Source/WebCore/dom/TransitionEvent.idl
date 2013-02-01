@@ -25,7 +25,6 @@
  */
 
 [
-    Conditional=CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED,
     ConstructorTemplate=Event
 ] interface TransitionEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString propertyName;

@@ -117,6 +117,11 @@
     shouldBeTrue("document.createEvent('UIEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('UIEvents').constructor === window.UIEvent");
 
+    // TransitionEvent
+    shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.TransitionEvent");
+    shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('TransitionEvent').constructor === window.TransitionEvent");
+
     // WebKitAnimationEvent
     shouldBeTrue("document.createEvent('WebKitAnimationEvent') instanceof window.WebKitAnimationEvent");
     shouldBeTrue("document.createEvent('WebKitAnimationEvent') instanceof window.Event");
@@ -228,12 +233,6 @@
     // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.AutocompleteErrorEvent");
     // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.Event");
     // shouldBeTrue("document.createEvent('AutocompleteErrorEvent').constructor === window.AutocompleteErrorEvent");
-
-    // #if ENABLE(CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED)
-    // TransitionEvent
-    // shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.TransitionEvent");
-    // shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('TransitionEvent').constructor === window.TransitionEvent");
 
     // We test both a hard coded set and the automated set below (using enumeration) to ensure that a constructor being removed
     // from the window is caught a regression.
