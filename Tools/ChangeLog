@@ -1,3 +1,17 @@
+2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Set the GTK 64-bit Debug builder to build and test only WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=108648
+
+        Reviewed by Philippe Normand.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Change the builder name, type and
+        build directory to note that the builder builds and tests only the WebKit1 port on the GTK platform.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit1Only): Add the new build class that builds only the WebKit1 port of the builder's platform.
+        (BuildAndTestWebKit1OnlyFactory): Add the new factory that uses the CompileWebKit1Only build class
+        for building and testing only WebKit1 on the builder's platform.
+
 2013-02-01  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move ownership of TestRunner object to TestInterfaces
