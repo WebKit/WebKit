@@ -78,6 +78,10 @@ static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subject
     AudioBusMap::iterator iterator = audioBusMap.find(subjectName);
     if (iterator == audioBusMap.end()) {
         OwnPtr<AudioBus> concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
+        ASSERT(concatenatedImpulseResponses);
+        if (!concatenatedImpulseResponses)
+            return 0;
+
         bus = concatenatedImpulseResponses.leakPtr();
         audioBusMap.set(subjectName, bus);
     } else
