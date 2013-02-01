@@ -1516,20 +1516,24 @@ static HashSet<String> mimeModernTypesCache()
     }
     
     return cache;
-} 
+}
+
+static void concatenateHashSets(HashSet<String>& destination, const HashSet<String>& source)
+{
+    HashSet<String>::const_iterator it = source.begin();
+    HashSet<String>::const_iterator end = source.end();
+    for (; it != end; ++it)
+        destination.add(*it);
+}
 
 void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String>& supportedTypes)
 {
-    supportedTypes = mimeModernTypesCache();
-    
+    concatenateHashSets(supportedTypes, mimeModernTypesCache());
+
     // Note: this method starts QTKitServer if it isn't already running when in 64-bit because it has to return the list 
     // of every MIME type supported by QTKit.
-    HashSet<String> commonTypes = mimeCommonTypesCache();
-    HashSet<String>::const_iterator it = commonTypes.begin();
-    HashSet<String>::const_iterator end = commonTypes.end();
-    for (; it != end; ++it)
-        supportedTypes.add(*it);
-} 
+    concatenateHashSets(supportedTypes, mimeCommonTypesCache());
+}
 
 MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& type, const String& codecs, const KURL&)
 {
