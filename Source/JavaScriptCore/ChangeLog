@@ -1,5 +1,17 @@
 2013-02-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed an unused function: JSGlobalObject::createFunctionExecutableFromGlobalCode
+        https://bugs.webkit.org/show_bug.cgi?id=108657
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+
+2013-02-01  Geoffrey Garen  <ggaren@apple.com>
+
         Added TriState to WTF and started using it in one place
         https://bugs.webkit.org/show_bug.cgi?id=108628
 

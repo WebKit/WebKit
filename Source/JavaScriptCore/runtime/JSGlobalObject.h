@@ -392,7 +392,6 @@ namespace JSC {
 
         UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
         UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*, JSObject** exception);
-        UnlinkedFunctionExecutable* createFunctionExecutableFromGlobalCode(CallFrame*, const Identifier&, const SourceCode&, JSObject** exception);
 
     protected:
 

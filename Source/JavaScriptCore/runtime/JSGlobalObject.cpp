@@ -633,20 +633,4 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     return unlinkedCode;
 }
 
-UnlinkedFunctionExecutable* JSGlobalObject::createFunctionExecutableFromGlobalCode(CallFrame* callFrame, const Identifier& name, const SourceCode& code, JSObject** exception)
-{
-    ParserError error;
-    UnlinkedFunctionExecutable* executable = globalData().codeCache()->getFunctionExecutableFromGlobalCode(globalData(), name, code, error);
-    if (hasDebugger())
-        debugger()->sourceParsed(callFrame, code.provider(), error.m_line, error.m_message);
-
-    if (error.m_type != ParserError::ErrorNone) {
-        *exception = error.toErrorObject(this, code);
-        return 0;
-    }
-
-    return executable;
-}
-
-
 } // namespace JSC
