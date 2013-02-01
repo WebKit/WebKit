@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
+PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Node* node, CollectionType type)
 {
-    return adoptRef(new HTMLAllCollection(document));
+    return adoptRef(new HTMLAllCollection(node, type));
 }
 
-HTMLAllCollection::HTMLAllCollection(Document* document)
-    : HTMLCollection(document, DocAll, DoesNotOverrideItemAfter)
+HTMLAllCollection::HTMLAllCollection(Node* node, CollectionType type)
+    : HTMLCollection(node, type, DoesNotOverrideItemAfter)
 {
 }
 
