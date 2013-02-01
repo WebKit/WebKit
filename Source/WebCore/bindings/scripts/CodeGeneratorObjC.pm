@@ -446,10 +446,12 @@ sub SkipFunction
 sub SkipAttribute
 {
     my $attribute = shift;
+    my $type = $attribute->signature->type;
 
-    $codeGenerator->AssertNotSequenceType($attribute->signature->type);
-    return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
-    return 1 if $codeGenerator->IsTypedArrayType($attribute->signature->type);
+    $codeGenerator->AssertNotSequenceType($type);
+    return 1 if $codeGenerator->GetArrayType($type);
+    return 1 if $codeGenerator->IsTypedArrayType($type);
+    return 1 if $codeGenerator->IsEnumType($type);
 
     # This is for DynamicsCompressorNode.idl
     if ($attribute->signature->name eq "release") {

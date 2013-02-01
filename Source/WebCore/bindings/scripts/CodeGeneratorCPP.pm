@@ -199,23 +199,28 @@ sub SkipFunction
 sub SkipAttribute
 {
     my $attribute = shift;
+    my $type = $attribute->signature->type;
 
     return 1 if $attribute->signature->extendedAttributes->{"Custom"}
                 or $attribute->signature->extendedAttributes->{"CustomGetter"};
 
-    return 1 if $attribute->signature->type =~ /Constructor$/;
+    return 1 if $type =~ /Constructor$/;
 
-    return 1 if $codeGenerator->IsTypedArrayType($attribute->signature->type);
+    return 1 if $codeGenerator->IsTypedArrayType($type);
 
-    if ($codeGenerator->GetArrayType($attribute->signature->type)) {
+    if ($codeGenerator->GetArrayType($type)) {
         return 1;
     }
 
-    if ($codeGenerator->GetSequenceType($attribute->signature->type)) {
+    if ($codeGenerator->GetSequenceType($type)) {
         return 1;
     }
 
-    $codeGenerator->AssertNotSequenceType($attribute->signature->type);
+    if ($codeGenerator->IsEnumType($type)) {
+        return 1;
+    }
+
+    $codeGenerator->AssertNotSequenceType($type);
 
     # FIXME: This is typically used to add script execution state arguments to the method.
     # These functions will not compile with the C++ bindings as is, so disable them

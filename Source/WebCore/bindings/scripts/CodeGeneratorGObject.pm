@@ -187,6 +187,10 @@ sub SkipAttribute {
         return 1;
     }
 
+    if ($codeGenerator->IsEnumType($propType)) {
+        return 1;
+    }
+
     # This is for DOMWindow.idl location attribute
     if ($attribute->signature->name eq "location") {
         return 1;
