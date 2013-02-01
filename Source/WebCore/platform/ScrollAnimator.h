@@ -31,6 +31,7 @@
 #ifndef ScrollAnimator_h
 #define ScrollAnimator_h
 
+#include "FloatSize.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include <wtf/FastAllocBase.h>
@@ -40,7 +41,6 @@
 namespace WebCore {
 
 class FloatPoint;
-class FloatSize;
 class ScrollableArea;
 class Scrollbar;
 
