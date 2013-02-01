@@ -254,14 +254,15 @@ bool Dictionary::get(const String& key, RefPtr<DOMWindow>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    DOMWindow* source = 0;
+    // We need to handle a DOMWindow specially, because a DOMWindow wrapper
+    // exists on a prototype chain of v8Value.
+    value = 0;
     if (v8Value->IsObject()) {
         v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
         v8::Handle<v8::Object> window = wrapper->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(m_isolate));
         if (!window.IsEmpty())
-            source = V8DOMWindow::toNative(window);
+            value = V8DOMWindow::toNative(window);
     }
-    value = source;
     return true;
 }
 
@@ -271,14 +272,9 @@ bool Dictionary::get(const String& key, RefPtr<Storage>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    Storage* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> storage = wrapper->FindInstanceInPrototypeChain(V8Storage::GetTemplate(m_isolate));
-        if (!storage.IsEmpty())
-            source = V8Storage::toNative(storage);
-    }
-    value = source;
+    value = 0;
+    if (V8Storage::HasInstance(v8Value))
+        value = V8Storage::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 
@@ -334,14 +330,9 @@ bool Dictionary::get(const String& key, RefPtr<Uint8Array>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    Uint8Array* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> array = wrapper->FindInstanceInPrototypeChain(V8Uint8Array::GetTemplate(m_isolate));
-        if (!array.IsEmpty())
-            source = V8Uint8Array::toNative(array);
-    }
-    value = source;
+    value = 0;
+    if (V8Uint8Array::HasInstance(v8Value))
+        value = V8Uint8Array::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 
@@ -352,14 +343,9 @@ bool Dictionary::get(const String& key, RefPtr<MediaKeyError>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    MediaKeyError* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> error = wrapper->FindInstanceInPrototypeChain(V8MediaKeyError::GetTemplate(m_isolate));
-        if (!error.IsEmpty())
-            source = V8MediaKeyError::toNative(error);
-    }
-    value = source;
+    value = 0;
+    if (V8MediaKeyError::HasInstance(v8Value))
+        value = V8MediaKeyError::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 #endif
@@ -393,14 +379,9 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionError>& value) c
     if (!getKey(key, v8Value))
         return false;
 
-    SpeechRecognitionError* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> speechRecognitionError = wrapper->FindInstanceInPrototypeChain(V8SpeechRecognitionError::GetTemplate(m_isolate));
-        if (!speechRecognitionError.IsEmpty())
-            source = V8SpeechRecognitionError::toNative(speechRecognitionError);
-    }
-    value = source;
+    value = 0;
+    if (V8SpeechRecognitionError::HasInstance(v8Value))
+        value = V8SpeechRecognitionError::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 
@@ -410,14 +391,9 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResult>& value) 
     if (!getKey(key, v8Value))
         return false;
 
-    SpeechRecognitionResult* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> speechRecognitionResult = wrapper->FindInstanceInPrototypeChain(V8SpeechRecognitionResult::GetTemplate(m_isolate));
-        if (!speechRecognitionResult.IsEmpty())
-            source = V8SpeechRecognitionResult::toNative(speechRecognitionResult);
-    }
-    value = source;
+    value = 0;
+    if (V8SpeechRecognitionResult::HasInstance(v8Value))
+        value = V8SpeechRecognitionResult::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 
@@ -427,14 +403,9 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResultList>& val
     if (!getKey(key, v8Value))
         return false;
 
-    SpeechRecognitionResultList* source = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> speechRecognitionResultList = wrapper->FindInstanceInPrototypeChain(V8SpeechRecognitionResultList::GetTemplate(m_isolate));
-        if (!speechRecognitionResultList.IsEmpty())
-            source = V8SpeechRecognitionResultList::toNative(speechRecognitionResultList);
-    }
-    value = source;
+    value = 0;
+    if (V8SpeechRecognitionResultList::HasInstance(v8Value))
+        value = V8SpeechRecognitionResultList::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 
@@ -447,14 +418,9 @@ bool Dictionary::get(const String& key, RefPtr<MediaStream>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    MediaStream* stream = 0;
-    if (v8Value->IsObject()) {
-        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        v8::Handle<v8::Object> error = wrapper->FindInstanceInPrototypeChain(V8MediaStream::GetTemplate(m_isolate));
-        if (!error.IsEmpty())
-            stream = V8MediaStream::toNative(error);
-    }
-    value = stream;
+    value = 0;
+    if (V8MediaStream::HasInstance(v8Value))
+        value = V8MediaStream::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
 #endif
@@ -465,8 +431,8 @@ bool Dictionary::get(const String& key, RefPtr<EventTarget>& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    EventTarget* target = 0;
-    // We need to handle a DOMWindow specially, because a wrapper object of a DOMWindow
+    value = 0;
+    // We need to handle a DOMWindow specially, because a DOMWindow wrapper
     // exists on a prototype chain of v8Value.
     if (v8Value->IsObject()) {
         v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
@@ -479,9 +445,8 @@ bool Dictionary::get(const String& key, RefPtr<EventTarget>& value) const
 
     if (V8DOMWrapper::isDOMWrapper(v8Value)) {
         v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
-        target = toWrapperTypeInfo(wrapper)->toEventTarget(wrapper);
+        value = toWrapperTypeInfo(wrapper)->toEventTarget(wrapper);
     }
-    value = target;
     return true;
 }
 
