@@ -52,6 +52,7 @@ public:
     static void collectGarbage();
 
     static Node* opaqueRootForGC(Node*);
+    static void didCreateWrapperForNode(Node*);
 
 private:
     static Vector<Node*>* m_edenNodes;
