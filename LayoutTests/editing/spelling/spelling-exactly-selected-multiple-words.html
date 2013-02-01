@@ -39,6 +39,7 @@ initSpellTest("destination", "It should be upper case.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "upper case");
     shouldBeEqualToString("window.getSelection().toString()", "upper case");
+    shouldBeEqualToString("contextMenuElements[contextMenuElements.length - 1]", "uppercase");
 });
 
 </script>

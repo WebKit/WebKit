@@ -1,3 +1,15 @@
+2013-01-31  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        [Chromium] Select multi-word misspelling on context click
+        https://bugs.webkit.org/show_bug.cgi?id=108509
+
+        Reviewed by Tony Chang.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit):
+        (WebKit::selectMisspellingAsync): Added utility function to get the misspelling for asynchronous spellcheck.
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): Select multi-word misspelling on context click.
+
 2013-01-31  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening.

@@ -37,6 +37,15 @@
 
 using namespace WebKit;
 
+static void append(WebVector<WebString>* data, const WebString& item)
+{
+    WebVector<WebString> result(data->size() + 1);
+    for (size_t i = 0; i < data->size(); ++i)
+        result[i] = (*data)[i];
+    result[data->size()] = item;
+    data->swap(result);
+}
+
 MockSpellCheck::MockSpellCheck()
     : m_initialized(false) { }
 
@@ -107,13 +116,10 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
 
 void MockSpellCheck::fillSuggestionList(const WebString& word, WebVector<WebString>* suggestions)
 {
-    if (word == WebString::fromUTF8("wellcome")) {
-        WebVector<WebString> result(suggestions->size() + 1);
-        for (size_t i = 0; i < suggestions->size(); ++i)
-            result[i] = (*suggestions)[i];
-        result[suggestions->size()] = WebString::fromUTF8("welcome");
-        suggestions->swap(result);
-    }
+    if (word == WebString::fromUTF8("wellcome"))
+        append(suggestions, WebString::fromUTF8("welcome"));
+    else if (word == WebString::fromUTF8("upper case"))
+        append(suggestions, WebString::fromUTF8("uppercase"));
 }
 
 bool MockSpellCheck::initializeIfNeeded()
