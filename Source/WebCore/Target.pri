@@ -2243,6 +2243,8 @@ HEADERS += \
     platform/graphics/SurrogatePairAwareTextIterator.h \
     platform/graphics/texmap/coordinated/AreaAllocator.h \
     platform/graphics/texmap/coordinated/CoordinatedBackingStore.h \
+    platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h \
+    platform/graphics/texmap/coordinated/CoordinatedCustomFilterProgram.h \
     platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h \
     platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h \
     platform/graphics/texmap/coordinated/CoordinatedImageBacking.h \
@@ -2251,8 +2253,6 @@ HEADERS += \
     platform/graphics/texmap/coordinated/CoordinatedTile.h \
     platform/graphics/texmap/coordinated/SurfaceUpdateInfo.h \
     platform/graphics/texmap/coordinated/UpdateAtlas.h \
-    platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h \
-    platform/graphics/texmap/coordinated/CoordinatedCustomFilterProgram.h \
     platform/graphics/texmap/GraphicsLayerTextureMapper.h \
     platform/graphics/texmap/TextureMapper.h \
     platform/graphics/texmap/TextureMapperBackingStore.h \

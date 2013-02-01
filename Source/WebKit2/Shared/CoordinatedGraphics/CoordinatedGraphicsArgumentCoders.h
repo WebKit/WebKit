@@ -32,10 +32,10 @@
 #include "ArgumentCoders.h"
 
 namespace WebCore {
-class SurfaceUpdateInfo;
 class FloatPoint3D;
 class GraphicsLayerAnimation;
 class GraphicsLayerAnimations;
+class SurfaceUpdateInfo;
 class TransformationMatrix;
 class TransformOperations;
 struct CoordinatedLayerInfo;

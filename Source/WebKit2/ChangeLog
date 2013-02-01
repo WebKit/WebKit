@@ -1,3 +1,15 @@
+2013-02-01  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Sort Target.pri and class declarations in alphabetical order.
+        https://bugs.webkit.org/show_bug.cgi?id=108590
+
+        Reviewed by Noam Rosenthal.
+
+        Sort class declarations in alphabetical order.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        (WebCore):
+
 2013-02-01  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         [EFL][WK2] MiniBrowser segfaults on loading google.com
