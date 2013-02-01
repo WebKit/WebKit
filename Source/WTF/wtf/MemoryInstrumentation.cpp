@@ -64,11 +64,11 @@ void MemoryInstrumentation::callReportObjectInfo(MemoryObjectInfo* memoryObjectI
     memoryObjectInfo->reportObjectInfo(pointer, objectType, objectSize);
 }
 
-void MemoryInstrumentation::reportLinkToBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* nodeName, const char* edgeName)
+void MemoryInstrumentation::reportLinkToBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* className, const char* edgeName)
 {
     MemoryObjectInfo memoryObjectInfo(this, ownerObjectType, 0);
     memoryObjectInfo.reportObjectInfo(buffer, ownerObjectType, size);
-    memoryObjectInfo.setName(nodeName);
+    memoryObjectInfo.setClassName(className);
     m_client->reportLeaf(memoryObjectInfo, edgeName);
 }
 
@@ -129,13 +129,13 @@ void MemoryClassInfo::init(const void* objectAddress, MemoryObjectType objectTyp
     m_skipMembers = !m_memoryObjectInfo->firstVisit();
 }
 
-void MemoryClassInfo::addRawBuffer(const void* buffer, size_t size, const char* nodeName, const char* edgeName)
+void MemoryClassInfo::addRawBuffer(const void* buffer, size_t size, const char* className, const char* edgeName)
 {
     if (!m_skipMembers)
-        m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size, nodeName, edgeName);
+        m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size, className, edgeName);
 }
 
-void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType, const char* nodeName, const char* edgeName)
+void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType, const char* className, const char* edgeName)
 {
     if (!size)
         return;
@@ -144,7 +144,7 @@ void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObject
     if (!ownerObjectType)
         ownerObjectType = m_objectType;
     m_memoryInstrumentation->countObjectSize(0, ownerObjectType, size);
-    m_memoryInstrumentation->reportLinkToBuffer(0, ownerObjectType, size, nodeName, edgeName);
+    m_memoryInstrumentation->reportLinkToBuffer(0, ownerObjectType, size, className, edgeName);
 }
 
 void MemoryClassInfo::setCustomAllocation(bool customAllocation)

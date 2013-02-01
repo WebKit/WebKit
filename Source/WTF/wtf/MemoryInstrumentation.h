@@ -169,12 +169,12 @@ private:
     };
 
     template<typename T> void addObject(const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName) { MemberTypeTraits<T>::addObject(this, t, ownerObjectInfo, edgeName); }
-    void addRawBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* nodeName = 0, const char* edgeName = 0)
+    void addRawBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* className = 0, const char* edgeName = 0)
     {
         if (!buffer || visited(buffer))
             return;
         countObjectSize(buffer, ownerObjectType, size);
-        reportLinkToBuffer(buffer, ownerObjectType, size, nodeName, edgeName);
+        reportLinkToBuffer(buffer, ownerObjectType, size, className, edgeName);
     }
     WTF_EXPORT_PRIVATE void reportLinkToBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t, const char* nodeName, const char* edgeName);
 
@@ -244,8 +244,8 @@ public:
             m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName);
     }
 
-    WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* nodeName = 0, const char* edgeName = 0);
-    WTF_EXPORT_PRIVATE void addPrivateBuffer(size_t, MemoryObjectType ownerObjectType = 0, const char* nodeName = 0, const char* edgeName = 0);
+    WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* className = 0, const char* edgeName = 0);
+    WTF_EXPORT_PRIVATE void addPrivateBuffer(size_t, MemoryObjectType ownerObjectType = 0, const char* className = 0, const char* edgeName = 0);
     WTF_EXPORT_PRIVATE void setCustomAllocation(bool);
 
     void addWeakPointer(void*) { }

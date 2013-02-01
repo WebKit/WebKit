@@ -1,3 +1,21 @@
+2013-01-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: replace nodeName argument with className
+        https://bugs.webkit.org/show_bug.cgi?id=107278
+
+        Reviewed by Yury Semikhatsky.
+
+        I replaced nodeName with className because we newer report node name for private and raw buffers
+        but need to report their class names.
+
+        * wtf/MemoryInstrumentation.cpp:
+        (WTF::MemoryInstrumentation::reportLinkToBuffer):
+        (WTF::MemoryClassInfo::addRawBuffer):
+        (WTF::MemoryClassInfo::addPrivateBuffer):
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::addRawBuffer):
+        (MemoryClassInfo):
+
 2013-01-31  Jessie Berlin  <jberlin@apple.com>
 
         Rolling out r141407 because it is causing crashes under
