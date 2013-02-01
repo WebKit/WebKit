@@ -1089,13 +1089,13 @@ WebInspector.NetworkLogView.prototype = {
         }
     },
 
-    _clearBrowserCache: function(event)
+    _clearBrowserCache: function()
     {
         if (confirm(WebInspector.UIString("Are you sure you want to clear browser cache?")))
             NetworkAgent.clearBrowserCache();
     },
 
-    _clearBrowserCookies: function(event)
+    _clearBrowserCookies: function()
     {
         if (confirm(WebInspector.UIString("Are you sure you want to clear browser cookies?")))
             NetworkAgent.clearBrowserCookies();

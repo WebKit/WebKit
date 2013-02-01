@@ -97,13 +97,14 @@ WebInspector.ContextMenuItem.prototype = {
 WebInspector.ContextSubMenuItem = function(topLevelMenu, label, disabled)
 {
     WebInspector.ContextMenuItem.call(this, topLevelMenu, "subMenu", label, disabled);
+    /** @type {!Array.<!WebInspector.ContextMenuItem>} */
     this._items = [];
 }
 
 WebInspector.ContextSubMenuItem.prototype = {
     /**
      * @param {string} label
-     * @param {function} handler
+     * @param {function(?)} handler
      * @param {boolean=} disabled
      * @return {WebInspector.ContextMenuItem}
      */
@@ -144,6 +145,9 @@ WebInspector.ContextSubMenuItem.prototype = {
             this._pendingSeparator = true;
     },
 
+    /**
+     * @param {!WebInspector.ContextMenuItem} item
+     */
     _pushItem: function(item)
     {
         if (this._pendingSeparator) {

@@ -132,12 +132,12 @@ WebInspector.ImageView.prototype = {
         contextMenu.show();
     },
 
-    _copyImageURL: function(event)
+    _copyImageURL: function()
     {
         InspectorFrontendHost.copyText(this.resource.url);
     },
 
-    _openInNewTab: function(event)
+    _openInNewTab: function()
     {
         InspectorFrontendHost.openInNewTab(this.resource.url);
     },

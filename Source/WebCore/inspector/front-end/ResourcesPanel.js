@@ -1611,7 +1611,7 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
         contextMenu.show();
     },
 
-    _refreshIndexedDB: function(event)
+    _refreshIndexedDB: function()
     {
         this._model.refreshDatabaseNames();
     },

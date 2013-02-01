@@ -820,7 +820,7 @@ WebInspector.ConsoleGroup.prototype = {
             if (groupElement && message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
                 groupElement.addStyleClass("collapsed");
         } else
-            this.messagesElement.insertBefore(element, node);
+            this.messagesElement.insertBefore(element, node || null);
 
         if (element.previousSibling && message.originatingCommand && element.previousSibling.command === message.originatingCommand)
             element.previousSibling.addStyleClass("console-adjacent-user-command-result");

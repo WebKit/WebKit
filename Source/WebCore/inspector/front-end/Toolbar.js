@@ -101,7 +101,7 @@ WebInspector.Toolbar.prototype = {
      */
     _isDockedToBottom: function()
     {
-        return WebInspector.dockController && WebInspector.dockController.isDockedToBottom();
+        return !!WebInspector.dockController && WebInspector.dockController.isDockedToBottom();
     },
 
     /**
