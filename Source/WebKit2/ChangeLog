@@ -1,3 +1,28 @@
+2013-02-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_auth_request
+        https://bugs.webkit.org/show_bug.cgi?id=107806
+
+        Reviewed by Andreas Kling.
+
+        Use C API inside ewk_auth_request instead of accessing C++ internal
+        classes directly, to avoid violating layering.
+
+        * UIProcess/API/efl/ewk_auth_request.cpp:
+        (EwkAuthRequest::EwkAuthRequest):
+        (EwkAuthRequest::suggestedUsername):
+        (EwkAuthRequest::realm):
+        (EwkAuthRequest::host):
+        (EwkAuthRequest::continueWithoutCredential):
+        (EwkAuthRequest::authenticate):
+        (EwkAuthRequest::isRetrying):
+        (ewk_auth_request_authenticate):
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        (EwkAuthRequest::create):
+        (EwkAuthRequest):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame):
+
 2013-02-01  Seulgi Kim  <seulgikim@company100.net>
 
         [Gtk][WK2] Fix build after recent WebKit2 changes

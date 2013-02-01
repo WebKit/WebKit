@@ -27,19 +27,17 @@
 #define ewk_auth_request_private_h
 
 #include "WKEinaSharedString.h"
+#include "WKRetainPtr.h"
 #include "ewk_object_private.h"
+#include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-class AuthenticationChallengeProxy;
-}
 
 class EwkAuthRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkAuthRequest)
 
-    static PassRefPtr<EwkAuthRequest> create(WebKit::AuthenticationChallengeProxy* authenticationChallenge)
+    static PassRefPtr<EwkAuthRequest> create(WKAuthenticationChallengeRef authenticationChallenge)
     {
         return adoptRef(new EwkAuthRequest(authenticationChallenge));
     }
@@ -51,12 +49,12 @@ public:
     bool isRetrying() const;
 
     bool continueWithoutCredential();
-    bool authenticate(const String& username, const String& password);
+    bool authenticate(const char* username, const char* password);
 
 private:
-    explicit EwkAuthRequest(WebKit::AuthenticationChallengeProxy* authenticationChallenge);
+    explicit EwkAuthRequest(WKAuthenticationChallengeRef authenticationChallenge);
 
-    RefPtr<WebKit::AuthenticationChallengeProxy> m_authenticationChallenge;
+    WKRetainPtr<WKAuthenticationChallengeRef> m_authenticationChallenge;
     bool m_wasHandled;
     mutable WKEinaSharedString m_suggestedUsername;
     mutable WKEinaSharedString m_realm;

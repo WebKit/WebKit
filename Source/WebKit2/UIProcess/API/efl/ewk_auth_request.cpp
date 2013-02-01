@@ -26,18 +26,17 @@
 #include "config.h"
 #include "ewk_auth_request.h"
 
-#include "AuthenticationChallengeProxy.h"
-#include "AuthenticationDecisionListener.h"
-#include "WebCredential.h"
-#include "WebProtectionSpace.h"
-#include "WebString.h"
+#include "WKAuthenticationChallenge.h"
+#include "WKAuthenticationDecisionListener.h"
+#include "WKCredential.h"
+#include "WKProtectionSpace.h"
+#include "WKString.h"
 #include "ewk_auth_request_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
-using namespace WebCore;
 
-EwkAuthRequest::EwkAuthRequest(AuthenticationChallengeProxy* authenticationChallenge)
+EwkAuthRequest::EwkAuthRequest(WKAuthenticationChallengeRef authenticationChallenge)
     : m_authenticationChallenge(authenticationChallenge)
     , m_wasHandled(false)
 {
@@ -53,14 +52,14 @@ EwkAuthRequest::~EwkAuthRequest()
 const char* EwkAuthRequest::suggestedUsername() const
 {
     if (!m_suggestedUsername) {
-        WebCredential* credential = m_authenticationChallenge->proposedCredential();
+        WKRetainPtr<WKCredentialRef> credential = WKAuthenticationChallengeGetProposedCredential(m_authenticationChallenge.get());
         ASSERT(credential);
 
-        const String& suggestedUsername = credential->user();
-        if (suggestedUsername.isEmpty())
+        WKRetainPtr<WKStringRef> suggestedUsername(AdoptWK, WKCredentialCopyUser(credential.get()));
+        if (!suggestedUsername || WKStringIsEmpty(suggestedUsername.get()))
             return 0;
 
-        m_suggestedUsername = suggestedUsername.utf8().data();
+        m_suggestedUsername = suggestedUsername.get();
     }
 
     return m_suggestedUsername;
@@ -69,14 +68,14 @@ const char* EwkAuthRequest::suggestedUsername() const
 const char* EwkAuthRequest::realm() const
 {
     if (!m_realm) {
-        WebProtectionSpace* protectionSpace = m_authenticationChallenge->protectionSpace();
+        WKRetainPtr<WKProtectionSpaceRef> protectionSpace = WKAuthenticationChallengeGetProtectionSpace(m_authenticationChallenge.get());
         ASSERT(protectionSpace);
 
-        const String& realm = protectionSpace->realm();
-        if (realm.isEmpty())
+        WKRetainPtr<WKStringRef> realm(AdoptWK, WKProtectionSpaceCopyRealm(protectionSpace.get()));
+        if (!realm || WKStringIsEmpty(realm.get()))
             return 0;
 
-        m_realm = realm.utf8().data();
+        m_realm = realm.get();
     }
 
     return m_realm;
@@ -85,14 +84,14 @@ const char* EwkAuthRequest::realm() const
 const char* EwkAuthRequest::host() const
 {
     if (!m_host) {
-        WebProtectionSpace* protectionSpace = m_authenticationChallenge->protectionSpace();
+        WKRetainPtr<WKProtectionSpaceRef> protectionSpace = WKAuthenticationChallengeGetProtectionSpace(m_authenticationChallenge.get());
         ASSERT(protectionSpace);
 
-        const String& host = protectionSpace->host();
-        if (host.isEmpty())
+        WKRetainPtr<WKStringRef> host(AdoptWK, WKProtectionSpaceCopyHost(protectionSpace.get()));
+        if (!host || WKStringIsEmpty(host.get()))
             return 0;
 
-        m_host = host.utf8().data();
+        m_host = host.get();
     }
 
     return m_host;
@@ -104,26 +103,30 @@ bool EwkAuthRequest::continueWithoutCredential()
         return false;
 
     m_wasHandled = true;
-    m_authenticationChallenge->useCredential(0);
+    WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(m_authenticationChallenge.get());
+    WKAuthenticationDecisionListenerUseCredential(decisionListener, 0);
 
     return true;
 }
 
-bool EwkAuthRequest::authenticate(const String& username, const String& password)
+bool EwkAuthRequest::authenticate(const char* username, const char* password)
 {
     if (m_wasHandled)
         return false;
 
     m_wasHandled = true;
-    RefPtr<WebCredential> credential = WebCredential::create(WebString::create(username).get(), WebString::create(password).get(), CredentialPersistenceForSession);
-    m_authenticationChallenge->useCredential(credential.get());
+    WKRetainPtr<WKStringRef> wkUsername(AdoptWK, WKStringCreateWithUTF8CString(username));
+    WKRetainPtr<WKStringRef> wkPassword(AdoptWK, WKStringCreateWithUTF8CString(password));
+    WKRetainPtr<WKCredentialRef> credential(AdoptWK, WKCredentialCreate(wkUsername.get(), wkPassword.get(), kWKCredentialPersistenceForSession));
+    WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(m_authenticationChallenge.get());
+    WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
 
     return true;
 }
 
 bool EwkAuthRequest::isRetrying() const
 {
-    return m_authenticationChallenge->previousFailureCount() > 0;
+    return WKAuthenticationChallengeGetPreviousFailureCount(m_authenticationChallenge.get()) > 0;
 }
 
 const char* ewk_auth_request_suggested_username_get(const Ewk_Auth_Request* request)
@@ -146,7 +149,7 @@ Eina_Bool ewk_auth_request_authenticate(Ewk_Auth_Request* request, const char* u
     EINA_SAFETY_ON_NULL_RETURN_VAL(username, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(password, false);
 
-    return impl->authenticate(String::fromUTF8(username), String::fromUTF8(password));
+    return impl->authenticate(username, password);
 }
 
 Eina_Bool ewk_auth_request_retrying_get(const Ewk_Auth_Request* request)
