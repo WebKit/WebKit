@@ -26,6 +26,7 @@ HEADERS += \
     Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageDecoder.h \
     Platform/CoreIPC/MessageEncoder.h \
+    Platform/CoreIPC/MessageFlags.h \
     Platform/CoreIPC/MessageReceiver.h \
     Platform/CoreIPC/MessageReceiverMap.h \
     Platform/CoreIPC/MessageSender.h \
