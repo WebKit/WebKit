@@ -144,6 +144,11 @@ static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* select
     return misspelledWord;
 }
 
+static bool IsWhiteSpaceOrPunctuation(UChar c)
+{
+    return isSpaceOrNewline(c) || WTF::Unicode::isPunct(c);
+}
+
 static String selectMisspellingAsync(Frame* selectedFrame, Vector<DocumentMarker*>& markers)
 {
     VisibleSelection selection = selectedFrame->selection()->selection();
@@ -166,7 +171,7 @@ static String selectMisspellingAsync(Frame* selectedFrame, Vector<DocumentMarker
         selectionRange = selection.toNormalizedRange();
     }
 
-    if (markerRange->text().stripWhiteSpace() != selectionRange->text().stripWhiteSpace())
+    if (markerRange->text().stripWhiteSpace(&IsWhiteSpaceOrPunctuation) != selectionRange->text().stripWhiteSpace(&IsWhiteSpaceOrPunctuation))
         return String();
 
     return markerRange->text();

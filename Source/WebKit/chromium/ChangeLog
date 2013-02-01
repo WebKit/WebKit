@@ -1,3 +1,14 @@
+2013-02-01  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        [Chromium] Ignore punctuation in spellcheck
+        https://bugs.webkit.org/show_bug.cgi?id=108511
+
+        Reviewed by Tony Chang.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::IsWhiteSpaceOrPunctuation): Added utility function to detect whitespace or punctuation.
+        (WebKit::selectMisspellingAsync): Ignore punctuation when selecting the misspelling.
+
 2013-02-01  Philip Rogers  <pdr@google.com>
 
         Change hasAlpha to isKnownToBeOpaque and correct the return value for SVG images.
