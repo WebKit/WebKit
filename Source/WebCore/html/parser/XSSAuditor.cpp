@@ -170,6 +170,7 @@ static String fullyDecodeString(const String& string, const TextResourceDecoder*
 
 XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
     : m_parser(parser)
+    , m_documentURL(parser->document()->url())
     , m_isEnabled(false)
     , m_xssProtection(XSSProtectionEnabled)
     , m_state(Uninitialized)
@@ -207,21 +208,19 @@ void XSSAuditor::init(Document* document)
         return;
     }
 
-    const KURL& url = document->url();
-
-    if (url.isEmpty()) {
+    if (m_documentURL.isEmpty()) {
         // The URL can be empty when opening a new browser window or calling window.open("").
         m_isEnabled = false;
         return;
     }
 
-    if (url.protocolIsData()) {
+    if (m_documentURL.protocolIsData()) {
         m_isEnabled = false;
         return;
     }
 
     TextResourceDecoder* decoder = document->decoder();
-    m_decodedURL = fullyDecodeString(url.string(), decoder);
+    m_decodedURL = fullyDecodeString(m_documentURL.string(), decoder);
     if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
@@ -268,7 +267,7 @@ void XSSAuditor::init(Document* document)
 
     if (!m_reportURL.isEmpty()) {
         // May need these for reporting later on.
-        m_originalURL = url;
+        m_originalURL = m_documentURL;
         m_originalHTTPBody = httpBodyAsString;
     }
 }
@@ -653,12 +652,11 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
     // query string, we're more suspicious, however, because that's pretty rare
     // and the attacker might be able to trick a server-side script into doing
     // something dangerous with the query string.  
-    const KURL& documentURL = m_parser->document()->url();
-    if (documentURL.host().isEmpty())
+    if (m_documentURL.host().isEmpty())
         return false;
 
-    KURL resourceURL(documentURL, url);
-    return (documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
+    KURL resourceURL(m_documentURL, url);
+    return (m_documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 
 } // namespace WebCore

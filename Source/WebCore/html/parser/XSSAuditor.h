@@ -85,6 +85,7 @@ private:
 
     // FIXME: Remove this dependency.
     HTMLDocumentParser* m_parser;
+    KURL m_documentURL;
     bool m_isEnabled;
     XSSProtectionDisposition m_xssProtection;
 
