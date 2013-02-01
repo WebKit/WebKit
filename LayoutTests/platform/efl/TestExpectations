@@ -1311,6 +1311,10 @@ webkit.org/b/87226 printing/simultaneous-position-float-change.html [ Missing ]
 webkit.org/b/87226 printing/single-line-must-not-be-split-into-two-pages.html [ Missing ]
 webkit.org/b/87226 printing/width-overflow.html [ Missing ]
 
+webkit.org/b/108507 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
+webkit.org/b/108507 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
+webkit.org/b/108507 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
+
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
 # Font kerning issue, fails on GTK as well.

@@ -355,6 +355,7 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
+FAIL webkitAudioContext.toString() should be [object webkitAudioContextConstructor]. Was [object AudioContextConstructor].
 FAIL webkitAudioPannerNode.toString() should be [object webkitAudioPannerNodeConstructor]. Was [object PannerNodeConstructor].
 FAIL webkitOfflineAudioContext.toString() should be [object webkitOfflineAudioContextConstructor]. Was [object OfflineAudioContextConstructor].
 FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].

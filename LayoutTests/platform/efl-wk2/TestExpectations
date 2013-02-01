@@ -444,3 +444,6 @@ webkit.org/b/107286 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
 
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
+
+# Likely failing after r141310
+webkit.org/b/108618 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
