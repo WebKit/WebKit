@@ -173,6 +173,7 @@ public:
     virtual void visibleChildren(AccessibilityChildrenVector&);
     virtual void tabChildren(AccessibilityChildrenVector&);
     virtual bool shouldFocusActiveDescendant() const;
+    bool shouldNotifyActiveDescendant() const;
     virtual AccessibilityObject* activeDescendant() const;
     virtual void handleActiveDescendantChanged();
     virtual void handleAriaExpandedChanged();

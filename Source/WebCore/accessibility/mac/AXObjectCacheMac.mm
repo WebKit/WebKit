@@ -67,6 +67,12 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             // An active descendant change for trees means a selected rows change.
             if (obj->isTree())
                 macNotification = NSAccessibilitySelectedRowsChangedNotification;
+            
+            // When a combobox uses active descendant, it means the selected item in its associated
+            // list has changed. In these cases we should use selected children changed, because
+            // we don't want the focus to change away from the combobox where the user is typing.
+            else if (obj->isComboBox())
+                macNotification = NSAccessibilitySelectedChildrenChangedNotification;
             else
                 macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
             break;

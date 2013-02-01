@@ -2226,11 +2226,20 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     return result;
 }
 
+bool AccessibilityRenderObject::shouldNotifyActiveDescendant() const
+{
+    // We want to notify that the combo box has changed its active descendant,
+    // but we do not want to change the focus, because focus should remain with the combo box.
+    if (isComboBox())
+        return true;
+    
+    return shouldFocusActiveDescendant();
+}
+
 bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
 {
     switch (ariaRoleAttribute()) {
     case GroupRole:
-    case ComboBoxRole:
     case ListBoxRole:
     case MenuRole:
     case MenuBarRole:
@@ -2323,7 +2332,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
         return; 
     AccessibilityRenderObject* activedescendant = static_cast<AccessibilityRenderObject*>(activeDescendant());
     
-    if (activedescendant && shouldFocusActiveDescendant())
+    if (activedescendant && shouldNotifyActiveDescendant())
         doc->axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged, true);
 }
 
