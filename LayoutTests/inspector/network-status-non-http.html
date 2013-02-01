@@ -21,7 +21,7 @@ function test() {
                 var status = document.evaluate("ancestor::tr/td[position()=3]", urls.snapshotItem(i), null, XPathResult.STRING_TYPE, null);
                 var outputStatus = status.stringValue;
                 // Truncate the status string on failure, since the description following "(failed)" is platform-dependent.
-                if (outputStatus.indexOf("(failed)") == 0)
+                if (outputStatus.startsWith("(failed)"))
                     outputStatus = "(failed)";
                 outputStrings.push(urlFragment + ": " + outputStatus);
             }

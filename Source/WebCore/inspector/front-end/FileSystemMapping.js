@@ -164,7 +164,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
     {
         for (var fileSystemPath in this._mappedNames) {
             var uriPrefix = this._uriPrefixForMappedName(this._mappedNames[fileSystemPath]);
-            if (uri.indexOf(uriPrefix) === 0)
+            if (uri.startsWith(uriPrefix))
                 return new WebInspector.FileSystemMapping.FileDescriptor(fileSystemPath, "/" + uri.substring(uriPrefix.length));
         }
         return null;
@@ -187,7 +187,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
     uriForPath: function(path)
     {
         for (var fileSystemPath in this._mappedNames) {
-            if (path.indexOf(fileSystemPath) === 0) {
+            if (path.startsWith(fileSystemPath)) {
                 var uriPrefix = this._uriPrefixForMappedName(this._mappedNames[fileSystemPath]);
                 var subPath = path.substring(fileSystemPath.length);
                 if (subPath.length === 0)

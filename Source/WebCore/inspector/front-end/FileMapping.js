@@ -49,7 +49,7 @@ WebInspector.FileMapping.prototype = {
      */
     _entryMatchesURL: function(entry, url)
     {
-        return url.indexOf(entry.urlPrefix) === 0;
+        return url.startsWith(entry.urlPrefix);
     },
     
     /**
@@ -104,7 +104,7 @@ WebInspector.FileMapping.prototype = {
         for (var i = 0; i < this._entries.length; ++i) {
             var entry = this._entries[i];
             var uriPrefix = this._entryURIPrefix(entry);
-            if (uriPrefix && uri.indexOf(uriPrefix) === 0)
+            if (uriPrefix && uri.startsWith(uriPrefix))
                 return entry.urlPrefix + uri.substring(uriPrefix.length);
         }
         return "";
