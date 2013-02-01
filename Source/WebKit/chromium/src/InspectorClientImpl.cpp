@@ -36,6 +36,7 @@
 #include "InspectorInstrumentation.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "Settings.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
@@ -164,7 +165,9 @@ void InspectorClientImpl::setShowPaintRects(bool show)
 
 bool InspectorClientImpl::canShowFPSCounter()
 {
-    return true;
+    if (m_inspectedWebView->page())
+        return m_inspectedWebView->page()->settings()->forceCompositingMode();
+    return false;
 }
 
 void InspectorClientImpl::setShowFPSCounter(bool show)
@@ -174,7 +177,9 @@ void InspectorClientImpl::setShowFPSCounter(bool show)
 
 bool InspectorClientImpl::canContinuouslyPaint()
 {
-    return true;
+    if (m_inspectedWebView->page())
+        return m_inspectedWebView->page()->settings()->forceCompositingMode();
+    return false;
 }
 
 void InspectorClientImpl::setContinuousPaintingEnabled(bool enabled)
