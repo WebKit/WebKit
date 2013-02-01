@@ -504,15 +504,10 @@ void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerN
 {
     for (Node* node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
         RefPtr<Node> clonedNode;
-        // Specs require voice and class WebVTT elements to be spans for DOM trees.
-        if (node->hasTagName(voiceElementTagName()) || node->hasTagName(classElementTagName()) || node->hasTagName(langElementTagName())) {
-            clonedNode = HTMLSpanElement::create(spanTag, static_cast<Document*>(m_scriptExecutionContext));
-            toElement(clonedNode.get())->setAttribute(classAttr, toElement(node)->getAttribute(classAttr));
-            toElement(clonedNode.get())->setAttribute(titleAttr, toElement(node)->getAttribute(voiceAttributeName()));
-            toElement(clonedNode.get())->setAttribute(langAttr, toElement(node)->getAttribute(langAttributeName()));
-        } else
+        if (node->isWebVTTElement())
+            clonedNode = toWebVTTElement(node)->createEquivalentHTMLElement(ownerDocument());
+        else
             clonedNode = node->cloneNode(false);
-
         parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);
         if (node->isContainerNode())
             copyWebVTTNodeToDOMTree(toContainerNode(node), toContainerNode(clonedNode.get()));
@@ -522,8 +517,7 @@ void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerN
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
     createWebVTTNodeTree();
-    Document* document = static_cast<Document*>(m_scriptExecutionContext);
-    RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(document);
+    RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(ownerDocument());
     copyWebVTTNodeToDOMTree(m_webVTTNodeTree.get(), clonedFragment.get());
     return clonedFragment.release();
 }
@@ -532,8 +526,7 @@ PassRefPtr<DocumentFragment> TextTrackCue::createCueRenderingTree()
 {
     RefPtr<DocumentFragment> clonedFragment;
     createWebVTTNodeTree();
-    Document* document = static_cast<Document*>(m_scriptExecutionContext);
-    clonedFragment = DocumentFragment::create(document);
+    clonedFragment = DocumentFragment::create(ownerDocument());
     m_webVTTNodeTree->cloneChildNodes(clonedFragment.get());
     return clonedFragment.release();
 }
@@ -709,7 +702,7 @@ void TextTrackCue::markFutureAndPastNodes(ContainerNode* root, double previousTi
         }
         
         if (child->isWebVTTElement()) {
-            toWebVTTElement(child)->setWebVTTNodeType(isPastNode ? WebVTTNodeTypePast : WebVTTNodeTypeFuture);
+            toWebVTTElement(child)->setIsPastNode(isPastNode);
             // Make an elemenet id match a cue id for style matching purposes.
             if (!m_id.isEmpty())
                 toElement(child)->setIdAttribute(AtomicString(m_id.characters(), m_id.length()));

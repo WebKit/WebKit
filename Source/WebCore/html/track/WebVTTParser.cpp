@@ -342,9 +342,33 @@ double WebVTTParser::collectTimeStamp(const String& line, unsigned* position)
     return (value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3 + (value4 * secondsPerMillisecond);
 }
 
-static inline bool isLangToken(WebVTTToken& token)
+static WebVTTNodeType tokenToNodeType(WebVTTToken& token)
 {
-    return token.name().size() == 4 && token.name()[0] == 'l' && token.name()[1] == 'a' && token.name()[2] == 'n' && token.name()[3] == 'g';
+    switch (token.name().size()) {
+    case 1:
+        if (token.name()[0] == 'c')
+            return WebVTTNodeTypeClass;
+        if (token.name()[0] == 'v')
+            return WebVTTNodeTypeVoice;
+        if (token.name()[0] == 'b')
+            return WebVTTNodeTypeBold;
+        if (token.name()[0] == 'i')
+            return WebVTTNodeTypeItalic;
+        if (token.name()[0] == 'u')
+            return WebVTTNodeTypeUnderline;
+        break;
+    case 2:
+        if (token.name()[0] == 'r' && token.name()[1] == 't')
+            return WebVTTNodeTypeRubyText;
+        break;
+    case 4:
+        if (token.name()[0] == 'r' && token.name()[1] == 'u' && token.name()[2] == 'b' && token.name()[3] == 'y')
+            return WebVTTNodeTypeRuby;
+        if (token.name()[0] == 'l' && token.name()[1] == 'a' && token.name()[2] == 'n' && token.name()[3] == 'g')
+            return WebVTTNodeTypeLanguage;
+        break;
+    }
+    return WebVTTNodeTypeNone;
 }
 
 void WebVTTParser::constructTreeFromToken(Document* document)
@@ -363,43 +387,36 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     }
     case WebVTTTokenTypes::StartTag: {
         RefPtr<WebVTTElement> child;
-        if (isRecognizedTag(tokenTagName))
-            child = WebVTTElement::create(tagName, document);
-        else if (m_token.name().size() == 1 && m_token.name()[0] == 'c')
-            child = WebVTTElement::create(TextTrackCue::classElementTagName(), document);
-        else if (m_token.name().size() == 1 && m_token.name()[0] == 'v')
-            child = WebVTTElement::create(TextTrackCue::voiceElementTagName(), document);
-        else if (isLangToken(m_token))
-            child = WebVTTElement::create(TextTrackCue::langElementTagName(), document);
-
+        WebVTTNodeType nodeType = tokenToNodeType(m_token);
+        if (nodeType != WebVTTNodeTypeNone)
+            child = WebVTTElement::create(nodeType, document);
         if (child) {
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
-            if (child->hasTagName(TextTrackCue::voiceElementTagName()))
-                child->setAttribute(TextTrackCue::voiceAttributeName(), AtomicString(m_token.annotation().data(), m_token.annotation().size()));
-            if (child->hasTagName(TextTrackCue::langElementTagName()))
+
+            if (child->webVTTNodeType() == WebVTTNodeTypeVoice)
+                child->setAttribute(WebVTTElement::voiceAttributeName(), AtomicString(m_token.annotation().data(), m_token.annotation().size()));
+            else if (child->webVTTNodeType() == WebVTTNodeTypeLanguage)
                 m_languageStack.append(AtomicString(m_token.annotation().data(), m_token.annotation().size()));
+
             if (!m_languageStack.isEmpty())
-                child->setAttribute(TextTrackCue::langAttributeName(), m_languageStack.last());
+                child->setAttribute(WebVTTElement::langAttributeName(), m_languageStack.last());
+
             m_currentNode->parserAppendChild(child);
             m_currentNode = child;
         }
         break;
     }
-    case WebVTTTokenTypes::EndTag:
-        if (isRecognizedTag(tokenTagName)
-            || (m_token.name().size() == 1 && m_token.name()[0] == 'c')
-            || (m_token.name().size() == 1 && m_token.name()[0] == 'v')) {
-            if (m_currentNode->parentNode())
-                m_currentNode = m_currentNode->parentNode();
-        }
-        if (isLangToken(m_token)) {
-            if (m_currentNode->hasTagName(TextTrackCue::langElementTagName()))
+    case WebVTTTokenTypes::EndTag: {
+        WebVTTNodeType nodeType = tokenToNodeType(m_token);
+        if (nodeType != WebVTTNodeTypeNone) {
+            if (nodeType == WebVTTNodeTypeLanguage && m_currentNode->isWebVTTElement() && toWebVTTElement(m_currentNode.get())->webVTTNodeType() == WebVTTNodeTypeLanguage)
                 m_languageStack.removeLast();
             if (m_currentNode->parentNode())
                 m_currentNode = m_currentNode->parentNode();
         }
         break;
+    }
     case WebVTTTokenTypes::TimestampTag: {
         unsigned position = 0;
         double time = collectTimeStamp(m_token.characters().data(), &position);

@@ -666,7 +666,7 @@ void StyleResolver::collectMatchingRules(const MatchRequest& matchRequest, RuleR
     }
 
 #if ENABLE(VIDEO_TRACK)
-    if (m_element->isWebVTTElement() && toWebVTTElement(m_element)->webVTTNodeType())
+    if (m_element->isWebVTTElement())
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, ruleRange);
 #endif
     // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
@@ -1267,7 +1267,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->isWebVTTElement() != m_element->isWebVTTElement())
         return false;
 
-    if (element->isWebVTTElement() && m_element->isWebVTTElement() && toWebVTTElement(element)->webVTTNodeType() != toWebVTTElement(m_element)->webVTTNodeType())
+    if (element->isWebVTTElement() && m_element->isWebVTTElement() && toWebVTTElement(element)->isPastNode() != toWebVTTElement(m_element)->isPastNode())
         return false;
 #endif
 
