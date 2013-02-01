@@ -85,15 +85,16 @@ class RecordPatchEvent(object):
             WarningLog.record("patchlog wait duration missing", "In stopped event.", attachment_id, queue_name, bot_id)
             return
 
-        if bot_id:
-            patch_log.bot_id = bot_id
-        patch_log.finished = True
-        patch_log.calculate_process_duration()
-        patch_log.put()
+        if not patch_log.finished:
+            if bot_id:
+                patch_log.bot_id = bot_id
+            patch_log.finished = True
+            patch_log.calculate_process_duration()
+            patch_log.put()
 
-        queue_log = QueueLog.get_current(queue_name, queue_log_duration)
-        queue_log.patch_process_durations.append(patch_log.process_duration)
-        queue_log.put()
+            queue_log = QueueLog.get_current(queue_name, queue_log_duration)
+            queue_log.patch_process_durations.append(patch_log.process_duration)
+            queue_log.put()
 
     @classmethod
     def updated(cls, attachment_id, queue_name, bot_id=None):

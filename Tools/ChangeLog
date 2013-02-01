@@ -1,3 +1,15 @@
+2013-02-01  Alan Cutter  <alancutter@chromium.org>
+
+        PatchLog process durations are increasing linearly with time (faulty data logging)
+        https://bugs.webkit.org/show_bug.cgi?id=108621
+
+        Reviewed by Eric Seidel.
+
+        Added a check to prevent a stop event from happening to the same patch multiple times.
+
+        * QueueStatusServer/loggers/recordpatchevent.py:
+        (RecordPatchEvent.stopped):
+
 2013-02-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] MiniBrowser fullscreen signals support
