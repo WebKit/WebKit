@@ -43,6 +43,7 @@ class RunTests(AbstractStep):
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
+            Options.build_style,
             Options.test,
             Options.non_interactive,
             Options.quiet,
@@ -87,11 +88,18 @@ class RunTests(AbstractStep):
                 "--no-new-test-results",
                 "--no-show-results",
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
-                "--quiet",
             ])
 
+            if self._options.build_style == "release":
+                args.append("--release")
+            elif self._options.build_style == "debug":
+                args.append("--debug")
+
+            # old-run-webkit-tests does not support --skip-failing-tests
+            # Using --quiet one Windows fails when we try to use /dev/null, disabling for now until we find a fix
             if sys.platform != "cygwin":
                 args.append("--skip-failing-test")
+                args.append("--quiet")
 
         if self._options.quiet:
             args.append("--quiet")

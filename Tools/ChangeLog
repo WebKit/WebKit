@@ -1,3 +1,18 @@
+2013-01-31  Roger Fong  <roger_fong@apple.com>
+
+        Fix test scripts for EWS bots to get them running once and for all.
+        https://bugs.webkit.org/show_bug.cgi?id=108422
+
+        Reviewed by Timothy Horton.
+
+        Disabling --quiet option on Windows for now because that fails when we try to use /dev/null.
+        runtests.py was not passing in a configuration to run-webkit-tests which causes DRT to build in release by default.
+        However, we build in Debug only on the EWS Windows bots, which caused the build to fail.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.options):
+        (RunTests.run):
+
 2013-02-01  Nico Weber  <thakis@chromium.org>
 
         [chromium] Build webkit with enable_web_intents set to 0.
