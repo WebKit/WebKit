@@ -1,3 +1,17 @@
+2013-02-01  Chris Hopman  <cjhopman@chromium.org>
+
+        [Chromium] WebWidget::selectionBounds should return the bounds in document space
+        https://bugs.webkit.org/show_bug.cgi?id=108386
+
+        Reviewed by James Robinson.
+
+        When in applyPageScaleFactorInCompositor mode, selectionBounds needs
+        to scale the anchor/focus window points by the pageScaleFactor.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::selectionBounds):
+        (WebKit::WebViewImpl::computeScaleAndScrollForFocusedNode):
+
 2013-02-01  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: memoize expensive computation during blocks where tree doesn't change

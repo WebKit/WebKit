@@ -2367,31 +2367,36 @@ bool WebViewImpl::selectionBounds(WebRect& anchor, WebRect& focus) const
     if (!selection)
         return false;
 
-    if (selection->isCaret()) {
-        anchor = focus = frame->view()->contentsToWindow(selection->absoluteCaretBounds());
-        return true;
+    if (selection->isCaret())
+        anchor = focus = selection->absoluteCaretBounds();
+    else {
+        RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
+        if (!selectedRange)
+            return false;
+
+        RefPtr<Range> range(Range::create(selectedRange->startContainer()->document(),
+            selectedRange->startContainer(),
+            selectedRange->startOffset(),
+            selectedRange->startContainer(),
+            selectedRange->startOffset()));
+        anchor = frame->editor()->firstRectForRange(range.get());
+
+        range = Range::create(selectedRange->endContainer()->document(),
+            selectedRange->endContainer(),
+            selectedRange->endOffset(),
+            selectedRange->endContainer(),
+            selectedRange->endOffset());
+        focus = frame->editor()->firstRectForRange(range.get());
     }
 
-    RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
-    if (!selectedRange)
-        return false;
-
-    RefPtr<Range> range(Range::create(selectedRange->startContainer()->document(),
-                                      selectedRange->startContainer(),
-                                      selectedRange->startOffset(),
-                                      selectedRange->startContainer(),
-                                      selectedRange->startOffset()));
-    anchor = frame->editor()->firstRectForRange(range.get());
-
-    range = Range::create(selectedRange->endContainer()->document(),
-                          selectedRange->endContainer(),
-                          selectedRange->endOffset(),
-                          selectedRange->endContainer(),
-                          selectedRange->endOffset());
-    focus = frame->editor()->firstRectForRange(range.get());
-
-    anchor = frame->view()->contentsToWindow(anchor);
-    focus = frame->view()->contentsToWindow(focus);
+    IntRect scaledAnchor(frame->view()->contentsToWindow(anchor));
+    IntRect scaledFocus(frame->view()->contentsToWindow(focus));
+    if (m_webSettings->applyPageScaleFactorInCompositor()) {
+        scaledAnchor.scale(pageScaleFactor());
+        scaledFocus.scale(pageScaleFactor());
+    }
+    anchor = scaledAnchor;
+    focus = scaledFocus;
 
     if (!frame->selection()->selection().isBaseFirst())
         std::swap(anchor, focus);
@@ -2780,8 +2785,13 @@ void WebViewImpl::computeScaleAndScrollForFocusedNode(Node* focusedNode, float& 
 
     // 'caret' is rect encompassing the blinking cursor.
     IntRect textboxRect = focusedNode->document()->view()->contentsToWindow(pixelSnappedIntRect(focusedNode->Node::boundingBox()));
-    WebRect caret, end;
-    selectionBounds(caret, end);
+    WebRect caret, unusedEnd;
+    selectionBounds(caret, unusedEnd);
+    if (settingsImpl()->applyPageScaleFactorInCompositor()) {
+        IntRect unscaledCaret = caret;
+        unscaledCaret.scale(1 / pageScaleFactor());
+        caret = unscaledCaret;
+    }
 
     // Pick a scale which is reasonably readable. This is the scale at which
     // the caret height will become minReadableCaretHeight (adjusted for dpi
