@@ -640,6 +640,7 @@ WebInspector.SourceFrame.prototype = {
             this._sourcePositionElement.textContent = WebInspector.UIString("Line %d, Column %d", textRange.endLine + 1, textRange.endColumn + 1);
             return;
         }
+        textRange = textRange.normalize();
 
         var selectedText = this._textEditor.copyRange(textRange);
         if (textRange.startLine === textRange.endLine)
