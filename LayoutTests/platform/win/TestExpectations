@@ -2598,6 +2598,18 @@ fast/js/reentrant-caching.html
 fast/repaint/caret-with-transformation.html
 http/tests/incremental/pause-in-script-element.pl
 fast/text/international/harfbuzz-buffer-overrun.html
+compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html
+compositing/iframes/iframe-size-from-zero.html
+compositing/iframes/overlapped-iframe-iframe.html
+compositing/tiling/tiled-layer-resize.html
+css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html
+editing/input/ime-composition-clearpreedit.html
+fast/canvas/canvas-composite-alpha.html
+fast/canvas/canvas-quadratic-same-endpoint.html
+fast/events/ime-composition-events-001.html
+fast/text/international/hebrew-vowels.html
+jquery/attributes.html
+media/W3C/video/events/event_canplaythrough.html		
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
