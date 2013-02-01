@@ -1,3 +1,9 @@
+2013-02-01  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r141566.
+
+        * POTFILES.in: The FullscreenVideoController moved to WebCore.
+
 2012-12-08  Nilamdyuti Goswami  <nilamdyuti@gmail.com>
 
         [as_IN] New translation for WebKitGTK+
