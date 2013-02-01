@@ -170,7 +170,7 @@ struct SVGAttributeHashTranslator {
 
 inline SVGElement* toSVGElement(Element* element)
 {
-    ASSERT(!element || element->isSVGElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isSVGElement());
     return static_cast<SVGElement*>(element);
 }
 

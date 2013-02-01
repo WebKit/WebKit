@@ -102,9 +102,7 @@ public:
     void getItemRefElements(Vector<HTMLElement*>&);
 #endif
 
-#ifndef NDEBUG
     virtual bool isHTMLUnknownElement() const { return false; }
-#endif
 
     virtual bool isLabelable() const { return false; }
     virtual bool isFocusableByClickOnLabel() const;
@@ -153,13 +151,13 @@ private:
 
 inline HTMLElement* toHTMLElement(Node* node)
 {
-    ASSERT(!node || node->isHTMLElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isHTMLElement());
     return static_cast<HTMLElement*>(node);
 }
 
 inline const HTMLElement* toHTMLElement(const Node* node)
 {
-    ASSERT(!node || node->isHTMLElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isHTMLElement());
     return static_cast<const HTMLElement*>(node);
 }
 

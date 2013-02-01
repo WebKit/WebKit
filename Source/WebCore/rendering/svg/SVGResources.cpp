@@ -179,7 +179,7 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document*
 static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement* element)
 {
     ASSERT(element);
-    ASSERT(element->isStyled());
+    ASSERT_WITH_SECURITY_IMPLICATION(element->isStyled());
     extensions->addPendingResource(id, static_cast<SVGStyledElement*>(element));
 }
 
@@ -190,7 +190,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
     Node* node = object->node();
     ASSERT(node);
-    ASSERT(node->isSVGElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(node->isSVGElement());
 
     SVGElement* element = static_cast<SVGElement*>(node);
     if (!element)

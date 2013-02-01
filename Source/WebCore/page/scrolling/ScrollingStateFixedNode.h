@@ -72,7 +72,7 @@ private:
 
 inline ScrollingStateFixedNode* toScrollingStateFixedNode(ScrollingStateNode* node)
 {
-    ASSERT(!node || node->isFixedNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFixedNode());
     return static_cast<ScrollingStateFixedNode*>(node);
 }
     

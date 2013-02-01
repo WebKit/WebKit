@@ -617,13 +617,13 @@ private:
     
 inline Element* toElement(Node* node)
 {
-    ASSERT(!node || node->isElementNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isElementNode());
     return static_cast<Element*>(node);
 }
 
 inline const Element* toElement(const Node* node)
 {
-    ASSERT(!node || node->isElementNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isElementNode());
     return static_cast<const Element*>(node);
 }
 

@@ -95,7 +95,7 @@ private:
 
 inline SVGStyledElement* toSVGStyledElement(Node* node)
 {
-    ASSERT(!node || (node->isStyledElement() && node->isSVGElement()));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isStyledElement() && node->isSVGElement()));
     return static_cast<SVGStyledElement*>(node);
 }
 

@@ -175,13 +175,13 @@ bool childAttachedAllowedWhenAttachingChildren(ContainerNode*);
 
 inline ContainerNode* toContainerNode(Node* node)
 {
-    ASSERT(!node || node->isContainerNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isContainerNode());
     return static_cast<ContainerNode*>(node);
 }
 
 inline const ContainerNode* toContainerNode(const Node* node)
 {
-    ASSERT(!node || node->isContainerNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isContainerNode());
     return static_cast<const ContainerNode*>(node);
 }
 

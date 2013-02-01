@@ -72,7 +72,7 @@ private:
 
 inline ScrollingStateStickyNode* toScrollingStateStickyNode(ScrollingStateNode* node)
 {
-    ASSERT(!node || node->isStickyNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isStickyNode());
     return static_cast<ScrollingStateStickyNode*>(node);
 }
     

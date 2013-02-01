@@ -133,7 +133,7 @@ private:
 
 inline InputFieldSpeechButtonElement* toInputFieldSpeechButtonElement(Element* element)
 {
-    ASSERT(!element || element->isInputFieldSpeechButtonElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isInputFieldSpeechButtonElement());
     return static_cast<InputFieldSpeechButtonElement*>(element);
 }
 

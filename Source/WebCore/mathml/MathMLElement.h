@@ -54,7 +54,7 @@ private:
 
 inline MathMLElement* toMathMLElement(Node* node)
 {
-    ASSERT(!node || (node->isElementNode() && static_cast<Element*>(node)->isMathMLElement()));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isElementNode() && static_cast<Element*>(node)->isMathMLElement()));
     return static_cast<MathMLElement*>(node);
 }
 

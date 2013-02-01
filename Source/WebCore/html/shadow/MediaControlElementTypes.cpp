@@ -66,7 +66,7 @@ HTMLMediaElement* toParentMediaElement(Node* node)
 
 MediaControlElementType mediaControlElementType(Node* node)
 {
-    ASSERT(node->isMediaControlElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(node->isMediaControlElement());
     HTMLElement* element = toHTMLElement(node);
     if (element->hasTagName(inputTag))
         return static_cast<MediaControlInputElement*>(element)->displayType();

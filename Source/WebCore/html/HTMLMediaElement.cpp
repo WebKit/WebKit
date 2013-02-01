@@ -4274,7 +4274,7 @@ bool HTMLMediaElement::hasMediaControls() const
 {
     if (ShadowRoot* userAgent = userAgentShadowRoot()) {
         Node* node = userAgent->firstChild();
-        ASSERT(!node || node->isMediaControls());
+        ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isMediaControls());
         return node;
     }
 

@@ -88,7 +88,7 @@ void HTMLTemplateElement::didMoveToNewDocument(Document* oldDocument)
 #ifndef NDEBUG
 const HTMLTemplateElement* toHTMLTemplateElement(const Node* node)
 {
-    ASSERT(!node || (node->isHTMLElement() && node->hasTagName(templateTag)));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isHTMLElement() && node->hasTagName(templateTag)));
     return static_cast<const HTMLTemplateElement*>(node);
 }
 #endif

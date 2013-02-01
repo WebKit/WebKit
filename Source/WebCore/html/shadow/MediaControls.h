@@ -145,7 +145,7 @@ private:
 
 inline MediaControls* toMediaControls(Node* node)
 {
-    ASSERT(!node || node->isMediaControls());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isMediaControls());
     return static_cast<MediaControls*>(node);
 }
 

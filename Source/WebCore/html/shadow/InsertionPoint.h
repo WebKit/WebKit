@@ -105,13 +105,13 @@ private:
 
 inline InsertionPoint* toInsertionPoint(Node* node)
 {
-    ASSERT(!node || node->isInsertionPoint());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isInsertionPoint());
     return static_cast<InsertionPoint*>(node);
 }
 
 inline const InsertionPoint* toInsertionPoint(const Node* node)
 {
-    ASSERT(!node || node->isInsertionPoint());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isInsertionPoint());
     return static_cast<const InsertionPoint*>(node);
 }
 

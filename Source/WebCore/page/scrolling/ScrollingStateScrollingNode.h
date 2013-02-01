@@ -161,7 +161,7 @@ private:
 
 inline ScrollingStateScrollingNode* toScrollingStateScrollingNode(ScrollingStateNode* node)
 {
-    ASSERT(!node || node->isScrollingNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isScrollingNode());
     return static_cast<ScrollingStateScrollingNode*>(node);
 }
     

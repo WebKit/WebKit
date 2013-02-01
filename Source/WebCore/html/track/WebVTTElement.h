@@ -51,7 +51,7 @@ private:
 
 inline WebVTTElement* toWebVTTElement(Node* node)
 {
-    ASSERT(!node || node->isWebVTTElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isWebVTTElement());
     return static_cast<WebVTTElement*>(node);
 }
 

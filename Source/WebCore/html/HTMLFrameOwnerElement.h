@@ -74,7 +74,7 @@ private:
 
 inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
 {
-    ASSERT(!node || node->isFrameOwnerElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());
     return static_cast<HTMLFrameOwnerElement*>(node);
 }
 

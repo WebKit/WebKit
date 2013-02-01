@@ -75,7 +75,7 @@ private:
 
 inline Text* toText(Node* node)
 {
-    ASSERT(!node || node->isTextNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isTextNode());
     return static_cast<Text*>(node);
 }
 
