@@ -2927,7 +2927,8 @@ WebInspector.TextEditorMainChunk.prototype = {
         this._chunkedPanel.beginDomUpdates();
         this.element.className = "webkit-line-content";
         if (this.element.decorationsElement) {
-            this.element.removeChild(this.element.decorationsElement);
+            if (this.element.decorationsElement.parentElement)
+                this.element.removeChild(this.element.decorationsElement);
             delete this.element.decorationsElement;
         }
         this._chunkedPanel.endDomUpdates();
