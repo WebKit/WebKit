@@ -41,7 +41,6 @@ all : \
     DateConstructor.lut.h \
     DatePrototype.lut.h \
     ErrorPrototype.lut.h \
-    HeaderDetection.h \
     JSONObject.lut.h \
     JSGlobalObject.lut.h \
     KeywordLookup.h \
@@ -84,19 +83,3 @@ KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 
 udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
 	(PYTHONPATH=$(JavaScriptCore)/disassembler/udis86 python $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml || exit 1)
-
-# header detection
-
-ifeq ($(OS),MACOS)
-
-HeaderDetection.h : DerivedSources.make /System/Library/CoreServices/SystemVersion.plist
-	rm -f $@
-	echo "/* This is a generated file. Do not edit. */" > $@
-	if [ -f $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders/pthread_machdep.h ]; then echo "#define HAVE_PTHREAD_MACHDEP_H 1" >> $@; else echo >> $@; fi
-
-else
-
-HeaderDetection.h :
-	echo > $@
-
-endif

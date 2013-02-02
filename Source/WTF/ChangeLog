@@ -1,3 +1,13 @@
+2013-02-02  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/108745> WTF shouldn't use a script build phase to detect the presence of headers when the compiler can do it for us
+
+        Reviewed by Sam Weinig.
+
+        * WTF.xcodeproj/project.pbxproj: Remove the script phase that used to generate a header file
+        containing information about whether certain header files exist on the system.
+        * wtf/FastMalloc.cpp: Use Clang's __has_include to detect whether the header exists before including it.
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. WTF VS2010 project cleanup.
