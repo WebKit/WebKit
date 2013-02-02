@@ -251,7 +251,6 @@
   <ItemGroup>
     <None Include="WTFPostBuild.cmd" />
     <None Include="WTFPreBuild.cmd" />
-    <None Include="WTFPreLink.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="WTFGenerated.vcxproj">

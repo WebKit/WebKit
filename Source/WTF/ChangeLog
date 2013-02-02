@@ -1,3 +1,11 @@
+2013-02-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. WTF VS2010 project cleanup.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.vcxproj/WTFPreLink.cmd: Removed.
+
 2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WTFURL source files to the build
