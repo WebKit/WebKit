@@ -67,6 +67,17 @@ function test()
             InspectorTest.dumpEditorHTML(textEditor, true);
             next();
         },
+
+        function testHighlightSmallRange(next)
+        {
+            InspectorTest.addResult("\nHighlighting range from (1, 1) to (1, 1)");
+            paintLineCalls = 0;
+            var smallRangeHighlightDescriptor = textEditor.highlightRange(new WebInspector.TextRange(1, 1, 1, 1), "some-other-class");
+            InspectorTest.addResult("Lines repainted: " + paintLineCalls);
+            InspectorTest.dumpEditorHTML(textEditor, true);
+            next();
+        },
+
     ]);
 }
 

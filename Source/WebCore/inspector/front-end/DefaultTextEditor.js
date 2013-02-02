@@ -2825,7 +2825,7 @@ WebInspector.TextEditorMainPanel.RangeHighlightDescriptor.prototype = {
             return [];
 
         var startColumn = lineNumber === this._range.startLine ? this._range.startColumn : 0;
-        var endColumn = lineNumber === this._range.endLine ? Math.max(this._range.endColumn, line.length) : line.length;
+        var endColumn = lineNumber === this._range.endLine ? Math.min(this._range.endColumn, line.length) : line.length;
         return [{
             startColumn: startColumn,
             endColumn: endColumn
