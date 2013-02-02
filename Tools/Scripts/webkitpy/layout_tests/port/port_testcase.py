@@ -458,6 +458,7 @@ class PortTestCase(unittest.TestCase):
             "fast/canvas/webgl",  # Requires WebGLShader
             "compositing/webgl",  # Requires WebGLShader
             "http/tests/canvas/webgl",  # Requires WebGLShader
+            "webgl",  # Requires WebGLShader
             "mhtml",  # Requires MHTMLArchive
             "fast/css/variables",  # Requires CSS Variables
             "inspector/styles/variables",  # Requires CSS Variables
@@ -473,7 +474,7 @@ class PortTestCase(unittest.TestCase):
 000000000124f670 s __ZZN7WebCore13GraphicsLayer13addChildBelowEPS0_S1_E19__PRETTY_FUNCTION__
 """
         # Note 'compositing' is not in the list of skipped directories (hence the parsing of GraphicsLayer worked):
-        expected_directories = set(['mathml', 'transforms/3d', 'compositing/webgl', 'fast/canvas/webgl', 'animations/3d', 'mhtml', 'http/tests/canvas/webgl', 'fast/css/variables', 'inspector/styles/variables'])
+        expected_directories = set(['mathml', 'transforms/3d', 'compositing/webgl', 'fast/canvas/webgl', 'animations/3d', 'webgl', 'mhtml', 'http/tests/canvas/webgl', 'fast/css/variables', 'inspector/styles/variables'])
         result_directories = set(TestWebKitPort(symbols_string=symbols_string)._skipped_tests_for_unsupported_features(test_list=['mathml/foo.html']))
         self.assertEqual(result_directories, expected_directories)
 

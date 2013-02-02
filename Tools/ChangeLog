@@ -1,3 +1,20 @@
+2013-02-01  Gregg Tavares  <gman@google.com>
+
+        Update LayoutTests scripts to skip webgl folder on ports
+        https://bugs.webkit.org/show_bug.cgi?id=108705
+
+        Reviewed by Dirk Pranke.
+
+        I'm working on checking in the WebGL Conformance Tests
+        as layout tests into LayoutTests/webgl. For ports
+        that do not have WebGL enabled this changes will
+        skip tests in the "webgl" folder.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._missing_symbol_to_skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_skipped_directories_for_symbols):
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix for webkitpy tests.
