@@ -7,11 +7,15 @@ document.getElementsByTagName('head')[0].appendChild(styleElement);
 
 var textarea = document.createElement('textarea');
 textarea.style.fontFamily = 'SVGraffiti';
+textarea.style.fontSize = '11px';
+textarea.style.padding = 0;
 textarea.cols = 20;
 document.body.appendChild(textarea);
 
 var input = document.createElement('input');
 input.style.fontFamily = 'SVGraffiti';
+input.style.fontSize = '11px';
+input.style.padding = 0;
 input.size = 20;
 document.body.appendChild(input);
 

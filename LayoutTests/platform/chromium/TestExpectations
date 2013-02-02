@@ -1922,9 +1922,6 @@ crbug.com/9798 [ Win Release ] http/tests/xmlhttprequest/small-chunks-response-t
 # so the test timeouts.
 crbug.com/11001 http/tests/history/back-to-post.php [ Timeout ]
 
-# Regressions from WebKit Merge 42932:42994 due to text metric changes.
-crbug.com/11251 [ Android Linux Win ] svg/custom/svg-fonts-in-text-controls.html [ Failure ]
-
 # WebKit 45086:45111
 crbug.com/15270 fast/js/excessive-comma-usage.html [ Failure ]
 
