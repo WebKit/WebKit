@@ -1,3 +1,10 @@
+2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r180186.  Requested by
+        "Nico Weber" <thakis@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-01  Chris Hopman  <cjhopman@chromium.org>
 
         [Chromium] WebWidget::selectionBounds should return the bounds in document space
