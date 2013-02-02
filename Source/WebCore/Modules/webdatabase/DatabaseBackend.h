@@ -33,6 +33,7 @@
 
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
+#include "DatabaseError.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -106,7 +107,7 @@ protected:
 
     void closeDatabase();
 
-    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode&, String& errorMessage);
+    virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);

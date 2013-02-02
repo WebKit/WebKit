@@ -43,23 +43,35 @@ namespace WebCore {
 PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     DatabaseManager& dbManager = DatabaseManager::manager();
-    if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()) || !dbManager.isAvailable()) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
+    RefPtr<Database> database;
+    DatabaseError error = DatabaseError::None;
+    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin()))
+        database = dbManager.openDatabase(context, name, version, displayName, estimatedSize, creationCallback, error);
 
-    return dbManager.openDatabase(context, name, version, displayName, estimatedSize, creationCallback, ec);
+    ASSERT(error == DatabaseError::None || error == DatabaseError::CannotOpenDatabase);
+    if (error == DatabaseError::CannotOpenDatabase)
+        ec = INVALID_STATE_ERR;
+    if (!database && !ec)
+        ec = SECURITY_ERR;
+
+    return database.release();
 }
 
 PassRefPtr<DatabaseSync> WorkerContextWebDatabase::openDatabaseSync(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     DatabaseManager& dbManager = DatabaseManager::manager();
-    if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()) || !dbManager.isAvailable()) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
+    RefPtr<DatabaseSync> database;
+    DatabaseError error =  DatabaseError::None;
+    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin()))
+        database = dbManager.openDatabaseSync(context, name, version, displayName, estimatedSize, creationCallback, error);
 
-    return dbManager.openDatabaseSync(context, name, version, displayName, estimatedSize, creationCallback, ec);
+    ASSERT(error == DatabaseError::None || error == DatabaseError::CannotOpenDatabase);
+    if (error == DatabaseError::CannotOpenDatabase)
+        ec = INVALID_STATE_ERR;
+    if (!database && !ec)
+        ec = SECURITY_ERR;
+
+    return database.release();
 }
 
 } // namespace WebCore

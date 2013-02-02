@@ -32,6 +32,7 @@
 
 #include "Database.h"
 #include "DatabaseBasicTypes.h"
+#include "DatabaseError.h"
 #include "SQLTransaction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -99,13 +100,13 @@ private:
 
 class Database::DatabaseOpenTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, ExceptionCode& code, String& errorMessage, bool& success)
+    static PassOwnPtr<DatabaseOpenTask> create(Database* db, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, DatabaseError& error, String& errorMessage, bool& success)
     {
-        return adoptPtr(new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, code, errorMessage, success));
+        return adoptPtr(new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, error, errorMessage, success));
     }
 
 private:
-    DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, ExceptionCode&, String& errorMessage, bool& success);
+    DatabaseOpenTask(Database*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
 
     virtual void doPerformTask();
 #if !LOG_DISABLED
@@ -113,7 +114,7 @@ private:
 #endif
 
     bool m_setVersionInNewDatabase;
-    ExceptionCode& m_code;
+    DatabaseError& m_error;
     String& m_errorMessage;
     bool& m_success;
 };

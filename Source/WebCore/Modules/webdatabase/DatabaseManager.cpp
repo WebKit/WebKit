@@ -198,9 +198,11 @@ void DatabaseManager::didDestructDatabaseContext()
 
 PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
-    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& e)
+    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
+    DatabaseError& error)
 {
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
+    ASSERT(error == DatabaseError::None);
 
     if (!canEstablishDatabase(context, name, displayName, estimatedSize)) {
         LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
@@ -210,7 +212,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
     RefPtr<Database> database = adoptRef(new Database(databaseContext, name, expectedVersion, displayName, estimatedSize));
 
     String errorMessage;
-    if (!database->openAndVerifyVersion(!creationCallback, e, errorMessage)) {
+    if (!database->openAndVerifyVersion(!creationCallback, error, errorMessage)) {
         database->logErrorMessage(errorMessage);
         return 0;
     }
@@ -230,10 +232,11 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
 
 PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
-    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
+    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, DatabaseError& error)
 {
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
     ASSERT(context->isContextThread());
+    ASSERT(error == DatabaseError::None);
 
     if (!canEstablishDatabase(context, name, displayName, estimatedSize)) {
         LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
@@ -243,7 +246,7 @@ PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContex
     RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(databaseContext, name, expectedVersion, displayName, estimatedSize));
 
     String errorMessage;
-    if (!database->openAndVerifyVersion(!creationCallback, ec, errorMessage)) {
+    if (!database->openAndVerifyVersion(!creationCallback, error, errorMessage)) {
         database->logErrorMessage(errorMessage);
         return 0;
     }

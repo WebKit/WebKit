@@ -121,7 +121,7 @@ String Database::version() const
     return DatabaseBackend::version();
 }
 
-bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode& e, String& errorMessage)
+bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     DatabaseTaskSynchronizer synchronizer;
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
@@ -131,7 +131,7 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, ExceptionCode&
     DatabaseTracker::tracker().prepareToOpenDatabase(this);
 #endif
     bool success = false;
-    OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, e, errorMessage, success);
+    OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
     databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
     synchronizer.waitForTaskCompletion();
 
@@ -192,9 +192,9 @@ unsigned long long Database::maximumSize() const
     return DatabaseManager::manager().getMaxSizeForDatabase(this);
 }
 
-bool Database::performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode& e, String& errorMessage)
+bool Database::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, e, errorMessage)) {
+    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
         if (databaseContext()->databaseThread())
             databaseContext()->databaseThread()->recordDatabaseOpen(this);
 
