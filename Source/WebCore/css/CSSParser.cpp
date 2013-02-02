@@ -2970,7 +2970,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {
     if (lval) {
-        if (lval->isValueList())
+        if (lval->isBaseValueList())
             static_cast<CSSValueList*>(lval.get())->append(rval);
         else {
             PassRefPtr<CSSValue> oldlVal(lval.release());
