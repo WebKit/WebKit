@@ -1,3 +1,29 @@
+2013-02-01  Jer Noble  <jer.noble@apple.com>
+
+        LLDB: add synthetic provider for WTF::HashTable
+        https://bugs.webkit.org/show_bug.cgi?id=108718
+
+        Reviewed by Darin Adler.
+
+        Add a synthetic provider which will emit the contents of a given
+        WTF::HashTable. This allows clients using Xcode/lldb to enumerate
+        the hash contents.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (__lldb_init_module.lldb_webkit):
+        (WTFHashTable_SummaryProvider):
+        (WTFVectorProvider.has_children):
+        (WTFHashTableProvider):
+        (WTFHashTableProvider.__init__):
+        (WTFHashTableProvider.num_children):
+        (WTFHashTableProvider.get_child_index):
+        (WTFHashTableProvider.get_child_at_index):
+        (WTFHashTableProvider.tableSize):
+        (WTFHashTableProvider.keyCount):
+        (WTFHashTableProvider.update):
+        (WTFHashTableProvider.has_children):
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix webkitpy tests since a build_style is not specified in some cases.
