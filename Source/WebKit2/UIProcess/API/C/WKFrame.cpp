@@ -96,16 +96,6 @@ WKPageRef WKFrameGetPage(WKFrameRef frameRef)
     return toAPI(toImpl(frameRef)->page());
 }
 
-WKArrayRef WKFrameCopyChildFrames(WKFrameRef frameRef)
-{
-    return toAPI(toImpl(frameRef)->childFrames().leakRef());
-}
-
-WKFrameRef WKFrameGetParentFrame(WKFrameRef frameRef)
-{
-    return toAPI(toImpl(frameRef)->parentFrame());
-}
-
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->certificateInfo());
@@ -183,3 +173,16 @@ void WKFrameGetWebArchive_b(WKFrameRef frameRef, WKFrameGetWebArchiveBlock block
     WKFrameGetWebArchive(frameRef, callGetWebArchiveBlockAndDispose, Block_copy(block));
 }
 #endif
+
+
+// NOTE: These are deprecated and should be removed. They currently do nothing.
+
+WKArrayRef WKFrameCopyChildFrames(WKFrameRef)
+{
+    return 0;
+}
+
+WKFrameRef WKFrameGetParentFrame(WKFrameRef)
+{
+    return 0;
+}

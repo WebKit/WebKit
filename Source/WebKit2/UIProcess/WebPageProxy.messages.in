@@ -111,9 +111,7 @@ messages -> WebPageProxy LegacyReceiver {
 
     # Frame lifetime messages
     DidCreateMainFrame(uint64_t frameID)
-    DidCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
-    DidSaveFrameToPageCache(uint64_t frameID);
-    DidRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID);
+    DidCreateSubframe(uint64_t frameID)
 
     # Frame load messages
     DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, uint32_t loadType, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic

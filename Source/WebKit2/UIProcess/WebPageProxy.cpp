@@ -1997,62 +1997,16 @@ void WebPageProxy::didCreateMainFrame(uint64_t frameID)
     m_process->frameCreated(frameID, m_mainFrame.get());
 }
 
-void WebPageProxy::didCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
+void WebPageProxy::didCreateSubframe(uint64_t frameID)
 {
     MESSAGE_CHECK(m_mainFrame);
-
-    WebFrameProxy* parentFrame = m_process->webFrame(parentFrameID);
-    MESSAGE_CHECK(parentFrame);
-    MESSAGE_CHECK(parentFrame->isDescendantOf(m_mainFrame.get()));
-
     MESSAGE_CHECK(m_process->canCreateFrame(frameID));
     
     RefPtr<WebFrameProxy> subFrame = WebFrameProxy::create(this, frameID);
 
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, subFrame.get());
-
-    // Insert the frame into the frame hierarchy.
-    parentFrame->appendChild(subFrame.get());
 }
-
-static bool isDisconnectedFrame(WebFrameProxy* frame)
-{
-    return !frame->page() || !frame->page()->mainFrame() || !frame->isDescendantOf(frame->page()->mainFrame());
-}
-
-void WebPageProxy::didSaveFrameToPageCache(uint64_t frameID)
-{
-    MESSAGE_CHECK(m_mainFrame);
-
-    WebFrameProxy* subframe = m_process->webFrame(frameID);
-    MESSAGE_CHECK(subframe);
-
-    if (isDisconnectedFrame(subframe))
-        return;
-
-    MESSAGE_CHECK(subframe->isDescendantOf(m_mainFrame.get()));
-
-    subframe->didRemoveFromHierarchy();
-}
-
-void WebPageProxy::didRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID)
-{
-    MESSAGE_CHECK(m_mainFrame);
-
-    WebFrameProxy* subframe = m_process->webFrame(frameID);
-    MESSAGE_CHECK(subframe);
-    MESSAGE_CHECK(!subframe->parentFrame());
-    MESSAGE_CHECK(subframe->page() == m_mainFrame->page());
-
-    WebFrameProxy* parentFrame = m_process->webFrame(parentFrameID);
-    MESSAGE_CHECK(parentFrame);
-    MESSAGE_CHECK(parentFrame->isDescendantOf(m_mainFrame.get()));
-
-    // Insert the frame into the frame hierarchy.
-    parentFrame->appendChild(subframe);
-}
-
 
 // Always start progress at initialProgressValue. This helps provide feedback as
 // soon as a load starts.
@@ -2329,8 +2283,6 @@ void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::Messag
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
-
-    frame->didRemoveFromHierarchy();
 
     m_loaderClient.didRemoveFrameFromHierarchy(this, frame, userData.get());
 }

@@ -1,5 +1,40 @@
 2013-02-02  Sam Weinig  <sam@webkit.org>
 
+        Stop keeping a frame tree in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=81728
+
+        Reviewed by Oliver Hunt.
+
+        This patch removes the parent/child relationships of WebFrameProxys
+        in the UIProcess
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyChildFrames):
+        (WKFrameGetParentFrame):
+        * UIProcess/API/C/WKFrame.h:
+        Null out the implementations of WKFrameCopyChildFrames and WKFrameGetParentFrame,
+        but keep them around as their symbols are still needed for nightlies.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        (WebKit::WebFrameProxy::disconnect):
+        * UIProcess/WebFrameProxy.h:
+        Remove parent/child connections.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didSaveToPageCache):
+        (WebKit::WebFrameLoaderClient::didRestoreFromPageCache):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSubframe):
+        Remove/Update messages that only served to update the parent/child connection.
+
+2013-02-02  Sam Weinig  <sam@webkit.org>
+
         Make it possible to modify the connection from ChildProcessProxy subclasses.
 
         Reviewed by Anders Carlsson.

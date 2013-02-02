@@ -58,10 +58,6 @@ WK_EXPORT WKStringRef WKFrameCopyTitle(WKFrameRef frame);
 
 WK_EXPORT WKPageRef WKFrameGetPage(WKFrameRef frame);
 
-WK_EXPORT WKArrayRef WKFrameCopyChildFrames(WKFrameRef frame);
-
-WK_EXPORT WKFrameRef WKFrameGetParentFrame(WKFrameRef frame);
-
 WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameCanProvideSource(WKFrameRef frame);
@@ -87,6 +83,12 @@ WK_EXPORT void WKFrameGetWebArchive(WKFrameRef frame, WKFrameGetWebArchiveFuncti
 typedef void (^WKFrameGetWebArchiveBlock)(WKDataRef archiveData, WKErrorRef error);
 WK_EXPORT void WKFrameGetWebArchive_b(WKFrameRef frame, WKFrameGetWebArchiveBlock block);
 #endif
+
+
+// NOTE: These are deprecated and should be removed. They currently do nothing.
+
+WK_EXPORT WKArrayRef WKFrameCopyChildFrames(WKFrameRef frame);
+WK_EXPORT WKFrameRef WKFrameGetParentFrame(WKFrameRef frame);
 
 #ifdef __cplusplus
 }

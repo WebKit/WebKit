@@ -44,11 +44,6 @@ namespace WebKit {
 
 WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
     : m_page(page)
-    , m_parentFrame(0)
-    , m_nextSibling(0)
-    , m_previousSibling(0)
-    , m_firstChild(0)
-    , m_lastChild(0)
     , m_loadState(LoadStateFinished)
     , m_isFrameSet(false)
     , m_frameID(frameID)
@@ -64,11 +59,6 @@ WebFrameProxy::~WebFrameProxy()
 void WebFrameProxy::disconnect()
 {
     m_page = 0;
-    m_parentFrame = 0;
-    m_nextSibling = 0;
-    m_previousSibling = 0;
-    m_firstChild = 0;
-    m_lastChild = 0;
 
     if (m_activeListener) {
         m_activeListener->invalidate();
@@ -194,85 +184,6 @@ void WebFrameProxy::didSameDocumentNavigation(const String& url)
 void WebFrameProxy::didChangeTitle(const String& title)
 {
     m_title = title;
-}
-
-void WebFrameProxy::appendChild(WebFrameProxy* child)
-{
-    ASSERT(child->page() == page());
-    ASSERT(!child->m_parentFrame);
-    ASSERT(!child->m_nextSibling);
-    ASSERT(!child->m_previousSibling);
-
-    child->m_parentFrame = this;
-
-    WebFrameProxy* oldLast = m_lastChild;
-    m_lastChild = child;
-
-    if (oldLast) {
-        ASSERT(!oldLast->m_nextSibling);
-        child->m_previousSibling = oldLast;
-        oldLast->m_nextSibling = child;
-    } else
-        m_firstChild = child;
-}
-
-void WebFrameProxy::removeChild(WebFrameProxy* child)
-{
-    child->m_parentFrame = 0;
-
-    WebFrameProxy*& newLocationForNext = m_firstChild == child ? m_firstChild : child->m_previousSibling->m_nextSibling;
-    WebFrameProxy*& newLocationForPrevious = m_lastChild == child ? m_lastChild : child->m_nextSibling->m_previousSibling;
-    swap(newLocationForNext, child->m_nextSibling);
-    swap(newLocationForPrevious, child->m_previousSibling);
-    child->m_previousSibling = 0;
-    child->m_nextSibling = 0;
-}
-
-bool WebFrameProxy::isDescendantOf(const WebFrameProxy* ancestor) const
-{
-    if (!ancestor)
-        return false;
-
-    if (m_page != ancestor->m_page)
-        return false;
-
-    for (const WebFrameProxy* frame = this; frame; frame = frame->m_parentFrame) {
-        if (frame == ancestor)
-            return true;
-    }
-
-    return false;
-}
-
-void WebFrameProxy::dumpFrameTreeToSTDOUT(unsigned indent)
-{
-    if (!indent && m_parentFrame)
-        printf("NOTE: Printing subtree.\n");
-
-    for (unsigned i = 0; i < indent; ++i)
-        printf(" ");
-    printf("| FRAME %d %s\n", (int)m_frameID, m_url.utf8().data());
-
-    for (WebFrameProxy* child = m_firstChild; child; child = child->m_nextSibling)
-        child->dumpFrameTreeToSTDOUT(indent + 4);
-}
-
-void WebFrameProxy::didRemoveFromHierarchy()
-{
-    if (m_parentFrame)
-        m_parentFrame->removeChild(this);
-}
-
-PassRefPtr<ImmutableArray> WebFrameProxy::childFrames()
-{
-    if (!m_firstChild)
-        return ImmutableArray::create();
-
-    Vector<RefPtr<APIObject> > vector;
-    for (WebFrameProxy* child = m_firstChild; child; child = child->m_nextSibling)
-        vector.append(child);
-
-    return ImmutableArray::adopt(vector);
 }
 
 void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_t listenerID)
