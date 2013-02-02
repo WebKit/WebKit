@@ -358,6 +358,7 @@
     <ClInclude Include="..\bytecode\CodeOrigin.h" />
     <ClInclude Include="..\bytecode\CodeType.h" />
     <ClInclude Include="..\bytecode\Comment.h" />
+    <ClInclude Include="..\bytecode\DataFormat.h" />
     <ClInclude Include="..\bytecode\EvalCodeCache.h" />
     <ClInclude Include="..\bytecode\ExecutionCounter.h" />
     <ClInclude Include="..\bytecode\ExitKind.h" />

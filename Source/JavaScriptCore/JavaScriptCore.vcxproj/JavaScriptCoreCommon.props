@@ -11,7 +11,6 @@
     <Link>
       <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>JavaScriptCoreExports.def</ModuleDefinitionFile>
-      <ImportLibrary>$(ConfigurationBuildDir)\lib\$(TargetName).lib</ImportLibrary>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
