@@ -35,7 +35,7 @@ class ChildProcessProxy : ProcessLauncher::Client, public CoreIPC::Connection::C
     WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
 
 public:
-    ChildProcessProxy(CoreIPC::Connection::QueueClient* = 0);
+    ChildProcessProxy();
     virtual ~ChildProcessProxy();
 
     // FIXME: This function does an unchecked upcast, and it is only used in a deprecated code path. Would like to get rid of it.
@@ -67,13 +67,14 @@ protected:
 
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
+    virtual void connectionWillOpen(CoreIPC::Connection*);
+    virtual void connectionWillClose(CoreIPC::Connection*);
 
     bool sendMessage(PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
     Vector<std::pair<OwnPtr<CoreIPC::MessageEncoder>, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<CoreIPC::Connection> m_connection;
-    CoreIPC::Connection::QueueClient* m_queueClient;
 };
 
 template<typename T>
@@ -98,6 +99,6 @@ bool ChildProcessProxy::sendSync(const U& message, const typename U::Reply& repl
     return connection()->sendSync(message, reply, destinationID, timeout);
 }
 
-}
+} // namespace WebKit
 
 #endif // ChildProcessProxy_h

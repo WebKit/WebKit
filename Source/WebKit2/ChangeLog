@@ -1,3 +1,24 @@
+2013-02-02  Sam Weinig  <sam@webkit.org>
+
+        Make it possible to modify the connection from ChildProcessProxy subclasses.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::ChildProcessProxy):
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        (WebKit::ChildProcessProxy::clearConnection):
+        (WebKit::ChildProcessProxy::connectionWillOpen):
+        (WebKit::ChildProcessProxy::connectionWillClose):
+        * Shared/ChildProcessProxy.h:
+        (ChildProcessProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        (WebKit::WebProcessProxy::connectionWillClose):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2013-02-02  David Kilzer  <ddkilzer@apple.com>
 
         Upstream iOS FeatureDefines

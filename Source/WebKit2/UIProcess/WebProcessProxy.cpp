@@ -102,8 +102,7 @@ PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> conte
 }
 
 WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
-    : ChildProcessProxy(this)
-    , m_responsivenessTimer(this)
+    : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
 #if ENABLE(CUSTOM_PROTOCOLS)
@@ -126,6 +125,16 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 {
     launchOptions.processType = ProcessLauncher::WebProcess;
     platformGetLaunchOptions(launchOptions);
+}
+
+void WebProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
+{
+    connection->addQueueClient(this);
+}
+
+void WebProcessProxy::connectionWillClose(CoreIPC::Connection* connection)
+{
+    connection->removeQueueClient(this);
 }
 
 void WebProcessProxy::disconnect()

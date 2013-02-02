@@ -121,8 +121,11 @@ public:
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 
-    void getLaunchOptions(ProcessLauncher::LaunchOptions&);
+    // From ChildProcessProxy
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
+    virtual void connectionWillOpen(CoreIPC::Connection*) OVERRIDE;
+    virtual void connectionWillClose(CoreIPC::Connection*) OVERRIDE;
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.

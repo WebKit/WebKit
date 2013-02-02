@@ -32,8 +32,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ChildProcessProxy::ChildProcessProxy(CoreIPC::Connection::QueueClient* queueClient)
-    : m_queueClient(queueClient)
+ChildProcessProxy::ChildProcessProxy()
 {
 }
 
@@ -107,8 +106,7 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection
     m_connection->setShouldCloseConnectionOnProcessTermination(processIdentifier());
 #endif
 
-    if (m_queueClient)
-        m_connection->addQueueClient(m_queueClient);
+    connectionWillOpen(m_connection.get());
     m_connection->open();
 
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
@@ -125,10 +123,18 @@ void ChildProcessProxy::clearConnection()
     if (!m_connection)
         return;
 
-    if (m_queueClient)
-        m_connection->removeQueueClient(m_queueClient);
+    connectionWillClose(m_connection.get());
+
     m_connection->invalidate();
     m_connection = nullptr;
 }
 
+void ChildProcessProxy::connectionWillOpen(CoreIPC::Connection*)
+{
 }
+
+void ChildProcessProxy::connectionWillClose(CoreIPC::Connection*)
+{
+}
+
+} // namespace WebKit
