@@ -101,8 +101,8 @@ class RunTests(AbstractStep):
             # old-run-webkit-tests does not support --skip-failing-tests
             # Using --quiet one Windows fails when we try to use /dev/null, disabling for now until we find a fix
             if sys.platform != "cygwin":
-                args.append("--skip-failing-test")
                 args.append("--quiet")
+                args.append("--skip-failing-tests")
 
         if self._options.quiet:
             args.append("--quiet")

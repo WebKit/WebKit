@@ -1,3 +1,11 @@
+2013-02-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix for webkitpy tests.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2013-02-01  Jer Noble  <jer.noble@apple.com>
 
         LLDB: add synthetic provider for WTF::HashTable
