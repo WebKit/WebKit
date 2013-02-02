@@ -1,3 +1,15 @@
+2013-02-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Eliminate dead blocks sooner in the DFG::ByteCodeParser to make clear that you don't need to hold onto them during Phi construction
+        https://bugs.webkit.org/show_bug.cgi?id=108717
+
+        Reviewed by Mark Hahnenberg.
+        
+        I think this makes the code clearer. It doesn't change behavior.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
 2013-02-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structure should have a StructureRareData field to save space

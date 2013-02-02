@@ -3730,6 +3730,13 @@ bool ByteCodeParser::parse()
     dataLogF("Processing local variable phis.\n");
 #endif
     
+    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        ASSERT(block);
+        if (!block->isReachable)
+            m_graph.m_blocks[blockIndex].clear();
+    }
+    
     m_currentProfilingIndex = m_currentIndex;
     
     processPhiStack<LocalPhiStack>();
@@ -3738,13 +3745,6 @@ bool ByteCodeParser::parse()
 #endif
     processPhiStack<ArgumentPhiStack>();
 
-    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
-        ASSERT(block);
-        if (!block->isReachable)
-            m_graph.m_blocks[blockIndex].clear();
-    }
-    
     fixVariableAccessPredictions();
     
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
