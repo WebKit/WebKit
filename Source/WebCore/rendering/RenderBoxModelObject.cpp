@@ -558,95 +558,10 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
     return snapSizeToPixel(offsetHeight(), offsetTop());
 }
 
-LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
+LayoutUnit RenderBoxModelObject::computedCSSPadding(Length padding) const
 {
     LayoutUnit w = 0;
     RenderView* renderView = 0;
-    Length padding = style()->paddingTop();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingBottom();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingLeft();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingRight();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingBefore();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingAfter();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingStart();
-    if (padding.isPercent())
-        w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = view();
-    return minimumValueForLength(padding, w, renderView);
-}
-
-LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
-{
-    LayoutUnit w = 0;
-    RenderView* renderView = 0;
-    Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
