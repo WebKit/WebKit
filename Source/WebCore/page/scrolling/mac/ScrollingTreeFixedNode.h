@@ -40,12 +40,12 @@ class FixedPositionViewportConstraints;
 
 class ScrollingTreeFixedNode : public ScrollingTreeNode {
 public:
-    static PassOwnPtr<ScrollingTreeFixedNode> create(ScrollingTree*);
+    static PassOwnPtr<ScrollingTreeFixedNode> create(ScrollingTree*, ScrollingNodeID);
 
     virtual ~ScrollingTreeFixedNode();
 
 private:
-    ScrollingTreeFixedNode(ScrollingTree*);
+    ScrollingTreeFixedNode(ScrollingTree*, ScrollingNodeID);
 
     virtual void update(ScrollingStateNode*) OVERRIDE;
     virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) OVERRIDE;

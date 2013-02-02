@@ -42,7 +42,7 @@ class ScrollingStateScrollingNode;
 
 class ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
-    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree*);
+    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree*, ScrollingNodeID);
     virtual ~ScrollingTreeScrollingNode();
 
     virtual void update(ScrollingStateNode*) OVERRIDE;
@@ -56,7 +56,7 @@ public:
     MainThreadScrollingReasons shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
 
 protected:
-    explicit ScrollingTreeScrollingNode(ScrollingTree*);
+    explicit ScrollingTreeScrollingNode(ScrollingTree*, ScrollingNodeID);
 
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& contentsSize() const { return m_contentsSize; }

@@ -48,7 +48,6 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
-    , m_rootNode(ScrollingTreeScrollingNode::create(this))
     , m_hasWheelEventHandlers(false)
     , m_canGoBack(false)
     , m_canGoForward(false)
@@ -157,24 +156,27 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
     } else {
         // If the node isn't found, it's either new and needs to be added to the tree, or there is a new ID for our
         // root node.
+        ScrollingNodeID nodeID = stateNode->scrollingNodeID();
         if (!stateNode->parent()) {
             // This is the root node.
-            m_rootNode->setScrollingNodeID(stateNode->scrollingNodeID());
-            m_nodeMap.set(stateNode->scrollingNodeID(), m_rootNode.get());
+            if (!m_rootNode)
+                m_rootNode = ScrollingTreeScrollingNode::create(this, nodeID);
+
+            m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->update(stateNode);
         } else {
             OwnPtr<ScrollingTreeNode> newNode;
             if (stateNode->isScrollingNode())
-                newNode = ScrollingTreeScrollingNode::create(this);
+                newNode = ScrollingTreeScrollingNode::create(this, nodeID);
             else if (stateNode->isFixedNode())
-                newNode = ScrollingTreeFixedNode::create(this);
+                newNode = ScrollingTreeFixedNode::create(this, nodeID);
             else if (stateNode->isStickyNode())
-                newNode = ScrollingTreeStickyNode::create(this);
+                newNode = ScrollingTreeStickyNode::create(this, nodeID);
             else
                 ASSERT_NOT_REACHED();
 
             ScrollingTreeNode* newNodeRawPtr = newNode.get();
-            m_nodeMap.set(stateNode->scrollingNodeID(), newNodeRawPtr);
+            m_nodeMap.set(nodeID, newNodeRawPtr);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());
             ASSERT(it != m_nodeMap.end());
             if (it != m_nodeMap.end()) {

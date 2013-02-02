@@ -47,13 +47,13 @@ static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons);
 static void logWheelEventHandlerCountChanged(unsigned);
 
 
-PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(ScrollingTree* scrollingTree)
+PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingTreeScrollingNodeMac(scrollingTree));
+    return adoptPtr(new ScrollingTreeScrollingNodeMac(scrollingTree, nodeID));
 }
 
-ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree)
-    : ScrollingTreeScrollingNode(scrollingTree)
+ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeScrollingNode(scrollingTree, nodeID)
     , m_scrollElasticityController(this)
     , m_lastScrollHadUnfilledPixels(false)
 {

@@ -40,12 +40,12 @@ class StickyPositionViewportConstraints;
 
 class ScrollingTreeStickyNode : public ScrollingTreeNode {
 public:
-    static PassOwnPtr<ScrollingTreeStickyNode> create(ScrollingTree*);
+    static PassOwnPtr<ScrollingTreeStickyNode> create(ScrollingTree*, ScrollingNodeID);
 
     virtual ~ScrollingTreeStickyNode();
 
 private:
-    ScrollingTreeStickyNode(ScrollingTree*);
+    ScrollingTreeStickyNode(ScrollingTree*, ScrollingNodeID);
 
     virtual void update(ScrollingStateNode*) OVERRIDE;
     virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) OVERRIDE;

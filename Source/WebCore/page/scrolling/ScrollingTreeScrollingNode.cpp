@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree* scrollingTree)
-    : ScrollingTreeNode(scrollingTree)
+ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+    : ScrollingTreeNode(scrollingTree, nodeID)
     , m_frameScaleFactor(1)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
