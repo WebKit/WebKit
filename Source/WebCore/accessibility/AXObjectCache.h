@@ -261,8 +261,8 @@ inline AccessibilityObject* AXObjectCache::rootObject() { return 0; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return 0; }
 inline Element* AXObjectCache::rootAXEditableElement(Node*) { return 0; }
 inline bool nodeHasRole(Node*, const String&) { return false; }
-inline void startCachingComputedObjectAttributesUntilTreeMutates() { }
-inline void stopCachingComputedObjectAttributes() { }
+inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
+inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return 0; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
