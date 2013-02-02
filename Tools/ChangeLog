@@ -1,3 +1,12 @@
+2013-02-02  Dean Jackson  <dino@apple.com>
+
+        Add Antoine Quint to the list of committers
+        https://bugs.webkit.org/show_bug.cgi?id=108750
+
+        No review necessary.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-02  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Adopt the WinCE port to new CMake
