@@ -112,9 +112,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
     ANGLEResources.MaxDrawBuffers = 1; // Always set to 1 for OpenGL ES.
-    ANGLEResources.OES_standard_derivatives = m_extensions->supports("GL_OES_standard_derivatives");
-    ANGLEResources.OES_EGL_image_external = m_extensions->supports("GL_EGL_image_external");
-    ANGLEResources.ARB_texture_rectangle = m_extensions->supports("GL_ARB_texture_rectangle");
     m_compiler.setResources(ANGLEResources);
 
     ::glClearColor(0, 0, 0, 0);
