@@ -1,3 +1,18 @@
+2013-02-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Building fails in an armv5tel board
+        https://bugs.webkit.org/show_bug.cgi?id=108083
+
+        Reviewed by Martin Robinson.
+
+        In some systems in which $architecture is filled-in from "uname -m"
+        the value may not start with "arm-", but with "armvN", where "N" is
+        an architecture version number. The regexp in isARM() is modified
+        so it covers these kind of cases.
+
+        * Scripts/webkitdirs.pm:
+        (isARM):
+
 2013-02-01  Gregg Tavares  <gman@google.com>
 
         Update LayoutTests scripts to skip webgl folder on ports
