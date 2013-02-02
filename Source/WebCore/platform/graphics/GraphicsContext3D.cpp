@@ -824,7 +824,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatR8, GraphicsCont
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatR8, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
         source += 4;
@@ -858,7 +858,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA8, GraphicsCon
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA8, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
         destination[1] = source[3];
@@ -897,7 +897,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB8, GraphicsCo
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB8, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
@@ -935,7 +935,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA8, GraphicsC
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA8, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
@@ -983,7 +983,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA4444, Graphi
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA4444, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
@@ -1031,7 +1031,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA5551, Graphi
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA5551, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
@@ -1077,7 +1077,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB565, Graphics
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB565, GraphicsContext3D::AlphaDoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        float scaleFactor = 1.0f / (source[3] ? source[3] / 255.0f : 1.0f);
+        float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
@@ -1127,14 +1127,7 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB32F, Graphics
 // Used only during RGBA8 or BGRA8 -> floating-point uploads.
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA32F, GraphicsContext3D::AlphaDoNothing, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
 {
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        destination[0] = source[0];
-        destination[1] = source[1];
-        destination[2] = source[2];
-        destination[3] = source[3];
-        source += 4;
-        destination += 4;
-    }
+    memcpy(destination, source, pixelsPerRow * 4 * sizeof(float));
 }
 
 template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA32F, GraphicsContext3D::AlphaDoPremultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
