@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,9 @@ namespace WebKit {
 
 static WebCookieManager* sharedCookieManager;
 
-const AtomicString& WebCookieManager::supplementName()
+const char* WebCookieManager::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebCookieManager", AtomicString::ConstructFromLiteral));
-    return name;
+    return "WebCookieManager";
 }
 
 WebCookieManager::WebCookieManager(ChildProcess* process)

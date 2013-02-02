@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class WebGeolocationManagerProxy : public APIObject, public WebContextSupplement
 public:
     static const Type APIType = TypeGeolocationManager;
 
-    static const AtomicString& supplementName();
+    static const char* supplementName();
 
     static PassRefPtr<WebGeolocationManagerProxy> create(WebContext*);
     virtual ~WebGeolocationManagerProxy();

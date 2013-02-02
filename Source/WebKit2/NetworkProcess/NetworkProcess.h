@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ public:
     template <typename T>
     void addSupplement()
     {
-        m_supplements.add(T::supplementName(), new T(this));
+        m_supplements.add(T::supplementName(), adoptPtr<NetworkProcessSupplement>(new T(this)));
     }
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
@@ -119,7 +119,7 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-    typedef HashMap<AtomicString, NetworkProcessSupplement*> NetworkProcessSupplementMap;
+    typedef HashMap<const char*, OwnPtr<NetworkProcessSupplement>, PtrHash<const char*> > NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 };
 
