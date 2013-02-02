@@ -69,20 +69,11 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
 {
     RetainPtr<NSImage> dissolvedImage(AdoptNS, [[NSImage alloc] initWithSize:[image.get() size]]);
     
-    NSPoint point = [image.get() isFlipped] ? NSMakePoint(0, [image.get() size].height) : NSZeroPoint;
-    
-    // In this case the dragging image is always correct.
-    [dissolvedImage.get() setFlipped:[image.get() isFlipped]];
-    
     [dissolvedImage.get() lockFocus];
-    [image.get() dissolveToPoint:point fraction: delta];
+    [image.get() drawAtPoint:NSZeroPoint fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositeCopy fraction:delta];
     [dissolvedImage.get() unlockFocus];
-    
-    [image.get() lockFocus];
-    [dissolvedImage.get() compositeToPoint:point operation:NSCompositeCopy];
-    [image.get() unlockFocus];
-    
-    return image;
+
+    return dissolvedImage;
 }
         
 RetainPtr<NSImage> createDragImageFromImage(Image* image, RespectImageOrientationEnum shouldRespectImageOrientation)
