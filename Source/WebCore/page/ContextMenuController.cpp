@@ -142,6 +142,8 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
 
 PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
 {
+    ASSERT(event);
+    
     if (!event->isMouseEvent())
         return nullptr;
 

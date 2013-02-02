@@ -269,6 +269,9 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 #if ENABLE(CONTEXT_MENUS)
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem>& items)
 {
+    if (!event)
+        return;
+
     ASSERT(m_frontendPage);
     ScriptState* frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
     ScriptObject frontendApiObject;
