@@ -1,3 +1,10 @@
+2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r141648.
+
+        * GNUmakefile.am: Add UIProcess/Storage to the list of paths that
+        should be searched for *.messages.in files.
+
 2013-02-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix after r141648
