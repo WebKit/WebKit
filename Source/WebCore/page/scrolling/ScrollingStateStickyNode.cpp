@@ -42,14 +42,12 @@ PassOwnPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingS
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
     : ScrollingStateNode(tree, nodeID)
-    , m_changedProperties(0)
 {
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNode& node)
     : ScrollingStateNode(node)
     , m_constraints(StickyPositionViewportConstraints(node.viewportConstraints()))
-    , m_changedProperties(node.changedProperties())
 {
 }
 
@@ -68,7 +66,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
         return;
 
     m_constraints = constraints;
-    m_changedProperties = ViewportConstraints;
+    setPropertyChanged(ViewportConstraints);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 

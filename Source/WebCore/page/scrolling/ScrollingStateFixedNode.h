@@ -45,11 +45,9 @@ public:
 
     virtual ~ScrollingStateFixedNode();
 
-    enum ChangedPropertyForFixed {
-        ViewportConstraints = 1 << 0
+    enum {
+        ViewportConstraints = NumStateNodeBits
     };
-
-    virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }
 
     void updateConstraints(const FixedPositionViewportConstraints&);
     const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
@@ -60,14 +58,11 @@ private:
 
     virtual bool isFixedNode() OVERRIDE { return true; }
 
-    virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
-    virtual void resetChangedProperties() OVERRIDE { m_changedProperties = 0; }
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
 
     FixedPositionViewportConstraints m_constraints;
-    unsigned m_changedProperties;
 };
 
 inline ScrollingStateFixedNode* toScrollingStateFixedNode(ScrollingStateNode* node)

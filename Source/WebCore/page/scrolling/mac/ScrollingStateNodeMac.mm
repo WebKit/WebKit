@@ -53,7 +53,7 @@ void ScrollingStateNode::setScrollLayer(GraphicsLayer* graphicsLayer)
     m_platformScrollLayer = platformScrollLayer;
     m_graphicsLayer = graphicsLayer;
 
-    m_scrollLayerDidChange = true;
+    setPropertyChanged(ScrollLayer);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 

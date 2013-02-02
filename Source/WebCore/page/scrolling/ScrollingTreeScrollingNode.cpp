@@ -53,37 +53,37 @@ void ScrollingTreeScrollingNode::update(ScrollingStateNode* stateNode)
 {
     ScrollingStateScrollingNode* state = toScrollingStateScrollingNode(stateNode);
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ViewportRect)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
         m_viewportRect = state->viewportRect();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ContentsSize)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ContentsSize))
         m_contentsSize = state->contentsSize();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::FrameScaleFactor)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread))
         m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollElasticity)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::HorizontalScrollElasticity))
         m_horizontalScrollElasticity = state->horizontalScrollElasticity();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollElasticity)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::VerticalScrollElasticity))
         m_verticalScrollElasticity = state->verticalScrollElasticity();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledHorizontalScrollbar)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::HasEnabledHorizontalScrollbar))
         m_hasEnabledHorizontalScrollbar = state->hasEnabledHorizontalScrollbar();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledVerticalScrollbar)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::HasEnabledVerticalScrollbar))
         m_hasEnabledVerticalScrollbar = state->hasEnabledVerticalScrollbar();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollbarMode)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::HorizontalScrollbarMode))
         m_horizontalScrollbarMode = state->horizontalScrollbarMode();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollbarMode)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::VerticalScrollbarMode))
         m_verticalScrollbarMode = state->verticalScrollbarMode();
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ScrollOrigin)
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
         m_scrollOrigin = state->scrollOrigin();
 }
 

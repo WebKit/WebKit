@@ -42,14 +42,12 @@ PassOwnPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingSta
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
     : ScrollingStateNode(tree, nodeID)
-    , m_changedProperties(0)
 {
 }
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node)
     : ScrollingStateNode(node)
     , m_constraints(FixedPositionViewportConstraints(node.viewportConstraints()))
-    , m_changedProperties(node.changedProperties())
 {
 }
 
@@ -68,7 +66,7 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
         return;
 
     m_constraints = constraints;
-    m_changedProperties = ViewportConstraints;
+    setPropertyChanged(ViewportConstraints);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 

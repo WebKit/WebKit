@@ -127,21 +127,22 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
-    if (scrollingStateTree->rootStateNode()->changedProperties() & (ScrollingStateScrollingNode::WheelEventHandlerCount | ScrollingStateScrollingNode::NonFastScrollableRegion) || scrollingStateTree->rootStateNode()->scrollLayerDidChange()) {
+    ScrollingStateScrollingNode* rootNode = scrollingStateTree->rootStateNode();
+    if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount) || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion) || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
         MutexLocker lock(m_mutex);
 
-        if (scrollingStateTree->rootStateNode()->scrollLayerDidChange())
+        if (rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
             m_mainFrameScrollPosition = IntPoint();
-        if (scrollingStateTree->rootStateNode()->changedProperties() & ScrollingStateScrollingNode::WheelEventHandlerCount)
+        if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount))
             m_hasWheelEventHandlers = scrollingStateTree->rootStateNode()->wheelEventHandlerCount();
-        if (scrollingStateTree->rootStateNode()->changedProperties() & ScrollingStateScrollingNode::NonFastScrollableRegion)
+        if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion))
             m_nonFastScrollableRegion = scrollingStateTree->rootStateNode()->nonFastScrollableRegion();
     }
     
-    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollingStateTree->rootStateNode()->requestedScrollPositionRepresentsProgrammaticScroll());
+    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, rootNode->requestedScrollPositionRepresentsProgrammaticScroll());
 
     removeDestroyedNodes(scrollingStateTree.get());
-    updateTreeFromStateNode(scrollingStateTree->rootStateNode());
+    updateTreeFromStateNode(rootNode);
 }
 
 void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)

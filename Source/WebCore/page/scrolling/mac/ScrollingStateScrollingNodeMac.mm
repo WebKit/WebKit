@@ -47,7 +47,7 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(GraphicsLayer* graphi
     m_counterScrollingPlatformLayer = platformScrollLayer;
     m_counterScrollingLayer = graphicsLayer;
 
-    m_counterScrollingLayerDidChange = true;
+    setPropertyChanged(CounterScrollingLayer);
     if (m_scrollingStateTree)
         m_scrollingStateTree->setHasChangedProperties(true);
 }

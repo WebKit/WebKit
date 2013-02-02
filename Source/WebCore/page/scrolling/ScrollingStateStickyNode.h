@@ -45,11 +45,9 @@ public:
 
     virtual ~ScrollingStateStickyNode();
 
-    enum ChangedPropertyForSticky {
-        ViewportConstraints = 1 << 0
+    enum {
+        ViewportConstraints = NumStateNodeBits
     };
-
-    virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }
 
     void updateConstraints(const StickyPositionViewportConstraints&);
     const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
@@ -60,14 +58,11 @@ private:
 
     virtual bool isStickyNode() OVERRIDE { return true; }
 
-    virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
-    virtual void resetChangedProperties() OVERRIDE { m_changedProperties = 0; }
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
 
     StickyPositionViewportConstraints m_constraints;
-    unsigned m_changedProperties;
 };
 
 inline ScrollingStateStickyNode* toScrollingStateStickyNode(ScrollingStateNode* node)

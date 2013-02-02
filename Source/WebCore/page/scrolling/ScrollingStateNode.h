@@ -57,10 +57,16 @@ public:
     PassOwnPtr<ScrollingStateNode> cloneAndReset();
     void cloneAndResetChildren(ScrollingStateNode*);
 
-    virtual bool hasChangedProperties() const = 0;
-    virtual unsigned changedProperties() const = 0;
-    virtual void resetChangedProperties() = 0;
-    virtual void setHasChangedProperties() { setScrollLayerDidChange(true); }
+    enum {
+        ScrollLayer = 0,
+        NumStateNodeBits = 1
+    };
+    typedef unsigned ChangedProperties;
+
+    bool hasChangedProperties() const { return m_changedProperties; }
+    bool hasChangedProperty(unsigned propertyBit) { return m_changedProperties & (1 << propertyBit); }
+    void resetChangedProperties() { m_changedProperties = 0; }
+    void setPropertyChanged(unsigned propertyBit) { m_changedProperties |= (1 << propertyBit); }
 
     virtual void syncLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/) { }
 
@@ -68,9 +74,6 @@ public:
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(GraphicsLayer*);
     void setScrollPlatformLayer(PlatformLayer*);
-
-    bool scrollLayerDidChange() const { return m_scrollLayerDidChange; }
-    void setScrollLayerDidChange(bool scrollLayerDidChange) { m_scrollLayerDidChange = scrollLayerDidChange; }
 
     ScrollingStateTree* scrollingStateTree() const { return m_scrollingStateTree; }
     void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
@@ -98,13 +101,13 @@ private:
     void dump(TextStream&, int indent) const;
 
     virtual void dumpProperties(TextStream&, int indent) const = 0;
+    ChangedProperties changedProperties() const { return m_changedProperties; }
 
     ScrollingNodeID m_nodeID;
+    ChangedProperties m_changedProperties;
 
     ScrollingStateNode* m_parent;
     OwnPtr<Vector<OwnPtr<ScrollingStateNode> > > m_children;
-
-    bool m_scrollLayerDidChange;
 
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_platformScrollLayer;
