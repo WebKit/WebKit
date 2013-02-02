@@ -11,7 +11,6 @@
       <PreprocessorDefinitions>DISABLE_3D_RENDERING;WEBCORE_CONTEXT_MENUS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>WebCorePrefix.h</PrecompiledHeaderFile>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).vc80.pdb</ProgramDataBaseFileName>
       <ForcedIncludeFiles>WebCorePrefix.h;ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
   </ItemDefinitionGroup>
