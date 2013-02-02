@@ -1,5 +1,12 @@
 2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed.  Rolled Chromium DEPS to r180221.  Requested by
+        "Nico Weber" <thakis@chromium.org> via sheriffbot.
+
+        * DEPS:
+
+2013-02-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed.  Rolled Chromium DEPS to r180186.  Requested by
         "Nico Weber" <thakis@chromium.org> via sheriffbot.
 
