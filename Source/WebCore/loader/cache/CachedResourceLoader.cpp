@@ -465,7 +465,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (!resource)
         return 0;
 
-    resource->setLoadPriority(request.priority());
+    if (!request.forPreload() || policy != Use)
+        resource->setLoadPriority(request.priority());
+
     if ((policy != Use || resource->stillNeedsLoad()) && CachedResourceRequest::NoDefer == request.defer()) {
         resource->load(this, request.options());
 

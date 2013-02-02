@@ -29,6 +29,7 @@
 #include "AuthenticationClient.h"
 #include "HTTPHeaderMap.h"
 #include "ResourceHandleTypes.h"
+#include "ResourceLoadPriority.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -190,7 +191,9 @@ public:
 #if PLATFORM(BLACKBERRY)
     void pauseLoad(bool);
 #endif
-      
+
+    void didChangePriority(ResourceLoadPriority);
+
     ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 

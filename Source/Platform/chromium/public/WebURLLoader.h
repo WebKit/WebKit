@@ -32,12 +32,12 @@
 #define WebURLLoader_h
 
 #include "WebCommon.h"
+#include "WebURLRequest.h"
 
 namespace WebKit {
 
 class WebData;
 class WebURLLoaderClient;
-class WebURLRequest;
 class WebURLResponse;
 struct WebURLError;
 
@@ -64,6 +64,11 @@ public:
 
     // Suspends/resumes an asynchronous load.
     virtual void setDefersLoading(bool) = 0;
+
+    // Notifies the loader that the priority of a WebURLRequest has changed from
+    // its previous value. For example, a preload request starts with low
+    // priority, but may increase when the resource is needed for rendering.
+    virtual void didChangePriority(WebURLRequest::Priority newPriority) { }
 };
 
 } // namespace WebKit

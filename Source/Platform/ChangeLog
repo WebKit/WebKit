@@ -1,3 +1,15 @@
+2013-02-01  James Simonsen  <simonjam@chromium.org>
+
+        Add didChangePriority() to ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=107995
+
+        Reviewed by Darin Fisher.
+
+        * chromium/public/WebURLLoader.h:
+        (WebKit):
+        (WebURLLoader):
+        (WebKit::WebURLLoader::didChangePriority): Added.
+
 2013-02-01  Kevin Ellis  <kevers@chromium.org>
 
         [chromium] Fat scrollbars on Windows in high-DPI mode.

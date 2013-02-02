@@ -88,6 +88,11 @@ void ResourceHandleInternal::setDefersLoading(bool value)
     m_loader->setDefersLoading(value);
 }
 
+void ResourceHandleInternal::didChangePriority(WebURLRequest::Priority newPriority)
+{
+    m_loader->didChangePriority(newPriority);
+}
+
 bool ResourceHandleInternal::allowStoredCredentials() const
 {
     return m_client && m_client->shouldUseCredentialStorage(m_owner);
@@ -274,6 +279,11 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context,
     error = errorOut;
     data.clear();
     data.append(dataOut.data(), dataOut.size());
+}
+
+void ResourceHandle::didChangePriority(ResourceLoadPriority newPriority)
+{
+    d->didChangePriority(static_cast<WebURLRequest::Priority>(newPriority));
 }
 
 // static

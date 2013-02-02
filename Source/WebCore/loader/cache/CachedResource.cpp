@@ -863,12 +863,16 @@ unsigned CachedResource::overheadSize() const
     static const int kAverageClientsHashMapSize = 384;
     return sizeof(CachedResource) + m_response.memoryUsage() + kAverageClientsHashMapSize + m_resourceRequest.url().string().length() * 2;
 }
-    
-void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority) 
-{ 
+
+void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
+{
     if (loadPriority == ResourceLoadPriorityUnresolved)
+        loadPriority = defaultPriorityForResourceType(type());
+    if (loadPriority == m_loadPriority)
         return;
     m_loadPriority = loadPriority;
+    if (m_loader && m_loader->handle())
+        m_loader->handle()->didChangePriority(loadPriority);
 }
 
 

@@ -35,6 +35,7 @@
 #include <public/WebCommon.h>
 #include <public/WebURLLoader.h>
 #include <public/WebURLLoaderClient.h>
+#include <public/WebURLRequest.h>
 
 namespace WebCore {
 
@@ -51,6 +52,7 @@ public:
     void cancel();
     void setDefersLoading(bool);
     bool allowStoredCredentials() const;
+    void didChangePriority(WebKit::WebURLRequest::Priority);
 
     // WebURLLoaderClient methods:
     virtual void willSendRequest(WebKit::WebURLLoader*, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
