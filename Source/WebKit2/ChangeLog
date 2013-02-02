@@ -1,3 +1,11 @@
+2013-02-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Follow-up to r141682. Adding build targets for the files that should be generated from the new message.in file.
+
+        Unreviewed.
+
+        * GNUmakefile.list.am:
+
 2013-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r141648.

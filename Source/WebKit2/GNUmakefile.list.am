@@ -160,6 +160,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/PluginProcessProxyMessages.h \
 	DerivedSources/WebKit2/PluginProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/PluginProxyMessages.h \
+	DerivedSources/WebKit2/StorageManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/StorageManagerMessages.h \
 	DerivedSources/WebKit2/WebApplicationCacheManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebApplicationCacheManagerMessages.h \
 	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessageReceiver.cpp \
