@@ -1,3 +1,13 @@
+2013-02-02  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Adopt the WinCE port to new CMake
+        https://bugs.webkit.org/show_bug.cgi?id=108754
+
+        Reviewed by Laszlo Gombos.
+
+        * os-win32/WinMain.cpp: Removed.
+        * shell/PlatformWinCE.cmake: Removed.
+
 2013-02-02  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/108745> WTF shouldn't use a script build phase to detect the presence of headers when the compiler can do it for us

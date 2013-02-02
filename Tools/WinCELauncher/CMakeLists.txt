@@ -20,7 +20,7 @@ set(WinCELauncher_LIBRARIES
 )
 
 include_directories(${WinCELauncher_INCLUDE_DIRECTORIES})
-add_executable(WinCELauncher ${WinCELauncher_SOURCES})
+add_executable(WinCELauncher WIN32 ${WinCELauncher_SOURCES})
 add_dependencies(WinCELauncher ${WebKit_LIBRARY_NAME})
 target_link_libraries(WinCELauncher ${WinCELauncher_LIBRARIES})
 set_target_properties(WinCELauncher PROPERTIES FOLDER "Tools")

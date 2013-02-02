@@ -15,5 +15,3 @@ if (MSVC)
         set(CMAKE_CXX_FLAGS "/MP ${CMAKE_CXX_FLAGS}")
     endif ()
 endif ()
-
-string(REPLACE "/ENTRY:mainACRTStartup" "/ENTRY:WinMainCRTStartup" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
