@@ -1,3 +1,31 @@
+2013-02-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Structure::m_enumerationCache should be moved to StructureRareData
+        https://bugs.webkit.org/show_bug.cgi?id=108723
+
+        Reviewed by Oliver Hunt.
+
+        m_enumerationCache is only used by objects whose properties are iterated over, so not every Structure needs this 
+        field and it can therefore be moved safely to StructureRareData to help with memory savings.
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSPropertyNameIterator):
+        (JSC::Register::propertyNameIterator):
+        (JSC::StructureRareData::enumerationCache): Add to JSPropertyNameIterator.h so that it can see the correct type.
+        (JSC::StructureRareData::setEnumerationCache): Ditto.
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyWithoutTransition): Use the enumerationCache() getter rather than accessing the field.
+        (JSC::Structure::removePropertyWithoutTransition): Ditto.
+        (JSC::Structure::visitChildren): We no longer have to worry about marking the m_enumerationCache field.
+        * runtime/Structure.h: 
+        (JSC::Structure::setEnumerationCache): Move the old accessors back since we don't have to have any knowledge of 
+        the JSPropertyNameIterator type.
+        (JSC::Structure::enumerationCache): Ditto.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren): Mark the new m_enumerationCache field.
+        * runtime/StructureRareData.h: Add new functions/fields.
+        (StructureRareData):
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. JavaScriptCore VS2010 project cleanup.

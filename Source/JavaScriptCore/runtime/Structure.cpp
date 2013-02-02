@@ -645,7 +645,7 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
 
 PropertyOffset Structure::addPropertyWithoutTransition(JSGlobalData& globalData, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
-    ASSERT(!m_enumerationCache);
+    ASSERT(!enumerationCache());
 
     if (m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         specificValue = 0;
@@ -660,7 +660,7 @@ PropertyOffset Structure::addPropertyWithoutTransition(JSGlobalData& globalData,
 PropertyOffset Structure::removePropertyWithoutTransition(JSGlobalData& globalData, PropertyName propertyName)
 {
     ASSERT(isUncacheableDictionary());
-    ASSERT(!m_enumerationCache);
+    ASSERT(!enumerationCache());
 
     materializePropertyMapIfNecessaryForPinning(globalData);
 
@@ -859,7 +859,6 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     }
     visitor.append(&thisObject->m_previousOrRareData);
     visitor.append(&thisObject->m_specificValueInPrevious);
-    visitor.append(&thisObject->m_enumerationCache);
     if (thisObject->m_propertyTable) {
         PropertyTable::iterator end = thisObject->m_propertyTable->end();
         for (PropertyTable::iterator ptr = thisObject->m_propertyTable->begin(); ptr != end; ++ptr)

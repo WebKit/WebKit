@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+class JSPropertyNameIterator;
 class Structure;
 
 class StructureRareData : public JSCell {
@@ -51,6 +52,9 @@ public:
     JSString* objectToStringValue() const;
     void setObjectToStringValue(JSGlobalData&, const JSCell* owner, JSString* value);
 
+    JSPropertyNameIterator* enumerationCache();
+    void setEnumerationCache(JSGlobalData&, const Structure* owner, JSPropertyNameIterator* value);
+
     static JS_EXPORTDATA const ClassInfo s_info;
 
 private:
@@ -61,6 +65,7 @@ private:
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
+    WriteBarrier<JSPropertyNameIterator> m_enumerationCache;
 };
 
 } // namespace JSC

@@ -79,6 +79,7 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_previous);
     visitor.append(&thisObject->m_objectToStringValue);
+    visitor.append(&thisObject->m_enumerationCache);
 }
 
 } // namespace JSC

@@ -476,8 +476,6 @@ namespace JSC {
 
         StructureTransitionTable m_transitionTable;
 
-        WriteBarrier<JSPropertyNameIterator> m_enumerationCache;
-
         OwnPtr<PropertyTable> m_propertyTable;
 
         mutable InlineWatchpointSet m_transitionWatchpointSet;
@@ -582,6 +580,21 @@ namespace JSC {
                 return true;
         }
         return false;
+    }
+
+    inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
+    {
+        ASSERT(!isDictionary());
+        if (!typeInfo().structureHasRareData())
+            allocateRareData(globalData);
+        rareData()->setEnumerationCache(globalData, this, enumerationCache);
+    }
+
+    inline JSPropertyNameIterator* Structure::enumerationCache()
+    {
+        if (!typeInfo().structureHasRareData())
+            return 0;
+        return rareData()->enumerationCache();
     }
 
 } // namespace JSC

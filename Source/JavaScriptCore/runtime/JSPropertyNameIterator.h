@@ -73,7 +73,7 @@ namespace JSC {
         void setCachedPrototypeChain(JSGlobalData& globalData, StructureChain* cachedPrototypeChain) { m_cachedPrototypeChain.set(globalData, this, cachedPrototypeChain); }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
         void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
@@ -98,20 +98,19 @@ namespace JSC {
         OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
     };
 
-    inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
-    {
-        ASSERT(!isDictionary());
-        m_enumerationCache.set(globalData, this, enumerationCache);
-    }
-
-    inline JSPropertyNameIterator* Structure::enumerationCache()
-    {
-        return m_enumerationCache.get();
-    }
-
     ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const
     {
         return jsCast<JSPropertyNameIterator*>(jsValue().asCell());
+    }
+
+    inline JSPropertyNameIterator* StructureRareData::enumerationCache()
+    {
+        return m_enumerationCache.get();
+    }
+    
+    inline void StructureRareData::setEnumerationCache(JSGlobalData& globalData, const Structure* owner, JSPropertyNameIterator* value)
+    {
+        m_enumerationCache.set(globalData, owner, value);
     }
 
 } // namespace JSC
