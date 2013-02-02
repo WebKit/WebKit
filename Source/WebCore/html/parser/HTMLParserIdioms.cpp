@@ -26,10 +26,12 @@
 #include "HTMLParserIdioms.h"
 
 #include "Decimal.h"
+#include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -273,6 +275,23 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
     
     const UChar* start = input.characters();
     return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
+}
+
+static bool threadSafeEqual(StringImpl* a, StringImpl* b)
+{
+    if (a->hash() != b->hash())
+        return false;
+    return StringHash::equal(a, b);
+}
+
+bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
+{
+    return threadSafeEqual(a.localName().impl(), b.localName().impl());
+}
+
+bool threadSafeMatch(const String& localName, const QualifiedName& qName)
+{
+    return threadSafeEqual(localName.impl(), qName.localName().impl());
 }
 
 }

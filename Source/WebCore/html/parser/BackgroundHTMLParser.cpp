@@ -31,6 +31,7 @@
 
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLParserThread.h"
 #include "HTMLTokenizer.h"
 #include "MathMLNames.h"
@@ -55,18 +56,6 @@ static void checkThatTokensAreSafeToSendToAnotherThread(const CompactHTMLTokenSt
 
 // FIXME: Tune this constant based on a benchmark. The current value was choosen arbitrarily.
 static const size_t pendingTokenLimit = 4000;
-
-static bool threadSafeEqual(StringImpl* a, StringImpl* b)
-{
-    if (a->hash() != b->hash())
-        return false;
-    return StringHash::equal(a, b);
-}
-
-static bool threadSafeMatch(const String& localName, const QualifiedName& qName)
-{
-    return threadSafeEqual(localName.impl(), qName.localName().impl());
-}
 
 ParserMap& parserMap()
 {

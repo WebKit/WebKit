@@ -486,9 +486,9 @@ bool XSSAuditor::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName&
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
         if (isContainedInRequest(decodedSnippetForAttribute(token, attribute, treatment))) {
-            if (attributeName == srcAttr && isLikelySafeResource(String(attribute.m_value.data(), attribute.m_value.size())))
+            if (threadSafeMatch(attributeName, srcAttr) && isLikelySafeResource(String(attribute.m_value.data(), attribute.m_value.size())))
                 return false;
-            if (attributeName == http_equivAttr && !isDangerousHTTPEquiv(String(attribute.m_value.data(), attribute.m_value.size())))
+            if (threadSafeMatch(attributeName, http_equivAttr) && !isDangerousHTTPEquiv(String(attribute.m_value.data(), attribute.m_value.size())))
                 return false;
             token.eraseValueOfAttribute(indexOfAttribute);
             if (!replacementValue.isEmpty())

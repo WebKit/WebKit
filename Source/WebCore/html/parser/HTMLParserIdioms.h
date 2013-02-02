@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Decimal;
+class QualifiedName;
 
 // Space characters as defined by the HTML specification.
 bool isHTMLSpace(UChar);
@@ -84,6 +85,9 @@ inline bool isNotHTMLSpace(UChar character)
 {
     return !isHTMLSpace(character);
 }
+
+bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
+bool threadSafeMatch(const String&, const QualifiedName&);
 
 }
 
