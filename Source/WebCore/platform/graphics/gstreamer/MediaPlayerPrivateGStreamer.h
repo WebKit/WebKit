@@ -139,6 +139,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             MediaPlayer* mediaPlayer() const { return m_player; }
 
+            static KURL convertPlaybinURL(const gchar* uri);
+
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -146,6 +148,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             static void getSupportedTypes(HashSet<String>&);
             static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const KURL&);
+
+            void setPlaybinURL(KURL&);
 
             static bool isAvailable();
 
