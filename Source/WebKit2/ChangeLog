@@ -1,5 +1,12 @@
 2013-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
+        Build fix for CustomProtocolManagerMac after r141658.
+
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (WebKit::CustomProtocolManager::supplementName): I accidentally typed "const" twice twice.
+
+2013-02-01  Benjamin Poulain  <bpoulain@apple.com>
+
         [WK2] Use light supplement names instead of static AtomicStrings
         https://bugs.webkit.org/show_bug.cgi?id=108570
 

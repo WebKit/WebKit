@@ -109,7 +109,7 @@ static uint64_t generateCustomProtocolID()
 
 namespace WebKit {
 
-const const char* CustomProtocolManager::supplementName()
+const char* CustomProtocolManager::supplementName()
 {
     return "CustomProtocolManager";
 }
