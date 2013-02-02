@@ -316,8 +316,10 @@ KURL MediaPlayerPrivateGStreamer::convertPlaybinURL(const gchar* uri)
 void MediaPlayerPrivateGStreamer::setPlaybinURL(KURL& url)
 {
     // Clean out everything after file:// url path.
-    if (url.isLocalFile())
+    if (url.isLocalFile()) {
+        url.setQuery(String());
         url.removeFragmentIdentifier();
+    }
 
     m_url = url;
 
