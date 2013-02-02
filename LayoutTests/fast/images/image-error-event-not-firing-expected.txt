@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Refused to load the image 'http://www.myfakesiteabc.com/image.png' because it violates the following Content Security Policy directive: "img-src 'self'".
+
+This tests onerror event is fired if we change image src to a url blocked by content-security-policy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS error event fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

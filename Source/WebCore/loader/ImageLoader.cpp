@@ -217,12 +217,23 @@ void ImageLoader::updateFromElement()
     
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
-        if (m_hasPendingBeforeLoadEvent)
+        if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(this);
-        if (m_hasPendingLoadEvent)
+            m_hasPendingBeforeLoadEvent = false;
+        }
+        if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(this);
-        if (m_hasPendingErrorEvent)
+            m_hasPendingLoadEvent = false;
+        }
+
+        // Cancel error events that belong to the previous load, which is now cancelled by changing the src attribute.
+        // If newImage is null and m_hasPendingErrorEvent is true, we know the error event has been just posted by
+        // this load and we should not cancel the event.
+        // FIXME: If both previous load and this one got blocked with an error, we can receive one error event instead of two.
+        if (m_hasPendingErrorEvent && newImage) {
             errorEventSender().cancelEvent(this);
+            m_hasPendingErrorEvent = false;
+        }
 
         m_image = newImage;
         m_hasPendingBeforeLoadEvent = !m_element->document()->isImageDocument() && newImage;

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src 'self'">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description(
+    "This tests onerror event is fired if we change image src to a url blocked by content-security-policy."
+)
+
+jsTestIsAsync = true;
+
+function load()
+{
+    var image = document.getElementById('test');
+    image.onerror = function() {
+        testPassed("error event fired.");
+        finishJSTest();
+    };
+    image.src = 'http://www.myfakesiteabc.com/image.png';
+
+    setTimeout(function() {
+        testFailed("error event is not fired.")
+        finishJSTest();
+    }, 200);
+}
+</script>
+
+</head>
+<body onload='load()'>
+
+<img src="./color-jpeg-with-color-profile-expected.png" id="test"></img>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
