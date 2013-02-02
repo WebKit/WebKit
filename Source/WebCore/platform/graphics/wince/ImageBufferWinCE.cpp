@@ -38,6 +38,7 @@ public:
     {
     }
 
+    virtual bool currentFrameKnownToBeOpaque() { return !m_data->m_bitmap->hasAlpha() ; }
     virtual IntSize size() const { return IntSize(m_data->m_bitmap->width(), m_data->m_bitmap->height()); }
     virtual void destroyDecodedData(bool destroyAll = true) {}
     virtual unsigned decodedSize() const { return 0; }
