@@ -1,3 +1,10 @@
+2013-02-02  Alexey Proskuryakov  <ap@apple.com>
+
+        One is not allowed to use commit-queue to make oneself a committer.
+
+        * Scripts/webkitpy/common/config/committers.py: Rolled out r141693.
+        Also, changed e-mail order for Yongjun Zhang, so that Bugzilla autocomplete works.
+
 2013-02-02  Antoine Quint  <graouts@apple.com>
 
         Add Antoine Quint to the list of committers
