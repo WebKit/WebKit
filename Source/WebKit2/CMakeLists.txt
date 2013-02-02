@@ -504,6 +504,7 @@ set(WebKit2_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
+    UIProcess/Storage/StorageManager.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebContext.messages.in

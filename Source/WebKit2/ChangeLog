@@ -1,3 +1,11 @@
+2013-02-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix after r141648
+
+        Needs to add StorageManager.messages.in to CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2013-02-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for CustomProtocolManagerMac after r141658.
