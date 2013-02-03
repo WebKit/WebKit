@@ -22,7 +22,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-messages -> WebDatabaseManagerProxy LegacyReceiver {
+messages -> WebDatabaseManagerProxy {
     DidGetDatabasesByOrigin(Vector<WebKit::OriginAndDatabases> originAndDatabases, uint64_t callbackID);
     DidGetDatabaseOrigins(Vector<WTF::String> originIdentifiers, uint64_t callbackID)
     DidModifyOrigin(WTF::String originIdentifier)

@@ -1,5 +1,43 @@
 2013-02-02  Sam Weinig  <sam@webkit.org>
 
+        Remove more LegacyReceivers
+        https://bugs.webkit.org/show_bug.cgi?id=108758
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        (WebApplicationCacheManagerProxy):
+        * UIProcess/WebApplicationCacheManagerProxy.messages.in:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy):
+        * UIProcess/WebCookieManagerProxy.messages.in:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        * UIProcess/WebDatabaseManagerProxy.h:
+        (WebDatabaseManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (RemoteLayerTreeHost):
+        * UIProcess/mac/RemoteLayerTreeHost.messages.in:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+        (WebApplicationCacheManager):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in:
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        * WebProcess/Cookies/WebCookieManager.h:
+        (WebCookieManager):
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        (WebDatabaseManager):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+
+2013-02-02  Sam Weinig  <sam@webkit.org>
+
         Convert CustomProtocolManagerProxy, CustomProtocolManager and AuthenticationManager to be non-LegacyReceivers
         https://bugs.webkit.org/show_bug.cgi?id=108757
 

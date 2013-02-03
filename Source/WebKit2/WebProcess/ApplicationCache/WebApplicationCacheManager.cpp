@@ -51,11 +51,6 @@ WebApplicationCacheManager::WebApplicationCacheManager(ChildProcess* childProces
     m_childProcess->addMessageReceiver(Messages::WebApplicationCacheManager::messageReceiverName(), this);
 }
 
-void WebApplicationCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebApplicationCacheManagerMessage(connection, decoder);
-}
-
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 {
     HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;

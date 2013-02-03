@@ -97,16 +97,6 @@ void DownloadProxy::processDidClose()
     m_webContext->downloadClient().processDidCrash(m_webContext.get(), this);
 }
 
-void DownloadProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveDownloadProxyMessage(connection, decoder);
-}
-
-void DownloadProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
-{
-    didReceiveSyncDownloadProxyMessage(connection, decoder, replyEncoder);
-}
-
 void DownloadProxy::didStart(const ResourceRequest& request)
 {
     m_request = request;

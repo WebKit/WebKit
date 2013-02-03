@@ -80,11 +80,6 @@ void WebApplicationCacheManagerProxy::derefWebContextSupplement()
     APIObject::deref();
 }
 
-void WebApplicationCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebApplicationCacheManagerProxyMessage(connection,  decoder);
-}
-
 void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     if (!context())

@@ -53,9 +53,7 @@ private:
     virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
     // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    // Implemented in generated WebDatabaseManagerMessageReceiver.cpp
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getDatabasesByOrigin(uint64_t callbackID) const;
     void getDatabaseOrigins(uint64_t callbackID) const;

@@ -54,7 +54,10 @@ public:
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
 #endif
 
-private:    
+private:
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+
     void getHostnamesWithCookies(uint64_t callbackID);
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
@@ -69,8 +72,6 @@ private:
     static void cookiesDidChange();
     void dispatchCookiesDidChange();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     ChildProcess* m_process;
 };

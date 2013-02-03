@@ -40,10 +40,6 @@
 #include "SoupCookiePersistentStorageType.h"
 #endif
 
-namespace CoreIPC {
-    class Connection;
-}
-
 namespace WebKit {
 
 class WebContext;
@@ -101,7 +97,6 @@ private:
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebCookieManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
 #if PLATFORM(MAC)
     void persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);

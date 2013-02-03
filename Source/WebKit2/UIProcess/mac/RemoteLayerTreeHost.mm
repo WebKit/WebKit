@@ -48,11 +48,6 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     m_webPageProxy->process()->removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
-void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder&decoder)
-{
-    didReceiveRemoteLayerTreeHostMessage(connection, decoder);
-}
-
 void RemoteLayerTreeHost::notifyAnimationStarted(const GraphicsLayer*, double time)
 {
 }
