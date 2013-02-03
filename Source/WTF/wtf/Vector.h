@@ -252,10 +252,11 @@ namespace WTF {
         void allocateBuffer(size_t newCapacity)
         {
             ASSERT(newCapacity);
-            m_capacity = newCapacity;
             if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
                 CRASH();
-            m_buffer = static_cast<T*>(fastMalloc(newCapacity * sizeof(T)));
+            size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
+            m_capacity = sizeToAllocate / sizeof(T);
+            m_buffer = static_cast<T*>(fastMalloc(sizeToAllocate));
         }
 
         bool tryAllocateBuffer(size_t newCapacity)
@@ -264,9 +265,10 @@ namespace WTF {
             if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
                 return false;
 
+            size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
             T* newBuffer;
-            if (tryFastMalloc(newCapacity * sizeof(T)).getValue(newBuffer)) {
-                m_capacity = newCapacity;
+            if (tryFastMalloc(sizeToAllocate).getValue(newBuffer)) {
+                m_capacity = sizeToAllocate / sizeof(T);
                 m_buffer = newBuffer;
                 return true;
             }
@@ -281,10 +283,11 @@ namespace WTF {
         void reallocateBuffer(size_t newCapacity)
         {
             ASSERT(shouldReallocateBuffer(newCapacity));
-            m_capacity = newCapacity;
             if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
                 CRASH();
-            m_buffer = static_cast<T*>(fastRealloc(m_buffer, newCapacity * sizeof(T)));
+            size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
+            m_capacity = sizeToAllocate / sizeof(T);
+            m_buffer = static_cast<T*>(fastRealloc(m_buffer, sizeToAllocate));
         }
 
         void deallocateBuffer(T* bufferToDeallocate)

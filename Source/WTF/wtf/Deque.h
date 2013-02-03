@@ -383,14 +383,13 @@ namespace WTF {
     {
         checkValidity();
         size_t oldCapacity = m_buffer.capacity();
-        size_t newCapacity = std::max(static_cast<size_t>(16), oldCapacity + oldCapacity / 4 + 1);
         T* oldBuffer = m_buffer.buffer();
-        m_buffer.allocateBuffer(newCapacity);
+        m_buffer.allocateBuffer(std::max(static_cast<size_t>(16), oldCapacity + oldCapacity / 4 + 1));
         if (m_start <= m_end)
             TypeOperations::move(oldBuffer + m_start, oldBuffer + m_end, m_buffer.buffer() + m_start);
         else {
             TypeOperations::move(oldBuffer, oldBuffer + m_end, m_buffer.buffer());
-            size_t newStart = newCapacity - (oldCapacity - m_start);
+            size_t newStart = m_buffer.capacity() - (oldCapacity - m_start);
             TypeOperations::move(oldBuffer + m_start, oldBuffer + oldCapacity, m_buffer.buffer() + newStart);
             m_start = newStart;
         }
