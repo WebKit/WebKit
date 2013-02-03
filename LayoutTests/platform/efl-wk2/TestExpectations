@@ -144,16 +144,17 @@ Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failu
 webkit.org/b/98761 svg/text/selection-tripleclick.svg [ Failure Pass ]
 
 # ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
-webkit.org/b/35220 inspector/debugger/debugger-no-nested-pause.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-pause-in-internal.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-pause-on-exception.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-reload-on-pause.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-scripts.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-step-in.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/debugger-step-over.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/disable-script.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/function-details.html [ Crash Failure Pass ]
-webkit.org/b/35220 inspector/debugger/script-extract-outline.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-no-nested-pause.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-pause-in-internal.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-pause-on-exception.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-reload-on-pause.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-scripts.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-step-in.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/debugger-step-over.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/disable-script.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/function-details.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/script-extract-outline.html [ Crash Failure Pass ]
+webkit.org/b/81574 inspector/debugger/source-frame-count.html [ Crash Failure Pass ]
 
 # Test is flaky and needs to be fixed
 webkit.org/b/56985 http/tests/loading/bad-server-subframe.html [ Crash Pass ]
