@@ -139,12 +139,12 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     // See whether the first argument is a ArrayBuffer.
-    if (V8ArrayBuffer::HasInstance(args[0]))
+    if (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))
       return constructWebGLArrayWithArrayBufferArgument<ArrayClass, ElementType>(args, type, arrayType, true);
 
     // See whether the first argument is the same type as impl. In that case,
     // we can simply memcpy data from source to impl.
-    if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
+    if (JavaScriptWrapperArrayType::HasInstance(args[0], args.GetIsolate())) {
         ArrayClass* source = JavaScriptWrapperArrayType::toNative(args[0]->ToObject());
         uint32_t length = source->length();
 
@@ -238,7 +238,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 
     CPlusPlusArrayType* impl = JavaScriptWrapperArrayType::toNative(args.Holder());
 
-    if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
+    if (JavaScriptWrapperArrayType::HasInstance(args[0], args.GetIsolate())) {
         // void set(in WebGL<T>Array array, [Optional] in unsigned long offset);
         CPlusPlusArrayType* src = JavaScriptWrapperArrayType::toNative(args[0]->ToObject());
         uint32_t offset = 0;

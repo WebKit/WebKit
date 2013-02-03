@@ -37,7 +37,7 @@ void V8HTMLMediaElement::controllerAccessorSetter(v8::Local<v8::String> name, v8
 {
     HTMLMediaElement* imp = V8HTMLMediaElement::toNative(info.Holder());
     MediaController* controller = 0;
-    if (V8MediaController::HasInstance(value))
+    if (V8MediaController::HasInstance(value, info.GetIsolate()))
         controller = V8MediaController::toNative(value->ToObject());
     
     if (!controller) {

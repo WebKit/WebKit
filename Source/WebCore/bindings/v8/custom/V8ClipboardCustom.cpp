@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Clipboard::setDragImageCallback(const v8::Arguments& arg
     int y = toInt32(args[2]);
 
     Node* node = 0;
-    if (V8Node::HasInstance(args[0]))
+    if (V8Node::HasInstance(args[0], args.GetIsolate()))
         node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
 
     if (!node || !node->isElementNode())

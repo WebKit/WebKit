@@ -69,7 +69,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::removeCallback(const v8::Arguments& a
 
 v8::Handle<v8::Value> removeElement(HTMLSelectElement* imp, const v8::Arguments& args) 
 {
-    if (V8HTMLOptionElement::HasInstance(args[0])) {
+    if (V8HTMLOptionElement::HasInstance(args[0], args.GetIsolate())) {
         HTMLOptionElement* element = V8HTMLOptionElement::toNative(v8::Handle<v8::Object>::Cast(args[0]));
         imp->remove(element->index());
         return v8::Undefined();

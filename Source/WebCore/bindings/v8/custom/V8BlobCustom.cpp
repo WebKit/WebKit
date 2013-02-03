@@ -97,17 +97,17 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
         v8::Local<v8::Value> item = blobParts->Get(v8::Uint32::New(i));
         ASSERT(!item.IsEmpty());
 #if ENABLE(BLOB)
-        if (V8ArrayBuffer::HasInstance(item)) {
+        if (V8ArrayBuffer::HasInstance(item, args.GetIsolate())) {
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBuffer);
             blobBuilder.append(context, arrayBuffer);
-        } else if (V8ArrayBufferView::HasInstance(item)) {
+        } else if (V8ArrayBufferView::HasInstance(item, args.GetIsolate())) {
             ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBufferView);
             blobBuilder.append(arrayBufferView);
         } else
 #endif
-        if (V8Blob::HasInstance(item)) {
+        if (V8Blob::HasInstance(item, args.GetIsolate())) {
             Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(blob);
             blobBuilder.append(blob);

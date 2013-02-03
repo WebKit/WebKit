@@ -70,7 +70,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     ExceptionCode ec = 0;
     String expression = toWebCoreString(args[0]);
     RefPtr<Node> contextNode;
-    if (V8Node::HasInstance(args[1]))
+    if (V8Node::HasInstance(args[1], args.GetIsolate()))
         contextNode = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1]));
 
     RefPtr<XPathNSResolver> resolver = toXPathNSResolver(args[2]);
@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 
     int type = toInt32(args[3]);
     RefPtr<XPathResult> inResult;
-    if (V8XPathResult::HasInstance(args[4]))
+    if (V8XPathResult::HasInstance(args[4], args.GetIsolate()))
         inResult = V8XPathResult::toNative(v8::Handle<v8::Object>::Cast(args[4]));
 
     V8TRYCATCH(RefPtr<XPathResult>, result, document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec));

@@ -42,7 +42,7 @@ void V8AudioBufferSourceNode::bufferAccessorSetter(v8::Local<v8::String> name, v
     AudioBufferSourceNode* imp = V8AudioBufferSourceNode::toNative(holder);
 
     AudioBuffer* buffer = 0;
-    if (V8AudioBuffer::HasInstance(value)) {
+    if (V8AudioBuffer::HasInstance(value, info.GetIsolate())) {
         buffer = V8AudioBuffer::toNative(value->ToObject());
         if (buffer && !imp->setBuffer(buffer)) {
             throwTypeError("AudioBuffer unsupported number of channels", info.GetIsolate());

@@ -90,7 +90,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::removeCallback(const v8::Argument
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& args)
 {
-    if (!V8HTMLOptionElement::HasInstance(args[0]))
+    if (!V8HTMLOptionElement::HasInstance(args[0], args.GetIsolate()))
         return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
     HTMLOptionElement* option = V8HTMLOptionElement::toNative(v8::Handle<v8::Object>(v8::Handle<v8::Object>::Cast(args[0])));
