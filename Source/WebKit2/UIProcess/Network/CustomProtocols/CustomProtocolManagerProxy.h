@@ -28,16 +28,13 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
+#include "MessageReceiver.h"
+
 #if PLATFORM(MAC)
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WKCustomProtocolLoader;
 #endif
-
-namespace CoreIPC {
-class Connection;
-class MessageDecoder;
-} // namespace CoreIPC
 
 namespace WebCore {
 class ResourceRequest;
@@ -47,17 +44,17 @@ namespace WebKit {
 
 class ChildProcessProxy;
 
-class CustomProtocolManagerProxy {
+class CustomProtocolManagerProxy : public CoreIPC::MessageReceiver {
 public:
     explicit CustomProtocolManagerProxy(ChildProcessProxy*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);
 
-private:
-    void didReceiveCustomProtocolManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
+private:
     ChildProcessProxy* m_childProcessProxy;
 
 #if PLATFORM(MAC)

@@ -63,11 +63,6 @@ AuthenticationManager::AuthenticationManager(ChildProcess* process)
     m_process->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
 }
 
-void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveAuthenticationManagerMessage(connection, decoder);
-}
-
 uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)
 {
     uint64_t challengeID = generateAuthenticationChallengeID();

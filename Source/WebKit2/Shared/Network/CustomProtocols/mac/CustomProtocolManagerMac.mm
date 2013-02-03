@@ -174,11 +174,6 @@ bool CustomProtocolManager::supportsScheme(const String& scheme)
     return m_registeredSchemes.contains(scheme);
 }
 
-void CustomProtocolManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveCustomProtocolManagerMessage(connection, decoder);
-}
-
 void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
 {
     WKCustomProtocol *protocol = protocolForID(customProtocolID);

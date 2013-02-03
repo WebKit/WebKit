@@ -22,7 +22,7 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
-messages -> CustomProtocolManagerProxy LegacyReceiver {
+messages -> CustomProtocolManagerProxy {
     StartLoading(uint64_t customProtocolID, WebCore::ResourceRequest request)
     StopLoading(uint64_t customProtocolID)
 }

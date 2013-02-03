@@ -1,3 +1,23 @@
+2013-02-02  Sam Weinig  <sam@webkit.org>
+
+        Convert CustomProtocolManagerProxy, CustomProtocolManager and AuthenticationManager to be non-LegacyReceivers
+        https://bugs.webkit.org/show_bug.cgi?id=108757
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        * Shared/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        (CustomProtocolManager):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in:
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        (CustomProtocolManagerProxy):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+
 2013-02-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_file_chooser_request
