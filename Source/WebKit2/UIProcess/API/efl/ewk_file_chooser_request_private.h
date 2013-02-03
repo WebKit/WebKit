@@ -27,22 +27,16 @@
 #define ewk_file_chooser_request_private_h
 
 #include "APIObject.h"
+#include "WKRetainPtr.h"
 #include "ewk_object_private.h"
+#include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-
-namespace WebKit {
-class ImmutableArray;
-class WebOpenPanelParameters;
-class WebOpenPanelResultListenerProxy;
-}
 
 class EwkFileChooserRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkFileChooserRequest)
 
-    static PassRefPtr<EwkFileChooserRequest> create(WebKit::WebOpenPanelParameters* parameters, WebKit::WebOpenPanelResultListenerProxy* listener)
+    static PassRefPtr<EwkFileChooserRequest> create(WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener)
     {
         return adoptRef(new EwkFileChooserRequest(parameters, listener));
     }
@@ -50,16 +44,16 @@ public:
     ~EwkFileChooserRequest();
 
     bool allowMultipleFiles() const;
-    PassRefPtr<WebKit::ImmutableArray> acceptedMIMETypes() const;
+    WKRetainPtr<WKArrayRef> acceptedMIMETypes() const;
     inline bool wasHandled() const { return m_wasRequestHandled; }
     void cancel();
-    void chooseFiles(Vector< RefPtr<WebKit::APIObject> >& fileURLs);
+    void chooseFiles(WKArrayRef fileURLs);
 
 private:
-    EwkFileChooserRequest(WebKit::WebOpenPanelParameters* parameters, WebKit::WebOpenPanelResultListenerProxy* listener);
+    EwkFileChooserRequest(WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener);
 
-    RefPtr<WebKit::WebOpenPanelParameters> m_parameters;
-    RefPtr<WebKit::WebOpenPanelResultListenerProxy> m_listener;
+    WKRetainPtr<WKOpenPanelParametersRef> m_parameters;
+    WKRetainPtr<WKOpenPanelResultListenerRef> m_listener;
     bool m_wasRequestHandled;
 };
 

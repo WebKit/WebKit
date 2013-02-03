@@ -1,3 +1,30 @@
+2013-02-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_file_chooser_request
+        https://bugs.webkit.org/show_bug.cgi?id=107811
+
+        Reviewed by Sam Weinig.
+
+        Use C API inside ewk_file_chooser_request instead of
+        accessing the internal C++ classes directly, to
+        avoid violating API layering.
+
+        * UIProcess/API/efl/ewk_file_chooser_request.cpp:
+        (EwkFileChooserRequest::EwkFileChooserRequest):
+        (EwkFileChooserRequest::~EwkFileChooserRequest):
+        (EwkFileChooserRequest::allowMultipleFiles):
+        (EwkFileChooserRequest::acceptedMIMETypes):
+        (EwkFileChooserRequest::cancel):
+        (EwkFileChooserRequest::chooseFiles):
+        (ewk_file_chooser_request_accepted_mimetypes_get):
+        (ewk_file_chooser_request_files_choose):
+        (ewk_file_chooser_request_file_choose):
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        (EwkFileChooserRequest::create):
+        (EwkFileChooserRequest):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::runOpenPanel):
+
 2013-02-02  Sam Weinig  <sam@webkit.org>
 
         Stop keeping a frame tree in the UIProcess

@@ -26,18 +26,19 @@
 #include "config.h"
 #include "ewk_file_chooser_request.h"
 
-#include "ImmutableArray.h"
-#include "MutableArray.h"
-#include "WebOpenPanelParameters.h"
-#include "WebOpenPanelResultListenerProxy.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "WKArray.h"
+#include "WKOpenPanelParameters.h"
+#include "WKOpenPanelResultListener.h"
+#include "WKSharedAPICast.h"
+#include "WKString.h"
+#include "WKURL.h"
 #include "ewk_file_chooser_request_private.h"
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
 
-EwkFileChooserRequest::EwkFileChooserRequest(WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
+EwkFileChooserRequest::EwkFileChooserRequest(WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener)
     : m_parameters(parameters)
     , m_listener(listener)
     , m_wasRequestHandled(false)
@@ -49,33 +50,30 @@ EwkFileChooserRequest::EwkFileChooserRequest(WebOpenPanelParameters* parameters,
 EwkFileChooserRequest::~EwkFileChooserRequest()
 {
     if (!m_wasRequestHandled)
-        m_listener->cancel();
+        WKOpenPanelResultListenerCancel(m_listener.get());
 }
 
 bool EwkFileChooserRequest::allowMultipleFiles() const
 {
-    return m_parameters->allowMultipleFiles();
+    return WKOpenPanelParametersGetAllowsMultipleFiles(m_parameters.get());
 }
 
-PassRefPtr<ImmutableArray> EwkFileChooserRequest::acceptedMIMETypes() const
+WKRetainPtr<WKArrayRef> EwkFileChooserRequest::acceptedMIMETypes() const
 {
-    return m_parameters->acceptMIMETypes();
+    return adoptWK(WKOpenPanelParametersCopyAcceptedMIMETypes(m_parameters.get()));
 }
 
 void EwkFileChooserRequest::cancel()
 {
     m_wasRequestHandled = true;
 
-    return m_listener->cancel();
+    return WKOpenPanelResultListenerCancel(m_listener.get());
 }
 
-void EwkFileChooserRequest::chooseFiles(Vector< RefPtr<APIObject> >& fileURLs)
+void EwkFileChooserRequest::chooseFiles(WKArrayRef fileURLs)
 {
-    ASSERT(!fileURLs.isEmpty());
-    ASSERT(fileURLs.size() == 1 || m_parameters->allowMultipleFiles());
-
     m_wasRequestHandled = true;
-    m_listener->chooseFiles(ImmutableArray::adopt(fileURLs).get());
+    WKOpenPanelResultListenerChooseFiles(m_listener.get(), fileURLs);
 }
 
 Eina_Bool ewk_file_chooser_request_allow_multiple_files_get(const Ewk_File_Chooser_Request* request)
@@ -90,14 +88,14 @@ Eina_List* ewk_file_chooser_request_accepted_mimetypes_get(const Ewk_File_Choose
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkFileChooserRequest, request, impl, 0);
 
     Eina_List* mimeTypeList = 0;
-    RefPtr<ImmutableArray> mimeTypes = impl->acceptedMIMETypes();
+    WKRetainPtr<WKArrayRef> mimeTypes = impl->acceptedMIMETypes();
 
-    const size_t size = mimeTypes->size();
+    const size_t size = WKArrayGetSize(mimeTypes.get());
     for (size_t i = 0; i < size; ++i) {
-        String mimeTypeString = static_cast<WebString*>(mimeTypes->at(i))->string();
-        if (mimeTypeString.isEmpty())
+        WKRetainPtr<WKStringRef> mimeType = static_cast<WKStringRef>(WKArrayGetItemAtIndex(mimeTypes.get(), i));
+        if (!mimeType || WKStringIsEmpty(mimeType.get()))
             continue;
-        mimeTypeList = eina_list_append(mimeTypeList, eina_stringshare_add(mimeTypeString.utf8().data()));
+        mimeTypeList = eina_list_append(mimeTypeList, eina_stringshare_add(toWTFString(mimeType.get()).utf8().data()));
     }
 
     return mimeTypeList;
@@ -117,20 +115,22 @@ Eina_Bool ewk_file_chooser_request_files_choose(Ewk_File_Chooser_Request* reques
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkFileChooserRequest, request, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(chosenFiles, false);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_list_count(chosenFiles) == 1 || impl->allowMultipleFiles(), false);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(impl->wasHandled(), false);
 
-    Vector< RefPtr<APIObject> > fileURLs;
+    const unsigned urlCount = eina_list_count(chosenFiles);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(urlCount == 1 || (urlCount > 1 && impl->allowMultipleFiles()), false);
 
-    const Eina_List* l;
-    void* data;
-    EINA_LIST_FOREACH(chosenFiles, l, data) {
-        EINA_SAFETY_ON_NULL_RETURN_VAL(data, false);
-        String fileURL = "file://" + String::fromUTF8(static_cast<char*>(data));
-        fileURLs.append(WebURL::create(fileURL));
+    OwnArrayPtr<WKTypeRef> filesURLs = adoptArrayPtr(new WKTypeRef[urlCount]);
+
+    for (unsigned i = 0; i < urlCount; ++i) {
+        const char* url = static_cast<char*>(eina_list_nth(chosenFiles, i));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(url, false);
+        String fileURL = ASCIILiteral("file://") + String::fromUTF8(url);
+        filesURLs[i] = toCopiedURLAPI(fileURL);
     }
 
-    impl->chooseFiles(fileURLs);
+    WKRetainPtr<WKArrayRef> wkFileURLs(AdoptWK, WKArrayCreateAdoptingValues(filesURLs.get(), urlCount));
+    impl->chooseFiles(wkFileURLs.get());
 
     return true;
 }
@@ -141,11 +141,12 @@ Eina_Bool ewk_file_chooser_request_file_choose(Ewk_File_Chooser_Request* request
     EINA_SAFETY_ON_NULL_RETURN_VAL(chosenFile, false);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(impl->wasHandled(), false);
 
-    Vector< RefPtr<APIObject> > fileURLs;
-    String fileURL = "file://" + String::fromUTF8(chosenFile);
-    fileURLs.append(WebURL::create(fileURL));
+    String fileURL = ASCIILiteral("file://") + String::fromUTF8(chosenFile);
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, toCopiedURLAPI(fileURL));
 
-    impl->chooseFiles(fileURLs);
+    WKTypeRef wkURLPtr = wkURL.get();
+    WKRetainPtr<WKArrayRef> wkFileURLs(AdoptWK, WKArrayCreate(&wkURLPtr, 1));
+    impl->chooseFiles(wkFileURLs.get());
 
     return true;
 }

@@ -200,7 +200,7 @@ unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef,
 void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
 {
     EwkView* view = toPageUIClientEfl(clientInfo)->m_view;
-    RefPtr<EwkFileChooserRequest> fileChooserRequest = EwkFileChooserRequest::create(toImpl(parameters), toImpl(listener));
+    RefPtr<EwkFileChooserRequest> fileChooserRequest = EwkFileChooserRequest::create(parameters, listener);
     view->smartCallback<FileChooserRequest>().call(fileChooserRequest.get());
 }
 
