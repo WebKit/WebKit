@@ -112,7 +112,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallback(const v8
         return v8Boolean(false, args.GetIsolate());
 
     v8::HandleScope handleScope;
-    return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0]));
+    return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0], args.GetIsolate()));
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& args)
@@ -133,19 +133,19 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
         return v8::String::NewSymbol("date");
     if (value->IsRegExp())
         return v8::String::NewSymbol("regexp");
-    if (V8Node::HasInstance(value))
+    if (V8Node::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("node");
-    if (V8NodeList::HasInstance(value))
+    if (V8NodeList::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8HTMLCollection::HasInstance(value))
+    if (V8HTMLCollection::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Int8Array::HasInstance(value) || V8Int16Array::HasInstance(value) || V8Int32Array::HasInstance(value))
+    if (V8Int8Array::HasInstance(value, args.GetIsolate()) || V8Int16Array::HasInstance(value, args.GetIsolate()) || V8Int32Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Uint8Array::HasInstance(value) || V8Uint16Array::HasInstance(value) || V8Uint32Array::HasInstance(value))
+    if (V8Uint8Array::HasInstance(value, args.GetIsolate()) || V8Uint16Array::HasInstance(value, args.GetIsolate()) || V8Uint32Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Float32Array::HasInstance(value) || V8Float64Array::HasInstance(value))
+    if (V8Float32Array::HasInstance(value, args.GetIsolate()) || V8Float64Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Uint8ClampedArray::HasInstance(value))
+    if (V8Uint8ClampedArray::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
     return v8::Undefined();
 }
@@ -243,7 +243,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallback(const v8::
     v8::HandleScope handleScope;
 
     v8::Local<v8::Value> value = args[0];
-    if (!V8Node::HasInstance(value))
+    if (!V8Node::HasInstance(value, args.GetIsolate()))
         return v8::Undefined();
     Node* node = V8Node::toNative(value->ToObject());
     if (!node)
