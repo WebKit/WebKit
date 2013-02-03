@@ -51,6 +51,10 @@ public:
     // for the requested path.
     virtual void didReadMetadata(const WebFileInfo&) = 0;
 
+    // Callback for WebFileSystem::createSnapshot. The metadata also includes the
+    // platform file path.
+    virtual void didCreateSnapshotFile(const WebFileInfo&) { WEBKIT_ASSERT_NOT_REACHED(); }
+
     // Callback for WebFileSystem::readDirectory.  Called with a vector of
     // file entries in the requested directory. This callback might be called
     // multiple times if the directory has many entries. |hasMore| must be
