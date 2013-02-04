@@ -135,6 +135,14 @@ fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 # https://bugs.webkit.org/show_bug.cgi?id=105390
 fast/css/sticky/sticky-top-zoomed.html
 
+# [Qt][Wk2] New printing tests fail on Qt since r141459.
+webkit.org/b/108643 printing/quirks-percentage-height-body.html [ Skip ]
+webkit.org/b/108643 printing/quirks-percentage-height.html [ Skip ]
+webkit.org/b/108643 printing/standards-percentage-heights.html [ Skip ]
+
+# [Qt][Wk2] REGRESSION(r141039): It made compositing/layer-creation/fixed-position-no-content.html fails on Qt.
+webkit.org/b/108646 compositing/layer-creation/fixed-position-no-content.html [ Skip ]
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
