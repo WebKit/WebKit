@@ -233,9 +233,11 @@
        (subpath "/Library/Components")
        (subpath "/Library/Keyboard Layouts")
        (subpath "/Library/Input Methods")
+       (subpath "/Library/InputManagers")
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
        (home-subpath "/Library/Input Methods")
+       (home-subpath "/Library/InputManagers")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
        (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le"))
        (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le.kbdx"))
