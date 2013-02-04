@@ -28,7 +28,8 @@
     Conditional=SVG,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    EventTarget
 ] interface SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget
