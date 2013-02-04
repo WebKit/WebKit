@@ -461,6 +461,10 @@ void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection
         didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
 }
 
+void WebProcessProxy::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
+}
+
 void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
     // Protect ourselves, as the call to disconnect() below may otherwise cause us

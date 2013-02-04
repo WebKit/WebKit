@@ -49,6 +49,10 @@ void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*
         didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
 }
 
+void StorageManager::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
+}
+
 void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
 {
     UNUSED_PARAM(storageAreaID);

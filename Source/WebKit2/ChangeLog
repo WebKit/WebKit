@@ -1,3 +1,43 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Add didCloseOnConnectionWorkQueue to Connection::QueueClient
+        https://bugs.webkit.org/show_bug.cgi?id=108853
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::connectionDidClose):
+        * Platform/CoreIPC/Connection.h:
+        (QueueClient):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::didCloseOnConnectionWorkQueue):
+        * Shared/mac/SecItemShim.h:
+        (SecItemShim):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::didCloseOnConnectionWorkQueue):
+        (WebKit):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didCloseOnConnectionWorkQueue):
+        (WebKit):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::didCloseOnConnectionWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.h:
+        (SecItemShimProxy):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::didCloseOnConnectionWorkQueue):
+        (WebKit):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didCloseOnConnectionWorkQueue):
+        (WebKit):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2013-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ 'make dist' in preparation for the 1.11.5 release.

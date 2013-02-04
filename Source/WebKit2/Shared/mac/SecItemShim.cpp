@@ -140,6 +140,10 @@ void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* co
     }
 }
 
+void SecItemShim::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
 }
 
-#endif
+} // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)

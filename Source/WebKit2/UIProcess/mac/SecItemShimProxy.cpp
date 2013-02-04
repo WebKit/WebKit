@@ -114,6 +114,10 @@ void SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connectio
     }
 }
 
+void SecItemShimProxy::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
 }
+
+} // namespace WebKit
 
 #endif // USE(SECURITY_FRAMEWORK)

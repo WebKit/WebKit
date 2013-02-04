@@ -81,6 +81,10 @@ void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection
     }
 }
 
+void EventDispatcher::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
+}
+
 void EventDispatcher::wheelEvent(CoreIPC::Connection*, uint64_t pageID, const WebWheelEvent& wheelEvent, bool canGoBack, bool canGoForward)
 {
 #if ENABLE(THREADED_SCROLLING)

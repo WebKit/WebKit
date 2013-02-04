@@ -642,6 +642,10 @@ void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* con
     }
 }
 
+void WebProcess::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
+}
+
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);

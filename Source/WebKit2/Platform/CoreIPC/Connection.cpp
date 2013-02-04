@@ -636,6 +636,9 @@ void Connection::connectionDidClose()
             iter->value->semaphore.signal();
     }
 
+    for (size_t i = 0; i < m_connectionQueueClients.size(); ++i)
+        m_connectionQueueClients[i]->didCloseOnConnectionWorkQueue(this);
+
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);
 
