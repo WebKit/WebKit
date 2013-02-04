@@ -90,7 +90,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
             return false;
         }
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
-        if (V8MessagePort::HasInstance(transferrable)) {
+        if (V8MessagePort::HasInstance(transferrable, isolate)) {
             RefPtr<MessagePort> port = V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(transferrable));
             // Check for duplicate MessagePorts.
             if (ports.contains(port)) {
@@ -98,7 +98,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
                 return false;
             }
             ports.append(port.release());
-        } else if (V8ArrayBuffer::HasInstance(transferrable))
+        } else if (V8ArrayBuffer::HasInstance(transferrable, isolate))
             arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
         else {
             throwTypeError(0, isolate);

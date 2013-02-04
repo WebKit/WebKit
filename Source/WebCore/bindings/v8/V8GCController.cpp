@@ -180,6 +180,11 @@ Node* V8GCController::opaqueRootForGC(Node* node)
 
 class WrapperVisitor : public v8::PersistentHandleVisitor {
 public:
+    explicit WrapperVisitor(v8::Isolate* isolate)
+        : m_isolate(isolate)
+    {
+    }
+
     virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId) OVERRIDE
     {
         ASSERT(value->IsObject());
@@ -216,7 +221,8 @@ public:
         }
 
         if (classId == v8DOMNodeClassId) {
-            ASSERT(V8Node::HasInstance(wrapper));
+            UNUSED_PARAM(m_isolate);
+            ASSERT(V8Node::HasInstance(wrapper, m_isolate));
             ASSERT(!wrapper.IsIndependent());
 
             Node* node = static_cast<Node*>(object);
@@ -239,6 +245,7 @@ public:
 
 private:
     WrapperGrouper m_grouper;
+    v8::Isolate* m_isolate;
 };
 
 // Regarding a minor GC algorithm for DOM nodes, see this document:
@@ -348,14 +355,14 @@ void V8GCController::majorGCPrologue()
 {
     TRACE_EVENT_BEGIN0("v8", "GC");
 
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope;
 
-    WrapperVisitor visitor;
+    WrapperVisitor visitor(isolate);
     v8::V8::VisitHandlesWithClassIds(&visitor);
     visitor.notifyFinished();
 
-    V8PerIsolateData* data = V8PerIsolateData::current();
-    data->stringCache()->clearOnGC();
+    V8PerIsolateData::from(isolate)->stringCache()->clearOnGC();
 }
 
 static int workingSetEstimateMB = 0;

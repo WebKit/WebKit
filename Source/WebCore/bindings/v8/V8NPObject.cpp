@@ -70,13 +70,13 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     NPObject* npObject;
 
     // These three types are subtypes of HTMLPlugInElement.
-    if (V8HTMLAppletElement::HasInstance(args.Holder()) || V8HTMLEmbedElement::HasInstance(args.Holder())
-        || V8HTMLObjectElement::HasInstance(args.Holder())) {
+    if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate()) || V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate())
+        || V8HTMLObjectElement::HasInstance(args.Holder(), args.GetIsolate())) {
         // The holder object is a subtype of HTMLPlugInElement.
         HTMLPlugInElement* element;
-        if (V8HTMLAppletElement::HasInstance(args.Holder()))
+        if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate()))
             element = V8HTMLAppletElement::toNative(args.Holder());
-        else if (V8HTMLEmbedElement::HasInstance(args.Holder()))
+        else if (V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate()))
             element = V8HTMLEmbedElement::toNative(args.Holder());
         else
             element = V8HTMLObjectElement::toNative(args.Holder());

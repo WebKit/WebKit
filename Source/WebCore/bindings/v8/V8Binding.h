@@ -436,7 +436,7 @@ namespace WebCore {
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>, v8::Isolate*);
-    PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>);
+    PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>, v8::Isolate*);
 
     v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context>);
     DOMWindow* toDOMWindow(v8::Handle<v8::Context>);

@@ -710,7 +710,7 @@ public:
         JSFailure
     };
 
-    Serializer(Writer& writer, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, Vector<String>& blobURLs, v8::TryCatch& tryCatch)
+    Serializer(Writer& writer, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, Vector<String>& blobURLs, v8::TryCatch& tryCatch, v8::Isolate* isolate)
         : m_writer(writer)
         , m_tryCatch(tryCatch)
         , m_depth(0)
@@ -718,6 +718,7 @@ public:
         , m_status(Success)
         , m_nextObjectReference(0)
         , m_blobURLs(blobURLs)
+        , m_isolate(isolate)
     {
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
@@ -1238,6 +1239,7 @@ private:
     ObjectPool m_transferredArrayBuffers;
     uint32_t m_nextObjectReference;
     Vector<String>& m_blobURLs;
+    v8::Isolate* m_isolate;
 };
 
 Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
@@ -1271,17 +1273,17 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         m_writer.writeUint32(value->Uint32Value());
     else if (value->IsNumber())
         m_writer.writeNumber(value.As<v8::Number>()->Value());
-    else if (V8ArrayBufferView::HasInstance(value))
+    else if (V8ArrayBufferView::HasInstance(value, m_isolate))
         return writeAndGreyArrayBufferView(value.As<v8::Object>(), next);
     else if (value->IsString())
         writeString(value);
-    else if (V8MessagePort::HasInstance(value)) {
+    else if (V8MessagePort::HasInstance(value, m_isolate)) {
         uint32_t messagePortIndex;
         if (m_transferredMessagePorts.tryGet(value.As<v8::Object>(), &messagePortIndex))
                 m_writer.writeTransferredMessagePort(messagePortIndex);
             else
                 return handleError(DataCloneError, next);
-    } else if (V8ArrayBuffer::HasInstance(value) && m_transferredArrayBuffers.tryGet(value.As<v8::Object>(), &arrayBufferIndex))
+    } else if (V8ArrayBuffer::HasInstance(value, m_isolate) && m_transferredArrayBuffers.tryGet(value.As<v8::Object>(), &arrayBufferIndex))
         return writeTransferredArrayBuffer(value, arrayBufferIndex, next);
     else {
         v8::Handle<v8::Object> jsObject = value.As<v8::Object>();
@@ -1298,21 +1300,21 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
             writeBooleanObject(value);
         else if (value->IsArray()) {
             return startArrayState(value.As<v8::Array>(), next);
-        } else if (V8File::HasInstance(value))
+        } else if (V8File::HasInstance(value, m_isolate))
             writeFile(value);
-        else if (V8Blob::HasInstance(value))
+        else if (V8Blob::HasInstance(value, m_isolate))
             writeBlob(value);
 #if ENABLE(FILE_SYSTEM)
-        else if (V8DOMFileSystem::HasInstance(value))
+        else if (V8DOMFileSystem::HasInstance(value, m_isolate))
             return writeDOMFileSystem(value, next);
 #endif
-        else if (V8FileList::HasInstance(value))
+        else if (V8FileList::HasInstance(value, m_isolate))
             writeFileList(value);
-        else if (V8ImageData::HasInstance(value))
+        else if (V8ImageData::HasInstance(value, m_isolate))
             writeImageData(value);
         else if (value->IsRegExp())
             writeRegExp(value);
-        else if (V8ArrayBuffer::HasInstance(value))
+        else if (V8ArrayBuffer::HasInstance(value, m_isolate))
             return writeArrayBuffer(value, next);
         else if (value->IsObject()) {
             if (isHostObject(jsObject) || jsObject->IsCallable() || value->IsNativeError())
@@ -1983,8 +1985,7 @@ typedef Vector<WTF::ArrayBufferContents, 1> ArrayBufferContentsArray;
 
 class Deserializer : public CompositeCreator {
 public:
-    explicit Deserializer(Reader& reader, 
-                          MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents)
+    Deserializer(Reader& reader, MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents)
         : m_reader(reader)
         , m_transferredMessagePorts(messagePorts)
         , m_arrayBufferContents(arrayBufferContents)
@@ -2429,7 +2430,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, Messag
     Serializer::Status status;
     {
         v8::TryCatch tryCatch;
-        Serializer serializer(writer, messagePorts, arrayBuffers, m_blobURLs, tryCatch);
+        Serializer serializer(writer, messagePorts, arrayBuffers, m_blobURLs, tryCatch, isolate);
         status = serializer.serialize(value);
         if (status == Serializer::JSException) {
             // If there was a JS exception thrown, re-throw it.
