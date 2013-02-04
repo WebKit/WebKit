@@ -1,3 +1,20 @@
+2013-02-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add a new method for obtaining a build-type-dependent path,
+        instead of modifying all call sites to pass it in.
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): use the new method, which takes a tuple.
+        (TestRunner._setup_testing_environment): ditto.
+        * gtk/common.py:
+        (get_build_path): accept a tuple that may include Release and
+        Debug as build types, for searching.
+        (build_path_for_build_types): new method that finds the path when
+        it is dependent on the build type.
+        (build_path): restore its original behaviour.
+
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate entry from DumpRenderTree Xcode project

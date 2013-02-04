@@ -88,7 +88,7 @@ class TestRunner:
         self._options = options
         self._build_type = "Debug" if self._options.debug else "Release"
 
-        self._programs_path = common.build_path(self._build_type, "Programs")
+        self._programs_path = common.build_path_for_build_types((self._build_type,), "Programs")
         self._tests = self._get_tests(tests)
         self._skipped_tests = TestRunner.SKIPPED
         if not sys.stdout.isatty():
@@ -161,7 +161,7 @@ class TestRunner:
         self._test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
         self._test_env['GSETTINGS_BACKEND'] = 'memory'
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path(self._build_type, "Libraries")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path_for_build_types((self._build_type,), "Libraries")
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
         try:

@@ -36,7 +36,7 @@ def top_level_path(*args):
     return os.path.join(*((script_path('..', '..'),) + args))
 
 
-def get_build_path(build_type='Release'):
+def get_build_path(build_types=('Release', 'Debug')):
     global build_dir
     if build_dir:
         return build_dir
@@ -57,7 +57,7 @@ def get_build_path(build_type='Release'):
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    if build_type:
+    for build_type in build_types:
         build_dir = top_level_path('WebKitBuild', build_type)
         if is_valid_build_directory(build_dir):
             return build_dir
@@ -79,8 +79,12 @@ def get_build_path(build_type='Release'):
     sys.exit(1)
 
 
-def build_path(build_type, *args):
-    return os.path.join(*(get_build_path(build_type),) + args)
+def build_path_for_build_types(build_types, *args):
+    return os.path.join(*(get_build_path(build_types),) + args)
+
+
+def build_path(*args):
+    return build_path_for_build_types(('Release', 'Debug'), *args)
 
 
 def pkg_config_file_variable(package, variable):
