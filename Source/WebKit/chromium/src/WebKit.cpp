@@ -53,6 +53,10 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/AtomicString.h>
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBFactoryBackendProxy.h"
+#endif
+
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivateChromium.h"
 #include "WebMediaPlayerClientImpl.h"
@@ -147,6 +151,10 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
     // the initialization thread-safe, but given that so many code paths use
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
+
+#if ENABLE(INDEXED_DATABASE)
+    WebCore::setIDBFactoryBackendInterfaceCreateFunction(WebKit::IDBFactoryBackendProxy::create);
+#endif
 
 #if ENABLE(VIDEO)
     WebCore::MediaPlayerPrivate::setMediaEngineRegisterSelfFunction(WebKit::WebMediaPlayerClientImpl::registerSelf);

@@ -370,7 +370,6 @@
                 'src/IDBDatabaseCallbacksProxy.h',
                 'src/IDBDatabaseBackendProxy.cpp',
                 'src/IDBDatabaseBackendProxy.h',
-                'src/IDBFactoryBackendInterface.cpp',
                 'src/IDBFactoryBackendProxy.cpp',
                 'src/IDBFactoryBackendProxy.h',
                 'src/InspectorClientImpl.cpp',

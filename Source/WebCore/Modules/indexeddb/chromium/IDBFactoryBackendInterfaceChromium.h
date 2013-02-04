@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef IDBFactoryBackendInterfaceChromium_h
+#define IDBFactoryBackendInterfaceChromium_h
 
-#ifndef IDBFactoryBackendProxy_h
-#define IDBFactoryBackendProxy_h
+#include "IDBFactoryBackendInterface.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCallbacks.h"
-#include "IDBFactoryBackendInterfaceChromium.h"
-
 namespace WebCore {
-class ScriptExecutionContext;
-}
 
-namespace WebKit {
+typedef PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterfaceCreate();
 
-class WebIDBFactory;
-class WebSecurityOrigin;
+void setIDBFactoryBackendInterfaceCreateFunction(IDBFactoryBackendInterfaceCreate);
 
-class IDBFactoryBackendProxy : public WebCore::IDBFactoryBackendInterface {
-public:
-    static PassRefPtr<WebCore::IDBFactoryBackendInterface> create();
-    virtual ~IDBFactoryBackendProxy();
-
-    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
-    virtual void open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
-    virtual void deleteDatabase(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
-
-private:
-    IDBFactoryBackendProxy();
-    bool allowIndexedDB(WebCore::ScriptExecutionContext*, const String& name, const WebSecurityOrigin&, PassRefPtr<WebCore::IDBCallbacks>);
-
-    // We don't own this pointer (unlike all the other proxy classes which do).
-    WebIDBFactory* m_webIDBFactory;
-};
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif
 
-#endif // IDBFactoryBackendProxy_h
+#endif // IDBFactoryBackendInterfaceChromium_h

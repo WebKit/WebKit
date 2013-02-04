@@ -56,7 +56,7 @@
 #include "IDBCursor.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseException.h"
-#include "IDBFactoryBackendInterface.h"
+#include "IDBFactoryBackendInterfaceChromium.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"

@@ -1,3 +1,19 @@
+2013-02-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move IDBFactoryBackendInterface to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=108638
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 106829.
+
+        * WebKit.gyp:
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBFactoryBackendInterface.cpp: Removed.
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+
 2013-02-04  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect bad cast in DOM, CSS, etc.

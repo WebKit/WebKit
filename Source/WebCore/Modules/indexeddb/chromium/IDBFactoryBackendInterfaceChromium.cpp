@@ -26,19 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "IDBFactoryBackendInterface.h"
-
-#include "IDBFactoryBackendProxy.h"
+#include "IDBFactoryBackendInterfaceChromium.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
+static IDBFactoryBackendInterfaceCreate* s_idbFactoryBackendInterfaceCreateFunction = 0;
+
+void setIDBFactoryBackendInterfaceCreateFunction(IDBFactoryBackendInterfaceCreate idbFactoryBackendInterfaceCreateFunction)
+{
+    s_idbFactoryBackendInterfaceCreateFunction = idbFactoryBackendInterfaceCreateFunction;
+}
+
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
 {
+    ASSERT(s_idbFactoryBackendInterfaceCreateFunction);
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
-    return WebKit::IDBFactoryBackendProxy::create();
+    return s_idbFactoryBackendInterfaceCreateFunction();
 }
 
 } // namespace WebCore

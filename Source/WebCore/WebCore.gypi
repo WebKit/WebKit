@@ -778,6 +778,8 @@
             'Modules/indexeddb/PageGroupIndexedDatabase.h',
             'Modules/indexeddb/WorkerContextIndexedDatabase.cpp',
             'Modules/indexeddb/WorkerContextIndexedDatabase.h',
+            'Modules/indexeddb/chromium/IDBFactoryBackendInterfaceChromium.cpp',
+            'Modules/indexeddb/chromium/IDBFactoryBackendInterfaceChromium.h',
             'Modules/intents/DeliveredIntent.cpp',
             'Modules/intents/DeliveredIntent.h',
             'Modules/intents/DOMWindowIntents.cpp',

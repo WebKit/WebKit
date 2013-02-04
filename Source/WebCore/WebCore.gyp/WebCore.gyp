@@ -58,6 +58,7 @@
       '../Modules/geolocation',
       '../Modules/intents',
       '../Modules/indexeddb',
+      '../Modules/indexeddb/chromium',
       '../Modules/mediasource',
       '../Modules/mediastream',
       '../Modules/navigatorcontentutils',
