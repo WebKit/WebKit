@@ -2745,6 +2745,26 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.htm
 
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
+# Need rebaseline
+webkit.org/b/108791 [ XP ] fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/108791 [ XP ] fast/forms/date/date-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] fast/forms/datetime/datetime-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/108791 [ XP ] fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] fast/forms/month/month-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] fast/forms/time-multiple-fields/time-multiple-fields-localization.html [ Failure ]
+
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/108791 [ XP ] platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 
