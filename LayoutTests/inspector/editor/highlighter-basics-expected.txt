@@ -91,7 +91,7 @@ After highlighting up to the end
 15 :  * line #6 : javascript-ident[3-7] javascript-number[9-10]
 16 :  * line #7 : javascript-ident[3-7] javascript-number[9-10]
 17 :  * line #8 : javascript-ident[3-7] javascript-number[9-10]
-18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] javascript-comment[20-24]
+18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] javascript-comment[20-24]
 19 : some text : javascript-ident[0-4] javascript-ident[5-9]
 20 :  :
 
@@ -113,7 +113,7 @@ After changing the first line, and updating the highlights for the first 5 lines
 15 :  * line #6 : javascript-ident[3-7] javascript-number[9-10]
 16 :  * line #7 : javascript-ident[3-7] javascript-number[9-10]
 17 :  * line #8 : javascript-ident[3-7] javascript-number[9-10]
-18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] javascript-comment[20-24]
+18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] javascript-comment[20-24]
 19 : some text : javascript-ident[0-4] javascript-ident[5-9]
 20 :  :
 

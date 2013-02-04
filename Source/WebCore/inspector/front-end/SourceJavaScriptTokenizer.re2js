@@ -177,7 +177,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                         this.tokenType = "javascript-ident";
                     return cursor;
                 }
-                <DIV,NODIV> RightParen => DIV { this.tokenType = null; return cursor; }
+                <DIV,NODIV> RightParen => DIV { this.tokenType = "brace-end"; return cursor; }
                 <DIV,NODIV> Punctuation => NODIV
                 {
                     var token = this._line.charAt(cursorOnEnter);
@@ -185,6 +185,8 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                         this.tokenType = "block-start";
                     else if (token === "}")
                         this.tokenType = "block-end";
+                    else if (token === "(")
+                        this.tokenType = "brace-start";
                     else this.tokenType = null;
                     return cursor;
                 }

@@ -3,10 +3,10 @@ Tests that JavaScriptSourceSyntaxHighlighter detects the tokens.
 return'foo';: webkit-javascript-keyword,webkit-javascript-string,*
 /\//g: webkit-javascript-regexp
 //ig';: webkit-javascript-comment
-1 / 2 + /a/.test('a');: webkit-javascript-number,*,webkit-javascript-number,*,webkit-javascript-regexp,*,webkit-javascript-ident,*,webkit-javascript-string,*
+1 / 2 + /a/.test('a');: webkit-javascript-number,*,webkit-javascript-number,*,webkit-javascript-regexp,*,webkit-javascript-ident,webkit-brace-start,webkit-javascript-string,webkit-brace-end,*
 "\"/".length / 2: webkit-javascript-string,*,webkit-javascript-ident,*,webkit-javascript-number
 var foo = 1/*/***//2: webkit-javascript-keyword,*,webkit-javascript-ident,*,webkit-javascript-number,webkit-javascript-comment,*,webkit-javascript-number
-/*comment*//.*/.test('a'): webkit-javascript-comment,webkit-javascript-regexp,*,webkit-javascript-ident,*,webkit-javascript-string,*
+/*comment*//.*/.test('a'): webkit-javascript-comment,webkit-javascript-regexp,*,webkit-javascript-ident,webkit-brace-start,webkit-javascript-string,webkit-brace-end
 'f\
 oo';: webkit-javascript-string,,webkit-javascript-string,*
 '\f\b\t';: webkit-javascript-string,*
