@@ -1,3 +1,32 @@
+2013-02-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Upstream iOS's AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=108139
+
+        Reviewed by David Kilzer.
+
+        On iOS, WebCore can be executed from two different threads. To maintain consistency,
+        a few changes had been made:
+        -The main UI thread and the WebThread share the same AtomicStringTable.
+        -A spin lock is needed before any access to prevent any concurrent modification of the string table.
+         The spin lock also prevent race on the static initialization of the shared table.
+
+        * wtf/Platform.h:
+        Introduce a new USE(WEB_THREAD) to scope changes related to iOS Web Thread.
+        * wtf/text/AtomicString.cpp:
+        (AtomicStringTableLocker):
+        (WTF::AtomicStringTableLocker::AtomicStringTableLocker):
+        (WTF::AtomicStringTableLocker::~AtomicStringTableLocker):
+        (WTF::AtomicStringTable::create):
+        wtfThreadData() is not necessarily inlined on ARM. When it is not inlined, the old code
+        causes two call to the function. Instead, we can keep the value in register and pass it
+        to AtomicStringTable::create().
+        (WTF::stringTable):
+        (WTF::addToStringTable):
+        (WTF::AtomicString::addSlowCase):
+        (WTF::AtomicString::find):
+        (WTF::AtomicString::remove):
+
 2013-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ 'make dist' in preparation for the 1.11.5 release.
