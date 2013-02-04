@@ -426,10 +426,14 @@ public:
         , m_result(result)
     {
         ASSERT(type != CallbackInstanceMethod || instanceClass);
+        if (m_type != CallbackInstanceMethod)
+            [[m_invocation.get() target] retain];
     }
 
     ~ObjCCallbackFunction()
     {
+        if (m_type != CallbackInstanceMethod)
+            [[m_invocation.get() target] release];
         [m_instanceClass release];
     }
 

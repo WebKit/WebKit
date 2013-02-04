@@ -1,3 +1,17 @@
+2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: ObjCCallbackFunction should retain the target of its NSInvocation
+        https://bugs.webkit.org/show_bug.cgi?id=108843
+
+        Reviewed by Darin Adler.
+
+        Currently, ObjCCallbackFunction doesn't retain the target of its NSInvocation. It needs to do 
+        this to prevent crashes when trying to invoke a callback later on.
+
+        * API/ObjCCallbackFunction.mm:
+        (ObjCCallbackFunction::ObjCCallbackFunction):
+        (ObjCCallbackFunction::~ObjCCallbackFunction):
+
 2013-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ 'make dist' in preparation for the 1.11.5 release.
