@@ -1,3 +1,17 @@
+2013-02-03  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Do not call m_widgetClient->show() for WebHelperPlugin.
+        https://bugs.webkit.org/show_bug.cgi?id=108740
+
+        Reviewed by Kent Tamura.
+
+        The calls to m_widgetClient->show() and setFocus() do not appear to be
+        necessary, and the former causes problems on at least on platform.
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::initialize): Removed calls to m_widgetClient->show() and setFocus().
+        (WebKit::WebHelperPluginImpl::setFocus): Should never be called.
+
 2013-02-02  Michael Nordman  <michaeln@google.com>
 
         [chromium] FileSystem mods: Changes to snapshot file creation to reduce dependencies on blobs.

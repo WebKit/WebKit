@@ -120,12 +120,7 @@ bool WebHelperPluginImpl::initialize(WebViewImpl* webView, const String& pluginT
     ASSERT(webView);
     m_webView = webView;
 
-    if (!initializePage(webView, pluginType))
-        return false;
-    m_widgetClient->show(WebNavigationPolicy());
-    setFocus(true);
-
-    return true;
+    return initializePage(webView, pluginType);
 }
 
 void WebHelperPluginImpl::closeHelperPlugin()
@@ -233,13 +228,9 @@ void WebHelperPluginImpl::layout()
     PageWidgetDelegate::layout(m_page.get());
 }
 
-void WebHelperPluginImpl::setFocus(bool enable)
+void WebHelperPluginImpl::setFocus(bool)
 {
-    if (!m_page)
-        return;
-    m_page->focusController()->setFocused(enable);
-    if (enable)
-        m_page->focusController()->setActive(true);
+    ASSERT_NOT_REACHED();
 }
 
 void WebHelperPluginImpl::close()
