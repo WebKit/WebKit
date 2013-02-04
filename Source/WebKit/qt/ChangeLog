@@ -1,3 +1,15 @@
+2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r141473
+        https://bugs.webkit.org/show_bug.cgi?id=108782
+
+        Reviewed by Kentaro Hara.
+
+        Fix -Wunused-parameter build warning.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::getClientPasteboardDataForRange):
+
 2013-02-01  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Make QWebHistory unit tests more robust

@@ -1,3 +1,15 @@
+2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r141473
+        https://bugs.webkit.org/show_bug.cgi?id=108782
+
+        Reviewed by Kentaro Hara.
+
+        Fix -Wunused-parameter build warning.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::getClientPasteboardDataForRange):
+
 2013-02-01  Philip Rogers  <pdr@google.com>
 
         Change hasAlpha to isKnownToBeOpaque and correct the return value for SVG images.

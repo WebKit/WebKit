@@ -296,7 +296,7 @@ void EditorClientImpl::willWriteSelectionToPasteboard(WebCore::Range*)
 {
 }
 
-void EditorClientImpl::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData)
+void EditorClientImpl::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
 {
 }
 

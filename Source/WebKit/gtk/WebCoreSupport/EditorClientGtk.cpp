@@ -280,7 +280,7 @@ void EditorClient::willWriteSelectionToPasteboard(WebCore::Range*)
 {
 }
 
-void EditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData)
+void EditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
 {
 }
 

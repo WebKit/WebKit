@@ -1,3 +1,15 @@
+2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r141473
+        https://bugs.webkit.org/show_bug.cgi?id=108782
+
+        Reviewed by Kentaro Hara.
+
+        Fix -Wunused-parameter build warning.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::getClientPasteboardDataForRange):
+
 2013-02-01  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Zooming in during page load of non-scalable webpage results in fixed magnification

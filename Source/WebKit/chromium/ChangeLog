@@ -1,3 +1,15 @@
+2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r141473
+        https://bugs.webkit.org/show_bug.cgi?id=108782
+
+        Reviewed by Kentaro Hara.
+
+        Fix -Wunused-parameter build warning.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::getClientPasteboardDataForRange):
+
 2013-02-03  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Do not call m_widgetClient->show() for WebHelperPlugin.
