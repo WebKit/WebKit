@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8StyleSheetList::namedPropertyGetter(v8::Local<v8::String
     if (!item)
         return v8Undefined();
 
-    return toV8(item->sheet(), info.Holder(), info.GetIsolate());
+    return toV8Fast(item->sheet(), info, imp);
 }
 
 } // namespace WebCore

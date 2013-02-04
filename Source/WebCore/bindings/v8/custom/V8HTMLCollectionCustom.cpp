@@ -59,13 +59,13 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
         RefPtr<PropertyNodeList> item = static_cast<HTMLPropertiesCollection*>(imp)->propertyNodeList(toWebCoreAtomicString(name));
         if (!item)
             return v8Undefined();
-        return toV8(item.release(), info.Holder(), info.GetIsolate());
+        return toV8Fast(item.release(), info, imp);
     }
 #endif
     Node* item = imp->namedItem(toWebCoreAtomicString(name));
     if (!item)
         return v8Undefined();
-    return toV8(item, info.Holder(), info.GetIsolate());
+    return toV8Fast(item, info, imp);
 }
 
 v8::Handle<v8::Object> wrap(HTMLCollection* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)

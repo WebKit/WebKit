@@ -90,7 +90,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             Document* document = xmlHttpRequest->responseXML(ec);
             if (ec)
                 return setDOMException(ec, info.GetIsolate());
-            return toV8(document, info.Holder(), info.GetIsolate());
+            return toV8Fast(document, info, xmlHttpRequest);
         }
 
     case XMLHttpRequest::ResponseTypeBlob:
@@ -99,7 +99,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             Blob* blob = xmlHttpRequest->responseBlob(ec);
             if (ec)
                 return setDOMException(ec, info.GetIsolate());
-            return toV8(blob, info.Holder(), info.GetIsolate());
+            return toV8Fast(blob, info, xmlHttpRequest);
         }
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
@@ -108,7 +108,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             ArrayBuffer* arrayBuffer = xmlHttpRequest->responseArrayBuffer(ec);
             if (ec)
                 return setDOMException(ec, info.GetIsolate());
-            return toV8(arrayBuffer, info.Holder(), info.GetIsolate());
+            return toV8Fast(arrayBuffer, info, xmlHttpRequest);
         }
     }
 

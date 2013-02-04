@@ -86,7 +86,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     if (ec)
         return setDOMException(ec, args.GetIsolate());
 
-    return toV8(result.release(), args.Holder(), args.GetIsolate());
+    return toV8Fast(result.release(), args, document.get());
 }
 
 v8::Handle<v8::Object> wrap(Document* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)

@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::S
         return v8Undefined();
     if (!document->frame())
         return v8Undefined();
-    return toV8(document->domWindow(), info.Holder(), info.GetIsolate());
+    return toV8Fast(document->domWindow(), info, imp);
 }
 
 } // namespace WebCore

@@ -39,7 +39,8 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collection, const AtomicString& name, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+template<typename HolderContainer>
+static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collection, const AtomicString& name, const HolderContainer& holder)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->namedItems(name, namedItems);
@@ -48,9 +49,9 @@ static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collectio
         return v8Undefined();
 
     if (namedItems.size() == 1)
-        return toV8(namedItems.at(0).release(), creationContext, isolate);
+        return toV8Fast(namedItems.at(0).release(), holder, collection);
 
-    return toV8(collection->ownerNode()->radioNodeList(name).get(), creationContext, isolate);
+    return toV8Fast(collection->ownerNode()->radioNodeList(name).get(), holder, collection);
 }
 
 v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -61,13 +62,13 @@ v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Loca
         return v8Undefined();
 
     HTMLFormControlsCollection* imp = V8HTMLFormControlsCollection::toNative(info.Holder());
-    return getNamedItems(imp, toWebCoreAtomicString(name), info.Holder(), info.GetIsolate());
+    return getNamedItems(imp, toWebCoreAtomicString(name), info);
 }
 
 v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedItemCallback(const v8::Arguments& args)
 {
     HTMLFormControlsCollection* imp = V8HTMLFormControlsCollection::toNative(args.Holder());
-    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder(), args.GetIsolate());
+    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args);
 
     if (result.IsEmpty())
         return v8::Undefined(args.GetIsolate());

@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, cons
     if (!result)
         return v8Undefined();
 
-    return toV8(result.release(), info.Holder(), info.GetIsolate());
+    return toV8Fast(result.release(), info, imp);
 }
 
 v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -64,7 +64,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
     if (!result)
         return v8Undefined();
 
-    return toV8(result.release(), info.Holder(), info.GetIsolate());
+    return toV8Fast(result.release(), info, imp);
 }
 
 } // namespace WebCore
