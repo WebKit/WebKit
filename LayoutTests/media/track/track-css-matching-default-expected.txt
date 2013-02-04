@@ -1,0 +1,8 @@
+Test that u, b, i WebVTT objects are being styled correctly.
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).fontWeight == 'bold') OK
+EXPECTED (getComputedStyle(cueNode).fontStyle == 'italic') OK
+EXPECTED (getComputedStyle(cueNode).textDecoration == 'underline') OK
+END OF TEST
+

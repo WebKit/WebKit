@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var cueNode;
+
+        function seeked()
+        {
+            if (testEnded)
+                return;
+
+            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild;
+            testExpected("getComputedStyle(cueNode).fontWeight", "bold");
+            cueNode = cueNode.nextElementSibling;
+            testExpected("getComputedStyle(cueNode).fontStyle", "italic");
+            cueNode = cueNode.nextElementSibling;
+            testExpected("getComputedStyle(cueNode).textDecoration", "underline");
+
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that u, b, i WebVTT objects are being styled correctly.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = 0.1; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling-default.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

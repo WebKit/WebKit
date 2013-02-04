@@ -254,3 +254,15 @@ video::-webkit-media-text-track-display {
 video::cue(:future) {
     color: gray;
 }
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}
