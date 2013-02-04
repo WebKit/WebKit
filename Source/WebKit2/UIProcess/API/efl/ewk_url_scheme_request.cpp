@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ewk_url_scheme_request.h"
 
-#include "GOwnPtrSoup.h"
 #include "WKData.h"
 #include "WKString.h"
+#include "WKURL.h"
 #include "ewk_url_scheme_request_private.h"
 
 using namespace WebKit;
@@ -37,10 +37,9 @@ EwkUrlSchemeRequest::EwkUrlSchemeRequest(WKSoupRequestManagerRef manager, WKURLR
     : m_wkRequestManager(manager)
     , m_url(url)
     , m_requestID(requestID)
+    , m_scheme(AdoptWK, WKURLCopyScheme(url))
+    , m_path(AdoptWK, WKURLCopyPath(url))
 {
-    GOwnPtr<SoupURI> soupURI(soup_uri_new(m_url));
-    m_scheme = soupURI->scheme;
-    m_path = soupURI->path;
 }
 
 uint64_t EwkUrlSchemeRequest::id() const
