@@ -1,3 +1,13 @@
+2013-02-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Made the documentation on the confirmed argument for the
+        WebView::script-confirm signal clearer about its type.
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
 2013-02-04  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Soup] Wrap SoupSession by NetworkStorageSession

@@ -2239,7 +2239,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
-     * @confirmed: whether the dialog has been confirmed
+     * @confirmed: a pointer to a #gboolean where the callback should store
+     * whether the user confirmed the dialog, when handling this signal
      *
      * A JavaScript confirm dialog was created, providing Yes and No buttons.
      *
