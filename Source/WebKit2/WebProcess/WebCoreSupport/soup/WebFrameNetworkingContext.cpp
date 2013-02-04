@@ -28,7 +28,6 @@
 
 #include "WebFrame.h"
 #include "WebPage.h"
-#include <WebCore/ResourceHandle.h>
 
 using namespace WebCore;
 
@@ -42,9 +41,9 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
         m_initiatingPageID = page->pageID();
 }
 
-SoupSession* WebFrameNetworkingContext::soupSession() const
+NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    return ResourceHandle::defaultSession();
+    return NetworkStorageSession::defaultStorageSession();
 }
 
 uint64_t WebFrameNetworkingContext::initiatingPageID() const

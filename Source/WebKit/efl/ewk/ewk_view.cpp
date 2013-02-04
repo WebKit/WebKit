@@ -49,6 +49,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSLock.h"
+#include "NetworkStorageSession.h"
 #include "Operations.h"
 #include "PageClientEfl.h"
 #include "PageGroup.h"
@@ -272,6 +273,7 @@ struct _Ewk_View_Private_Data {
 #if ENABLE(NAVIGATOR_CONTENT_UTILS) || ENABLE(CUSTOM_SCHEME_HANDLER)
     OwnPtr<WebCore::NavigatorContentUtilsClientEfl> navigatorContentUtilsClient;
 #endif
+    OwnPtr<WebCore::NetworkStorageSession> storageSession;
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -369,7 +371,6 @@ struct _Ewk_View_Private_Data {
         } center;
         Ecore_Animator* animator;
     } animatedZoom;
-    SoupSession* soupSession;
     const char* cursorGroup;
     Evas_Object* cursorObject;
 #if ENABLE(INSPECTOR)
@@ -926,7 +927,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
 
-    priv->soupSession = WebCore::ResourceHandle::defaultSession();
+    priv->storageSession = WebCore::NetworkStorageSession::createDefaultSession();
 
     priv->pageClient = adoptPtr(new PageClientEfl(smartData->self));
 
@@ -4381,7 +4382,7 @@ SoupSession* ewk_view_soup_session_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return priv->soupSession;
+    return priv->storageSession->soupSession();
 }
 
 void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
@@ -4393,7 +4394,7 @@ void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
             "a SoupSessionSync was provided.");
         return;
     }
-    priv->soupSession = session;
+    priv->storageSession->setSoupSession(session);
 }
 
 Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object* ewkView)
@@ -4849,6 +4850,13 @@ PlatformPageClient corePageClient(Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->pageClient.get();
+}
+
+WebCore::NetworkStorageSession* storageSession(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+    return priv->storageSession.get();
 }
 
 } // namespace EWKPrivate

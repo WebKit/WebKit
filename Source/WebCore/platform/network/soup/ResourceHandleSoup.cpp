@@ -258,7 +258,9 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 static SoupSession* sessionFromContext(NetworkingContext* context)
 {
-    return (context && context->isValid()) ? context->soupSession() : ResourceHandle::defaultSession();
+    if (!context || !context->isValid())
+        return ResourceHandle::defaultSession();
+    return context->storageSession().soupSession();
 }
 
 ResourceHandle::~ResourceHandle()

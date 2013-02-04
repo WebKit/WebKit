@@ -23,6 +23,7 @@
 #define ewk_view_private_h
 
 #include "Frame.h"
+#include "NetworkStorageSession.h"
 #include "Page.h"
 #include "Widget.h"
 #include "ewk_paint_context_private.h"
@@ -174,6 +175,7 @@ void ewk_view_fullscreen_exit(const Evas_Object* ewkView);
 namespace EWKPrivate {
 WebCore::Page *corePage(const Evas_Object *ewkView);
 PlatformPageClient corePageClient(Evas_Object* ewkView);
+WebCore::NetworkStorageSession* storageSession(const Evas_Object* ewkView);
 } // namespace EWKPrivate
 
 #endif // ewk_view_private_h

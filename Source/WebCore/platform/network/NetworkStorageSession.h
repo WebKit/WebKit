@@ -32,6 +32,9 @@
 #if PLATFORM(MAC) || USE(CFNETWORK)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+#elif USE(SOUP)
+typedef struct _SoupCookieJar SoupCookieJar;
+typedef struct _SoupSession SoupSession;
 #endif
 
 namespace WebCore {
@@ -42,7 +45,7 @@ class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
     static NetworkStorageSession& defaultStorageSession();
-    static PassOwnPtr<NetworkStorageSession> createDefaultSession(const String& identifierBase);
+    static PassOwnPtr<NetworkStorageSession> createDefaultSession(const String& identifierBase = String());
     static PassOwnPtr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase);
 
     static void switchToNewTestingSession();
@@ -52,6 +55,9 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     bool isPrivateBrowsingSession() const { return m_isPrivate; }
+#elif USE(SOUP)
+    void setSoupSession(SoupSession* session) { m_session = session; }
+    SoupSession* soupSession() const { return m_session; }
 #else
     NetworkStorageSession(NetworkingContext*);
     ~NetworkStorageSession();
@@ -64,6 +70,9 @@ private:
     NetworkStorageSession();
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
     bool m_isPrivate;
+#elif USE(SOUP)
+    NetworkStorageSession(SoupSession*);
+    SoupSession* m_session;
 #else
     RefPtr<NetworkingContext> m_context;
 #endif

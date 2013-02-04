@@ -86,6 +86,7 @@ list(APPEND WebCore_SOURCES
 # Networking sources
 list(APPEND WebCore_SOURCES
     platform/network/MIMESniffing.cpp
+    platform/network/NetworkStorageSessionStub.cpp
     platform/network/ProxyServer.cpp
     platform/network/blackberry/AutofillBackingStore.cpp
     platform/network/blackberry/DNSBlackBerry.cpp

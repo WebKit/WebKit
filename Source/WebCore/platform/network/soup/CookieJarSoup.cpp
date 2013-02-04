@@ -34,9 +34,9 @@ namespace WebCore {
 
 static SoupCookieJar* cookieJarForSession(const NetworkStorageSession& session)
 {
-    if (!session.context())
+    if (!session.soupSession())
         return soupCookieJar();
-    return SOUP_COOKIE_JAR(soup_session_get_feature(session.context()->soupSession(), SOUP_TYPE_COOKIE_JAR));
+    return SOUP_COOKIE_JAR(soup_session_get_feature(session.soupSession(), SOUP_TYPE_COOKIE_JAR));
 }
 
 static GRefPtr<SoupCookieJar>& defaultCookieJar()

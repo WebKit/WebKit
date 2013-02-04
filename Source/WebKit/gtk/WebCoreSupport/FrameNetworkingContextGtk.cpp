@@ -21,16 +21,16 @@
 #include "config.h"
 #include "FrameNetworkingContextGtk.h"
 
+#include "NetworkStorageSession.h"
 #include "NotImplemented.h"
-#include "ResourceHandle.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-SoupSession* FrameNetworkingContextGtk::soupSession() const
+NetworkStorageSession& FrameNetworkingContextGtk::storageSession() const
 {
-    return ResourceHandle::defaultSession();
+    return NetworkStorageSession::defaultStorageSession();
 }
 
 uint64_t FrameNetworkingContextGtk::initiatingPageID() const

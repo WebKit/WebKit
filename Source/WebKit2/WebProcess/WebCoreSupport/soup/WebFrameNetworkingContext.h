@@ -44,7 +44,7 @@ public:
 private:
     WebFrameNetworkingContext(WebFrame*);
 
-    virtual SoupSession* soupSession() const;
+    virtual WebCore::NetworkStorageSession& storageSession() const;
     virtual uint64_t initiatingPageID() const;
 
     uint64_t m_initiatingPageID;

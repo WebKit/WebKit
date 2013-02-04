@@ -56,7 +56,7 @@ static NetworkingContext* networkingContext(const Document* document)
     return loader->networkingContext();
 }
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
 inline NetworkStorageSession& storageSession(const Document* document)
 {
     NetworkingContext* context = networkingContext(document);
