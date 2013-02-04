@@ -32,6 +32,18 @@
     -webkit-grid-row: 2;
 }
 
+.gridAutoFlowNone {
+    -webkit-grid-auto-flow: none;
+}
+
+.gridAutoFlowColumn {
+    -webkit-grid-auto-flow: column;
+}
+
+.gridAutoFlowRow {
+    -webkit-grid-auto-flow: row;
+}
+
 .verticalRL {
     -webkit-writing-mode: vertical-rl;
 }

@@ -487,6 +487,8 @@ enum WrapThrough { WrapThroughWrap, WrapThroughNone };
 
 enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
 
+enum GridAutoFlow { AutoFlowNone, AutoFlowColumn, AutoFlowRow };
+
 #if ENABLE(DRAGGABLE_REGION)
 enum DraggableRegionMode { DraggableRegionNone, DraggableRegionDrag, DraggableRegionNoDrag };
 #endif

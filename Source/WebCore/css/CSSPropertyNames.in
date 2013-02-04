@@ -293,6 +293,7 @@ z-index
 -webkit-grid-rows
 -webkit-grid-column
 -webkit-grid-row
+-webkit-grid-auto-flow
 -webkit-highlight
 -webkit-hyphenate-character
 -webkit-hyphenate-limit-after

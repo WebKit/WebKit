@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridAutoFlowInherit {
+    -webkit-grid-auto-flow: inherit;
+}
+/* Bad values. */
+.gridAutoFlowRows {
+    -webkit-grid-auto-flow: rows;
+}
+.gridAutoFlowColumns {
+    -webkit-grid-auto-flow: columns;
+}
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div class="grid" id="gridInitial"></div>
+<div class="grid gridAutoFlowNone" id="gridAutoFlowNone"></div>
+<div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn"></div>
+<div class="grid gridAutoFlowRow" id="gridAutoFlowRow"></div>
+<div class="grid gridAutoFlowColumn">
+    <div><div class="grid gridAutoFlowInherit" id="gridAutoFlowInherit"></div></div>
+</div>
+<div class="grid gridAutoFlowColumns" id="gridAutoFlowColumns"></div>
+<div class="grid gridAutoFlowRows" id="gridAutoFlowRows"></div>
+<script>
+    description('Test that setting and getting grid-auto-flow works as expected');
+
+    debug("Test getting -webkit-auto-flow set through CSS");
+    var gridAutoFlowNone = document.getElementById("gridAutoFlowNone");
+    shouldBe("window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+
+    var gridAutoFlowColumn = document.getElementById("gridAutoFlowColumn");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumn, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
+
+    var gridAutoFlowRow = document.getElementById("gridAutoFlowRow");
+    shouldBe("window.getComputedStyle(gridAutoFlowRow, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    var gridAutoFlowColumns = document.getElementById("gridAutoFlowColumns");
+    shouldBe("window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+
+    var gridAutoFlowRows = document.getElementById("gridAutoFlowRows");
+    shouldBe("window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+
+    var gridAutoFlowInherit = document.getElementById("gridAutoFlowInherit");
+    shouldBe("window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+
+    debug("");
+    debug("Test the initial value");
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+
+    debug("");
+    debug("Test getting and setting -webkit-grid-auto-flow through JS");
+    element.style.webkitGridAutoFlow = "column";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
+
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.webkitGridAutoFlow = "row";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    debug("");
+    debug("Test getting and setting bad values for -webkit-grid-auto-flow through JS");
+    document.body.appendChild(element);
+    element.style.webkitGridAutoFlow = "noone";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

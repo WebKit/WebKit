@@ -4101,6 +4101,39 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
     return WrapThroughWrap;
 }
 
+template<> inline CSSPrimitiveValue::operator GridAutoFlow() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return AutoFlowNone;
+    case CSSValueColumn:
+        return AutoFlowColumn;
+    case CSSValueRow:
+        return AutoFlowRow;
+    }
+
+    ASSERT_NOT_REACHED();
+    return AutoFlowNone;
+
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(GridAutoFlow flow)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (flow) {
+    case AutoFlowNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case AutoFlowColumn:
+        m_value.ident = CSSValueColumn;
+        break;
+    case AutoFlowRow:
+        m_value.ident = CSSValueRow;
+        break;
+    }
+}
+
 enum LengthConversion {
     AnyConversion = ~0,
     FixedIntegerConversion = 1 << 0,

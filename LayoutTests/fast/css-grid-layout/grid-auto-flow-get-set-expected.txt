@@ -1,0 +1,26 @@
+Test that setting and getting grid-auto-flow works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting -webkit-auto-flow set through CSS
+PASS window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('-webkit-grid-auto-flow') is 'none'
+PASS window.getComputedStyle(gridAutoFlowColumn, '').getPropertyValue('-webkit-grid-auto-flow') is 'column'
+PASS window.getComputedStyle(gridAutoFlowRow, '').getPropertyValue('-webkit-grid-auto-flow') is 'row'
+PASS window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('-webkit-grid-auto-flow') is 'none'
+PASS window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('-webkit-grid-auto-flow') is 'none'
+PASS window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('-webkit-grid-auto-flow') is 'none'
+
+Test the initial value
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow') is 'none'
+
+Test getting and setting -webkit-grid-auto-flow through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow') is 'column'
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow') is 'row'
+
+Test getting and setting bad values for -webkit-grid-auto-flow through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow') is 'row'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

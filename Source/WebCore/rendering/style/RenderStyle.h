@@ -764,6 +764,7 @@ public:
 
     const Vector<GridTrackSize>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
     const Vector<GridTrackSize>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
+    GridAutoFlow gridAutoFlow() const { return rareNonInheritedData->m_grid->m_gridAutoFlow; }
 
     const GridPosition& gridItemColumn() const { return rareNonInheritedData->m_gridItem->m_gridColumn; }
     const GridPosition& gridItemRow() const { return rareNonInheritedData->m_gridItem->m_gridRow; }
@@ -1252,6 +1253,7 @@ public:
     void setJustifyContent(EJustifyContent p) { SET_VAR(rareNonInheritedData, m_justifyContent, p); }
     void setGridColumns(const Vector<GridTrackSize>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, lengths); }
     void setGridRows(const Vector<GridTrackSize>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, lengths); }
+    void setGridAutoFlow(GridAutoFlow flow) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoFlow, flow); }
     void setGridItemColumn(const GridPosition& columnPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridColumn, columnPosition); }
     void setGridItemRow(const GridPosition& rowPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRow, rowPosition); }
 
@@ -1652,6 +1654,8 @@ public:
     // The initial value is 'none' for grid tracks.
     static Vector<GridTrackSize> initialGridColumns() { return Vector<GridTrackSize>(); }
     static Vector<GridTrackSize> initialGridRows() { return Vector<GridTrackSize>(); }
+
+    static GridAutoFlow initialGridAutoFlow() { return AutoFlowNone; }
 
     // 'auto' is the default.
     static GridPosition initialGridItemColumn() { return GridPosition(); }

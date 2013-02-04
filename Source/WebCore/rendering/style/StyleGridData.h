@@ -27,6 +27,7 @@
 #define StyleGridData_h
 
 #include "GridTrackSize.h"
+#include "RenderStyleConstants.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -40,7 +41,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows;
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow != o.m_gridAutoFlow;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -51,6 +52,8 @@ public:
     // FIXME: Update the naming of the following variables.
     Vector<GridTrackSize> m_gridColumns;
     Vector<GridTrackSize> m_gridRows;
+
+    GridAutoFlow m_gridAutoFlow;
 
 private:
     StyleGridData();
