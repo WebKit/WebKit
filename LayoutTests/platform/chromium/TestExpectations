@@ -4346,3 +4346,4 @@ webkit.org/b/108424 media/video-error-does-not-exist.html [ Failure Crash ]
 webkit.org/b/108594 [ Debug ] tables/table-section-overflow-clip-crash.html [ Crash ]
 
 webkit.org/b/108781 [ Win ] fast/css-grid-layout/grid-preferred-logical-widths.html [ Timeout ]
+webkit.org/b/108789 [ Win Mac ] http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout ]
