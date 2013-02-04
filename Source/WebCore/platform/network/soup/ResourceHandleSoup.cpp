@@ -956,12 +956,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
 
-    String firstPartyString = request.firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
-        soup_message_set_first_party(soupMessage, firstParty.get());
-    }
-
     FormData* httpBody = request.httpBody();
     CString contentType = request.httpContentType().utf8().data();
     if (httpBody && !httpBody->isEmpty() && !addFormElementsToSoupMessage(soupMessage, contentType.data(), httpBody, d->m_bodySize)) {
