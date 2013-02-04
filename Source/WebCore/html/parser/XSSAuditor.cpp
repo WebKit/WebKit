@@ -49,6 +49,7 @@
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
+#include "XLinkNames.h"
 
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
@@ -118,8 +119,13 @@ static bool hasName(const HTMLToken& token, const QualifiedName& name)
 
 static bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)
 {
+    String attrName = name.localName().string();
+
+    if (name.namespaceURI() == XLinkNames::xlinkNamespaceURI)
+        attrName = "xlink:" + attrName;
+
     for (size_t i = 0; i < token.attributes().size(); ++i) {
-        if (equalIgnoringNullity(token.attributes().at(i).m_name, name.localName())) {
+        if (equalIgnoringNullity(token.attributes().at(i).m_name, attrName)) {
             indexOfMatchingAttribute = i;
             return true;
         }
@@ -357,10 +363,13 @@ bool XSSAuditor::filterScriptToken(HTMLToken& token)
     m_cachedDecodedSnippet = decodedSnippetForName(token);
     m_shouldAllowCDATA = m_parser->tokenizer()->shouldAllowCDATA();
 
-    if (isContainedInRequest(decodedSnippetForName(token)))
-        return eraseAttributeIfInjected(token, srcAttr, blankURL().string(), SrcLikeAttribute);
+    bool didBlockScript = false;
+    if (isContainedInRequest(decodedSnippetForName(token))) {
+        didBlockScript |= eraseAttributeIfInjected(token, srcAttr, blankURL().string(), SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(token, XLinkNames::hrefAttr, blankURL().string(), SrcLikeAttribute);
+    }
 
-    return false;
+    return didBlockScript;
 }
 
 bool XSSAuditor::filterObjectToken(HTMLToken& token)
