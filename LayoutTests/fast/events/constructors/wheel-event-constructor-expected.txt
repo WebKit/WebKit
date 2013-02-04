@@ -174,6 +174,31 @@ PASS new WheelEvent('eventType', { wheelDeltaY: [12345, 67890] }).wheelDeltaY is
 PASS new WheelEvent('eventType', { wheelDeltaY: {} }).wheelDeltaY is 0
 PASS new WheelEvent('eventType', { wheelDeltaY: {moemoe: 12345} }).wheelDeltaY is 0
 PASS new WheelEvent('eventType', { wheelDeltaY: {valueOf: function () { return 12345; }} }).wheelDeltaY is 12345
+PASS new WheelEvent('eventType', { deltaMode: 0 }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: 1 }).deltaMode is 1
+PASS new WheelEvent('eventType', { deltaMode: 4294967294 }).deltaMode is 4294967294
+PASS new WheelEvent('eventType', { deltaMode: 4294967295 }).deltaMode is 4294967295
+PASS new WheelEvent('eventType', { deltaMode: WheelEvent.DOM_DELTA_PIXEL }).deltaMode is WheelEvent.DOM_DELTA_PIXEL
+PASS new WheelEvent('eventType', { deltaMode: WheelEvent.DOM_DELTA_LINE }).deltaMode is WheelEvent.DOM_DELTA_LINE
+PASS new WheelEvent('eventType', { deltaMode: WheelEvent.DOM_DELTA_PAGE }).deltaMode is WheelEvent.DOM_DELTA_PAGE
+PASS new WheelEvent('eventType', { deltaMode: 9007199254740991 }).deltaMode is 4294967295
+PASS new WheelEvent('eventType', { deltaMode: 18446744073709551615 }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: 12345678901234567890 }).deltaMode is 3944679424
+PASS new WheelEvent('eventType', { deltaMode: -1 }).deltaMode is 4294967295
+PASS new WheelEvent('eventType', { deltaMode: 123.45 }).deltaMode is 123
+PASS new WheelEvent('eventType', { deltaMode: NaN }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: undefined }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: null }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: '' }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: '12345' }).deltaMode is 12345
+PASS new WheelEvent('eventType', { deltaMode: '12345a' }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: 'abc' }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: [] }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: [12345] }).deltaMode is 12345
+PASS new WheelEvent('eventType', { deltaMode: [12345, 67890] }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: {} }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: {moemoe: 12345} }).deltaMode is 0
+PASS new WheelEvent('eventType', { deltaMode: {valueOf: function () { return 12345; }} }).deltaMode is 12345
 PASS new WheelEvent('eventType', { ctrlKey: false }).ctrlKey is false
 PASS new WheelEvent('eventType', { ctrlKey: true }).ctrlKey is true
 PASS new WheelEvent('eventType', { altKey: false }).altKey is false
@@ -220,22 +245,23 @@ PASS new WheelEvent('eventType', { relatedTarget: NaN }).relatedTarget is null
 PASS new WheelEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv is false
 PASS new WheelEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget is null
 PASS new WheelEvent('eventType', { get relatedTarget() { throw 'WheelEvent Error'; } }) threw exception WheelEvent Error.
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).bubbles is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).cancelable is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).view is window
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).detail is 111
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).screenX is 222
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).screenY is 333
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).clientX is 444
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).clientY is 555
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).ctrlKey is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).shiftKey is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).altKey is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).metaKey is true
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).button is 666
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).relatedTarget is testDiv
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).wheelDeltaX is 777
-PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888 }).wheelDeltaY is 888
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).bubbles is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).cancelable is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).view is window
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).detail is 111
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).screenX is 222
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).screenY is 333
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).clientX is 444
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).clientY is 555
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).ctrlKey is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).shiftKey is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).altKey is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).metaKey is true
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).button is 666
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).relatedTarget is testDiv
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).wheelDeltaX is 777
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).wheelDeltaY is 888
+PASS new WheelEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, screenX: 222, screenY: 333, clientX: 444, clientY: 555, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true, button: 666, relatedTarget: testDiv, wheelDeltaX: 777, wheelDeltaY: 888, deltaMode: WheelEvent.DOM_DELTA_PAGE }).deltaMode is WheelEvent.DOM_DELTA_PAGE
 PASS successfullyParsed is true
 
 TEST COMPLETE

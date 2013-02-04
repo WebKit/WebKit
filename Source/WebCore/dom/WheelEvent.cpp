@@ -34,11 +34,12 @@ namespace WebCore {
 WheelEventInit::WheelEventInit()
     : wheelDeltaX(0)
     , wheelDeltaY(0)
+    , deltaMode(WheelEvent::DOM_DELTA_PIXEL)
 {
 }
 
 WheelEvent::WheelEvent()
-    : m_deltaMode(DOMDeltaPixel)
+    : m_deltaMode(DOM_DELTA_PIXEL)
     , m_directionInvertedFromDevice(false)
 {
 }
@@ -46,10 +47,11 @@ WheelEvent::WheelEvent()
 WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializer)
     : MouseEvent(type, initializer)
     , m_wheelDelta(IntPoint(initializer.wheelDeltaX, initializer.wheelDeltaY))
+    , m_deltaMode(initializer.deltaMode)
 {
 }
 
-WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta, DeltaMode deltaMode,
+WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta, unsigned deltaMode,
     PassRefPtr<AbstractView> view, const IntPoint& screenLocation, const IntPoint& pageLocation,
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice)
     : MouseEvent(eventNames().mousewheelEvent,
@@ -85,7 +87,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     m_wheelDelta = IntPoint(rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier);
     
     m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
-    m_deltaMode = DOMDeltaPixel;
+    m_deltaMode = DOM_DELTA_PIXEL;
     m_directionInvertedFromDevice = false;
 
     initCoordinates(IntPoint(pageX, pageY));
@@ -109,9 +111,9 @@ bool WheelEvent::isMouseEvent() const
     return false;
 }
 
-inline static WheelEvent::DeltaMode deltaMode(const PlatformWheelEvent& event)
+inline static unsigned deltaMode(const PlatformWheelEvent& event)
 {
-    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOMDeltaPage : WheelEvent::DOMDeltaPixel;
+    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
 }
 
 PassRefPtr<WheelEventDispatchMediator> WheelEventDispatchMediator::create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)

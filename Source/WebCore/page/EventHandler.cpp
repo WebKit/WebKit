@@ -251,17 +251,18 @@ public:
 };
 #endif
 
-static inline ScrollGranularity wheelGranularityToScrollGranularity(WheelEvent::DeltaMode deltaMode)
+static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned deltaMode)
 {
     switch (deltaMode) {
-    case WheelEvent::DOMDeltaPage:
+    case WheelEvent::DOM_DELTA_PAGE:
         return ScrollByPage;
-    case WheelEvent::DOMDeltaLine:
+    case WheelEvent::DOM_DELTA_LINE:
         return ScrollByLine;
-    case WheelEvent::DOMDeltaPixel:
+    case WheelEvent::DOM_DELTA_PIXEL:
+        return ScrollByPixel;
+    default:
         return ScrollByPixel;
     }
-    return ScrollByPixel;
 }
 
 static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Node** stopNode)

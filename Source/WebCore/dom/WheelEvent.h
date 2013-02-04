@@ -35,13 +35,18 @@ struct WheelEventInit : public MouseEventInit {
 
     int wheelDeltaX;
     int wheelDeltaY;
+    unsigned deltaMode;
 };
 
 class WheelEvent : public MouseEvent {
 public:
     enum { TickMultiplier = 120 };
 
-    enum DeltaMode { DOMDeltaPixel, DOMDeltaLine, DOMDeltaPage };
+    enum DeltaMode {
+        DOM_DELTA_PIXEL = 0,
+        DOM_DELTA_LINE,
+        DOM_DELTA_PAGE
+    };
 
     static PassRefPtr<WheelEvent> create()
     {
@@ -54,7 +59,7 @@ public:
     }
 
     static PassRefPtr<WheelEvent> create(const FloatPoint& wheelTicks,
-        const FloatPoint& rawDelta, DeltaMode deltaMode, PassRefPtr<AbstractView> view,
+        const FloatPoint& rawDelta, unsigned deltaMode, PassRefPtr<AbstractView> view,
         const IntPoint& screenLocation, const IntPoint& pageLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice)
     {
@@ -75,7 +80,7 @@ public:
     int wheelDeltaY() const { return m_wheelDelta.y(); }
     int rawDeltaX() const { return m_rawDelta.x(); }
     int rawDeltaY() const { return m_rawDelta.y(); }
-    DeltaMode deltaMode() const { return m_deltaMode; }
+    unsigned deltaMode() const { return m_deltaMode; }
 
     bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
     // Needed for Objective-C legacy support
@@ -88,13 +93,12 @@ private:
     WheelEvent();
     WheelEvent(const AtomicString&, const WheelEventInit&);
     WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
-        DeltaMode, PassRefPtr<AbstractView>,
-        const IntPoint& screenLocation, const IntPoint& pageLocation,
+        unsigned, PassRefPtr<AbstractView>, const IntPoint& screenLocation, const IntPoint& pageLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice);
 
     IntPoint m_wheelDelta;
     IntPoint m_rawDelta;
-    DeltaMode m_deltaMode;
+    unsigned m_deltaMode;
     bool m_directionInvertedFromDevice;
 };
 
