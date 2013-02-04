@@ -2089,6 +2089,8 @@ public:
     void compileArithMul(Node*);
 #if CPU(X86) || CPU(X86_64)
     void compileIntegerArithDivForX86(Node*);
+#elif CPU(APPLE_ARMV7S)
+    void compileIntegerArithDivForARMv7s(Node*);
 #endif
     void compileArithMod(Node*);
     void compileSoftModulo(Node*);

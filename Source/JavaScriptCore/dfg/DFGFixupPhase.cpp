@@ -305,7 +305,7 @@ private:
         case ArithDiv: {
             if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInteger()) {
-                if (isX86())
+                if (isX86() || isARMv7s())
                     break;
                 injectInt32ToDoubleNode(0);
                 injectInt32ToDoubleNode(1);

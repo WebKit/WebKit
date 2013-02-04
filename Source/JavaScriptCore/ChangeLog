@@ -1,3 +1,31 @@
+2013-02-04  Michael Saboff  <msaboff@apple.com>
+
+        For ARMv7s use integer divide instruction for divide and modulo when possible
+        https://bugs.webkit.org/show_bug.cgi?id=108840
+
+        Reviewed in person by Filip Pizlo.
+
+        Added ARMv7s integer divide path for ArithDiv and ArithMod where operands and results are integer.
+        This is patterned after the similar code for X86.  Also added modulo power of 2 optimization
+        that uses logical and.  Added sdiv and udiv to the ARMv7 disassembler.  Put all the changes
+        behind #if CPU(APPLE_ARMV7S). 
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::sdiv):
+        (JSC::ARMv7Assembler::udiv):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::isARMv7s):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForARMv7s):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
         Check PrivateHeaders/JSBasePrivate.h for inappropriate macros

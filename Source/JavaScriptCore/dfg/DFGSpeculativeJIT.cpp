@@ -2859,6 +2859,26 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
             return;
         }
     }
+#elif CPU(APPLE_ARMV7S)
+    if (isInt32Constant(node->child2().node())) {
+        int32_t divisor = valueOfInt32Constant(node->child2().node());
+        if (divisor > 0 && hasOneBitSet(divisor)) { // If power of 2 then just mask
+            GPRReg dividendGPR = op1.gpr();
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+
+            m_jit.assembler().cmp(dividendGPR, ARMThumbImmediate::makeEncodedImm(0));
+            m_jit.assembler().it(ARMv7Assembler::ConditionLT, false);
+            m_jit.assembler().neg(resultGPR, dividendGPR);
+            m_jit.assembler().mov(resultGPR, dividendGPR);
+            m_jit.and32(TrustedImm32(divisor - 1), resultGPR);
+            m_jit.assembler().it(ARMv7Assembler::ConditionLT);
+            m_jit.assembler().neg(resultGPR, resultGPR);
+
+            integerResult(resultGPR, m_compileIndex);
+            return;
+        }
+    }
 #endif
 
     SpeculateIntegerOperand op2(this, node->child2());
@@ -2928,7 +2948,31 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
         unlock(op1SaveGPR);
             
     integerResult(edx.gpr(), node);
-#else // CPU(X86) || CPU(X86_64) --> so not X86
+
+#elif CPU(APPLE_ARMV7S)
+    GPRTemporary temp(this);
+    GPRTemporary quotientThenRemainder(this);
+    GPRTemporary multiplyAnswer(this);
+    GPRReg dividendGPR = op1.gpr();
+    GPRReg divisorGPR = op2.gpr();
+    GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
+    GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
+
+    m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
+    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
+    m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
+
+    // If the user cares about negative zero, then speculate that we're not about
+    // to produce negative zero.
+    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        // Check that we're not about to create negative zero.
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
+        numeratorPositive.link(&m_jit);
+    }
+
+    integerResult(quotientThenRemainderGPR, m_compileIndex);
+#else // not architecture that can do integer division
     // Do this the *safest* way possible: call out to a C function that will do the modulo,
     // and then attempt to convert back.
     GPRReg op1GPR = op1.gpr();
@@ -3246,7 +3290,36 @@ void SpeculativeJIT::compileIntegerArithDivForX86(Node* node)
             
     integerResult(eax.gpr(), node);
 }
-#endif // CPU(X86) || CPU(X86_64)
+#elif CPU(APPLE_ARMV7S)
+void SpeculativeJIT::compileIntegerArithDivForARMv7s(Node* node)
+{
+    SpeculateIntegerOperand op1(this, node->child1());
+    SpeculateIntegerOperand op2(this, node->child2());
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    GPRTemporary quotient(this);
+    GPRTemporary multiplyAnswer(this);
+
+    // If the user cares about negative zero, then speculate that we're not about
+    // to produce negative zero.
+    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
+        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
+        numeratorNonZero.link(&m_jit);
+    }
+
+    m_jit.assembler().sdiv(quotient.gpr(), op1GPR, op2GPR);
+
+    // Check that there was no remainder. If there had been, then we'd be obligated to
+    // produce a double result instead.
+    if (nodeUsedAsNumber(node->arithNodeFlags())) {
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
+    }
+
+    integerResult(quotient.gpr(), m_compileIndex);
+}
+#endif
 
 void SpeculativeJIT::compileArithMod(Node* node)
 {

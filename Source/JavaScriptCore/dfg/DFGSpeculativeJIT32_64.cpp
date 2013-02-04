@@ -2412,9 +2412,11 @@ void SpeculativeJIT::compile(Node* node)
             && node->canSpeculateInteger()) {
 #if CPU(X86)
             compileIntegerArithDivForX86(node);
-#else // CPU(X86) -> so non-X86 code follows
+#elif CPU(APPLE_ARMV7S)
+            compileIntegerArithDivForARMv7s(node);
+#else // CPU type without integer divide
             RELEASE_ASSERT_NOT_REACHED(); // should have been coverted into a double divide.
-#endif // CPU(X86)
+#endif
             break;
         }
         
