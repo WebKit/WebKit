@@ -44,8 +44,9 @@ class DOMWrapperMap {
 public:
     typedef HashMap<KeyType*, v8::Persistent<v8::Object> > MapType;
 
-    explicit DOMWrapperMap(v8::WeakReferenceCallback callback = &defaultWeakCallback)
+    explicit DOMWrapperMap(v8::Isolate* isolate, v8::NearDeathCallback callback = &defaultWeakCallback)
         : m_callback(callback)
+        , m_isolate(isolate)
     {
     }
 
@@ -58,7 +59,7 @@ public:
     {
         ASSERT(!m_map.contains(key));
         ASSERT(static_cast<KeyType*>(toNative(wrapper)) == key);
-        wrapper.MakeWeak(this, m_callback);
+        wrapper.MakeWeak(m_isolate, this, m_callback);
         m_map.set(key, wrapper);
     }
 
@@ -89,7 +90,7 @@ public:
     }
 
 private:
-    static void defaultWeakCallback(v8::Persistent<v8::Value> value, void* context)
+    static void defaultWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void* context)
     {
         DOMWrapperMap<KeyType>* map = static_cast<DOMWrapperMap<KeyType>*>(context);
         ASSERT(value->IsObject());
@@ -104,7 +105,8 @@ private:
         type->derefObject(key);
     }
 
-    v8::WeakReferenceCallback m_callback;
+    v8::NearDeathCallback m_callback;
+    v8::Isolate* m_isolate;
     MapType m_map;
 };
 

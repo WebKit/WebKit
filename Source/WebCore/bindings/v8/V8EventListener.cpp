@@ -41,7 +41,7 @@
 namespace WebCore {
 
 V8EventListener::V8EventListener(v8::Local<v8::Object> listener, bool isAttribute, const WorldContextHandle& worldContext)
-    : V8AbstractEventListener(isAttribute, worldContext)
+    : V8AbstractEventListener(isAttribute, worldContext, v8::Isolate::GetCurrent()) // FIXME: Remove GetCurrent().
 {
     setListenerObject(listener);
 }

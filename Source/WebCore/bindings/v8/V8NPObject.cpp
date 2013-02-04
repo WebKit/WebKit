@@ -175,19 +175,25 @@ public:
     {
         ASSERT(!m_map.contains(key));
         m_map.set(key, wrapper);
-        wrapper.MakeWeak(key, weakCallback);
+        wrapper.MakeWeak(m_isolate, key, weakCallback);
     }
 
-    static V8NPTemplateMap& sharedInstance()
+    static V8NPTemplateMap& sharedInstance(v8::Isolate* isolate)
     {
-        DEFINE_STATIC_LOCAL(V8NPTemplateMap, map, ());
+        DEFINE_STATIC_LOCAL(V8NPTemplateMap, map, (isolate));
+        ASSERT(isolate == map.m_isolate);
         return map;
     }
 
 private:
-    static void weakCallback(v8::Persistent<v8::Value> object, void* context)
+    explicit V8NPTemplateMap(v8::Isolate* isolate)
+        : m_isolate(isolate)
     {
-        sharedInstance().dispose(static_cast<PrivateIdentifier*>(context));
+    }
+
+    static void weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, void* context)
+    {
+        sharedInstance(isolate).dispose(static_cast<PrivateIdentifier*>(context));
     }
 
     void dispose(PrivateIdentifier* key)
@@ -200,6 +206,7 @@ private:
     }
 
     MapType m_map;
+    v8::Isolate* m_isolate;
 };
 
 static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> key, v8::Isolate* isolate)
@@ -237,14 +244,14 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
             return throwError(v8ReferenceError, "NPObject deleted", isolate);
 
         PrivateIdentifier* id = static_cast<PrivateIdentifier*>(identifier);
-        v8::Persistent<v8::FunctionTemplate> functionTemplate = V8NPTemplateMap::sharedInstance().get(id);
+        v8::Persistent<v8::FunctionTemplate> functionTemplate = V8NPTemplateMap::sharedInstance(isolate).get(id);
         // Cache templates using identifier as the key.
         if (functionTemplate.IsEmpty()) {
             // Create a new template.
             v8::Local<v8::FunctionTemplate> temp = v8::FunctionTemplate::New();
             temp->SetCallHandler(npObjectMethodHandler, key);
             functionTemplate = v8::Persistent<v8::FunctionTemplate>::New(temp);
-            V8NPTemplateMap::sharedInstance().set(id, functionTemplate);
+            V8NPTemplateMap::sharedInstance(isolate).set(id, functionTemplate);
         }
 
         // FunctionTemplate caches function for each context.
@@ -376,15 +383,15 @@ v8::Handle<v8::Array> npObjectIndexedPropertyEnumerator(const v8::AccessorInfo& 
     return npObjectPropertyEnumerator(info, false);
 }
 
-static void weakNPObjectCallback(v8::Persistent<v8::Value>, void*);
+static void weakNPObjectCallback(v8::Isolate*, v8::Persistent<v8::Value>, void*);
 
 static DOMWrapperMap<NPObject>& staticNPObjectMap()
 {
-    DEFINE_STATIC_LOCAL(DOMWrapperMap<NPObject>, npObjectMap, (&weakNPObjectCallback));
+    DEFINE_STATIC_LOCAL(DOMWrapperMap<NPObject>, npObjectMap, (v8::Isolate::GetCurrent(), &weakNPObjectCallback));
     return npObjectMap;
 }
 
-static void weakNPObjectCallback(v8::Persistent<v8::Value> value, void*)
+static void weakNPObjectCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void*)
 {
     ASSERT(value->IsObject());
     v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);

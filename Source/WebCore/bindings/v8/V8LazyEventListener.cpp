@@ -52,7 +52,7 @@
 namespace WebCore {
 
 V8LazyEventListener::V8LazyEventListener(const AtomicString& functionName, const AtomicString& eventParameterName, const String& code, const String sourceURL, const TextPosition& position, Node* node, const WorldContextHandle& worldContext)
-    : V8AbstractEventListener(true, worldContext)
+    : V8AbstractEventListener(true, worldContext, v8::Isolate::GetCurrent()) // FIXME Remove GetCurrent()
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
     , m_code(code)

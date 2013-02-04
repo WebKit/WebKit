@@ -47,16 +47,17 @@
 
 namespace WebCore {
 
-void V8AbstractEventListener::weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter)
+void V8AbstractEventListener::weakEventListenerCallback(v8::Isolate* isolate, v8::Persistent<v8::Value>, void* parameter)
 {
     V8AbstractEventListener* listener = static_cast<V8AbstractEventListener*>(parameter);
     listener->m_listener.clear();
 }
 
-V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext)
+V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext, v8::Isolate* isolate)
     : EventListener(JSEventListenerType)
     , m_isAttribute(isAttribute)
     , m_worldContext(worldContext)
+    , m_isolate(isolate)
 {
 #if ENABLE(INSPECTOR)
     ThreadLocalInspectorCounters::current().incrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
@@ -105,7 +106,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
 void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 {
     m_listener.set(listener);
-    m_listener.get().MakeWeak(this, &V8AbstractEventListener::weakEventListenerCallback);
+    m_listener.get().MakeWeak(m_isolate, this, &V8AbstractEventListener::weakEventListenerCallback);
 }
 
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)

@@ -106,7 +106,7 @@ namespace WebCore {
         const WorldContextHandle& worldContext() const { return m_worldContext; }
 
     protected:
-        V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext);
+        V8AbstractEventListener(bool isAttribute, const WorldContextHandle&, v8::Isolate*);
 
         virtual void prepareListenerObject(ScriptExecutionContext*) { }
 
@@ -118,7 +118,7 @@ namespace WebCore {
         v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);
 
     private:
-        static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter);
+        static void weakEventListenerCallback(v8::Isolate*, v8::Persistent<v8::Value>, void* parameter);
 
         // Implementation of EventListener function.
         virtual bool virtualisAttribute() const { return m_isAttribute; }
@@ -133,6 +133,7 @@ namespace WebCore {
         bool m_isAttribute;
 
         WorldContextHandle m_worldContext;
+        v8::Isolate* m_isolate;
     };
 
 } // namespace WebCore

@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallbackCustom(const v8::Ar
     ScriptExecutionContext* context = getScriptExecutionContext();
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context, wrapper);
+    RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context, wrapper, args.GetIsolate());
     RefPtr<MutationObserver> observer = MutationObserver::create(callback.release());
 
     V8DOMWrapper::associateObjectWithWrapper(observer.release(), &info, wrapper, args.GetIsolate());

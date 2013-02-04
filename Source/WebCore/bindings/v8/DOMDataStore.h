@@ -93,11 +93,11 @@ public:
     {
         if (mainWorldWrapperIsStoredInObject(object) && isMainWorldObject(object)) {
             if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist())) {
-                setWrapperInObject(object, wrapper);
+                setWrapperInObject(object, wrapper, isolate);
                 return;
             }
         }
-        return current(isolate)->set(object, wrapper);
+        return current(isolate)->set(object, wrapper, isolate);
     }
 
     template<typename T>
@@ -109,12 +109,12 @@ public:
     }
 
     template<typename T>
-    inline void set(T* object, v8::Persistent<v8::Object> wrapper)
+    inline void set(T* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
     {
         ASSERT(!!object);
         ASSERT(!wrapper.IsEmpty());
         if (mainWorldWrapperIsStoredInObject(object) && m_type == MainWorld) {
-            setWrapperInObject(object, wrapper);
+            setWrapperInObject(object, wrapper, isolate);
             return;
         }
         m_wrapperMap.set(object, wrapper);
@@ -154,25 +154,25 @@ private:
         return object->wrapper();
     }
 
-    static void setWrapperInObject(void*, v8::Persistent<v8::Object>)
+    static void setWrapperInObject(void*, v8::Persistent<v8::Object>, v8::Isolate*)
     {
         ASSERT_NOT_REACHED();
     }
-    static void setWrapperInObject(ScriptWrappable* object, v8::Persistent<v8::Object> wrapper)
+    static void setWrapperInObject(ScriptWrappable* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
     {
         ASSERT(object->wrapper().IsEmpty());
         object->setWrapper(wrapper);
-        wrapper.MakeWeak(object, weakCallback);
+        wrapper.MakeWeak(isolate, object, weakCallback);
     }
-    static void setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper)
+    static void setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
     {
         ASSERT(object->wrapper().IsEmpty());
         object->setWrapper(wrapper);
         V8GCController::didCreateWrapperForNode(object);
-        wrapper.MakeWeak(static_cast<ScriptWrappable*>(object), weakCallback);
+        wrapper.MakeWeak(isolate, static_cast<ScriptWrappable*>(object), weakCallback);
     }
 
-    static void weakCallback(v8::Persistent<v8::Value>, void* context);
+    static void weakCallback(v8::Isolate*, v8::Persistent<v8::Value>, void* context);
 
     Type m_type;
     DOMWrapperMap<void> m_wrapperMap;

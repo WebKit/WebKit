@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-V8MutationCallback::V8MutationCallback(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
+V8MutationCallback::V8MutationCallback(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner, v8::Isolate* isolate)
     : ActiveDOMCallback(context)
     , m_callback(callback)
     , m_worldContext(UseCurrentWorld)
 {
     owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
-    m_callback.get().MakeWeak(this, &V8MutationCallback::weakCallback);
+    m_callback.get().MakeWeak(isolate, this, &V8MutationCallback::weakCallback);
 }
 
 bool V8MutationCallback::handleEvent(MutationRecordArray* mutations, MutationObserver* observer)

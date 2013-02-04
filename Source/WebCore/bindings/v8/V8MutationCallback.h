@@ -38,20 +38,20 @@ class ScriptExecutionContext;
 
 class V8MutationCallback : public MutationCallback, public ActiveDOMCallback {
 public:
-    static PassRefPtr<V8MutationCallback> create(v8::Handle<v8::Value> value, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
+    static PassRefPtr<V8MutationCallback> create(v8::Handle<v8::Value> value, ScriptExecutionContext* context, v8::Handle<v8::Object> owner, v8::Isolate* isolate)
     {
         ASSERT(value->IsObject());
         ASSERT(context);
-        return adoptRef(new V8MutationCallback(v8::Handle<v8::Object>::Cast(value), context, owner));
+        return adoptRef(new V8MutationCallback(v8::Handle<v8::Object>::Cast(value), context, owner, isolate));
     }
 
     virtual bool handleEvent(MutationRecordArray*, MutationObserver*) OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
 private:
-    V8MutationCallback(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>);
+    V8MutationCallback(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>, v8::Isolate*);
 
-    static void weakCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
+    static void weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> wrapper, void* parameter)
     {
         V8MutationCallback* object = static_cast<V8MutationCallback*>(parameter);
         object->m_callback.clear();

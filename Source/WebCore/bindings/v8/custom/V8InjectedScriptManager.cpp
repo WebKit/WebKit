@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parameter)
+static void WeakReferenceCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, void* parameter)
 {
     InjectedScriptHost* nativeObject = static_cast<InjectedScriptHost*>(parameter);
     nativeObject->deref();
@@ -70,7 +70,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
     // InspectorBackend when the wrapper is garbage collected.
     host->ref();
     v8::Persistent<v8::Object> weakHandle = v8::Persistent<v8::Object>::New(instance);
-    weakHandle.MakeWeak(host, &WeakReferenceCallback);
+    weakHandle.MakeWeak(isolate, host, &WeakReferenceCallback);
     return instance;
 }
 
