@@ -656,6 +656,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Plugins/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/Storage/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/soup/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/ApplicationCache/*.in) \

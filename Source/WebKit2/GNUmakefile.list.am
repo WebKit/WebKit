@@ -267,6 +267,7 @@ webkit2_sources += \
 	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
+	Source/WebKit2/Platform/CoreIPC/MessageFlags.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.h \
@@ -421,6 +422,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
 	Source/WebKit2/Shared/Network/NetworkProcessSupplement.h \
+	Source/WebKit2/Shared/Network/NetworkResourceLoadParameters.h \
 	Source/WebKit2/Shared/OriginAndDatabases.cpp \
 	Source/WebKit2/Shared/OriginAndDatabases.h \
 	Source/WebKit2/Shared/PlatformPopupMenuData.cpp \
@@ -448,6 +450,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/Plugins/PluginQuirks.h \
 	Source/WebKit2/Shared/SameDocumentNavigationType.h \
 	Source/WebKit2/Shared/SandboxExtension.h \
+	Source/WebKit2/Shared/SandboxInitializationParameters.h \
 	Source/WebKit2/Shared/SecurityOriginData.h \
 	Source/WebKit2/Shared/SecurityOriginData.cpp \
 	Source/WebKit2/Shared/SessionState.cpp \
@@ -1110,6 +1113,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Plugins/PluginView.h \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.h \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
+	Source/WebKit2/WebProcess/Storage/StorageNamespaceProxy.h \
 	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.cpp \
 	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.cpp \

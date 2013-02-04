@@ -1,3 +1,9 @@
+2013-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix GTK+ 'make dist' in preparation for the 1.11.5 release.
+
+        * GNUmakefile.list.am: Update the source lists.
+
 2013-02-04  Michael Saboff  <msaboff@apple.com>
 
         For ARMv7s use integer divide instruction for divide and modulo when possible

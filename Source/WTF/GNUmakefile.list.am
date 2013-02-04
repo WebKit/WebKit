@@ -43,6 +43,7 @@ wtf_sources += \
     Source/WTF/wtf/DynamicAnnotations.cpp \
     Source/WTF/wtf/DynamicAnnotations.h \
     Source/WTF/wtf/Encoder.h \
+    Source/WTF/wtf/EnumClass.h \
     Source/WTF/wtf/ExportMacros.h \
     Source/WTF/wtf/FastAllocBase.h \
     Source/WTF/wtf/FastBitVector.h \
@@ -183,6 +184,7 @@ wtf_sources += \
     Source/WTF/wtf/ThreadingPrimitives.h \
     Source/WTF/wtf/ThreadingPthreads.cpp \
     Source/WTF/wtf/ThreadingWin.cpp \
+    Source/WTF/wtf/TriState.h \
     Source/WTF/wtf/TypeTraits.cpp \
     Source/WTF/wtf/TypeTraits.h \
     Source/WTF/wtf/TypedArrayBase.h \

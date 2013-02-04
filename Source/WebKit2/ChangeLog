@@ -1,3 +1,10 @@
+2013-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix GTK+ 'make dist' in preparation for the 1.11.5 release.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2013-02-04  Enrica Casucci  <enrica@apple.com>
 
         Add specific EditActions for Bold and Italic commands.
