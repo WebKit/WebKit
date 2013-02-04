@@ -1,3 +1,16 @@
+2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r141648
+        https://bugs.webkit.org/show_bug.cgi?id=108784
+
+        Reviewed by Kentaro Hara.
+
+        Fix -Wunused-parameter build warning.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createStorageArea):
+        (WebKit::StorageManager::destroyStorageArea):
+
 2013-02-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Make distcheck fails

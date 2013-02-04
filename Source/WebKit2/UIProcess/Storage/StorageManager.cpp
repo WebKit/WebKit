@@ -49,11 +49,11 @@ void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*
         didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
 }
 
-void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
+void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t /* storageAreaID */, uint64_t /* storageNamespaceID */, const SecurityOriginData&)
 {
 }
 
-void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID)
+void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t)
 {
 }
 
