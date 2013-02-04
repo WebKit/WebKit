@@ -128,12 +128,6 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
     result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
 }
 
-void WebResourceLoader::networkProcessCrashed()
-{
-    ASSERT(m_coreLoader);
-    m_coreLoader->didFail(internalError(m_coreLoader->url()));
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

@@ -54,7 +54,7 @@ using namespace WebCore;
 namespace WebKit {
 
 WebResourceLoadScheduler::WebResourceLoadScheduler()
-    : m_unschedulableLoadTimer(RunLoop::main(), this, &WebResourceLoadScheduler::unscheduledLoadTimerFired)
+    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebResourceLoadScheduler::internallyFailedLoadTimerFired)
     , m_suspendPendingRequestsCount(0)
 {
 }
@@ -109,7 +109,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
-        addUnschedulableLoad(resourceLoader);
+        scheduleInternallyFailedLoad(resourceLoader);
         return;
     }
     
@@ -118,19 +118,19 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     notifyDidScheduleResourceRequest(resourceLoader);
 }
 
-void WebResourceLoadScheduler::addUnschedulableLoad(WebCore::ResourceLoader* resourceLoader)
+void WebResourceLoadScheduler::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)
 {
-    m_unschedulableResourceLoaders.add(resourceLoader);
-    m_unschedulableLoadTimer.startOneShot(0);
+    m_internallyFailedResourceLoaders.add(resourceLoader);
+    m_internallyFailedLoadTimer.startOneShot(0);
 }
 
-void WebResourceLoadScheduler::unscheduledLoadTimerFired()
+void WebResourceLoadScheduler::internallyFailedLoadTimerFired()
 {
-    Vector<RefPtr<ResourceLoader> > unschedulableLoaders;
-    copyToVector(m_unschedulableResourceLoaders, unschedulableLoaders);
+    Vector<RefPtr<ResourceLoader> > internallyFailedResourceLoaders;
+    copyToVector(m_internallyFailedResourceLoaders, internallyFailedResourceLoaders);
     
-    for (size_t i = 0; i < unschedulableLoaders.size(); ++i)
-        unschedulableLoaders[i]->didFail(internalError(unschedulableLoaders[i]->url()));
+    for (size_t i = 0; i < internallyFailedResourceLoaders.size(); ++i)
+        internallyFailedResourceLoaders[i]->didFail(internalError(internallyFailedResourceLoaders[i]->url()));
 }
 
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
@@ -138,15 +138,10 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     ASSERT(resourceLoader);
     LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
-    if (m_unschedulableResourceLoaders.contains(resourceLoader)) {
-        m_unschedulableResourceLoaders.remove(resourceLoader);
+    if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
+        m_internallyFailedResourceLoaders.remove(resourceLoader);
         return;
     }
-
-    // FIXME (NetworkProcess): It's possible for a resourceLoader to be removed before it ever started,
-    // meaning before it even has an identifier.
-    // We should make this not be possible.
-    // The ResourceLoader code path should always for an identifier to ResourceLoaders.
     
     ResourceLoadIdentifier identifier = resourceLoader->identifier();
     if (!identifier) {
@@ -198,13 +193,11 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 
 void WebResourceLoadScheduler::networkProcessCrashed()
 {
-    Vector<RefPtr<WebResourceLoader> > webResourceLoaders;
-    copyValuesToVector(m_webResourceLoaders, webResourceLoaders);
-    
-    for (size_t i = 0; i < webResourceLoaders.size(); ++i)
-        webResourceLoaders[i]->networkProcessCrashed();
+    HashMap<unsigned long, RefPtr<WebResourceLoader> >::iterator end = m_webResourceLoaders.end();
+    for (HashMap<unsigned long, RefPtr<WebResourceLoader> >::iterator i = m_webResourceLoaders.begin(); i != end; ++i)
+        scheduleInternallyFailedLoad(i->value.get()->resourceLoader());
 
-    ASSERT(m_webResourceLoaders.isEmpty());
+    m_webResourceLoaders.clear();
 }
 
 } // namespace WebKit

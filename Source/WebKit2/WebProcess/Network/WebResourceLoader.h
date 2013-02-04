@@ -66,7 +66,7 @@ public:
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
-    void networkProcessCrashed();
+    WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);

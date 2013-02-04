@@ -1,3 +1,26 @@
+2013-02-04  Brady Eidson  <beidson@apple.com>
+
+        WebProcess crashes handling repeated NetworkProcess crashes.
+        <rdar://problem/13049867> and https://bugs.webkit.org/show_bug.cgi?id=108861
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Rename the concept of "unschedulable loader" to "internally failed loader"
+        - When the NetworkProcess crashes, add all outstanding ResourceLoaders into the unschedulable pile.
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::WebResourceLoadScheduler):
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        (WebKit::WebResourceLoadScheduler::scheduleInternallyFailedLoad):
+        (WebKit::WebResourceLoadScheduler::internallyFailedLoadTimerFired):
+        (WebKit::WebResourceLoadScheduler::remove): Also remove a non-helpful, out of date comment.
+        (WebKit::WebResourceLoadScheduler::networkProcessCrashed):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
+        WebResourceLoader no longer responds to crashes directly, but now exposes its WebCore ResourceLoader:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        (WebKit::WebResourceLoader::resourceLoader):
+
 2013-02-04  Anders Carlsson  <andersca@apple.com>
 
         Update message generation to use the new queue client semantics
