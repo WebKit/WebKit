@@ -3563,6 +3563,10 @@ void WebPagePrivate::resumeBackingStore()
         m_backingStore->d->resetTiles();
         m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
 
+#if USE(ACCELERATED_COMPOSITING)
+        setNeedsOneShotDrawingSynchronization();
+#endif
+
         m_backingStore->d->renderAndBlitVisibleContentsImmediately();
     } else {
         if (m_backingStore->d->isOpenGLCompositing())
@@ -3570,11 +3574,10 @@ void WebPagePrivate::resumeBackingStore()
 
         // Rendering was disabled while we were hidden, so we need to update all tiles.
         m_backingStore->d->updateTiles(true /* updateVisible */, false /* immediate */);
-    }
-
 #if USE(ACCELERATED_COMPOSITING)
-    setNeedsOneShotDrawingSynchronization();
+        setNeedsOneShotDrawingSynchronization();
 #endif
+    }
 
     setShouldResetTilesWhenShown(false);
 }

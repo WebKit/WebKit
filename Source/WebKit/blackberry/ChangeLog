@@ -1,3 +1,20 @@
+2013-02-04  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Needs one-shot drawing synchronization flag should be set before rendering when resuming the backing store
+        https://bugs.webkit.org/show_bug.cgi?id=108760
+
+        Reviewed by Yong Li.
+        Internally reviewed by Arvid Nilsson.
+
+        Internal PR 286218.
+        When acquiring the backing store ownership in WebPagePrivate::resumeBackingStore
+        we need to set the needs one-shot drawing synchronization flag
+        before rendering, so that when the render is completed we
+        commit the root layer.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+
 2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
 
         Fix build warning after r141473
