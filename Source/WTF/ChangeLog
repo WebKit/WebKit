@@ -1,3 +1,13 @@
+2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Build fix for AtomicString on iOS
+
+        Unreviewed. The commit r141812 rely on isUIThread(), there is no such things
+        in the tree right now. Use pthread_main_np() until more thread handling is upstreamed.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicStringTable::create):
+
 2013-02-04  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access

@@ -74,7 +74,7 @@ public:
         static AtomicStringTable* sharedStringTable = new AtomicStringTable;
 
         bool currentThreadIsWebThread = isWebThread();
-        if (currentThreadIsWebThread || isUIThread())
+        if (currentThreadIsWebThread || pthread_main_np())
             data.m_atomicStringTable = sharedStringTable;
         else
             data.m_atomicStringTable = new AtomicStringTable;
