@@ -1,3 +1,12 @@
+2013-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove an unnecessary sandbox rule.
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/com.apple.WebProcess.sb.in: We already have a file-read rule for
+        /Library/Managed Preferences, no need for another rule for something inside it.
+
 2013-02-04  Brady Eidson  <beidson@apple.com>
 
         WebProcess crashes handling repeated NetworkProcess crashes.

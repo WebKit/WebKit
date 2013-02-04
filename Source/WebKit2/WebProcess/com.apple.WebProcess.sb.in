@@ -49,7 +49,6 @@
 
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
-       (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")
        (home-literal "/Library/Preferences/.GlobalPreferences.plist")
        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
        (home-regex #"/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
