@@ -153,6 +153,7 @@
       '../svg/properties',
       '../../ThirdParty/glu',
       '../workers',
+      '../workers/chromium',
       '../xml',
       '../xml/parser',
     ],

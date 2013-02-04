@@ -62,6 +62,11 @@
 #include "WebMediaPlayerClientImpl.h"
 #endif
 
+#if ENABLE(WORKERS)
+#include "WebWorkerClientImpl.h"
+#include "WorkerContextProxyChromium.h"
+#endif
+
 #if OS(DARWIN)
 #include "WebSystemInterface.h"
 #endif
@@ -158,6 +163,10 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 
 #if ENABLE(VIDEO)
     WebCore::MediaPlayerPrivate::setMediaEngineRegisterSelfFunction(WebKit::WebMediaPlayerClientImpl::registerSelf);
+#endif
+
+#if ENABLE(WORKERS)
+    WebCore::setWorkerContextProxyCreateFunction(WebWorkerClientImpl::createWorkerContextProxy);
 #endif
 }
 

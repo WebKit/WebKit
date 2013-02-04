@@ -2646,6 +2646,8 @@
             'workers/WorkerScriptLoader.h',
             'workers/WorkerScriptLoaderClient.h',
             'workers/WorkerThread.cpp',
+            'workers/chromium/WorkerContextProxyChromium.cpp',
+            'workers/chromium/WorkerContextProxyChromium.h',
             'xml/parser/CharacterReferenceParserInlines.h',
             'xml/parser/MarkupTokenBase.h',
             'xml/parser/MarkupTokenizerBase.h',
