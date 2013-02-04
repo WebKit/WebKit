@@ -108,7 +108,7 @@ public:
     static EwkView* fromEvasObject(const Evas_Object* view);
     Evas_Object* view() { return m_evasObject; }
 
-    WKPageRef wkPage();
+    WKPageRef wkPage() const;
     WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
     EwkContext* ewkContext() { return m_context.get(); }
     EwkSettings* settings() { return m_settings.get(); }

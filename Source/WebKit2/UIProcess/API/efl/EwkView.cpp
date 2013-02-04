@@ -37,6 +37,7 @@
 #include "WKDictionary.h"
 #include "WKGeometry.h"
 #include "WKNumber.h"
+#include "WKPageGroup.h"
 #include "WKString.h"
 #include "WebContext.h"
 #include "WebImage.h"
@@ -146,6 +147,16 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     ASSERT(m_context);
     ASSERT(m_pageProxy);
 
+    WKPageSetUseFixedLayout(wkPage(), behavior == DefaultBehavior);
+
+    WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
+    WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
+
+    WKPreferencesSetWebGLEnabled(wkPreferences, true);
+    WKPreferencesSetFullScreenEnabled(wkPreferences, true);
+    WKPreferencesSetWebAudioEnabled(wkPreferences, true);
+    WKPreferencesSetOfflineWebApplicationCacheEnabled(wkPreferences, true);
+
 #if USE(COORDINATED_GRAPHICS)
     m_pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
@@ -153,24 +164,13 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     m_pageProxy->pageGroup()->preferences()->setCompositingBordersVisible(showDebugVisuals);
     m_pageProxy->pageGroup()->preferences()->setCompositingRepaintCountersVisible(showDebugVisuals);
-#if ENABLE(WEBGL)
-    m_pageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
-#endif
-    if (behavior == DefaultBehavior)
-        m_pageProxy->setUseFixedLayout(true);
 #endif
 
     m_pageProxy->initializeWebPage();
 
 #if ENABLE(FULLSCREEN_API)
     m_pageProxy->fullScreenManager()->setWebView(m_evasObject);
-    m_pageProxy->pageGroup()->preferences()->setFullScreenEnabled(true);
 #endif
-#if ENABLE(WEB_AUDIO)
-    m_pageProxy->pageGroup()->preferences()->setWebAudioEnabled(true);
-#endif
-
-    m_pageProxy->pageGroup()->preferences()->setOfflineWebApplicationCacheEnabled(true);
 
     // Enable mouse events by default
     setMouseEventsEnabled(true);
@@ -211,11 +211,7 @@ EwkView* EwkView::fromEvasObject(const Evas_Object* view)
     return sd->priv;
 }
 
-/**
- * @internal
- * Retrieves the internal WKPage for this view.
- */
-WKPageRef EwkView::wkPage()
+WKPageRef EwkView::wkPage() const
 {
     return toAPI(m_pageProxy.get());
 }
@@ -301,7 +297,7 @@ void EwkView::setDeviceScaleFactor(float scale)
 
 float EwkView::deviceScaleFactor() const
 {
-    return m_pageProxy->deviceScaleFactor();
+    return WKPageGetBackingScaleFactor(wkPage());
 }
 
 AffineTransform EwkView::transformFromScene() const
@@ -527,7 +523,7 @@ bool EwkView::isVisible() const
 
 const char* EwkView::title() const
 {
-    m_title = m_pageProxy->pageTitle().utf8().data();
+    m_title = WKEinaSharedString(AdoptWK, WKPageCopyTitle(wkPage()));
 
     return m_title;
 }
@@ -556,18 +552,19 @@ void EwkView::setThemePath(const char* theme)
 
 const char* EwkView::customTextEncodingName() const
 {
-    String customEncoding = m_pageProxy->customTextEncodingName();
-    if (customEncoding.isEmpty())
+    WKRetainPtr<WKStringRef> customEncoding = adoptWK(WKPageCopyCustomTextEncodingName(wkPage()));
+    if (WKStringIsEmpty(customEncoding.get()))
         return 0;
 
-    m_customEncoding = customEncoding.utf8().data();
+    m_customEncoding = WKEinaSharedString(customEncoding.get());
 
     return m_customEncoding;
 }
 
 void EwkView::setCustomTextEncodingName(const String& encoding)
 {
-    m_pageProxy->setCustomTextEncodingName(encoding);
+    WKRetainPtr<WKStringRef> wkEncoding = adoptWK(toCopiedAPI(encoding));
+    WKPageSetCustomTextEncodingName(wkPage(), wkEncoding.get());
 }
 
 void EwkView::setMouseEventsEnabled(bool enabled)
@@ -894,15 +891,13 @@ unsigned long long EwkView::informDatabaseQuotaReached(const String& databaseNam
  */
 void EwkView::informURLChange()
 {
-    String activeURL = m_pageProxy->activeURL();
-    if (activeURL.isEmpty())
+    WKRetainPtr<WKURLRef> wkActiveURL = adoptWK(WKPageCopyActiveURL(wkPage()));
+    WKRetainPtr<WKStringRef> wkURLString = wkActiveURL ? adoptWK(WKURLCopyString(wkActiveURL.get())) : adoptWK(WKStringCreateWithUTF8CString(""));
+
+    if (WKStringIsEqualToUTF8CString(wkURLString.get(), m_url))
         return;
 
-    CString rawActiveURL = activeURL.utf8();
-    if (m_url == rawActiveURL.data())
-        return;
-
-    m_url = rawActiveURL.data();
+    m_url = WKEinaSharedString(wkURLString.get());
     smartCallback<URLChanged>().call(m_url);
 
     // Update the view's favicon.
