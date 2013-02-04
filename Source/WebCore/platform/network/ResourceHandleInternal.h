@@ -113,6 +113,7 @@ namespace WebCore {
 #if USE(SOUP)
             , m_cancelled(false)
             , m_buffer(0)
+            , m_bufferSize(0)
             , m_bodySize(0)
             , m_bodyDataSent(0)
             , m_redirectCount(0)
@@ -200,6 +201,7 @@ namespace WebCore {
         GRefPtr<GAsyncResult> m_deferredResult;
         GRefPtr<GSource> m_timeoutSource;
         char* m_buffer;
+        int m_bufferSize;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
         RefPtr<NetworkingContext> m_context;

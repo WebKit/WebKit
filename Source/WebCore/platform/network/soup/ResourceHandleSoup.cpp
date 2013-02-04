@@ -532,7 +532,8 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     if (bytesSkipped > 0) {
-        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
+        d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+        g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
             d->m_cancellable.get(), redirectSkipCallback, handle.get());
         return;
     }
@@ -573,8 +574,8 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     }
 
     if (d->m_buffer) {
-        g_slice_free1(READ_BUFFER_SIZE, d->m_buffer);
         d->m_buffer = 0;
+        d->m_bufferSize = 0;
     }
 
     if (d->m_timeoutSource) {
@@ -645,7 +646,8 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
         return;
     }
 
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
+    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
         G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -675,7 +677,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
-    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
+    ASSERT(!d->m_buffer);
 
     if (soupMessage) {
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
@@ -683,7 +685,8 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
             // We use read_async() rather than skip_async() to work around
             // https://bugzilla.gnome.org/show_bug.cgi?id=691489 until we can
             // depend on glib > 2.35.4
-            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
+            d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+            g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
                 d->m_cancellable.get(), redirectSkipCallback, handle.get());
             return;
         }
@@ -722,7 +725,9 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
     d->m_inputStream = inputStream;
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
+
+    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
 
@@ -1379,7 +1384,8 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
         return;
     }
 
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
+    d->m_buffer = handle->client()->getBuffer(READ_BUFFER_SIZE, &d->m_bufferSize);
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, d->m_bufferSize, G_PRIORITY_DEFAULT,
                               d->m_cancellable.get(), readCallback, handle.get());
 }
 
