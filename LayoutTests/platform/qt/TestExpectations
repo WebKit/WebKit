@@ -92,6 +92,7 @@ gamepad/
 
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-currentPath.html
+fast/canvas/canvas-path-constructors.html
 
 # ENABLE(INPUT_SPEECH) is disabled.
 fast/speech
@@ -2623,3 +2624,9 @@ webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ]
 webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
+
+# [Qt] REGRESSION(r141634) test failing
+webkit.org/b/108813 compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
+
+# [Qt] different result from other platforms
+webkit.org/b/108676 svg/custom/svg-fonts-in-text-controls.html [ Skip ]
