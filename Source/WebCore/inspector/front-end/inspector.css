@@ -3054,7 +3054,11 @@ body.platform-mac .progress-bar-container progress {
     margin-top: 1px;
 }
 
-.source-frame-position {
+.source-frame-cursor-position {
     padding-left: 6px;
     padding-top: 5px;
+    display: inline-block;
+    pointer-events: auto;
+    -webkit-user-select: text;
+    font-size: 11px;
 }

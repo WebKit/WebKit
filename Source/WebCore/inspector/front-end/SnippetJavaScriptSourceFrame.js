@@ -49,7 +49,7 @@ WebInspector.SnippetJavaScriptSourceFrame.prototype = {
      */
     statusBarItems: function()
     {
-        return [this._runButton.element];
+        return [this._runButton.element].concat(WebInspector.JavaScriptSourceFrame.prototype.statusBarItems.call(this));
     },
 
     _runButtonClicked: function()
