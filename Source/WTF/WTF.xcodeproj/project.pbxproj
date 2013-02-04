@@ -1226,6 +1226,7 @@
 				A8A47450151A825B004123FF /* ThreadRestrictionVerifier.h in Headers */,
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
+				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
 				A8A47457151A825B004123FF /* TypedArrayBase.h in Headers */,
 				A8A47459151A825B004123FF /* TypeTraits.h in Headers */,
 				A8A4745C151A825B004123FF /* Uint16Array.h in Headers */,
@@ -1259,7 +1260,6 @@
 				974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
 				A8A47487151A825B004123FF /* WTFThreadData.h in Headers */,
-				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
