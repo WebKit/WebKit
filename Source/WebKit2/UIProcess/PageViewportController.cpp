@@ -125,9 +125,8 @@ FloatPoint PageViewportController::boundContentsPositionAtScale(const WebCore::F
     bounds.setHeight(std::max(0.f, m_contentsSize.height() - floorf(m_viewportSize.height() / scale)));
 
     FloatPoint position;
-    // Unfortunately it doesn't seem to be enough, so just always allow one pixel more.
-    position.setX(clampTo(framePosition.x(), bounds.x(), bounds.width() + 1));
-    position.setY(clampTo(framePosition.y(), bounds.y(), bounds.height() + 1));
+    position.setX(clampTo(framePosition.x(), bounds.x(), bounds.width()));
+    position.setY(clampTo(framePosition.y(), bounds.y(), bounds.height()));
 
     return position;
 }

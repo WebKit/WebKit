@@ -1,3 +1,15 @@
+2013-02-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Weird stripe at the end of the page
+        https://bugs.webkit.org/show_bug.cgi?id=108820
+
+        Reviewed by Noam Rosenthal.
+
+        The page scroll bound was artificially enlarged by one causing the artifact appearance.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::boundContentsPositionAtScale):
+
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
         Sort WebKit2 Xcode project file
