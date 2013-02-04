@@ -524,8 +524,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     ResourceHandleInternal* d = handle->getInternal();
     gssize bytesSkipped = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
-        ResourceHandleClient* client = handle->client();
-        client->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -552,8 +551,7 @@ static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer dat
     if (handle->cancelledOrClientless())
         return;
 
-    ResourceHandleClient* client = handle->client();
-    client->didSendData(handle.get(), d->m_bodyDataSent, d->m_bodySize);
+    handle->client()->didSendData(handle.get(), d->m_bodyDataSent, d->m_bodySize);
 }
 
 static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying)
@@ -622,15 +620,14 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     GOwnPtr<GError> error;
     d->m_inputStream = adoptGRef(soup_multipart_input_stream_next_part_finish(d->m_multipartInputStream.get(), result, &error.outPtr()));
 
-    ResourceHandleClient* client = handle->client();
     if (error) {
-        client->didFail(handle.get(), ResourceError::httpError(d->m_soupMessage.get(), error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::httpError(d->m_soupMessage.get(), error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
 
     if (!d->m_inputStream) {
-        client->didFinishLoading(handle.get(), 0);
+        handle->client()->didFinishLoading(handle.get(), 0);
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -639,7 +636,7 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     d->m_response.setURL(handle->firstRequest().url());
     d->m_response.updateFromSoupMessageHeaders(soup_multipart_input_stream_get_headers(d->m_multipartInputStream.get()));
 
-    client->didReceiveResponse(handle.get(), d->m_response);
+    handle->client()->didReceiveResponse(handle.get(), d->m_response);
 
     if (handle->cancelledOrClientless()) {
         cleanupSoupRequestOperation(handle.get());
@@ -660,7 +657,6 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     }
 
     ResourceHandleInternal* d = handle->getInternal();
-    ResourceHandleClient* client = handle->client();
     SoupMessage* soupMessage = d->m_soupMessage.get();
 
 
@@ -672,7 +668,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     GOwnPtr<GError> error;
     GRefPtr<GInputStream> inputStream = adoptGRef(soup_request_send_finish(d->m_soupRequest.get(), result, &error.outPtr()));
     if (error) {
-        client->didFail(handle.get(), ResourceError::httpError(soupMessage, error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::httpError(soupMessage, error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -709,7 +705,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         d->m_response.setExpectedContentLength(soup_request_get_content_length(d->m_soupRequest.get()));
     }
 
-    client->didReceiveResponse(handle.get(), d->m_response);
+    handle->client()->didReceiveResponse(handle.get(), d->m_response);
 
     if (handle->cancelledOrClientless()) {
         cleanupSoupRequestOperation(handle.get());
@@ -1318,9 +1314,8 @@ static void closeCallback(GObject*, GAsyncResult* res, gpointer data)
 
     g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
 
-    ResourceHandleClient* client = handle->client();
-    if (client && loadingSynchronousRequest)
-        client->didFinishLoading(handle.get(), 0);
+    if (handle->client() && loadingSynchronousRequest)
+        handle->client()->didFinishLoading(handle.get(), 0);
 
     cleanupSoupRequestOperation(handle.get());
 }
@@ -1343,9 +1338,8 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     GOwnPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
 
-    ResourceHandleClient* client = handle->client();
     if (error) {
-        client->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
+        handle->client()->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -1363,8 +1357,8 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
         // stream to close because the input stream is closed asynchronously. If this
         // is a synchronous request, we wait until the closeCallback, because we don't
         // want to halt the internal main loop before the input stream closes.
-        if (client && !loadingSynchronousRequest) {
-            client->didFinishLoading(handle.get(), 0);
+        if (handle->client() && !loadingSynchronousRequest) {
+            handle->client()->didFinishLoading(handle.get(), 0);
             handle->setClient(0); // Unset the client so that we do not try to access th
                                   // client in the closeCallback.
         }
@@ -1375,7 +1369,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     // It's mandatory to have sent a response before sending data
     ASSERT(!d->m_response.isNull());
 
-    client->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
+    handle->client()->didReceiveData(handle.get(), d->m_buffer, bytesRead, bytesRead);
 
     // didReceiveData may cancel the load, which may release the last reference.
     if (handle->cancelledOrClientless()) {
