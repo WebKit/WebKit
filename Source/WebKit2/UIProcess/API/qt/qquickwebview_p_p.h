@@ -33,6 +33,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <WebCore/ViewportArguments.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -161,6 +162,7 @@ protected:
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
+    WKRetainPtr<WKPageGroupRef> pageGroup;
 
     WebKit::QtPageClient pageClient;
     WebKit::DefaultUndoController undoController;

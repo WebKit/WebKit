@@ -65,7 +65,9 @@
 #include <QtQml/QJSValue>
 #include <QtQuick/QQuickView>
 #include <WKOpenPanelResultListener.h>
+#include <WKPageGroup.h>
 #include <WKSerializedScriptValue.h>
+#include <WKString.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <limits>
@@ -295,14 +297,12 @@ QQuickWebViewPrivate::~QQuickWebViewPrivate()
 // Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
 void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    RefPtr<WebPageGroup> pageGroup;
-    if (pageGroupRef)
-        pageGroup = toImpl(pageGroupRef);
-    else
-        pageGroup = WebPageGroup::create();
+    pageGroup = pageGroupRef;
+    if (!pageGroup)
+        pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(0));
 
     context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
-    webPageProxy = context->createWebPage(&pageClient, pageGroup.get());
+    webPageProxy = context->createWebPage(&pageClient, toImpl(pageGroup.get()));
     webPageProxy->setUseFixedLayout(s_flickableViewportEnabled);
 #if ENABLE(FULLSCREEN_API)
     webPageProxy->fullScreenManager()->setWebView(q_ptr);
@@ -737,7 +737,7 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     webPageProxy->postMessageToInjectedBundle(messageName, webEnabled.get());
 }
 
-static QString readUserScript(const QUrl& url)
+static WKRetainPtr<WKStringRef> readUserScript(const QUrl& url)
 {
     QString path;
     if (url.isLocalFile())
@@ -746,28 +746,27 @@ static QString readUserScript(const QUrl& url)
         path = QStringLiteral(":") + url.path();
     else {
         qWarning("QQuickWebView: Couldn't open '%s' as user script because only file:/// and qrc:/// URLs are supported.", qPrintable(url.toString()));
-        return QString();
+        return 0;
     }
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning("QQuickWebView: Couldn't open '%s' as user script due to error '%s'.", qPrintable(url.toString()), qPrintable(file.errorString()));
-        return QString();
+        return 0;
     }
 
-    QString contents = QString::fromUtf8(file.readAll());
+    QByteArray contents = file.readAll();
     if (contents.isEmpty())
         qWarning("QQuickWebView: Ignoring '%s' as user script because file is empty.", qPrintable(url.toString()));
 
-    return contents;
+    return adoptWK(WKStringCreateWithUTF8CString(contents.constData()));
 }
 
 void QQuickWebViewPrivate::updateUserScripts()
 {
     // This feature works per-WebView because we keep an unique page group for
     // each Page/WebView pair we create.
-    WebPageGroup* pageGroup = webPageProxy->pageGroup();
-    pageGroup->removeAllUserScripts();
+    WKPageGroupRemoveAllUserScripts(pageGroup.get());
 
     for (unsigned i = 0; i < userScripts.size(); ++i) {
         const QUrl& url = userScripts.at(i);
@@ -776,10 +775,10 @@ void QQuickWebViewPrivate::updateUserScripts()
             continue;
         }
 
-        QString contents = readUserScript(url);
-        if (contents.isEmpty())
+        WKRetainPtr<WKStringRef> contents = readUserScript(url);
+        if (!contents || WKStringIsEmpty(contents.get()))
             continue;
-        pageGroup->addUserScript(String(contents), emptyString(), 0, 0, InjectInTopFrameOnly, InjectAtDocumentEnd);
+        WKPageGroupAddUserScript(pageGroup.get(), contents.get(), /*baseURL*/ 0, /*whitelistedURLPatterns*/ 0, /*blacklistedURLPatterns*/ 0, kWKInjectInTopFrameOnly, kWKInjectAtDocumentEnd);
     }
 }
 

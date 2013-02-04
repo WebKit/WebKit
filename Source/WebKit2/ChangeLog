@@ -1,3 +1,19 @@
+2013-02-04  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [WK2][Qt] Replace WebPageGroup usage for user scripts with WKPageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=108651
+
+        Reviewed by Sam Weinig.
+
+        It's straight-forward port towards the C API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (readUserScript):
+        (QQuickWebViewPrivate::updateUserScripts):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2013-02-04  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Soup] Wrap SoupSession by NetworkStorageSession
