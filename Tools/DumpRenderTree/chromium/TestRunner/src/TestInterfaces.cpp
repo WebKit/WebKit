@@ -45,6 +45,7 @@ using WebKit::WebView;
 namespace WebTestRunner {
 
 TestInterfaces::TestInterfaces()
+    : m_webView(0)
 {
     m_accessibilityController = adoptPtr(new AccessibilityController());
     m_eventSender = adoptPtr(new EventSender());
@@ -70,6 +71,7 @@ TestInterfaces::~TestInterfaces()
 
 void TestInterfaces::setWebView(WebView* webView)
 {
+    m_webView = webView;
     m_accessibilityController->setWebView(webView);
     m_eventSender->setWebView(webView);
     // m_gamepadController doesn't depend on WebView.
@@ -123,6 +125,11 @@ EventSender* TestInterfaces::eventSender()
 TestRunner* TestInterfaces::testRunner()
 {
     return m_testRunner.get();
+}
+
+WebView* TestInterfaces::webView()
+{
+    return m_webView;
 }
 
 }

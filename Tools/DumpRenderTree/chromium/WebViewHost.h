@@ -32,7 +32,6 @@
 #define WebViewHost_h
 
 #include "TestNavigationController.h"
-#include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
 #include "WebIntentRequest.h"

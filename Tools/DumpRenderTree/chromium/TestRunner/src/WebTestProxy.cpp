@@ -31,16 +31,18 @@
 #include "config.h"
 #include "WebTestProxy.h"
 
+#include "AccessibilityControllerChromium.h"
+#include "EventSender.h"
 #include "SpellCheckClient.h"
+#include "TestInterfaces.h"
 #include "TestPlugin.h"
-#include "WebAccessibilityController.h"
+#include "TestRunner.h"
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebCachedURLRequest.h"
 #include "WebConsoleMessage.h"
 #include "WebDataSource.h"
 #include "WebElement.h"
-#include "WebEventSender.h"
 #include "WebFrame.h"
 #include "WebIntent.h"
 #include "WebIntentRequest.h"
@@ -270,7 +272,7 @@ WebTestProxyBase::~WebTestProxyBase()
 
 void WebTestProxyBase::setInterfaces(WebTestInterfaces* interfaces)
 {
-    m_testInterfaces = interfaces;
+    m_testInterfaces = interfaces->testInterfaces();
 }
 
 void WebTestProxyBase::setDelegate(WebTestDelegate* delegate)

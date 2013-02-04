@@ -61,6 +61,8 @@ public:
     AccessibilityController* accessibilityController();
     EventSender* eventSender();
     TestRunner* testRunner();
+    WebKit::WebView* webView();
+
 
 private:
     OwnPtr<AccessibilityController> m_accessibilityController;
@@ -68,6 +70,7 @@ private:
     OwnPtr<GamepadController> m_gamepadController;
     OwnPtr<TextInputController> m_textInputController;
     OwnPtr<TestRunner> m_testRunner;
+    WebKit::WebView* m_webView;
 };
 
 }

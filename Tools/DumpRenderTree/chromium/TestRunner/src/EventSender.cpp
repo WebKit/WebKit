@@ -47,7 +47,6 @@
 #include "MockSpellCheck.h"
 #include "WebContextMenuData.h"
 #include "WebDragOperation.h"
-#include "WebEventSender.h"
 #include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"

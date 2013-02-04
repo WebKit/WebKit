@@ -84,8 +84,6 @@ public:
     // Returns the host for the main WebView.
     WebViewHost* webViewHost() const { return m_webViewHost.get(); }
     WebTestRunner::WebTestRunner* testRunner() const { return m_testInterfaces->testRunner(); }
-    WebTestRunner::WebEventSender* eventSender() const { return m_testInterfaces->eventSender(); }
-    WebTestRunner::WebAccessibilityController* accessibilityController() const { return m_testInterfaces->accessibilityController(); }
 #if ENABLE(NOTIFICATIONS)
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
 #endif

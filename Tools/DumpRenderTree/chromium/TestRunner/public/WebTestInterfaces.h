@@ -38,8 +38,7 @@ class WebView;
 
 namespace WebTestRunner {
 
-class WebAccessibilityController;
-class WebEventSender;
+class TestInterfaces;
 class WebTestDelegate;
 class WebTestRunner;
 
@@ -55,13 +54,14 @@ public:
     void setTestIsRunning(bool);
 
     WebKit::WebView* webView() const;
-    WebAccessibilityController* accessibilityController();
-    WebEventSender* eventSender();
     WebTestRunner* testRunner();
 
+#if WEBTESTRUNNER_IMPLEMENTATION
+    TestInterfaces* testInterfaces();
+#endif
+
 private:
-    class Internal;
-    Internal* m_internal;
+    TestInterfaces* m_interfaces;
 };
 
 }

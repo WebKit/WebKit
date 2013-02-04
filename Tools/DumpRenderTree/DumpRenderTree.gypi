@@ -52,9 +52,7 @@
             'chromium/WebViewHost.h',
         ],
         'test_runner_files': [
-            'chromium/TestRunner/public/WebAccessibilityController.h',
             'chromium/TestRunner/public/WebTestDelegate.h',
-            'chromium/TestRunner/public/WebEventSender.h',
             'chromium/TestRunner/public/WebPreferences.h',
             'chromium/TestRunner/public/WebTask.h',
             'chromium/TestRunner/public/WebTestInterfaces.h',
@@ -86,8 +84,6 @@
             'chromium/TestRunner/src/TextInputController.h',
             'chromium/TestRunner/src/TestRunner.cpp',
             'chromium/TestRunner/src/TestRunner.h',
-            'chromium/TestRunner/src/WebAccessibilityController.cpp',
-            'chromium/TestRunner/src/WebEventSender.cpp',
             'chromium/TestRunner/src/WebPermissions.cpp',
             'chromium/TestRunner/src/WebPermissions.h',
             'chromium/TestRunner/src/WebPreferences.cpp',
@@ -96,7 +92,6 @@
             'chromium/TestRunner/src/TestPlugin.cpp',
             'chromium/TestRunner/src/TestPlugin.h',
             'chromium/TestRunner/src/WebTestProxy.cpp',
-            'chromium/TestRunner/src/WebTestRunner.cpp',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

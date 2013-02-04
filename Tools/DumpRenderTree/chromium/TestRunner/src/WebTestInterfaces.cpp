@@ -32,125 +32,60 @@
 #include "WebTestInterfaces.h"
 
 #include "TestInterfaces.h"
-#include "WebAccessibilityController.h"
-#include "WebEventSender.h"
-#include "WebTestDelegate.h"
-#include "WebTestRunner.h"
+#include "TestRunner.h"
 
-using WebKit::WebContextMenuData;
-using WebKit::WebFrame;
-using WebKit::WebGamepads;
-using WebKit::WebString;
-using WebKit::WebVector;
-using WebKit::WebView;
+using namespace WebKit;
 
 namespace WebTestRunner {
 
-class WebTestInterfaces::Internal {
-public:
-    Internal();
-    virtual ~Internal();
-
-    TestInterfaces* testInterfaces() { return &m_interfaces; }
-    void setDelegate(WebTestDelegate*);
-    void setWebView(WebView*);
-    void setTestIsRunning(bool);
-    WebView* webView() const { return m_webView; }
-    WebAccessibilityController* accessibilityController() { return &m_accessibilityController; }
-    WebEventSender* eventSender() { return &m_eventSender; }
-    WebTestRunner* testRunner() { return &m_testRunner; }
-
-private:
-    TestInterfaces m_interfaces;
-    bool m_testIsRunning;
-    WebView* m_webView;
-    WebAccessibilityController m_accessibilityController;
-    WebEventSender m_eventSender;
-    WebTestRunner m_testRunner;
-};
-
-WebTestInterfaces::Internal::Internal()
-    : m_testIsRunning(false)
-    , m_webView(0)
-    , m_accessibilityController(m_interfaces.accessibilityController())
-    , m_eventSender(m_interfaces.eventSender())
-    , m_testRunner(m_interfaces.testRunner())
-{
-}
-
-WebTestInterfaces::Internal::~Internal()
-{
-}
-
-void WebTestInterfaces::Internal::setDelegate(WebTestDelegate* delegate)
-{
-    m_interfaces.setDelegate(delegate);
-}
-
-void WebTestInterfaces::Internal::setWebView(WebView* webView)
-{
-    m_webView = webView;
-    m_interfaces.setWebView(webView);
-}
-
-void WebTestInterfaces::Internal::setTestIsRunning(bool running)
-{
-    m_interfaces.setTestIsRunning(running);
-}
-
 WebTestInterfaces::WebTestInterfaces()
 {
-    m_internal = new Internal;
+    m_interfaces = new TestInterfaces;
 }
 
 WebTestInterfaces::~WebTestInterfaces()
 {
-    delete m_internal;
+    delete m_interfaces;
 }
 
 void WebTestInterfaces::setWebView(WebView* webView)
 {
-    m_internal->setWebView(webView);
+    m_interfaces->setWebView(webView);
 }
 
 void WebTestInterfaces::setDelegate(WebTestDelegate* delegate)
 {
-    m_internal->setDelegate(delegate);
+    m_interfaces->setDelegate(delegate);
 }
 
 void WebTestInterfaces::bindTo(WebFrame* frame)
 {
-    m_internal->testInterfaces()->bindTo(frame);
+    m_interfaces->bindTo(frame);
 }
 
 void WebTestInterfaces::resetAll()
 {
-    m_internal->testInterfaces()->resetAll();
+    m_interfaces->resetAll();
 }
 
 void WebTestInterfaces::setTestIsRunning(bool running)
 {
-    m_internal->setTestIsRunning(running);
+    m_interfaces->setTestIsRunning(running);
 }
 
 WebView* WebTestInterfaces::webView() const
 {
-    return m_internal->webView();
-}
-
-WebAccessibilityController* WebTestInterfaces::accessibilityController()
-{
-    return m_internal->accessibilityController();
-}
-
-WebEventSender* WebTestInterfaces::eventSender()
-{
-    return m_internal->eventSender();
+    return m_interfaces->webView();
 }
 
 WebTestRunner* WebTestInterfaces::testRunner()
 {
-    return m_internal->testRunner();
+    return m_interfaces->testRunner();
+}
+
+TestInterfaces* WebTestInterfaces::testInterfaces()
+{
+    return m_interfaces;
 }
 
 }

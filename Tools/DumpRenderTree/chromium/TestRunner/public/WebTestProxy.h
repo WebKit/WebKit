@@ -74,6 +74,7 @@ struct WebWindowFeatures;
 namespace WebTestRunner {
 
 class SpellCheckClient;
+class TestInterfaces;
 class WebTestDelegate;
 class WebTestInterfaces;
 class WebTestRunner;
@@ -161,7 +162,7 @@ protected:
 private:
     void locationChangeDone(WebKit::WebFrame*);
 
-    WebTestInterfaces* m_testInterfaces;
+    TestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
 
     SpellCheckClient* m_spellcheck;
