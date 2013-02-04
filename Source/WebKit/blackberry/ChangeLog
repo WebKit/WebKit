@@ -1,3 +1,19 @@
+2013-02-04  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry]Adjust fatfinger detection rect size
+        https://bugs.webkit.org/show_bug.cgi?id=108678
+
+        Reviewed by Antonio Gomes.
+        RIM Bug 246976
+
+        We still need to clip the fatfinger detection rect to the viewport to
+        avoid wrong hitTest result.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::mouseEvent):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+
 2013-02-04  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect bad cast in DOM, CSS, etc.

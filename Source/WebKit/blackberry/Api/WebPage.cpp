@@ -3934,14 +3934,14 @@ bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDelt
         buttonType = MiddleButton;
 
     // Create our event.
-    PlatformMouseEvent platformMouseEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
+    PlatformMouseEvent platformMouseEvent(mouseEvent.documentViewportPosition(), mouseEvent.screenPosition(),
         toWebCoreMouseEventType(mouseEvent.type()), clickCount, buttonType,
         mouseEvent.shiftActive(), mouseEvent.ctrlActive(), mouseEvent.altActive(), PointingDevice);
     d->m_lastMouseEvent = platformMouseEvent;
     bool success = d->handleMouseEvent(platformMouseEvent);
 
     if (mouseEvent.wheelTicks()) {
-        PlatformWheelEvent wheelEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
+        PlatformWheelEvent wheelEvent(mouseEvent.documentViewportPosition(), mouseEvent.screenPosition(),
             0, -mouseEvent.wheelDelta(),
             0, -mouseEvent.wheelTicks(),
             ScrollByPixelWheelEvent,
