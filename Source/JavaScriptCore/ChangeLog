@@ -1,5 +1,14 @@
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        Remove duplicate entries from JavaScriptCore Xcode project
+
+            $ uniq Source/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj | diff -u - Source/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj | patch -p0 -R
+            patching file Source/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove duplicates.
+
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
         Sort JavaScriptCore Xcode project file
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
