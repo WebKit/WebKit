@@ -125,6 +125,10 @@ String WebEditCommandProxy::nameForEditAction(EditAction editAction)
         return WEB_UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
     case EditActionCut:
         return WEB_UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
+    case EditActionBold:
+        return WEB_UI_STRING_KEY("Bold", "Bold (Undo action name)", "Undo action name");
+    case EditActionItalics:
+        return WEB_UI_STRING_KEY("Italics", "Italics (Undo action name)", "Undo action name");
     case EditActionPaste:
         return WEB_UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
     case EditActionPasteFont:

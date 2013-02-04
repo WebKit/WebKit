@@ -69,6 +69,10 @@ static QString undoNameForEditAction(const EditAction editAction)
         return QObject::tr("Set Writing Direction");
     case EditActionSubscript:
         return QObject::tr("Subscript");
+    case EditActionBold:
+        return QObject::tr("Bold");
+    case EditActionItalics:
+        return QObject::tr("Italic");
     case EditActionSuperscript:
         return QObject::tr("Superscript");
     case EditActionUnderline:

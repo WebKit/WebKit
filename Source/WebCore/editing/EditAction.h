@@ -55,6 +55,8 @@ namespace WebCore {
         EditActionUnscript,
         EditActionDrag,
         EditActionCut,
+        EditActionBold,
+        EditActionItalics,
         EditActionPaste,
         EditActionPasteFont,
         EditActionPasteRuler,

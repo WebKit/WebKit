@@ -1096,12 +1096,12 @@ static bool executeTakeFindStringFromSelection(Frame* frame, Event*, EditorComma
 
 static bool executeToggleBold(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontWeight, "normal", "bold");
+    return executeToggleStyle(frame, source, EditActionBold, CSSPropertyFontWeight, "normal", "bold");
 }
 
 static bool executeToggleItalic(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyFontStyle, "normal", "italic");
+    return executeToggleStyle(frame, source, EditActionItalics, CSSPropertyFontStyle, "normal", "italic");
 }
 
 static bool executeTranspose(Frame* frame, Event*, EditorCommandSource, const String&)

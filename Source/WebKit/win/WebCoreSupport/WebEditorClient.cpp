@@ -518,6 +518,8 @@ static String undoNameForEditAction(EditAction editAction)
     case EditActionSetWritingDirection: return WEB_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
     case EditActionSubscript: return WEB_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
     case EditActionSuperscript: return WEB_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
+    case EditActionBold: return WEB_UI_STRING_KEY("Bold", "Bold (Undo action name)", "Undo action name");
+    case EditActionItalics: return WEB_UI_STRING_KEY("Italics", "Italics (Undo action name)", "Undo action name");
     case EditActionUnderline: return WEB_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
     case EditActionOutline: return WEB_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
     case EditActionUnscript: return WEB_UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");

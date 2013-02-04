@@ -1,3 +1,14 @@
+2013-02-04  Enrica Casucci  <enrica@apple.com>
+
+        Add specific EditActions for Bold and Italic commands.
+        https://bugs.webkit.org/show_bug.cgi?id=108842.
+        <rdar://problem/13098252>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction):
+
 2013-02-03  David Kilzer  <ddkilzer@apple.com>
 
         Upstream ENABLE_PDFKIT_PLUGIN settting
