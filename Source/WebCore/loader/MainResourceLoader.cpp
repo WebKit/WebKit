@@ -207,7 +207,12 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(const ResourceRequest& newReq
 
 PassRefPtr<ResourceBuffer> MainResourceLoader::resourceData()
 {
-    return m_resource ? m_resource->resourceBuffer() : 0;
+    ASSERT(!m_resource || !m_substituteData.isValid());
+    if (m_resource)
+        return m_resource->resourceBuffer();
+    if (m_substituteData.isValid())
+        return ResourceBuffer::create(m_substituteData.content()->data(), m_substituteData.content()->size());
+    return 0;
 }
 
 void MainResourceLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
