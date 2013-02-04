@@ -1,3 +1,9 @@
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
+        Sort WebKit2 Xcode project file
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-02-04  Simon Hausmann  <simon.hausmann@digia.com>
 
         [WK2][Qt] Replace WebPageGroup usage for user scripts with WKPageGroupRef
