@@ -285,6 +285,8 @@ void InspectorOverlay::update()
     IntSize viewportSize = enclosingIntRect(view->visibleContentRect()).size();
     IntSize frameViewFullSize = enclosingIntRect(view->visibleContentRect(true)).size();
     IntSize size = m_size.isEmpty() ? frameViewFullSize : m_size;
+    overlayPage()->setPageScaleFactor(m_page->pageScaleFactor(), IntPoint());
+    size.scale(m_page->pageScaleFactor());
     overlayView->resize(size);
 
     // Clear canvas and paint things.
