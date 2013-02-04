@@ -271,8 +271,9 @@ class ChangeLogEntry(object):
 
     # Determine if any text has been added to the section on touched files
     def is_touched_files_text_clean(self):
+        file_line_end = r"( (Added|Removed|(Copied|Renamed) from [A-Za-z0-9_\-./\\]+).)?$"
         for line in self.touched_files_text().splitlines():
-            if re.match(self.touched_files_regexp + "$", line):
+            if re.match(self.touched_files_regexp + file_line_end, line):
                 continue
             if re.match(self.touched_functions_regexp + "$", line):
                 continue

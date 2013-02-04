@@ -465,6 +465,48 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_has_valid_reviewer("Rubber stamped by Eric Seidel.", True)
         self._assert_has_valid_reviewer("Unreviewed build fix.", True)
 
+    def test_is_touched_files_text_clean(self):
+        tests = [
+        ('''2013-01-30  Timothy Loh  <timloh@chromium.com>
+
+        Make ChangeLogEntry detect annotations by prepare-ChangeLog (Added/Removed/Copied from/Renamed from) as clean.
+        https://bugs.webkit.org/show_bug.cgi?id=108433
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry.is_touched_files_text_clean):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_is_touched_files_text_clean):
+''', True),
+        ('''2013-01-10  Alan Cutter  <alancutter@chromium.org>
+
+        Perform some file operations (automatically added comments).
+
+        * QueueStatusServer/config/charts.py: Copied from Tools/QueueStatusServer/model/queuelog.py.
+        (get_time_unit):
+        * QueueStatusServer/handlers/queuecharts.py: Added.
+        (QueueCharts):
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_0.js: Removed.
+        * EWSTools/build-vm.sh: Renamed from Tools/EWSTools/cold-boot.sh.
+''', True),
+        ('''2013-01-30  Timothy Loh  <timloh@chromium.com>
+
+        Add unit test (manually added comment).
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_is_touched_files_text_clean): Added.
+''', False),
+        ('''2013-01-30  Timothy Loh  <timloh@chromium.com>
+
+        Add file (manually added comment).
+
+        * Scripts/webkitpy/common/checkout/super_changelog.py: Copied from the internet.
+''', False),
+        ]
+
+        for contents, expected_result in tests:
+            entry = ChangeLogEntry(contents)
+            self.assertEqual(entry.is_touched_files_text_clean(), expected_result)
+
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)

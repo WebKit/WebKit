@@ -1,3 +1,19 @@
+2013-02-03  Timothy Loh  <timloh@chromium.com>
+
+        Make ChangeLogEntry detect annotations by prepare-ChangeLog (Added/Removed/Copied from/Renamed from) as clean.
+        https://bugs.webkit.org/show_bug.cgi?id=108433
+
+        Reviewed by Eric Seidel.
+
+        PrepareChangeLog is supposed to update the file/function list if we
+        haven't touched it, but the existing regex doesn't handle the
+        annotations prepare-ChangeLog adds (e.g. "Added.")
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry.is_touched_files_text_clean):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_is_touched_files_text_clean):
+
 2013-02-02  Dean Jackson  <dino@apple.com>
 
         Add Antoine Quint to the list of committers
