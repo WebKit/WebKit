@@ -345,7 +345,7 @@ public:
     virtual const QualifiedName& imageSourceAttributeName() const;
     virtual String target() const { return String(); }
 
-    virtual void focus(bool restorePreviousSelection = true);
+    virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone);
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void blur();
 

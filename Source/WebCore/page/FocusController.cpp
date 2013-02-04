@@ -127,7 +127,7 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
         document->focusedNode()->dispatchBlurEvent(0);
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
     if (focused && document->focusedNode())
-        document->focusedNode()->dispatchFocusEvent(0);
+        document->focusedNode()->dispatchFocusEvent(0, FocusDirectionNone);
 }
 
 static inline bool hasCustomFocusLogic(Node* node)
@@ -353,7 +353,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             frame->selection()->setSelection(newSelection);
     }
 
-    static_cast<Element*>(node.get())->focus(false);
+    static_cast<Element*>(node.get())->focus(false, direction);
     return true;
 }
 
@@ -578,7 +578,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     s->clear();
 }
 
-bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFrame)
+bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFrame, FocusDirection direction)
 {
     RefPtr<Frame> oldFocusedFrame = focusedFrame();
     RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
@@ -617,7 +617,7 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     // Setting the focused node can result in losing our last reft to node when JS event handlers fire.
     RefPtr<Node> protect = node;
     if (newDocument) {
-        bool successfullyFocused = newDocument->setFocusedNode(node);
+        bool successfullyFocused = newDocument->setFocusedNode(node, direction);
         if (!successfullyFocused)
             return false;
     }
@@ -831,7 +831,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
     Element* element = toElement(focusCandidate.focusableNode);
     ASSERT(element);
 
-    element->focus(false);
+    element->focus(false, direction);
     return true;
 }
 

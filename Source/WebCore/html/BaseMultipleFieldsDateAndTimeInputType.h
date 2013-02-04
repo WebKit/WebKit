@@ -81,7 +81,7 @@ private:
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
-    virtual void focus(bool restorePreviousSelection) OVERRIDE FINAL;
+    virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE FINAL;
     virtual void forwardEvent(Event*) OVERRIDE FINAL;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
     virtual bool hasBadInput() const OVERRIDE;

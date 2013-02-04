@@ -2412,7 +2412,7 @@ bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
     return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
 }
 
-void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
+void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection)
 {
     if (document()->page())
         document()->page()->chrome()->client()->elementDidFocus(this);

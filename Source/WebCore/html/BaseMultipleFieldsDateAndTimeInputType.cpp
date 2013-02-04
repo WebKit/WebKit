@@ -240,7 +240,7 @@ void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
     BaseDateAndTimeInputType::destroyShadowSubtree();
 }
 
-void BaseMultipleFieldsDateAndTimeInputType::focus(bool)
+void BaseMultipleFieldsDateAndTimeInputType::focus(bool, FocusDirection)
 {
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->focusByOwner();

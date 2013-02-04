@@ -41,7 +41,7 @@ private:
     HTMLFormControlElement* associatedControl();
 
     virtual void accessKeyAction(bool sendMouseEvents);
-    virtual void focus(bool restorePreviousSelection = true);
+    virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
     virtual HTMLFormElement* virtualForm() const OVERRIDE;
 };
 

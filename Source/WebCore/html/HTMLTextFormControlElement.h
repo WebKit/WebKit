@@ -118,7 +118,7 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection) OVERRIDE;
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
 
@@ -127,7 +127,7 @@ private:
     // Returns true if suggested value is empty. Used to check placeholder visibility.
     virtual bool isEmptySuggestedValue() const { return true; }
     // Called in dispatchFocusEvent(), after placeholder process, before calling parent's dispatchFocusEvent().
-    virtual void handleFocusEvent() { }
+    virtual void handleFocusEvent(FocusDirection) { }
     // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
     virtual void handleBlurEvent() { }
 

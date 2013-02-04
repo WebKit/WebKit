@@ -52,7 +52,7 @@ private:
     // Overridden to either click() or focus() the corresponding control.
     virtual void defaultEventHandler(Event*);
 
-    void focus(bool restorePreviousSelection = true);
+    virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
 };
 
 } //namespace

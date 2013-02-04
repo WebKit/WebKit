@@ -900,13 +900,13 @@ int HTMLSelectElement::listToOptionIndex(int listIndex) const
     return optionIndex;
 }
 
-void HTMLSelectElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
+void HTMLSelectElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection direction)
 {
     // Save the selection so it can be compared to the new selection when
     // dispatching change events during blur event dispatch.
     if (usesMenuList())
         saveLastSelection();
-    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
+    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode, direction);
 }
 
 void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)

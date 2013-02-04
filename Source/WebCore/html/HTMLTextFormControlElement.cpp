@@ -84,12 +84,12 @@ Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(Cont
     return InsertionDone;
 }
 
-void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
+void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection direction)
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility(false);
-    handleFocusEvent();
-    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
+    handleFocusEvent(direction);
+    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode, direction);
 }
 
 void HTMLTextFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)

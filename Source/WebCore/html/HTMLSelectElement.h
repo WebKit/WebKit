@@ -114,7 +114,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection) OVERRIDE;
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     
     virtual bool canStartSelection() const { return false; }

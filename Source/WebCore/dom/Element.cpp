@@ -1864,7 +1864,7 @@ CSSStyleDeclaration *Element::style()
     return 0;
 }
 
-void Element::focus(bool restorePreviousSelection)
+void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 {
     if (!inDocument())
         return;
@@ -1891,7 +1891,7 @@ void Element::focus(bool restorePreviousSelection)
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
         protect = this;
-        if (!page->focusController()->setFocusedNode(this, doc->frame()))
+        if (!page->focusController()->setFocusedNode(this, doc->frame(), direction))
             return;
     }
 

@@ -3286,7 +3286,7 @@ void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
 }
 #endif
 
-bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
+bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection direction)
 {
     RefPtr<Node> newFocusedNode = prpNewFocusedNode;
 
@@ -3364,7 +3364,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         m_focusedNode = newFocusedNode;
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        m_focusedNode->dispatchFocusEvent(oldFocusedNode);
+        m_focusedNode->dispatchFocusEvent(oldFocusedNode, direction);
 
         if (m_focusedNode != newFocusedNode) {
             // handler shifted focus

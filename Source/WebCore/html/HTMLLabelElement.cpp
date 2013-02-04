@@ -155,11 +155,11 @@ bool HTMLLabelElement::willRespondToMouseClickEvents()
     return HTMLElement::willRespondToMouseClickEvents();
 }
 
-void HTMLLabelElement::focus(bool)
+void HTMLLabelElement::focus(bool, FocusDirection direction)
 {
     // to match other browsers, always restore previous selection
     if (HTMLElement* element = control())
-        element->focus();
+        element->focus(true, direction);
 }
 
 void HTMLLabelElement::accessKeyAction(bool sendMouseEvents)

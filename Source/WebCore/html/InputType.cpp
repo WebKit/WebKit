@@ -470,9 +470,9 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
-void InputType::focus(bool restorePreviousSelection)
+void InputType::focus(bool restorePreviousSelection, FocusDirection direction)
 {
-    element()->defaultFocus(restorePreviousSelection);
+    element()->defaultFocus(restorePreviousSelection, direction);
 }
 
 void InputType::createShadowSubtree()

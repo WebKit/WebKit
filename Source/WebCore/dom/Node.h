@@ -27,6 +27,7 @@
 
 #include "EditingBoundary.h"
 #include "EventTarget.h"
+#include "FocusDirection.h"
 #include "KURLHash.h"
 #include "LayoutRect.h"
 #include "MutationObserver.h"
@@ -637,7 +638,7 @@ public:
     void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
-    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection);
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual void dispatchChangeEvent();
     virtual void dispatchInputEvent();
