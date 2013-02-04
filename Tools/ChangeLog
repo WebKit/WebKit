@@ -1,3 +1,9 @@
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
+        Sort TestWebKitAPI Xcode project file
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2013-02-03  Alan Cutter  <alancutter@chromium.org>
 
         PatchLogs are not getting created on QueueStatusServer

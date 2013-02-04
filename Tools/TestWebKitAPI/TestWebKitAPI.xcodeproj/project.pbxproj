@@ -229,7 +229,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */,
@@ -240,6 +239,7 @@
 				C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */,
 				37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */,
 				37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */,
+				C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */,
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
@@ -1035,6 +1035,7 @@
 				A51B650916ADF9B1007AA5D9 /* PageVisibilityState.cpp in Sources */,
 				A57A34F016AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm in Sources */,
 				52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */,
+				C54237F016B8955800E638FC /* PasteboardNotifications.mm in Sources */,
 				BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */,
 				BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */,
 				BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */,
@@ -1084,7 +1085,6 @@
 				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
 				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
 				265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */,
-				C54237F016B8955800E638FC /* PasteboardNotifications.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1112,6 +1112,7 @@
 				93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */,
 				93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */,
 				52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */,
+				C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */,
 				BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */,
 				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
 				C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */,
@@ -1120,7 +1121,6 @@
 				520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */,
 				76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */,
 				BC901E331492AF390074A667 /* WKConnection_Bundle.cpp in Sources */,
-				C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
