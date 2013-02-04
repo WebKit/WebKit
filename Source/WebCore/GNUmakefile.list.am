@@ -1878,6 +1878,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBFactoryBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBFactory.cpp \
 	Source/WebCore/Modules/indexeddb/IDBFactory.h \
+    Source/WebCore/Modules/indexeddb/IDBHistograms.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \

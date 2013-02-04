@@ -3080,6 +3080,7 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBFactory.h \
         Modules/indexeddb/IDBFactoryBackendInterface.h \
         Modules/indexeddb/IDBFactoryBackendImpl.h \
+        Modules/indexeddb/IDBHistograms.h \
         Modules/indexeddb/IDBIndex.h \
         Modules/indexeddb/IDBKey.h \
         Modules/indexeddb/IDBKeyRange.h \

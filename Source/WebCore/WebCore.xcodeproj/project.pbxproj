@@ -1473,6 +1473,7 @@
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */; };
 		4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */; };
+		4B61737379636F616E277368 /* IDBHistograms.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B61737379636F616E277368 /* IDBHistograms.h */; };
 		4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4D273CF91669420800259CA1 /* InspectorInputAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D273CF71669420800259CA1 /* InspectorInputAgent.cpp */; };

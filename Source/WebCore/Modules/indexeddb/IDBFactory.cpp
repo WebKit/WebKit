@@ -35,11 +35,13 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "GroupSettings.h"
+#include "HistogramSupport.h"
 #include "IDBBindingUtilities.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
+#include "IDBHistograms.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBOpenDBRequest.h"
@@ -122,6 +124,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* context, const String& name, int64_t version, ExceptionCode& ec)
 {
+    HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBOpenCall, IDBMethodsMax);
     ASSERT(version >= 1 || version == IDBDatabaseMetadata::NoIntVersion);
     if (name.isNull()) {
         ec = TypeError;
@@ -148,6 +151,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
+    HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBDeleteDatabaseCall, IDBMethodsMax);
     if (name.isNull()) {
         ec = TypeError;
         return 0;

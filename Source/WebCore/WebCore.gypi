@@ -742,6 +742,7 @@
             'Modules/indexeddb/IDBFactoryBackendImpl.h',
             'Modules/indexeddb/IDBFactoryBackendInterface.cpp',
             'Modules/indexeddb/IDBFactoryBackendInterface.h',
+            'Modules/indexeddb/IDBHistograms.h',
             'Modules/indexeddb/IDBIndex.cpp',
             'Modules/indexeddb/IDBIndex.h',
             'Modules/indexeddb/IDBKey.cpp',

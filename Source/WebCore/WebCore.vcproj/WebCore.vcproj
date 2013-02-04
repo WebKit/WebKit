@@ -25094,6 +25094,10 @@
 					>
 				</File>
 				<File
+					RelativePath="../Modules\indexeddb\IDBHistograms.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\indexeddb\IDBIndex.cpp"
 					>
 				</File>
