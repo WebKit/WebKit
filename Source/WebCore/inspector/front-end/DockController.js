@@ -60,6 +60,14 @@ WebInspector.DockController.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    dockSide: function()
+    {
+        return this._dockSide;
+    },
+
+    /**
      * @param {string} dockSide
      */
     setDockSide: function(dockSide)
@@ -76,14 +84,6 @@ WebInspector.DockController.prototype = {
         else
             WebInspector.userMetrics.WindowUndocked.record();
         this._updateUI();
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isDockedToBottom: function()
-    {
-        return this._dockSide == WebInspector.DockController.State.DockedToBottom;
     },
 
     /**

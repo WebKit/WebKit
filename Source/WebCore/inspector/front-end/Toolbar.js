@@ -42,6 +42,8 @@ WebInspector.Toolbar = function()
 
     document.getElementById("close-button-left").addEventListener("click", this._onClose, true);
     document.getElementById("close-button-right").addEventListener("click", this._onClose, true);
+
+    this._isWindowMoveSupported = WebInspector.isMac() && !Preferences.showDockToRight;
 }
 
 WebInspector.Toolbar.prototype = {
@@ -101,7 +103,15 @@ WebInspector.Toolbar.prototype = {
      */
     _isDockedToBottom: function()
     {
-        return !!WebInspector.dockController && WebInspector.dockController.isDockedToBottom();
+        return !!WebInspector.dockController && WebInspector.dockController.dockSide() == WebInspector.DockController.State.DockedToBottom;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    _isUndocked: function()
+    {
+        return !!WebInspector.dockController && WebInspector.dockController.dockSide() == WebInspector.DockController.State.Undocked;
     },
 
     /**
@@ -109,7 +119,7 @@ WebInspector.Toolbar.prototype = {
      */
     _toolbarDragStart: function(event)
     {
-        if ((!this._isDockedToBottom() && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
+        if (this._isUndocked() && !this._isWindowMoveSupported)
             return false;
 
         var target = event.target;
@@ -119,9 +129,11 @@ WebInspector.Toolbar.prototype = {
         if (target !== this.element && !target.hasStyleClass("toolbar-item"))
             return false;
 
-        this.element.lastScreenX = event.screenX;
-        this.element.lastScreenY = event.screenY;
+        this._lastScreenX = event.screenX;
+        this._lastScreenY = event.screenY;
         this._lastHeightDuringDrag = window.innerHeight;
+        this._startDistanceToRight = window.innerWidth - event.clientX;
+        this._startDinstanceToBottom = window.innerHeight - event.clientY;
         return true;
     },
 
@@ -130,31 +142,59 @@ WebInspector.Toolbar.prototype = {
         // We may not get the drag event at the end.
         // Apply last changes manually.
         this._toolbarDrag(event);
-        delete this.element.lastScreenX;
-        delete this.element.lastScreenY;
+        delete this._lastScreenX;
+        delete this._lastScreenY;
         delete this._lastHeightDuringDrag;
+        delete this._startDistanceToRight;
+        delete this._startDinstanceToBottom;
     },
 
     _toolbarDrag: function(event)
     {
-        if (this._isDockedToBottom()) {
-            var height = this._lastHeightDuringDrag - (event.screenY - this.element.lastScreenY);
-            this._lastHeightDuringDrag = height;
-
-            InspectorFrontendHost.setAttachedWindowHeight(height);
-        } else {
-            var x = event.screenX - this.element.lastScreenX;
-            var y = event.screenY - this.element.lastScreenY;
-
-            // We cannot call window.moveBy here because it restricts the movement
-            // of the window at the edges.
-            InspectorFrontendHost.moveWindowBy(x, y);
-        }
-
-        this.element.lastScreenX = event.screenX;
-        this.element.lastScreenY = event.screenY;
-
         event.preventDefault();
+
+        if (this._isUndocked())
+            return this._toolbarDragMoveWindow(event);
+
+        if (Preferences.showDockToRight)
+            return this._toolbarDragChangeDocking(event);
+
+        return this._toolbarDragChangeHeight(event);
+    },
+
+    _toolbarDragMoveWindow: function(event)
+    {
+        var x = event.screenX - this._lastScreenX;
+        var y = event.screenY - this._lastScreenY;
+        this._lastScreenX = event.screenX;
+        this._lastScreenY = event.screenY;
+        InspectorFrontendHost.moveWindowBy(x, y);
+    },
+
+    _toolbarDragChangeDocking: function(event)
+    {
+        if (this._isDockedToBottom()) {
+            var distanceToRight = window.innerWidth - event.clientX;
+            if (distanceToRight < this._startDistanceToRight * 2 / 3) {
+                InspectorFrontendHost.requestSetDockSide(WebInspector.DockController.State.DockedToRight);
+                return true;
+            }
+        } else {
+            var distanceToBottom = window.innerHeight - event.clientY;
+            if (distanceToBottom < this._startDinstanceToBottom * 2 / 3) {
+                InspectorFrontendHost.requestSetDockSide(WebInspector.DockController.State.DockedToBottom);
+                return true;
+            }
+        }
+    },
+
+    _toolbarDragChangeHeight: function(event)
+    {
+        // Change the inspector window height for dock-to-bottom only mode.
+        var height = this._lastHeightDuringDrag - (event.screenY - this._lastScreenY);
+        this._lastHeightDuringDrag = height;
+        this._lastScreenY = event.screenY;
+        InspectorFrontendHost.setAttachedWindowHeight(height);
     },
 
     _onClose: function()
