@@ -26,6 +26,9 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
     }
   </style>
   <script type="text/javascript">
+      if (window.internals)
+          window.internals.settings.setAcceleratedCompositingForOverflowScrollEnabled(true);
+
       window.addEventListener('load', function() {
           if (!window.testRunner || !window.internals) {
               alert('This test requires testRunner to run!');

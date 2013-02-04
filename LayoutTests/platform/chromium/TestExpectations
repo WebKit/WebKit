@@ -3324,8 +3324,6 @@ webkit.org/b/84802 [ Mac Win Debug ] fast/js/random-array-gc-stress.html [ Pass 
 
 webkit.org/b/84847 [ Win Release ] inspector/timeline/timeline-start-time.html [ Failure Pass ]
 
-crbug.com/128325 platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html [ Failure ]
-
 webkit.org/b/85106 tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
 webkit.org/b/85174 fast/files/blob-constructor.html [ Failure ]
@@ -3677,20 +3675,9 @@ webkit.org/b/95581 http/tests/misc/javascript-url-stop-loaders.html [ Pass Timeo
 webkit.org/b/99734 [ Mac ] http/tests/xmlhttprequest/request-encoding2.html [ Pass Timeout ]
 
 # ENABLE_ACCELERATED_OVERFLOW_SCROLLING is not currently enabled in Chromium.
-webkit.org/b/94353 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
-webkit.org/b/94353 compositing/overflow/scrolling-without-painting.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/scrolling-without-painting.html [ Failure ]
-webkit.org/b/94353 compositing/overflow/updating-scrolling-content.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/updating-scrolling-content.html [ Failure ]
-webkit.org/b/94353 compositing/overflow/textarea-scroll-touch.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/textarea-scroll-touch.html [ Failure ]
-
-# Failing on Linux (Content Shell) only now
-webkit.org/b/94353 [ Android Linux ] compositing/overflow/nested-scrolling.html [ Failure Pass ]
-webkit.org/b/94353 [ Android Linux ] platform/chromium/virtual/softwarecompositing/overflow/nested-scrolling.html [ Failure Pass ]
+webkit.org/b/94353 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
+webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-overlay-with-touch.html [ Failure ]
@@ -4200,9 +4187,6 @@ webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-
 webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Failure Pass ]
-
-webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/overflow/scrolling-without-painting.html
-webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/overflow/updating-scrolling-content.html
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]

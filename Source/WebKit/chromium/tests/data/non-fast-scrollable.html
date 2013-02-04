@@ -2,17 +2,23 @@
 <html>
 <head>
   <style type="text/css">
-    .scrollable {
+    .box {
       width: 10px;
       height: 10px;
+    }
+    .scrollable {
       overflow: scroll;
+    }
+    .out-of-flow {
+      position: absolute;
     }
   </style>
 </head>
 
 <body>
-  <div class="scrollable">
+  <div class="scrollable box">
     Scrolling content.
+    <div class="out-of-flow box">Out-of-flow content.</div>
   </div>
 </body>
 </html>

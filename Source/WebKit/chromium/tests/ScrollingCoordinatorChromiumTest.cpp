@@ -43,9 +43,7 @@
 #include <public/WebLayer.h>
 #include <webkit/support/webkit_support.h>
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 #include "GraphicsLayerChromium.h"
-#endif
 
 using namespace WebCore;
 using namespace WebKit;
@@ -91,6 +89,7 @@ public:
         m_webViewImpl->settings()->setForceCompositingMode(true);
         m_webViewImpl->settings()->setAcceleratedCompositingEnabled(true);
         m_webViewImpl->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+        m_webViewImpl->settings()->setAcceleratedCompositingForOverflowScrollEnabled(true);
         m_webViewImpl->settings()->setFixedPositionCreatesStackingContext(true);
         m_webViewImpl->initializeMainFrame(&m_mockWebFrameClient);
         m_webViewImpl->resize(IntSize(320, 240));
@@ -208,11 +207,10 @@ TEST_F(ScrollingCoordinatorChromiumTest, clippedBodyTest)
     ASSERT_EQ(0u, rootScrollLayer->nonFastScrollableRegion().size());
 }
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-TEST_F(ScrollingCoordinatorChromiumTest, touchOverflowScrolling)
+TEST_F(ScrollingCoordinatorChromiumTest, overflowScrolling)
 {
-    registerMockedHttpURLLoad("touch-overflow-scrolling.html");
-    navigateTo(m_baseURL + "touch-overflow-scrolling.html");
+    registerMockedHttpURLLoad("overflow-scrolling.html");
+    navigateTo(m_baseURL + "overflow-scrolling.html");
 
     // Verify the properties of the accelerated scrolling element starting from the RenderObject
     // all the way to the WebLayer.
@@ -237,6 +235,5 @@ TEST_F(ScrollingCoordinatorChromiumTest, touchOverflowScrolling)
     WebLayer* webScrollLayer = static_cast<WebLayer*>(layerBacking->scrollingContentsLayer()->platformLayer());
     ASSERT_TRUE(webScrollLayer->scrollable());
 }
-#endif // ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 
 } // namespace

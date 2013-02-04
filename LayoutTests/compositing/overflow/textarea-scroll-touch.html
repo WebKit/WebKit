@@ -19,6 +19,9 @@
     if (window.testRunner)
       testRunner.dumpAsText();
 
+    if (window.internals)
+      window.internals.settings.setAcceleratedCompositingForOverflowScrollEnabled(true);
+
     function testScrollability(element)
     {
       // This will cause scrollable element content layers to be offset by y=50 with respect to their scrolling container.

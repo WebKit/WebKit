@@ -1,3 +1,26 @@
+2013-02-04  Sami Kyostila  <skyostil@chromium.org>
+
+        Disable -webkit-overflow-scrolling CSS attribute on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=108020
+
+        Reviewed by James Robinson.
+
+        Now that we can automatically promote overflow elements to accelerated
+        scrolling layers there is no use for the -webkit-overflow-scrolling CSS
+        attribute any longer on Chromium.
+
+        This patch enables composited overflow scrolling in
+        ScrollingCoordinatorChromiumTest. Because this also causes the overflow div
+        in non-fast-scrollable.html to become composited, we also need to modify that
+        test to opt it out of composited scrolling.
+
+        * features.gypi:
+        * tests/ScrollingCoordinatorChromiumTest.cpp:
+        (WebKit::ScrollingCoordinatorChromiumTest::ScrollingCoordinatorChromiumTest):
+        (WebKit::TEST_F):
+        * tests/data/non-fast-scrollable.html:
+        * tests/data/overflow-scrolling.html: Renamed from Source/WebKit/chromium/tests/data/touch-overflow-scrolling.html.
+
 2013-02-03  KwangYong Choi  <ky0.choi@samsung.com>
 
         Fix build warning after r141473
