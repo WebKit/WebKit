@@ -26230,7 +26230,6 @@
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				A24BF77B15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h in Headers */,
-				A24BF77B15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h in Headers */,
 				8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */,
 				29CD61DE146D02890068E82A /* WebKitCSSShaderValue.h in Headers */,
 				0562F9471573ECEB0031CA16 /* WebKitCSSSVGDocumentValue.h in Headers */,
