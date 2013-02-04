@@ -1,3 +1,17 @@
+2013-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141809.
+        http://trac.webkit.org/changeset/141809
+        https://bugs.webkit.org/show_bug.cgi?id=108860
+
+        ARC isn't supported on 32-bit. (Requested by mhahnenberg on
+        #webkit).
+
+        * API/tests/testapi.mm:
+        (+[TestObject testObject]):
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: testapi.mm should use ARC
