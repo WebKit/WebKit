@@ -122,20 +122,18 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
         this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
     }
 
-    this._debugSidebarContentsElement = document.createElement("div");
-    this._debugSidebarContentsElement.id = "scripts-debug-sidebar-contents";
-    this.sidebarElement.appendChild(this._debugSidebarContentsElement);
+    this.sidebarPaneView = new WebInspector.SidebarPaneStack();
+    this.sidebarPaneView.element.id = "scripts-debug-sidebar-contents";
+    for (var pane in this.sidebarPanes)
+        this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+    this.sidebarPaneView.show(this.sidebarElement);
 
-    for (var pane in this.sidebarPanes) {
-        if (this.sidebarPanes[pane] === this.sidebarPanes.domBreakpoints)
-            continue;
-        this.sidebarPanes[pane].show(this._debugSidebarContentsElement);
-    }
+    if (WebInspector.settings.watchExpressions.get().length > 0)
+        this.sidebarPanes.watchExpressions.expand();
 
-    this.sidebarPanes.callstack.expanded = true;
-
-    this.sidebarPanes.scopechain.expanded = true;
-    this.sidebarPanes.jsBreakpoints.expanded = true;
+    this.sidebarPanes.callstack.expand();
+    this.sidebarPanes.scopechain.expand();
+    this.sidebarPanes.jsBreakpoints.expand();
 
     this.sidebarPanes.callstack.registerShortcuts(this.registerShortcuts.bind(this));
     this.registerShortcuts(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.EvaluateSelectionInConsole, this._evaluateSelectionInConsole.bind(this));
@@ -215,8 +213,6 @@ WebInspector.ScriptsPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        this.sidebarPanes.domBreakpoints.show(this._debugSidebarContentsElement, this.sidebarPanes.xhrBreakpoints.element);
-
         this._navigatorController.wasShown();
     },
 

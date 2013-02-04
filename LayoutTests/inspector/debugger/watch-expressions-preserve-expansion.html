@@ -24,7 +24,10 @@ var test = function()
 
     function step1()
     {
-        watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
+        var watchExpressionsPane = WebInspector.panels.scripts.sidebarPanes.watchExpressions;
+        watchExpressionsPane.expand();
+
+        watchExpressionsSection = watchExpressionsPane.section;
         watchExpressionsSection.watchExpressions = [];
         watchExpressionsSection.watchExpressions.push("globalObject");
         watchExpressionsSection.watchExpressions.push("windowAlias");

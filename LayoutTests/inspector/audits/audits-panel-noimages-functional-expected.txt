@@ -1,10 +1,10 @@
 Tests audit rules on a page without images.
 Page reloaded.
-  Network Utilization
+ Network Utilization
     Combine external JavaScript (4)
      There are multiple resources served from same domain. Consider combining them into as few files as possible.
       4 JavaScript resources served from [domain].
-  Web Page Performance
+ Web Page Performance
     Optimize the order of styles and scripts (2)
      The following external CSS files were included after an external JavaScript file in the document head. To ensure CSS files are downloaded in parallel, always include external CSS before external JavaScript.
        audits-style1.css

@@ -8,13 +8,27 @@ function initialize_extensionsSidebarTest()
 {
     InspectorTest.dumpSidebarContent = function(callback)
     {
-        var sidebarPanes = WebInspector.panel("elements").sidebarPanes;
-        // the sidebar of interest is presumed to always be last.
-        var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
+        var sidebar = InspectorTest._extensionSidebar();
         InspectorTest.runAfterPendingDispatches(function() {
             InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
             callback();
         });
+    }
+
+    InspectorTest.expandSidebar = function(callback)
+    {
+        var sidebar = InspectorTest._extensionSidebar();
+        InspectorTest.runAfterPendingDispatches(function() {
+            sidebar.expand();
+            callback();
+        });
+    }
+
+    InspectorTest._extensionSidebar = function()
+    {
+        var sidebarPanes = WebInspector.panel("elements").sidebarPanes;
+        // the sidebar of interest is presumed to always be last.
+        return sidebarPanes[Object.keys(sidebarPanes).pop()];
     }
 }
 
@@ -32,7 +46,7 @@ function extension_testSidebarSetPage(nextTest)
         sidebar.onShown.addListener(onShown);
         var basePath = location.pathname.replace(/\/[^/]*$/, "/");
         sidebar.setPage(basePath + "extension-sidebar.html");
-        extension_showPanel("elements");
+        extension_showPanel("elements", extension_expandSidebar);
     }
     webInspector.panels.elements.createSidebarPane("Test Sidebar", onSidebarCreated);
 }
@@ -40,6 +54,11 @@ function extension_testSidebarSetPage(nextTest)
 function extension_dumpSidebarContent(nextTest)
 {
     evaluateOnFrontend("InspectorTest.dumpSidebarContent(reply);", nextTest);
+}
+
+function extension_expandSidebar(callback)
+{
+    evaluateOnFrontend("InspectorTest.expandSidebar(reply);", callback);
 }
 
 function extension_testSidebarSetObject(nextTest)
@@ -105,7 +124,7 @@ function extension_testSidebarPageReplacedWithObject(nextTest)
          sidebar = aSidebar;
          sidebar.onShown.addListener(onShown);
          sidebar.setPage(basePath + "extension-sidebar.html");
-         extension_showPanel("elements");
+         extension_showPanel("elements", extension_expandSidebar);
      }
      var didSetObject = false;
      function onShown(frame)

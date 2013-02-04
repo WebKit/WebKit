@@ -5,7 +5,7 @@ Running tests...
 RUNNING TEST: extension_testAudits
 Progress: 50%
 Progress: 75%
-  Extension audits
+ Extension audits
     Failed rule (42)
      this rule always fails
     Rule with details subtree (1)
@@ -43,7 +43,7 @@ Progress: 75%
          extensions-audits.html:20
     Passed rule
      this rule always passes ok
-  Extension audits that fail
+ Extension audits that fail
 category.onAuditStarted fired
 failedCategory.onAuditStarted fired, throwing exception
 All tests done.

@@ -4,6 +4,30 @@
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
 
+function initialize_extensionsSidebarTest()
+{
+    InspectorTest.expandSidebar = function(callback)
+    {
+        var sidebar = InspectorTest._extensionSidebar();
+        InspectorTest.runAfterPendingDispatches(function() {
+            sidebar.expand();
+            callback();
+        });
+    }
+
+    InspectorTest._extensionSidebar = function()
+    {
+        var sidebarPanes = WebInspector.panel("elements").sidebarPanes;
+        // the sidebar of interest is presumed to always be last.
+        return sidebarPanes[Object.keys(sidebarPanes).pop()];
+    }
+}
+
+function extension_expandSidebar(callback)
+{
+    evaluateOnFrontend("InspectorTest.expandSidebar(reply);", callback);
+}
+
 function extension_testOnSelectionChanged(nextTest)
 {
     function onSelectionChanged()
@@ -105,7 +129,7 @@ function extension_testViewShowHide(nextTest)
         addListener(sidebar, "sidebar", "onShown");
         sidebar.setPage(basePath + "extension-sidebar.html");
     }
-    extension_showPanel("elements");
+    extension_showPanel("elements", extension_expandSidebar);
     var basePath = location.pathname.replace(/\/[^/]*$/, "/");
     function onSidebarCreated(sidebarPane)
     {

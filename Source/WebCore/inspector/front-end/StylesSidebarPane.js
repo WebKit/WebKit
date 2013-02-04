@@ -239,7 +239,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 userCallback();
         }
 
-        if (this._computedStylePane.expanded || forceFetchComputedStyle) {
+        if (this._computedStylePane.isShowing() || forceFetchComputedStyle) {
             this._refreshUpdateInProgress = true;
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         } else {
@@ -302,7 +302,7 @@ WebInspector.StylesSidebarPane.prototype = {
             resultStyles.computedStyle = computedStyle;
         }
 
-        if (this._computedStylePane.expanded)
+        if (this._computedStylePane.isShowing())
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedCallback.bind(this));
         WebInspector.cssModel.getInlineStylesAsync(node.id, inlineCallback.bind(this));
         WebInspector.cssModel.getMatchedStylesAsync(node.id, true, true, stylesCallback.bind(this));
@@ -671,7 +671,7 @@ WebInspector.StylesSidebarPane.prototype = {
     _createNewRule: function(event)
     {
         event.consume();
-        this.expanded = true;
+        this.expand();
         this.addBlankSection().startEditingSelector();
     },
 
@@ -800,15 +800,9 @@ WebInspector.ComputedStyleSidebarPane = function()
 
 WebInspector.ComputedStyleSidebarPane.prototype = {
 
-    // Overriding expand() rather than onexpand() to eliminate the visual slowness due to a possible backend trip.
-    expand: function()
+    prepareContent: function(callback)
     {
-        function callback()
-        {
-            WebInspector.SidebarPane.prototype.expand.call(this);
-        }
-
-        this._stylesSidebarPane._refreshUpdate(null, true, callback.bind(this));
+        this._stylesSidebarPane._refreshUpdate(null, true, callback);
     },
 
     __proto__: WebInspector.SidebarPane.prototype

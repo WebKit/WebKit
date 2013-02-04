@@ -30,24 +30,24 @@
 
 /**
  * @constructor
- * @extends {WebInspector.View}
+ * @extends {WebInspector.SidebarPaneStack}
  * @param {!Array.<!WebInspector.AuditCategoryResult>} categoryResults
  */
 WebInspector.AuditResultView = function(categoryResults)
 {
-    WebInspector.View.call(this);
-    this.element.className = "audit-result-view";
+    WebInspector.SidebarPaneStack.call(this);
+    this.element.addStyleClass("audit-result-view");
 
     function categorySorter(a, b) {
         return (a.title || "").localeCompare(b.title || "");
     }
     categoryResults.sort(categorySorter);
     for (var i = 0; i < categoryResults.length; ++i)
-        new WebInspector.AuditCategoryResultPane(categoryResults[i]).show(this.element);
+        this.addPane(new WebInspector.AuditCategoryResultPane(categoryResults[i]));
 }
 
 WebInspector.AuditResultView.prototype = {
-    __proto__: WebInspector.View.prototype
+    __proto__: WebInspector.SidebarPaneStack.prototype
 }
 
 /**

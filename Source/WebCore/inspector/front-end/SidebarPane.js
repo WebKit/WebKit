@@ -35,103 +35,193 @@ WebInspector.SidebarPane = function(title)
     WebInspector.View.call(this);
     this.element.className = "pane";
 
-    this.titleElement = document.createElement("div");
-    this.titleElement.className = "title";
-    this.titleElement.tabIndex = 0;
-    this.titleElement.addEventListener("click", this.toggleExpanded.bind(this), false);
-    this.titleElement.addEventListener("keydown", this._onTitleKeyDown.bind(this), false);
+    this.titleElement = document.createDocumentFragment();
+    this.bodyElement = this.element.createChild("div", "body");
 
-    this.bodyElement = document.createElement("div");
-    this.bodyElement.className = "body";
+    this._title = title;
 
-    this.element.appendChild(this.titleElement);
-    this.element.appendChild(this.bodyElement);
-
-    this.title = title;
-    this.growbarVisible = false;
-    this.expanded = false;
+    this._expandCallback = null;
+    this._showCallback = null;
 }
 
 WebInspector.SidebarPane.prototype = {
-    get title()
+    title: function()
     {
         return this._title;
     },
 
-    set title(x)
+    /**
+     * @param {function} callback
+     */
+    prepareContent: function(callback)
     {
-        if (this._title === x)
-            return;
-        this._title = x;
-        this.titleElement.textContent = x;
-    },
-
-    get growbarVisible()
-    {
-        return this._growbarVisible;
-    },
-
-    set growbarVisible(x)
-    {
-        if (this._growbarVisible === x)
-            return;
-
-        this._growbarVisible = x;
-
-        if (x && !this._growbarElement) {
-            this._growbarElement = document.createElement("div");
-            this._growbarElement.className = "growbar";
-            this.element.appendChild(this._growbarElement);
-        } else if (!x && this._growbarElement) {
-            if (this._growbarElement.parentNode)
-                this._growbarElement.parentNode(this._growbarElement);
-            delete this._growbarElement;
-        }
-    },
-
-    get expanded()
-    {
-        return this._expanded;
-    },
-
-    set expanded(x)
-    {
-        if (x)
-            this.expand();
-        else
-            this.collapse();
+        callback();
     },
 
     expand: function()
     {
-        if (this._expanded)
-            return;
-        this._expanded = true;
-        this.element.addStyleClass("expanded");
-        this.onexpand();
+        if (this._expandCallback)
+            this.prepareContent(this.onContentReady.bind(this));
+        else
+            this._expandPending = true;
     },
 
-    onexpand: function()
+    onContentReady: function()
     {
+        this._expandCallback();
     },
 
-    collapse: function()
+    /**
+     * @param {function} callback
+     * @return {boolean}
+     */
+    setExpandCallback: function(callback)
     {
-        if (!this._expanded)
-            return;
-        this._expanded = false;
-        this.element.removeStyleClass("expanded");
+        this._expandCallback = callback;
+        var pending = this._expandPending;
+        delete this._expandPending;
+        return pending;
     },
 
-    toggleExpanded: function()
+    /**
+     * @param {function} callback
+     */
+    setShowCallback: function(callback)
     {
-        this.expanded = !this.expanded;
+        this._showCallback = callback;
     },
 
-    _onTitleKeyDown: function(event)
+    wasShown: function()
+    {
+        WebInspector.View.prototype.wasShown.call(this);
+        if (this._showCallback)
+            this._showCallback();
+    },
+
+    __proto__: WebInspector.View.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.View}
+ */
+WebInspector.SidebarPaneStack = function()
+{
+    WebInspector.View.call(this);
+    this.element.className = "sidebar-pane-stack fill";
+
+    this._titles = [];
+    this._panes = [];
+}
+
+WebInspector.SidebarPaneStack.prototype = {
+    wasShown: function()
+    {
+        WebInspector.View.prototype.wasShown.call(this);
+        for (var i = 0; i < this._panes.length; i++)
+            this._attachToPane(i);
+    },
+
+    /**
+     * @param {WebInspector.SidebarPane} pane
+     */
+    addPane: function(pane)
+    {
+        var index = this._panes.length; 
+        this._panes.push(pane);
+        this._addTitle(pane, index);
+        if (this.isShowing())
+            this._attachToPane(index);
+    },
+
+    /**
+     * @param {WebInspector.SidebarPane} pane
+     * @param {number} index
+     */
+    _addTitle: function(pane, index)
+    {
+        var title = this.element.createChild("div", "pane-title");
+        title.textContent = pane.title();
+        title.tabIndex = 0;
+        title.addEventListener("click", this._togglePane.bind(this, index), false);
+        title.addEventListener("keydown", this._onTitleKeyDown.bind(this, index), false);
+        title.appendChild(pane.titleElement);
+        this._titles.push(title);
+    },
+
+    /**
+     * @param {number} index
+     */
+    _attachToPane: function(index)
+    {
+        var pane = this._panes[index];
+        var title = this._titles[index];
+        var expandPending = pane.setExpandCallback(this._onPaneExpanded.bind(this, index));
+        this._setExpanded(index, this._isExpanded(index) || expandPending);
+    },
+
+    /**
+     * @param {number} index
+     */
+    _isExpanded: function(index)
+    {
+        var title = this._titles[index];
+        return title.hasStyleClass("expanded");
+    },
+
+    /**
+     * @param {number} index
+     * @param {boolean} on
+     */
+    _setExpanded: function(index, on)
+    {
+        if (on)
+            this._panes[index].prepareContent(this._onPaneExpanded.bind(this, index));
+        else
+            this._collapsePane(index);
+    },
+
+    /**
+     * @param {number} index
+     */
+    _onPaneExpanded: function(index)
+    {
+        var pane = this._panes[index];
+        var title = this._titles[index];
+        title.addStyleClass("expanded");
+        pane.show(this.element, title.nextSibling);
+    },
+
+    /**
+     * @param {number} index
+     */
+    _collapsePane: function(index)
+    {
+        var pane = this._panes[index];
+        var title = this._titles[index];
+        title.removeStyleClass("expanded");
+        if (pane.element.parentNode == this.element)
+            pane.detach();
+    },
+
+    /**
+     * @param {number} index
+     * @private
+     */
+    _togglePane: function(index)
+    {
+        this._setExpanded(index, !this._isExpanded(index));
+    },
+    
+    /**
+     * @param {number} index
+     * @param {Event} event
+     * @private
+     */
+    _onTitleKeyDown: function(index, event)
     {
         if (isEnterKey(event) || event.keyCode === WebInspector.KeyboardShortcut.Keys.Space.code)
-            this.toggleExpanded();
+            this._togglePane(index);
     },
 
     __proto__: WebInspector.View.prototype

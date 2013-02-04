@@ -10,7 +10,10 @@ var test = function()
     // We need to initialize scripts panel so that watch expressions section is created.
     WebInspector.showPanel("scripts");
 
-    var watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
+    var watchExpressionsPane = WebInspector.panels.scripts.sidebarPanes.watchExpressions;
+    watchExpressionsPane.expand();
+
+    var watchExpressionsSection = watchExpressionsPane.section;
     watchExpressionsSection.watchExpressions = [];
     watchExpressionsSection.watchExpressions.push("#$%");
     watchExpressionsSection.update();

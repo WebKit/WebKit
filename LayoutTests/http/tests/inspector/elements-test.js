@@ -111,7 +111,7 @@ InspectorTest.selectNodeAndWaitForStylesWithComputed = function(idValue, callbac
 
     function stylesCallback(targetNode)
     {
-        InspectorTest.addSniffer(WebInspector.SidebarPane.prototype, "expand", callback);
+        InspectorTest.addSniffer(WebInspector.SidebarPane.prototype, "onContentReady", callback);
         WebInspector.panels.elements.sidebarPanes.computedStyle.expand();
     }
 

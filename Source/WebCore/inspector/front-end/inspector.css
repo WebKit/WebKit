@@ -1782,11 +1782,11 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     border: 1px solid rgba(64, 64, 64, 0.8);
 }
 
-.pane:not(.expanded) + .pane, .pane:first-of-type {
+.pane-title + .pane-title, .pane:not(.visible) + .pane-title, .pane-title:first-of-type {
     margin-top: -1px;
 }
 
-.pane > .title {
+.pane-title {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), color-stop(0.05, rgb(243, 243, 243)), color-stop(0.05, rgb(230, 230, 230)), to(rgb(209, 209, 209)));
     height: 20px;
     padding: 0 5px;
@@ -1801,13 +1801,13 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     -webkit-background-clip: padding;
 }
 
-.pane > .title:active {
+.pane-title:active {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(231, 231, 231)), color-stop(0.05, rgb(231, 231, 231)), color-stop(0.05, rgb(207, 207, 207)), to(rgb(186, 186, 186)));
     border-top: 1px solid rgb(178, 178, 178);
     border-bottom: 1px solid rgb(178, 178, 178);
 }
 
-.pane > .title::before {
+.pane-title::before {
     content: url(Images/disclosureTriangleSmallRightBlack.png);
     float: left;
     width: 11px;
@@ -1816,11 +1816,11 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     margin-top: 1px;
 }
 
-.pane.expanded > .title::before {
+.pane-title.expanded::before {
     content: url(Images/disclosureTriangleSmallDownBlack.png);
 }
 
-.pane > .title > select {
+.pane-title > select {
     float: right;
     width: 23px;
     height: 17px;
@@ -1834,27 +1834,27 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     -webkit-appearance: none;
 }
 
-.pane > .title > select:hover {
+.pane-title > select:hover {
     background-position: -23px 0px;
 }
 
-.pane > .title > select:active {
+.pane-title > select:active {
     background-position: -46px 0px;
 }
 
-.pane > .title > select.select-settings {
+.pane-title > select.select-settings {
     background-image: url(Images/paneSettingsButtons.png);
 }
 
-.pane > .title > select.select-filter {
+.pane-title > select.select-filter {
     background-image: url(Images/paneFilterButtons.png);
 }
 
-.pane > .title > select > option, .pane > .title > select > hr {
+.pane-title > select > option, .pane-title > select > hr {
     color: black;
 }
 
-.pane > .title > .pane-title-button {
+.pane-title > .pane-title-button {
     float: right;
     width: 23px;
     height: 17px;
@@ -1868,23 +1868,23 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     -webkit-appearance: none;
 }
 
-.pane > .title > .pane-title-button:hover {
+.pane-title > .pane-title-button:hover {
     background-position: -23px 0px;
 }
 
-.pane > .title > .pane-title-button:active, .pane > .title > .pane-title-button.toggled {
+.pane-title > .pane-title-button:active, .pane-title > .pane-title-button.toggled {
     background-position: -46px 0px;
 }
 
-.pane > .title > .pane-title-button.add {
+.pane-title > .pane-title-button.add {
     background-image: url(Images/paneAddButtons.png);
 }
 
-.pane > .title > .pane-title-button.element-state {
+.pane-title > .pane-title-button.element-state {
     background-image: url(Images/paneElementStateButtons.png);
 }
 
-.pane > .title > .pane-title-button.refresh {
+.pane-title > .pane-title-button.refresh {
     background-image: url(Images/paneRefreshButtons.png);
 }
 
@@ -1908,7 +1908,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-color: rgb(255, 255, 194);
 }
 
-.pane.expanded > .body, .pane.expanded > .growbar {
+.pane.visible > .body {
     display: block;
 }
 
@@ -1928,16 +1928,8 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     border: 1px solid rgb(66%, 66%, 66%);
 }
 
-.pane.expanded:nth-last-of-type(1) {
+.pane.visible:nth-last-of-type(1) {
     border-bottom: 1px solid rgb(189, 189, 189);
-}
-
-.pane > .growbar {
-    display: none;
-    background-image: url(Images/paneGrowHandleLine.png), url(Images/paneBottomGrow.png);
-    background-repeat: no-repeat, repeat-x;
-    background-position: center center, bottom;
-    height: 5px;
 }
 
 .sidebar-pane-subtitle {
@@ -1969,7 +1961,7 @@ body.inactive .sidebar {
     background-color: rgb(232, 232, 232);
 }
 
-.panel-enabler-view button:not(.status-bar-item), .pane button, button.show-all-nodes {
+.panel-enabler-view button:not(.status-bar-item), .pane-title-button, button.show-all-nodes {
     color: rgb(6, 6, 6);
     background-color: transparent;
     border: 1px solid rgb(165, 165, 165);
@@ -1986,17 +1978,12 @@ button.show-all-nodes {
     height: 20px;
 }
 
-.pane button {
-    margin: 6px 0 6px 3px;
-    padding: 2px 9px;
-}
-
-.panel-enabler-view button:active:not(.status-bar-item), .pane button:active, button.show-all-nodes:active {
+.panel-enabler-view button:active:not(.status-bar-item), .pane-title-button:active, button.show-all-nodes:active {
     background-color: rgb(215, 215, 215);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
 }
 
-body.inactive .panel-enabler-view button:not(.status-bar-item), .panel-enabler-view button:disabled:not(.status-bar-item), body.inactive .pane button, .pane button:disabled, body.inactive button.show-all-nodes {
+body.inactive .panel-enabler-view button:not(.status-bar-item), .panel-enabler-view button:disabled:not(.status-bar-item), body.inactive .pane-title-button, .pane-title-button:disabled, body.inactive button.show-all-nodes {
     color: rgb(130, 130, 130);
     border-color: rgb(212, 212, 212);
     background-color: rgb(239, 239, 239);

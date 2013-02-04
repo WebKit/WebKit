@@ -29,7 +29,7 @@ function test()
     {
         InspectorTest.addResult("==== All styles (should be no computed) ====");
         InspectorTest.dumpSelectedElementStyles(false, false);
-        InspectorTest.addSniffer(WebInspector.SidebarPane.prototype, "expand", step2);
+        InspectorTest.addSniffer(WebInspector.SidebarPane.prototype, "onContentReady", step2);
         WebInspector.panels.elements.sidebarPanes.computedStyle.expand();
     }
 

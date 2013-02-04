@@ -3,7 +3,7 @@ Tests audit formatters performing evals on content scripts in WebInspector Exten
  Started extension.
 Running tests...
 RUNNING TEST: extension_testAudits
-  Extension audits
+ Extension audits
     Rule with details subtree (1)
       Test Formatters
            main world object

@@ -140,6 +140,7 @@ WebInspector.ExtensionButton.prototype = {
 WebInspector.ExtensionSidebarPane = function(title, id)
 {
     WebInspector.SidebarPane.call(this, title);
+    this.setHideOnDetach();
     this._id = id;
 }
 

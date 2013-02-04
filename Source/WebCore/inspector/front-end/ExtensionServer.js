@@ -231,13 +231,13 @@ WebInspector.ExtensionServer.prototype = {
         var panel = WebInspector.panel(message.panel);
         if (!panel)
             return this._status.E_NOTFOUND(message.panel);
-        if (!panel.sidebarElement || !panel.sidebarPanes)
+        if (!panel.sidebarPaneView || !panel.sidebarPanes)
             return this._status.E_NOTSUPPORTED();
         var id = message.id;
         var sidebar = new WebInspector.ExtensionSidebarPane(message.title, message.id);
         this._clientObjects[id] = sidebar;
         panel.sidebarPanes[id] = sidebar;
-        sidebar.show(panel.sidebarElement);
+        panel.sidebarPaneView.addPane(sidebar);
 
         return this._status.OK();
     },
