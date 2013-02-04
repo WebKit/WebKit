@@ -1024,6 +1024,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
     this.$_ = injectedScript._lastResult;
 }
 
+// NOTE: Please keep the list of API methods below snchronized to that in WebInspector.RuntimeModel!
 /**
  * @type {Array.<string>}
  * @const
