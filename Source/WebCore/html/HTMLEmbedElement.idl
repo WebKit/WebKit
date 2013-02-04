@@ -21,7 +21,8 @@
 [
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomCall
+    CustomCall,
+    V8SkipVTableValidation
 ] interface HTMLEmbedElement : HTMLElement {
 attribute [Reflect] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
