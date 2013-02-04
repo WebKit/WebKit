@@ -1134,7 +1134,8 @@ crbug.com/27849 http/tests/security/isolatedWorld/didClearWindowObject.html [ Fa
 
 # Due to the differences in initialization checks in KURL and googleurl.
 # Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
-crbug.com/39423 security/block-test.html [ Timeout ]
+# See also https://webkit.org/b/108780
+crbug.com/39423 security/block-test.html [ Timeout Failure ]
 
 crbug.com/20345 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]
 webkit.org/b/42769 http/tests/security/401-logout/401-logout.php [ Timeout ]
