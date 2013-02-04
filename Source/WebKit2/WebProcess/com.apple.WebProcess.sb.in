@@ -103,6 +103,12 @@
        (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
        (home-regex #"/Library/Preferences/com\.apple\.WebProcess\."))
 
+;; MediaAccessibility
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+(allow file-read* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.plist"))
+(allow file-read* file-write* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.public.plist"))
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
