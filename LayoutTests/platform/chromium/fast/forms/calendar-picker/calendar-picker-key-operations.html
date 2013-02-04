@@ -129,7 +129,7 @@ function testToday() {
     eventSender.keyDown('t');
     var now = new Date();
     var expectedDate = serializeDate(now.getFullYear(), now.getMonth(), now.getDate());
-    var expectedMonth = popupWindow.Month.createFromDate(now).toString();
+    var expectedMonth = (new popupWindow.Month(now.getFullYear(), now.getMonth())).toString();
     return selectedDate() === expectedDate && currentMonth() === expectedMonth;
 }
 

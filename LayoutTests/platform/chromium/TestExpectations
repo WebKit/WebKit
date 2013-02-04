@@ -4341,5 +4341,4 @@ webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed
 webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 
 webkit.org/b/108424 media/video-error-does-not-exist.html [ Failure Crash ]
-webkit.org/b/108566 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
 webkit.org/b/108594 [ Debug ] tables/table-section-overflow-clip-crash.html [ Crash ]
