@@ -33,6 +33,7 @@
 #include "CSSBorderImage.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSDefaultStyleSheets.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
 #include "CSSHostRule.h"
@@ -57,8 +58,6 @@
 #endif
 #include "CachedImage.h"
 #include "CalculationValue.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ContentData.h"
 #include "ContextFeatures.h"
 #include "Counter.h"
@@ -211,43 +210,7 @@ if (isInitial) { \
     return; \
 }
 
-static RuleSet* defaultStyle;
-static RuleSet* defaultQuirksStyle;
-static RuleSet* defaultPrintStyle;
-static RuleSet* defaultViewSourceStyle;
-static StyleSheetContents* simpleDefaultStyleSheet;
-static StyleSheetContents* defaultStyleSheet;
-static StyleSheetContents* quirksStyleSheet;
-static StyleSheetContents* svgStyleSheet;
-static StyleSheetContents* mathMLStyleSheet;
-static StyleSheetContents* mediaControlsStyleSheet;
-static StyleSheetContents* fullscreenStyleSheet;
-static StyleSheetContents* plugInsStyleSheet;
-
 RenderStyle* StyleResolver::s_styleNotYetAvailable;
-
-static void loadFullDefaultStyle();
-static void loadSimpleDefaultStyle();
-
-// FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
-static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
-
-static inline bool elementCanUseSimpleDefaultStyle(Element* e)
-{
-    return e->hasTagName(htmlTag) || e->hasTagName(headTag) || e->hasTagName(bodyTag) || e->hasTagName(divTag) || e->hasTagName(spanTag) || e->hasTagName(brTag) || e->hasTagName(aTag);
-}
-
-static const MediaQueryEvaluator& screenEval()
-{
-    DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticScreenEval, ("screen"));
-    return staticScreenEval;
-}
-
-static const MediaQueryEvaluator& printEval()
-{
-    DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticPrintEval, ("print"));
-    return staticPrintEval;
-}
 
 static StylePropertySet* leftToRightDeclaration()
 {
@@ -299,12 +262,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 {
     Element* root = document->documentElement();
 
-    if (!defaultStyle) {
-        if (!root || elementCanUseSimpleDefaultStyle(root))
-            loadSimpleDefaultStyle();
-        else
-            loadFullDefaultStyle();
-    }
+    CSSDefaultStyleSheets::initDefaultStyle(root);
 
     // construct document root element default style. this is needed
     // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
@@ -484,123 +442,6 @@ void StyleResolver::sweepMatchedPropertiesCache(Timer<StyleResolver>*)
         m_matchedPropertiesCache.remove(toRemove[i]);
 
     m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
-}
-
-static StyleSheetContents* parseUASheet(const String& str)
-{
-    StyleSheetContents* sheet = StyleSheetContents::create().leakRef(); // leak the sheet on purpose
-    sheet->parseString(str);
-    return sheet;
-}
-
-static StyleSheetContents* parseUASheet(const char* characters, unsigned size)
-{
-    return parseUASheet(String(characters, size));
-}
-
-static void loadFullDefaultStyle()
-{
-    if (simpleDefaultStyleSheet) {
-        ASSERT(defaultStyle);
-        ASSERT(defaultPrintStyle == defaultStyle);
-        delete defaultStyle;
-        simpleDefaultStyleSheet->deref();
-        defaultStyle = RuleSet::create().leakPtr();
-        defaultPrintStyle = RuleSet::create().leakPtr();
-        simpleDefaultStyleSheet = 0;
-    } else {
-        ASSERT(!defaultStyle);
-        defaultStyle = RuleSet::create().leakPtr();
-        defaultPrintStyle = RuleSet::create().leakPtr();
-        defaultQuirksStyle = RuleSet::create().leakPtr();
-    }
-
-    // Strict-mode rules.
-    String defaultRules = String(htmlUserAgentStyleSheet, sizeof(htmlUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
-    defaultStyleSheet = parseUASheet(defaultRules);
-    defaultStyle->addRulesFromSheet(defaultStyleSheet, screenEval());
-    defaultPrintStyle->addRulesFromSheet(defaultStyleSheet, printEval());
-
-    // Quirks-mode rules.
-    String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraQuirksStyleSheet();
-    quirksStyleSheet = parseUASheet(quirksRules);
-    defaultQuirksStyle->addRulesFromSheet(quirksStyleSheet, screenEval());
-}
-
-static void loadSimpleDefaultStyle()
-{
-    ASSERT(!defaultStyle);
-    ASSERT(!simpleDefaultStyleSheet);
-
-    defaultStyle = RuleSet::create().leakPtr();
-    // There are no media-specific rules in the simple default style.
-    defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = RuleSet::create().leakPtr();
-
-    simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
-    defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
-
-    // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
-}
-
-static RuleSet* viewSourceStyle()
-{
-    if (!defaultViewSourceStyle) {
-        defaultViewSourceStyle = RuleSet::create().leakPtr();
-        defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
-    }
-    return defaultViewSourceStyle;
-}
-
-static void ensureDefaultStyleSheetsForElement(Element* element)
-{
-    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element))
-        loadFullDefaultStyle();
-
-#if ENABLE(SVG)
-    if (element->isSVGElement() && !svgStyleSheet) {
-        // SVG rules.
-        svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
-    }
-#endif
-
-#if ENABLE(MATHML)
-    if (element->isMathMLElement() && !mathMLStyleSheet) {
-        // MathML rules.
-        mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mathMLStyleSheet, printEval());
-    }
-#endif
-
-#if ENABLE(VIDEO)
-    if (!mediaControlsStyleSheet && (element->hasTagName(videoTag) || element->hasTagName(audioTag))) {
-        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraMediaControlsStyleSheet();
-        mediaControlsStyleSheet = parseUASheet(mediaRules);
-        defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
-    }
-#endif
-
-#if ENABLE(FULLSCREEN_API)
-    if (!fullscreenStyleSheet && element->document()->webkitIsFullScreen()) {
-        String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
-        fullscreenStyleSheet = parseUASheet(fullscreenRules);
-        defaultStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
-        defaultQuirksStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
-    }
-#endif
-
-    if (!plugInsStyleSheet && (element->hasTagName(objectTag) || element->hasTagName(embedTag))) {
-        String plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome()->client()->plugInExtraStyleSheet();
-        plugInsStyleSheet = parseUASheet(plugInsRules);
-        defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
-    }
-
-    ASSERT(defaultStyle->features().idsInRules.isEmpty());
-    ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
 void StyleResolver::addMatchedProperties(MatchResult& matchResult, const StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
@@ -1354,19 +1195,19 @@ void StyleResolver::matchUARules(MatchResult& result)
     MatchingUARulesScope scope;
 
     // First we match rules from the user agent sheet.
-    if (simpleDefaultStyleSheet)
+    if (CSSDefaultStyleSheets::simpleDefaultStyleSheet)
         result.isCacheable = false;
     RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
-        ? defaultPrintStyle : defaultStyle;
+        ? CSSDefaultStyleSheets::defaultPrintStyle : CSSDefaultStyleSheets::defaultStyle;
     matchUARules(result, userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (!m_selectorChecker.strictParsing())
-        matchUARules(result, defaultQuirksStyle);
+        matchUARules(result, CSSDefaultStyleSheets::defaultQuirksStyle);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
     if (document()->isViewSource())
-        matchUARules(result, viewSourceStyle());
+        matchUARules(result, CSSDefaultStyleSheets::viewSourceStyle());
 }
 
 static void setStylesForPaginationMode(Pagination::Mode paginationMode, RenderStyle* style)
@@ -1604,7 +1445,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
         m_style->setInsideLink(linkState);
     }
 
-    ensureDefaultStyleSheetsForElement(element);
+    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
 
     MatchResult matchResult;
     if (matchingBehavior == MatchOnlyUserAgentRules)
@@ -1800,7 +1641,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     const String page = pageName(pageIndex);
     
     MatchResult result;
-    matchPageRules(result, defaultPrintStyle, isLeft, isFirst, page);
+    matchPageRules(result, CSSDefaultStyleSheets::defaultPrintStyle, isLeft, isFirst, page);
     matchPageRules(result, m_userStyle.get(), isLeft, isFirst, page);
     // Only consider the global author RuleSet for @page rules, as per the HTML5 spec.
     matchPageRules(result, m_authorStyle.get(), isLeft, isFirst, page);
@@ -2743,13 +2584,13 @@ void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentSty
 CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, DocumentStyleSheetCollection* styleSheetCollection)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, simpleDefaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, defaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, quirksStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, svgStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, mathMLStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, mediaControlsStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, fullscreenStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::simpleDefaultStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::defaultStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::quirksStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::svgStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mathMLStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mediaControlsStyleSheet);
+        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::fullscreenStyleSheet);
 
         collectFromDocumentStyleSheetCollection(styleSheetCollection);
     }
@@ -5418,10 +5259,10 @@ void StyleResolver::collectFeatures()
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject
     // sharing candidates.
-    m_features.add(defaultStyle->features());
+    m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
     m_features.add(m_authorStyle->features());
     if (document()->isViewSource())
-        m_features.add(viewSourceStyle()->features());
+        m_features.add(CSSDefaultStyleSheets::viewSourceStyle()->features());
 
     if (m_scopeResolver)
         m_scopeResolver->collectFeaturesTo(m_features);
@@ -5492,10 +5333,10 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_scopeResolver, "scopeResolver");
 
     // FIXME: move this to a place where it would be called only once?
-    info.addMember(defaultStyle, "defaultStyle");
-    info.addMember(defaultQuirksStyle, "defaultQuirksStyle");
-    info.addMember(defaultPrintStyle, "defaultPrintStyle");
-    info.addMember(defaultViewSourceStyle, "defaultViewSourceStyle");
+    info.addMember(CSSDefaultStyleSheets::defaultStyle, "defaultStyle");
+    info.addMember(CSSDefaultStyleSheets::defaultQuirksStyle, "defaultQuirksStyle");
+    info.addMember(CSSDefaultStyleSheets::defaultPrintStyle,"defaultPrintStyle");
+    info.addMember(CSSDefaultStyleSheets::defaultViewSourceStyle, "defaultViewSourceStyle");
 }
 
 } // namespace WebCore

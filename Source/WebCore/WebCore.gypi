@@ -1461,6 +1461,8 @@
             'css/CSSCrossfadeValue.cpp',
             'css/CSSCrossfadeValue.h',
             'css/CSSCursorImageValue.cpp',
+            'css/CSSDefaultStyleSheets.cpp',
+            'css/CSSDefaultStyleSheets.h',
             'css/CSSFontFace.cpp',
             'css/CSSFontFace.h',
             'css/CSSFontFaceRule.cpp',
