@@ -1,3 +1,23 @@
+2013-02-04  Abhishek Arya  <inferno@chromium.org>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION to detect bad cast in DOM, CSS, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=108688
+
+        Reviewed by Eric Seidel.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB):
+        (WebKit::getWebFrame):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::deleteFileSystem):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::connectTask):
+        (WebKit::resumeWorkerContextTask):
+        (WebKit::connectToWorkerContextInspectorTask):
+        (WebKit::reconnectToWorkerContextInspectorTask):
+        (WebKit::disconnectFromWorkerContextInspectorTask):
+        (WebKit::dispatchOnInspectorBackendTask):
+
 2013-02-04  Sami Kyostila  <skyostil@chromium.org>
 
         Disable -webkit-overflow-scrolling CSS attribute on Chromium

@@ -65,7 +65,7 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
     }
 #endif // ENABLE(WORKERS)
 
-    ASSERT(context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
     return WebSocketChannel::create(static_cast<Document*>(context), client);
 }
 

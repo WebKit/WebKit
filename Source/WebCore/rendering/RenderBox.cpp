@@ -2647,7 +2647,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
             // FIXME: This calculation is not patched for block-flow yet.
             // https://bugs.webkit.org/show_bug.cgi?id=46500
             if (cb->isOutOfFlowPositioned() && cb->style()->height().isAuto() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto())) {
-                ASSERT(cb->isRenderBlock());
+                ASSERT_WITH_SECURITY_IMPLICATION(cb->isRenderBlock());
                 RenderBlock* block = toRenderBlock(cb);
                 LogicalExtentComputedValues computedValues;
                 block->computeLogicalHeight(block->logicalHeight(), 0, computedValues);

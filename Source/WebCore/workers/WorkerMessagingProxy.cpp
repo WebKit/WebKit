@@ -68,7 +68,7 @@ private:
 
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
-        ASSERT(scriptContext->isWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isWorkerContext());
         DedicatedWorkerContext* context = static_cast<DedicatedWorkerContext*>(scriptContext);
         OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*scriptContext, m_channels.release());
         context->dispatchEvent(MessageEvent::create(ports.release(), m_message));
@@ -374,7 +374,7 @@ void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 static void connectToWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
 {
-    ASSERT(context->isWorkerContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->connectFrontend();
 }
 #endif
@@ -393,7 +393,7 @@ void WorkerMessagingProxy::connectToInspector(WorkerContextProxy::PageInspector*
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* context, bool)
 {
-    ASSERT(context->isWorkerContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->disconnectFrontend();
 }
 #endif
@@ -411,7 +411,7 @@ void WorkerMessagingProxy::disconnectFromInspector()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
 {
-    ASSERT(context->isWorkerContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
     static_cast<WorkerContext*>(context)->workerInspectorController()->dispatchMessageFromFrontend(message);
 }
 #endif

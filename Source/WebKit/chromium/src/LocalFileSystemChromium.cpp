@@ -233,7 +233,7 @@ void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSys
 void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     ASSERT(context);
-    ASSERT(context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
 
     Document* document = static_cast<Document*>(context);
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());

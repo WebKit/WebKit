@@ -1136,7 +1136,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
 
         if (r->isText() && toRenderText(r)->renderedTextLength()) {
-            ASSERT(n->isTextNode());
+            ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
             type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 const UChar* chars = toRenderText(r)->characters();
@@ -1218,7 +1218,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && toRenderText(r)->renderedTextLength()) {
-            ASSERT(n->isTextNode());
+            ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
             int length = toRenderText(r)->textLength();
             type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {

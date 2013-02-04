@@ -605,7 +605,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     RenderObject* currChildNextSibling = currChild->nextSibling();
 
     while (curr && curr != fromBlock) {
-        ASSERT(curr->isRenderBlock());
+        ASSERT_WITH_SECURITY_IMPLICATION(curr->isRenderBlock());
         
         RenderBlock* blockCurr = toRenderBlock(curr);
         
@@ -6396,7 +6396,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating() || 
             !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow())
             break;
-        ASSERT(parentBlock->isRenderBlock());
+        ASSERT_WITH_SECURITY_IMPLICATION(parentBlock->isRenderBlock());
         firstLineBlock = toRenderBlock(parentBlock);
     } 
     

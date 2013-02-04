@@ -109,7 +109,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
             if (!node)
                 continue;
 
-            ASSERT(child->isInlineFlowBox());
+            ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
 
             SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
             bool isTextPath = node->hasTagName(SVGNames::textPathTag);
@@ -149,7 +149,7 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
             if (!child->renderer()->node())
                 continue;
 
-            ASSERT(child->isInlineFlowBox());
+            ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
 
             SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
             layoutChildBoxes(flowBox);

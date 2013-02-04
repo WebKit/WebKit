@@ -472,7 +472,7 @@ VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInConten
     if (!rootBox)
         return createVisiblePosition(0, DOWNSTREAM);
 
-    ASSERT(rootBox->isSVGRootInlineBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(rootBox->isSVGRootInlineBox());
     ASSERT(!rootBox->nextRootBox());
     ASSERT(childrenInline());
 

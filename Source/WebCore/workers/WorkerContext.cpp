@@ -76,7 +76,7 @@ public:
 
     virtual void performTask(ScriptExecutionContext *context)
     {
-        ASSERT(context->isWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
         workerContext->thread()->workerReportingProxy().workerContextClosed();

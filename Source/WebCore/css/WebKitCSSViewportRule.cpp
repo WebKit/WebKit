@@ -79,7 +79,7 @@ String WebKitCSSViewportRule::cssText() const
 void WebKitCSSViewportRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    ASSERT(rule->isViewportRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(rule->isViewportRule());
     m_viewportRule = static_cast<StyleRuleViewport*>(rule);
 
     if (m_propertiesCSSOMWrapper)

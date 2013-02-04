@@ -579,7 +579,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         return 0;
     
     AccessibilityObject* cellObject = axObjectCache()->getOrCreate(cell);
-    ASSERT(cellObject->isTableCell());
+    ASSERT_WITH_SECURITY_IMPLICATION(cellObject->isTableCell());
     
     return static_cast<AccessibilityTableCell*>(cellObject);
 }

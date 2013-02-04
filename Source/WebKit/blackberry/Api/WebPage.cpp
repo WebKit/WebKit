@@ -4025,7 +4025,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 
             // We do focus <select>/<option> on mouse down so that a Focus event is fired and have the
             // element painted in its focus state on repaint.
-            ASSERT(node->isElementNode());
+            ASSERT_WITH_SECURITY_IMPLICATION(node->isElementNode());
             if (node->isElementNode()) {
                 Element* element = static_cast<Element*>(node);
                 element->focus();

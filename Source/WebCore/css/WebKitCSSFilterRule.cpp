@@ -80,7 +80,7 @@ String WebKitCSSFilterRule::cssText() const
 void WebKitCSSFilterRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    ASSERT(rule->isFilterRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(rule->isFilterRule());
     m_filterRule = static_cast<StyleRuleFilter*>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_filterRule->mutableProperties());

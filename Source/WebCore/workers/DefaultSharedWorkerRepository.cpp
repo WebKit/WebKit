@@ -228,7 +228,7 @@ void SharedWorkerProxy::workerContextDestroyed()
 void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
 {
     // Nested workers are not yet supported, so passed-in context should always be a Document.
-    ASSERT(context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
     ASSERT(!isClosing());
     MutexLocker lock(m_workerDocumentsLock);
     Document* document = static_cast<Document*>(context);
@@ -272,11 +272,11 @@ private:
     {
         RefPtr<MessagePort> port = MessagePort::create(*scriptContext);
         port->entangle(m_channel.release());
-        ASSERT(scriptContext->isWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptContext);
         // Since close() stops the thread event loop, this should not ever get called while closing.
         ASSERT(!workerContext->isClosing());
-        ASSERT(workerContext->isSharedWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(workerContext->isSharedWorkerContext());
         workerContext->dispatchEvent(createConnectEvent(port));
     }
 

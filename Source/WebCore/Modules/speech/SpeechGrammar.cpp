@@ -45,7 +45,7 @@ PassRefPtr<SpeechGrammar> SpeechGrammar::create(const KURL& src, double weight)
 
 void SpeechGrammar::setSrc(ScriptExecutionContext* scriptExecutionContext, const String& src)
 {
-    ASSERT(scriptExecutionContext->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(scriptExecutionContext);
     m_src = document->completeURL(src);
 }

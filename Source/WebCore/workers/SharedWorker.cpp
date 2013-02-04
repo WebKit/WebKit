@@ -70,7 +70,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
         return 0;
 
     // We don't currently support nested workers, so workers can only be created from documents.
-    ASSERT(context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
     Document* document = static_cast<Document*>(context);
     if (!document->securityOrigin()->canAccessSharedWorkers(document->topOrigin())) {
         ec = SECURITY_ERR;

@@ -69,7 +69,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     if (!request)
         return;
 
-    ASSERT(scriptExecutionContext->isWorkerContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isWorkerContext());
 
     ThreadableLoaderOptions options;
     options.allowCredentials = AllowStoredCredentials;

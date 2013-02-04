@@ -873,7 +873,7 @@ public:
         }
 #if !ASSERT_DISABLED
         else {
-            ASSERT(value->isPrimitiveValue());
+            ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
             ASSERT(static_cast<CSSPrimitiveValue*>(value)->getIdent() == CSSValueNormal);
         }
 #endif
@@ -1137,7 +1137,7 @@ public:
         ETextDecoration t = RenderStyle::initialTextDecoration();
         for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
-            ASSERT(item->isPrimitiveValue());
+            ASSERT_WITH_SECURITY_IMPLICATION(item->isPrimitiveValue());
             t |= *static_cast<CSSPrimitiveValue*>(item);
         }
         styleResolver->style()->setTextDecoration(t);
@@ -1609,7 +1609,7 @@ public:
 
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        ASSERT(value->isPrimitiveValue());
+        ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         if (primitiveValue->getIdent() == CSSValueNormal) {

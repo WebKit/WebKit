@@ -1,3 +1,15 @@
+2013-02-04  Abhishek Arya  <inferno@chromium.org>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION to detect bad cast in DOM, CSS, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=108688
+
+        Reviewed by Eric Seidel.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::setSuccessfulFatFingersResult):
+
 2013-02-04  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Needs one-shot drawing synchronization flag should be set before rendering when resuming the backing store

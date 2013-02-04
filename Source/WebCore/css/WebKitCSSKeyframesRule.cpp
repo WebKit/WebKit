@@ -203,7 +203,7 @@ CSSRuleList* WebKitCSSKeyframesRule::cssRules()
 void WebKitCSSKeyframesRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    ASSERT(rule->isKeyframesRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(rule->isKeyframesRule());
     m_keyframesRule = static_cast<StyleRuleKeyframes*>(rule);
 }
 

@@ -630,7 +630,7 @@ Frame* Frame::frameForWidget(const Widget* widget)
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    ASSERT(widget->isFrameView());
+    ASSERT_WITH_SECURITY_IMPLICATION(widget->isFrameView());
     return static_cast<const FrameView*>(widget)->frame();
 }
 

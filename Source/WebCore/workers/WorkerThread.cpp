@@ -207,7 +207,7 @@ public:
 
     virtual void performTask(ScriptExecutionContext *context)
     {
-        ASSERT(context->isWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 #if ENABLE(INSPECTOR)
         workerContext->clearInspector();
@@ -228,7 +228,7 @@ public:
 
     virtual void performTask(ScriptExecutionContext *context)
     {
-        ASSERT(context->isWorkerContext());
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 
 #if ENABLE(SQL_DATABASE)

@@ -1422,7 +1422,7 @@ public:
         ScrollView* parentScrollView = parent();
         QRect clipRect;
         if (parentScrollView) {
-            ASSERT(parentScrollView->isFrameView());
+            ASSERT_WITH_SECURITY_IMPLICATION(parentScrollView->isFrameView());
             clipRect = static_cast<FrameView*>(parentScrollView)->windowClipRect();
             clipRect.translate(-windowRect.x(), -windowRect.y());
         }

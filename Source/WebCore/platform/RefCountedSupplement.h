@@ -63,7 +63,7 @@ public:
         Supplement<T>* found = host->requireSupplement(key);
         if (!found)
             return 0;
-        ASSERT(found->isRefCountedWrapper());
+        ASSERT_WITH_SECURITY_IMPLICATION(found->isRefCountedWrapper());
         return static_cast<Wrapper*>(found)->wrapped();
     }
 };

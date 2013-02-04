@@ -59,7 +59,7 @@ void resetInternalsObject(v8::Local<v8::Context> context)
     v8::HandleScope scope;
 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    ASSERT(scriptContext->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isDocument());
     Page* page = static_cast<Document*>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(page);
     InternalSettings::from(page)->resetToConsistentState();

@@ -418,7 +418,7 @@ ALWAYS_INLINE void LiveNodeListBase::setItemCache(Node* item, unsigned offset, u
 {
     setItemCache(item, offset);
     if (overridesItemAfter()) {
-        ASSERT(item->isElementNode());
+        ASSERT_WITH_SECURITY_IMPLICATION(item->isElementNode());
         static_cast<const HTMLCollection*>(this)->m_cachedElementsArrayOffset = elementsArrayOffset;
     } else
         ASSERT(!elementsArrayOffset);
