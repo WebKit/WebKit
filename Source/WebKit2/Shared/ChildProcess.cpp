@@ -55,13 +55,13 @@ NO_RETURN static void watchdogCallback()
     _exit(EXIT_FAILURE);
 }
 
-static void didCloseOnConnectionWorkQueue(WorkQueue* workQueue, CoreIPC::Connection*)
+static void didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds
     // the process will exit forcibly.
     const double watchdogDelay = 10;
 
-    workQueue->dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
+    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
 }
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)

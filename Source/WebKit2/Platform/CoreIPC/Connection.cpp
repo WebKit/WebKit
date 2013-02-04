@@ -637,7 +637,7 @@ void Connection::connectionDidClose()
     }
 
     if (m_didCloseOnConnectionWorkQueueCallback)
-        m_didCloseOnConnectionWorkQueueCallback(m_connectionQueue.get(), this);
+        m_didCloseOnConnectionWorkQueueCallback(this);
 
     m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchConnectionDidClose, this));
 }

@@ -1,3 +1,20 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Use a separate queue for the connection watchdog callback in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=108844
+
+        Reviewed by Andreas Kling.
+
+        Don't pass the connection work queue to the didCloseOnConnectionWorkQueue callback.
+        Instead, create a new, temporary work queue where the exit call will be dispatched to.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::connectionDidClose):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+
 2013-02-04  Tim Horton  <timothy_horton@apple.com>
 
         Allow TiledCoreAnimationDrawingArea overlay layers to become tiled
