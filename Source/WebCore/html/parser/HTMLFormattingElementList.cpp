@@ -97,7 +97,7 @@ void HTMLFormattingElementList::swapTo(Element* oldElement, PassRefPtr<HTMLStack
         return;
     }
     size_t index = bookmark.mark() - first();
-    ASSERT(index < size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < size());
     m_entries.insert(index + 1, newItem);
     remove(oldElement);
 }

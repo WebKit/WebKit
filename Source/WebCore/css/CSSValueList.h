@@ -88,7 +88,7 @@ private:
 class CSSValueListInspector {
 public:
     CSSValueListInspector(CSSValue* value) : m_list((value && value->isValueList()) ? static_cast<CSSValueList*>(value) : 0) { }
-    CSSValue* item(size_t index) const { ASSERT(index < length()); return m_list->itemWithoutBoundsCheck(index); }
+    CSSValue* item(size_t index) const { ASSERT_WITH_SECURITY_IMPLICATION(index < length()); return m_list->itemWithoutBoundsCheck(index); }
     CSSValue* first() const { return item(0); }
     CSSValue* second() const { return item(1); }
     size_t length() const { return m_list ? m_list->length() : 0; }

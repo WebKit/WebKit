@@ -60,7 +60,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
         context.drawBidiText(font, run, point);
 
     if (underlinedIndex >= 0) {
-        ASSERT(underlinedIndex < static_cast<int>(text.length()));
+        ASSERT_WITH_SECURITY_IMPLICATION(underlinedIndex < static_cast<int>(text.length()));
 
         int beforeWidth;
         if (underlinedIndex > 0) {

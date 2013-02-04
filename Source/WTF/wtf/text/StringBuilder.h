@@ -217,7 +217,7 @@ public:
 
     UChar operator[](unsigned i) const
     {
-        ASSERT(i < m_length);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
         if (m_is8Bit)
             return characters8()[i];
         return characters16()[i];

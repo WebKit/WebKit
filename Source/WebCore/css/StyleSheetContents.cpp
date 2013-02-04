@@ -148,7 +148,7 @@ void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
 
 StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
 {
-    ASSERT(index < ruleCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
     
     unsigned childVectorIndex = index;
     if (hasCharsetRule()) {
@@ -198,7 +198,7 @@ void StyleSheetContents::parserSetEncodingFromCharsetRule(const String& encoding
 bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsigned index)
 {
     ASSERT(m_isMutable);
-    ASSERT(index <= ruleCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(index <= ruleCount());
     // Parser::parseRule doesn't currently allow @charset so we don't need to deal with it.
     ASSERT(!rule->isCharsetRule());
     
@@ -234,7 +234,7 @@ bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
 void StyleSheetContents::wrapperDeleteRule(unsigned index)
 {
     ASSERT(m_isMutable);
-    ASSERT(index < ruleCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
 
     unsigned childVectorIndex = index;
     if (hasCharsetRule()) {

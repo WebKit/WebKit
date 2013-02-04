@@ -227,7 +227,7 @@ String SegmentedString::toString() const
 
 void SegmentedString::advance(unsigned count, UChar* consumedCharacters)
 {
-    ASSERT(count <= length());
+    ASSERT_WITH_SECURITY_IMPLICATION(count <= length());
     for (unsigned i = 0; i < count; ++i) {
         consumedCharacters[i] = currentChar();
         advance();

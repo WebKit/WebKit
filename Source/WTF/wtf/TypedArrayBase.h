@@ -69,7 +69,7 @@ class TypedArrayBase : public ArrayBufferView {
     // is responsible for doing so and returning undefined as necessary.
     T item(unsigned index) const
     {
-        ASSERT(index < TypedArrayBase<T>::m_length);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < TypedArrayBase<T>::m_length);
         return TypedArrayBase<T>::data()[index];
     }
 

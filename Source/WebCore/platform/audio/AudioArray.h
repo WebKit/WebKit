@@ -106,7 +106,7 @@ public:
     {
         // Note that although it is a size_t, m_size is now guaranteed to be
         // no greater than max unsigned. This guarantee is enforced in allocate().
-        ASSERT(i < size());
+        ASSERT_WITH_SECURITY_IMPLICATION(i < size());
         return data()[i];
     }
 

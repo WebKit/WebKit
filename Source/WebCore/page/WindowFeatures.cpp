@@ -111,7 +111,7 @@ WindowFeatures::WindowFeatures(const String& features)
             i++;
         valueEnd = i;
 
-        ASSERT(i <= length);
+        ASSERT_WITH_SECURITY_IMPLICATION(i <= length);
 
         String keyString(buffer.substring(keyBegin, keyEnd - keyBegin));
         String valueString(buffer.substring(valueBegin, valueEnd - valueBegin));

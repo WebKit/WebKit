@@ -41,13 +41,13 @@ public:
 
     void set(unsigned index)
     {
-        ASSERT(index < arraySize);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < arraySize);
         m_data[index / 8] |= 1 << (index & 7);
     }
 
     bool get(unsigned index) const
     {
-        ASSERT(index < arraySize);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < arraySize);
         return !!(m_data[index / 8] & (1 << (index & 7)));
     }
 

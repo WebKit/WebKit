@@ -263,7 +263,7 @@ inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& na
 
 inline const Attribute* ElementAttributeData::attributeItem(unsigned index) const
 {
-    ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     if (m_isMutable)
         return &mutableAttributeVector().at(index);
     return &immutableAttributeArray()[index];
@@ -271,7 +271,7 @@ inline const Attribute* ElementAttributeData::attributeItem(unsigned index) cons
 
 inline Attribute* ElementAttributeData::attributeItem(unsigned index)
 {
-    ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     return &mutableAttributeVector().at(index);
 }
 

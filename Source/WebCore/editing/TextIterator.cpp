@@ -465,7 +465,7 @@ void TextIterator::advance()
 
 UChar TextIterator::characterAt(unsigned index) const
 {
-    ASSERT(index < static_cast<unsigned>(length()));
+    ASSERT_WITH_SECURITY_IMPLICATION(index < static_cast<unsigned>(length()));
     if (!(index < static_cast<unsigned>(length())))
         return 0;
 

@@ -78,13 +78,13 @@ public:
 
     GlyphData glyphDataForIndex(unsigned index) const
     {
-        ASSERT(index < size);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         return GlyphData(m_glyphs[index], m_glyphFontData[index]);
     }
 
     Glyph glyphAt(unsigned index) const
     {
-        ASSERT(index < size);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         return m_glyphs[index];
     }
 
@@ -100,7 +100,7 @@ public:
 
     void setGlyphDataForIndex(unsigned index, Glyph g, const SimpleFontData* f)
     {
-        ASSERT(index < size);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         m_glyphs[index] = g;
         m_glyphFontData[index] = f;
     }

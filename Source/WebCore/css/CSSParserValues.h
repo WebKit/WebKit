@@ -78,7 +78,7 @@ struct CSSParserString {
 
     UChar operator[](unsigned i)
     {
-        ASSERT(i < m_length);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
         if (is8Bit())
             return m_data.characters8[i];
         return m_data.characters16[i];

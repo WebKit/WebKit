@@ -789,7 +789,7 @@ InspectorArrayBase::InspectorArrayBase()
 
 PassRefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
 {
-    ASSERT(index < m_data.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < m_data.size());
     return m_data[index];
 }
 

@@ -218,7 +218,7 @@ namespace {
 
         UChar current()
         {
-            ASSERT(m_position < m_length);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_position < m_length);
             return m_sourceString[m_position];
         }
 

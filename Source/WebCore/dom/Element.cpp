@@ -1767,7 +1767,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
 
 void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    ASSERT(index < attributeCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < attributeCount());
 
     ElementAttributeData* attributeData = mutableAttributeData();
 

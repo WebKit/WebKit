@@ -34,13 +34,13 @@ template <typename T, size_t Size> class FixedArray {
 public:
     T& operator[](size_t i)
     {
-        ASSERT(i < Size);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < Size);
         return m_data[i];
     }
 
     const T& operator[](size_t i) const
     {
-        ASSERT(i < Size);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < Size);
         return m_data[i];
     }
 

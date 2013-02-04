@@ -41,7 +41,7 @@ static const char crlfLineEnding[] = "\r\n";
 
 static size_t lengthOfLineEndingAtIndex(const char* input, size_t inputLength, size_t index)
 {
-    ASSERT(index < inputLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(index < inputLength);
     if (input[index] == '\n')
         return 1; // Single LF.
 

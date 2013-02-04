@@ -111,13 +111,13 @@ void SandboxExtension::HandleArray::allocate(size_t size)
 
 SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i)
 {
-    ASSERT(i < m_size);    
+    ASSERT_WITH_SECURITY_IMPLICATION(i < m_size); 
     return m_data[i];
 }
 
 const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i) const
 {
-    ASSERT(i < m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(i < m_size);
     return m_data[i];
 }
 

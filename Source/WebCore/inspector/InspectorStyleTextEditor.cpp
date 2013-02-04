@@ -121,7 +121,7 @@ void InspectorStyleTextEditor::insertProperty(unsigned index, const String& prop
 
 void InspectorStyleTextEditor::replaceProperty(unsigned index, const String& newText)
 {
-    ASSERT(index < m_allProperties->size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < m_allProperties->size());
 
     const InspectorStyleProperty& property = m_allProperties->at(index);
     long propertyStart = property.sourceData.range.start;

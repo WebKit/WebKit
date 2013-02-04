@@ -1,3 +1,15 @@
+2013-02-04  Abhishek Arya  <inferno@chromium.org>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access
+        https://bugs.webkit.org/show_bug.cgi?id=108668
+
+        Reviewed by Eric Seidel.
+
+        * src/ContextFeaturesClientImpl.cpp:
+        (WebKit::ContextFeaturesCache::entryFor):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectFindMatch):
+
 2013-02-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move IDBFactoryBackendInterface to WebCore

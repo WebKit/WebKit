@@ -84,7 +84,7 @@ void TiledImageOpenVG::setTile(int xIndex, int yIndex, VGImage image)
 {
     ASSERT(xIndex < m_numColumns);
     int i = (yIndex * m_numColumns) + xIndex;
-    ASSERT(i < m_tiles.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(i < m_tiles.size());
     m_tiles.at(i) = image;
 }
 
@@ -113,7 +113,7 @@ VGImage TiledImageOpenVG::tile(int xIndex, int yIndex) const
 {
     ASSERT(xIndex < m_numColumns);
     int i = (yIndex * m_numColumns) + xIndex;
-    ASSERT(i < m_tiles.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(i < m_tiles.size());
     return m_tiles.at(i);
 }
 

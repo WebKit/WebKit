@@ -407,7 +407,7 @@ public:
         unsigned index = 0;
         Value result;
         bool ok = parseValueExpression(tokens, 0, &index, &result);
-        ASSERT(index <= tokens->size());
+        ASSERT_WITH_SECURITY_IMPLICATION(index <= tokens->size());
         if (!ok || index != tokens->size())
             return 0;
         return result.value;

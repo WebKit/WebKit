@@ -66,7 +66,7 @@ void CSSImageSetValue::fillImageSet()
         String imageURL = static_cast<CSSImageValue*>(imageValue)->url();
 
         ++i;
-        ASSERT(i < length);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < length);
         CSSValue* scaleFactorValue = item(i);
         ASSERT_WITH_SECURITY_IMPLICATION(scaleFactorValue->isPrimitiveValue());
         float scaleFactor = static_cast<CSSPrimitiveValue*>(scaleFactorValue)->getFloatValue();
@@ -158,7 +158,7 @@ String CSSImageSetValue::customCssText() const
         result.append(' ');
 
         ++i;
-        ASSERT(i < length);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < length);
         const CSSValue* scaleFactorValue = item(i);
         result.append(scaleFactorValue->cssText());
         // FIXME: Eventually the scale factor should contain it's own unit http://wkb.ug/100120.

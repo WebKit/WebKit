@@ -121,7 +121,7 @@ void AudioFIFO::push(const AudioBus* sourceBus)
 
 void AudioFIFO::findWrapLengths(size_t index, size_t size, size_t& part1Length, size_t& part2Length)
 {
-    ASSERT(index < m_fifoLength && size <= m_fifoLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(index < m_fifoLength && size <= m_fifoLength);
     if (index < m_fifoLength && size <= m_fifoLength) {
         if (index + size > m_fifoLength) {
             // Need to wrap. Figure out the length of each piece.

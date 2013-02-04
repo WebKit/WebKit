@@ -138,7 +138,7 @@ void ElementAttributeData::addAttribute(const Attribute& attribute)
 void ElementAttributeData::removeAttribute(size_t index)
 {
     ASSERT(isMutable());
-    ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     mutableAttributeVector().remove(index);
 }
 

@@ -1258,7 +1258,7 @@ bool InspectorStyleSheet::styleSheetTextWithChangedStyle(CSSStyleDeclaration* st
     ASSERT(bodyStart <= bodyEnd);
 
     String text = m_parsedStyleSheet->text();
-    ASSERT(bodyEnd <= text.length()); // bodyEnd is exclusive
+    ASSERT_WITH_SECURITY_IMPLICATION(bodyEnd <= text.length()); // bodyEnd is exclusive
 
     text.replace(bodyStart, bodyEnd - bodyStart, newStyleText);
     *result = text;

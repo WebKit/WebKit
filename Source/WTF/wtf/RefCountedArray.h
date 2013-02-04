@@ -118,13 +118,13 @@ public:
     
     T& at(size_t i)
     {
-        ASSERT(i < size());
+        ASSERT_WITH_SECURITY_IMPLICATION(i < size());
         return begin()[i];
     }
     
     const T& at(size_t i) const
     {
-        ASSERT(i < size());
+        ASSERT_WITH_SECURITY_IMPLICATION(i < size());
         return begin()[i];
     }
     

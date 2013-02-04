@@ -2036,7 +2036,7 @@ int WebFrameImpl::nearestFindMatch(const FloatPoint& point, float& distanceSquar
 
 int WebFrameImpl::selectFindMatch(unsigned index, WebRect* selectionRect)
 {
-    ASSERT(index < m_findMatchesCache.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < m_findMatchesCache.size());
 
     RefPtr<Range> range = m_findMatchesCache[index].m_range;
     if (!range->boundaryPointsValid() || !range->startContainer()->inDocument())

@@ -1,3 +1,13 @@
+2013-02-04  Abhishek Arya  <inferno@chromium.org>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access
+        https://bugs.webkit.org/show_bug.cgi?id=108668
+
+        Reviewed by Eric Seidel.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::HandleArray::operator[]):
+
 2013-02-04  Anders Carlsson  <andersca@apple.com>
 
         Change didReceiveMessageOnConnectionWorkQueue semantics

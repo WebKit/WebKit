@@ -48,7 +48,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 
     int index = selectedIndex();
     ASSERT(index >= 0);
-    ASSERT(index < listItems().size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < listItems().size());
     setSelectedIndex(index);
     event->setDefaultHandled();
     return true;

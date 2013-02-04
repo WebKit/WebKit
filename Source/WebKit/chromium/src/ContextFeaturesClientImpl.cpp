@@ -83,7 +83,7 @@ public:
     Entry& entryFor(ContextFeatures::FeatureType type)
     {
         size_t index = static_cast<size_t>(type);
-        ASSERT(index < ContextFeatures::FeatureTypeSize);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < ContextFeatures::FeatureTypeSize);
         return m_entries[index];
     }
 

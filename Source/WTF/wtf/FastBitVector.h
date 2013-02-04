@@ -146,13 +146,13 @@ public:
     
     void set(size_t i)
     {
-        ASSERT(i < m_numBits);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
         m_array[i >> 5] |= (1 << (i & 31));
     }
     
     void clear(size_t i)
     {
-        ASSERT(i < m_numBits);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
         m_array[i >> 5] &= ~(1 << (i & 31));
     }
     
@@ -166,7 +166,7 @@ public:
     
     bool get(size_t i) const
     {
-        ASSERT(i < m_numBits);
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_numBits);
         return !!(m_array[i >> 5] & (1 << (i & 31)));
     }
 private:

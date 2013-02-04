@@ -155,9 +155,9 @@ public:
         return result;
     }
 
-    UChar operator[](unsigned i) const { ASSERT(i < m_len); return is8Bit() ? m_data.characters8[i] :m_data.characters16[i]; }
-    const LChar* data8(unsigned i) const { ASSERT(i < m_len); ASSERT(is8Bit()); return &m_data.characters8[i]; }
-    const UChar* data16(unsigned i) const { ASSERT(i < m_len); ASSERT(!is8Bit()); return &m_data.characters16[i]; }
+    UChar operator[](unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); return is8Bit() ? m_data.characters8[i] :m_data.characters16[i]; }
+    const LChar* data8(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); ASSERT(is8Bit()); return &m_data.characters8[i]; }
+    const UChar* data16(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_len); ASSERT(!is8Bit()); return &m_data.characters16[i]; }
 
     const LChar* characters8() const { ASSERT(is8Bit()); return m_data.characters8; }
     const UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
