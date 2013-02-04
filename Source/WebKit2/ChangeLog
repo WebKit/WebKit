@@ -1,3 +1,10 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Use UNUSED_PARAM instead of C style comments.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createStorageArea):
+
 2013-02-04  Christophe Dumez  <dchris@gmail.com>
 
         [EFL][WK2] Stop using libsoup in ewk_url_scheme_request
