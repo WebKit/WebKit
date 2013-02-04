@@ -1,5 +1,17 @@
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        Check PrivateHeaders/JSBasePrivate.h for inappropriate macros
+        <http://webkit.org/b/108749>
+
+        Reviewed by Joseph Pecoraro.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add
+        PrivateHeaders/JSBasePrivate.h to list of headers to check in
+        "Check for Inappropriate Macros in External Headers" build phase
+        script.
+
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
         Remove duplicate entries from JavaScriptCore Xcode project
 
             $ uniq Source/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj | diff -u - Source/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj | patch -p0 -R
