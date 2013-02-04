@@ -8,6 +8,8 @@
         <script src=../media-controls.js></script>
 
         <style>
+        ::cue(:lang(ru)) { color: lime; }
+        ::cue(:lang(en)) { color: purple; }
         ::cue(c[lang="ru"]) { color: red; }
         ::cue(c[lang="en"]) { color: green; }
         </style>
@@ -16,9 +18,10 @@
 
         var cueNode;
         var seekedCount = 0;
-        var seekTimes = [0.1];
+        var seekTimes = [0.1, 0.6];
 
-        var info = [["rgb(0, 128, 0)", "rgb(255, 0, 0)", "rgb(0, 128, 0)"]];
+        var info = [["rgb(0, 128, 0)", "rgb(255, 0, 0)", "rgb(0, 128, 0)"],
+                    ["rgb(128, 0, 128)", "rgb(0, 255, 0)", "rgb(128, 0, 128)"]];
 
         function seeked()
         {

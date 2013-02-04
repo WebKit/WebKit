@@ -4,5 +4,11 @@ EVENT(seeked)
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+
+RUN(video.currentTime = 0.6)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 255, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
 END OF TEST
 

@@ -819,7 +819,13 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
             break;
         case CSSSelector::PseudoLang:
             {
-                AtomicString value = element->computeInheritedLanguage();
+                AtomicString value;
+#if ENABLE(VIDEO_TRACK)
+                if (element->isWebVTTElement())
+                    value = element->getAttribute(langAttr);
+                else
+#endif
+                    value = element->computeInheritedLanguage();
                 const AtomicString& argument = selector->argument();
                 if (value.isEmpty() || !value.startsWith(argument, false))
                     break;
