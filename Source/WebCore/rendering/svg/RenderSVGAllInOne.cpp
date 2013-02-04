@@ -77,3 +77,4 @@
 #include "SVGTextMetrics.cpp"
 #include "SVGTextMetricsBuilder.cpp"
 #include "SVGTextQuery.cpp"
+
