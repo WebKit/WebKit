@@ -1540,6 +1540,8 @@
             'css/FontFeatureValue.h',
             'css/FontValue.cpp',
             'css/FontValue.h',
+            'css/InspectorCSSOMWrappers.cpp',
+            'css/InspectorCSSOMWrappers.h',
             'css/LengthFunctions.cpp',
             'css/MediaFeatureNames.cpp',
             'css/MediaFeatureNames.h',

@@ -26,6 +26,7 @@
 #include "CSSRuleList.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
+#include "InspectorCSSOMWrappers.h"
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
@@ -63,7 +64,6 @@ class CSSPrimitiveValue;
 class CSSProperty;
 class CSSRuleList;
 class CSSSelector;
-class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
@@ -99,7 +99,6 @@ class StyleRulePage;
 class StyleRuleRegion;
 class StyleShader;
 class StyleSheet;
-class StyleSheetContents;
 class StyleSheetList;
 class StyledElement;
 class ViewportStyleResolver;
@@ -134,27 +133,6 @@ enum RuleMatchingBehavior {
     MatchAllRules,
     MatchAllRulesExcludingSMIL,
     MatchOnlyUserAgentRules,
-};
-
-class InspectorCSSOMWrappers {
-public:
-    // WARNING. This will construct CSSOM wrappers for all style rules and cache them in a map for significant memory cost.
-    // It is here to support inspector. Don't use for any regular engine functions.
-    CSSStyleRule* getWrapperForRuleInSheets(StyleRule*, DocumentStyleSheetCollection*);
-    void collectFromStyleSheetIfNeeded(CSSStyleSheet*);
-
-    void reportMemoryUsage(MemoryObjectInfo*) const;
-
-private:
-    template <class ListType>
-    void collect(ListType*);
-
-    void collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents*);
-    void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&);
-    void collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection*);
-
-    HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
-    HashSet<RefPtr<CSSStyleSheet> > m_styleSheetCSSOMWrapperSet;
 };
 
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.

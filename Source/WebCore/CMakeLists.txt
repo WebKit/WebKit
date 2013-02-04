@@ -1070,6 +1070,7 @@ set(WebCore_SOURCES
     css/CSSValuePool.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp
+    css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp
     css/MediaFeatureNames.cpp
     css/MediaList.cpp

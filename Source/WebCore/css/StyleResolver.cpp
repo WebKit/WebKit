@@ -36,10 +36,7 @@
 #include "CSSDefaultStyleSheets.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
-#include "CSSHostRule.h"
-#include "CSSImportRule.h"
 #include "CSSLineBoxContainValue.h"
-#include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -48,7 +45,6 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
-#include "CSSStyleSheet.h"
 #include "CSSSupportsRule.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
@@ -2512,97 +2508,6 @@ String StyleResolver::pageName(int /* pageIndex */) const
 {
     // FIXME: Implement page index to page name mapping.
     return "";
-}
-
-void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet* styleSheet)
-{
-    if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
-        collect(styleSheet);
-}
-
-template <class ListType>
-void InspectorCSSOMWrappers::collect(ListType* listType)
-{
-    if (!listType)
-        return;
-    unsigned size = listType->length();
-    for (unsigned i = 0; i < size; ++i) {
-        CSSRule* cssRule = listType->item(i);
-        switch (cssRule->type()) {
-        case CSSRule::IMPORT_RULE:
-            collect(static_cast<CSSImportRule*>(cssRule)->styleSheet());
-            break;
-        case CSSRule::MEDIA_RULE:
-            collect(static_cast<CSSMediaRule*>(cssRule));
-            break;
-#if ENABLE(CSS3_CONDITIONAL_RULES)
-        case CSSRule::SUPPORTS_RULE:
-            collectCSSOMWrappers(static_cast<CSSSupportsRule*>(cssRule));
-            break;
-#endif
-#if ENABLE(CSS_REGIONS)
-        case CSSRule::WEBKIT_REGION_RULE:
-            collect(static_cast<WebKitCSSRegionRule*>(cssRule));
-            break;
-#endif
-#if ENABLE(SHADOW_DOM)
-        case CSSRule::HOST_RULE:
-            collect(static_cast<CSSHostRule*>(cssRule));
-            break;
-#endif
-        case CSSRule::STYLE_RULE:
-            m_styleRuleToCSSOMWrapperMap.add(static_cast<CSSStyleRule*>(cssRule)->styleRule(), static_cast<CSSStyleRule*>(cssRule));
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents* styleSheet)
-{
-    if (!styleSheet)
-        return;
-    RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(styleSheet);
-    sheetWrapperSet.add(styleSheetWrapper);
-    collect(styleSheetWrapper.get());
-}
-
-void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& sheets)
-{
-    for (unsigned i = 0; i < sheets.size(); ++i)
-        collect(sheets[i].get());
-}
-
-void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection* styleSheetCollection)
-{
-    collectFromStyleSheets(styleSheetCollection->activeAuthorStyleSheets());
-    collect(styleSheetCollection->pageUserSheet());
-    collectFromStyleSheets(styleSheetCollection->injectedUserStyleSheets());
-    collectFromStyleSheets(styleSheetCollection->documentUserStyleSheets());
-}
-
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, DocumentStyleSheetCollection* styleSheetCollection)
-{
-    if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::simpleDefaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::defaultStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::quirksStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::svgStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mathMLStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::mediaControlsStyleSheet);
-        collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::fullscreenStyleSheet);
-
-        collectFromDocumentStyleSheetCollection(styleSheetCollection);
-    }
-    return m_styleRuleToCSSOMWrapperMap.get(rule).get();
-}
-
-void InspectorCSSOMWrappers::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_styleRuleToCSSOMWrapperMap);
-    info.addMember(m_styleSheetCSSOMWrapperSet);
 }
 
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
