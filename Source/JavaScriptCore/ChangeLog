@@ -1,3 +1,9 @@
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
+        Sort JavaScriptCore Xcode project file
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-02-03  David Kilzer  <ddkilzer@apple.com>
 
         Upstream ENABLE_PDFKIT_PLUGIN settting
