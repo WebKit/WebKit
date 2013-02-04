@@ -1,3 +1,13 @@
+2013-02-03  David Kilzer  <ddkilzer@apple.com>
+
+        Upstream ENABLE_PDFKIT_PLUGIN settting
+        <http://webkit.org/b/108792>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig: Disable PDFKIT_PLUGIN
+        on iOS since PDFKit is a Mac-only framework.
+
 2013-02-01  Alexey Proskuryakov  <ap@apple.com>
 
         Silently block one more directory needed for NSApplication initialization.

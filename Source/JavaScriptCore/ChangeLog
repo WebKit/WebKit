@@ -1,3 +1,13 @@
+2013-02-03  David Kilzer  <ddkilzer@apple.com>
+
+        Upstream ENABLE_PDFKIT_PLUGIN settting
+        <http://webkit.org/b/108792>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig: Disable PDFKIT_PLUGIN
+        on iOS since PDFKit is a Mac-only framework.
+
 2013-02-02  Andreas Kling  <akling@apple.com>
 
         Vector should consult allocator about ideal size when choosing capacity.
