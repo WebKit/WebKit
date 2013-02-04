@@ -1,5 +1,22 @@
 2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Objective-C API: testapi.mm should use ARC
+        https://bugs.webkit.org/show_bug.cgi?id=107838
+
+        Reviewed by Oliver Hunt.
+
+        In ToT testapi.mm uses the Obj-C garbage collector, which hides a lot of our object lifetime bugs. 
+        We should enable ARC, since that is what most of our clients will be using.
+
+        * API/tests/testapi.mm:
+        (-[TestObject init]):
+        (-[TestObject dealloc]):
+        (+[TestObject testObject]):
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Objective-C API: ObjCCallbackFunction should retain the target of its NSInvocation
         https://bugs.webkit.org/show_bug.cgi?id=108843
 
