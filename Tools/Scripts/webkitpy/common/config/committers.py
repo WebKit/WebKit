@@ -141,6 +141,7 @@ contributors_who_are_not_committers = [
     Contributor("David Reveman", "reveman@chromium.org", "reveman"),
     Contributor("Dongsung Huang", "luxtella@company100.net", "Huang"),
     Contributor("Douglas Davidson", "ddavidso@apple.com"),
+    Contributor("Douglas Stockwell", "dstockwell@chromium.org", "dstockwell"),
     Contributor("Edward O'Connor", "eoconnor@apple.com", "hober"),
     Contributor("Eric Penner", "epenner@chromium.org", "epenner"),
     Contributor("Felician Marton", ["felician@inf.u-szeged.hu", "marton.felician.zoltan@stud.u-szeged.hu"], "Felician"),

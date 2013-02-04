@@ -1,3 +1,11 @@
+2013-02-03  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Unreviewed. Add dstockwell as a contributor in comitters.py and to the watchlist for animation
+        https://bugs.webkit.org/show_bug.cgi?id=108777
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-03  Sam Weinig  <sam@webkit.org>
 
         Fix failing test.
