@@ -637,10 +637,7 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringR
 void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        bool didHandleMessage = false;
-        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
-        if (didHandleMessage)
-            decoder = nullptr;
+        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, decoder);
         return;
     }
 }

@@ -458,10 +458,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
 void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
-        bool didHandleMessage = false;
-        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
-        if (didHandleMessage)
-            decoder = nullptr;
+        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, decoder);
         return;
     }
 }

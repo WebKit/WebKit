@@ -1,3 +1,41 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Update message generation to use the new queue client semantics
+        https://bugs.webkit.org/show_bug.cgi?id=108865
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkit2/messages.py:
+        (connection_work_queue_message_statement):
+        (async_message_statement):
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::didReceiveMessageOnConnectionWorkQueue):
+        * Shared/mac/SecItemShim.h:
+        (SecItemShim):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.h:
+        (SecItemShimProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2013-02-04  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access

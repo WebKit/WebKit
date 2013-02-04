@@ -135,10 +135,7 @@ void SecItemShim::initialize(ChildProcess* process)
 void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::SecItemShim::messageReceiverName()) {
-        bool didHandleMessage = false;
-        didReceiveSecItemShimMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
-        if (didHandleMessage)
-            decoder = nullptr;
+        didReceiveSecItemShimMessageOnConnectionWorkQueue(connection, decoder);
         return;
     }
 }

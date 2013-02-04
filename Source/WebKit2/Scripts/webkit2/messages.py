@@ -302,20 +302,25 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
+def connection_work_queue_message_statement(receiver, message):
+    dispatch_function_args = ['connection', '*decoder', 'this', '&%s' % handler_function(receiver, message)]
+    result = []
+    result.append('    if (decoder->messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
+    result.append('        CoreIPC::handleMessageOnConnectionQueue<Messages::%s::%s>(%s);\n' % (receiver.name, message.name, ', '.join(dispatch_function_args)))
+    result.append('        decoder = nullptr;\n')
+    result.append('        return;\n')
+    result.append('    }\n')
+    return surround_in_condition(''.join(result), message.condition)
+
 def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
     dispatch_function = 'handleMessage'
     if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
-    if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
-        dispatch_function += 'OnConnectionQueue'
-        dispatch_function_args.insert(0, 'connection')
-        
+
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
     result.append('        CoreIPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
-    if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
-        result.append('        didHandleMessage = true;\n')
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
@@ -530,13 +535,13 @@ def generate_message_handler(file):
                 async_messages.append(message)
 
     if async_dispatch_on_connection_queue_messages:
-        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)\n' % (receiver.name, receiver.name))
         result.append('{\n')
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(push)\n')
         result.append('#pragma warning(disable: 4065)\n')
         result.append('#endif\n')
-        result += [async_message_statement(receiver, message) for message in async_dispatch_on_connection_queue_messages]
+        result += [connection_work_queue_message_statement(receiver, message) for message in async_dispatch_on_connection_queue_messages]
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(pop)\n')
         result.append('#endif\n')

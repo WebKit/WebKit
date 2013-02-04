@@ -703,15 +703,15 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4065)
 #endif
-    if (decoder.messageName() == Messages::WebPage::TestConnectionQueue::name()) {
-        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, decoder, this, &WebPage::testConnectionQueue);
-        didHandleMessage = true;
+    if (decoder->messageName() == Messages::WebPage::TestConnectionQueue::name()) {
+        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, *decoder, this, &WebPage::testConnectionQueue);
+        decoder = nullptr;
         return;
     }
 #if COMPILER(MSVC)

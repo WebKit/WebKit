@@ -50,7 +50,7 @@ private:
     virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
 
     // Implemented in generated SecItemShimMessageReceiver.cpp.
-    void didReceiveSecItemShimMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+    void didReceiveSecItemShimMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
 
     void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);
 };

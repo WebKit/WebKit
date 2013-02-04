@@ -48,10 +48,7 @@ StorageManager::~StorageManager()
 void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
-        bool didHandleMessage = false;
-        didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
-        if (didHandleMessage)
-            decoder = nullptr;
+        didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, decoder);
         return;
     }
 }

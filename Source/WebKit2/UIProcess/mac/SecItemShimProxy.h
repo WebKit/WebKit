@@ -47,7 +47,7 @@ private:
     virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
 
     // Implemented in generated SecItemShimProxyMessageReceiver.cpp.
-    void didReceiveSecItemShimProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+    void didReceiveSecItemShimProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
 
     void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
 };
