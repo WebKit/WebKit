@@ -896,9 +896,14 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
 void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
 {
     float pageScaleFactor;
+    bool hadChanges = m_uncommittedChanges;
+
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
     commitLayerChangesBeforeSublayers(pageScaleFactor, offset, m_visibleRect);
     commitLayerChangesAfterSublayers();
+
+    if (hadChanges && client())
+        client()->didCommitChangesForLayer(this);
 }
 
 TiledBacking* GraphicsLayerCA::tiledBacking() const
@@ -2647,9 +2652,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         m_layer->appendSublayer(m_visibleTileWashLayer.get());
 #endif
 
-    // FIXME: Skip this step if we don't have a superlayer. This is problably a benign
-    // case that happens while restructuring the layer tree.
-    ASSERT(oldLayer->superlayer());
+    // Skip this step if we don't have a superlayer. This is probably a benign
+    // case that happens while restructuring the layer tree, and also occurs with
+    // WebKit2 page overlays, which can become tiled but are out-of-tree.
     if (oldLayer->superlayer())
         oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
 

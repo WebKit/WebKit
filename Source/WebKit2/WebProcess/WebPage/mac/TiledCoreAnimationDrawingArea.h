@@ -81,6 +81,7 @@ private:
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE;
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
     virtual float deviceScaleFactor() const OVERRIDE;
+    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const OVERRIDE;
 
     // WebCore::LayerFlushSchedulerClient
     virtual bool flushLayers() OVERRIDE;
@@ -113,6 +114,7 @@ private:
     RetainPtr<CALayer> m_debugInfoLayer;
 
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    mutable RetainPtr<CALayer> m_pageOverlayPlatformLayer;
 
     bool m_isPaintingSuspended;
 
