@@ -38,7 +38,7 @@ static bool receivedProperBackForwardCallbacks = false;
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void*)
 {
     // Only mark finished when the main frame loads
-    if (WKFrameGetParentFrame(frame))
+    if (!WKFrameIsMainFrame(frame))
         return;
 
     finished = true;

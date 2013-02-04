@@ -1,3 +1,10 @@
+2013-02-03  Sam Weinig  <sam@webkit.org>
+
+        Fix failing test.
+
+        * TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp:
+        (TestWebKitAPI::didFinishLoadForFrame):
+
 2013-02-03  Timothy Loh  <timloh@chromium.com>
 
         Make ChangeLogEntry detect annotations by prepare-ChangeLog (Added/Removed/Copied from/Renamed from) as clean.
