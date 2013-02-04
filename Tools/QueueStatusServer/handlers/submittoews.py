@@ -30,6 +30,7 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
+from loggers.recordpatchevent import RecordPatchEvent
 from model.attachment import Attachment
 from model.queues import Queue
 
@@ -57,6 +58,7 @@ class SubmitToEWS(UpdateBase):
         for queue in Queue.all_ews():  # all_ews() currently includes the style-queue
             if self._should_add_to_ews_queue(queue, attachment):
                 queue.work_items().add_work_item(attachment.id)
+                RecordPatchEvent.added(attachment.id, queue.name())
 
     def post(self):
         attachment_id = self._int_from_request("attachment_id")

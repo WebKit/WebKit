@@ -1,3 +1,16 @@
+2013-02-03  Alan Cutter  <alancutter@chromium.org>
+
+        PatchLogs are not getting created on QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=108593
+
+        Reviewed by Eric Seidel.
+
+        Added missing "added" patch event to submit-to-ews handler.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/handlers/submittoews.py:
+        (SubmitToEWS._add_attachment_to_ews_queues):
+
 2013-02-03  Douglas Stockwell  <dstockwell@chromium.org>
 
         Unreviewed. Add dstockwell as a contributor in comitters.py and to the watchlist for animation
