@@ -202,14 +202,10 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
                                           bool includePartialGlyphs) const
 {
-    // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
-    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
-    int targetX = static_cast<int>(xFloat);
-
     HarfBuzzShaper shaper(this, run);
     if (!shaper.shape())
         return 0;
-    return shaper.offsetForPosition(targetX);
+    return shaper.offsetForPosition(xFloat);
 }
 
 // Return the rectangle for selecting the given range of code-points in the TextRun.
