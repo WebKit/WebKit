@@ -24,22 +24,18 @@
  */
 
 #include "config.h"
-#include "WebTestPlugin.h"
+#include "TestPlugin.h"
 
 #include "WebFrame.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
-#include "WebPluginContainer.h"
 #include "WebPluginParams.h"
 #include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
 #include <public/Platform.h>
 #include <public/WebCompositorSupport.h>
-#include <public/WebExternalTextureLayer.h>
-#include <public/WebExternalTextureLayerClient.h>
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -148,101 +144,10 @@ WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebSt
     return WebPluginContainer::TouchEventRequestTypeNone;
 }
 
-class WebTestPluginImpl : public WebTestPlugin, public WebExternalTextureLayerClient {
-public:
-    WebTestPluginImpl(WebFrame*, const WebPluginParams&, WebTestDelegate*);
-    virtual ~WebTestPluginImpl();
+}
 
-    // WebPlugin methods:
-    virtual bool initialize(WebPluginContainer*);
-    virtual void destroy();
-    virtual NPObject* scriptableObject() { return 0; }
-    virtual bool canProcessDrag() const { return m_canProcessDrag; }
-    virtual void paint(WebCanvas*, const WebRect&) { }
-    virtual void updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible);
-    virtual void updateFocus(bool) { }
-    virtual void updateVisibility(bool) { }
-    virtual bool acceptsInputEvents() { return true; }
-    virtual bool handleInputEvent(const WebInputEvent&, WebCursorInfo&);
-    virtual bool handleDragStatusUpdate(WebDragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition);
-    virtual void didReceiveResponse(const WebURLResponse&) { }
-    virtual void didReceiveData(const char* data, int dataLength) { }
-    virtual void didFinishLoading() { }
-    virtual void didFailLoading(const WebURLError&) { }
-    virtual void didFinishLoadingFrameRequest(const WebURL&, void* notifyData) { }
-    virtual void didFailLoadingFrameRequest(const WebURL&, void* notifyData, const WebURLError&) { }
-    virtual bool isPlaceholder() { return false; }
 
-    // WebExternalTextureLayerClient methods:
-    virtual unsigned prepareTexture(WebTextureUpdater&) { return m_colorTexture; }
-    virtual WebGraphicsContext3D* context() { return m_context; }
-
-private:
-    enum Primitive {
-        PrimitiveNone,
-        PrimitiveTriangle
-    };
-
-    struct Scene {
-        Primitive primitive;
-        unsigned backgroundColor[3];
-        unsigned primitiveColor[3];
-        float opacity;
-
-        unsigned vbo;
-        unsigned program;
-        int colorLocation;
-        int positionLocation;
-
-        Scene()
-            : primitive(PrimitiveNone)
-            , opacity(1.0f) // Fully opaque.
-            , vbo(0)
-            , program(0)
-            , colorLocation(-1)
-            , positionLocation(-1)
-        {
-            backgroundColor[0] = backgroundColor[1] = backgroundColor[2] = 0;
-            primitiveColor[0] = primitiveColor[1] = primitiveColor[2] = 0;
-        }
-    };
-
-    // Functions for parsing plugin parameters.
-    Primitive parsePrimitive(const WebString&);
-    void parseColor(const WebString&, unsigned color[3]);
-    float parseOpacity(const WebString&);
-    bool parseBoolean(const WebString&);
-
-    // Functions for loading and drawing scene.
-    bool initScene();
-    void drawScene();
-    void destroyScene();
-    bool initProgram();
-    bool initPrimitive();
-    void drawPrimitive();
-    unsigned loadShader(unsigned type, const WTF::CString& source);
-    unsigned loadProgram(const WTF::CString& vertexSource, const WTF::CString& fragmentSource);
-
-    WebFrame* m_frame;
-    WebTestDelegate* m_delegate;
-    WebPluginContainer* m_container;
-
-    WebRect m_rect;
-    WebGraphicsContext3D* m_context;
-    unsigned m_colorTexture;
-    unsigned m_framebuffer;
-    Scene m_scene;
-    OwnPtr<WebExternalTextureLayer> m_layer;
-
-    WebPluginContainer::TouchEventRequestType m_touchEventRequest;
-    // Requests touch events from the WebPluginContainerImpl multiple times to tickle webkit.org/b/108381
-    bool m_reRequestTouchEvents;
-    bool m_printEventDetails;
-    bool m_printUserGestureStatus;
-    bool m_canProcessDrag;
-};
-
-WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
+TestPlugin::TestPlugin(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
     : m_frame(frame)
     , m_delegate(delegate)
     , m_container(0)
@@ -290,11 +195,11 @@ WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& par
     }
 }
 
-WebTestPluginImpl::~WebTestPluginImpl()
+TestPlugin::~TestPlugin()
 {
 }
 
-bool WebTestPluginImpl::initialize(WebPluginContainer* container)
+bool TestPlugin::initialize(WebPluginContainer* container)
 {
     WebGraphicsContext3D::Attributes attrs;
     m_context = Platform::current()->createOffscreenGraphicsContext3D(attrs);
@@ -319,7 +224,7 @@ bool WebTestPluginImpl::initialize(WebPluginContainer* container)
     return true;
 }
 
-void WebTestPluginImpl::destroy()
+void TestPlugin::destroy()
 {
     if (m_container)
         m_container->setWebLayer(0);
@@ -333,7 +238,7 @@ void WebTestPluginImpl::destroy()
     m_frame = 0;
 }
 
-void WebTestPluginImpl::updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible)
+void TestPlugin::updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible)
 {
     if (clipRect == m_rect)
         return;
@@ -359,7 +264,7 @@ void WebTestPluginImpl::updateGeometry(const WebRect& frameRect, const WebRect& 
     m_layer->layer()->invalidate();
 }
 
-WebTestPluginImpl::Primitive WebTestPluginImpl::parsePrimitive(const WebString& string)
+TestPlugin::Primitive TestPlugin::parsePrimitive(const WebString& string)
 {
     static const WebString kPrimitiveNone = WebString::fromUTF8("none");
     static const WebString kPrimitiveTriangle = WebString::fromUTF8("triangle");
@@ -376,7 +281,7 @@ WebTestPluginImpl::Primitive WebTestPluginImpl::parsePrimitive(const WebString& 
 
 // FIXME: This method should already exist. Use it.
 // For now just parse primary colors.
-void WebTestPluginImpl::parseColor(const WebString& string, unsigned color[3])
+void TestPlugin::parseColor(const WebString& string, unsigned color[3])
 {
     color[0] = color[1] = color[2] = 0;
     if (string == "black")
@@ -392,18 +297,18 @@ void WebTestPluginImpl::parseColor(const WebString& string, unsigned color[3])
         ASSERT_NOT_REACHED();
 }
 
-float WebTestPluginImpl::parseOpacity(const WebString& string)
+float TestPlugin::parseOpacity(const WebString& string)
 {
     return static_cast<float>(atof(string.utf8().data()));
 }
 
-bool WebTestPluginImpl::parseBoolean(const WebString& string)
+bool TestPlugin::parseBoolean(const WebString& string)
 {
     static const WebString kPrimitiveTrue = WebString::fromUTF8("true");
     return string == kPrimitiveTrue;
 }
 
-bool WebTestPluginImpl::initScene()
+bool TestPlugin::initScene()
 {
     float color[4];
     premultiplyAlpha(m_scene.backgroundColor, m_scene.opacity, color);
@@ -423,7 +328,7 @@ bool WebTestPluginImpl::initScene()
     return m_scene.primitive != PrimitiveNone ? initProgram() && initPrimitive() : true;
 }
 
-void WebTestPluginImpl::drawScene()
+void TestPlugin::drawScene()
 {
     m_context->viewport(0, 0, m_rect.width, m_rect.height);
     m_context->clear(GL_COLOR_BUFFER_BIT);
@@ -432,7 +337,7 @@ void WebTestPluginImpl::drawScene()
         drawPrimitive();
 }
 
-void WebTestPluginImpl::destroyScene()
+void TestPlugin::destroyScene()
 {
     if (m_scene.program) {
         m_context->deleteProgram(m_scene.program);
@@ -454,7 +359,7 @@ void WebTestPluginImpl::destroyScene()
     }
 }
 
-bool WebTestPluginImpl::initProgram()
+bool TestPlugin::initProgram()
 {
     const CString vertexSource(
         "attribute vec4 position;  \n"
@@ -480,7 +385,7 @@ bool WebTestPluginImpl::initProgram()
     return true;
 }
 
-bool WebTestPluginImpl::initPrimitive()
+bool TestPlugin::initPrimitive()
 {
     ASSERT(m_scene.primitive == PrimitiveTriangle);
 
@@ -498,7 +403,7 @@ bool WebTestPluginImpl::initPrimitive()
     return true;
 }
 
-void WebTestPluginImpl::drawPrimitive()
+void TestPlugin::drawPrimitive()
 {
     ASSERT(m_scene.primitive == PrimitiveTriangle);
     ASSERT(m_scene.vbo);
@@ -518,7 +423,7 @@ void WebTestPluginImpl::drawPrimitive()
     m_context->drawArrays(GL_TRIANGLES, 0, 3);
 }
 
-unsigned WebTestPluginImpl::loadShader(unsigned type, const CString& source)
+unsigned TestPlugin::loadShader(unsigned type, const CString& source)
 {
     unsigned shader = m_context->createShader(type);
     if (shader) {
@@ -535,7 +440,7 @@ unsigned WebTestPluginImpl::loadShader(unsigned type, const CString& source)
     return shader;
 }
 
-unsigned WebTestPluginImpl::loadProgram(const CString& vertexSource, const CString& fragmentSource)
+unsigned TestPlugin::loadProgram(const CString& vertexSource, const CString& fragmentSource)
 {
     unsigned vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
     unsigned fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
@@ -560,7 +465,7 @@ unsigned WebTestPluginImpl::loadProgram(const CString& vertexSource, const CStri
     return program;
 }
 
-bool WebTestPluginImpl::handleInputEvent(const WebInputEvent& event, WebCursorInfo& info)
+bool TestPlugin::handleInputEvent(const WebInputEvent& event, WebCursorInfo& info)
 {
     const char* eventName = 0;
     switch (event.type) {
@@ -610,7 +515,7 @@ bool WebTestPluginImpl::handleInputEvent(const WebInputEvent& event, WebCursorIn
     return false;
 }
 
-bool WebTestPluginImpl::handleDragStatusUpdate(WebDragStatus dragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition)
+bool TestPlugin::handleDragStatusUpdate(WebDragStatus dragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition)
 {
     const char* dragStatusName = 0;
     switch (dragStatus) {
@@ -633,22 +538,12 @@ bool WebTestPluginImpl::handleDragStatusUpdate(WebDragStatus dragStatus, const W
     return false;
 }
 
-}
-
-WebTestPlugin* WebTestPlugin::create(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
+TestPlugin* TestPlugin::create(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
 {
-    return new WebTestPluginImpl(frame, params, delegate);
+    return new TestPlugin(frame, params, delegate);
 }
 
-WebTestPlugin::WebTestPlugin()
-{
-}
-
-WebTestPlugin::~WebTestPlugin()
-{
-}
-
-const WebString& WebTestPlugin::mimeType()
+const WebString& TestPlugin::mimeType()
 {
     static const WebString kMimeType = WebString::fromUTF8("application/x-webkit-test-webplugin");
     return kMimeType;

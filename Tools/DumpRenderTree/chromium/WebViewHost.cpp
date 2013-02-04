@@ -59,7 +59,6 @@
 #include "WebScreenInfo.h"
 #include "WebSerializedScriptValue.h"
 #include "WebStorageNamespace.h"
-#include "WebTestPlugin.h"
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
@@ -536,9 +535,6 @@ void WebViewHost::exitFullScreen()
 
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
 {
-    if (params.mimeType == WebTestPlugin::mimeType())
-        return WebTestPlugin::create(frame, params, this);
-
     return webkit_support::CreateWebPlugin(frame, params);
 }
 

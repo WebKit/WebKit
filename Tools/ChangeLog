@@ -1,3 +1,65 @@
+2013-02-04  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove WebTestPlugin from the public TestRunner API
+        https://bugs.webkit.org/show_bug.cgi?id=108467
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestPlugin.h: Removed.
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::createPlugin):
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp.
+        (WebTestRunner::TestPlugin::TestPlugin):
+        (WebTestRunner):
+        (WebTestRunner::TestPlugin::~TestPlugin):
+        (WebTestRunner::TestPlugin::initialize):
+        (WebTestRunner::TestPlugin::destroy):
+        (WebTestRunner::TestPlugin::updateGeometry):
+        (WebTestRunner::TestPlugin::parsePrimitive):
+        (WebTestRunner::TestPlugin::parseColor):
+        (WebTestRunner::TestPlugin::parseOpacity):
+        (WebTestRunner::TestPlugin::parseBoolean):
+        (WebTestRunner::TestPlugin::initScene):
+        (WebTestRunner::TestPlugin::drawScene):
+        (WebTestRunner::TestPlugin::destroyScene):
+        (WebTestRunner::TestPlugin::initProgram):
+        (WebTestRunner::TestPlugin::initPrimitive):
+        (WebTestRunner::TestPlugin::drawPrimitive):
+        (WebTestRunner::TestPlugin::loadShader):
+        (WebTestRunner::TestPlugin::loadProgram):
+        (WebTestRunner::TestPlugin::handleInputEvent):
+        (WebTestRunner::TestPlugin::handleDragStatusUpdate):
+        (WebTestRunner::TestPlugin::create):
+        (WebTestRunner::TestPlugin::mimeType):
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.h: Added.
+        (WebTestRunner):
+        (TestPlugin):
+        (WebTestRunner::TestPlugin::scriptableObject):
+        (WebTestRunner::TestPlugin::canProcessDrag):
+        (WebTestRunner::TestPlugin::paint):
+        (WebTestRunner::TestPlugin::updateFocus):
+        (WebTestRunner::TestPlugin::updateVisibility):
+        (WebTestRunner::TestPlugin::acceptsInputEvents):
+        (WebTestRunner::TestPlugin::didReceiveResponse):
+        (WebTestRunner::TestPlugin::didReceiveData):
+        (WebTestRunner::TestPlugin::didFinishLoading):
+        (WebTestRunner::TestPlugin::didFailLoading):
+        (WebTestRunner::TestPlugin::didFinishLoadingFrameRequest):
+        (WebTestRunner::TestPlugin::didFailLoadingFrameRequest):
+        (WebTestRunner::TestPlugin::isPlaceholder):
+        (WebTestRunner::TestPlugin::prepareTexture):
+        (WebTestRunner::TestPlugin::context):
+        (Scene):
+        (WebTestRunner::TestPlugin::Scene::Scene):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::createPlugin):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPlugin):
+
 2013-02-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         Add a new method for obtaining a build-type-dependent path,

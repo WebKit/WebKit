@@ -32,6 +32,7 @@
 #include "WebTestProxy.h"
 
 #include "SpellCheckClient.h"
+#include "TestPlugin.h"
 #include "WebAccessibilityController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
@@ -45,6 +46,7 @@
 #include "WebIntentRequest.h"
 #include "WebIntentServiceInfo.h"
 #include "WebNode.h"
+#include "WebPluginParams.h"
 #include "WebRange.h"
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
@@ -595,6 +597,13 @@ bool WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const
     if (m_testInterfaces->testRunner()->shouldDumpCreateView())
         m_delegate->printMessage(string("createView(") + URLDescription(request.url()) + ")\n");
     return true;
+}
+
+WebPlugin* WebTestProxyBase::createPlugin(WebFrame* frame, const WebPluginParams& params)
+{
+    if (params.mimeType == TestPlugin::mimeType())
+        return TestPlugin::create(frame, params, m_delegate);
+    return 0;
 }
 
 void WebTestProxyBase::setStatusText(const WebString& text)
