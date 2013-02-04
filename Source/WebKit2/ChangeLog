@@ -1,3 +1,46 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Change didReceiveMessageOnConnectionWorkQueue semantics
+        https://bugs.webkit.org/show_bug.cgi?id=108859
+
+        Reviewed by Sam Weinig.
+
+        Change didReceiveMessageOnConnectionWorkQueue to take a reference to an
+        OwnPtr<MessageDecoder>. This lets queue clients handle a message later, on a different
+        work queue for example. Also, get rid of the didHandleMessage boolean, since taking ownership
+        of the decoder implicitly means that the message was handled.
+        
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/Connection.h:
+        (QueueClient):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::didReceiveMessageOnConnectionWorkQueue):
+        * Shared/mac/SecItemShim.h:
+        (SecItemShim):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageManager):
+        (WebKit::StorageManager::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/Storage/StorageManager.h:
+        (WebKit):
+        (StorageManager):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.h:
+        (SecItemShimProxy):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2013-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12884778> Sandbox violation due to MediaAccessibility code trying to access ~/Library/Preferences/com.apple.mediaaccessibility.plist

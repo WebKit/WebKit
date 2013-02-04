@@ -272,7 +272,7 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // CoreIPC::Connection::QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage) OVERRIDE;
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&) OVERRIDE;
     virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
 
     // Implemented in generated WebProcessMessageReceiver.cpp

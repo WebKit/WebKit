@@ -132,10 +132,13 @@ void SecItemShim::initialize(ChildProcess* process)
     func(callbacks);
 }
 
-void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
-    if (decoder.messageReceiverName() == Messages::SecItemShim::messageReceiverName()) {
-        didReceiveSecItemShimMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
+    if (decoder->messageReceiverName() == Messages::SecItemShim::messageReceiverName()) {
+        bool didHandleMessage = false;
+        didReceiveSecItemShimMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
+        if (didHandleMessage)
+            decoder = nullptr;
         return;
     }
 }

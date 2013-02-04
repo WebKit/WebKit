@@ -601,10 +601,8 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
 
     // Hand off the message to the connection queue clients.
     for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
-        bool didHandleMessage = false;
-
-        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, *message, didHandleMessage);
-        if (didHandleMessage) {
+        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, message);
+        if (!message) {
             // A connection queue client handled the message, our work here is done.
             return;
         }

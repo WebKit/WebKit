@@ -30,7 +30,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+class WorkQueue;
+
 namespace WebKit {
+
 struct SecurityOriginData;
 
 class StorageManager : public ThreadSafeRefCounted<StorageManager>, public CoreIPC::Connection::QueueClient {
@@ -42,7 +45,7 @@ private:
     StorageManager();
 
     // CoreIPC::Connection::QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage) OVERRIDE;
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&) OVERRIDE;
     virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
 
     void didReceiveStorageManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder&, bool& didHandleMessage);
@@ -50,6 +53,8 @@ private:
     // Message handlers.
     void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
+
+    RefPtr<WorkQueue> m_queue;
 };
 
 } // namespace WebKit

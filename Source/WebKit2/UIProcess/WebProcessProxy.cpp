@@ -455,10 +455,15 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     pageProxy->didReceiveSyncMessage(connection, decoder, replyEncoder);
 }
 
-void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
-    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
-        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
+    if (decoder->messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
+        bool didHandleMessage = false;
+        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
+        if (didHandleMessage)
+            decoder = nullptr;
+        return;
+    }
 }
 
 void WebProcessProxy::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)

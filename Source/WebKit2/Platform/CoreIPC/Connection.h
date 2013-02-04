@@ -94,7 +94,7 @@ public:
 
     class QueueClient {
     public:
-        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageDecoder&, bool& didHandleMessage) = 0;
+        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, OwnPtr<MessageDecoder>&) = 0;
         virtual void didCloseOnConnectionWorkQueue(Connection*) = 0;
 
     protected:

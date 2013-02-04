@@ -27,6 +27,7 @@
 #include "StorageManager.h"
 
 #include "StorageManagerMessages.h"
+#include "WorkQueue.h"
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ PassRefPtr<StorageManager> StorageManager::create()
 }
 
 StorageManager::StorageManager()
+    : m_queue(WorkQueue::create("com.apple.WebKit.StorageManager"))
 {
 }
 
@@ -43,10 +45,15 @@ StorageManager::~StorageManager()
 {
 }
 
-void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
-    if (decoder.messageReceiverName() == Messages::StorageManager::messageReceiverName())
-        didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, decoder, didHandleMessage);
+    if (decoder->messageReceiverName() == Messages::StorageManager::messageReceiverName()) {
+        bool didHandleMessage = false;
+        didReceiveStorageManagerMessageOnConnectionWorkQueue(connection, *decoder, didHandleMessage);
+        if (didHandleMessage)
+            decoder = nullptr;
+        return;
+    }
 }
 
 void StorageManager::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
