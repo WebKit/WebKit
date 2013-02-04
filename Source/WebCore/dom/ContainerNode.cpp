@@ -214,21 +214,19 @@ static inline bool checkAcceptChildGuaranteedNodeTypes(ContainerNode* newParent,
 
 static inline bool checkAddChild(ContainerNode* newParent, Node* newChild, ExceptionCode& ec)
 {
-    if (ExceptionCode code = checkAcceptChild(newParent, newChild, 0)) {
-        ec = code;
+    ec = checkAcceptChild(newParent, newChild, 0);
+    if (ec)
         return false;
-    }
 
     return true;
 }
 
 static inline bool checkReplaceChild(ContainerNode* newParent, Node* newChild, Node* oldChild, ExceptionCode& ec)
 {
-    if (ExceptionCode code = checkAcceptChild(newParent, newChild, oldChild)) {
-        ec = code;
+    ec = checkAcceptChild(newParent, newChild, oldChild);
+    if (ec)
         return false;
-    }
-    
+
     return true;
 }
 
