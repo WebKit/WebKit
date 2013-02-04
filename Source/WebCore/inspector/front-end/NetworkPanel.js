@@ -231,11 +231,9 @@ WebInspector.NetworkLogView.prototype = {
     _makeHeaderFragment: function(title, subtitle)
     {
         var fragment = document.createDocumentFragment();
-        fragment.appendChild(document.createTextNode(title));
-        var subtitleDiv = document.createElement("div");
-        subtitleDiv.className = "network-header-subtitle";
-        subtitleDiv.textContent = subtitle;
-        fragment.appendChild(subtitleDiv);
+        fragment.createTextChild(title);
+        var subtitleDiv = fragment.createChild("div", "network-header-subtitle");
+        subtitleDiv.createTextChild(subtitle);
         return fragment;
     },
 
@@ -362,6 +360,7 @@ WebInspector.NetworkLogView.prototype = {
     {
         var filterBarElement = document.createElement("div");
         filterBarElement.className = "scope-bar status-bar-item";
+        filterBarElement.title = WebInspector.UIString("Use %s Click to select multiple types.", WebInspector.KeyboardShortcut.shortcutToString("", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta));
 
         /**
          * @param {string} typeName
@@ -372,7 +371,7 @@ WebInspector.NetworkLogView.prototype = {
             var categoryElement = document.createElement("li");
             categoryElement.typeName = typeName;
             categoryElement.className = typeName;
-            categoryElement.appendChild(document.createTextNode(label));
+            categoryElement.createTextChild(label);
             categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
             filterBarElement.appendChild(categoryElement);
 
@@ -380,11 +379,7 @@ WebInspector.NetworkLogView.prototype = {
         }
 
         this._filterAllElement = createFilterElement.call(this, "all", WebInspector.UIString("All"));
-
-        // Add a divider
-        var dividerElement = document.createElement("div");
-        dividerElement.addStyleClass("scope-bar-divider");
-        filterBarElement.appendChild(dividerElement);
+        filterBarElement.createChild("div", "scope-bar-divider");
 
         for (var typeId in WebInspector.resourceTypes) {
             var type = WebInspector.resourceTypes[typeId];
@@ -1130,10 +1125,7 @@ WebInspector.NetworkLogView.prototype = {
 
             var rowIsVisible = unfilteredRowIndex * rowHeight < visibleBottom && (unfilteredRowIndex + 1) * rowHeight > visibleTop;
             if (rowIsVisible !== row.rowIsVisible) {
-                if (rowIsVisible)
-                    row.removeStyleClass("offscreen");
-                else
-                    row.addStyleClass("offscreen");
+                row.enableStyleClass("offscreen", !rowIsVisible);
                 row.rowIsVisible = rowIsVisible;
             }
             unfilteredRowIndex++;
@@ -1530,10 +1522,7 @@ WebInspector.NetworkPanel.prototype = {
 
     _onRowSizeChanged: function(event)
     {
-        if (event.data.largeRows)
-            this._viewsContainerElement.removeStyleClass("small");
-        else
-            this._viewsContainerElement.addStyleClass("small");
+        this._viewsContainerElement.enableStyleClass("small", !event.data.largeRows);
     },
 
     _onSearchCountUpdated: function(event)

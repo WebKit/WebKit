@@ -443,6 +443,7 @@ localizedStrings["Undock into separate window."] = "Undock into separate window.
 localizedStrings["Unknown property name."] = "Unknown property name.";
 localizedStrings["Use large resource rows."] = "Use large resource rows.";
 localizedStrings["Use small resource rows."] = "Use small resource rows.";
+localizedStrings["Use %s Click to select multiple types."] = "Use %s Click to select multiple types.";
 localizedStrings["Used Heap Size"] = "Used Heap Size";
 localizedStrings["Unhide all"] = "Unhide all";
 localizedStrings["Value"] = "Value";
