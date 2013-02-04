@@ -1,3 +1,12 @@
+2013-02-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Make distcheck fails
+        https://bugs.webkit.org/show_bug.cgi?id=108756
+
+        Reviewed by Kentaro Hara.
+
+        * GNUmakefile.list.am: Remove header files which no longer exist
+
 2013-02-02  Sam Weinig  <sam@webkit.org>
 
         Remove more LegacyReceivers

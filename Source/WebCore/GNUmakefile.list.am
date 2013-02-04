@@ -1902,8 +1902,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBTracing.h \
 	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.h \
-	Source/WebCore/Modules/indexeddb/IDBTransactionBackendInterface.h \
-	Source/WebCore/Modules/indexeddb/IDBTransactionCallbacks.h \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.h \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
@@ -2390,7 +2388,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeListCustom.cpp \
-	Source/WebCore/bindings/js/JSNotificationCustom.h \
 	Source/WebCore/bindings/js/JSNotificationCustom.cpp \
 	Source/WebCore/bindings/js/JSOscillatorNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSPannerNodeCustom.cpp \
@@ -6343,7 +6340,7 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/length_limits.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/numeric_lex.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/DiagnosticsBase.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/preprocessor/Diagnostics.h \
+	Source/ThirdParty/ANGLE/src/compiler/preprocessor/DiagnosticsBase.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/DirectiveHandlerBase.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/DirectiveHandlerBase.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/DirectiveParser.cpp \

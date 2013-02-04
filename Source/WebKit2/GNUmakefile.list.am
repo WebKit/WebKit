@@ -260,7 +260,6 @@ webkit2_sources += \
 	Source/WebKit2/Platform/CoreIPC/BinarySemaphore.h \
 	Source/WebKit2/Platform/CoreIPC/Connection.cpp \
 	Source/WebKit2/Platform/CoreIPC/Connection.h \
-	Source/WebKit2/Platform/CoreIPC/CoreIPCMessageKinds.h \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
 	Source/WebKit2/Platform/CoreIPC/DataReference.h \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
@@ -268,7 +267,6 @@ webkit2_sources += \
 	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
-	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.h \
@@ -295,7 +293,6 @@ webkit2_sources += \
 	Source/WebKit2/PluginProcess/PluginCreationParameters.h \
 	Source/WebKit2/PluginProcess/PluginProcess.cpp \
 	Source/WebKit2/PluginProcess/PluginProcess.h \
-	Source/WebKit2/PluginProcess/PluginProcessMain.h \
 	Source/WebKit2/PluginProcess/WebProcessConnection.cpp \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/PluginProcess/unix/PluginControllerProxyUnix.cpp \
@@ -385,7 +382,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/CommandLine.h \
 	Source/WebKit2/Shared/ConnectionStack.cpp \
 	Source/WebKit2/Shared/ConnectionStack.h \
-	Source/WebKit2/Shared/CoreIPCSupport/WebConnectionMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
 	Source/WebKit2/Shared/Downloads/Download.cpp \
@@ -1245,7 +1241,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Platform/CoreIPC/BinarySemaphore.h \
 	Source/WebKit2/Platform/CoreIPC/Connection.cpp \
 	Source/WebKit2/Platform/CoreIPC/Connection.h \
-	Source/WebKit2/Platform/CoreIPC/CoreIPCMessageKinds.h \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
 	Source/WebKit2/Platform/CoreIPC/DataReference.h \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
@@ -1253,7 +1248,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
-	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.h \
@@ -1276,7 +1270,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/PluginProcess/PluginCreationParameters.h \
 	Source/WebKit2/PluginProcess/PluginProcess.cpp \
 	Source/WebKit2/PluginProcess/PluginProcess.h \
-	Source/WebKit2/PluginProcess/PluginProcessMain.h \
 	Source/WebKit2/PluginProcess/WebProcessConnection.cpp \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.cpp \
