@@ -496,7 +496,6 @@
 			isa = PBXGroup;
 			children = (
 				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
-				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
 				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
 				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,

@@ -1,5 +1,15 @@
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        Remove duplicate entry from DumpRenderTree Xcode project
+
+            $ uniq Tools/DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj | diff -u - Tools/DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj | patch -p0 -R
+            patching file Tools/DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Remove duplicate.
+
+2013-02-04  David Kilzer  <ddkilzer@apple.com>
+
         Sort TestWebKitAPI Xcode project file
 
         * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
