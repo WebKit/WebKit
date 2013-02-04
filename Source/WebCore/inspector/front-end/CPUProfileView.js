@@ -26,6 +26,7 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {WebInspector.CPUProfileHeader} profile
  */
 WebInspector.CPUProfileView = function(profile)
 {
@@ -75,9 +76,23 @@ WebInspector.CPUProfileView = function(profile)
     this.resetButton.visible = false;
     this.resetButton.addEventListener("click", this._resetClicked, this);
 
+    this.profileHead = /** @type {?ProfilerAgent.CPUProfileNode} */ null;
     this.profile = profile;
 
-    function profileCallback(error, profile)
+    this._linkifier = new WebInspector.Linkifier(new WebInspector.Linkifier.DefaultFormatter(30));
+
+    ProfilerAgent.getCPUProfile(this.profile.uid, this._getCPUProfileCallback.bind(this));
+}
+
+WebInspector.CPUProfileView._TypeTree = "Tree";
+WebInspector.CPUProfileView._TypeHeavy = "Heavy";
+
+WebInspector.CPUProfileView.prototype = {
+    /**
+     * @param {?Protocol.Error} error
+     * @param {ProfilerAgent.CPUProfile} profile
+     */
+    _getCPUProfileCallback: function(error, profile)
     {
         if (error)
             return;
@@ -86,7 +101,7 @@ WebInspector.CPUProfileView = function(profile)
             // Profiling was tentatively terminated with the "Clear all profiles." button.
             return;
         }
-        this.profile.head = profile.head;
+        this.profileHead = profile.head;
 
         if (profile.idleTime)
             this._injectIdleTimeNode(profile);
@@ -94,49 +109,31 @@ WebInspector.CPUProfileView = function(profile)
         this._assignParentsInProfile();
         this._changeView();
         this._updatePercentButton();
-    }
+    },
 
-    this._linkifier = new WebInspector.Linkifier(new WebInspector.Linkifier.DefaultFormatter(30));
-
-    ProfilerAgent.getCPUProfile(this.profile.uid, profileCallback.bind(this));
-}
-
-WebInspector.CPUProfileView._TypeTree = "Tree";
-WebInspector.CPUProfileView._TypeHeavy = "Heavy";
-
-WebInspector.CPUProfileView.prototype = {
     get statusBarItems()
     {
         return [this.viewSelectComboBox.element, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
     },
 
-    get bottomUpProfileDataGridTree()
+    /**
+     * @return {!WebInspector.ProfileDataGridTree}
+     */
+    _getBottomUpProfileDataGridTree: function()
     {
-        if (!this._bottomUpProfileDataGridTree) {
-            if (this.profile.bottomUpHead)
-                this._bottomUpProfileDataGridTree = new WebInspector.TopDownProfileDataGridTree(this, this.profile.bottomUpHead);
-            else
-                this._bottomUpProfileDataGridTree = new WebInspector.BottomUpProfileDataGridTree(this, this.profile.head);
-        }
+        if (!this._bottomUpProfileDataGridTree)
+            this._bottomUpProfileDataGridTree = new WebInspector.BottomUpProfileDataGridTree(this, this.profileHead);
         return this._bottomUpProfileDataGridTree;
     },
 
-    get topDownProfileDataGridTree()
+    /**
+     * @return {!WebInspector.ProfileDataGridTree}
+     */
+    _getTopDownProfileDataGridTree: function()
     {
         if (!this._topDownProfileDataGridTree)
-            this._topDownProfileDataGridTree = new WebInspector.TopDownProfileDataGridTree(this, this.profile.head);
+            this._topDownProfileDataGridTree = new WebInspector.TopDownProfileDataGridTree(this, this.profileHead);
         return this._topDownProfileDataGridTree;
-    },
-
-    get currentTree()
-    {
-        return this._currentTree;
-    },
-
-    set currentTree(tree)
-    {
-        this._currentTree = tree;
-        this.refresh();
     },
 
     willHide: function()
@@ -388,12 +385,12 @@ WebInspector.CPUProfileView.prototype = {
 
         switch (this.viewSelectComboBox.selectedOption().value) {
         case WebInspector.CPUProfileView._TypeTree:
-            this.profileDataGridTree = this.topDownProfileDataGridTree;
+            this.profileDataGridTree = this._getTopDownProfileDataGridTree();
             this._sortProfile();
             this._viewType.set(WebInspector.CPUProfileView._TypeTree);
             break;
         case WebInspector.CPUProfileView._TypeHeavy:
-            this.profileDataGridTree = this.bottomUpProfileDataGridTree;
+            this.profileDataGridTree = this._getBottomUpProfileDataGridTree();
             this._sortProfile();
             this._viewType.set(WebInspector.CPUProfileView._TypeHeavy);
         }
@@ -515,12 +512,12 @@ WebInspector.CPUProfileView.prototype = {
 
     _assignParentsInProfile: function()
     {
-        var head = this.profile.head;
+        var head = this.profileHead;
         head.parent = null;
         head.head = null;
         var nodesToTraverse = [ { parent: head, children: head.children } ];
         while (nodesToTraverse.length > 0) {
-            var pair = nodesToTraverse.shift();
+            var pair = nodesToTraverse.pop();
             var parent = pair.parent;
             var children = pair.children;
             var length = children.length;
@@ -533,6 +530,9 @@ WebInspector.CPUProfileView.prototype = {
         }
     },
 
+    /**
+     * @param {ProfilerAgent.CPUProfile} profile
+     */
     _injectIdleTimeNode: function(profile)
     {
         var idleTime = profile.idleTime;

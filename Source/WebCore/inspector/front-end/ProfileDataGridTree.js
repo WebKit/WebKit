@@ -26,10 +26,12 @@
 /**
  * @constructor
  * @extends {WebInspector.DataGridNode}
+ * @param {!ProfilerAgent.CPUProfileNode} profileNode
+ * @param {!WebInspector.TopDownProfileDataGridTree} owningTree
+ * @param {boolean} hasChildren
  */
-WebInspector.ProfileDataGridNode = function(profileView, profileNode, owningTree, hasChildren)
+WebInspector.ProfileDataGridNode = function(profileNode, owningTree, hasChildren)
 {
-    this.profileView = profileView;
     this.profileNode = profileNode;
 
     WebInspector.DataGridNode.call(this, null, hasChildren);
@@ -62,17 +64,17 @@ WebInspector.ProfileDataGridNode.prototype = {
         data["function"] = this.functionName;
         data["calls"] = this.numberOfCalls;
 
-        if (this.profileView.showSelfTimeAsPercent.get())
+        if (this.tree.profileView.showSelfTimeAsPercent.get())
             data["self"] = WebInspector.UIString("%.2f%", this.selfPercent);
         else
             data["self"] = formatMilliseconds(this.selfTime);
 
-        if (this.profileView.showTotalTimeAsPercent.get())
+        if (this.tree.profileView.showTotalTimeAsPercent.get())
             data["total"] = WebInspector.UIString("%.2f%", this.totalPercent);
         else
             data["total"] = formatMilliseconds(this.totalTime);
 
-        if (this.profileView.showAverageTimeAsPercent.get())
+        if (this.tree.profileView.showAverageTimeAsPercent.get())
             data["average"] = WebInspector.UIString("%.2f%", this.averagePercent);
         else
             data["average"] = formatMilliseconds(this.averageTime);
@@ -80,6 +82,11 @@ WebInspector.ProfileDataGridNode.prototype = {
         return data;
     },
 
+    /**
+     * @override
+     * @param {string} columnIdentifier
+     * @return {!Element}
+     */
     createCell: function(columnIdentifier)
     {
         var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
@@ -102,7 +109,7 @@ WebInspector.ProfileDataGridNode.prototype = {
         if (this.profileNode.url) {
             // FIXME(62725): profileNode should reference a debugger location.
             var lineNumber = this.profileNode.lineNumber ? this.profileNode.lineNumber - 1 : 0;
-            var urlElement = this.profileView._linkifier.linkifyLocation(this.profileNode.url, lineNumber, 0, "profile-node-file");
+            var urlElement = this.tree.profileView._linkifier.linkifyLocation(this.profileNode.url, lineNumber, 0, "profile-node-file");
             urlElement.style.maxWidth = "75%";
             cell.insertBefore(urlElement, cell.firstChild);
         }
@@ -113,16 +120,20 @@ WebInspector.ProfileDataGridNode.prototype = {
     select: function(supressSelectedEvent)
     {
         WebInspector.DataGridNode.prototype.select.call(this, supressSelectedEvent);
-        this.profileView._dataGridNodeSelected(this);
+        this.tree.profileView._dataGridNodeSelected(this);
     },
 
     deselect: function(supressDeselectedEvent)
     {
         WebInspector.DataGridNode.prototype.deselect.call(this, supressDeselectedEvent);
-        this.profileView._dataGridNodeDeselected(this);
+        this.tree.profileView._dataGridNodeDeselected(this);
     },
 
-    sort: function(/*Function*/ comparator, /*Boolean*/ force)
+    /**
+     * @param {function(Object, Object)} comparator
+     * @param {boolean} force
+     */
+    sort: function(comparator, force)
     {
         var gridNodeGroups = [[this]];
 
@@ -158,28 +169,38 @@ WebInspector.ProfileDataGridNode.prototype = {
         }
     },
 
-    insertChild: function(/*ProfileDataGridNode*/ profileDataGridNode, index)
+    /**
+     * @param {!WebInspector.ProfileDataGridNode} profileDataGridNode
+     * @param {number} index
+     */
+    insertChild: function(profileDataGridNode, index)
     {
         WebInspector.DataGridNode.prototype.insertChild.call(this, profileDataGridNode, index);
 
         this.childrenByCallUID[profileDataGridNode.callUID] = profileDataGridNode;
     },
 
-    removeChild: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    /**
+     * @param {!WebInspector.ProfileDataGridNode} profileDataGridNode
+     */
+    removeChild: function(profileDataGridNode)
     {
         WebInspector.DataGridNode.prototype.removeChild.call(this, profileDataGridNode);
 
         delete this.childrenByCallUID[profileDataGridNode.callUID];
     },
 
-    removeChildren: function(/*ProfileDataGridNode*/ profileDataGridNode)
+    removeChildren: function()
     {
         WebInspector.DataGridNode.prototype.removeChildren.call(this);
 
         this.childrenByCallUID = {};
     },
 
-    findChild: function(/*Node*/ node)
+    /**
+     * @param {!WebInspector.ProfileDataGridNode} node
+     */
+    findChild: function(node)
     {
         if (!node)
             return null;
@@ -301,15 +322,17 @@ WebInspector.ProfileDataGridNode.prototype = {
 
 /**
  * @constructor
+ * @param {WebInspector.CPUProfileView} profileView
+ * @param {ProfilerAgent.CPUProfileNode} rootProfileNode
  */
-WebInspector.ProfileDataGridTree = function(profileView, profileNode)
+WebInspector.ProfileDataGridTree = function(profileView, rootProfileNode)
 {
     this.tree = this;
     this.children = [];
 
     this.profileView = profileView;
 
-    this.totalTime = profileNode.totalTime;
+    this.totalTime = rootProfileNode.totalTime;
     this.lastComparator = null;
 
     this.childrenByCallUID = {};
@@ -370,7 +393,12 @@ WebInspector.ProfileDataGridTree.prototype = {
 
 WebInspector.ProfileDataGridTree.propertyComparators = [{}, {}];
 
-WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ property, /*Boolean*/ isAscending)
+/**
+ * @param {string} property
+ * @param {boolean} isAscending
+ * @return {function(Object, Object)}
+ */
+WebInspector.ProfileDataGridTree.propertyComparator = function(property, isAscending)
 {
     var comparator = WebInspector.ProfileDataGridTree.propertyComparators[(isAscending ? 1 : 0)][property];
 

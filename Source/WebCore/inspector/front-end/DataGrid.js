@@ -1275,6 +1275,10 @@ WebInspector.DataGridNode.prototype = {
         return cell;
     },
 
+    /**
+     * @param {string} columnIdentifier
+     * @return {!Element}
+     */
     createCell: function(columnIdentifier)
     {
         var cell = this.createTD(columnIdentifier);
