@@ -10,6 +10,10 @@
         <style>
         ::cue {word-spacing: 100px;}
         ::cue(c) {padding-left: 10px; color: red;}
+        .cue {
+            display: inline;
+            background-color: green;
+        }
         </style>
 
         <script>
@@ -36,6 +40,10 @@
             testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
             testExpected("getComputedStyle(cueNode).padding", "0px");
             testExpected("getComputedStyle(cueNode).wordSpacing", "0px");
+            
+            consoleWrite("<br>Test that filtering doesn't apply to elements which class equals 'cue' outside WebVTT scope.");
+            cueNode = document.getElementsByClassName("cue")[0];
+            testExpected("getComputedStyle(cueNode).display", "inline");
             endTest();
         }
 
@@ -54,5 +62,6 @@
         <video controls >
             <track src="captions-webvtt/whitelist.vtt" kind="captions" default>
         </video>
+        <div><div class="cue">This should display inline</div></div>
     </body>
 </html>
