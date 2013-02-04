@@ -111,7 +111,7 @@ namespace WebCore {
 #if ENABLE(VIDEO_TRACK)
         bool userPrefersCaptions();
         bool userHasCaptionPreferences();
-        float captionFontSizeScale();
+        float captionFontSizeScale(bool&);
         void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
         void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
 #endif

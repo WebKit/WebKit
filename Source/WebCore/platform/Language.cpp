@@ -76,6 +76,11 @@ static Vector<String>& preferredLanguagesOverride()
     return override;
 }
 
+Vector<String> userPreferredLanguagesOverride()
+{
+    return preferredLanguagesOverride();
+}
+
 void overrideUserPreferredLanguages(const Vector<String>& override)
 {
     preferredLanguagesOverride() = override;

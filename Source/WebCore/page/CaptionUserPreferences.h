@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "Language.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
 
@@ -48,11 +49,15 @@ public:
     virtual ~CaptionUserPreferences() { }
 
     virtual bool userPrefersCaptions() const { return false; }
+    virtual void setUserPrefersCaptions(bool) { }
     virtual bool userHasCaptionPreferences() const { return false; }
-    virtual float captionFontSizeScale() const { return 0.05f; }
+    virtual float captionFontSizeScale(bool& important) const { important = false; return 0.05f; }
     virtual String captionsStyleSheetOverride() const { return emptyString(); }
     virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) { }
     virtual void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) { }
+
+    virtual void setPreferredLanguage(String) const { }
+    virtual Vector<String> preferredLanguages() const { return platformUserPreferredLanguages(); }
 
     PageGroup* pageGroup() { return m_pageGroup; }
 

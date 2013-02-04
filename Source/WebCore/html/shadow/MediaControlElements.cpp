@@ -1363,10 +1363,11 @@ void MediaControlTextTrackContainerElement::updateSizes()
 
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
 
-    float fontSize = smallestDimension * (document()->page()->group().captionFontSizeScale());
+    bool important;
+    float fontSize = smallestDimension * (document()->page()->group().captionFontSizeScale(important));
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
-        setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
+        setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);
     }
 }
 

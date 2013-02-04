@@ -60,14 +60,16 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeSubtitle, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, NSString *)
 #define AVMetadataItem getAVMetadataItemClass()
 #define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
 #define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
 #define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
 #define AVMediaTypeSubtitle getAVMediaTypeSubtitle()
-#define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
+#define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
+#define AVMediaCharacteristicDescribesMusicAndSoundForAccessibility getAVMediaCharacteristicDescribesMusicAndSoundForAccessibility()
 
 using namespace WebCore;
 using namespace std;
@@ -94,8 +96,17 @@ InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
     NSString *mediaType = [m_mediaSelectionOption mediaType];
     if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
         return Captions;
-    if ([mediaType isEqualToString:AVMediaTypeSubtitle])
+    if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
+
+        // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
+        // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
+        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+            return Captions;
+        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+            return Captions;
+        
         return Subtitles;
+    }
 
     return Captions;
 }

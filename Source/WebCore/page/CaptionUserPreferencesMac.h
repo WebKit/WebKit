@@ -26,7 +26,7 @@
 #ifndef CaptionUserPreferencesMac_h
 #define CaptionUserPreferencesMac_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 #include "CSSPropertyNames.h"
 #include "CaptionUserPreferences.h"
@@ -41,25 +41,31 @@ public:
     virtual ~CaptionUserPreferencesMac();
 
     virtual bool userPrefersCaptions() const OVERRIDE;
-    virtual bool userHasCaptionPreferences() const OVERRIDE;
-    virtual float captionFontSizeScale() const OVERRIDE;
+    virtual void setUserPrefersCaptions(bool) OVERRIDE;
+    virtual bool userHasCaptionPreferences() const OVERRIDE { return true; }
+    virtual float captionFontSizeScale(bool&) const OVERRIDE;
     virtual String captionsStyleSheetOverride() const OVERRIDE;
     virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
     virtual void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+
+    virtual void setPreferredLanguage(String) const OVERRIDE;
+    virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     void captionPreferencesChanged();
 
 private:
     CaptionUserPreferencesMac(PageGroup*);
 
-    Color captionsWindowColor() const;
-    Color captionsBackgroundColor() const;
-    Color captionsTextColor() const;
-    String captionsDefaultFont() const;
+    String captionsWindowCSS() const;
+    String captionsBackgroundCSS() const;
+    String captionsTextColorCSS() const;
+    Color captionsTextColor(bool&) const;
+    String captionsDefaultFontCSS() const;
     Color captionsEdgeColorForTextColor(const Color&) const;
-    String captionsTextEdgeStyle() const;
-    String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&) const;
-    String cssColorProperty(CSSPropertyID, const Color&) const;
+    String windowRoundedCornerRadiusCSS() const;
+    String captionsTextEdgeCSS() const;
+    String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&, bool) const;
+    String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
 
     void updateCaptionStyleSheetOveride();
 

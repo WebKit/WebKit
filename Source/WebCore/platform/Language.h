@@ -33,6 +33,7 @@ namespace WebCore {
 
 String defaultLanguage();
 Vector<String> userPreferredLanguages();
+Vector<String> userPreferredLanguagesOverride();
 void overrideUserPreferredLanguages(const Vector<String>&);
 String preferredLanguageFromList(const Vector<String>&);
 
