@@ -1,3 +1,18 @@
+2013-02-04  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [EFL] Add "full screen" parameter to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=108850
+
+        Reviewed by Antonio Gomes.
+
+        Implements the {-F,--full-screen}={true,false} parameter to WebKit EFL's
+        MiniBrowser.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+        Added '-F/--full-screen' parameter functionality.
+
 2013-02-04  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove WebTestPlugin from the public TestRunner API

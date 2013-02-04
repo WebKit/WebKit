@@ -44,6 +44,7 @@ static char *evas_engine_name = NULL;
 static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static Eina_Bool local_storage_enabled = EINA_TRUE;
+static Eina_Bool fullscreen_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
@@ -132,6 +133,8 @@ static const Ecore_Getopt options = {
             ('f', "flattening", "frame flattening.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('l', "local-storage", "HTML5 local storage support (enabled by default).", EINA_TRUE),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('F', "full-screen", "start in full-screen.", EINA_FALSE),
         ECORE_GETOPT_VERSION
             ('V', "version"),
         ECORE_GETOPT_COPYRIGHT
@@ -1206,6 +1209,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
     ewk_settings_local_storage_enabled_set(settings, local_storage_enabled);
     info("HTML5 local storage is %s for this view.\n", local_storage_enabled ? "enabled" : "disabled");
+    elm_win_fullscreen_set(window->elm_window, fullscreen_enabled);
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
 
@@ -1288,6 +1292,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
         ECORE_GETOPT_VALUE_BOOL(local_storage_enabled),
+        ECORE_GETOPT_VALUE_BOOL(fullscreen_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
