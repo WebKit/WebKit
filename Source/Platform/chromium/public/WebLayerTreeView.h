@@ -96,7 +96,7 @@ public:
 
     // View properties ---------------------------------------------------
 
-    virtual void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize = WebSize()) = 0;
+    virtual void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize) = 0;
     // Gives the viewport size in layer space.
     virtual WebSize layoutViewportSize() const = 0;
     // Gives the viewport size in physical device pixels (may be different

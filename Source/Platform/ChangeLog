@@ -1,3 +1,15 @@
+2013-02-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove optionalness of second parameter to WebLayerTreeView::setViewportSize
+        https://bugs.webkit.org/show_bug.cgi?id=108972
+
+        Reviewed by Adam Barth.
+
+        This was added to ease the transition of adding this parameter, but it's now always set.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2013-02-02  Michael Nordman  <michaeln@google.com>
 
         [chromium] FileSystem mods: Changes to snapshot file creation to reduce dependencies on blobs.
