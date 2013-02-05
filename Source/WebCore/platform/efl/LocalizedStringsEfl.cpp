@@ -175,20 +175,17 @@ String contextMenuItemTagOpenFrameInNewWindow()
 
 String contextMenuItemTagCopy()
 {
-    static String stockLabel = String::fromUTF8("Copy");
-    return stockLabel;
+    return String::fromUTF8("Copy");
 }
 
 String contextMenuItemTagDelete()
 {
-    static String stockLabel = String::fromUTF8("Delete");
-    return stockLabel;
+    return String::fromUTF8("Delete");
 }
 
 String contextMenuItemTagSelectAll()
 {
-    static String stockLabel = String::fromUTF8("Select All");
-    return stockLabel;
+    return String::fromUTF8("Select All");
 }
 
 String contextMenuItemTagUnicode()
@@ -203,20 +200,17 @@ String contextMenuItemTagInputMethods()
 
 String contextMenuItemTagGoBack()
 {
-    static String stockLabel = String::fromUTF8("Go Back");
-    return stockLabel;
+    return String::fromUTF8("Go Back");
 }
 
 String contextMenuItemTagGoForward()
 {
-    static String stockLabel = String::fromUTF8("Go Forward");
-    return stockLabel;
+    return String::fromUTF8("Go Forward");
 }
 
 String contextMenuItemTagStop()
 {
-    static String stockLabel = String::fromUTF8("Stop");
-    return stockLabel;
+    return String::fromUTF8("Stop");
 }
 
 String contextMenuItemTagReload()
@@ -226,14 +220,12 @@ String contextMenuItemTagReload()
 
 String contextMenuItemTagCut()
 {
-    static String stockLabel = String::fromUTF8("Cut");
-    return stockLabel;
+    return String::fromUTF8("Cut");
 }
 
 String contextMenuItemTagPaste()
 {
-    static String stockLabel = String::fromUTF8("Paste");
-    return stockLabel;
+    return String::fromUTF8("Paste");
 }
 
 String contextMenuItemTagNoGuessesFound()
@@ -303,20 +295,17 @@ String contextMenuItemTagFontMenu()
 
 String contextMenuItemTagBold()
 {
-    static String stockLabel = String::fromUTF8("Bold");
-    return stockLabel;
+    return String::fromUTF8("Bold");
 }
 
 String contextMenuItemTagItalic()
 {
-    static String stockLabel = String::fromUTF8("Italic");
-    return stockLabel;
+    return String::fromUTF8("Italic");
 }
 
 String contextMenuItemTagUnderline()
 {
-    static String stockLabel = String::fromUTF8("Underline");
-    return stockLabel;
+    return String::fromUTF8("Underline");
 }
 
 String contextMenuItemTagOutline()
