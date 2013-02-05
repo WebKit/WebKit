@@ -107,6 +107,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_trackIndex(invalidTrackIndex)
     , m_renderedTrackIndex(invalidTrackIndex)
     , m_hasBeenConfigured(false)
+    , m_isClosedCaptions(false)
 {
     setKind(kind);
 }

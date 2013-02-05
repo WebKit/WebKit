@@ -109,6 +109,9 @@ public:
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }
 
+    bool isClosedCaptions() const { return m_isClosedCaptions; }
+    void setIsClosedCaptions(bool isClosedCaptions) { m_isClosedCaptions = isClosedCaptions; }
+
     int trackIndex();
     void invalidateTrackIndex();
 
@@ -141,6 +144,7 @@ private:
     int m_trackIndex;
     int m_renderedTrackIndex;
     bool m_hasBeenConfigured;
+    bool m_isClosedCaptions;
 };
 
 } // namespace WebCore
