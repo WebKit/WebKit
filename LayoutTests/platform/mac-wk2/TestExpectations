@@ -262,9 +262,6 @@ webkit.org/b/96580 css3/filters/custom/filter-fallback-to-software.html [ ImageO
 webkit.org/b/96832 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 webkit.org/b/96832 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 
-# Will need rebaselining after bug 98527 fixed
-webkit.org/b/98527 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
-
 # Causes next test to crash
 webkit.org/b/98960 fast/parser/document-open-in-unload.html [ Skip ]
 
