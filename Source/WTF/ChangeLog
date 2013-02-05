@@ -1,3 +1,13 @@
+2013-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTFURL] Comparison between signed and unsigned integer expressions in URLUtil.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=108955
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/url/src/URLUtil.cpp:
+        (URLUtilities): Make the counter variable a signed integer to get rid of the warning.
+
 2013-02-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Rationalize the use of iOS/Mac #defines in Assertions.cpp

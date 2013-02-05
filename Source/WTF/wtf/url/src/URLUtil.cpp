@@ -90,7 +90,7 @@ bool doIsStandard(const CharacterType* spec, const URLComponent& scheme)
     if (!scheme.isNonEmpty())
         return false; // Empty or invalid schemes are non-standard.
 
-    for (size_t i = 0; i < kNumStandardURLSchemes; ++i) {
+    for (int i = 0; i < kNumStandardURLSchemes; ++i) {
         if (lowerCaseEqualsASCII(&spec[scheme.begin()], &spec[scheme.end()], kStandardURLSchemes[i]))
             return true;
     }
