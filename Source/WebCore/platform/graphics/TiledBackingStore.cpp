@@ -362,6 +362,25 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
     if (rect.size() == candidateSize)
         return;
 
+    /*
+     * In the following case, there is no intersection of the contents rect and the cover/keep rect.
+     * Thus the latter should not be inflated.
+     *
+     *  +---------------+
+     *  |   m_rect      |
+     *  +---------------+
+     *
+     *          +-------------------------------+
+     *          |      cover or keep rect       |
+     *          |         +---------+           |
+     *          |         | visible |           |
+     *          |         |  rect   |           |
+     *          |         +---------+           |
+     *          +-------------------------------+
+     */
+    if (rect.isEmpty())
+        return;
+
     // Even now we might cover more than the content area so let's inflate in the
     // opposite directions.
     int pixelsCovered = candidateSize.width() * candidateSize.height();
