@@ -14,11 +14,12 @@ function createWeekInput(min, max, value) {
     return input;
 }
 
+// FIXME: Rename this function and the test file.
 function isReadOnlyField(input, pseudo) {
     var node = internals.youngestShadowRoot(input).querySelector('*[pseudo="' + pseudo + '"]');
     if (!node)
         testFailed('Requested node is missing.');
-    return node && node.hasAttribute('readonly');
+    return node && node.hasAttribute('disabled');
 }
 
 var pseudoWeek = '-webkit-datetime-edit-week-field';

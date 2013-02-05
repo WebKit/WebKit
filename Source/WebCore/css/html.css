@@ -593,15 +593,15 @@ input::-webkit-datetime-edit-year-field:focus {
     outline: none;
 }
 
-input::-webkit-datetime-edit-year-field[readonly],
-input::-webkit-datetime-edit-month-field[readonly],
-input::-webkit-datetime-edit-week-field[readonly],
-input::-webkit-datetime-edit-day-field[readonly],
-input::-webkit-datetime-edit-ampm-field[readonly],
-input::-webkit-datetime-edit-hour-field[readonly],
-input::-webkit-datetime-edit-millisecond-field[readonly],
-input::-webkit-datetime-edit-minute-field[readonly],
-input::-webkit-datetime-edit-second-field[readonly] {
+input::-webkit-datetime-edit-year-field[disabled],
+input::-webkit-datetime-edit-month-field[disabled],
+input::-webkit-datetime-edit-week-field[disabled],
+input::-webkit-datetime-edit-day-field[disabled],
+input::-webkit-datetime-edit-ampm-field[disabled],
+input::-webkit-datetime-edit-hour-field[disabled],
+input::-webkit-datetime-edit-millisecond-field[disabled],
+input::-webkit-datetime-edit-minute-field[disabled],
+input::-webkit-datetime-edit-second-field[disabled] {
     color: GrayText;
 }
 

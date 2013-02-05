@@ -157,16 +157,16 @@ bool DateTimeFieldElement::isDateTimeFieldElement() const
 
 bool DateTimeFieldElement::isFocusable() const
 {
-    if (isReadOnly())
+    if (isDisabled())
         return false;
     if (m_fieldOwner && m_fieldOwner->isFieldOwnerDisabledOrReadOnly())
         return false;
     return HTMLElement::isFocusable();
 }
 
-bool DateTimeFieldElement::isReadOnly() const
+bool DateTimeFieldElement::isDisabled() const
 {
-    return fastHasAttribute(readonlyAttr);
+    return fastHasAttribute(disabledAttr);
 }
 
 Locale& DateTimeFieldElement::localeForOwner() const
@@ -185,10 +185,10 @@ float DateTimeFieldElement::maximumWidth(const Font&)
     return paddingLeftAndRight;
 }
 
-void DateTimeFieldElement::setReadOnly()
+void DateTimeFieldElement::setDisabled()
 {
-    // Set HTML attribute readonly to change apperance.
-    setBooleanAttribute(readonlyAttr, true);
+    // Set HTML attribute disabled to change apperance.
+    setBooleanAttribute(disabledAttr, true);
     setNeedsStyleRecalc();
 }
 

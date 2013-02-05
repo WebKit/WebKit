@@ -102,7 +102,7 @@ void DateTimeSymbolicFieldElement::initialize(const AtomicString& pseudo, const 
 
 void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
-    if (isReadOnly())
+    if (isDisabled())
         return;
     m_selectedIndex = invalidIndex;
     updateVisibleValue(eventBehavior);

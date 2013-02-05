@@ -62,11 +62,12 @@ public:
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual bool hasValue() const = 0;
-    bool isReadOnly() const;
+    bool isDisabled() const;
+    virtual bool isFocusable() const OVERRIDE FINAL;
     virtual float maximumWidth(const Font&);
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
     void removeEventHandler() { m_fieldOwner = 0; }
-    void setReadOnly();
+    void setDisabled();
     virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) = 0;
@@ -92,7 +93,6 @@ protected:
 private:
     void defaultKeyboardEventHandler(KeyboardEvent*);
     virtual bool isDateTimeFieldElement() const OVERRIDE;
-    virtual bool isFocusable() const OVERRIDE FINAL;
     virtual bool supportsFocus() const OVERRIDE FINAL;
 
     FieldOwner* m_fieldOwner;
