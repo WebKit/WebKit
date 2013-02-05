@@ -42,6 +42,7 @@ eventSender.addTouchPoint(input1.offsetLeft + input1.offsetWidth / 2, input1.off
 eventSender.touchStart();
 eventSender.touchEnd();
 
+shouldBeTrue('touchstartFiredInShadowDOM');
 shouldBe('touchTargetForHost1', 'host1');
 shouldBe('touchTargetForInput1', 'input1');
 
