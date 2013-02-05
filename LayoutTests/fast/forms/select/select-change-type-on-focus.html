@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<div tabindex="04">
+<select onfocus="this.size = 10">
+<optgroup tabindex="20"></optgroup>
+</select>
+<script>
+description('Check if select type change on focus doesn\'t cause crash.');
+if (!window.eventSender)
+    debug('Requires DRT/WRT.');
+eventSender.keyDown('\t');
+eventSender.keyDown('\t');
+eventSender.keyDown(' ');
+testPassed('if not crashed');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</div>
