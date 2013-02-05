@@ -7,6 +7,12 @@ PASS new KeyboardEvent('eventType').bubbles is false
 PASS new KeyboardEvent('eventType').cancelable is false
 PASS new KeyboardEvent('eventType').view is null
 PASS new KeyboardEvent('eventType').detail is 0
+PASS new KeyboardEvent('eventType').keyIdentifier is ""
+PASS new KeyboardEvent('eventType').keyLocation is 0
+PASS new KeyboardEvent('eventType').ctrlKey is false
+PASS new KeyboardEvent('eventType').altKey is false
+PASS new KeyboardEvent('eventType').shiftKey is false
+PASS new KeyboardEvent('eventType').metaKey is false
 PASS new KeyboardEvent('eventType', { bubbles: false }).bubbles is false
 PASS new KeyboardEvent('eventType', { bubbles: true }).bubbles is true
 PASS new KeyboardEvent('eventType', { cancelable: false }).cancelable is false

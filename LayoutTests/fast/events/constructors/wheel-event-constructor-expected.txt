@@ -7,6 +7,19 @@ PASS new WheelEvent('eventType').bubbles is false
 PASS new WheelEvent('eventType').cancelable is false
 PASS new WheelEvent('eventType').view is null
 PASS new WheelEvent('eventType').detail is 0
+PASS new WheelEvent('eventType').screenX is 0
+PASS new WheelEvent('eventType').screenY is 0
+PASS new WheelEvent('eventType').clientX is 0
+PASS new WheelEvent('eventType').clientY is 0
+PASS new WheelEvent('eventType').ctrlKey is false
+PASS new WheelEvent('eventType').shiftKey is false
+PASS new WheelEvent('eventType').altKey is false
+PASS new WheelEvent('eventType').metaKey is false
+PASS new WheelEvent('eventType').button is 0
+PASS new WheelEvent('eventType').relatedTarget is null
+PASS new WheelEvent('eventType').wheelDeltaX is 0
+PASS new WheelEvent('eventType').wheelDeltaY is 0
+PASS new WheelEvent('eventType').deltaMode is WheelEvent.DOM_DELTA_PIXEL
 PASS new WheelEvent('eventType', { bubbles: false }).bubbles is false
 PASS new WheelEvent('eventType', { bubbles: true }).bubbles is true
 PASS new WheelEvent('eventType', { cancelable: false }).cancelable is false

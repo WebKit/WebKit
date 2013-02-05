@@ -15,6 +15,12 @@ shouldBe("new KeyboardEvent('eventType').bubbles", "false");
 shouldBe("new KeyboardEvent('eventType').cancelable", "false");
 shouldBe("new KeyboardEvent('eventType').view", "null");
 shouldBe("new KeyboardEvent('eventType').detail", "0");
+shouldBeEqualToString("new KeyboardEvent('eventType').keyIdentifier", "");
+shouldBe("new KeyboardEvent('eventType').keyLocation", "0");
+shouldBe("new KeyboardEvent('eventType').ctrlKey", "false");
+shouldBe("new KeyboardEvent('eventType').altKey", "false");
+shouldBe("new KeyboardEvent('eventType').shiftKey", "false");
+shouldBe("new KeyboardEvent('eventType').metaKey", "false");
 
 // bubbles is passed.
 shouldBe("new KeyboardEvent('eventType', { bubbles: false }).bubbles", "false");

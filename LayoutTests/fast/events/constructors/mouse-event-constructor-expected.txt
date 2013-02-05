@@ -7,6 +7,16 @@ PASS new MouseEvent('eventType').bubbles is false
 PASS new MouseEvent('eventType').cancelable is false
 PASS new MouseEvent('eventType').view is null
 PASS new MouseEvent('eventType').detail is 0
+PASS new MouseEvent('eventType').screenX is 0
+PASS new MouseEvent('eventType').screenY is 0
+PASS new MouseEvent('eventType').clientX is 0
+PASS new MouseEvent('eventType').clientY is 0
+PASS new MouseEvent('eventType').ctrlKey is false
+PASS new MouseEvent('eventType').shiftKey is false
+PASS new MouseEvent('eventType').altKey is false
+PASS new MouseEvent('eventType').metaKey is false
+PASS new MouseEvent('eventType').button is 0
+PASS new MouseEvent('eventType').relatedTarget is null
 PASS new MouseEvent('eventType', { bubbles: false }).bubbles is false
 PASS new MouseEvent('eventType', { bubbles: true }).bubbles is true
 PASS new MouseEvent('eventType', { cancelable: false }).cancelable is false

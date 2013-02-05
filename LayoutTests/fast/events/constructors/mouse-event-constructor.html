@@ -17,6 +17,16 @@ shouldBe("new MouseEvent('eventType').bubbles", "false");
 shouldBe("new MouseEvent('eventType').cancelable", "false");
 shouldBe("new MouseEvent('eventType').view", "null");
 shouldBe("new MouseEvent('eventType').detail", "0");
+shouldBe("new MouseEvent('eventType').screenX", "0");
+shouldBe("new MouseEvent('eventType').screenY", "0");
+shouldBe("new MouseEvent('eventType').clientX", "0");
+shouldBe("new MouseEvent('eventType').clientY", "0");
+shouldBe("new MouseEvent('eventType').ctrlKey", "false");
+shouldBe("new MouseEvent('eventType').shiftKey", "false");
+shouldBe("new MouseEvent('eventType').altKey", "false");
+shouldBe("new MouseEvent('eventType').metaKey", "false");
+shouldBe("new MouseEvent('eventType').button", "0");
+shouldBe("new MouseEvent('eventType').relatedTarget", "null");
 
 // bubbles is passed.
 shouldBe("new MouseEvent('eventType', { bubbles: false }).bubbles", "false");

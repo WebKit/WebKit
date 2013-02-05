@@ -17,6 +17,19 @@ shouldBe("new WheelEvent('eventType').bubbles", "false");
 shouldBe("new WheelEvent('eventType').cancelable", "false");
 shouldBe("new WheelEvent('eventType').view", "null");
 shouldBe("new WheelEvent('eventType').detail", "0");
+shouldBe("new WheelEvent('eventType').screenX", "0");
+shouldBe("new WheelEvent('eventType').screenY", "0");
+shouldBe("new WheelEvent('eventType').clientX", "0");
+shouldBe("new WheelEvent('eventType').clientY", "0");
+shouldBe("new WheelEvent('eventType').ctrlKey", "false");
+shouldBe("new WheelEvent('eventType').shiftKey", "false");
+shouldBe("new WheelEvent('eventType').altKey", "false");
+shouldBe("new WheelEvent('eventType').metaKey", "false");
+shouldBe("new WheelEvent('eventType').button", "0");
+shouldBe("new WheelEvent('eventType').relatedTarget", "null");
+shouldBe("new WheelEvent('eventType').wheelDeltaX", "0");
+shouldBe("new WheelEvent('eventType').wheelDeltaY", "0");
+shouldBe("new WheelEvent('eventType').deltaMode", "WheelEvent.DOM_DELTA_PIXEL");
 
 // bubbles is passed.
 shouldBe("new WheelEvent('eventType', { bubbles: false }).bubbles", "false");
