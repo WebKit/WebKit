@@ -1,3 +1,16 @@
+2013-02-05  Michael Saboff  <msaboff@apple.com>
+
+        r141788 won't build due to not having all changes needed by Node* change
+        https://bugs.webkit.org/show_bug.cgi?id=108944
+
+        Reviewed by David Kilzer.
+
+        Fixed three instances of integerResult(..., m_compileIndex) to be integerResult(..., node).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForARMv7s):
+
 2013-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r141809.

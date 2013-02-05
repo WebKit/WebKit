@@ -2875,7 +2875,7 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
             m_jit.assembler().it(ARMv7Assembler::ConditionLT);
             m_jit.assembler().neg(resultGPR, resultGPR);
 
-            integerResult(resultGPR, m_compileIndex);
+            integerResult(resultGPR, node);
             return;
         }
     }
@@ -2971,7 +2971,7 @@ void SpeculativeJIT::compileSoftModulo(Node* node)
         numeratorPositive.link(&m_jit);
     }
 
-    integerResult(quotientThenRemainderGPR, m_compileIndex);
+    integerResult(quotientThenRemainderGPR, node);
 #else // not architecture that can do integer division
     // Do this the *safest* way possible: call out to a C function that will do the modulo,
     // and then attempt to convert back.
@@ -3317,7 +3317,7 @@ void SpeculativeJIT::compileIntegerArithDivForARMv7s(Node* node)
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
     }
 
-    integerResult(quotient.gpr(), m_compileIndex);
+    integerResult(quotient.gpr(), node);
 }
 #endif
 
