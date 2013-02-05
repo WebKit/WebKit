@@ -1700,4 +1700,10 @@ void FrameLoaderClientImpl::didLoseWebGLContext(int arbRobustnessContextLostReas
 }
 #endif
 
+void FrameLoaderClientImpl::dispatchWillInsertBody()
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->willInsertBody(m_webFrame);
+}
+
 } // namespace WebKit

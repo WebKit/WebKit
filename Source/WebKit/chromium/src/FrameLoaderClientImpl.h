@@ -237,6 +237,8 @@ public:
     virtual void didLoseWebGLContext(int arbRobustnessContextLostReason) OVERRIDE;
 #endif
 
+    virtual void dispatchWillInsertBody() OVERRIDE;
+
 private:
     void makeDocumentView();
 

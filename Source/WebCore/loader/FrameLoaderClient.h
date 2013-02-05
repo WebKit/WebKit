@@ -371,6 +371,9 @@ namespace WebCore {
         // notification with the given GL_ARB_robustness guilt/innocence code (see Extensions3D.h).
         virtual void didLoseWebGLContext(int) { }
 #endif
+
+        // If an HTML document is being loaded, informs the embedder that the document will have its <body> attached soon.
+        virtual void dispatchWillInsertBody() { }
     };
 
 } // namespace WebCore

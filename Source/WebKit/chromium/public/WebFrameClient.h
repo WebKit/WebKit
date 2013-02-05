@@ -328,6 +328,9 @@ public:
     // The main frame scrolled.
     virtual void didChangeScrollOffset(WebFrame*) { }
 
+    // If the frame is loading an HTML document, this will be called to
+    // notify that the <body> will be attached soon.
+    virtual void willInsertBody(WebFrame*) { }
 
     // Find-in-page notifications ------------------------------------------
 

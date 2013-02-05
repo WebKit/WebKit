@@ -1,3 +1,20 @@
+2013-02-04  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Add a signal for when the body is inserted in the document
+        https://bugs.webkit.org/show_bug.cgi?id=108725
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::willInsertBody):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillInsertBody):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * tests/WebFrameTest.cpp:
+
 2013-02-04  Chris Hopman  <cjhopman@chromium.org>
 
         Make moveCaretTowardsWindowPoint not snap to the beginning/end when moved above/below editable

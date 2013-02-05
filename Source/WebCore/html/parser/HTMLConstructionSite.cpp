@@ -32,6 +32,7 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
@@ -395,6 +396,8 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
     RefPtr<Element> body = createHTMLElement(token);
     attachLater(currentNode(), body);
     m_openElements.pushHTMLBodyElement(HTMLStackItem::create(body.release(), token));
+    if (Frame* frame = m_document->frame())
+        frame->loader()->client()->dispatchWillInsertBody();
 }
 
 void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool isDemoted)

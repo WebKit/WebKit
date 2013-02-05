@@ -2078,4 +2078,54 @@ TEST_F(WebFrameTest, ReplaceNavigationAfterHistoryNavigation)
     EXPECT_TRUE(webFrameClient.commitCalled());
 }
 
+class TestWillInsertBodyWebFrameClient : public WebFrameClient {
+public:
+    TestWillInsertBodyWebFrameClient() : m_numBodies(0), m_didLoad(false)
+    {
+    }
+
+    virtual void didCommitProvisionalLoad(WebFrame*, bool) OVERRIDE
+    {
+        m_numBodies = 0;
+        m_didLoad = true;
+    }
+
+    virtual void didCreateDocumentElement(WebFrame*) OVERRIDE
+    {
+        EXPECT_EQ(0, m_numBodies);
+    }
+
+    virtual void willInsertBody(WebFrame*) OVERRIDE
+    {
+        m_numBodies++;
+    }
+
+    int m_numBodies;
+    bool m_didLoad;
+};
+
+TEST_F(WebFrameTest, HTMLDocument)
+{
+    registerMockedHttpURLLoad("clipped-body.html");
+
+    TestWillInsertBodyWebFrameClient webFrameClient;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "clipped-body.html", false, &webFrameClient);
+
+    EXPECT_TRUE(webFrameClient.m_didLoad);
+    EXPECT_EQ(1, webFrameClient.m_numBodies);
+    webView->close();
+}
+
+TEST_F(WebFrameTest, EmptyDocument)
+{
+    registerMockedHttpURLLoad("pageserializer/green_rectangle.svg");
+
+    TestWillInsertBodyWebFrameClient webFrameClient;
+    WebView* webView = FrameTestHelpers::createWebView(false, &webFrameClient);
+
+    EXPECT_FALSE(webFrameClient.m_didLoad);
+    EXPECT_EQ(1, webFrameClient.m_numBodies); // The empty document that a new frame starts with triggers this.
+    webView->close();
+}
+
 } // namespace
