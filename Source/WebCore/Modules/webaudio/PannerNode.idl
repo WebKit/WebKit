@@ -47,12 +47,12 @@
     // Distance model
     [CustomSetter] attribute DOMString distanceModel;
 
-    attribute float refDistance;
-    attribute float maxDistance;
-    attribute float rolloffFactor;
+    attribute double refDistance;
+    attribute double maxDistance;
+    attribute double rolloffFactor;
 
     // Directional sound cone
-    attribute float coneInnerAngle;
-    attribute float coneOuterAngle;
-    attribute float coneOuterGain;
+    attribute double coneInnerAngle;
+    attribute double coneOuterAngle;
+    attribute double coneOuterGain;
 };

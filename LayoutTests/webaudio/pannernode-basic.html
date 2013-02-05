@@ -40,30 +40,66 @@ function runTest() {
     else
         testFailed("refDistance default value should be 1.");
     
+    panner.refDistance = 270.52
+    if (panner.refDistance === 270.52)
+        testPassed("refDistance value is set to 270.52.");
+    else
+        testFailed("refDistance value should be set to 270.52.");
+    
     if (panner.maxDistance === 10000)
         testPassed("maxDistance default value is 10000.");
     else
         testFailed("maxDistance default value should be 10000.");
+    
+    panner.maxDistance = 100.55
+    if (panner.maxDistance === 100.55)
+        testPassed("maxDistance value is set to 100.55.");
+    else
+        testFailed("maxDistance value should be set to 100.55.");
     
     if (panner.rolloffFactor === 1)
         testPassed("rolloffFactor default value is 1.");
     else
         testFailed("rolloffFactor default value should be 1.");
     
+    panner.rolloffFactor = 0.83
+    if (panner.rolloffFactor === 0.83)
+        testPassed("rolloffFactor value is set to 0.83.");
+    else
+        testFailed("rolloffFactor value should be set to 0.83.");
+    
     if (panner.coneInnerAngle === 360)
         testPassed("coneInnerAngle default value is 360.");
     else
         testFailed("coneInnerAngle default value should be 360.");
+    
+    panner.coneInnerAngle = 240.45
+    if (panner.coneInnerAngle === 240.45)
+        testPassed("coneInnerAngle value is set to 240.45.");
+    else
+        testFailed("coneInnerAngle value should be set to 240.45.");
     
     if (panner.coneOuterAngle === 360)
         testPassed("coneOuterAngle default value is 360.");
     else
         testFailed("coneOuterAngle default value should be 360.");
     
+    panner.coneOuterAngle = 166.66
+    if (panner.coneOuterAngle === 166.66)
+        testPassed("coneOuterAngle value is set to 166.66.");
+    else
+        testFailed("coneOuterAngle value should be set to 166.66.");
+    
     if (panner.coneOuterGain === 0)
         testPassed("coneOuterGain default value is 0.");
     else
         testFailed("coneOuterGain default value should be 0.");
+
+    panner.coneOuterGain = 0.35
+    if (panner.coneOuterGain === 0.35)
+        testPassed("coneOuterGain value is set to 0.35.");
+    else
+        testFailed("coneOuterGain value should be set to 0.35.");
 
     if (panner.panningModel === "HRTF")
         testPassed("PannerNode defaults to 'HRTF' panningModel.");
