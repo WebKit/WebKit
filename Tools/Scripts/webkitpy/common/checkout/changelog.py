@@ -195,6 +195,7 @@ class ChangeLogEntry(object):
             _log.warning("Creating invalid ChangeLogEntry:\n%s" % self._contents)
 
         self._date_line = match.group()
+        self._date = match.group("date")
         self._bug_description = self._parse_bug_description(self._contents)
 
         # FIXME: group("name") does not seem to be Unicode?  Probably due to self._contents not being unicode.
@@ -210,6 +211,9 @@ class ChangeLogEntry(object):
 
     def date_line(self):
         return self._date_line
+
+    def date(self):
+        return self._date
 
     def author_text(self):
         return self._author_text

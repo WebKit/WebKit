@@ -45,6 +45,7 @@ class PrepareChangeLog(AbstractStep):
             Options.quiet,
             Options.email,
             Options.git_commit,
+            Options.prepare_changelogs,
         ]
 
     def _ensure_bug_url(self, state):
@@ -83,10 +84,7 @@ class PrepareChangeLog(AbstractStep):
     def _merge_entries(self, old_entry, new_entry):
         final_entry = old_entry.contents()
 
-        new_date_line = new_entry.date_line()
-        old_date_line = old_entry.date_line()
-        if new_date_line != old_date_line:
-            final_entry = final_entry.replace(old_date_line, new_date_line)
+        final_entry = final_entry.replace(old_entry.date(), new_entry.date(), 1)
 
         new_bug_desc = new_entry.bug_description()
         old_bug_desc = old_entry.bug_description()
@@ -104,6 +102,9 @@ class PrepareChangeLog(AbstractStep):
         return final_entry + "\n"
 
     def run(self, state):
+        if not self._options.prepare_changelogs:
+            return
+
         if self.cached_lookup(state, "changelogs"):
             self._ensure_bug_url(state)
 

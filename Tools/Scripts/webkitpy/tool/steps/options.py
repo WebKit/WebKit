@@ -49,6 +49,7 @@ class Options(object):
     obsolete_patches = make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one.")
     open_bug = make_option("--open-bug", action="store_true", dest="open_bug", default=False, help="Opens the associated bug in a browser.")
     parent_command = make_option("--parent-command", action="store", dest="parent_command", default=None, help="(Internal) The command that spawned this instance.")
+    prepare_changelogs = make_option("--no-prepare-changelogs", action="store_false", dest="prepare_changelogs", default=True, help="Don't prepare (create and/or update) ChangeLogs.")
     quiet = make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output.")
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")

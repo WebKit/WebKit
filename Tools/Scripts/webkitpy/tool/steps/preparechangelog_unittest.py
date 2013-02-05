@@ -40,12 +40,12 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
     def test_resolve_existing_entry(self):
         step = PrepareChangeLog(MockTool(), MockOptions())
 
-        roll_over = "== Rolled over to ChangeLog-2012-10-02 =="
-
         headers = ["2013-01-18  Timothy Loh  <timloh@chromium.com>\n\n",
                    "2013-01-20  Timothy Loh  <timloh@chromium.com>\n\n",
                   u"2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>\n\n",
                   u"2009-08-18  Tor Arne Vestb\xf8  <vestbo@webkit.org>\n\n",
+                   "2013-01-18  Eric Seidel  <eric@webkit.org>\n\n",
+                   "2013-01-20  Eric Seidel  <eric@webkit.org>\n\n",
                   ]
 
         bug_descs = ["        prepare-Changelog should support updating the list of changed files\n",
@@ -93,15 +93,19 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
                       ((0, 0, 0, 1), (0, 0, 1, 2), (0, 0, 1, 3)),
                       ((1, 1, 0, 1), (0, 0, 0, 2), (1, 1, 0, 3)),
                       ((3, 0, 0, 0), (2, 0, 1, 0), (3, 0, 1, 0)),
+                      ((4, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)),
+                      ((5, 0, 0, 0), (0, 0, 0, 0), (1, 0, 0, 0)),
+                      ((0, 0, 0, 0), (4, 0, 0, 0), (4, 0, 0, 0)),
+                      ((1, 0, 0, 0), (4, 0, 0, 0), (5, 0, 0, 0)),
         ]
 
         for new, old, final in test_cases:
             new_entry = make_entry(new)
             old_entry = make_entry(old)
-            start_file = new_entry + old_entry + roll_over
+            start_file = new_entry + old_entry + self._rolled_over_footer
 
             final_entry = make_entry(final)
-            end_file = final_entry + roll_over
+            end_file = final_entry + self._rolled_over_footer
 
             path = "ChangeLog"
             step._tool.filesystem = MockFileSystem()

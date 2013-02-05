@@ -1,3 +1,33 @@
+2013-02-04  Timothy Loh  <timloh@chromium.com>
+
+        Don't update author info in PrepareChangeLog and allow users to skip the PrepareChangeLog step entirely.
+        https://bugs.webkit.org/show_bug.cgi?id=108788
+
+        Reviewed by Ryosuke Niwa.
+
+        As per discussion in Bug 74358, it's probably preferable to remove the
+        behaviour of updating the author details in a ChangeLog entry. We also
+        want to be able to skip preparing change logs (e.g. rebaselining many
+        tests), so a --no-prepare-changelogs option is added to webkit-patch.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry._parse_entry):
+        (ChangeLogEntry.date): Added
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_log_entries_from_changelog):
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        (CommandsTest.assert_execute_outputs):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options): Added --no-prepare-changelogs
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog.options):
+        (PrepareChangeLog._merge_entries): date_line() gets the entire line, including
+        the author's name and email, but we only want to replace the date.
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (PrepareChangeLogTest.test_resolve_existing_entry): Added tests for changed
+        authors. Removed unneeded variable.
+
 2013-02-04  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Remove WebEventSender and WebAccessibilityController from public TestRunner API
