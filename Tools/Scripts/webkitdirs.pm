@@ -2194,6 +2194,8 @@ sub generateBuildSystemFromCMakeProject
     } elsif ($config =~ /debug/i) {
         push @args, "-DCMAKE_BUILD_TYPE=Debug";
     }
+    # Don't warn variables which aren't used by cmake ports.
+    push @args, "--no-warn-unused-cli";
     push @args, @cmakeArgs if @cmakeArgs;
     push @args, $additionalCMakeArgs if $additionalCMakeArgs;
 

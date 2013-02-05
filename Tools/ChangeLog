@@ -1,3 +1,15 @@
+2013-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake] Don't warn unused cmake variables which aren't used by cmake ports
+        https://bugs.webkit.org/show_bug.cgi?id=108761
+
+        Reviewed by Laszlo Gombos.
+
+        Ignore unused macro variables which aren't used by cmake ports.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2013-02-05  Julie Parent  <jparent@chromium.org>
 
         Add cc_unittests to the dashboards
