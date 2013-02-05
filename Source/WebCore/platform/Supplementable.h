@@ -79,7 +79,7 @@ template<typename T>
 class Supplement {
 public:
     virtual ~Supplement() { }
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || defined(ADDRESS_SANITIZER)
     virtual bool isRefCountedWrapper() const { return false; }
 #endif
 
