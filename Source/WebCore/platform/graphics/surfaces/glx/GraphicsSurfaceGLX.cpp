@@ -181,6 +181,12 @@ public:
         }
     }
 
+    static bool isMesaGLX()
+    {
+        static bool isMesa = !!strstr(glXGetClientString(display(), GLX_VENDOR), "Mesa");
+        return isMesa;
+    }
+
 private:
     static int m_refCount;
     static Window m_window;
@@ -555,12 +561,14 @@ uint32_t GraphicsSurface::platformFrontBuffer() const
 
 uint32_t GraphicsSurface::platformSwapBuffers()
 {
-    if (m_private->isReceiver() && platformGetTextureID()) {
-        glBindTexture(GL_TEXTURE_2D, platformGetTextureID());
-        // Release previous lock and rebind texture to surface to get frame update.
-        pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
-        pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
-
+    if (m_private->isReceiver()) {
+        if (OffScreenRootWindow::isMesaGLX() && platformGetTextureID()) {
+            glBindTexture(GL_TEXTURE_2D, platformGetTextureID());
+            // Mesa doesn't re-bind texture to the front buffer on glXSwapBufer
+            // Manually release previous lock and rebind texture to surface to get frame update.
+            pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
+            pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
+        }
         return 0;
     }
 
