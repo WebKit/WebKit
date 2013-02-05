@@ -36,7 +36,7 @@
 namespace WebCore {
 
 DropShadowImageFilter::DropShadowImageFilter(SkScalar dx, SkScalar dy, SkScalar sigma, SkColor color, SkImageFilter* input)
-    : SkSingleInputImageFilter(input)
+    : SkImageFilter(input)
     , m_dx(dx)
     , m_dy(dy)
     , m_sigma(sigma)
@@ -44,7 +44,7 @@ DropShadowImageFilter::DropShadowImageFilter(SkScalar dx, SkScalar dy, SkScalar 
 {
 }
 
-DropShadowImageFilter::DropShadowImageFilter(SkFlattenableReadBuffer& buffer) : SkSingleInputImageFilter(buffer)
+DropShadowImageFilter::DropShadowImageFilter(SkFlattenableReadBuffer& buffer) : SkImageFilter(buffer)
 {
     m_dx = buffer.readScalar();
     m_dy = buffer.readScalar();
@@ -62,7 +62,7 @@ void DropShadowImageFilter::flatten(SkFlattenableWriteBuffer& buffer) const
 
 bool DropShadowImageFilter::onFilterImage(Proxy* proxy, const SkBitmap& source, const SkMatrix& matrix, SkBitmap* result, SkIPoint* loc)
 {
-    SkBitmap src = this->getInputResult(proxy, source, matrix, loc);
+    SkBitmap src = this->getInputResult(0, proxy, source, matrix, loc);
     SkAutoTUnref<SkDevice> device(proxy->createDevice(src.width(), src.height()));
     SkCanvas canvas(device.get());
 

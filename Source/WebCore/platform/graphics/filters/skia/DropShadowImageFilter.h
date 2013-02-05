@@ -24,12 +24,12 @@
  */
 
 #include "SkColor.h"
+#include "SkImageFilter.h"
 #include "SkScalar.h"
-#include "SkSingleInputImageFilter.h"
 
 namespace WebCore {
 
-class DropShadowImageFilter : public SkSingleInputImageFilter {
+class DropShadowImageFilter : public SkImageFilter {
 public:
     DropShadowImageFilter(SkScalar dx, SkScalar dy, SkScalar sigma, SkColor, SkImageFilter* input = 0);
     SK_DECLARE_PUBLIC_FLATTENABLE_DESERIALIZATION_PROCS(DropShadowImageFilter)
