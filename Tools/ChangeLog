@@ -1,5 +1,18 @@
 2013-02-05  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] remove methods from the WebTestRunner interface that are only used by WebTestProxyBase
+        https://bugs.webkit.org/show_bug.cgi?id=108926
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebKit):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+
+2013-02-05  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] remove unneccessary 0 checks for testRunner now that the TestRunner library owns it
         https://bugs.webkit.org/show_bug.cgi?id=108923
 

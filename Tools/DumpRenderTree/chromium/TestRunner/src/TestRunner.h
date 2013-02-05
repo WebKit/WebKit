@@ -70,7 +70,6 @@ public:
     void setTestIsRunning(bool);
 
     // WebTestRunner implementation.
-    virtual bool shouldDumpEditingCallbacks() const OVERRIDE;
     virtual bool shouldDumpAsText() const OVERRIDE;
     virtual void setShouldDumpAsText(bool) OVERRIDE;
     virtual bool shouldGeneratePixelResults() const OVERRIDE;
@@ -79,39 +78,42 @@ public:
     virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
-    virtual bool shouldDumpFrameLoadCallbacks() const OVERRIDE;
     virtual void setShouldDumpFrameLoadCallbacks(bool) OVERRIDE;
-    virtual bool shouldDumpUserGestureInFrameLoadCallbacks() const OVERRIDE;
-    virtual bool stopProvisionalFrameLoads() const OVERRIDE;
-    virtual bool shouldDumpTitleChanges() const OVERRIDE;
-    virtual bool shouldDumpCreateView() const OVERRIDE;
-    virtual bool canOpenWindows() const OVERRIDE;
-    virtual bool shouldDumpResourceLoadCallbacks() const OVERRIDE;
-    virtual bool shouldDumpResourceRequestCallbacks() const OVERRIDE;
-    virtual bool shouldDumpResourceResponseMIMETypes() const OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
-    virtual bool shouldDumpStatusCallbacks() const OVERRIDE;
-    virtual bool shouldDumpProgressFinishedCallback() const OVERRIDE;
     virtual bool shouldDumpBackForwardList() const OVERRIDE;
-    virtual bool deferMainResourceDataLoad() const OVERRIDE;
     virtual bool shouldDumpSelectionRect() const OVERRIDE;
     virtual bool testRepaint() const OVERRIDE;
     virtual bool sweepHorizontally() const OVERRIDE;
     virtual bool isPrinting() const OVERRIDE;
-    virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const OVERRIDE;
-    virtual void setTitleTextDirection(WebKit::WebTextDirection) OVERRIDE;
-    virtual const std::set<std::string>* httpHeadersToClear() const OVERRIDE;
-    virtual bool shouldBlockRedirects() const OVERRIDE;
-    virtual bool willSendRequestShouldReturnNull() const OVERRIDE;
-    virtual void setTopLoadingFrame(WebKit::WebFrame*, bool) OVERRIDE;
-    virtual WebKit::WebFrame* topLoadingFrame() const OVERRIDE;
-    virtual void policyDelegateDone() OVERRIDE;
-    virtual bool policyDelegateEnabled() const OVERRIDE;
-    virtual bool policyDelegateIsPermissive() const OVERRIDE;
-    virtual bool policyDelegateShouldNotifyDone() const OVERRIDE;
-    virtual bool shouldInterceptPostMessage() const OVERRIDE;
-    virtual bool isSmartInsertDeleteEnabled() const OVERRIDE;
-    virtual bool isSelectTrailingWhitespaceEnabled() const OVERRIDE;
+
+    // Methods used by WebTestProxyBase.
+    bool shouldDumpEditingCallbacks() const;
+    bool shouldDumpFrameLoadCallbacks() const;
+    bool shouldDumpUserGestureInFrameLoadCallbacks() const;
+    bool stopProvisionalFrameLoads() const;
+    bool shouldDumpTitleChanges() const;
+    bool shouldDumpCreateView() const;
+    bool canOpenWindows() const;
+    bool shouldDumpResourceLoadCallbacks() const;
+    bool shouldDumpResourceRequestCallbacks() const;
+    bool shouldDumpResourceResponseMIMETypes() const;
+    bool shouldDumpStatusCallbacks() const;
+    bool shouldDumpProgressFinishedCallback() const;
+    bool deferMainResourceDataLoad() const;
+    bool shouldStayOnPageAfterHandlingBeforeUnload() const;
+    void setTitleTextDirection(WebKit::WebTextDirection);
+    const std::set<std::string>* httpHeadersToClear() const;
+    bool shouldBlockRedirects() const;
+    bool willSendRequestShouldReturnNull() const;
+    void setTopLoadingFrame(WebKit::WebFrame*, bool);
+    WebKit::WebFrame* topLoadingFrame() const;
+    void policyDelegateDone();
+    bool policyDelegateEnabled() const;
+    bool policyDelegateIsPermissive() const;
+    bool policyDelegateShouldNotifyDone() const;
+    bool shouldInterceptPostMessage() const;
+    bool isSmartInsertDeleteEnabled() const;
+    bool isSelectTrailingWhitespaceEnabled() const;
 
     // A single item in the work queue.
     class WorkItem {
