@@ -195,7 +195,7 @@ private:
             , drawsContent(false)
             , contentsVisible(true)
             , contentsOpaque(false)
-            , backfaceVisibility(false)
+            , backfaceVisibility(true)
             , visible(true)
             , showDebugBorders(false)
             , showRepaintCounter(false)
