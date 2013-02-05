@@ -184,7 +184,10 @@ WebInspector.ProfileHeader.prototype = {
         throw new Error("Not implemented.");
     },
 
-    reset: function()
+    /**
+     * @param {!WebInspector.ProfilesPanel} profilesPanel
+     */
+    dispose: function(profilesPanel)
     {
     },
 
@@ -419,7 +422,7 @@ WebInspector.ProfilesPanel.prototype = {
                 if ("dispose" in view)
                     view.dispose();
             }
-            this._profiles[i].reset();
+            this._profiles[i].dispose(this);
         }
         delete this.visibleView;
 
@@ -614,7 +617,7 @@ WebInspector.ProfilesPanel.prototype = {
             if (this._profiles[i].uid === profile.uid) {
                 profile = this._profiles[i];
                 this._profiles.splice(i, 1);
-                profile.reset();
+                profile.dispose(this);
                 break;
             }
         }
@@ -1141,21 +1144,16 @@ WebInspector.ProfilesPanel.prototype = {
     {
         var profileTypeObject = this.getProfileType(profileType);
         profileTypeObject.setRecordingProfile(isProfiling);
-        var temporaryProfile = this.findTemporaryProfile(profileType);
-        if (!!temporaryProfile === isProfiling)
-            return;
-        if (!temporaryProfile)
-            temporaryProfile = profileTypeObject.createTemporaryProfile();
-        if (isProfiling)
-            this.addProfileHeader(temporaryProfile);
-        else
-            this._removeTemporaryProfile(profileType);
         this.recordButton.toggled = isProfiling;
         this.recordButton.title = profileTypeObject.buttonTooltip;
-        if (isProfiling)
+        if (isProfiling) {
             this._launcherView.profileStarted();
-        else
+            if (!this.findTemporaryProfile(profileType))
+                this.addProfileHeader(profileTypeObject.createTemporaryProfile());
+        } else {
             this._launcherView.profileFinished();
+            this._removeTemporaryProfile(profileType);
+        }
     },
 
     takeHeapSnapshot: function()

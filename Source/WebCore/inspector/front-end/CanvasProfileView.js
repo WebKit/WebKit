@@ -767,11 +767,17 @@ WebInspector.CanvasProfileHeader.prototype = {
 
     /**
      * @override
+     * @param {!WebInspector.ProfilesPanel} profilesPanel
      */
-    reset: function()
+    dispose: function(profilesPanel)
     {
-        if (this._traceLogId)
+        if (this._traceLogId) {
             CanvasAgent.dropTraceLog(this._traceLogId);
+            clearTimeout(this._requestStatusTimer);
+            if (this._alive)
+                profilesPanel.setRecordingProfile(WebInspector.CanvasProfileType.TypeId, false);
+            this._alive = false;
+        }
     },
 
     /**
