@@ -429,6 +429,13 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Arr
     strings = counterVisitor.strings();
 }
 
+void InspectorMemoryAgent::getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners)
+{
+    *documents = InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
+    *nodes = InspectorCounters::counterValue(InspectorCounters::NodeCounter);
+    *jsEventListeners = ThreadLocalInspectorCounters::current().counterValue(ThreadLocalInspectorCounters::JSEventListenerCounter);
+}
+
 static void reportJSHeapInfo(WTF::MemoryInstrumentationClient& memoryInstrumentationClient)
 {
     HeapInfo info;

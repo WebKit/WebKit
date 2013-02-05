@@ -100,6 +100,14 @@
                 ]
             },
             {
+                "name": "getDOMCounters",
+                "returns": [
+                    { "name": "documents", "type": "integer" },
+                    { "name": "nodes", "type": "integer" },
+                    { "name": "jsEventListeners", "type": "integer" }
+                ]
+            },
+            {
                 "name": "getProcessMemoryDistribution",
                 "parameters": [
                     { "name": "reportGraph", "type": "boolean", "optional": true, "description": "Whether native memory graph should be reported in addition to aggregated statistics." }

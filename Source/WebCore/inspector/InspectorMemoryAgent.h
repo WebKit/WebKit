@@ -59,6 +59,7 @@ public:
     virtual ~InspectorMemoryAgent();
 
     virtual void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
+    virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);
     virtual void getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<TypeBuilder::Memory::MemoryBlock>& processMemory, RefPtr<InspectorObject>& graph);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
