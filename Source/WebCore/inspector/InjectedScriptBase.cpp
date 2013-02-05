@@ -124,6 +124,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, ScriptFunctionCa
     }
     if (result->type() == InspectorValue::TypeString) {
         result->asString(errorString);
+        ASSERT(errorString->length());
         return;
     }
     RefPtr<InspectorObject> resultPair = result->asObject();
