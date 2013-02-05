@@ -45,10 +45,13 @@
 #include <signal.h>
 #endif
 
-#if PLATFORM(MAC)
+#if USE(CF)
 #include <CoreFoundation/CFString.h>
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#define WTF_USE_APPLE_SYSTEM_LOG 1
 #include <asl.h>
 #endif
+#endif // USE(CF)
 
 #if COMPILER(MSVC) && !OS(WINCE)
 #include <crtdbg.h>
@@ -77,7 +80,7 @@ extern "C" {
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
 {
-#if PLATFORM(MAC)
+#if USE(CF) && !OS(WINDOWS)
     if (strstr(format, "%@")) {
         CFStringRef cfFormat = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
 
@@ -94,7 +97,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
         CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(APPLE_SYSTEM_LOG)
         asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
 #endif
         fputs(buffer, stderr);
@@ -105,7 +108,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         return;
     }
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if USE(APPLE_SYSTEM_LOG)
     va_list copyOfArgs;
     va_copy(copyOfArgs, args);
     asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
