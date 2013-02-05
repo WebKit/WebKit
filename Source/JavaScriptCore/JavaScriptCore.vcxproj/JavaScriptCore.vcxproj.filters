@@ -741,6 +741,9 @@
     <ClCompile Include="..\runtime\JSCJSValue.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\StructureRareData.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICast.h">
@@ -1889,6 +1892,12 @@
     </ClInclude>
     <ClInclude Include="..\bytecode\DataFormat.h">
       <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\StructureRareData.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\StructureRareDataInlines.h">
+      <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

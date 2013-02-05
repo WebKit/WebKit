@@ -1,3 +1,11 @@
+2013-02-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed VS2010 Build Correction after r141651
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add missing
+        StructureRareData.h and StructureRareData.cpp files.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+
 2013-02-05  Michael Saboff  <msaboff@apple.com>
 
         r141788 won't build due to not having all changes needed by Node* change
