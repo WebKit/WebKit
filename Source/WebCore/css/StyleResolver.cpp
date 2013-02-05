@@ -1433,7 +1433,10 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
         state.style->setInsideLink(linkState);
     }
 
-    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
+    bool needsCollection = false;
+    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
+    if (needsCollection)
+        collectFeatures();
 
     MatchResult matchResult;
     if (matchingBehavior == MatchOnlyUserAgentRules)
@@ -5169,8 +5172,10 @@ void StyleResolver::collectFeatures()
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject
     // sharing candidates.
-    m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
-    m_features.add(m_authorStyle->features());
+    if (CSSDefaultStyleSheets::defaultStyle)
+        m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
+    if (m_authorStyle)
+        m_features.add(m_authorStyle->features());
     if (document()->isViewSource())
         m_features.add(CSSDefaultStyleSheets::viewSourceStyle()->features());
 

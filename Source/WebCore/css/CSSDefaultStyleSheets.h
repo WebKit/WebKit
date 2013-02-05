@@ -45,7 +45,7 @@ public:
     static StyleSheetContents* fullscreenStyleSheet;
     static StyleSheetContents* plugInsStyleSheet;
 
-    static void ensureDefaultStyleSheetsForElement(Element*);
+    static void ensureDefaultStyleSheetsForElement(Element*, bool& changedDefaultStyle);
     static void loadFullDefaultStyle();
     static void loadSimpleDefaultStyle();
     static void initDefaultStyle(Element*);

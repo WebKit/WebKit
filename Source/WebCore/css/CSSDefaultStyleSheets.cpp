@@ -153,10 +153,12 @@ RuleSet* CSSDefaultStyleSheets::viewSourceStyle()
 }
 
 
-void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
+void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element, bool& changedDefaultStyle)
 {
-    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element))
+    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
         loadFullDefaultStyle();
+        changedDefaultStyle = true;
+    }
 
 #if ENABLE(SVG)
     if (element->isSVGElement() && !svgStyleSheet) {
@@ -164,6 +166,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
         svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
+        changedDefaultStyle = true;
     }
 #endif
 
@@ -173,6 +176,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
         mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mathMLStyleSheet, printEval());
+        changedDefaultStyle = true;
     }
 #endif
 
@@ -182,6 +186,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
         mediaControlsStyleSheet = parseUASheet(mediaRules);
         defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
+        changedDefaultStyle = true;
     }
 #endif
 
@@ -191,6 +196,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
         fullscreenStyleSheet = parseUASheet(fullscreenRules);
         defaultStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
         defaultQuirksStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
+        changedDefaultStyle = true;
     }
 #endif
 
@@ -198,6 +204,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element)
         String plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome()->client()->plugInExtraStyleSheet();
         plugInsStyleSheet = parseUASheet(plugInsRules);
         defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
+        changedDefaultStyle = true;
     }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
