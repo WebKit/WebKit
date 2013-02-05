@@ -156,7 +156,7 @@ static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persi
     v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
 }
 
-Node* V8GCController::opaqueRootForGC(Node* node)
+Node* V8GCController::opaqueRootForGC(Node* node, v8::Isolate*)
 {
     // FIXME: Remove the special handling for image elements.
     // The same special handling is in V8GCController::gcTree().
@@ -213,7 +213,7 @@ public:
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
-                m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(*it), wrapper);
+                m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
@@ -230,9 +230,9 @@ public:
             if (node->hasEventListeners())
                 addImplicitReferencesForNodeWithEventListeners(node, wrapper);
 
-            m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(node), wrapper);
+            m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(node, m_isolate), wrapper);
         } else if (classId == v8DOMObjectClassId) {
-            m_grouper.addObjectToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
+            m_grouper.addObjectToGroup(type->opaqueRootForGC(object, wrapper, m_isolate), wrapper);
         } else {
             ASSERT_NOT_REACHED();
         }

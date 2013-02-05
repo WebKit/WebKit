@@ -187,9 +187,9 @@ sub GenerateOpaqueRootForGC
     }
 
     push(@implContent, <<END);
-void* V8${interfaceName}::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
+void* V8${interfaceName}::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
 {
-    ASSERT(!wrapper.IsIndependent());
+    ASSERT(!wrapper.IsIndependent(isolate));
     ${interfaceName}* impl = static_cast<${interfaceName}*>(object);
 END
     if (GetGenerateIsReachable($interface) eq  "ImplDocument" ||
@@ -207,7 +207,7 @@ END
 
         push(@implContent, <<END);
     if (Node* owner = impl->${methodName}())
-        return V8GCController::opaqueRootForGC(owner);
+        return V8GCController::opaqueRootForGC(owner, isolate);
 END
     }
 
@@ -365,7 +365,7 @@ END
 END
 
     if (NeedsCustomOpaqueRootForGC($interface)) {
-        push(@headerContent, "    static void* opaqueRootForGC(void*, v8::Persistent<v8::Object>);\n");
+        push(@headerContent, "    static void* opaqueRootForGC(void*, v8::Persistent<v8::Object>, v8::Isolate*);\n");
     }
 
     if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {

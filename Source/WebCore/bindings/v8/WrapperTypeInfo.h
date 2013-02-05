@@ -50,7 +50,7 @@ namespace WebCore {
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
     typedef EventTarget* (*ToEventTargetFunction)(v8::Handle<v8::Object>);
-    typedef void* (*OpaqueRootForGC)(void*, v8::Persistent<v8::Object>);
+    typedef void* (*OpaqueRootForGC)(void*, v8::Persistent<v8::Object>, v8::Isolate*);
     typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>);
 
     enum WrapperTypePrototype {
@@ -112,11 +112,11 @@ namespace WebCore {
             return toEventTargetFunction(object);
         }
 
-        void* opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
+        void* opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
         {
             if (!opaqueRootForGCFunction)
                 return object;
-            return opaqueRootForGCFunction(object, wrapper);
+            return opaqueRootForGCFunction(object, wrapper, isolate);
         }
 
         const GetTemplateFunction getTemplateFunction;

@@ -51,7 +51,7 @@ public:
     static void hintForCollectGarbage();
     static void collectGarbage();
 
-    static Node* opaqueRootForGC(Node*);
+    static Node* opaqueRootForGC(Node*, v8::Isolate*);
     static void didCreateWrapperForNode(Node*);
 
 private:
