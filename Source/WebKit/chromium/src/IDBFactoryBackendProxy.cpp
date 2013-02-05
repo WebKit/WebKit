@@ -53,6 +53,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
+#include "platform/WebKitPlatformSupport.h"
 #include <public/WebVector.h>
 
 
@@ -74,8 +75,10 @@ PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
 
 IDBFactoryBackendProxy::IDBFactoryBackendProxy()
 {
-    ASSERT(s_webIDBFactory);
-    m_webIDBFactory = s_webIDBFactory;
+    if (s_webIDBFactory)
+        m_webIDBFactory = s_webIDBFactory;
+    else
+        m_webIDBFactory = webKitPlatformSupport()->idbFactory();
 }
 
 IDBFactoryBackendProxy::~IDBFactoryBackendProxy()

@@ -1,3 +1,19 @@
+2013-02-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141896.
+        http://trac.webkit.org/changeset/141896
+        https://bugs.webkit.org/show_bug.cgi?id=108956
+
+        crashes indexdb security tests (Requested by gavinp on
+        #webkit).
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::idbFactory):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::IDBFactoryBackendProxy):
+
 2013-02-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove idbFactory from WebKitPlatformSupport
