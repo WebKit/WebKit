@@ -162,6 +162,7 @@ protected:
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
+    WKRetainPtr<WKPageRef> webPage;
     WKRetainPtr<WKPageGroupRef> pageGroup;
 
     WebKit::QtPageClient pageClient;

@@ -1,3 +1,38 @@
+2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt][WK2] Replace more uses of WebPageProxy with WKPage in QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=108826
+
+        Reviewed by Kenneth Rohde Christiansen and signed off for WK2 by
+        Benjamin Poulain.
+
+        This patch converts a few more usages of WebPageProxy to functions in
+        the WKPage API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewLegacyPrivate::zoomFactor):
+        (QQuickWebViewLegacyPrivate::setZoomFactor):
+        (QQuickWebViewExperimental::postMessage):
+        (QQuickWebViewExperimental::userAgent):
+        (QQuickWebViewExperimental::setUserAgent):
+        (QQuickWebViewExperimental::evaluateJavaScript):
+        (QQuickWebViewExperimental::findText):
+        (QQuickWebView::goBack):
+        (QQuickWebView::goForward):
+        (QQuickWebView::stop):
+        (QQuickWebView::reload):
+        (QQuickWebView::setUrl):
+        (QQuickWebView::canGoBack):
+        (QQuickWebView::canGoForward):
+        (QQuickWebView::loading):
+        (QQuickWebView::title):
+        (QQuickWebView::pageRef):
+        (QQuickWebView::loadHtml):
+        (QQuickWebView::runJavaScriptInMainFrame):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2013-02-04  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Coordinated Graphics : disconnectCustomFilterProgram does not do anything.
