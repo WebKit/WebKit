@@ -1,3 +1,56 @@
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
+        VS2010 WebKit projects, scripts, and property sheets.
+        https://bugs.webkit.org/show_bug.cgi?id=106989.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/Interfaces: Added.
+        * WebKit.vcxproj/Interfaces/FixMIDLHeaders.pl: Copied from win/WebKit.vcproj/FixMIDLHeaders.pl.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Added.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.filters: Added.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.user: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesCommon.props: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesDebug.props: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesPostBuild.cmd: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesRelease.props: Added.
+        * WebKit.vcxproj/WebKit: Added.
+        * WebKit.vcxproj/WebKit.sln:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Added.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Added.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.user: Added.
+        * WebKit.vcxproj/WebKit/WebKitApple.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitCFLite.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitDebug.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitDirectX.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd: Added.
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd: Added.
+        * WebKit.vcxproj/WebKit/WebKitPreLink.cmd: Added.
+        * WebKit.vcxproj/WebKit/WebKitRelease.props: Added.
+        * WebKit.vcxproj/WebKit/resource.h: Copied from win/WebKit.vcproj/resource.h.
+        * WebKit.vcxproj/WebKitExportGenerator: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj.filters: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj.user: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebug.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPostBuild.cmd: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorRelease.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Copied from win/WebKit.vcproj/WebKitExports.def.in.
+        * WebKit.vcxproj/WebKitGUID: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.user: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDCommon.props: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebug.props: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPostBuild.cmd: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDPreBuild.cmd: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDRelease.props: Added.
+
 2013-01-31  Christophe Dumez  <dchris@gmail.com>
 
         [EFL] Disable Web Intents

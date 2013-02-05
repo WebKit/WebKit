@@ -1,3 +1,36 @@
+2013-02-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Copy some resource files for VS2010 solution.
+        https://bugs.webkit.org/show_bug.cgi?id=106989.
+
+        * WebKit.resources/WebKit.rc: Added.
+        * WebKit.resources/deleteButton.png: Added.
+        * WebKit.resources/deleteButtonPressed.png: Added.
+        * WebKit.resources/fsVideoAudioVolumeHigh.png: Added.
+        * WebKit.resources/fsVideoAudioVolumeLow.png: Added.
+        * WebKit.resources/fsVideoExitFullscreen.png: Added.
+        * WebKit.resources/fsVideoPause.png: Added.
+        * WebKit.resources/fsVideoPlay.png: Added.
+        * WebKit.resources/missingImage.png: Added.
+        * WebKit.resources/nullplugin.png: Added.
+        * WebKit.resources/panEastCursor.png: Added.
+        * WebKit.resources/panIcon.png: Added.
+        * WebKit.resources/panNorthCursor.png: Added.
+        * WebKit.resources/panNorthEastCursor.png: Added.
+        * WebKit.resources/panNorthWestCursor.png: Added.
+        * WebKit.resources/panSouthCursor.png: Added.
+        * WebKit.resources/panSouthEastCursor.png: Added.
+        * WebKit.resources/panSouthWestCursor.png: Added.
+        * WebKit.resources/panWestCursor.png: Added.
+        * WebKit.resources/searchCancel.png: Added.
+        * WebKit.resources/searchCancelPressed.png: Added.
+        * WebKit.resources/searchMagnifier.png: Added.
+        * WebKit.resources/searchMagnifierResults.png: Added.
+        * WebKit.resources/textAreaResizeCorner.png: Added.
+        * WebKit.resources/verticalTextCursor.png: Added.
+        * WebKit.resources/zoomInCursor.png: Added.
+        * WebKit.resources/zoomOutCursor.png: Added.
+
 2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Kill suspendAnimation(), resumeAnimation() and numberOfActiveAnimations() from DRT/WTR; use Internals

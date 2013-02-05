@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>WebKit</ProjectName>
+    <ProjectGuid>{0662A8A9-82A3-4638-97D8-EC425D8D87C9}</ProjectGuid>
+    <RootNamespace>WebKit</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="WebKitRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="WebKitDebug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile />
+    <ClCompile />
+    <ClCompile />
+    <ClCompile />
+    <Link />
+    <ClCompile />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Link />
+    <ClCompile />
+    <ClCompile />
+    <ClCompile />
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp" />
+    <ClCompile Include="..\..\win\AccessibleBase.cpp" />
+    <ClCompile Include="..\..\win\AccessibleDocument.cpp" />
+    <ClCompile Include="..\..\win\AccessibleImage.cpp" />
+    <ClCompile Include="..\..\win\CFDictionaryPropertyBag.cpp" />
+    <ClCompile Include="..\..\win\DefaultDownloadDelegate.cpp" />
+    <ClCompile Include="..\..\win\DefaultPolicyDelegate.cpp" />
+    <ClCompile Include="..\..\win\DOMCoreClasses.cpp" />
+    <ClCompile Include="..\..\win\DOMCSSClasses.cpp" />
+    <ClCompile Include="..\..\win\DOMEventsClasses.cpp" />
+    <ClCompile Include="..\..\win\DOMHTMLClasses.cpp" />
+    <ClCompile Include="..\..\win\ForEachCoClass.cpp" />
+    <ClCompile Include="..\..\win\FullscreenVideoController.cpp" />
+    <ClCompile Include="..\..\win\MarshallingHelpers.cpp" />
+    <ClCompile Include="..\..\win\MemoryStream.cpp" />
+    <ClCompile Include="..\..\win\WebActionPropertyBag.cpp" />
+    <ClCompile Include="..\..\win\WebArchive.cpp" />
+    <ClCompile Include="..\..\win\WebBackForwardList.cpp" />
+    <ClCompile Include="..\..\win\WebCache.cpp" />
+    <ClCompile Include="..\..\win\WebCookieManager.cpp" />
+    <ClCompile Include="..\..\win\WebCookieManagerCFNet.cpp" />
+    <ClCompile Include="..\..\win\WebCookieManagerCurl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WebCoreStatistics.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\EmbeddedWidget.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebChromeClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebContextMenuClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebDesktopNotificationsDelegate.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebDragClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebEditorClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebFrameLoaderClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebFrameNetworkingContext.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebGeolocationClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebInspectorClient.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebInspectorDelegate.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebPlatformStrategies.cpp" />
+    <ClCompile Include="..\..\win\WebDatabaseManager.cpp" />
+    <ClCompile Include="..\..\win\WebDataSource.cpp" />
+    <ClCompile Include="..\..\win\WebDocumentLoader.cpp" />
+    <ClCompile Include="..\..\win\WebDownload.cpp" />
+    <ClCompile Include="..\..\win\WebDownloadCFNet.cpp" />
+    <ClCompile Include="..\..\win\WebDownloadCurl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WebDropSource.cpp" />
+    <ClCompile Include="..\..\win\WebElementPropertyBag.cpp" />
+    <ClCompile Include="..\..\win\WebError.cpp" />
+    <ClCompile Include="..\..\win\WebFrame.cpp" />
+    <ClCompile Include="..\..\win\WebFramePolicyListener.cpp" />
+    <ClCompile Include="..\..\win\WebGeolocationPolicyListener.cpp" />
+    <ClCompile Include="..\..\win\WebGeolocationPosition.cpp" />
+    <ClCompile Include="..\..\win\WebHistory.cpp" />
+    <ClCompile Include="..\..\win\WebHistoryItem.cpp" />
+    <ClCompile Include="..\..\win\WebHTMLRepresentation.cpp" />
+    <ClCompile Include="..\..\win\WebIconDatabase.cpp" />
+    <ClCompile Include="..\..\win\WebInspector.cpp" />
+    <ClCompile Include="..\..\win\WebJavaScriptCollector.cpp" />
+    <ClCompile Include="..\..\win\WebKitClassFactory.cpp" />
+    <ClCompile Include="..\..\win\WebKitCOMAPI.cpp" />
+    <ClCompile Include="..\..\win\WebKitDLL.cpp" />
+    <ClCompile Include="..\..\win\WebKitGraphics.cpp" />
+    <ClCompile Include="..\..\win\WebKitLogging.cpp" />
+    <ClCompile Include="..\..\win\WebKitPrefix.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WebKitStatistics.cpp" />
+    <ClCompile Include="..\..\win\WebKitSystemBits.cpp" />
+    <ClCompile Include="..\..\win\WebLocalizableStrings.cpp" />
+    <ClCompile Include="..\..\win\WebMutableURLRequest.cpp" />
+    <ClCompile Include="..\..\win\WebNavigationData.cpp" />
+    <ClCompile Include="..\..\win\WebNodeHighlight.cpp" />
+    <ClCompile Include="..\..\win\WebNotification.cpp" />
+    <ClCompile Include="..\..\win\WebNotificationCenter.cpp" />
+    <ClCompile Include="..\..\win\WebPreferences.cpp" />
+    <ClCompile Include="..\..\win\WebResource.cpp" />
+    <ClCompile Include="..\..\win\WebScriptObject.cpp" />
+    <ClCompile Include="..\..\win\WebScriptWorld.cpp" />
+    <ClCompile Include="..\..\win\WebScrollBar.cpp" />
+    <ClCompile Include="..\..\win\WebSecurityOrigin.cpp" />
+    <ClCompile Include="..\..\win\WebSerializedJSValue.cpp" />
+    <ClCompile Include="..\..\win\WebTextRenderer.cpp" />
+    <ClCompile Include="..\..\win\WebURLAuthenticationChallenge.cpp" />
+    <ClCompile Include="..\..\win\WebURLAuthenticationChallengeSender.cpp" />
+    <ClCompile Include="..\..\win\WebURLAuthenticationChallengeSenderCFNet.cpp" />
+    <ClCompile Include="..\..\win\WebURLAuthenticationChallengeSenderCurl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WebURLCredential.cpp" />
+    <ClCompile Include="..\..\win\WebURLProtectionSpace.cpp" />
+    <ClCompile Include="..\..\win\WebURLResponse.cpp" />
+    <ClCompile Include="..\..\win\WebUserContentURLPattern.cpp" />
+    <ClCompile Include="..\..\win\WebView.cpp" />
+    <ClCompile Include="..\..\win\WebWorkersPrivate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\win\AccessibleBase.h" />
+    <ClInclude Include="..\..\win\AccessibleDocument.h" />
+    <ClInclude Include="..\..\win\AccessibleImage.h" />
+    <ClInclude Include="..\..\win\CFDictionaryPropertyBag.h" />
+    <ClInclude Include="..\..\win\CodeAnalysisConfig.h" />
+    <ClInclude Include="..\..\win\COMEnumVariant.h" />
+    <ClInclude Include="..\..\win\COMPropertyBag.h" />
+    <ClInclude Include="..\..\win\COMVariantSetter.h" />
+    <ClInclude Include="..\..\win\DefaultDownloadDelegate.h" />
+    <ClInclude Include="..\..\win\DefaultPolicyDelegate.h" />
+    <ClInclude Include="..\..\win\DOMCoreClasses.h" />
+    <ClInclude Include="..\..\win\DOMCSSClasses.h" />
+    <ClInclude Include="..\..\win\DOMEventsClasses.h" />
+    <ClInclude Include="..\..\win\DOMHTMLClasses.h" />
+    <ClInclude Include="..\..\win\ForEachCoClass.h" />
+    <ClInclude Include="..\..\win\FullscreenVideoController.h" />
+    <ClInclude Include="..\..\win\MarshallingHelpers.h" />
+    <ClInclude Include="..\..\win\MemoryStream.h" />
+    <ClInclude Include="..\..\win\ProgIDMacros.h" />
+    <ClInclude Include="..\..\win\WebActionPropertyBag.h" />
+    <ClInclude Include="..\..\win\WebArchive.h" />
+    <ClInclude Include="..\..\win\WebBackForwardList.h" />
+    <ClInclude Include="..\..\win\WebCache.h" />
+    <ClInclude Include="..\..\win\WebCachedFramePlatformData.h" />
+    <ClInclude Include="..\..\win\WebCookieManager.h" />
+    <ClInclude Include="..\..\win\WebCoreStatistics.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebChromeClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebContextMenuClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebDesktopNotificationsDelegate.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebDragClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebEditorClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebFrameLoaderClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebFrameNetworkingContext.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebGeolocationClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebInspectorClient.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebInspectorDelegate.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebPlatformStrategies.h" />
+    <ClInclude Include="..\..\win\WebDatabaseManager.h" />
+    <ClInclude Include="..\..\win\WebDataSource.h" />
+    <ClInclude Include="..\..\win\WebDocumentLoader.h" />
+    <ClInclude Include="..\..\win\WebDownload.h" />
+    <ClInclude Include="..\..\win\WebDropSource.h" />
+    <ClInclude Include="..\..\win\WebElementPropertyBag.h" />
+    <ClInclude Include="..\..\win\WebError.h" />
+    <ClInclude Include="..\..\win\WebFrame.h" />
+    <ClInclude Include="..\..\win\WebFramePolicyListener.h" />
+    <ClInclude Include="..\..\win\WebGeolocationPolicyListener.h" />
+    <ClInclude Include="..\..\win\WebGeolocationPosition.h" />
+    <ClInclude Include="..\..\win\WebHistory.h" />
+    <ClInclude Include="..\..\win\WebHistoryItem.h" />
+    <ClInclude Include="..\..\win\WebHTMLRepresentation.h" />
+    <ClInclude Include="..\..\win\WebIconDatabase.h" />
+    <ClInclude Include="..\..\win\WebInspector.h" />
+    <ClInclude Include="..\..\win\WebJavaScriptCollector.h" />
+    <ClInclude Include="..\..\win\WebKitClassFactory.h" />
+    <ClInclude Include="..\..\win\WebKitCOMAPI.h" />
+    <ClInclude Include="..\..\win\WebKitDLL.h" />
+    <ClInclude Include="..\..\win\WebKitGraphics.h" />
+    <ClInclude Include="..\..\win\WebKitLogging.h" />
+    <ClInclude Include="..\..\win\WebKitPrefix.h" />
+    <ClInclude Include="..\..\win\WebKitStatistics.h" />
+    <ClInclude Include="..\..\win\WebKitStatisticsPrivate.h" />
+    <ClInclude Include="..\..\win\WebKitSystemBits.h" />
+    <ClInclude Include="..\..\win\WebLocalizableStrings.h" />
+    <ClInclude Include="..\..\win\WebMutableURLRequest.h" />
+    <ClInclude Include="..\..\win\WebNavigationData.h" />
+    <ClInclude Include="..\..\win\WebNodeHighlight.h" />
+    <ClInclude Include="..\..\win\WebNotification.h" />
+    <ClInclude Include="..\..\win\WebNotificationCenter.h" />
+    <ClInclude Include="..\..\win\WebPreferenceKeysPrivate.h" />
+    <ClInclude Include="..\..\win\WebPreferences.h" />
+    <ClInclude Include="..\..\win\WebResource.h" />
+    <ClInclude Include="..\..\win\WebScriptObject.h" />
+    <ClInclude Include="..\..\win\WebScriptWorld.h" />
+    <ClInclude Include="..\..\win\WebScrollBar.h" />
+    <ClInclude Include="..\..\win\WebSecurityOrigin.h" />
+    <ClInclude Include="..\..\win\WebSerializedJSValue.h" />
+    <ClInclude Include="..\..\win\WebTextRenderer.h" />
+    <ClInclude Include="..\..\win\WebURLAuthenticationChallenge.h" />
+    <ClInclude Include="..\..\win\WebURLAuthenticationChallengeSender.h" />
+    <ClInclude Include="..\..\win\WebURLCredential.h" />
+    <ClInclude Include="..\..\win\WebURLProtectionSpace.h" />
+    <ClInclude Include="..\..\win\WebURLResponse.h" />
+    <ClInclude Include="..\..\win\WebUserContentURLPattern.h" />
+    <ClInclude Include="..\..\win\WebView.h" />
+    <ClInclude Include="..\..\win\WebWorkersPrivate.h" />
+    <CustomBuildStep Include="..\WebKitGraphics.h" />
+    <CustomBuildStep Include="..\WebLocalizableStrings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\win\WebKit.resources\deleteButton.png" />
+    <None Include="..\..\win\WebKit.resources\deleteButtonPressed.png" />
+    <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeHigh.png" />
+    <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeLow.png" />
+    <None Include="..\..\win\WebKit.resources\fsVideoExitFullscreen.png" />
+    <None Include="..\..\win\WebKit.resources\fsVideoPause.png" />
+    <None Include="..\..\win\WebKit.resources\fsVideoPlay.png" />
+    <None Include="..\..\win\WebKit.resources\missingImage.png" />
+    <None Include="..\..\win\WebKit.resources\nullplugin.png" />
+    <None Include="..\..\win\WebKit.resources\panEastCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panIcon.png" />
+    <None Include="..\..\win\WebKit.resources\panNorthCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panNorthEastCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panNorthWestCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panSouthCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panSouthEastCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panSouthWestCursor.png" />
+    <None Include="..\..\win\WebKit.resources\panWestCursor.png" />
+    <None Include="..\..\win\WebKit.resources\searchCancel.png" />
+    <None Include="..\..\win\WebKit.resources\searchCancelPressed.png" />
+    <None Include="..\..\win\WebKit.resources\searchMagnifier.png" />
+    <None Include="..\..\win\WebKit.resources\searchMagnifierResults.png" />
+    <None Include="..\..\win\WebKit.resources\textAreaResizeCorner.png" />
+    <None Include="..\..\win\WebKit.resources\verticalTextCursor.png" />
+    <None Include="..\..\win\WebKit.resources\zoomInCursor.png" />
+    <None Include="..\..\win\WebKit.resources\zoomOutCursor.png" />
+    <None Include="WebKitPostBuild.cmd" />
+    <None Include="WebKitPreBuild.cmd" />
+    <None Include="WebKitPreLink.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\win\WebKit.resources\WebKit.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

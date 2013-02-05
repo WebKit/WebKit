@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(ConfigurationBuildDir)\include\WebKit\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Midl>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\obj\WebKit\DerivedSources;../../win/Interfaces;$(IntDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Midl>
+      <GenerateStublessProxies>false</GenerateStublessProxies>
+      <OutputDirectory>$(ConfigurationBuildDir)\obj\WebKit\$(ProjectName)</OutputDirectory>
+      <DllDataFileName>dlldata.c</DllDataFileName>
+      <TypeLibraryName>$(ConfigurationBuildDir)\lib\WebKit.tlb</TypeLibraryName>
+      <ValidateAllParameters>true</ValidateAllParameters>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
