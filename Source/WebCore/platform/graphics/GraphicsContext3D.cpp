@@ -519,6 +519,58 @@ template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatBGRA8, uint8_t
     }
 }
 
+template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatABGR8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+{
+    const float scaleFactor = 1.0f / 255.0f;
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[3] * scaleFactor;
+        destination[1] = source[2] * scaleFactor;
+        destination[2] = source[1] * scaleFactor;
+        destination[3] = source[0] * scaleFactor;
+        source += 4;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatARGB8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+{
+    const float scaleFactor = 1.0f / 255.0f;
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[1] * scaleFactor;
+        destination[1] = source[2] * scaleFactor;
+        destination[2] = source[3] * scaleFactor;
+        destination[3] = source[0] * scaleFactor;
+        source += 4;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatRGB8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+{
+    const float scaleFactor = 1.0f / 255.0f;
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[0] * scaleFactor;
+        destination[1] = source[1] * scaleFactor;
+        destination[2] = source[2] * scaleFactor;
+        destination[3] = 1;
+        source += 3;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatBGR8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+{
+    const float scaleFactor = 1.0f / 255.0f;
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = source[2] * scaleFactor;
+        destination[1] = source[1] * scaleFactor;
+        destination[2] = source[0] * scaleFactor;
+        destination[3] = 1;
+        source += 3;
+        destination += 4;
+    }
+}
+
 template<> ALWAYS_INLINE void unpack<GraphicsContext3D::DataFormatRGB32F, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
@@ -1236,10 +1288,6 @@ ALWAYS_INLINE void FormatConverter::convert()
     // Many instantiations of this template function will never be entered, so we try
     // to return immediately in these cases to avoid the compiler to generate useless code.
     if (SrcFormat == DstFormat && alphaOp == GraphicsContext3D::AlphaDoNothing) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    if (IsFloatFormat<DstFormat>::Value && !IsFloatFormat<SrcFormat>::Value && SrcFormat != GraphicsContext3D::DataFormatRGBA8 && SrcFormat != GraphicsContext3D::DataFormatBGRA8) {
         ASSERT_NOT_REACHED();
         return;
     }
