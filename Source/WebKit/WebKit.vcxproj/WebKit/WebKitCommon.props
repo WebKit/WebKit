@@ -7,8 +7,6 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\..\win;$(ProjectDir)\..\..\win\WebCoreSupport;$(ConfigurationBuildDir)\include\WebKit;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj\WebKit\DerivedSources;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;$(WebKit_Libraries)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(WebKit_Libraries)\Include\private\JavaScriptCore;$(WebKit_Libraries)\include\pthreads;$(IntDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>WebKitPrefix.h</PrecompiledHeaderFile>
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>

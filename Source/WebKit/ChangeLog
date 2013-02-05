@@ -1,5 +1,11 @@
 2013-02-05  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Delete some errant preprocessor definitions.
+
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
         VS2010 WebKit projects, scripts, and property sheets.
         https://bugs.webkit.org/show_bug.cgi?id=106989.
 
