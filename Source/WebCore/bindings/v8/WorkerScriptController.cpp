@@ -151,12 +151,13 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
         m_disableEvalPending = String();
     }
 
+    v8::Isolate* isolate = m_context->GetIsolate();
     v8::Context::Scope scope(m_context.get());
 
     v8::TryCatch block;
 
-    v8::Handle<v8::String> scriptString = v8String(script, m_context->GetIsolate());
-    v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
+    v8::Handle<v8::String> scriptString = v8String(script, isolate);
+    v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition, 0, isolate);
     v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
 
     if (!block.CanContinue()) {
@@ -171,7 +172,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
         state->lineNumber = message->GetLineNumber();
         state->sourceURL = toWebCoreString(message->GetScriptResourceName());
         if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
-            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data(), m_context->GetIsolate());
+            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data(), isolate);
         else
             state->exception = ScriptValue(block.Exception());
 

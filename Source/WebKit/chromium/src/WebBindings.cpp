@@ -394,16 +394,17 @@ void WebBindings::toNPVariant(v8::Local<v8::Value> object, NPObject* root, NPVar
 
 v8::Handle<v8::Value> WebBindings::toV8Value(const NPVariant* variant)
 {
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     if (variant->type == NPVariantType_Object) {
         NPObject* object = NPVARIANT_TO_OBJECT(*variant);
         if (object->_class != npScriptObjectClass)
             return v8::Undefined();
         V8NPObject* v8Object = reinterpret_cast<V8NPObject*>(object);
-        return convertNPVariantToV8Object(variant, v8Object->rootObject->frame()->script()->windowScriptNPObject());
+        return convertNPVariantToV8Object(variant, v8Object->rootObject->frame()->script()->windowScriptNPObject(), isolate);
     }
     // Safe to pass 0 since we have checked the script object class to make sure the
     // argument is a primitive v8 type.
-    return convertNPVariantToV8Object(variant, 0);
+    return convertNPVariantToV8Object(variant, 0, isolate);
 }
 #endif
 
