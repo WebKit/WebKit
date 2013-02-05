@@ -1935,15 +1935,4 @@ void KURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif
 }
 
-bool KURL::isSafeToSendToAnotherThread() const
-{
-#if USE(GOOGLEURL)
-    return m_url.isSafeToSendToAnotherThread();
-#elif USE(WTFURL)
-    return m_urlImpl.isSafeToSendToAnotherThread();
-#else // !USE(GOOGLEURL)
-    return m_string.isSafeToSendToAnotherThread();
-#endif
-}
-
 }

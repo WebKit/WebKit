@@ -399,14 +399,6 @@ void KURLGooglePrivate::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
     info.addMember(m_innerURL, "innerURL");
     info.addMember(m_parsed, "parsed");
 }
-
-bool KURLGooglePrivate::isSafeToSendToAnotherThread() const
-{
-    return m_string.isSafeToSendToAnotherThread()
-        && m_utf8.isSafeToSendToAnotherThread()
-        && (!m_innerURL || m_innerURL->isSafeToSendToAnotherThread());
-}
-
 // KURL ------------------------------------------------------------------------
 
 // Initializes with a string representing an absolute URL. No encoding

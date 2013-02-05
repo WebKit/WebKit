@@ -49,11 +49,6 @@ public:
         info.addMember(m_parsedURL, "parsedURL");
         info.addMember(m_invalidUrlString, "invalidUrlString");
     }
-    bool isSafeToSendToAnotherThread() const
-    {
-        return m_invalidUrlString.isSafeToSendToAnotherThread()
-            && m_parsedURL.isSafeToSendToAnotherThread();
-    }
     PassRefPtr<KURLWTFURLImpl> copy() const;
 };
 

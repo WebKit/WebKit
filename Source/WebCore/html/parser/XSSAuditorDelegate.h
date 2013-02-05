@@ -34,14 +34,12 @@ namespace WebCore {
 
 class Document;
 
-class XSSInfo {
+class DidBlockScriptRequest {
 public:
-    static PassOwnPtr<XSSInfo> create(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
+    static PassOwnPtr<DidBlockScriptRequest> create(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
     {
-        return adoptPtr(new XSSInfo(reportURL, originalURL, originalHTTPBody, didBlockEntirePage));
+        return adoptPtr(new DidBlockScriptRequest(reportURL, originalURL, originalHTTPBody, didBlockEntirePage));
     }
-
-    bool isSafeToSendToAnotherThread() const;
 
     KURL m_reportURL;
     String m_originalURL;
@@ -49,7 +47,7 @@ public:
     bool m_didBlockEntirePage;
 
 private:
-    XSSInfo(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
+    DidBlockScriptRequest(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
         : m_reportURL(reportURL)
         , m_originalURL(originalURL)
         , m_originalHTTPBody(originalHTTPBody)
@@ -62,7 +60,7 @@ class XSSAuditorDelegate {
 public:
     explicit XSSAuditorDelegate(Document*);
 
-    void didBlockScript(const XSSInfo&);
+    void didBlockScript(PassOwnPtr<DidBlockScriptRequest>);
 
 private:
     Document* m_document;

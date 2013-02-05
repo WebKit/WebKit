@@ -99,11 +99,6 @@ void CString::copyBufferIfNeeded()
     memcpy(m_buffer->mutableData(), buffer->data(), length + 1);
 }
 
-bool CString::isSafeToSendToAnotherThread() const
-{
-    return !m_buffer || m_buffer->hasOneRef();
-}
-
 bool operator==(const CString& a, const CString& b)
 {
     if (a.isNull() != b.isNull())

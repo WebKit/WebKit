@@ -661,17 +661,6 @@ String String::isolatedCopy() const
     return m_impl->isolatedCopy();
 }
 
-bool String::isSafeToSendToAnotherThread() const
-{
-    if (!impl())
-        return true;
-    if (impl()->hasOneRef())
-        return true;
-    if (isEmpty())
-        return true;
-    return false;
-}
-
 void String::split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const
 {
     result.clear();
