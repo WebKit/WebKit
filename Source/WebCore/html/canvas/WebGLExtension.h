@@ -42,7 +42,7 @@ public:
         OESVertexArrayObjectName,
         WebGLDebugRendererInfoName,
         WebGLDebugShadersName,
-        WebKitWebGLCompressedTextureS3TCName, // WEBKIT_ prefix until extension is official
+        WebGLCompressedTextureS3TCName,
         WebKitWebGLDepthTextureName, // WEBKIT_ prefix until extension is official
         OESElementIndexUintName,
     };
