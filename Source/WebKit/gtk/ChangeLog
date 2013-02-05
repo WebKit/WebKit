@@ -1,3 +1,11 @@
+2013-02-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the NEWS and configuration in preparation for 1.11.5.
+
+        Reviewed by Philippe Normand.
+
+        * NEWS:
+
 2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Kill suspendAnimation(), resumeAnimation() and numberOfActiveAnimations() from DRT/WTR; use Internals

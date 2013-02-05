@@ -1,4 +1,36 @@
 =================
+WebKitGTK+ 1.11.5
+=================
+
+What's new in WebKitGTK+ 1.11.5?
+
+  - Fix crashes related to libsoup, gstreamer, and accessibility.
+  - Implement the WebKit2 resources API using the injected bundle.
+  - Add API to prefetch DNS of a given hostname to the WebKit2 API.
+  - Move Authentication and Downloads from WebProcess to Shared in
+    WebKit2.
+  - Many improvements to the GStreamer backend including the resurrection of
+    the native fullscreen mode for increased performance, support for
+    setPreservesPitch, bug fixes, support for Opus files, and
+    some other performance improvements.
+  - New features enabled: CSS Image Resolution, CSS Image Orientation,
+    and the performance timeline in the Web Inspector via resource timing
+    and navigation timing.
+  - Add support for blend modes to the Cairo backend.
+  - Fix for checkSpellingOfString erroneously treating multiple words
+    as spelled correctly.
+  - Characters outside the BMP are now properly rendered.
+  - Synthetic bold is now applied to fallback fonts properly.
+  - Better drag and drop icons during drags on non-composited desktops.
+  - The page title is now preserved in WebKit when disappearing when clicking on
+    an anchor link.
+  - The web database path setting in WebKit1 now also controls where IndexedDB
+    databases are stored.
+  - Fix various issues in the build tools, testing tools, Web Inspector, and
+    MiniBrowser.
+
+
+=================
 WebKitGTK+ 1.11.4
 =================
 
