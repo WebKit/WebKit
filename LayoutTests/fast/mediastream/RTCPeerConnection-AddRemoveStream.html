@@ -8,6 +8,7 @@
 description("Tests RTCPeerConnection [add|remove]Stream.");
 
 var stream = null;
+var stream2 = null;
 var pc = null;
 
 function error() {
@@ -24,30 +25,57 @@ function getUserMedia(dictionary, callback) {
     }
 }
 
+function onErroneousRemoveStream() {
+    testFailed('onErroneousRemoveStream was called.');
+    finishJSTest();
+}
+
 function onRemoveStream(event) {
     testPassed('onRemoveStream was called.');
 
+    shouldBe('pc.getLocalStreams().length', '0');
+
+    finishJSTest();
+}
+
+function onErroneousAddStream() {
+    testFailed('onErroneousAddStream was called.');
     finishJSTest();
 }
 
 function onAddStream(event) {
     testPassed('onAddStream was called.');
 
+    pc.onaddstream = onErroneousAddStream;
+    pc.addStream(stream);
+    shouldBe('pc.getLocalStreams().length', '1');
+
+    pc.onremovestream = onErroneousRemoveStream;
+    pc.removeStream(stream2);
+    shouldBe('pc.getLocalStreams().length', '1');
+
+    pc.onremovestream = onRemoveStream;
     pc.removeStream(stream);
 }
 
-function gotStream(s) {
-    testPassed('Got a stream.');
-    stream = s;
+function gotStream2(s) {
+    testPassed('Got another stream.');
+    stream2 = s;
 
     pc = new webkitRTCPeerConnection(null, null);
-    pc.onaddstream = onAddStream;
-    pc.onremovestream = onRemoveStream;
 
+    pc.onaddstream = onAddStream;
     pc.addStream(stream);
 }
 
-getUserMedia({audio:true, video:true}, gotStream);
+function gotStream1(s) {
+    testPassed('Got a stream.');
+    stream = s;
+
+    getUserMedia({audio:true, video:true}, gotStream2);
+}
+
+getUserMedia({audio:true, video:true}, gotStream1);
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

@@ -4,8 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS Got a stream.
+PASS Got another stream.
 PASS onAddStream was called.
+PASS pc.getLocalStreams().length is 1
+PASS pc.getLocalStreams().length is 1
 PASS onRemoveStream was called.
+PASS pc.getLocalStreams().length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

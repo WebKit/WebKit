@@ -38,7 +38,6 @@
 #include "EventTarget.h"
 #include "ExceptionBase.h"
 #include "MediaStream.h"
-#include "MediaStreamList.h"
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnectionHandler.h"
 #include "RTCPeerConnectionHandlerClient.h"
@@ -85,13 +84,13 @@ public:
 
     String iceConnectionState() const;
 
-    MediaStreamList* localStreams() const;
+    MediaStreamVector getLocalStreams() const;
 
-    MediaStreamList* remoteStreams() const;
+    MediaStreamVector getRemoteStreams() const;
 
-    void addStream(const PassRefPtr<MediaStream>, const Dictionary& mediaConstraints, ExceptionCode&);
+    void addStream(PassRefPtr<MediaStream>, const Dictionary& mediaConstraints, ExceptionCode&);
 
-    void removeStream(MediaStream*, ExceptionCode&);
+    void removeStream(PassRefPtr<MediaStream>, ExceptionCode&);
 
     void getStats(PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<MediaStreamTrack> selector);
 
@@ -150,8 +149,8 @@ private:
     IceGatheringState m_iceGatheringState;
     IceConnectionState m_iceConnectionState;
 
-    RefPtr<MediaStreamList> m_localStreams;
-    RefPtr<MediaStreamList> m_remoteStreams;
+    MediaStreamVector m_localStreams;
+    MediaStreamVector m_remoteStreams;
 
     Vector<RefPtr<RTCDataChannel> > m_dataChannels;
 

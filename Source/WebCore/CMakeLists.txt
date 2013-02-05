@@ -216,7 +216,6 @@ set(WebCore_IDL_FILES
     Modules/mediastream/LocalMediaStream.idl
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamEvent.idl
-    Modules/mediastream/MediaStreamList.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
     Modules/mediastream/NavigatorMediaStream.idl
@@ -860,7 +859,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamEvent.cpp
-    Modules/mediastream/MediaStreamList.cpp
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
     Modules/mediastream/MediaStreamTrackEvent.cpp
