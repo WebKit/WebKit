@@ -11,7 +11,7 @@
   <script>
     function checkRunning()
     {
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == 0)
         document.getElementById('result').innerHTML = "Number of active animations before transition is (0) as expected";
       else

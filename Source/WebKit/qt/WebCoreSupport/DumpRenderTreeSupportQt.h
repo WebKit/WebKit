@@ -124,7 +124,6 @@ public:
     static void webPageSetGroupName(QWebPageAdapter*, const QString& groupName);
     static void clearFrameName(QWebFrameAdapter*);
     static void overwritePluginDirectories();
-    static int numberOfActiveAnimations(QWebFrameAdapter*);
     static bool hasDocumentElement(QWebFrameAdapter*);
     static bool elementDoesAutoCompleteForElementWithId(QWebFrameAdapter*, const QString& elementId);
     static void setWindowsBehaviorAsEditingBehavior(QWebPageAdapter*);

@@ -97,10 +97,8 @@ interface TestRunner {
     [PassContext] void setValueForUser(in object element, in DOMString value);
 
     // Animation testing.
-    int numberOfActiveAnimations();
     boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);
     boolean pauseTransitionAtTimeOnElementWithId(in DOMString propertyName, in double time, in DOMString elementId);
-    void suspendAnimations();
 
     // UserContent testing.
     void addUserScript(in DOMString source, in boolean runAtStart, in boolean allFrames);

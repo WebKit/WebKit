@@ -185,7 +185,6 @@ TestRunner::TestRunner()
     bindMethod("pauseAnimationAtTimeOnElementWithId", &TestRunner::pauseAnimationAtTimeOnElementWithId);
     bindMethod("pauseTransitionAtTimeOnElementWithId", &TestRunner::pauseTransitionAtTimeOnElementWithId);
     bindMethod("elementDoesAutoCompleteForElementWithId", &TestRunner::elementDoesAutoCompleteForElementWithId);
-    bindMethod("numberOfActiveAnimations", &TestRunner::numberOfActiveAnimations);
     bindMethod("callShouldCloseOnWebView", &TestRunner::callShouldCloseOnWebView);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &TestRunner::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("evaluateScriptInIsolatedWorldAndReturnValue", &TestRunner::evaluateScriptInIsolatedWorldAndReturnValue);
@@ -1105,19 +1104,6 @@ bool TestRunner::elementDoesAutoCompleteForElementWithId(const WebString& elemen
     return inputElement.autoComplete();
 }
 
-int TestRunner::numberOfActiveAnimations()
-{
-    WebFrame* webFrame = m_webView->mainFrame();
-    if (!webFrame)
-        return -1;
-
-    WebAnimationController* controller = webFrame->animationController();
-    if (!controller)
-        return -1;
-
-    return controller->numberOfActiveAnimations();
-}
-
 void TestRunner::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
@@ -1148,11 +1134,6 @@ void TestRunner::elementDoesAutoCompleteForElementWithId(const CppArgumentList& 
     }
     WebString elementId = cppVariantToWebString(arguments[0]);
     result->set(elementDoesAutoCompleteForElementWithId(elementId));
-}
-
-void TestRunner::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
-{
-    result->set(numberOfActiveAnimations());
 }
 
 void TestRunner::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)

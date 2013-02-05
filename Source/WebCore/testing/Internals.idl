@@ -66,6 +66,9 @@
     boolean hasSelectorForAttributeInShadow(in Element host, in DOMString attributeName) raises (DOMException);
     boolean hasSelectorForPseudoClassInShadow(in Element host, in DOMString pseudoClass) raises (DOMException);
 
+    unsigned long numberOfActiveAnimations();
+    void suspendAnimations(in Document document) raises (DOMException);
+    void resumeAnimations(in Document document) raises (DOMException);
     boolean pauseAnimationAtTimeOnPseudoElement(in DOMString animationName, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
     boolean pauseTransitionAtTimeOnPseudoElement(in DOMString property, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
 
@@ -163,9 +166,6 @@
     boolean isPageBoxVisible(in Document document, in long pageNumber) raises (DOMException);
 
     readonly attribute InternalSettings settings;
-
-    void suspendAnimations(in Document document) raises (DOMException);
-    void resumeAnimations(in Document document) raises (DOMException);
 
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;

@@ -960,19 +960,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return controller->pauseTransitionAtTime(coreNode->renderer(), name, time);
 }
 
-- (unsigned) _numberOfActiveAnimations
-{
-    Frame* frame = core(self);
-    if (!frame)
-        return false;
-
-    AnimationController* controller = frame->animation();
-    if (!controller)
-        return false;
-
-    return controller->numberOfActiveAnimations(frame->document());
-}
-
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)

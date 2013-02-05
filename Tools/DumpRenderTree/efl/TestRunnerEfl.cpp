@@ -665,11 +665,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     return DumpRenderTreeSupportEfl::pauseTransition(browser->mainFrame(), propertyName->string().utf8().data(), elementId->string().utf8().data(), time);
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    return DumpRenderTreeSupportEfl::activeAnimationsCount(browser->mainFrame());
-}
-
 static inline bool toBool(JSStringRef value)
 {
     return equals(value, "true") || equals(value, "1");

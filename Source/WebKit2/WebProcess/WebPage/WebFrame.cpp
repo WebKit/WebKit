@@ -417,18 +417,6 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
     return ImmutableArray::adopt(vector);
 }
 
-unsigned WebFrame::numberOfActiveAnimations() const
-{
-    if (!m_coreFrame)
-        return 0;
-
-    AnimationController* controller = m_coreFrame->animation();
-    if (!controller)
-        return 0;
-
-    return controller->numberOfActiveAnimations(m_coreFrame->document());
-}
-
 bool WebFrame::pauseAnimationOnElementWithId(const AtomicString& animationName, const String& elementID, double time)
 {
     if (!m_coreFrame)
@@ -465,30 +453,6 @@ bool WebFrame::pauseTransitionOnElementWithId(const String& propertyName, const 
         return false;
 
     return controller->pauseTransitionAtTime(coreNode->renderer(), propertyName, time);
-}
-
-void WebFrame::suspendAnimations()
-{
-    if (!m_coreFrame)
-        return;
-
-    AnimationController* controller = m_coreFrame->animation();
-    if (!controller)
-        return;
-
-    controller->suspendAnimations();
-}
-
-void WebFrame::resumeAnimations()
-{
-    if (!m_coreFrame)
-        return;
-
-    AnimationController* controller = m_coreFrame->animation();
-    if (!controller)
-        return;
-
-    controller->resumeAnimations();
 }
 
 String WebFrame::layerTreeAsText() const

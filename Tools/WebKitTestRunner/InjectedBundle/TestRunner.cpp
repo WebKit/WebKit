@@ -166,14 +166,6 @@ void TestRunner::setCustomTimeout(int timeout)
     m_timeout = timeout;
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    // FIXME: Is it OK this works only for the main frame?
-    // FIXME: If this is needed only for the main frame, then why is the function on WKBundleFrame instead of WKBundlePage?
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    return WKBundleFrameGetNumberOfActiveAnimations(mainFrame);
-}
-
 bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
     // FIXME: Is it OK this works only for the main frame?
@@ -188,12 +180,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     // FIXME: If this is needed only for the main frame, then why is the function on WKBundleFrame instead of WKBundlePage?
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFramePauseTransitionOnElementWithId(mainFrame, toWK(propertyName).get(), toWK(elementId).get(), time);
-}
-
-void TestRunner::suspendAnimations()
-{
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    WKBundleFrameSuspendAnimations(mainFrame);
 }
 
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)

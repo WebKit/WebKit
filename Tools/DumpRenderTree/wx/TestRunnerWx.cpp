@@ -304,12 +304,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     // FIXME: implement
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    // FIXME: implement
-    return 0;
-}
-
 unsigned TestRunner::workerThreadCount() const
 {
     // FIXME: implement

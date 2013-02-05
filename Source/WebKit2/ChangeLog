@@ -1,3 +1,19 @@
+2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Kill suspendAnimation(), resumeAnimation() and numberOfActiveAnimations() from DRT/WTR; use Internals
+        https://bugs.webkit.org/show_bug.cgi?id=108741
+
+        Reviewed by Tony Chang.
+
+        Suspending and resuming application has been useless for a one. Someone just
+        "forgot" WebKit2.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+
 2013-02-04  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK2] Implement runBeforeUnloadConfirmPanel on EFL

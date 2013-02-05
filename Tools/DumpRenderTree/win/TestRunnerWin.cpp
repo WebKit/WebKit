@@ -1063,19 +1063,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     return SUCCEEDED(hr) && wasRunning;
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return 0;
-
-    UINT number = 0;
-    if (FAILED(framePrivate->numberOfActiveAnimations(&number)))
-        return 0;
-
-    return number;
-}
-
 static _bstr_t bstrT(JSStringRef jsString)
 {
     // The false parameter tells the _bstr_t constructor to adopt the BSTR we pass it.

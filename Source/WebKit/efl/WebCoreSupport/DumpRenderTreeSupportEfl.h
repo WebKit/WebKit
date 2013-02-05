@@ -53,7 +53,6 @@ public:
     static void setDumpRenderTreeModeEnabled(bool);
     static bool dumpRenderTreeModeEnabled();
 
-    static unsigned activeAnimationsCount(const Evas_Object* ewkFrame);
     static bool callShouldCloseOnWebView(Evas_Object* ewkFrame);
     static void clearFrameName(Evas_Object* ewkFrame);
     static void clearOpener(Evas_Object* ewkFrame);

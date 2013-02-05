@@ -96,6 +96,9 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);
 
+    unsigned numberOfActiveAnimations() const;
+    void suspendAnimations(Document*, ExceptionCode&) const;
+    void resumeAnimations(Document*, ExceptionCode&) const;
     bool pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element*, const String& pseudoId, ExceptionCode&);
     bool pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element*, const String& pseudoId, ExceptionCode&);
 
@@ -203,9 +206,6 @@ public:
     void setNetworkInformation(Document*, const String& eventType, double bandwidth, bool metered, ExceptionCode&);
 
     void setDeviceProximity(Document*, const String& eventType, double value, double min, double max, ExceptionCode&);
-
-    void suspendAnimations(Document*, ExceptionCode&) const;
-    void resumeAnimations(Document*, ExceptionCode&) const;
 
     enum {
         // Values need to be kept in sync with Internals.idl.

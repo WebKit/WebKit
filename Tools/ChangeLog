@@ -1,3 +1,34 @@
+2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Kill suspendAnimation(), resumeAnimation() and numberOfActiveAnimations() from DRT/WTR; use Internals
+        https://bugs.webkit.org/show_bug.cgi?id=108741
+
+        Reviewed by Tony Chang.
+
+        Remove all support for suspendAnimation(), resumeAnimation() and numberOfActiveAnimations().
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        * DumpRenderTree/wx/TestRunnerWx.cpp:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
 2013-02-04  Nico Weber  <thakis@chromium.org>
 
         [chromium] Try to get WebKit building with enable_web_intents set to 0 on Windows too.

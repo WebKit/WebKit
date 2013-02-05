@@ -341,20 +341,6 @@ bool DumpRenderTreeSupportQt::pauseTransitionOfProperty(QWebFrameAdapter *adapte
     return controller->pauseTransitionAtTime(coreNode->renderer(), propertyName, time);
 }
 
-// Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
-int DumpRenderTreeSupportQt::numberOfActiveAnimations(QWebFrameAdapter *adapter)
-{
-    Frame* coreFrame = adapter->frame;
-    if (!coreFrame)
-        return false;
-
-    AnimationController* controller = coreFrame->animation();
-    if (!controller)
-        return false;
-
-    return controller->numberOfActiveAnimations(coreFrame->document());
-}
-
 void DumpRenderTreeSupportQt::clearFrameName(QWebFrameAdapter *adapter)
 {
     Frame* coreFrame = adapter->frame;

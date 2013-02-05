@@ -389,18 +389,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     return animationController->pauseTransitionAtTime(node->renderer(), name.get(), time);
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    if (!mainFrame)
-        return false;
-
-    WebCore::AnimationController* animationController = mainFrame->animation();
-    if (!animationController)
-        return false;
-
-    return animationController->numberOfActiveAnimations(mainFrame->document());
-}
-
 unsigned TestRunner::workerThreadCount() const
 {
 #if ENABLE_WORKERS

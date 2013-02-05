@@ -50,7 +50,7 @@
    
     function sample0() {
       var expected = 4;
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result0').innerHTML = "Number of active animations at 0s is (" + current + ") as expected";
       else
@@ -59,7 +59,7 @@
     
     function sample1() {
       var expected = 4;
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result1').innerHTML = "Number of active animations at 1s is (" + current + ") as expected";
       else

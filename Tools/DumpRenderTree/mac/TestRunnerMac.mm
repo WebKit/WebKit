@@ -807,11 +807,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     return [mainFrame _pauseTransitionOfProperty:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    return [mainFrame _numberOfActiveAnimations];
-}
-
 void TestRunner::waitForPolicyDelegate()
 {
     setWaitToDump(true);

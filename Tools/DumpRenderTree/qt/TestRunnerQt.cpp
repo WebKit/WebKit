@@ -564,13 +564,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(const QString& propertyNam
     return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame->handle(), propertyName, time, elementId);
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    QWebFrame* frame = m_drt->webPage()->mainFrame();
-    Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame->handle());
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495

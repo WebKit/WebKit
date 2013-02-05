@@ -29,7 +29,7 @@
     function testTransitions()
     {
       if (window.testRunner) {
-        var numAnims = testRunner.numberOfActiveAnimations();
+        var numAnims = internals.numberOfActiveAnimations();
         if (numAnims == 0)
           log('No running transitions: PASS');
         else

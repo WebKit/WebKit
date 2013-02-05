@@ -1679,15 +1679,6 @@ static JSValueRef pauseTransitionAtTimeOnElementWithIdCallback(JSContextRef cont
     return JSValueMakeBoolean(context, controller->pauseTransitionAtTimeOnElementWithId(propertyName.get(), time, elementId.get()));
 }
 
-static JSValueRef numberOfActiveAnimationsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 0)
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, controller->numberOfActiveAnimations());
-}
-
 static JSValueRef waitForPolicyDelegateCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -2237,7 +2228,6 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "numberOfPendingGeolocationPermissionRequests", numberOfPendingGeolocationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "markerTextForListItem", markerTextForListItemCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

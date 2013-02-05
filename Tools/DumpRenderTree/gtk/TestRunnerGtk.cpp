@@ -740,11 +740,6 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, 
     return returnValue;
 }
 
-unsigned TestRunner::numberOfActiveAnimations() const
-{
-    return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);
-}
-
 static gboolean booleanFromValue(gchar* value)
 {
     return !g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1");

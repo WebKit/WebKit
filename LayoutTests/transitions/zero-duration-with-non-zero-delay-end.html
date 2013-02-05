@@ -22,7 +22,7 @@
    <script>
     function sample0() {
       var expected = 1;
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") as expected";
       else
@@ -31,7 +31,7 @@
     
     function sample1() {
       var expected = 0;
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") as expected";
       else

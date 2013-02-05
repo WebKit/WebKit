@@ -1551,3 +1551,4 @@ EXPORTS
         ?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderObject@2@ABVString@WTF@@N@Z
         ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z
         ?nonFastScrollableRects@Page@WebCore@@QAE?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z
+        ?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z

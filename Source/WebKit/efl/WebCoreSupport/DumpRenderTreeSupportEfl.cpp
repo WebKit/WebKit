@@ -98,18 +98,6 @@ bool DumpRenderTreeSupportEfl::dumpRenderTreeModeEnabled()
     return s_drtRun;
 }
 
-unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkFrame)
-{
-    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
-
-    WebCore::AnimationController* animationController = frame->animation();
-
-    if (!animationController)
-        return 0;
-
-    return animationController->numberOfActiveAnimations(frame->document());
-}
-
 bool DumpRenderTreeSupportEfl::callShouldCloseOnWebView(Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, false);

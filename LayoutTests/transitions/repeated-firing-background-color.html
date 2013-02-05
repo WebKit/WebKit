@@ -16,7 +16,7 @@
         return;
       }
         
-      var current = testRunner.numberOfActiveAnimations();
+      var current = internals.numberOfActiveAnimations();
       if (current == 0)
         document.getElementById('result').innerHTML = "Number of active transitions is (0) as expected";
       else

@@ -202,7 +202,6 @@ private:
     void pauseAnimationAtTimeOnElementWithId(const CppArgumentList&, CppVariant*);
     void pauseTransitionAtTimeOnElementWithId(const CppArgumentList&, CppVariant*);
     void elementDoesAutoCompleteForElementWithId(const CppArgumentList&, CppVariant*);
-    void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
     void callShouldCloseOnWebView(const CppArgumentList&, CppVariant*);
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
     void evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList&, CppVariant*);
@@ -517,7 +516,6 @@ private:
     bool pauseAnimationAtTimeOnElementWithId(const WebKit::WebString& animationName, double time, const WebKit::WebString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const WebKit::WebString& propertyName, double time, const WebKit::WebString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
-    int numberOfActiveAnimations();
     bool cppVariantToBool(const CppVariant&);
     int32_t cppVariantToInt32(const CppVariant&);
     WebKit::WebString cppVariantToWebString(const CppVariant&);

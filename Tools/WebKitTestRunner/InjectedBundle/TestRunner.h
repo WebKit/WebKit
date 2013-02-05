@@ -132,10 +132,8 @@ public:
     void display();
 
     // Animation testing.
-    unsigned numberOfActiveAnimations() const;
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
     bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
-    void suspendAnimations();
     
     // UserContent testing.
     void addUserScript(JSStringRef source, bool runAtStart, bool allFrames);

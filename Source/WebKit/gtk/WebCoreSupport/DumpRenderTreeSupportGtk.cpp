@@ -268,15 +268,6 @@ CString DumpRenderTreeSupportGtk::markerTextForListItem(WebKitWebFrame* frame, J
     return WebCore::markerTextForListItem(element).utf8();
 }
 
-unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* frame)
-{
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return 0;
-
-    return coreFrame->animation()->numberOfActiveAnimations(coreFrame->document());
-}
-
 void DumpRenderTreeSupportGtk::clearMainFrameName(WebKitWebFrame* frame)
 {
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
