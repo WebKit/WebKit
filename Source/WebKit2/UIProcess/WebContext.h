@@ -132,7 +132,9 @@ public:
     // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
     template<typename U> void sendToNetworkingProcess(const U& message);
     template<typename U> void sendToNetworkingProcessRelaunchingIfNecessary(const U& message);
-    
+
+    void processWillOpenConnection(WebProcessProxy*);
+    void processWillCloseConnection(WebProcessProxy*);
     void processDidFinishLaunching(WebProcessProxy*);
 
     // Disconnect the process from the context.

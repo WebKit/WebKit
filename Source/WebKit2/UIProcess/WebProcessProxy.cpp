@@ -129,11 +129,17 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
 void WebProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
 {
+    ASSERT(this->connection() == connection);
+
+    m_context->processWillOpenConnection(this);
     connection->addQueueClient(this);
 }
 
 void WebProcessProxy::connectionWillClose(CoreIPC::Connection* connection)
 {
+    ASSERT(this->connection() == connection);
+
+    m_context->processWillCloseConnection(this);
     connection->removeQueueClient(this);
 }
 
@@ -531,7 +537,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Con
 
     m_webConnection = WebConnectionToWebProcess::create(this);
 
-    // Tell the context that we finished launching.
     m_context->processDidFinishLaunching(this);
 
 #if PLATFORM(MAC)

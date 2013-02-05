@@ -588,6 +588,16 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     return true;
 }
 
+void WebContext::processWillOpenConnection(WebProcessProxy* process)
+{
+    m_storageManager->processWillOpenConnection(process);
+}
+
+void WebContext::processWillCloseConnection(WebProcessProxy* process)
+{
+    m_storageManager->processWillCloseConnection(process);
+}
+
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));

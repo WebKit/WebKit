@@ -35,11 +35,15 @@ class WorkQueue;
 namespace WebKit {
 
 struct SecurityOriginData;
+class WebProcessProxy;
 
-class StorageManager : public ThreadSafeRefCounted<StorageManager>, public CoreIPC::Connection::QueueClient {
+class StorageManager : public ThreadSafeRefCounted<StorageManager>, private CoreIPC::Connection::QueueClient {
 public:
     static PassRefPtr<StorageManager> create();
     ~StorageManager();
+
+    void processWillOpenConnection(WebProcessProxy*);
+    void processWillCloseConnection(WebProcessProxy*);
 
 private:
     StorageManager();

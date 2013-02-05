@@ -1,5 +1,36 @@
 2013-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Set up the storage manager as a connection queue
+        https://bugs.webkit.org/show_bug.cgi?id=108879
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::processWillOpenConnection):
+        Add the storage manager as a connection queue client.
+
+        (WebKit::StorageManager::processWillCloseConnection):
+        Remove the storage manager.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processWillOpenConnection):
+        Call the storage manager.
+
+        (WebKit::WebContext::processWillCloseConnection):
+        Call the storage manager.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        Call the context.
+
+        (WebKit::WebProcessProxy::connectionWillClose):
+        Call the context.
+
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Remove a comment.
+
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
         Send message when creating and destroying StorageAreaProxy objects
         https://bugs.webkit.org/show_bug.cgi?id=108874
 

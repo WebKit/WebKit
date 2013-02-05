@@ -27,6 +27,7 @@
 #include "StorageManager.h"
 
 #include "StorageManagerMessages.h"
+#include "WebProcessProxy.h"
 #include "WorkQueue.h"
 
 namespace WebKit {
@@ -43,6 +44,16 @@ StorageManager::StorageManager()
 
 StorageManager::~StorageManager()
 {
+}
+
+void StorageManager::processWillOpenConnection(WebProcessProxy* webProcessProxy)
+{
+    webProcessProxy->connection()->addQueueClient(this);
+}
+
+void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy)
+{
+    webProcessProxy->connection()->removeQueueClient(this);
 }
 
 void StorageManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
