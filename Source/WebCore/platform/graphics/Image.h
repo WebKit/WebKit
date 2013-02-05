@@ -128,7 +128,7 @@ public:
     virtual void destroyDecodedData(bool destroyAll = true) = 0;
     virtual unsigned decodedSize() const = 0;
 
-    SharedBuffer* data() { return m_data.get(); }
+    SharedBuffer* data() { return m_encodedImageData.get(); }
 
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.
@@ -207,7 +207,7 @@ protected:
     virtual Color solidColor() const { return Color(); }
     
 private:
-    RefPtr<SharedBuffer> m_data; // The encoded raw data for the image. 
+    RefPtr<SharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
 };
 

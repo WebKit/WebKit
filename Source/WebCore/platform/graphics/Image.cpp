@@ -70,11 +70,11 @@ bool Image::supportsType(const String& type)
 
 bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    m_data = data;
-    if (!m_data.get())
+    m_encodedImageData = data;
+    if (!m_encodedImageData.get())
         return true;
 
-    int length = m_data->size();
+    int length = m_encodedImageData->size();
     if (!length)
         return true;
     
@@ -203,7 +203,7 @@ void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     memoryObjectInfo->setClassName("Image");
-    info.addMember(m_data, "m_data");
+    info.addMember(m_encodedImageData, "encodedImageData");
     info.addWeakPointer(m_imageObserver);
 }
 
