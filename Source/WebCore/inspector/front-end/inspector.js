@@ -576,7 +576,7 @@ WebInspector.close = function(event)
 WebInspector.documentClick = function(event)
 {
     var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
-    if (!anchor || anchor.target === "_blank")
+    if (!anchor || (anchor.target === "_blank" && !WebInspector.ProfileURLRegExp.exec(anchor.href)))
         return;
 
     // Prevent the link from navigating, since we don't do any navigation by following links normally.
