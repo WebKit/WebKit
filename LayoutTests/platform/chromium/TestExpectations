@@ -4336,3 +4336,5 @@ webkit.org/b/108790 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/grad
 
 webkit.org/b/108876 [ Linux ] media/track/track-cues-cuechange.html [ Slow ]
 webkit.org/b/108876 [ Linux ] media/track/track-cues-enter-exit.html [ Slow ]
+
+webkit.org/b/108912 inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html [ Pass Failure ]
