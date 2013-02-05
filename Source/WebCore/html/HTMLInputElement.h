@@ -280,6 +280,7 @@ public:
 
     virtual void blur() OVERRIDE;
     void defaultBlur();
+    virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone) OVERRIDE;
 
     virtual const AtomicString& name() const OVERRIDE;
 

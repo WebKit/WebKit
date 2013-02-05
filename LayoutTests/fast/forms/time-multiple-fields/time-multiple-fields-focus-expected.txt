@@ -1,0 +1,14 @@
+Check if focus() for focused input does not change focused sub-field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Move focus to the second sub-field, then press Up key:
+PASS document.activeElement is timeInput
+PASS timeInput.value is "01:02"
+Calls focus(), then press Up key:
+PASS timeInput.value is "01:03"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

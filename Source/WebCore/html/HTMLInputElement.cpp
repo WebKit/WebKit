@@ -370,6 +370,12 @@ void HTMLInputElement::defaultBlur()
     HTMLTextFormControlElement::blur();
 }
 
+void HTMLInputElement::focus(bool restorePreviousSelection, FocusDirection direction)
+{
+    if (!m_inputType->willCancelFocus(restorePreviousSelection, direction))
+        HTMLTextFormControlElement::focus(restorePreviousSelection, direction);
+}
+
 bool HTMLInputElement::hasCustomFocusLogic() const
 {
     return m_inputType->hasCustomFocusLogic();

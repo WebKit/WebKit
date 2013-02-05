@@ -214,6 +214,7 @@ public:
 #endif
 
     virtual void blur();
+    virtual bool willCancelFocus(bool restorePreviousSelection, FocusDirection);
 
     // Shadow tree handling
 

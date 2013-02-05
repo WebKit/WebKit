@@ -470,6 +470,11 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
+bool InputType::willCancelFocus(bool, FocusDirection)
+{
+    return false;
+}
+
 void InputType::createShadowSubtree()
 {
 }

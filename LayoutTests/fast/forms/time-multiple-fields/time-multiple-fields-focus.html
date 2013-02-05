@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<input id="timeInput" type="time" value="01:01" autofocus>
+<script>
+function dispatchKeyEventTo(type, key, target) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent(type, true, true, document.defaultView, key);
+    target.dispatchEvent(event);
+}
+
+description('Check if focus() for focused input does not change focused sub-field.');
+debug('Move focus to the second sub-field, then press Up key:');
+var timeInput = document.getElementById('timeInput');
+shouldBe('document.activeElement', 'timeInput');
+dispatchKeyEventTo('keydown', 'Right', timeInput);
+dispatchKeyEventTo('keydown', 'Up', timeInput);
+shouldBeEqualToString('timeInput.value', '01:02');
+
+debug('Calls focus(), then press Up key:');
+timeInput.focus();
+dispatchKeyEventTo('keydown', 'Up', timeInput);
+shouldBeEqualToString('timeInput.value', '01:03');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
