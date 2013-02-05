@@ -6,6 +6,7 @@
 <p>Mac: <span id="resultmac">RUNNING</span></p>
 <p>Win: <span id="resultwin">RUNNING</span></p>
 <p>Unix: <span id="resultunix">RUNNING</span></p>
+<p>Android: <span id="resultandroid">RUNNING</span></p>
 
 <script>
 function test(platform, result) {
@@ -33,6 +34,7 @@ if (window.eventSender && window.testRunner && window.internals) {
     test('mac', 'resultmac');
     test('win', 'resultwin');
     test('unix', 'resultunix');
+    test('android', 'resultandroid');
 }
 </script>
 

@@ -16,7 +16,7 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
         testFailed(action + '", expected "' + expectedContents + '"');
 }
 
-platforms = ['mac', 'win', 'unix'];
+platforms = ['mac', 'win', 'unix', 'android'];
 
 for (var i = 0; i < platforms.length; i++) {
     platform = platforms[i];
@@ -25,7 +25,7 @@ for (var i = 0; i < platforms.length; i++) {
     if (window.internals)
         internals.settings.setEditingBehavior(platform);
 
-    if (platform == 'win' || platform == 'unix')
+    if (platform != 'mac')
         platform = 'nonmac';
 
     testSingleToggle("bold", "<u><b>hello</b> world</u>", {mac: '<u>hello world</u>', nonmac: '<u><b>hello world</b></u>'}[platform]);

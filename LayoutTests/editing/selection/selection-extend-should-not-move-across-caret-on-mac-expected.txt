@@ -14,4 +14,18 @@ Extend backward and then forward by line: PASS
 Extend forward and then backward by line: PASS
 Extend backward and then forward by paragraph: PASS
 Extend forward and then backward by paragraph: PASS
+unix:
+Extend backward and then forward by word: PASS
+Extend forward and then backward by word: PASS
+Extend backward and then forward by line: PASS
+Extend forward and then backward by line: PASS
+Extend backward and then forward by paragraph: PASS
+Extend forward and then backward by paragraph: PASS
+android:
+Extend backward and then forward by word: PASS
+Extend forward and then backward by word: PASS
+Extend backward and then forward by line: PASS
+Extend forward and then backward by line: PASS
+Extend backward and then forward by paragraph: PASS
+Extend forward and then backward by paragraph: PASS
 

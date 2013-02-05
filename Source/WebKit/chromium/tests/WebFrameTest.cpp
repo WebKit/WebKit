@@ -1789,6 +1789,41 @@ TEST_F(WebFrameTest, SelectRangeCanMoveSelectionEnd)
     webView->close();
 }
 
+#if OS(ANDROID)
+TEST_F(WebFrameTest, MoveCaretStaysHorizontallyAlignedWhenMoved)
+{
+    WebView* webView;
+    WebFrameImpl* frame;
+    registerMockedHttpURLLoad("move_caret.html");
+
+    webView = createWebViewForTextSelection(m_baseURL + "move_caret.html");
+    frame = (WebFrameImpl*)webView->mainFrame();
+
+    WebRect initialStartRect;
+    WebRect initialEndRect;
+    WebRect startRect;
+    WebRect endRect;
+
+    frame->executeScript(WebScriptSource("select();"));
+    webView->selectionBounds(initialStartRect, initialEndRect);
+    WebPoint moveTo(topLeft(initialStartRect));
+
+    moveTo.y += 40;
+    frame->moveCaretSelectionTowardsWindowPoint(moveTo);
+    webView->selectionBounds(startRect, endRect);
+    EXPECT_EQ(startRect, initialStartRect);
+    EXPECT_EQ(endRect, initialEndRect);
+
+    moveTo.y -= 80;
+    frame->moveCaretSelectionTowardsWindowPoint(moveTo);
+    webView->selectionBounds(startRect, endRect);
+    EXPECT_EQ(startRect, initialStartRect);
+    EXPECT_EQ(endRect, initialEndRect);
+
+    webView->close();
+}
+#endif
+
 class DisambiguationPopupTestWebViewClient : public WebViewClient {
 public:
     virtual bool didTapMultipleTargets(const WebGestureEvent&, const WebVector<WebRect>& targetRects) OVERRIDE

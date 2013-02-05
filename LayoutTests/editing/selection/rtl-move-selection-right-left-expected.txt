@@ -11,6 +11,8 @@ PASS Extend dragged selection right (Win)
 PASS Extend dragged selection left (Win)
 PASS Extend dragged selection right (Unix)
 PASS Extend dragged selection left (Unix)
+PASS Extend dragged selection right (Android)
+PASS Extend dragged selection left (Android)
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -48,7 +48,8 @@ public:
     enum EditingBehavior {
         EditingBehaviorMac,
         EditingBehaviorWin,
-        EditingBehaviorUnix
+        EditingBehaviorUnix,
+        EditingBehaviorAndroid
     };
 
     virtual bool scrollAnimatorEnabled() const = 0;

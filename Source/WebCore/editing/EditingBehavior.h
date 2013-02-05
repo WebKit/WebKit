@@ -39,7 +39,10 @@ public:
     // When extending a selection beyond the top or bottom boundary of an editable area,
     // maintain the horizontal position on Windows but extend it to the boundary of the editable
     // content on Mac.
-    bool shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom() const { return m_type != EditingWindowsBehavior; }
+    bool shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom() const
+    {
+        return m_type != EditingWindowsBehavior && m_type != EditingAndroidBehavior;
+    }
 
     // On Windows, selections should always be considered as directional, regardless if it is
     // mouse-based or keyboard-based.
@@ -65,14 +68,17 @@ public:
     bool shouldAllowSpellingSuggestionsWithoutSelection() const
     {
 #if !PLATFORM(CHROMIUM)
-        return m_type == EditingUnixBehavior;
+        return m_type == EditingUnixBehavior || m_type == EditingAndroidBehavior;
 #else
         return false;
 #endif
     }
     
     // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
-    bool shouldNavigateBackOnBackspace() const { return m_type != EditingUnixBehavior; }
+    bool shouldNavigateBackOnBackspace() const
+    {
+        return m_type != EditingUnixBehavior && m_type != EditingAndroidBehavior;
+    }
 
     // On Mac, selecting backwards by word/line from the middle of a word/line, and then going
     // forward leaves the caret back in the middle with no selection, instead of directly selecting

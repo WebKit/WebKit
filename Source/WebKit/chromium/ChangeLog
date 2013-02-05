@@ -1,3 +1,27 @@
+2013-02-04  Chris Hopman  <cjhopman@chromium.org>
+
+        Make moveCaretTowardsWindowPoint not snap to the beginning/end when moved above/below editable
+        https://bugs.webkit.org/show_bug.cgi?id=107850
+
+        Reviewed by Ojan Vafai.
+
+        On Android, EditingBehavior::shouldMoveCaret[...] controls the
+        behavior of insertion handles. This change adds a new Android specific
+        editing behavior type so that we can change these settings independent
+        of behavior for other platforms.
+
+        * public/WebSettings.h:
+        * src/AssertMatchingEnums.cpp:
+        Just add the corresponding assertion for the new editing behavior.
+
+        * public/WebSettings.h:
+        * src/AssertMatchingEnums.cpp:
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/move_caret.html: Added.
+        Add a test that moveCaretTowardsWindowPoint works as expected on
+        Android.
+
 2013-01-31  Kentaro Hara  <haraken@chromium.org>
 
         Implement WheelEvent::deltaMode

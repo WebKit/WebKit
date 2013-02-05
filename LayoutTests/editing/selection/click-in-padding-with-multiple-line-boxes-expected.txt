@@ -7,6 +7,8 @@ PASS Selection is [anchorNode: [object Text](12345) anchorOffset: 0 focusNode: [
 PASS Selection is [anchorNode: [object Text](BAR) anchorOffset: 3 focusNode: [object Text](BAR) focusOffset: 3 isCollapsed: true]
 PASS Selection is [anchorNode: [object Text](FOO) anchorOffset: 1 focusNode: [object Text](FOO) focusOffset: 1 isCollapsed: true]
 PASS Selection is [anchorNode: [object Text](FOO) anchorOffset: 1 focusNode: [object Text](FOO) focusOffset: 1 isCollapsed: true]
+PASS Selection is [anchorNode: [object Text](FOO) anchorOffset: 1 focusNode: [object Text](FOO) focusOffset: 1 isCollapsed: true]
+PASS Selection is [anchorNode: [object Text](FOO) anchorOffset: 1 focusNode: [object Text](FOO) focusOffset: 1 isCollapsed: true]
 PASS successfullyParsed is true
 
 TEST COMPLETE

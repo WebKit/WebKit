@@ -112,7 +112,8 @@ bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well QtWebKit and Chromium when built on Mac;
 //  2) EditingWindowsBehavior comprises Win32 and WinCE builds, as well as QtWebKit and Chromium when built on Windows;
-//  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS (and then abusing the terminology);
+//  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS/Android (and then abusing the terminology);
+//  4) EditingAndroidBehavior comprises Android builds.
 // 99) MacEditingBehavior is used a fallback.
 static EditingBehaviorType editingBehaviorTypeForPlatform()
 {
@@ -121,6 +122,8 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
     EditingMacBehavior
 #elif OS(WINDOWS)
     EditingWindowsBehavior
+#elif OS(ANDROID)
+    EditingAndroidBehavior
 #elif OS(UNIX)
     EditingUnixBehavior
 #else

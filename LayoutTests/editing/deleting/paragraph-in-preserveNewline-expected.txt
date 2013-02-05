@@ -34,6 +34,17 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line.  You should see '\nbar' below.
 
@@ -68,6 +79,16 @@ on unix:
 bar"
 
 after undo on unix:
+| <pre>
+|   "<#selection-anchor>foo<#selection-focus>
+bar"
+
+on android:
+| <pre>
+|   "<#selection-caret>
+bar"
+
+after undo on android:
 | <pre>
 |   "<#selection-anchor>foo<#selection-focus>
 bar"

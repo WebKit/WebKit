@@ -4,6 +4,7 @@
 <div id="resultmac">RUNNING</div>
 <div id="resultwin">RUNNING</div>
 <div id="resultunix">RUNNING</div>
+<div id="resultandroid">RUNNING</div>
 </body>
 <script>
 function test(platform, selectionExpected, result)
@@ -48,5 +49,6 @@ function load()
     test('mac', true, 'resultmac');
     test('win', false, 'resultwin');
     test('unix', false, 'resultunix');
+    test('android', false, 'resultandroid');
 }
 </script>

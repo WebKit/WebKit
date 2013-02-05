@@ -69,6 +69,7 @@ function editingTest(editingBehavior)
 
 editingTest("mac");
 editingTest("win");
+editingTest("android");
 
 // Clean up after ourselves if we're not being run in the browser
 if (window.eventSender) {

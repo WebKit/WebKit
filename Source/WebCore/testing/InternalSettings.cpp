@@ -386,6 +386,8 @@ void InternalSettings::setEditingBehavior(const String& editingBehavior, Excepti
         settings()->setEditingBehaviorType(EditingMacBehavior);
     else if (equalIgnoringCase(editingBehavior, "unix"))
         settings()->setEditingBehaviorType(EditingUnixBehavior);
+    else if (equalIgnoringCase(editingBehavior, "android"))
+        settings()->setEditingBehaviorType(EditingAndroidBehavior);
     else
         ec = SYNTAX_ERR;
 }

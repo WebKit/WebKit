@@ -28,6 +28,15 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 69 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 69 of #text > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 69 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests for a bug in endOfLine.
 
@@ -62,6 +71,16 @@ There should be three paragraphs in this editable region.
 The first one should be empty."
 
 after undo on unix:
+| "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
+There should be three paragraphs in this editable region.
+The first one should be empty."
+
+on android:
+| "<#selection-caret>
+There should be three paragraphs in this editable region.
+The first one should be empty."
+
+after undo on android:
 | "<#selection-anchor>You should not see this paragraph unless the command has been undone.<#selection-focus>
 There should be three paragraphs in this editable region.
 The first one should be empty."

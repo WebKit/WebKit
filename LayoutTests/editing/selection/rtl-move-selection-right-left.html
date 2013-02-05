@@ -79,6 +79,9 @@ function runTests()
         internals.settings.setEditingBehavior("unix");
         testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Unix)");
         testSelectionChange(dragSelection, "extend", "left", 1, 0, "Extend dragged selection left (Unix)");
+        internals.settings.setEditingBehavior("android");
+        testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Android)");
+        testSelectionChange(dragSelection, "extend", "left", 1, 0, "Extend dragged selection left (Android)");
     }
 }
 

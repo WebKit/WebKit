@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id='target' type='text' value='16-char header. ^^ 16-char footer.'></input>
+<script>
+    function select() {
+        var text = document.getElementById('target');
+        text.focus();
+        text.setSelectionRange(17, 17);
+    }
+    window.onload = select;
+</script>
+</body>
+</html>
+
