@@ -1,3 +1,9 @@
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix.
+
+        * wtf/FastMalloc.cpp:
+
 2013-02-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Tidy up StackBounds
