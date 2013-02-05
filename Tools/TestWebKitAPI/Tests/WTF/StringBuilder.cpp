@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -282,6 +283,53 @@ TEST(StringBuilderTest, ToAtomicString)
     AtomicString atomicString2 = builder.toAtomicString();
     // They should share the same StringImpl.
     ASSERT_EQ(atomicString2.impl(), string.impl());
+}
+
+TEST(StringBuilderTest, ToAtomicStringOnEmpty)
+{
+    { // Default constructed.
+        StringBuilder builder;
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // With capacity.
+        StringBuilder builder;
+        builder.reserveCapacity(64);
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // AtomicString constructed from a null string.
+        StringBuilder builder;
+        builder.append(String());
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // AtomicString constructed from an empty string.
+        StringBuilder builder;
+        builder.append(emptyString());
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // AtomicString constructed from an empty StringBuilder.
+        StringBuilder builder;
+        StringBuilder emptyBuilder;
+        builder.append(emptyBuilder);
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // AtomicString constructed from an empty char* string.
+        StringBuilder builder;
+        builder.append("", 0);
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
+    { // Cleared StringBuilder.
+        StringBuilder builder;
+        builder.appendLiteral("WebKit");
+        builder.clear();
+        AtomicString atomicString = builder.toAtomicString();
+        ASSERT_EQ(emptyAtom, atomicString);
+    }
 }
 
 } // namespace

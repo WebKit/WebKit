@@ -1,3 +1,16 @@
+2013-02-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make StringBuilder::toAtomicString() consistent with StringBuilder::toString() for strings of length zero
+        https://bugs.webkit.org/show_bug.cgi?id=108894
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::toAtomicString): The function was returning the nullAtom for strings of length zero.
+        This is inconsistent with StringBuilder::toString() which always return an empty string.
+
+        This patch unifies the behavior.
+
 2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structure::m_outOfLineCapacity is unnecessary

@@ -1,3 +1,13 @@
+2013-02-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make StringBuilder::toAtomicString() consistent with StringBuilder::toString() for strings of null length
+        https://bugs.webkit.org/show_bug.cgi?id=108894
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Extend the tests to check toAtomicString() on an empty builder.
+
 2013-02-05  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove methods from the WebTestRunner interface that are only used by WebTestProxyBase
