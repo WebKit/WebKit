@@ -116,10 +116,6 @@ Bug(GTK) fast/speech/speech-button-ignore-generated-events.html [ Failure ]
 Bug(GTK) fast/speech/speech-input-result-list-not-enough-arguments.html [ Failure ]
 Bug(GTK) fast/speech/speech-input-scripting.html [ Failure ]
 
-# WebKit2 needs layoutTestController.setCustomPolicyDelegate
-# https://bugs.webkit.org/show_bug.cgi?id=42546
-webkit.org/b/42546 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
-
 # WebKit2 needs layoutTestController.setEditingBehaviour
 Bug(GTK) editing/selection/directionality-after-undo-replace.html [ Failure ]
 Bug(GTK) editing/selection/5354455-1.html [ Failure ]
@@ -488,6 +484,9 @@ Bug(GTK) fast/forms/text-input-event.html [ Pass ]
 Bug(GTK) fast/js/names.html [ Pass ]
 Bug(GTK) fast/loader/form-submission-after-beforeunload-cancel.html [ Pass ]
 Bug(GTK) fast/loader/stop-provisional-loads.html [ Pass ]
+Bug(GTK) fast/loader/onload-policy-ignore-for-frame.html [ Pass ]
+Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass ]
+Bug(GTK) fast/loader/reload-policy-delegate.html [ Pass ]
 Bug(GTK) fast/preloader/document-write-noscript.html [ Pass ]
 Bug(GTK) fast/preloader/first-base-tag-scanned-wins.html [ Pass ]
 Bug(GTK) fast/preloader/first-base-tag-wins.html [ Pass ]
