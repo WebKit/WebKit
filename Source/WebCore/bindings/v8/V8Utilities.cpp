@@ -50,7 +50,7 @@ namespace WebCore {
 
 // Use an array to hold dependents. It works like a ref-counted scheme.
 // A value can be added more than once to the DOM object.
-void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex, v8::Isolate* isolate)
+void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)
 {
     v8::Local<v8::Value> cache = object->GetInternalField(cacheIndex);
     if (cache->IsNull() || cache->IsUndefined()) {
@@ -59,7 +59,7 @@ void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> 
     }
 
     v8::Local<v8::Array> cacheArray = v8::Local<v8::Array>::Cast(cache);
-    cacheArray->Set(v8Integer(cacheArray->Length(), isolate), value);
+    cacheArray->Set(deprecatedV8Integer(cacheArray->Length()), value);
 }
 
 bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, ArrayBufferArray& arrayBuffers, v8::Isolate* isolate)
@@ -121,14 +121,14 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports, v8
     return true;
 }
 
-void removeHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex, v8::Isolate* isolate)
+void removeHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)
 {
     v8::Local<v8::Value> cache = object->GetInternalField(cacheIndex);
     if (!cache->IsArray())
         return;
     v8::Local<v8::Array> cacheArray = v8::Local<v8::Array>::Cast(cache);
     for (int i = cacheArray->Length() - 1; i >= 0; --i) {
-        v8::Local<v8::Value> cached = cacheArray->Get(v8Integer(i, isolate));
+        v8::Local<v8::Value> cached = cacheArray->Get(deprecatedV8Integer(i));
         if (cached->StrictEquals(value)) {
             cacheArray->Delete(i);
             return;
@@ -136,18 +136,21 @@ void removeHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> 
     }
 }
     
-void transferHiddenDependency(v8::Handle<v8::Object> object, EventListener* oldValue, v8::Local<v8::Value> newValue, int cacheIndex, v8::Isolate* isolate)
+void transferHiddenDependency(v8::Handle<v8::Object> object,
+                              EventListener* oldValue, 
+                              v8::Local<v8::Value> newValue, 
+                              int cacheIndex)
 {
     if (oldValue) {
         V8AbstractEventListener* oldListener = V8AbstractEventListener::cast(oldValue);
         if (oldListener) {
             v8::Local<v8::Object> oldListenerObject = oldListener->getExistingListenerObject();
             if (!oldListenerObject.IsEmpty())
-                removeHiddenDependency(object, oldListenerObject, cacheIndex, isolate);
+                removeHiddenDependency(object, oldListenerObject, cacheIndex);
         }
     }
     if (!newValue->IsNull() && !newValue->IsUndefined())
-        createHiddenDependency(object, newValue, cacheIndex, isolate);
+        createHiddenDependency(object, newValue, cacheIndex);
 }
 
 ScriptExecutionContext* getScriptExecutionContext()

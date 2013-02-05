@@ -138,7 +138,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     // Unwrap return values.
     v8::Handle<v8::Value> returnValue;
     if (_NPN_IsAlive(npObject))
-        returnValue = convertNPVariantToV8Object(&result, npObject, args.GetIsolate());
+        returnValue = convertNPVariantToV8Object(&result, npObject);
     _NPN_ReleaseVariantValue(&result);
 
     return returnValue;
@@ -230,7 +230,7 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
 
         v8::Handle<v8::Value> returnValue;
         if (_NPN_IsAlive(npObject))
-            returnValue = convertNPVariantToV8Object(&result, npObject, isolate);
+            returnValue = convertNPVariantToV8Object(&result, npObject);
         _NPN_ReleaseVariantValue(&result);
         return returnValue;
 

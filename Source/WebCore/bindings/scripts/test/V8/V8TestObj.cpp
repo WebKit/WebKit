@@ -1114,7 +1114,7 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
         V8TestObj::toNative(args.Holder())->addEventListener(stringResource, listener, args[2]->BooleanValue());
-        createHiddenDependency(args.Holder(), args[1], V8TestObj::eventListenerCacheIndex, args.GetIsolate());
+        createHiddenDependency(args.Holder(), args[1], V8TestObj::eventListenerCacheIndex);
     }
     return v8Undefined();
 }
@@ -1125,7 +1125,7 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
         V8TestObj::toNative(args.Holder())->removeEventListener(stringResource, listener.get(), args[2]->BooleanValue());
-        removeHiddenDependency(args.Holder(), args[1], V8TestObj::eventListenerCacheIndex, args.GetIsolate());
+        removeHiddenDependency(args.Holder(), args[1], V8TestObj::eventListenerCacheIndex);
     }
     return v8Undefined();
 }

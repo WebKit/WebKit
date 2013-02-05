@@ -1,5 +1,16 @@
 2013-02-05  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r141865.
+        http://trac.webkit.org/changeset/141865
+        https://bugs.webkit.org/show_bug.cgi?id=108909
+
+        webkit unit tests are broken
+
+        * src/WebBindings.cpp:
+        (WebKit::WebBindings::toV8Value):
+
+2013-02-05  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Reduce usage of deprecatedString() and deprecatedInteger()
         https://bugs.webkit.org/show_bug.cgi?id=108909
 

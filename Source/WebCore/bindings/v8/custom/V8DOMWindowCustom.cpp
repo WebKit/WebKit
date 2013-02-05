@@ -249,7 +249,7 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
 
     if (listener) {
         imp->addEventListener(eventType, listener, useCapture);
-        createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex, args.GetIsolate());
+        createHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
     }
 
     return v8::Undefined();
@@ -278,7 +278,7 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
 
     if (listener) {
         imp->removeEventListener(eventType, listener.get(), useCapture);
-        removeHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex, args.GetIsolate());
+        removeHiddenDependency(args.Holder(), args[1], eventListenerCacheIndex);
     }
 
     return v8::Undefined();
