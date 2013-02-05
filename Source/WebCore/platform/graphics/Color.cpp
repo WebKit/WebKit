@@ -414,31 +414,30 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
         saturation = ((max - min) / (2.0 - (max + min)));
 }
 
-Color colorFromPremultipliedARGB(unsigned pixelColor)
+Color colorFromPremultipliedARGB(RGBA32 pixelColor)
 {
-    Color color;
-
-    if (unsigned alpha = (pixelColor & 0xFF000000) >> 24) {
-        color = Color::createUnchecked(
-                        ((pixelColor & 0x00FF0000) >> 16) * 255 / alpha,
-                        ((pixelColor & 0x0000FF00) >> 8) * 255 / alpha,
-                         (pixelColor & 0x000000FF) * 255 / alpha,
-                          alpha);
+    int alpha = alphaChannel(pixelColor);
+    if (alpha && alpha < 255) {
+        return Color::createUnchecked(
+            redChannel(pixelColor) * 255 / alpha,
+            greenChannel(pixelColor) * 255 / alpha,
+            blueChannel(pixelColor) * 255 / alpha,
+            alpha);
     } else
-        color = Color(pixelColor);
-
-    return color;
+        return Color(pixelColor);
 }
 
-unsigned premultipliedARGBFromColor(const Color& color)
+RGBA32 premultipliedARGBFromColor(const Color& color)
 {
     unsigned pixelColor;
 
-    if (unsigned alpha = color.alpha()) {
-        pixelColor = alpha << 24 |
-             ((color.red() * alpha  + 254) / 255) << 16 | 
-             ((color.green() * alpha  + 254) / 255) << 8 | 
-             ((color.blue() * alpha  + 254) / 255);
+    unsigned alpha = color.alpha();
+    if (alpha < 255) {
+        pixelColor = Color::createUnchecked(
+            (color.red() * alpha  + 254) / 255,
+            (color.green() * alpha  + 254) / 255,
+            (color.blue() * alpha  + 254) / 255,
+            alpha).rgb();
     } else
          pixelColor = color.rgb();
 

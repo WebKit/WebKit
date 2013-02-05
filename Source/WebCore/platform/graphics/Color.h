@@ -182,8 +182,8 @@ inline bool operator!=(const Color& a, const Color& b)
     return !(a == b);
 }
 
-Color colorFromPremultipliedARGB(unsigned);
-unsigned premultipliedARGBFromColor(const Color&);
+Color colorFromPremultipliedARGB(RGBA32);
+RGBA32 premultipliedARGBFromColor(const Color&);
 
 inline Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied = true)
 {

@@ -193,14 +193,19 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
         m_data.m_painter->begin(&m_data.m_pixmap);
 }
 
-static inline quint32 convertABGRToARGB(quint32 pixel)
+static inline void copyColorToRGBA(Color& from, uchar* to)
 {
-    return ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+    // Copy from endian dependent 32bit ARGB to endian independent RGBA8888.
+    to[0] = from.red();
+    to[1] = from.green();
+    to[2] = from.blue();
+    to[3] = from.alpha();
 }
 
-static inline quint32 convertARGBToABGR(quint32 pixel)
+static inline void copyRGBAToColor(const uchar* from, Color& to)
 {
-    return convertABGRToARGB(pixel);
+    // Copy from endian independent RGBA8888 to endian dependent 32bit ARGB.
+    to = Color::createUnchecked(from[0], from[1], from[2], from[3]);
 }
 
 template <Multiply multiplied>
@@ -211,7 +216,7 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         return 0;
 
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
-    unsigned char* data = result->data();
+    uchar* resultData = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > size.width() || rect.maxY() > size.height())
         result->zeroFill();
@@ -238,27 +243,26 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         endy = size.height();
     int numRows = endy - originy;
 
+    const unsigned destBytesPerRow = 4 * rect.width();
+
     // NOTE: For unmultiplied data, we undo the premultiplication below.
     QImage image = imageData.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
     ASSERT(!image.isNull());
 
-    const int bytesPerLine = image.bytesPerLine();
-    const uchar* bits = image.constBits();
-
-    quint32* destRows = reinterpret_cast_ptr<quint32*>(&data[desty * rect.width() * 4 + destx * 4]);
+    // The Canvas 2D Context expects RGBA order, while Qt uses 32bit QRgb (ARGB/BGRA).
     for (int y = 0; y < numRows; ++y) {
-        const quint32* scanLine = reinterpret_cast_ptr<const quint32*>(bits + (y + originy) * bytesPerLine);
-        for (int x = 0; x < numColumns; x++) {
-            QRgb pixel = scanLine[x + originx];
+        // This cast and the calls below relies on both QRgb and WebCore::RGBA32 being 32bit ARGB.
+        const unsigned* srcRow = reinterpret_cast<const unsigned*>(image.constScanLine(originy + y)) + originx;
+        uchar* destRow = resultData + (desty + y) * destBytesPerRow + destx * 4;
+        for (int x = 0; x < numColumns; x++, srcRow++, destRow += 4) {
             Color pixelColor;
             if (multiplied == Unmultiplied)
-                pixelColor = colorFromPremultipliedARGB(Color(qRed(pixel), qGreen(pixel), qBlue(pixel), qAlpha(pixel)).rgb());
+                pixelColor = colorFromPremultipliedARGB(*srcRow);
             else
-                pixelColor = Color(qRed(pixel), qGreen(pixel), qBlue(pixel), qAlpha(pixel));
-            destRows[x] = convertARGBToABGR(pixelColor.rgb());
+                pixelColor = Color(*srcRow);
+            copyColorToRGBA(pixelColor, destRow);
         }
-        destRows += rect.width();
     }
 
     return result.release();
@@ -302,25 +306,26 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     ASSERT(endy <= m_size.height());
     int numRows = endy - desty;
 
-    unsigned srcBytesPerRow = 4 * sourceSize.width();
+    const unsigned srcBytesPerRow = 4 * sourceSize.width();
 
     // NOTE: For unmultiplied input data, we do the premultiplication below.
     QImage image(numColumns, numRows, QImage::Format_ARGB32_Premultiplied);
-    uchar* bits = image.bits();
-    const int bytesPerLine = image.bytesPerLine();
 
-    const quint32* srcScanLine = reinterpret_cast_ptr<const quint32*>(source->data() + originy * srcBytesPerRow + originx * 4);
+    unsigned* destData = reinterpret_cast<unsigned*>(image.bits());
+    const uchar* srcData = source->data();
 
     for (int y = 0; y < numRows; ++y) {
-        quint32* destScanLine = reinterpret_cast_ptr<quint32*>(bits + y * bytesPerLine);
-        for (int x = 0; x < numColumns; x++) {
-            quint32 pixel = convertABGRToARGB(srcScanLine[x]);
+        const uchar* srcRow = srcData + (originy + y) * srcBytesPerRow + originx * 4;
+        // This cast and the calls below relies on both QRgb and WebCore::RGBA32 being 32bit ARGB.
+        unsigned* destRow = destData + y * numColumns;
+        for (int x = 0; x < numColumns; x++, srcRow += 4, destRow++) {
+            Color pixelColor;
+            copyRGBAToColor(srcRow, pixelColor);
             if (multiplied == Unmultiplied)
-                destScanLine[x] = premultipliedARGBFromColor(Color(pixel));
+                *destRow = premultipliedARGBFromColor(pixelColor);
             else
-                destScanLine[x] = pixel;
+                *destRow = pixelColor.rgb();
         }
-        srcScanLine += sourceSize.width();
     }
 
     bool isPainting = m_data.m_painter->isActive();
