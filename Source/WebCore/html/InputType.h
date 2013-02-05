@@ -201,11 +201,10 @@ public:
     virtual bool shouldSubmitImplicitly(Event*);
     virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
     virtual bool hasCustomFocusLogic() const;
-    virtual bool isFocusableByClickOnLabel() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool shouldUseInputMethod() const;
-    virtual void handleFocusEvent();
+    virtual void handleFocusEvent(FocusDirection);
     virtual void handleBlurEvent();
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
@@ -215,7 +214,6 @@ public:
 #endif
 
     virtual void blur();
-    virtual void focus(bool restorePreviousSelection, FocusDirection);
 
     // Shadow tree handling
 

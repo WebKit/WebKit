@@ -36,6 +36,7 @@
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "ElementShadow.h"
+#include "FocusController.h"
 #include "FormController.h"
 #include "HTMLDataListElement.h"
 #include "HTMLInputElement.h"
@@ -240,9 +241,14 @@ void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
     BaseDateAndTimeInputType::destroyShadowSubtree();
 }
 
-void BaseMultipleFieldsDateAndTimeInputType::focus(bool, FocusDirection)
+void BaseMultipleFieldsDateAndTimeInputType::handleFocusEvent(FocusDirection direction)
 {
-    if (m_dateTimeEditElement)
+    if (!m_dateTimeEditElement)
+        return;
+    if (direction == FocusDirectionBackward) {
+        if (element()->document()->page())
+            element()->document()->page()->focusController()->advanceFocus(direction, 0);
+    } else
         m_dateTimeEditElement->focusByOwner();
 }
 
@@ -283,19 +289,15 @@ bool BaseMultipleFieldsDateAndTimeInputType::hasBadInput() const
     return element()->value().isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->anyEditableFieldsHaveValues();
 }
 
-bool BaseMultipleFieldsDateAndTimeInputType::isFocusableByClickOnLabel() const
-{
-    return element()->isTextFormControlFocusable();
-}
-
 bool BaseMultipleFieldsDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return false;
+    // FIXME: This should be focusable even if readOnly(). webkit.org/b/108795.
+    return element()->isTextFormControlFocusable() && !element()->readOnly();
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::isMouseFocusable() const
 {
-    return false;
+    return element()->isTextFormControlFocusable();
 }
 
 AtomicString BaseMultipleFieldsDateAndTimeInputType::localeIdentifier() const

@@ -470,11 +470,6 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
-void InputType::focus(bool restorePreviousSelection, FocusDirection direction)
-{
-    element()->defaultFocus(restorePreviousSelection, direction);
-}
-
 void InputType::createShadowSubtree()
 {
 }
@@ -547,11 +542,6 @@ bool InputType::hasCustomFocusLogic() const
     return true;
 }
 
-bool InputType::isFocusableByClickOnLabel() const
-{
-    return isMouseFocusable();
-}
-
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return element()->isTextFormControlKeyboardFocusable(event);
@@ -567,7 +557,7 @@ bool InputType::shouldUseInputMethod() const
     return false;
 }
 
-void InputType::handleFocusEvent()
+void InputType::handleFocusEvent(FocusDirection)
 {
 }
 

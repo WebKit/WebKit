@@ -1163,11 +1163,6 @@ void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, CSSPropertyID pro
     style->setProperty(propertyID, cssValuePool().createColorValue(parsedColor.rgb()));
 }
 
-bool HTMLElement::isFocusableByClickOnLabel() const
-{
-    return isMouseFocusable();
-}
-
 } // namespace WebCore
 
 #ifndef NDEBUG

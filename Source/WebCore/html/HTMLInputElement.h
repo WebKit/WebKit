@@ -280,8 +280,6 @@ public:
 
     virtual void blur() OVERRIDE;
     void defaultBlur();
-    void defaultFocus(bool restorePreviousSelection, FocusDirection);
-    virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone) OVERRIDE;
 
     virtual const AtomicString& name() const OVERRIDE;
 
@@ -360,7 +358,6 @@ private:
     virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual bool isFocusableByClickOnLabel() const OVERRIDE;
     virtual bool isInRange() const;
     virtual bool isOutOfRange() const;
 
@@ -380,7 +377,7 @@ private:
     virtual void updatePlaceholderText();
     virtual bool isEmptyValue() const OVERRIDE { return innerTextValue().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
-    virtual void handleFocusEvent(FocusDirection);
+    virtual void handleFocusEvent(FocusDirection) OVERRIDE;
     virtual void handleBlurEvent();
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }

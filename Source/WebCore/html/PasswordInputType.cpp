@@ -95,9 +95,9 @@ bool PasswordInputType::isPasswordField() const
     return true;
 }
 
-void PasswordInputType::handleFocusEvent()
+void PasswordInputType::handleFocusEvent(FocusDirection direction)
 {
-    BaseTextInputType::handleFocusEvent();
+    BaseTextInputType::handleFocusEvent(direction);
     if (element()->document()->frame())
         element()->document()->setUseSecureKeyboardEntryWhenActive(true);
 }

@@ -136,7 +136,7 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
         // Click the corresponding control.
         element->dispatchSimulatedClick(evt);
 
-        if (element->isFocusableByClickOnLabel())
+        if (element->isMouseFocusable())
             element->focus();
 
         processingClick = false;
