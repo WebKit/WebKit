@@ -58,8 +58,9 @@ set(JavaScriptCore_SOURCES
     bytecode/MethodOfGettingAValueProfile.cpp
     bytecode/Opcode.cpp
     bytecode/PolymorphicPutByIdList.cpp
-    bytecode/SpeculatedType.cpp
+    bytecode/PreciseJumpTargets.cpp
     bytecode/PutByIdStatus.cpp
+    bytecode/SpeculatedType.cpp
     bytecode/ReduceWhitespace.cpp
     bytecode/ResolveGlobalStatus.cpp
     bytecode/SamplingTool.cpp

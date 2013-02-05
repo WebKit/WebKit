@@ -68,6 +68,7 @@ SOURCES += \
     bytecode/MethodOfGettingAValueProfile.cpp \
     bytecode/Opcode.cpp \
     bytecode/PolymorphicPutByIdList.cpp \
+    bytecode/PreciseJumpTargets.cpp \
     bytecode/PutByIdStatus.cpp \
     bytecode/ReduceWhitespace.cpp \
     bytecode/ResolveGlobalStatus.cpp \

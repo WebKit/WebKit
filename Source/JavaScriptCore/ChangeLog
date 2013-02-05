@@ -1,3 +1,34 @@
+2013-02-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have a precise view of jump targets
+        https://bugs.webkit.org/show_bug.cgi?id=108868
+
+        Reviewed by Oliver Hunt.
+        
+        Previously, the DFG relied entirely on the CodeBlock's jump targets list for
+        determining when to break basic blocks. This worked great, except sometimes it
+        would be too conservative since the CodeBlock just says where the bytecode
+        generator inserted labels.
+        
+        This change keeps the old jump target list in CodeBlock since it is still
+        valuable to the baseline JIT, but switches the DFG to use its own jump target
+        calculator. This ought to reduce pressure on the DFG simplifier, which would
+        previously do a lot of work to try to merge redundantly created basic blocks.
+        It appears to be a 1% progression on SunSpider.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/PreciseJumpTargets.cpp: Added.
+        (JSC):
+        (JSC::addSimpleSwitchTargets):
+        (JSC::computePreciseJumpTargets):
+        * bytecode/PreciseJumpTargets.h: Added.
+        (JSC):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Make ConfigurationBuildDir include directories precede WebKitLibraries in JSC.

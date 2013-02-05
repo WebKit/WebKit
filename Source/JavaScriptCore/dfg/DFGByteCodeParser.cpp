@@ -36,8 +36,10 @@
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
 #include "JSCJSValueInlines.h"
+#include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
 #include "ResolveGlobalStatus.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
@@ -3630,9 +3632,19 @@ void ByteCodeParser::parseCodeBlock()
         codeBlock->baselineVersion()->dumpBytecode();
     }
     
-    for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
+    Vector<unsigned, 32> jumpTargets;
+    computePreciseJumpTargets(codeBlock, jumpTargets);
+    if (Options::dumpBytecodeAtDFGTime()) {
+        dataLog("Jump targets: ");
+        CommaPrinter comma;
+        for (unsigned i = 0; i < jumpTargets.size(); ++i)
+            dataLog(comma, jumpTargets[i]);
+        dataLog("\n");
+    }
+    
+    for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= jumpTargets.size(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
-        unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
+        unsigned limit = jumpTargetIndex < jumpTargets.size() ? jumpTargets[jumpTargetIndex] : codeBlock->instructions().size();
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog(
             "Parsing bytecode with limit ", pointerDump(m_inlineStackTop->m_inlineCallFrame),
