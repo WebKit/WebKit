@@ -336,14 +336,9 @@ function parseParameters()
     }
 
     parseDashboardSpecificParameters();
-    parseParameter(queryHashAsMap(), 'builder');
-
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
-
-    if (!g_crossDashboardState.useTestData)
-        fillMissingValues(g_currentState, {'builder': currentBuilderGroup().defaultBuilder()});
 
     // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
     if (dashboardSpecificDiffState.builder)

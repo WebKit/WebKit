@@ -233,7 +233,7 @@ function generatePage()
 
     g_isGeneratingPage = true;
 
-    var rawTree = g_resultsByBuilder[g_currentState.builder];
+    var rawTree = g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()];
     g_webTree = convertToWebTreemapFormat('LayoutTests', rawTree);
     appendTreemap($('map'), g_webTree);
 
@@ -292,6 +292,7 @@ function handleValidHashParameter(key, value)
 }
 
 g_defaultDashboardSpecificStateValues = {
+    builder: null,
     treemapfocus: '',
 };
 

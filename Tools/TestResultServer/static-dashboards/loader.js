@@ -180,17 +180,6 @@ loader.Loader.prototype = {
         // data that isn't there.
         delete currentBuilders()[builderName];
 
-        // Change the default builder name if it has been deleted.
-        if (g_defaultDashboardSpecificStateValues.builder == builderName) {
-            var defaultBuilderName = currentBuilderGroup().defaultBuilder();
-            g_defaultDashboardSpecificStateValues.builder = defaultBuilderName;
-            if (!defaultBuilderName) {
-                var error = 'No tests results found for ' + g_crossDashboardState.testType + '. Reload the page to try fetching it again.';
-                console.error(error);
-                addError(error);
-            }
-       }
-
         // Proceed as if the resource had loaded.
         this._handleResourceLoad();
     },

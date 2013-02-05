@@ -113,7 +113,7 @@ var g_currentBuilderTestResults;
 function generatePage()
 {
     g_buildIndicesByTimestamp = {};
-    var results = g_resultsByBuilder[g_currentState.builder];
+    var results = g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()];
 
     for (var i = 0; i < results[FIXABLE_COUNTS_KEY].length; i++) {
         var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
@@ -145,7 +145,7 @@ function generatePage()
 function initCurrentBuilderTestResults()
 {
     var startTime = Date.now();
-    g_currentBuilderTestResults = decompressResults(g_resultsByBuilder[g_currentState.builder]);
+    g_currentBuilderTestResults = decompressResults(g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()]);
     console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
 }
 
@@ -168,6 +168,7 @@ function handleValidHashParameter(key, value)
 }
 
 g_defaultDashboardSpecificStateValues = {
+    builder: null,
     buildTimestamp: -1,
     ignoreFlakyTests: true
 };
@@ -184,7 +185,7 @@ function shouldShowWebKitRevisionsOnly()
 
 function updateTimelineForBuilder()
 {
-    var builder = g_currentState.builder;
+    var builder = g_currentState.builder || currentBuilderGroup().defaultBuilder();
     var results = g_resultsByBuilder[builder];
     var graphData = [];
 
@@ -438,18 +439,19 @@ document.addEventListener('keydown', function(e) {
     if (g_currentBuildIndex == -1)
         return;
 
+    var builder = g_currentState.builder || currentBuilderGroup().defaultBuilder();
     switch (e.keyIdentifier) {
     case 'Left':
         selectBuild(
-            g_resultsByBuilder[g_currentState.builder],
-            g_currentState.builder,
+            g_resultsByBuilder[builder],
+            builder,
             g_dygraph,
             g_currentBuildIndex + 1);
         break;
     case 'Right':
         selectBuild(
-            g_resultsByBuilder[g_currentState.builder],
-            g_currentState.builder,
+            g_resultsByBuilder[builder],
+            builder,
             g_dygraph,
             g_currentBuildIndex - 1);
         break;

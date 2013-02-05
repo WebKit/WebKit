@@ -1,5 +1,31 @@
 2013-02-04  Julie Parent  <jparent@chromium.org>
 
+        Dashboard cleanup: Make builder a real dashboardSpecificParameter.
+        https://bugs.webkit.org/show_bug.cgi?id=108706
+
+        Reviewed by Dirk Pranke.
+        
+        Add builder to g_defaultDashboardSpecificParameter maps for the
+        dashboards where it is used (flakiness, timeline, treemap).
+        Default it to null, and then update reads of it to check the
+        builder group's default if one is not set, rather than trying to
+        set and track this everywhere.
+        This allows us to remove tons of special-casing of builder parsing,
+        including where we used to add it to the query string even when the
+        user did not specify it.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseParameters):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (generatePage):
+        (handleQueryParameterChange):
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
+2013-02-04  Julie Parent  <jparent@chromium.org>
+
         Setting tests on flakiness dashboard should invalidate builder.
         https://bugs.webkit.org/show_bug.cgi?id=108521
 

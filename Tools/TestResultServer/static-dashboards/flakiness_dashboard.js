@@ -142,7 +142,6 @@ function generatePage()
     if (g_crossDashboardState.useTestData)
         return;
 
-    updateDefaultBuilderState();
     document.body.innerHTML = '<div id="loading-ui">LOADING...</div>';
     showErrors();
 
@@ -153,7 +152,7 @@ function generatePage()
     else if (g_currentState.expectationsUpdate)
         generatePageForExpectationsUpdate();
     else
-        generatePageForBuilder(g_currentState.builder);
+        generatePageForBuilder(g_currentState.builder || currentBuilderGroup().defaultBuilder());
 
     for (var builder in currentBuilders())
         processTestResultsForBuilderAsync(builder);
@@ -188,6 +187,7 @@ function handleValidHashParameter(key, value)
             function() {
                 return value in currentBuilders();
             });
+
         return true;
 
     case 'sortColumn':
@@ -260,6 +260,7 @@ g_defaultDashboardSpecificStateValues = {
     revision: null,
     tests: '',
     result: '',
+    builder: null
 };
 
 DB_SPECIFIC_INVALIDATING_PARAMETERS = {
@@ -2490,14 +2491,6 @@ function isInvalidKeyForCrossBuilderView(key)
     return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in g_defaultCrossDashboardStateValues);
 }
 
-function updateDefaultBuilderState()
-{
-    if (isCrossBuilderView())
-        delete g_defaultDashboardSpecificStateValues.builder;
-    else
-        g_defaultDashboardSpecificStateValues.builder = currentBuilderGroup().defaultBuilder();
-}
-
 // Sets the page state to regenerate the page.
 // @param {Object} params New or modified query parameters as key: value.
 function handleQueryParameterChange(params)
@@ -2516,7 +2509,6 @@ function handleQueryParameterChange(params)
         }
     }
 
-    updateDefaultBuilderState();
     return true;
 }
 
