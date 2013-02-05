@@ -2900,6 +2900,16 @@ ResourceTrackingManager.prototype = {
         this._stopCapturingOnFrameEnd = false;
     },
 
+    /**
+     * @param {!TraceLog} traceLog
+     */
+    dropTraceLog: function(traceLog)
+    {
+        this.stopCapturing(traceLog);
+        if (this._lastTraceLog === traceLog)
+            this._lastTraceLog = null;
+    },
+
     captureFrame: function()
     {
         this._lastTraceLog = new TraceLog();
@@ -3040,7 +3050,9 @@ InjectedCanvasModule.prototype = {
      */
     dropTraceLog: function(id)
     {
-        this.stopCapturing(id);
+        var traceLog = this._traceLogs[id];
+        if (traceLog)
+            this._manager.dropTraceLog(traceLog);
         delete this._traceLogs[id];
         delete this._traceLogPlayers[id];
     },
