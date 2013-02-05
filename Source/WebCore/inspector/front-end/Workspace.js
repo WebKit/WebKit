@@ -248,6 +248,11 @@ WebInspector.Project.prototype = {
     searchInFileContent: function(uri, query, caseSensitive, isRegex, callback)
     {
         this._workspaceProvider.searchInFileContent(uri, query, caseSensitive, isRegex, callback);
+    },
+
+    dispose: function()
+    {
+        this._workspaceProvider.reset();
     }
 }
 
@@ -256,8 +261,7 @@ WebInspector.projectNames = {
     LiveEdit: "liveedit",
     Compiler: "compiler",
     Network: "network",
-    Snippets: "snippets",
-    FileSystem: "filesystem"
+    Snippets: "snippets"
 }
 
 /**
@@ -310,6 +314,18 @@ WebInspector.Workspace.prototype = {
     {
         this._projects[projectName] = new WebInspector.Project(this, projectName, workspaceProvider);
         return this._projects[projectName];
+    },
+
+    /**
+     * @param {string} projectName
+     */
+    removeProject: function(projectName)
+    {
+        var project = this._projects[projectName];
+        if (!project)
+            return;
+        project.dispose();
+        delete this._projects[projectName];
     },
 
     /**

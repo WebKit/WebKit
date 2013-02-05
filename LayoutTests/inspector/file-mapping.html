@@ -6,8 +6,8 @@ function test()
 {
     function MockFileSystemMapping() {}
     MockFileSystemMapping.prototype = {
-        uriForPath: function(path) {
-            return "uri:" + path;
+        uriPrefixForPathPrefix: function(pathPrefix) {
+            return "uri:" + pathPrefix;
         }
     };
 

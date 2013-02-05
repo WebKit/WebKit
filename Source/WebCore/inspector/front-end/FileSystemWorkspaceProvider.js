@@ -34,14 +34,12 @@
  * @extends {WebInspector.Object}
  * @param {WebInspector.IsolatedFileSystemModel} isolatedFileSystemModel
  */
-WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel)
+WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel, fileSystemPath)
 {
     this._isolatedFileSystemModel = isolatedFileSystemModel;
+    this._fileSystemPath = fileSystemPath;
     this._files = {};
-
     this._populate();
-    this._isolatedFileSystemModel.mapping().addEventListener(WebInspector.FileSystemMapping.Events.FileSystemAdded, this._fileSystemAdded, this);
-    this._isolatedFileSystemModel.mapping().addEventListener(WebInspector.FileSystemMapping.Events.FileSystemRemoved, this._fileSystemRemoved, this);
 }
 
 WebInspector.FileSystemWorkspaceProvider._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
@@ -53,17 +51,17 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
      */
     requestFileContent: function(uri, callback)
     {
-        var fileDescriptor = this._isolatedFileSystemModel.mapping().fileForURI(uri);
-        if (!fileDescriptor) {
+        var filePath = this._isolatedFileSystemModel.mapping().fileForURI(this._fileSystemPath, uri);
+        if (!filePath) {
             console.error("No matching file for uri: " + uri);
             callback(null, false, WebInspector.resourceTypes.Other.canonicalMimeType());
             return;
         }
-        WebInspector.FileSystemUtils.requestFileContent(this._isolatedFileSystemModel, fileDescriptor.fileSystemPath, fileDescriptor.filePath, innerCallback.bind(this));
+        WebInspector.FileSystemUtils.requestFileContent(this._isolatedFileSystemModel, this._fileSystemPath, filePath, innerCallback.bind(this));
         
         function innerCallback(content)
         {
-            var contentType = this._contentTypeForPath(fileDescriptor.filePath);
+            var contentType = this._contentTypeForPath(filePath);
             callback(content, false, contentType.canonicalMimeType());
         }
     },
@@ -75,13 +73,13 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
      */
     setFileContent: function(uri, newContent, callback)
     {
-        var fileDescriptor = this._isolatedFileSystemModel.mapping().fileForURI(uri);
-        if (!fileDescriptor) {
+        var filePath = this._isolatedFileSystemModel.mapping().fileForURI(this._fileSystemPath, uri);
+        if (!filePath) {
             console.error("No matching file for uri: " + uri);
             callback("");
             return;
         }
-        WebInspector.FileSystemUtils.setFileContent(this._isolatedFileSystemModel, fileDescriptor.fileSystemPath, fileDescriptor.filePath, newContent, callback.bind(this, ""));
+        WebInspector.FileSystemUtils.setFileContent(this._isolatedFileSystemModel, this._fileSystemPath, filePath, newContent, callback.bind(this, ""));
     },
 
     /**
@@ -131,81 +129,47 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         return WebInspector.resourceTypes.Other;
     },
 
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _fileSystemAdded: function(event)
+    _populate: function()
     {
-        var fileSystemPath = /** @type {string} */ (event.data);
-        this._addFileSystem(fileSystemPath);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _fileSystemRemoved: function(event)
-    {
-        WebInspector.startBatchUpdate();
-        var fileSystemPath = /** @type {string} */ (event.data);
-        for (var uri in this._files[fileSystemPath])
-            this._removeFile(fileSystemPath, uri);
-        WebInspector.endBatchUpdate();
-    },
-
-    /**
-     * @param {string} fileSystemPath
-     */
-    _addFileSystem: function(fileSystemPath)
-    {
-        WebInspector.FileSystemUtils.requestFilesRecursive(this._isolatedFileSystemModel, fileSystemPath, "", filesLoaded.bind(this));
+        WebInspector.FileSystemUtils.requestFilesRecursive(this._isolatedFileSystemModel, this._fileSystemPath, "", filesLoaded.bind(this));
 
         function filesLoaded(files)
         {
             for (var i = 0; i < files.length; ++i) {
-                var uri = this._isolatedFileSystemModel.mapping().uriForFile(new WebInspector.FileSystemMapping.FileDescriptor(fileSystemPath, files[i]));
+                var uri = this._isolatedFileSystemModel.mapping().uriForFile(this._fileSystemPath, files[i]);
                 var contentType = this._contentTypeForPath(files[i]);
                 var url = WebInspector.fileMapping.urlForURI(uri);
-                var fileDescriptor = new WebInspector.FileDescriptor(uri, "file://" + fileSystemPath + files[i], url, contentType, true);
-                this._addFile(fileSystemPath, fileDescriptor);
+                var fileDescriptor = new WebInspector.FileDescriptor(uri, "file://" + this._fileSystemPath + files[i], url, contentType, true);
+                this._addFile(fileDescriptor);
             } 
         }
     },
 
     /**
-     * @param {string} fileSystemPath
      * @param {WebInspector.FileDescriptor} fileDescriptor
      */
-    _addFile: function(fileSystemPath, fileDescriptor)
+    _addFile: function(fileDescriptor)
     {
-        if (!this._files[fileSystemPath])
-            this._files[fileSystemPath] = {};
-        this._files[fileSystemPath][fileDescriptor.uri] = true;
+        if (!this._files[this._fileSystemPath])
+            this._files[this._fileSystemPath] = {};
+        this._files[this._fileSystemPath][fileDescriptor.uri] = true;
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
     },
 
     /**
-     * @param {string} fileSystemPath
      * @param {string} uri
      */
-    _removeFile: function(fileSystemPath, uri)
+    _removeFile: function(uri)
     {
-        delete this._files[fileSystemPath][uri];
-        if (Object.keys(this._files[fileSystemPath]).length === 0)
-            delete this._files[fileSystemPath];
+        delete this._files[this._fileSystemPath][uri];
+        if (Object.keys(this._files[this._fileSystemPath]).length === 0)
+            delete this._files[this._fileSystemPath];
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileRemoved, uri);
-    },
-
-    _populate: function()
-    {
-        var fileSystemPaths = this._isolatedFileSystemModel.mapping().fileSystemPaths();
-        for (var i = 0; i < fileSystemPaths.length; ++i)
-             this._addFileSystem(fileSystemPaths[i]);
     },
 
     reset: function()
     {
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.Reset, null);
-        this._populate();
     },
     
     __proto__: WebInspector.Object.prototype

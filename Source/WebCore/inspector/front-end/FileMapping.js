@@ -58,7 +58,7 @@ WebInspector.FileMapping.prototype = {
      */
     _entryURIPrefix: function(entry)
     {
-        return this._fileSystemMapping.uriForPath(entry.pathPrefix);
+        return this._fileSystemMapping.uriPrefixForPathPrefix(entry.pathPrefix);
     },
     
     /**

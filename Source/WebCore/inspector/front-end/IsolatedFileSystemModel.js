@@ -34,6 +34,7 @@
  */
 WebInspector.IsolatedFileSystemModel = function(workspace)
 {
+    this._workspace = workspace;
     /** @type {!Object.<string, WebInspector.IsolatedFileSystemModel.FileSystem>} */
     this._fileSystems = {};
     /** @type {Object.<string, Array.<function(DOMFileSystem)>>} */
@@ -42,9 +43,6 @@ WebInspector.IsolatedFileSystemModel = function(workspace)
 
     if (this.supportsFileSystems())
         this._requestFileSystems();
-
-    this._fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(this);
-    workspace.addProject(WebInspector.projectNames.FileSystem, this._fileSystemWorkspaceProvider);
 }
 
 /** @typedef {{fileSystemName: string, rootURL: string, fileSystemPath: string}} */
@@ -107,8 +105,11 @@ WebInspector.IsolatedFileSystemModel.prototype = {
      */
     _innerAddFileSystem: function(fileSystem)
     {
-        this._fileSystems[fileSystem.fileSystemPath] = fileSystem;
-        this._fileSystemMapping.addFileSystemMapping(fileSystem.fileSystemPath);
+        var fileSystemPath = fileSystem.fileSystemPath;
+        this._fileSystems[fileSystemPath] = fileSystem;
+        var fileSystemId = this._fileSystemMapping.addFileSystemMapping(fileSystemPath);
+        console.assert(!this._workspace.project(fileSystemId));
+        this._workspace.addProject(fileSystemId, new WebInspector.FileSystemWorkspaceProvider(this, fileSystemPath));
     },
 
     /**
@@ -154,9 +155,10 @@ WebInspector.IsolatedFileSystemModel.prototype = {
      */
     _fileSystemRemoved: function(fileSystemPath)
     {
-        delete this._fileSystems[fileSystemPath];
+        var fileSystemId = this._fileSystemMapping.fileSystemId(fileSystemPath);
+        this._workspace.removeProject(fileSystemId);
         this._fileSystemMapping.removeFileSystemMapping(fileSystemPath);
-
+        delete this._fileSystems[fileSystemPath];
         if (this._removeFileSystemCallback) {
             this._removeFileSystemCallback(fileSystemPath);
             delete this._removeFileSystemCallback;

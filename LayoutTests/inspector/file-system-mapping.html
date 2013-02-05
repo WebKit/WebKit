@@ -1,0 +1,102 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    var pathes = {
+        FOO: "/home/username/projects/foo",
+        BAR: "/home/username/projects/bar",
+        SITE1: "/www/site1"
+    };
+    var files = [{fileSystemPath: pathes.FOO, filePath: "/foo.txt"},
+                 {fileSystemPath: pathes.FOO, filePath: "/src/foo.cpp"},
+                 {fileSystemPath: pathes.BAR, filePath: "/bar.txt"},
+                 {fileSystemPath: pathes.BAR, filePath: "/src/bar.cpp"},
+                 {fileSystemPath: pathes.SITE1, filePath: "/site1.txt"}];
+
+    function addFileSystem(fileSystemMapping, path)
+    {
+        InspectorTest.addResult("Adding file system " + path);
+        fileSystemMapping.addFileSystemMapping(path);
+    }
+
+    function removeFileSystem(fileSystemMapping, path)
+    {
+        InspectorTest.addResult("Removing file system " + path);
+        fileSystemMapping.removeFileSystemMapping(path);
+    }
+
+    function checkAndDumpFileSystemMapping(fileSystemMapping)
+    {
+        var fileSystemPaths = fileSystemMapping.fileSystemPaths();
+        InspectorTest.addResult("Testing file system mapping.");
+        InspectorTest.addResult("    file system pathes:");
+        for (var i = 0; i < fileSystemPaths.length; ++i) {
+            var id = fileSystemMapping.fileSystemId(fileSystemPaths[i]);
+            InspectorTest.addResult("     - " + fileSystemPaths[i] + "(id = " + id + ")");
+        }
+        InspectorTest.addResult("    uriPrefixForPathPrefix:");
+        for (var i = 0; i < files.length; ++i) {
+            var pathPrefix = files[i].fileSystemPath;
+            var uriPrefix = fileSystemMapping.uriPrefixForPathPrefix(pathPrefix + "/");
+            if (!uriPrefix)
+                continue;
+            InspectorTest.addResult("        " + pathPrefix + " => " + uriPrefix);
+        }
+
+        var uris = [];
+        InspectorTest.addResult("    uriForFile:");
+        for (var i = 0; i < files.length; ++i) {
+            var uri = fileSystemMapping.uriForFile(files[i].fileSystemPath, files[i].filePath);
+            uris.push(uri);
+            if (!uri)
+                continue;
+            InspectorTest.addResult("        " + files[i].fileSystemPath + ", " + files[i].filePath + " => " + uri);
+        }
+        InspectorTest.addResult("    fileForURI:");
+        for (var i = 0; i < files.length; ++i) {
+            if (!uris[i])
+                continue;
+            var filePath = fileSystemMapping.fileForURI(files[i].fileSystemPath, uris[i]);
+            InspectorTest.addResult("        " + files[i].fileSystemPath + ", " + uris[i] + " => " + filePath);
+        }
+        InspectorTest.addResult("");
+    }
+
+    // At first create file system mapping and clear it.
+    var fileSystemMapping = new WebInspector.FileSystemMappingImpl();
+    var fileSystemPaths = fileSystemMapping.fileSystemPaths();
+    for (var i = 0; i < fileSystemPaths.length; ++i)
+        fileSystemMapping.removeFileSystemMapping(fileSystemPaths[i]);
+    
+    // Now fill it with file systems and test.
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+    addFileSystem(fileSystemMapping, pathes.FOO)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+    addFileSystem(fileSystemMapping, pathes.BAR)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+    addFileSystem(fileSystemMapping, pathes.SITE1)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+
+    // Then create another file mapping to make sure it is correctly restored from the settings.
+    InspectorTest.addResult("Creating another file system mapping.");
+    var fileSystemMapping = new WebInspector.FileSystemMappingImpl();
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+
+    // Now remove file systems and test.
+    removeFileSystem(fileSystemMapping, pathes.SITE1)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+    removeFileSystem(fileSystemMapping, pathes.FOO)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+    removeFileSystem(fileSystemMapping, pathes.BAR)
+    checkAndDumpFileSystemMapping(fileSystemMapping);
+
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests FileSystemMapping</p>
+</body>
+</html>
