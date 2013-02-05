@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO_TRACK) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if ENABLE(VIDEO_TRACK)
 
 #import "CaptionUserPreferencesMac.h"
 
@@ -34,13 +34,19 @@
 #import "DOMWrapperWorld.h"
 #import "FloatConversion.h"
 #import "KURL.h"
+#import "Language.h"
+#import "LocalizedStrings.h"
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 #import "MediaAccessibility/MediaAccessibility.h"
+#endif
 #import "PageGroup.h"
 #import "SoftLinking.h"
 #import "TextTrackCue.h"
 #import "UserStyleSheetTypes.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaAccessibility)
 
@@ -62,27 +68,36 @@ SOFT_LINK(MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayR
 SOFT_LINK_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
 #define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
 
+#endif
+
 using namespace std;
 
 namespace WebCore {
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
     static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
 }
+#endif
 
 CaptionUserPreferencesMac::CaptionUserPreferencesMac(PageGroup* group)
     : CaptionUserPreferences(group)
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     , m_listeningForPreferenceChanges(false)
+#endif
 {
 }
 
 CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
 {
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (kMAXCaptionAppearanceSettingsChangedNotification)
         CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, NULL);
+#endif
 }
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 bool CaptionUserPreferencesMac::userPrefersCaptions() const
 {
     return MACaptionAppearanceGetShowCaptions(kMACaptionAppearanceDomainUser);
@@ -396,6 +411,39 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
         userPreferredLanguages.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
 
     return userPreferredLanguages;
+}
+#endif
+
+String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
+{
+    String label = track->label();
+    String language = track->language();
+    String preferredLanguage = defaultLanguage();
+    StringBuilder displayName;
+
+    if (label.isEmpty() && language.isEmpty()) {
+        displayName.append(textTrackNoLabelText());
+        return displayName.toString();
+    }
+
+    if (!label.isEmpty())
+        displayName.append(label);
+
+    AtomicString localeDisplayName = displayNameForLanguageLocale(language);
+    if (!label.contains(localeDisplayName)) {
+        if (displayName.length() > 0)
+            displayName.append(" ");
+        displayName.append(localeDisplayName);
+    }
+
+    if (track->kind() == track->captionsKeyword()) {
+        if (track->isClosedCaptions())
+            displayName.append(" CC");
+        else
+            displayName.append(" SDH");
+    }
+
+    return displayName.toString();
 }
 
 }

@@ -8,7 +8,7 @@
         <script src="trackmenu-test.js"></script>
         <script>
 
-        var captionsSection;
+        var trackListSection;
         var item;
 
         if (window.testRunner)
@@ -20,19 +20,14 @@
             if (!trackListElement)
                 return;
 
-            // Track list should have two <section> elements.
-            var trackListSections = trackListElement.querySelectorAll("h3");
-            if (!trackListSections || trackListSections.length != 2) {
-                failTest("There should be two section elements in track list menu");
+            trackListSection = trackListElement.querySelector("h3");
+            if (!trackListSection) {
+                failTest("There should be a single section element in track list menu");
                 return;
             }
 
-            captionsSection = trackListSections[0];
-            logConsole("First section should be labelled 'Closed Captions'");
-            testExpected("captionsSection.textContent", "Closed Captions");
-            captionsSection = trackListSections[1];
-            logConsole("Second section should be labelled 'Subtitles'");
-            testExpected("captionsSection.textContent", "Subtitles");
+            logConsole("Heading should be labelled 'Subtitles'");
+            testExpected("trackListSection.textContent", "Subtitles");
 
             var captionsEntries = trackListElement.querySelectorAll("li");
             if (!captionsEntries || captionsEntries.length <= 0) {

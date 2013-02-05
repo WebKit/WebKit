@@ -15,33 +15,28 @@
                 var trackListElement = getTrackListElement();
                 if (!trackListElement)
                     return;
-                // Track list should have two <ul> elements.
-                var trackListSections = trackListElement.querySelectorAll("ul");
-                if (!trackListSections || trackListSections.length != 2) {
-                    failTest("There should be two ul elements in track list menu");
+                var trackListSection = trackListElement.querySelector("ul");
+                if (!trackListSection) {
+                    failTest("There should be a ul element in track list menu");
                     return;
                 }
-                for (var i = 0; i < trackListSections.length; i++) {
-                    consoleWrite("<br>*** Test menu section " + i + ".");
-                    var lastTrackLabel = null;
-                    var trackListItems = trackListSections[i].querySelectorAll("li");
-                    if (!trackListItems || trackListItems.length != 5) {
-                        failTest("There should be five li elements in this section");
-                        return;
+                var lastTrackLabel = null;
+                var trackListItems = trackListSection.querySelectorAll("li");
+                if (!trackListItems || trackListItems.length != 7) {
+                    failTest("There should be seven li elements in the menu");
+                    return;
+                }
+                for (var j = 0; j < trackListItems.length; j++) {
+                    var item = trackListItems[j];
+                    if (j == 0)
+                        logResult(item.textContent == "Off", "First item should be labelled off");
+                    else {
+                        if (lastTrackLabel)
+                            logResult(item.textContent > lastTrackLabel, lastTrackLabel + " comes before " + item.textContent);
+                        else
+                            logResult(true, item.textContent + " is the first real item in the list");
+                        lastTrackLabel = item.textContent;
                     }
-                    for (var j = 0; j < trackListItems.length; j++) {
-                        var item = trackListItems[j];
-                        if (j == 0)
-                            logResult(item.textContent == "Off", "First item should be labelled off");
-                        else {
-                            if (lastTrackLabel)
-                                logResult(item.textContent > lastTrackLabel, lastTrackLabel + " comes before " + item.textContent);
-                            else
-                                logResult(true, item.textContent + " is the first real item in the list");
-                            lastTrackLabel = item.textContent;
-                        }
-                    }
-                    consoleWrite("Menu section " + i + " was ok.<br>");
                 }
                 endTest();
             }
@@ -61,11 +56,9 @@
             <track label="c" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
             <track label="b" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
             <track label="a" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
-            <track label="d" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
             <track label="b" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
             <track label="a" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
             <track label="c" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
-            <track label="d" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
         </video>
     </body>
 </html>

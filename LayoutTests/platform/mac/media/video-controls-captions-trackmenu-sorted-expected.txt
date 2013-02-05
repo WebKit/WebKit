@@ -1,0 +1,15 @@
+Test that captions and subtitles are sorted in the menu.
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+First item should be labelled off OK
+a English (Australia) is the first real item in the list OK
+a English (Australia) comes before a English SDH OK
+a English SDH comes before b English (Australia) SDH OK
+b English (Australia) SDH comes before b Japanese OK
+b Japanese comes before c English OK
+c English comes before c Japanese SDH OK
+END OF TEST
+

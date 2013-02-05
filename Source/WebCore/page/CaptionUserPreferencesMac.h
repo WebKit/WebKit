@@ -26,7 +26,7 @@
 #ifndef CaptionUserPreferencesMac_h
 #define CaptionUserPreferencesMac_h
 
-#if ENABLE(VIDEO_TRACK) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if ENABLE(VIDEO_TRACK)
 
 #include "CSSPropertyNames.h"
 #include "CaptionUserPreferences.h"
@@ -40,6 +40,7 @@ public:
     static PassOwnPtr<CaptionUserPreferencesMac> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferencesMac(group)); }
     virtual ~CaptionUserPreferencesMac();
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual void setUserPrefersCaptions(bool) OVERRIDE;
     virtual bool userHasCaptionPreferences() const OVERRIDE { return true; }
@@ -52,10 +53,14 @@ public:
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     void captionPreferencesChanged();
+#endif
+
+    virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
 
 private:
     CaptionUserPreferencesMac(PageGroup*);
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     String captionsWindowCSS() const;
     String captionsBackgroundCSS() const;
     String captionsTextColorCSS() const;
@@ -71,6 +76,7 @@ private:
 
     HashSet<CaptionPreferencesChangedListener*> m_captionPreferenceChangeListeners;
     bool m_listeningForPreferenceChanges;
+#endif
 };
     
 }

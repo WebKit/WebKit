@@ -265,7 +265,6 @@ namespace WebCore {
     String clickToExitFullScreenText();
 
 #if ENABLE(VIDEO_TRACK)
-    String textTrackClosedCaptionsText();
     String textTrackSubtitlesText();
     String textTrackOffText();
     String textTrackNoLabelText();

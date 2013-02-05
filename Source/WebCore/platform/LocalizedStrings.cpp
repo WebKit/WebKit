@@ -1015,11 +1015,6 @@ String clickToExitFullScreenText()
 }
 
 #if ENABLE(VIDEO_TRACK)
-String textTrackClosedCaptionsText()
-{
-    return WEB_UI_STRING("Closed Captions", "Menu section heading for closed captions");
-}
-
 String textTrackSubtitlesText()
 {
     return WEB_UI_STRING("Subtitles", "Menu section heading for subtitles");

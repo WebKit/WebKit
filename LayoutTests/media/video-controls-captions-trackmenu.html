@@ -22,7 +22,7 @@
                 var trackListElement = getTrackListElement();
                 if (!trackListElement)
                     return;
-                // Track list should have a <ul> with five <li> children (One of them is "Off").
+                // Track list should have a <ul> with <li> children (One of them is "Off").
                 var trackList = trackListElement.querySelector("ul");
                 if (!trackList) {
                     failTest("Could not find a child ul element in track list menu");
@@ -70,9 +70,9 @@
             {
                 testExpected("video.textTracks.length", 4);
                 consoleWrite("Track 0 should be showing");
-                testExpected("video.textTracks[0].mode", "disabled");
+                testExpected("video.textTracks[0].mode", "showing");
                 consoleWrite("Track 1 should be disabled");
-                testExpected("video.textTracks[1].mode", "showing");
+                testExpected("video.textTracks[1].mode", "disabled");
                 consoleWrite("Track 2 should be disabled");
                 testExpected("video.textTracks[2].mode", "disabled");
                 consoleWrite("Track 3 should be disabled");

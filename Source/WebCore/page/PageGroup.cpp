@@ -39,7 +39,7 @@
 #include "StorageNamespace.h"
 
 #if ENABLE(VIDEO_TRACK)
-#if PLATFORM(MAC) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 #include "CaptionUserPreferencesMac.h"
 #else
 #include "CaptionUserPreferences.h"
@@ -420,7 +420,7 @@ void PageGroup::invalidatedInjectedStyleSheetCacheInAllFrames()
 CaptionUserPreferences* PageGroup::captionPreferences()
 {
     if (!m_captionPreferences)
-#if PLATFORM(MAC) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
         m_captionPreferences = CaptionUserPreferencesMac::create(this);
 #else
         m_captionPreferences = CaptionUserPreferences::create(this);
