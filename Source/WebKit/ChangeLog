@@ -1,5 +1,14 @@
 2013-02-05  Roger Fong  <roger_fong@apple.com>
 
+        Add a JavaScriptCore Export Generator project.
+        https://bugs.webkit.org/show_bug.cgi?id=108971.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.sln:
+
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Delete some errant preprocessor definitions.
 
         * WebKit.vcxproj/WebKit/WebKitCommon.props:

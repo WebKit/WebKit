@@ -802,7 +802,7 @@ static void InitSizeClasses() {
   size_t sc = 1;   // Next size class to assign
   unsigned char alignshift = kAlignShift;
   int last_lg = -1;
-  for (size_t size = kAlignment; size <= kMaxSize; size += (1 << alignshift)) {
+  for (size_t size = kAlignment; size <= kMaxSize; size += (1i64 << alignshift)) {
     int lg = LgFloor(size);
     if (lg > last_lg) {
       // Increase alignment every so often.

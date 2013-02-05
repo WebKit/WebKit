@@ -54,6 +54,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <Link />
+    <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\API\JSBase.cpp" />
@@ -680,7 +681,6 @@
     <None Include="copy-files.cmd">
       <FileType>Document</FileType>
     </None>
-    <None Include="JavaScriptCoreExports.def" />
     <None Include="JavaScriptCorePostBuild.cmd">
       <FileType>Document</FileType>
     </None>

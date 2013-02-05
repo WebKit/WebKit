@@ -1902,7 +1902,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />
-    <None Include="JavaScriptCoreExports.def" />
     <None Include="JavaScriptCorePostBuild.cmd" />
     <None Include="JavaScriptCorePreBuild.cmd" />
     <None Include="copy-files.cmd" />

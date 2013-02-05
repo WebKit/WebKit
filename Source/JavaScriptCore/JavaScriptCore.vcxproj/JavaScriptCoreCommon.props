@@ -10,7 +10,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>JavaScriptCoreExports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj\JavaScriptCoreExportGenerator\JavaScriptCoreExports.def</ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

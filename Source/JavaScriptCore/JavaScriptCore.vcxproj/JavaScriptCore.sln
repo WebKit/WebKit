@@ -3,8 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScriptCore.vcxproj", "{22413D41-3A18-42B7-92A8-CEDC6CE86920}"
 	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
-		{9221744B-5715-4F56-9590-42F7AB23DD8B} = {9221744B-5715-4F56-9590-42F7AB23DD8B}
+		{BB7E61B8-869E-45E7-8F12-0907D08C1F57} = {BB7E61B8-869E-45E7-8F12-0907D08C1F57}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "JavaScriptCoreGenerated.vcxproj", "{3670D01F-95F3-45A8-B878-947EB6CF214E}"
@@ -47,6 +46,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntOffsetsExtractor", "LLInt\LLIntOffsetsExtractor\LLIntOffsetsExtractor.vcxproj", "{D595E3F6-24F2-4C60-935C-95D50C6B3E96}"
 	ProjectSection(ProjectDependencies) = postProject
 		{877150A0-41B3-4730-9D98-1B8298098B14} = {877150A0-41B3-4730-9D98-1B8298098B14}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreExportGenerator", "JavaScriptCoreExportGenerator\JavaScriptCoreExportGenerator.vcxproj", "{BB7E61B8-869E-45E7-8F12-0907D08C1F57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
+		{9221744B-5715-4F56-9590-42F7AB23DD8B} = {9221744B-5715-4F56-9590-42F7AB23DD8B}
 	EndProjectSection
 EndProject
 Global
@@ -95,6 +100,10 @@ Global
 		{D595E3F6-24F2-4C60-935C-95D50C6B3E96}.Debug|Win32.Build.0 = Debug|Win32
 		{D595E3F6-24F2-4C60-935C-95D50C6B3E96}.Release|Win32.ActiveCfg = Release|Win32
 		{D595E3F6-24F2-4C60-935C-95D50C6B3E96}.Release|Win32.Build.0 = Release|Win32
+		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Debug|Win32.Build.0 = Debug|Win32
+		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Release|Win32.ActiveCfg = Release|Win32
+		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
