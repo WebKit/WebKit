@@ -34,6 +34,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -591,12 +593,6 @@ public:
                             const void* pixels,
                             Vector<uint8_t>& data);
 
-    // Flips the given image data vertically, in-place.
-    static void flipVertically(void* imageData,
-                        unsigned int width,
-                        unsigned int height,
-                        unsigned int bytesPerPixel,
-                        unsigned int unpackAlignment);
 
     // Attempt to enumerate all possible native image formats to
     // reduce the amount of temporary allocations during texture
@@ -642,19 +638,17 @@ public:
 
     // Check if the format is one of the formats from the ImageData or DOM elements.
     // The formats from ImageData is always RGBA8.
-    // The formats from DOM elements vary with Graphics ports. It can only be RGBA8 or BGRA8 for non-CG port while much more for CG port.
+    // The formats from DOM elements vary with Graphics ports. It can only be RGBA8 or BGRA8 for non-CG port while a little more for CG port.
     static ALWAYS_INLINE bool srcFormatComeFromDOMElementOrImageData(DataFormat SrcFormat)
     {
 #if USE(CG)
 #if CPU(BIG_ENDIAN)
-    return SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatRGBA16Big
-        || SrcFormat == DataFormatARGB8 || SrcFormat == DataFormatARGB16Big
-        || SrcFormat == DataFormatRGB8 || SrcFormat == DataFormatRGB16Big;
+    return SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatARGB8 || SrcFormat == DataFormatRGB8;
 #else
-    return SrcFormat == DataFormatBGRA8 || SrcFormat == DataFormatARGB16Little
-        || SrcFormat == DataFormatABGR8 || SrcFormat == DataFormatRGBA16Little
-        || SrcFormat == DataFormatBGR8 || SrcFormat == DataFormatRGB16Little
-        || SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatRGB8;
+    // That LITTLE_ENDIAN case has more possible formats than BIG_ENDIAN case is because some decoded image data is actually big endian
+    // even on little endian architectures.
+    return SrcFormat == DataFormatBGRA8 || SrcFormat == DataFormatABGR8 || SrcFormat == DataFormatBGR8
+        || SrcFormat == DataFormatRGBA8 || SrcFormat == DataFormatARGB8 || SrcFormat == DataFormatRGB8;
 #endif
 #else
     return SrcFormat == DataFormatBGRA8 || SrcFormat == DataFormatRGBA8;
@@ -937,6 +931,7 @@ public:
         CGImageRef m_cgImage;
         RetainPtr<CGImageRef> m_decodedImage;
         RetainPtr<CFDataRef> m_pixelData;
+        OwnArrayPtr<uint8_t> m_formalizedRGBA8Data;
 #elif PLATFORM(QT)
         QImage m_qtImage;
 #endif
