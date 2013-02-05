@@ -523,6 +523,8 @@ webkit.org/b/108682 [ Debug ] media/video-controls-fullscreen-volume.html [ Cras
 webkit.org/b/108682 [ Debug ] media/video-controls-visible-exiting-fullscreen.html [ Crash ]
 webkit.org/b/108682 [ Debug ] media/video-src.html [ Crash ]
 
+webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -627,6 +629,8 @@ webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
+webkit.org/b/104809 media/W3C/audio/events/event_pause_manual.html [ Crash Pass ]
+webkit.org/b/104809 fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Crash Pass ]
 
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
 
@@ -760,6 +764,8 @@ webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeou
 webkit.org/b/107534 fast/js/regress/object-closure-call.html [ Timeout ]
 webkit.org/b/107534 fast/js/regress/cell-argument.html [ Timeout ]
 
+webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -877,7 +883,6 @@ Bug(GTK) http/tests/loading/bad-server-subframe.html [ Failure ]
 Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
-Bug(GTK) http/tests/media/video-play-stall.html [ Failure Slow ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
