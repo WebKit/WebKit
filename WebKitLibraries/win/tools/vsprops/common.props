@@ -28,7 +28,9 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalOptions>/bigobj /GS %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_WINDOWS;WINVER=0x502;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1;_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;WINVER=0x502;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1;_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName);WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="$(Platform)=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="$(Platform)=='Win64'">x64</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <WarningLevel>Level4</WarningLevel>
@@ -41,7 +43,7 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
       <OpenMPSupport>false</OpenMPSupport>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>
       </AssemblerListingLocation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -198,6 +200,7 @@ cmd /c
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <CLRThreadAttribute>DefaultThreadingAttribute</CLRThreadAttribute>
+      <ImportLibrary>$(ConfigurationBuildDir)\lib\$(TargetName).lib</ImportLibrary>
     </Link>
     <Bscmake />
     <Xdcmake />

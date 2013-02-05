@@ -11,7 +11,7 @@
     </ClCompile>
     <Bscmake />
     <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
 </Project>
