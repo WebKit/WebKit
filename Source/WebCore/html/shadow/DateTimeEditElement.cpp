@@ -506,15 +506,12 @@ void DateTimeEditElement::focusIfNoFocus()
 {
     if (focusedFieldIndex() != invalidFieldIndex)
         return;
-
-    if (DateTimeFieldElement* field = fieldAt(0))
-        field->focus();
+    focusOnNextFocusableField(0);
 }
 
 void DateTimeEditElement::focusByOwner()
 {
-    if (DateTimeFieldElement* field = fieldAt(0))
-        field->focus();
+    focusOnNextFocusableField(0);
 }
 
 DateTimeFieldElement* DateTimeEditElement::focusedField() const
@@ -538,18 +535,23 @@ void DateTimeEditElement::fieldValueChanged()
         m_editControlOwner->editControlValueChanged();
 }
 
-bool DateTimeEditElement::focusOnNextField(const DateTimeFieldElement& field)
+bool DateTimeEditElement::focusOnNextFocusableField(size_t startIndex)
 {
-    const size_t startFieldIndex = fieldIndexOf(field);
-    if (startFieldIndex == invalidFieldIndex)
-        return false;
-    for (size_t fieldIndex = startFieldIndex + 1; fieldIndex < m_fields.size(); ++fieldIndex) {
+    for (size_t fieldIndex = startIndex; fieldIndex < m_fields.size(); ++fieldIndex) {
         if (m_fields[fieldIndex]->isFocusable()) {
             m_fields[fieldIndex]->focus();
             return true;
         }
     }
     return false;
+}
+
+bool DateTimeEditElement::focusOnNextField(const DateTimeFieldElement& field)
+{
+    const size_t startFieldIndex = fieldIndexOf(field);
+    if (startFieldIndex == invalidFieldIndex)
+        return false;
+    return focusOnNextFocusableField(startFieldIndex + 1);
 }
 
 bool DateTimeEditElement::focusOnPreviousField(const DateTimeFieldElement& field)

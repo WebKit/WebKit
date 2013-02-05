@@ -123,6 +123,7 @@ private:
     size_t fieldIndexOf(const DateTimeFieldElement&) const;
     DateTimeFieldElement* focusedField() const;
     size_t focusedFieldIndex() const;
+    bool focusOnNextFocusableField(size_t startIndex);
     bool isDisabled() const;
     bool isReadOnly() const;
     void layout(const LayoutParameters&, const DateComponents&);
