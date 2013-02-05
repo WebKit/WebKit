@@ -394,7 +394,7 @@ END
         my $name = $function->signature->name;
         my $attrExt = $function->signature->extendedAttributes;
 
-        if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && !$attrExt->{"ImplementedBy"} && $function->{overloadIndex} == 1) {
+        if (HasCustomMethod($attrExt) && !$attrExt->{"ImplementedBy"} && $function->{overloadIndex} == 1) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
@@ -422,18 +422,14 @@ END
         my $name = $attribute->signature->name;
         my $attrExt = $attribute->signature->extendedAttributes;
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
-        if (($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"} ||
-             $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
-            !$attrExt->{"ImplementedBy"}) {
+        if (HasCustomGetter($attrExt) && !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}AccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
-        if (($attrExt->{"V8CustomSetter"} || $attrExt->{"CustomSetter"} ||
-             $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
-            !$attrExt->{"ImplementedBy"}) {
+        if (HasCustomSetter($attrExt) && !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
@@ -755,6 +751,24 @@ sub HasCustomConstructor
     my $interface = shift;
 
     return $interface->extendedAttributes->{"CustomConstructor"} || $interface->extendedAttributes->{"V8CustomConstructor"};
+}
+
+sub HasCustomGetter
+{
+    my $attrExt = shift;
+    return $attrExt->{"Custom"} || $attrExt->{"V8Custom"} || $attrExt->{"CustomGetter"} || $attrExt->{"V8CustomGetter"};
+}
+
+sub HasCustomSetter
+{
+    my $attrExt = shift;
+    return $attrExt->{"Custom"} || $attrExt->{"V8Custom"} || $attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"};
+}
+
+sub HasCustomMethod
+{
+    my $attrExt = shift;
+    return $attrExt->{"Custom"} || $attrExt->{"V8Custom"};
 }
 
 sub IsReadonly
@@ -1343,12 +1357,7 @@ sub GetFunctionTemplateCallbackName
 
     my $name = $function->signature->name;
 
-    if ($function->signature->extendedAttributes->{"Custom"} ||
-        $function->signature->extendedAttributes->{"V8Custom"}) {
-        if ($function->signature->extendedAttributes->{"Custom"} &&
-            $function->signature->extendedAttributes->{"V8Custom"}) {
-            die "Custom and V8Custom should be mutually exclusive!"
-        }
+    if (HasCustomMethod($function->signature->extendedAttributes)) {
         return "V8${interfaceName}::${name}Callback";
     } else {
         return "${interfaceName}V8Internal::${name}Callback";
@@ -2258,14 +2267,7 @@ sub GenerateSingleBatchedAttribute
     }
     $accessControl = "static_cast<v8::AccessControl>(" . $accessControl . ")";
 
-    my $customAccessor =
-        $attrExt->{"Custom"} ||
-        $attrExt->{"CustomSetter"} ||
-        $attrExt->{"CustomGetter"} ||
-        $attrExt->{"V8Custom"} ||
-        $attrExt->{"V8CustomSetter"} ||
-        $attrExt->{"V8CustomGetter"} ||
-        "";
+    my $customAccessor = HasCustomGetter($attrExt) || HasCustomSetter($attrExt) || "";
     if ($customAccessor eq "VALUE_IS_MISSING") {
         # use the naming convension, interface + (capitalize) attr name
         $customAccessor = $interfaceName . "::" . $attrName;
@@ -2312,13 +2314,11 @@ sub GenerateSingleBatchedAttribute
             $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
         }
 
-        # Custom Setter
-        if ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+        if (HasCustomSetter($attrExt)) {
             $setter = "V8${customAccessor}AccessorSetter";
         }
 
-        # Custom Getter
-        if ($attrExt->{"CustomGetter"} || $attrExt->{"V8CustomGetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+        if (HasCustomGetter($attrExt)) {
             $getter = "V8${customAccessor}AccessorGetter";
         }
     }
@@ -2700,43 +2700,31 @@ END
     for (my $index = 0; $index < @{$interface->attributes}; $index++) {
         my $attribute = @{$interface->attributes}[$index];
         my $attrType = $attribute->signature->type;
+        my $attrExt = $attribute->signature->extendedAttributes;
 
         # Generate special code for the constructor attributes.
         if ($attrType =~ /Constructor$/) {
-            if (!($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-                $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
+            if (!HasCustomGetter($attrExt)) {
                 $hasConstructors = 1;
             }
             next;
         }
 
         if ($attrType eq "EventListener" && $interfaceName eq "DOMWindow") {
-            $attribute->signature->extendedAttributes->{"V8OnProto"} = 1;
+            $attrExt->{"V8OnProto"} = 1;
         }
 
         if ($attrType eq "SerializedScriptValue") {
             AddToImplIncludes("SerializedScriptValue.h");
         }
 
-        # Do not generate accessor if this is a custom attribute.  The
-        # call will be forwarded to a hand-written accessor
-        # implementation.
-        if ($attribute->signature->extendedAttributes->{"Custom"} ||
-            $attribute->signature->extendedAttributes->{"V8Custom"}) {
-            next;
-        }
-
-        # Generate the accessor.
-        if (!($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-            $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
+        if (!HasCustomGetter($attrExt)) {
             GenerateNormalAttrGetter($attribute, $interface);
         }
 
-        if ($attribute->signature->extendedAttributes->{"Replaceable"}) {
+        if ($attrExt->{"Replaceable"}) {
             $hasReplaceable = 1;
-        } elsif (!$attribute->signature->extendedAttributes->{"CustomSetter"} &&
-            !$attribute->signature->extendedAttributes->{"V8CustomSetter"} &&
-            !IsReadonly($attribute)) {
+        } elsif (!HasCustomSetter($attrExt) && !IsReadonly($attribute)) {
             GenerateNormalAttrSetter($attribute, $interface);
         }
     }
@@ -2775,7 +2763,7 @@ END
     my $needsDomainSafeFunctionSetter = 0;
     # Generate methods for functions.
     foreach my $function (@{$interface->functions}) {
-        my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"};
+        my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
         if (!$isCustom) {
             GenerateFunctionCallback($function, $interface);
             if ($function->{overloadIndex} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
@@ -4084,8 +4072,7 @@ sub RequiresCustomSignature
 {
     my $function = shift;
     # No signature needed for Custom function
-    if ($function->signature->extendedAttributes->{"Custom"} ||
-        $function->signature->extendedAttributes->{"V8Custom"}) {
+    if (HasCustomMethod($function->signature->extendedAttributes)) {
         return 0;
     }
     # No signature needed for overloaded function
