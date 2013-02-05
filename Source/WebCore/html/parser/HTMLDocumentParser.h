@@ -75,7 +75,6 @@ public:
     static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
-    String sourceForToken(const HTMLToken&);
 
     virtual TextPosition textPosition() const;
     virtual OrdinalNumber lineNumber() const;

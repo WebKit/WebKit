@@ -378,7 +378,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            OwnPtr<DidBlockScriptRequest> request = m_xssAuditor.filterToken(token());
+            OwnPtr<DidBlockScriptRequest> request = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder()));
             if (request)
                 m_xssAuditorDelegate.didBlockScript(request.release());
         }
@@ -663,11 +663,6 @@ bool HTMLDocumentParser::isExecutingScript() const
     if (!m_scriptRunner)
         return false;
     return m_scriptRunner->isExecutingScript();
-}
-
-String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
-{
-    return m_sourceTracker.sourceForToken(token);
 }
 
 OrdinalNumber HTMLDocumentParser::lineNumber() const
