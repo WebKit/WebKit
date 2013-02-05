@@ -1682,7 +1682,7 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
     TileMap currentMap = geometry->tileMap();
 
     bool isLoading = m_client->loadState() == WebPagePrivate::Committed;
-    bool forceVisible = checkLoading && isLoading;
+    bool updateNonVisibleTiles = !checkLoading || !isLoading;
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
@@ -1711,8 +1711,8 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
 #endif
             }
             updateTile(tileOrigin, false /*immediate*/);
-        } else if (isVisible
-            && (forceVisible || !tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale()))
+        } else if ((isVisible || updateNonVisibleTiles)
+            && (!tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale()))
             && !isCurrentVisibleJob(index, geometry))
             updateTile(tileOrigin, false /*immediate*/);
     }

@@ -1,3 +1,20 @@
+2013-02-05  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Scrolling performance drops doing page load
+        https://bugs.webkit.org/show_bug.cgi?id=108949
+
+        Reviewed by Yong Li.
+        Internally reviewed by Jakob Petsovits.
+
+        Internal PR 291390.
+        The intention of this code was to not update non-visible tiles during page load.
+
+        Before this patch, the code would update tiles that have already been rendered
+        during page load.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+
 2013-02-04  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry]Adjust fatfinger detection rect size
