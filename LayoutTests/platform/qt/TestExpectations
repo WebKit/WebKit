@@ -774,6 +774,9 @@ editing/selection/after-line-break.html
 # https://bugs.webkit.org/show_bug.cgi?id=54725
 editing/selection/mixed-editability-10.html
 
+# [Qt] editing/selection/select-out-of-editable.html times out after r141792.
+webkit.org/b/108942 editing/selection/select-out-of-editable.html [ Skip ]
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #
