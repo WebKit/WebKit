@@ -1,3 +1,20 @@
+2013-02-04  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] Implement runBeforeUnloadConfirmPanel on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=106979
+
+        Reviewed by Benjamin Poulain.
+
+        Implement runBeforeUnloadConfirmPanel() to support window.onbeforeunload.
+        We can show confirmation window when beforeunload event is fired.
+
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        (WebKit::PageUIClientEfl::runBeforeUnloadConfirmPanel):
+        (WebKit):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (PageUIClientEfl):
+
 2013-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Introduce a WebView class as counterpart for WKViewRef

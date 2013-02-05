@@ -62,6 +62,7 @@ private:
     static void setIsResizable(WKPageRef, bool, const void* clientInfo);
     static WKRect getWindowFrame(WKPageRef, const void*);
     static void setWindowFrame(WKPageRef, WKRect, const void*);
+    static bool runBeforeUnloadConfirmPanel(WKPageRef, WKStringRef, WKFrameRef, const void*);
 #if ENABLE(SQL_DATABASE)
     static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, const void*);
 #endif

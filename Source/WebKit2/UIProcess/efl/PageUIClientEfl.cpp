@@ -72,6 +72,7 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     uiClient.setIsResizable = setIsResizable;
     uiClient.getWindowFrame = getWindowFrame;
     uiClient.setWindowFrame = setWindowFrame;
+    uiClient.runBeforeUnloadConfirmPanel = runBeforeUnloadConfirmPanel;
 #if ENABLE(SQL_DATABASE)
     uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
 #endif
@@ -187,6 +188,11 @@ WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
 void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
 {
     toPageUIClientEfl(clientInfo)->m_view->setWindowGeometry(frame);
+}
+
+bool PageUIClientEfl::runBeforeUnloadConfirmPanel(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
+{
+    return toPageUIClientEfl(clientInfo)->m_view->requestJSConfirmPopup(WKEinaSharedString(message));
 }
 
 #if ENABLE(SQL_DATABASE)
