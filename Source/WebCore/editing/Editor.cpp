@@ -1316,6 +1316,39 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 
+WritingDirection Editor::baseWritingDirectionForSelectionStart() const
+{
+    WritingDirection result = LeftToRightWritingDirection;
+
+    Position pos = m_frame->selection()->selection().visibleStart().deepEquivalent();
+    Node* node = pos.deprecatedNode();
+    if (!node)
+        return result;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return result;
+
+    if (!renderer->isBlockFlow()) {
+        renderer = renderer->containingBlock();
+        if (!renderer)
+            return result;
+    }
+
+    RenderStyle* style = renderer->style();
+    if (!style)
+        return result;
+
+    switch (style->direction()) {
+    case LTR:
+        return LeftToRightWritingDirection;
+    case RTL:
+        return RightToLeftWritingDirection;
+    }
+    
+    return result;
+}
+
 void Editor::selectComposition()
 {
     RefPtr<Range> range = compositionRange();

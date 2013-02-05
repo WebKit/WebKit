@@ -373,11 +373,11 @@ public:
     bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
     void textWillBeDeletedInTextField(Element* input);
     void textDidChangeInTextArea(Element*);
+    WritingDirection baseWritingDirectionForSelectionStart() const;
 
 #if PLATFORM(MAC)
     const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
-    WritingDirection baseWritingDirectionForSelectionStart() const;
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     void writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
