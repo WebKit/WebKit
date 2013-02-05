@@ -1,3 +1,55 @@
+2013-02-05  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove unneccessary 0 checks for testRunner now that the TestRunner library owns it
+        https://bugs.webkit.org/show_bug.cgi?id=108923
+
+        Reviewed by Kentaro Hara.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::shouldBeginEditing):
+        (WebTestRunner::WebTestProxyBase::shouldEndEditing):
+        (WebTestRunner::WebTestProxyBase::shouldInsertNode):
+        (WebTestRunner::WebTestProxyBase::shouldInsertText):
+        (WebTestRunner::WebTestProxyBase::shouldChangeSelectedRange):
+        (WebTestRunner::WebTestProxyBase::shouldDeleteRange):
+        (WebTestRunner::WebTestProxyBase::shouldApplyStyle):
+        (WebTestRunner::WebTestProxyBase::didBeginEditing):
+        (WebTestRunner::WebTestProxyBase::didChangeSelection):
+        (WebTestRunner::WebTestProxyBase::didChangeContents):
+        (WebTestRunner::WebTestProxyBase::didEndEditing):
+        (WebTestRunner::WebTestProxyBase::createView):
+        (WebTestRunner::WebTestProxyBase::setStatusText):
+        (WebTestRunner::WebTestProxyBase::didStopLoading):
+        (WebTestRunner::WebTestProxyBase::isSmartInsertDeleteEnabled):
+        (WebTestRunner::WebTestProxyBase::isSelectTrailingWhitespaceEnabled):
+        (WebTestRunner::WebTestProxyBase::willPerformClientRedirect):
+        (WebTestRunner::WebTestProxyBase::didCancelClientRedirect):
+        (WebTestRunner::WebTestProxyBase::didStartProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didReceiveServerRedirectForProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didFailProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didCommitProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didReceiveTitle):
+        (WebTestRunner::WebTestProxyBase::didFinishDocumentLoad):
+        (WebTestRunner::WebTestProxyBase::didHandleOnloadEvents):
+        (WebTestRunner::WebTestProxyBase::didFailLoad):
+        (WebTestRunner::WebTestProxyBase::didFinishLoad):
+        (WebTestRunner::WebTestProxyBase::didChangeLocationWithinPage):
+        (WebTestRunner::WebTestProxyBase::didDisplayInsecureContent):
+        (WebTestRunner::WebTestProxyBase::didRunInsecureContent):
+        (WebTestRunner::WebTestProxyBase::didDetectXSS):
+        (WebTestRunner::WebTestProxyBase::assignIdentifierToRequest):
+        (WebTestRunner::WebTestProxyBase::willRequestResource):
+        (WebTestRunner::WebTestProxyBase::didCreateDataSource):
+        (WebTestRunner::WebTestProxyBase::willSendRequest):
+        (WebTestRunner::WebTestProxyBase::didReceiveResponse):
+        (WebTestRunner::WebTestProxyBase::didFinishResourceLoad):
+        (WebTestRunner::WebTestProxyBase::didFailResourceLoad):
+        (WebTestRunner::WebTestProxyBase::runModalBeforeUnloadDialog):
+        (WebTestRunner::WebTestProxyBase::locationChangeDone):
+        (WebTestRunner::WebTestProxyBase::decidePolicyForNavigation):
+        (WebTestRunner::WebTestProxyBase::willCheckAndDispatchMessageEvent):
+
 2013-02-04  Alan Cutter  <alancutter@chromium.org>
 
         EWS bots don't remove untracked files after processing a patch
