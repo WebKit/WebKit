@@ -51,11 +51,16 @@ struct TextAutosizingClusterInfo {
     explicit TextAutosizingClusterInfo(RenderBlock* root)
         : root(root)
         , blockContainingAllText(0)
+        , maxAllowedDifferenceFromTextWidth(150)
     {
     }
 
     RenderBlock* root;
     const RenderBlock* blockContainingAllText;
+
+    // Upper limit on the difference between the width of the cluster's block containing all
+    // text and that of a narrow child before the child becomes a separate cluster.
+    float maxAllowedDifferenceFromTextWidth;
 };
 
 
@@ -147,7 +152,7 @@ void TextAutosizer::processCluster(TextAutosizingClusterInfo* clusterInfo, Rende
     processContainer(multiplier, container, clusterInfo, subtreeRoot, windowInfo);
 }
 
-void TextAutosizer::processContainer(float multiplier, RenderBlock* container, const TextAutosizingClusterInfo* clusterInfo, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
+void TextAutosizer::processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo* clusterInfo, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
 {
     ASSERT(isAutosizingContainer(container));
 
@@ -230,7 +235,7 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
     return true;
 }
 
-bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const TextAutosizingClusterInfo* parentClusterInfo)
+bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, TextAutosizingClusterInfo* parentClusterInfo)
 {
     // "Autosizing clusters" are special autosizing containers within which we
     // want to enforce a uniform text size multiplier, in the hopes of making
@@ -256,15 +261,21 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const TextA
     // since they need special treatment due to their width.
     ASSERT(isAutosizingContainer(renderer));
 
-    // Upper limit on the difference between the width of the parent block containing all
-    // text and that of a narrow child before the child becomes a cluster.
-    const float maxWidthDifference = 200;
-
     if (parentClusterInfo->blockContainingAllText) {
         float contentWidth = renderer->contentLogicalWidth();
         float clusterTextWidth = parentClusterInfo->blockContainingAllText->contentLogicalWidth();
-        if (contentWidth > clusterTextWidth || (clusterTextWidth - contentWidth) > maxWidthDifference)
+        if (contentWidth > clusterTextWidth)
             return true;
+
+        // The upper limit on how many pixels the difference between the renderer width
+        // and its parent cluster width can exceed the current maximum difference by
+        // before the object is considered to be a separate autosizing cluster.
+        const float differenceFromMaxWidthDifference = 50;
+
+        float widthDifference = clusterTextWidth - contentWidth;
+        if (widthDifference - parentClusterInfo->maxAllowedDifferenceFromTextWidth > differenceFromMaxWidthDifference)
+            return true;
+        parentClusterInfo->maxAllowedDifferenceFromTextWidth = std::max(widthDifference, parentClusterInfo->maxAllowedDifferenceFromTextWidth);
     }
 
     return renderer->isRenderView()
@@ -378,7 +389,7 @@ bool TextAutosizer::contentHeightIsConstrained(const RenderBlock* container)
     return false;
 }
 
-bool TextAutosizer::clusterShouldBeAutosized(const TextAutosizingClusterInfo* clusterInfo, float blockWidth)
+bool TextAutosizer::clusterShouldBeAutosized(TextAutosizingClusterInfo* clusterInfo, float blockWidth)
 {
     // Don't autosize clusters that contain less than 4 lines of text (in
     // practice less lines are required, since measureDescendantTextWidth
@@ -399,7 +410,7 @@ bool TextAutosizer::clusterShouldBeAutosized(const TextAutosizingClusterInfo* cl
     return false;
 }
 
-void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, const TextAutosizingClusterInfo* clusterInfo, float minTextWidth, float& textWidth)
+void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, TextAutosizingClusterInfo* clusterInfo, float minTextWidth, float& textWidth)
 {
     bool skipLocalText = !containerShouldBeAutosized(container);
 
