@@ -1,3 +1,28 @@
+2013-02-05  Tony Gentilcore  <tonyg@chromium.org>
+
+        Call XSSAuditor's didBlockScript() for the threaded HTML parser
+        https://bugs.webkit.org/show_bug.cgi?id=108726
+
+        Reviewed by Adam Barth.
+
+        This patch adds isSafeToSendToAnotherThread() methods to CString, String, ParsedURL and URLString.
+        These methods check to ensure there are 0 or 1 references.
+
+        * wtf/text/CString.cpp:
+        (WTF::CString::isSafeToSendToAnotherThread): Added.
+        (WTF):
+        * wtf/text/CString.h:
+        (CString):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isSafeToSendToAnotherThread): Added.
+        (WTF):
+        * wtf/text/WTFString.h:
+        (String):
+        * wtf/url/api/ParsedURL.h:
+        (WTF::ParsedURL::isSafeToSendToAnotherThread): Added.
+        * wtf/url/api/URLString.h:
+        (WTF::URLString::isSafeToSendToAnotherThread): Added.
+
 2013-02-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for AtomicString on iOS

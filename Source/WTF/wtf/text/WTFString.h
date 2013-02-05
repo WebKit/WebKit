@@ -394,6 +394,7 @@ public:
     bool percentage(int& percentage) const;
 
     WTF_EXPORT_STRING_API String isolatedCopy() const;
+    bool isSafeToSendToAnotherThread() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString*).

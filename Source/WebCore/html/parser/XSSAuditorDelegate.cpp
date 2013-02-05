@@ -32,11 +32,19 @@
 #include "FormData.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "HTMLParserIdioms.h"
 #include "InspectorValues.h"
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
+
+bool XSSInfo::isSafeToSendToAnotherThread() const
+{
+    return m_reportURL.isSafeToSendToAnotherThread()
+        && m_originalURL.isSafeToSendToAnotherThread()
+        && m_originalHTTPBody.isSafeToSendToAnotherThread();
+}
 
 XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
     : m_document(document)
@@ -46,7 +54,7 @@ XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
     ASSERT(m_document);
 }
 
-void XSSAuditorDelegate::didBlockScript(PassOwnPtr<DidBlockScriptRequest> request)
+void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
 
@@ -54,27 +62,27 @@ void XSSAuditorDelegate::didBlockScript(PassOwnPtr<DidBlockScriptRequest> reques
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
     m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
 
-    if (request->m_didBlockEntirePage)
+    if (xssInfo.m_didBlockEntirePage)
         m_document->frame()->loader()->stopAllLoaders();
 
     if (!m_didNotifyClient) {
-        m_document->frame()->loader()->client()->didDetectXSS(m_document->url(), request->m_didBlockEntirePage);
+        m_document->frame()->loader()->client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
         m_didNotifyClient = true;
     }
 
-    if (!request->m_reportURL.isEmpty()) {
+    if (!xssInfo.m_reportURL.isEmpty()) {
         RefPtr<InspectorObject> reportDetails = InspectorObject::create();
-        reportDetails->setString("request-url", request->m_originalURL);
-        reportDetails->setString("request-body", request->m_originalHTTPBody);
+        reportDetails->setString("request-url", xssInfo.m_originalURL);
+        reportDetails->setString("request-body", xssInfo.m_originalHTTPBody);
 
         RefPtr<InspectorObject> reportObject = InspectorObject::create();
         reportObject->setObject("xss-report", reportDetails.release());
 
         RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8().data());
-        PingLoader::sendViolationReport(m_document->frame(), request->m_reportURL, report);
+        PingLoader::sendViolationReport(m_document->frame(), xssInfo.m_reportURL, report);
     }
 
-    if (request->m_didBlockEntirePage)
+    if (xssInfo.m_didBlockEntirePage)
         m_document->frame()->navigationScheduler()->scheduleLocationChange(m_document->securityOrigin(), blankURL(), String());
 }
 

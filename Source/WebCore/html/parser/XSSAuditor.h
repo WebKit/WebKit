@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-class DidBlockScriptRequest;
 class Document;
 class HTMLDocumentParser;
 class HTMLSourceTracker;
 class TextResourceDecoder;
+class XSSInfo;
 
 struct FilterTokenRequest {
     FilterTokenRequest(HTMLToken& token, HTMLSourceTracker& sourceTracker, const TextResourceDecoder* decoder)
@@ -57,7 +57,7 @@ public:
     explicit XSSAuditor(HTMLDocumentParser*);
 
     void init(Document*);
-    PassOwnPtr<DidBlockScriptRequest> filterToken(const FilterTokenRequest&);
+    PassOwnPtr<XSSInfo> filterToken(const FilterTokenRequest&);
 
 private:
     static const size_t kMaximumFragmentLengthTarget = 100;

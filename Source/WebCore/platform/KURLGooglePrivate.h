@@ -101,6 +101,7 @@ namespace WebCore {
         KURL* innerURL() const { return m_innerURL.get(); }
 
         void reportMemoryUsage(MemoryObjectInfo*) const;
+        bool isSafeToSendToAnotherThread() const;
 
     private:
         void initInnerURL();

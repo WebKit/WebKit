@@ -278,7 +278,7 @@ void XSSAuditor::init(Document* document)
     }
 }
 
-PassOwnPtr<DidBlockScriptRequest> XSSAuditor::filterToken(const FilterTokenRequest& request)
+PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_state == Initialized);
     if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
@@ -296,13 +296,13 @@ PassOwnPtr<DidBlockScriptRequest> XSSAuditor::filterToken(const FilterTokenReque
 
     if (didBlockScript) {
         bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
-        OwnPtr<DidBlockScriptRequest> didBlockScriptRequest = DidBlockScriptRequest::create(m_reportURL, m_originalURL, m_originalHTTPBody, didBlockEntirePage);
+        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, m_originalURL, m_originalHTTPBody, didBlockEntirePage);
         if (!m_reportURL.isEmpty()) {
             m_reportURL = KURL();
             m_originalURL = String();
             m_originalHTTPBody = String();
         }
-        return didBlockScriptRequest.release();
+        return xssInfo.release();
     }
     return nullptr;
 }
