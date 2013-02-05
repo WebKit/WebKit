@@ -172,7 +172,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
             valueBuilder.append(toText(n)->data());
     }
 
-    AtomicString newValue = valueBuilder.toString();
+    AtomicString newValue = valueBuilder.toAtomicString();
     if (m_element)
         m_element->willModifyAttribute(qualifiedName(), value(), newValue);
 
