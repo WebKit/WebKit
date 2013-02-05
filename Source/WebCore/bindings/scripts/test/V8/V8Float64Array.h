@@ -35,7 +35,7 @@ namespace WebCore {
 class V8Float64Array {
 public:
     static const bool hasDependentLifetime = V8ArrayBufferView::hasDependentLifetime;
-    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate* = 0);
+    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate* = 0);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate* = 0);
     static Float64Array* toNative(v8::Handle<v8::Object> object)

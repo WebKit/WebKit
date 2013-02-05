@@ -79,7 +79,7 @@ v8::Handle<v8::Value> WebArrayBuffer::toV8Value()
 
 WebArrayBuffer* WebArrayBuffer::createFromV8Value(v8::Handle<v8::Value> value)
 {
-    if (!V8ArrayBuffer::HasInstance(value))
+    if (!V8ArrayBuffer::HasInstance(value, v8::Isolate::GetCurrent()))
         return 0;
     WTF::ArrayBuffer* buffer = V8ArrayBuffer::toNative(value->ToObject());
     return new WebArrayBuffer(buffer);

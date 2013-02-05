@@ -259,7 +259,7 @@ static WebGLUniformLocation* toWebGLUniformLocation(v8::Handle<v8::Value> value,
 {
     ok = false;
     WebGLUniformLocation* location = 0;
-    if (V8WebGLUniformLocation::HasInstance(value)) {
+    if (V8WebGLUniformLocation::HasInstance(value, isolate)) {
         location = V8WebGLUniformLocation::toNative(value->ToObject());
         ok = true;
     }

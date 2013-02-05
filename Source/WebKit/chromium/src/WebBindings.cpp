@@ -204,7 +204,7 @@ void WebBindings::extractIdentifierData(const NPIdentifier& identifier, const NP
 
 #if USE(V8)
 
-static bool getRangeImpl(NPObject* object, WebRange* webRange)
+static bool getRangeImpl(NPObject* object, WebRange* webRange, v8::Isolate* isolate)
 {
     if (!object || (object->_class != npScriptObjectClass))
         return false;
@@ -214,7 +214,7 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
     if (!V8Range::info.equals(toWrapperTypeInfo(v8Object)))
         return false;
 
-    Range* native = V8Range::HasInstance(v8Object) ? V8Range::toNative(v8Object) : 0;
+    Range* native = V8Range::HasInstance(v8Object, isolate) ? V8Range::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -222,14 +222,14 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
     return true;
 }
 
-static bool getNodeImpl(NPObject* object, WebNode* webNode)
+static bool getNodeImpl(NPObject* object, WebNode* webNode, v8::Isolate* isolate)
 {
     if (!object || (object->_class != npScriptObjectClass))
         return false;
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    Node* native = V8Node::HasInstance(v8Object) ? V8Node::toNative(v8Object) : 0;
+    Node* native = V8Node::HasInstance(v8Object, isolate) ? V8Node::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -237,14 +237,14 @@ static bool getNodeImpl(NPObject* object, WebNode* webNode)
     return true;
 }
 
-static bool getElementImpl(NPObject* object, WebElement* webElement)
+static bool getElementImpl(NPObject* object, WebElement* webElement, v8::Isolate* isolate)
 {
     if (!object || (object->_class != npScriptObjectClass))
         return false;
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    Element* native = V8Element::HasInstance(v8Object) ? V8Element::toNative(v8Object) : 0;
+    Element* native = V8Element::HasInstance(v8Object, isolate) ? V8Element::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -252,14 +252,14 @@ static bool getElementImpl(NPObject* object, WebElement* webElement)
     return true;
 }
 
-static bool getArrayBufferImpl(NPObject* object, WebArrayBuffer* arrayBuffer)
+static bool getArrayBufferImpl(NPObject* object, WebArrayBuffer* arrayBuffer, v8::Isolate* isolate)
 {
     if (!object || (object->_class != npScriptObjectClass))
         return false;
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    ArrayBuffer* native = V8ArrayBuffer::HasInstance(v8Object) ? V8ArrayBuffer::toNative(v8Object) : 0;
+    ArrayBuffer* native = V8ArrayBuffer::HasInstance(v8Object, isolate) ? V8ArrayBuffer::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -267,14 +267,14 @@ static bool getArrayBufferImpl(NPObject* object, WebArrayBuffer* arrayBuffer)
     return true;
 }
 
-static bool getArrayBufferViewImpl(NPObject* object, WebArrayBufferView* arrayBufferView)
+static bool getArrayBufferViewImpl(NPObject* object, WebArrayBufferView* arrayBufferView, v8::Isolate* isolate)
 {
     if (!object || (object->_class != npScriptObjectClass))
         return false;
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    ArrayBufferView* native = V8ArrayBufferView::HasInstance(v8Object) ? V8ArrayBufferView::toNative(v8Object) : 0;
+    ArrayBufferView* native = V8ArrayBufferView::HasInstance(v8Object, isolate) ? V8ArrayBufferView::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -309,7 +309,7 @@ static NPObject* makeStringArrayImpl(const WebVector<WebString>& data)
 bool WebBindings::getRange(NPObject* range, WebRange* webRange)
 {
 #if USE(V8)
-    return getRangeImpl(range, webRange);
+    return getRangeImpl(range, webRange, v8::Isolate::GetCurrent());
 #else
     // Not supported on other ports (JSC, etc).
     return false;
@@ -319,7 +319,7 @@ bool WebBindings::getRange(NPObject* range, WebRange* webRange)
 bool WebBindings::getArrayBuffer(NPObject* arrayBuffer, WebArrayBuffer* webArrayBuffer)
 {
 #if USE(V8)
-    return getArrayBufferImpl(arrayBuffer, webArrayBuffer);
+    return getArrayBufferImpl(arrayBuffer, webArrayBuffer, v8::Isolate::GetCurrent());
 #else
     // Not supported on other ports (JSC, etc).
     return false;
@@ -329,7 +329,7 @@ bool WebBindings::getArrayBuffer(NPObject* arrayBuffer, WebArrayBuffer* webArray
 bool WebBindings::getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferView* webArrayBufferView)
 {
 #if USE(V8)
-    return getArrayBufferViewImpl(arrayBufferView, webArrayBufferView);
+    return getArrayBufferViewImpl(arrayBufferView, webArrayBufferView, v8::Isolate::GetCurrent());
 #else
     // Not supported on other ports (JSC, etc).
     return false;
@@ -339,7 +339,7 @@ bool WebBindings::getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferVi
 bool WebBindings::getNode(NPObject* node, WebNode* webNode)
 {
 #if USE(V8)
-    return getNodeImpl(node, webNode);
+    return getNodeImpl(node, webNode, v8::Isolate::GetCurrent());
 #else
     // Not supported on other ports (JSC, etc.).
     return false;
@@ -349,7 +349,7 @@ bool WebBindings::getNode(NPObject* node, WebNode* webNode)
 bool WebBindings::getElement(NPObject* element, WebElement* webElement)
 {
 #if USE(V8)
-    return getElementImpl(element, webElement);
+    return getElementImpl(element, webElement, v8::Isolate::GetCurrent());
 #else
     // Not supported on other ports (JSC, etc.).
     return false;

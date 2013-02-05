@@ -1,3 +1,31 @@
+2013-02-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make an Isolate parameter mandatory in HasInstance()
+        https://bugs.webkit.org/show_bug.cgi?id=108917
+
+        Reviewed by Adam Barth.
+
+        Because these methods do not have an Isolate, we have to call
+        v8::Isolate::GetCurrent().
+
+        No tests. No change in behavior.
+
+        * src/WebArrayBuffer.cpp:
+        (WebKit::WebArrayBuffer::createFromV8Value):
+        * src/WebArrayBufferView.cpp:
+        (WebKit::WebArrayBufferView::createFromV8Value):
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl):
+        (WebKit::getNodeImpl):
+        (WebKit::getElementImpl):
+        (WebKit::getArrayBufferImpl):
+        (WebKit::getArrayBufferViewImpl):
+        (WebKit::WebBindings::getRange):
+        (WebKit::WebBindings::getArrayBuffer):
+        (WebKit::WebBindings::getArrayBufferView):
+        (WebKit::WebBindings::getNode):
+        (WebKit::WebBindings::getElement):
+
 2013-02-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Provide compositor offscreen context through the WebLayerTreeViewClient interface

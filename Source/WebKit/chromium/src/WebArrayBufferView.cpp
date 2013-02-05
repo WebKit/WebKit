@@ -64,7 +64,7 @@ unsigned WebArrayBufferView::byteLength() const
 #if WEBKIT_USING_V8
 WebArrayBufferView* WebArrayBufferView::createFromV8Value(v8::Handle<v8::Value> value)
 {
-    if (!WebCore::V8ArrayBufferView::HasInstance(value))
+    if (!WebCore::V8ArrayBufferView::HasInstance(value, v8::Isolate::GetCurrent()))
         return 0;
     ArrayBufferView* view = WebCore::V8ArrayBufferView::toNative(value->ToObject());
     return new WebArrayBufferView(view);
