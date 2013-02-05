@@ -40,21 +40,23 @@ class HTMLSourceTracker;
 class TextResourceDecoder;
 
 struct FilterTokenRequest {
-    FilterTokenRequest(HTMLToken& token, HTMLSourceTracker& sourceTracker, const TextResourceDecoder* decoder)
+    FilterTokenRequest(HTMLToken& token, HTMLSourceTracker& sourceTracker, const TextResourceDecoder* decoder, bool shouldAllowCDATA)
         : token(token)
         , sourceTracker(sourceTracker)
         , decoder(decoder)
+        , shouldAllowCDATA(shouldAllowCDATA)
     { }
 
     HTMLToken& token;
     HTMLSourceTracker& sourceTracker;
     const TextResourceDecoder* decoder;
+    bool shouldAllowCDATA;
 };
 
 class XSSAuditor {
     WTF_MAKE_NONCOPYABLE(XSSAuditor);
 public:
-    explicit XSSAuditor(HTMLDocumentParser*);
+    XSSAuditor();
 
     void init(Document*);
     PassOwnPtr<DidBlockScriptRequest> filterToken(const FilterTokenRequest&);
@@ -74,7 +76,7 @@ private:
     };
 
     bool filterStartToken(const FilterTokenRequest&);
-    void filterEndToken(HTMLToken&);
+    void filterEndToken(const FilterTokenRequest&);
     bool filterCharacterToken(const FilterTokenRequest&);
     bool filterScriptToken(const FilterTokenRequest&);
     bool filterObjectToken(const FilterTokenRequest&);
@@ -97,8 +99,6 @@ private:
     bool isContainedInRequest(const String&);
     bool isLikelySafeResource(const String& url);
 
-    // FIXME: Remove this dependency.
-    HTMLDocumentParser* m_parser;
     KURL m_documentURL;
     bool m_isEnabled;
     XSSProtectionDisposition m_xssProtection;
@@ -111,7 +111,6 @@ private:
 
     State m_state;
     String m_cachedDecodedSnippet;
-    bool m_shouldAllowCDATA;
     unsigned m_scriptTagNestingLevel;
     KURL m_reportURL;
 };

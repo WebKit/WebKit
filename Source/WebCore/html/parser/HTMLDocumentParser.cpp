@@ -82,7 +82,6 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
     , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
     , m_parserScheduler(HTMLParserScheduler::create(this))
-    , m_xssAuditor(this)
     , m_xssAuditorDelegate(document)
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
@@ -102,7 +101,6 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
-    , m_xssAuditor(this)
     , m_xssAuditorDelegate(fragment->document())
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
@@ -378,8 +376,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            OwnPtr<DidBlockScriptRequest> request = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder()));
-            if (request)
+            if (OwnPtr<DidBlockScriptRequest> request = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder(), m_tokenizer->shouldAllowCDATA())))
                 m_xssAuditorDelegate.didBlockScript(request.release());
         }
 

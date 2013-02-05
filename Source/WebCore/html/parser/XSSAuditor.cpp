@@ -174,21 +174,12 @@ static String fullyDecodeString(const String& string, const TextResourceDecoder*
     return workingString;
 }
 
-XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
-    : m_parser(parser)
-    , m_documentURL(parser->document()->url())
-    , m_isEnabled(false)
+XSSAuditor::XSSAuditor()
+    : m_isEnabled(false)
     , m_xssProtection(XSSProtectionEnabled)
     , m_state(Uninitialized)
-    , m_shouldAllowCDATA(false)
     , m_scriptTagNestingLevel(0)
 {
-    ASSERT(isMainThread());
-    ASSERT(m_parser);
-    if (Frame* frame = parser->document()->frame()) {
-        if (Settings* settings = frame->settings())
-            m_isEnabled = settings->xssAuditorEnabled();
-    }
     // Although tempting to call init() at this point, the various objects
     // we want to reference might not all have been constructed yet.
 }
@@ -204,8 +195,14 @@ void XSSAuditor::init(Document* document)
     ASSERT(m_state == Uninitialized);
     m_state = Initialized;
 
+    if (Frame* frame = document->frame())
+        if (Settings* settings = frame->settings())
+            m_isEnabled = settings->xssAuditorEnabled();
+
     if (!m_isEnabled)
         return;
+
+    m_documentURL = document->url();
 
     // In theory, the Document could have detached from the Frame after the
     // XSSAuditor was constructed.
@@ -291,7 +288,7 @@ PassOwnPtr<DidBlockScriptRequest> XSSAuditor::filterToken(const FilterTokenReque
         if (request.token.type() == HTMLTokenTypes::Character)
             didBlockScript = filterCharacterToken(request);
         else if (request.token.type() == HTMLTokenTypes::EndTag)
-            filterEndToken(request.token);
+            filterEndToken(request);
     }
 
     if (didBlockScript) {
@@ -313,7 +310,7 @@ bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)
 
     if (hasName(request.token, scriptTag)) {
         didBlockScript |= filterScriptToken(request);
-        ASSERT(m_shouldAllowCDATA || !m_scriptTagNestingLevel);
+        ASSERT(request.shouldAllowCDATA || !m_scriptTagNestingLevel);
         m_scriptTagNestingLevel++;
     } else if (hasName(request.token, objectTag))
         didBlockScript |= filterObjectToken(request);
@@ -335,12 +332,12 @@ bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)
     return didBlockScript;
 }
 
-void XSSAuditor::filterEndToken(HTMLToken& token)
+void XSSAuditor::filterEndToken(const FilterTokenRequest& request)
 {
     ASSERT(m_scriptTagNestingLevel);
-    if (hasName(token, scriptTag)) {
+    if (hasName(request.token, scriptTag)) {
         m_scriptTagNestingLevel--;
-        ASSERT(m_shouldAllowCDATA || !m_scriptTagNestingLevel);
+        ASSERT(request.shouldAllowCDATA || !m_scriptTagNestingLevel);
     }
 }
 
@@ -361,7 +358,6 @@ bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
     ASSERT(hasName(request.token, scriptTag));
 
     m_cachedDecodedSnippet = decodedSnippetForName(request);
-    m_shouldAllowCDATA = m_parser->tokenizer()->shouldAllowCDATA();
 
     bool didBlockScript = false;
     if (isContainedInRequest(decodedSnippetForName(request))) {
@@ -588,7 +584,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
         // Under SVG/XML rules, only HTML comment syntax matters and the parser returns
         // these as a separate comment tokens. Having consumed whitespace, we need not look
         // further for these.
-        if (m_shouldAllowCDATA)
+        if (request.shouldAllowCDATA)
             break;
 
         // Under HTML rules, both the HTML and JS comment synatx matters, and the HTML
@@ -615,7 +611,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
         // not stopping inside a (possibly multiply encoded) %-esacpe sequence by breaking on
         // whitespace only. We should have enough text in these cases to avoid false positives.
         for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
-            if (!m_shouldAllowCDATA) {
+            if (!request.shouldAllowCDATA) {
                 if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
                     foundPosition += 2;
                     break;
