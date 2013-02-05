@@ -4192,6 +4192,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=*]" = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=i386]" = NO;
+				GCC_ENABLE_OBJC_GC_macosx = "";
+				"GCC_ENABLE_OBJC_GC_macosx[arch=*]" = NO;
+				"GCC_ENABLE_OBJC_GC_macosx[arch=i386]" = YES;
 			};
 			name = Debug;
 		};
@@ -4199,6 +4205,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=*]" = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=i386]" = NO;
+				GCC_ENABLE_OBJC_GC_macosx = "";
+				"GCC_ENABLE_OBJC_GC_macosx[arch=*]" = NO;
+				"GCC_ENABLE_OBJC_GC_macosx[arch=i386]" = YES;
 			};
 			name = Release;
 		};
@@ -4206,6 +4218,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=*]" = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=i386]" = NO;
+				GCC_ENABLE_OBJC_GC_macosx = "";
+				"GCC_ENABLE_OBJC_GC_macosx[arch=*]" = NO;
+				"GCC_ENABLE_OBJC_GC_macosx[arch=i386]" = YES;
 			};
 			name = Production;
 		};
@@ -4327,6 +4345,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=*]" = YES;
+				"CLANG_ENABLE_OBJC_ARC[arch=i386]" = NO;
+				GCC_ENABLE_OBJC_GC_macosx = "";
+				"GCC_ENABLE_OBJC_GC_macosx[arch=*]" = NO;
+				"GCC_ENABLE_OBJC_GC_macosx[arch=i386]" = YES;
 			};
 			name = Profiling;
 		};

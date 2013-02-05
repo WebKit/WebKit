@@ -1,3 +1,19 @@
+2013-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: testapi.mm should use ARC
+        https://bugs.webkit.org/show_bug.cgi?id=107838
+
+        Reviewed by Oliver Hunt.
+
+        In ToT testapi.mm uses the Obj-C garbage collector, which hides a lot of our object lifetime bugs.
+        We should enable ARC, since that is what most of our clients will be using. We use Xcode project 
+        settings to make sure we don't try to compile ARC on 32-bit.
+
+        * API/tests/testapi.mm:
+        (+[TestObject testObject]):
+        (testObjectiveCAPI):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-02-05  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed VS2010 Build Correction after r141651
