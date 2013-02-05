@@ -53,15 +53,10 @@ public:
         bool onPrototype;
     };
 
-    static void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate>,
-                                         v8::Handle<v8::ObjectTemplate>,
-                                         const BatchedAttribute*,
-                                         size_t attributeCount);
+    static void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedAttribute*, size_t attributeCount, v8::Isolate*);
 
     template<class ObjectOrTemplate>
-    static inline void configureAttribute(v8::Handle<ObjectOrTemplate> instance,
-                                          v8::Handle<ObjectOrTemplate> prototype,
-                                          const BatchedAttribute& attribute)
+    static inline void configureAttribute(v8::Handle<ObjectOrTemplate> instance, v8::Handle<ObjectOrTemplate> prototype, const BatchedAttribute& attribute, v8::Isolate*)
     {
         (attribute.onPrototype ? prototype : instance)->SetAccessor(v8::String::NewSymbol(attribute.name),
                                                                     attribute.getter,
@@ -79,10 +74,7 @@ public:
         int value;
     };
 
-    static void batchConfigureConstants(v8::Handle<v8::FunctionTemplate>,
-                                        v8::Handle<v8::ObjectTemplate>,
-                                        const BatchedConstant*,
-                                        size_t constantCount);
+    static void batchConfigureConstants(v8::Handle<v8::FunctionTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedConstant*, size_t constantCount, v8::Isolate*);
 
     // BatchedCallback translates into calls to Set() on the prototype ObjectTemplate.
     struct BatchedCallback {
@@ -90,20 +82,9 @@ public:
         v8::InvocationCallback callback;
     };
 
-    static void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate>, 
-                                        v8::Handle<v8::Signature>,
-                                        v8::PropertyAttribute,
-                                        const BatchedCallback*, 
-                                        size_t callbackCount);
+    static void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::Signature>, v8::PropertyAttribute, const BatchedCallback*, size_t callbackCount, v8::Isolate*);
 
-    static v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>,
-                                                      const char* interfaceName,
-                                                      v8::Persistent<v8::FunctionTemplate> parentClass,
-                                                      size_t fieldCount,
-                                                      const BatchedAttribute*,
-                                                      size_t attributeCount,
-                                                      const BatchedCallback*,
-                                                      size_t callbackCount);
+    static v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>, const char* interfaceName, v8::Persistent<v8::FunctionTemplate> parentClass, size_t fieldCount, const BatchedAttribute*, size_t attributeCount, const BatchedCallback*, size_t callbackCount, v8::Isolate*);
 };
 
 } // namespace WebCore

@@ -33,45 +33,29 @@
 
 namespace WebCore {
 
-void V8DOMConfiguration::batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
-                                                  v8::Handle<v8::ObjectTemplate> prototype, 
-                                                  const BatchedAttribute* attributes, 
-                                                  size_t attributeCount)
+void V8DOMConfiguration::batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> prototype, const BatchedAttribute* attributes, size_t attributeCount, v8::Isolate* isolate)
 {
     for (size_t i = 0; i < attributeCount; ++i)
-        configureAttribute(instance, prototype, attributes[i]);
+        configureAttribute(instance, prototype, attributes[i], isolate);
 }
 
-void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor,
-                                                 v8::Handle<v8::ObjectTemplate> prototype,
-                                                 const BatchedConstant* constants,
-                                                 size_t constantCount)
+void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor, v8::Handle<v8::ObjectTemplate> prototype, const BatchedConstant* constants, size_t constantCount, v8::Isolate* isolate)
 {
     for (size_t i = 0; i < constantCount; ++i) {
         const BatchedConstant* constant = &constants[i];
-        functionDescriptor->Set(v8::String::NewSymbol(constant->name), deprecatedV8Integer(constant->value), v8::ReadOnly);
-        prototype->Set(v8::String::NewSymbol(constant->name), deprecatedV8Integer(constant->value), v8::ReadOnly);
+        functionDescriptor->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value, isolate), v8::ReadOnly);
+        prototype->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value, isolate), v8::ReadOnly);
     }
 }
 
-void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, 
-                                                 v8::Handle<v8::Signature> signature, 
-                                                 v8::PropertyAttribute attributes,
-                                                 const BatchedCallback* callbacks,
-                                                 size_t callbackCount)
+void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, v8::Handle<v8::Signature> signature, v8::PropertyAttribute attributes, const BatchedCallback* callbacks, size_t callbackCount, v8::Isolate*)
 {
     for (size_t i = 0; i < callbackCount; ++i)
         prototype->Set(v8::String::NewSymbol(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
 }
 
-v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor,
-                                                               const char* interfaceName,
-                                                               v8::Persistent<v8::FunctionTemplate> parentClass,
-                                                               size_t fieldCount,
-                                                               const BatchedAttribute* attributes, 
-                                                               size_t attributeCount,
-                                                               const BatchedCallback* callbacks,
-                                                               size_t callbackCount)
+v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor, const char* interfaceName, v8::Persistent<v8::FunctionTemplate> parentClass,
+    size_t fieldCount, const BatchedAttribute* attributes, size_t attributeCount, const BatchedCallback* callbacks, size_t callbackCount, v8::Isolate* isolate)
 {
     functionDescriptor->SetClassName(v8::String::NewSymbol(interfaceName));
     v8::Local<v8::ObjectTemplate> instance = functionDescriptor->InstanceTemplate();
@@ -79,10 +63,10 @@ v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8
     if (!parentClass.IsEmpty())
         functionDescriptor->Inherit(parentClass);
     if (attributeCount)
-        batchConfigureAttributes(instance, functionDescriptor->PrototypeTemplate(), attributes, attributeCount);
+        batchConfigureAttributes(instance, functionDescriptor->PrototypeTemplate(), attributes, attributeCount, isolate);
     v8::Local<v8::Signature> defaultSignature = v8::Signature::New(functionDescriptor);
     if (callbackCount)
-        batchConfigureCallbacks(functionDescriptor->PrototypeTemplate(), defaultSignature, static_cast<v8::PropertyAttribute>(v8::DontDelete), callbacks, callbackCount);
+        batchConfigureCallbacks(functionDescriptor->PrototypeTemplate(), defaultSignature, static_cast<v8::PropertyAttribute>(v8::DontDelete), callbacks, callbackCount, isolate);
     return defaultSignature;
 }
 
