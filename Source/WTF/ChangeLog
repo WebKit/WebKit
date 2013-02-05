@@ -1,3 +1,23 @@
+2013-02-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Tidy up StackBounds
+        https://bugs.webkit.org/show_bug.cgi?id=108889
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/StackBounds.h:
+        (StackBounds):
+        (WTF::StackBounds::isSafeToRecurse):
+        (WTF::StackBounds::size):
+        Adopt a more conventional style for a multiline branch.
+
+        (WTF::StackBounds::StackBounds):
+        (WTF::StackBounds::current):
+        (WTF::StackBounds::recursionLimit):
+        Make those method private.
+
+        Making the constructor private ensure initialize() is alwasy called on any StackBounds.
+
 2013-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTFURL] Comparison between signed and unsigned integer expressions in URLUtil.cpp
