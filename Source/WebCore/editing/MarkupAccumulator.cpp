@@ -245,11 +245,10 @@ void MarkupAccumulator::appendNodeValue(StringBuilder& result, const Node* node,
     unsigned start = 0;
 
     if (range) {
-        ExceptionCode ec;
-        if (node == range->endContainer(ec))
-            length = range->endOffset(ec);
-        if (node == range->startContainer(ec)) {
-            start = range->startOffset(ec);
+        if (node == range->endContainer())
+            length = range->endOffset();
+        if (node == range->startContainer()) {
+            start = range->startOffset();
             length -= start;
         }
     }

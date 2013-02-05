@@ -442,7 +442,7 @@ void DOMSelection::deleteFromDocument()
     selectedRange->deleteContents(ec);
     ASSERT(!ec);
 
-    setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(ec), selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec);
+    setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(), selectedRange->startContainer(), selectedRange->startOffset(), ec);
     ASSERT(!ec);
 }
 
@@ -464,14 +464,14 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
         return false;
 
     ExceptionCode ec = 0;
-    bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec) >= 0 && !ec
-        && Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->endContainer(ec), selectedRange->endOffset(ec), ec) <= 0 && !ec;
+    bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(), selectedRange->startOffset(), ec) >= 0 && !ec
+        && Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->endContainer(), selectedRange->endOffset(), ec) <= 0 && !ec;
     ASSERT(!ec);
     if (nodeFullySelected)
         return true;
 
-    bool nodeFullyUnselected = (Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->endContainer(ec), selectedRange->endOffset(ec), ec) > 0 && !ec)
-        || (Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec) < 0 && !ec);
+    bool nodeFullyUnselected = (Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->endContainer(), selectedRange->endOffset(), ec) > 0 && !ec)
+        || (Range::compareBoundaryPoints(parentNode, nodeIndex + 1, selectedRange->startContainer(), selectedRange->startOffset(), ec) < 0 && !ec);
     ASSERT(!ec);
     if (nodeFullyUnselected)
         return false;

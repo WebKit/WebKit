@@ -1674,11 +1674,10 @@ static NSInteger _colCompare(id block1, id block2, void *)
 
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         RefPtr<Range> currentTextRange = it.range();
-        ExceptionCode ec = 0;
-        Node* startContainer = currentTextRange->startContainer(ec);
-        Node* endContainer = currentTextRange->endContainer(ec);
-        int startOffset = currentTextRange->startOffset(ec);
-        int endOffset = currentTextRange->endOffset(ec);
+        Node* startContainer = currentTextRange->startContainer();
+        Node* endContainer = currentTextRange->endContainer();
+        int startOffset = currentTextRange->startOffset();
+        int endOffset = currentTextRange->endOffset();
         
         if (startContainer == endContainer && (startOffset == endOffset - 1)) {
             Node* node = startContainer->childNode(startOffset);

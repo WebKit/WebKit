@@ -64,9 +64,7 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        int exception = 0;
-        addMarker(textPiece->startContainer(exception),
-                  DocumentMarker(type, textPiece->startOffset(exception), textPiece->endOffset(exception), description));
+        addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description));
     }
 }
 
@@ -75,9 +73,7 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        int exception = 0;
-        addMarker(textPiece->startContainer(exception),
-                  DocumentMarker(type, textPiece->startOffset(exception), textPiece->endOffset(exception)));
+        addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset()));
     }
 
 }
@@ -98,16 +94,15 @@ void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activ
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         RefPtr<Range> textPiece = markedText.range();
-        int exception = 0;
-        unsigned startOffset = textPiece->startOffset(exception);
-        unsigned endOffset = textPiece->endOffset(exception);
-        addMarker(textPiece->startContainer(exception), DocumentMarker(startOffset, endOffset, activeMatch));
+        unsigned startOffset = textPiece->startOffset();
+        unsigned endOffset = textPiece->endOffset();
+        addMarker(textPiece->startContainer(), DocumentMarker(startOffset, endOffset, activeMatch));
         if (endOffset > startOffset) {
             // Rendered rects for markers in WebKit are not populated until each time
             // the markers are painted. However, we need it to happen sooner, because
             // the whole purpose of tickmarks on the scrollbar is to show where
             // matches off-screen are (that haven't been painted yet).
-            Node* node = textPiece->startContainer(exception);
+            Node* node = textPiece->startContainer();
             Vector<DocumentMarker*> markers = markersFor(node);
             static_cast<RenderedDocumentMarker*>(markers[markers.size() - 1])->setRenderedRect(range->boundingBox());
         }
@@ -567,14 +562,14 @@ void DocumentMarkerController::setMarkersActive(Range* range, bool active)
         return;
     ASSERT(!m_markers.isEmpty());
 
-    ExceptionCode ec = 0;
-    Node* startContainer = range->startContainer(ec);
-    Node* endContainer = range->endContainer(ec);
+    Node* startContainer = range->startContainer();
+    Node* endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
+
     for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
-        int startOffset = node == startContainer ? range->startOffset(ec) : 0;
-        int endOffset = node == endContainer ? range->endOffset(ec) : INT_MAX;
+        int startOffset = node == startContainer ? range->startOffset() : 0;
+        int endOffset = node == endContainer ? range->endOffset() : INT_MAX;
         setMarkersActive(node, startOffset, endOffset, active);
     }
 }

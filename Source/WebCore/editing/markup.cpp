@@ -254,15 +254,14 @@ String StyledMarkupAccumulator::renderedText(const Node* node, const Range* rang
     if (!node->isTextNode())
         return String();
 
-    ExceptionCode ec;
     const Text* textNode = static_cast<const Text*>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode->length();
 
-    if (range && node == range->startContainer(ec))
-        startOffset = range->startOffset(ec);
-    if (range && node == range->endContainer(ec))
-        endOffset = range->endOffset(ec);
+    if (range && node == range->startContainer())
+        startOffset = range->startOffset();
+    if (range && node == range->endContainer())
+        endOffset = range->endOffset();
 
     Position start = createLegacyEditingPosition(const_cast<Node*>(node), startOffset);
     Position end = createLegacyEditingPosition(const_cast<Node*>(node), endOffset);
@@ -275,11 +274,10 @@ String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Rang
         return node->nodeValue();
 
     String str = node->nodeValue();
-    ExceptionCode ec;
-    if (node == range->endContainer(ec))
-        str.truncate(range->endOffset(ec));
-    if (node == range->startContainer(ec))
-        str.remove(0, range->startOffset(ec));
+    if (node == range->endContainer())
+        str.truncate(range->endOffset());
+    if (node == range->startContainer())
+        str.remove(0, range->startOffset());
     return str;
 }
 

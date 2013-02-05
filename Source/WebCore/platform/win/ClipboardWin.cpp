@@ -739,11 +739,10 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
 
     STGMEDIUM medium = {0};
     medium.tymed = TYMED_HGLOBAL;
-    ExceptionCode ec = 0;
 
     Vector<char> data;
     markupToCFHTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
-        selectedRange->startContainer(ec)->document()->url().string(), data);
+        selectedRange->startContainer()->document()->url().string(), data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
