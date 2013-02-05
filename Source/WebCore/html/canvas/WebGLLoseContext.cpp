@@ -44,7 +44,7 @@ WebGLLoseContext::~WebGLLoseContext()
 
 WebGLExtension::ExtensionName WebGLLoseContext::getName() const
 {
-    return WebKitWebGLLoseContextName;
+    return WebGLLoseContextName;
 }
 
 PassOwnPtr<WebGLLoseContext> WebGLLoseContext::create(WebGLRenderingContext* context)

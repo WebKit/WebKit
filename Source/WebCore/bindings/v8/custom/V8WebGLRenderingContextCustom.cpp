@@ -172,9 +172,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     v8::Handle<v8::Value> extensionObject;
     const char* referenceName = 0;
     switch (extension->getName()) {
-    case WebGLExtension::WebKitWebGLLoseContextName:
+    case WebGLExtension::WebGLLoseContextName:
         extensionObject = toV8(static_cast<WebGLLoseContext*>(extension), contextObject, isolate);
-        referenceName = "webKitWebGLLoseContextName";
+        referenceName = "webGLLoseContextName";
         break;
     case WebGLExtension::EXTTextureFilterAnisotropicName:
         extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension), contextObject, isolate);
