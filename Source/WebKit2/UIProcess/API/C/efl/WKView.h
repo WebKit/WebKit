@@ -24,8 +24,10 @@
 
 #if USE(EO)
 typedef struct _Eo Evas;
+typedef struct _Eo Evas_Object;
 #else
 typedef struct _Evas Evas;
+typedef struct _Evas_Object Evas_Object;
 #endif
 
 #ifdef __cplusplus
@@ -36,9 +38,19 @@ WK_EXPORT WKViewRef WKViewCreate(Evas* canvas, WKContextRef context, WKPageGroup
 
 WK_EXPORT WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
 
-WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+WK_EXPORT void WKViewInitialize(WKViewRef);
 
-WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef viewRef);
+WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
+
+WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
+
+WK_EXPORT void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef);
+WK_EXPORT void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef);
+
+// FIXME: The long term plan is to get rid of this, so keep usage to a bare minimum.
+WK_EXPORT Evas_Object* WKViewGetEvasObject(WKViewRef);
+
+WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);
 
 #ifdef __cplusplus
 }

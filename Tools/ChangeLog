@@ -1,3 +1,39 @@
+2013-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][WK2] Introduce a WebView class as counterpart for WKViewRef
+        https://bugs.webkit.org/show_bug.cgi?id=107931
+
+        Reviewed by Anders Carlsson.
+
+        Change platformView to be a WKView and use WKViewGetEvasObject
+        for the places where an Evas_Object is needed.
+
+        Instead of extracting the Ecore_Evas* from the m_view we use
+        the m_window instead, which actually holds the it.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI::PlatformWebView::page):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::sendTouchEvent):
+        (WTR::EventSenderProxy::setTouchModifier):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::focus):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2013-02-04  Timothy Loh  <timloh@chromium.com>
 
         Don't update author info in PrepareChangeLog and allow users to skip the PrepareChangeLog step entirely.

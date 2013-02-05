@@ -438,7 +438,7 @@ void EventSenderProxy::sendTouchEvent(Ewk_Touch_Event_Type eventType)
 {
     ASSERT(m_touchPoints);
 
-    Evas_Object* ewkView = m_testController->mainWebView()->platformView();
+    Evas_Object* ewkView = WKViewGetEvasObject(m_testController->mainWebView()->platformView());
     ewk_view_feed_touch_event(ewkView, eventType, m_touchPoints, evas_key_modifier_get(evas_object_evas_get(ewkView)));
 
     Eina_List* list;
@@ -490,12 +490,14 @@ void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 
 void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
 {
+    Evas_Object* ewkView = WKViewGetEvasObject(m_testController->mainWebView()->platformView());
+
     for (unsigned index = 0; index < (sizeof(modifierNames) / sizeof(char*)); ++index) {
         if (modifier & (1 << index)) {
             if (enable)
-                evas_key_modifier_on(evas_object_evas_get(m_testController->mainWebView()->platformView()), modifierNames[index]);
+                evas_key_modifier_on(evas_object_evas_get(ewkView), modifierNames[index]);
             else
-                evas_key_modifier_off(evas_object_evas_get(m_testController->mainWebView()->platformView()), modifierNames[index]);
+                evas_key_modifier_off(evas_object_evas_get(ewkView), modifierNames[index]);
         }
     }
 }

@@ -29,24 +29,54 @@ using namespace WebKit;
 
 WKViewRef WKViewCreate(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::LegacyBehavior));
+    EwkView* ewkView = ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::LegacyBehavior);
+    if (!ewkView)
+        return 0;
+
+    return static_cast<WKViewRef>(WKRetain(ewkView->wkView()));
 }
 
 WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return toAPI(ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::DefaultBehavior));
+    EwkView* ewkView = ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::DefaultBehavior);
+    if (!ewkView)
+        return 0;
+
+    return static_cast<WKViewRef>(WKRetain(ewkView->wkView()));
+}
+
+void WKViewInitialize(WKViewRef viewRef)
+{
+    toImpl(viewRef)->initialize();
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    EwkView* view = EwkView::fromEvasObject(toImpl(viewRef));
+    return toImpl(viewRef)->pageRef();
+}
 
-    return view->wkPage();
+void WKViewSetThemePath(WKViewRef viewRef, WKStringRef theme)
+{
+    toImpl(viewRef)->setThemePath(theme);
+}
+
+void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef viewRef)
+{
+    toImpl(viewRef)->suspendActiveDOMObjectsAndAnimations();
+}
+
+void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef viewRef)
+{
+    toImpl(viewRef)->resumeActiveDOMObjectsAndAnimations();
+}
+
+Evas_Object* WKViewGetEvasObject(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->evasObject();
 }
 
 WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
 {
-    EwkView* view = EwkView::fromEvasObject(toImpl(viewRef));
-
-    return WKImageCreateFromCairoSurface(view->takeSnapshot().get(), 0 /* options */);
+    EwkView* ewkView = EwkView::fromEvasObject(toImpl(viewRef)->evasObject());
+    return WKImageCreateFromCairoSurface(ewkView->takeSnapshot().get(), 0 /* options */);
 }

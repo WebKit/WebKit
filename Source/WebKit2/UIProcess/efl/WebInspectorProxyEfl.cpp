@@ -98,14 +98,19 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     if (!m_inspectorWindow)
         return 0;
 
-    m_inspectorView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
-    EwkView* inspectorViewImpl = EwkView::fromEvasObject(m_inspectorView);
-    inspectorViewImpl->setThemePath(TEST_THEME_DIR "/default.edj");
+    // FIXME: Refactor to use WKViewRef.
+    EwkView* ewkView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
+    if (!ewkView)
+        return 0;
 
-    Ewk_Settings* settings = inspectorViewImpl->settings();
+    m_inspectorView = ewkView->view();
+
+    ewkView->setThemePath(TEST_THEME_DIR "/default.edj");
+
+    Ewk_Settings* settings = ewkView->settings();
     ewk_settings_file_access_from_file_urls_allowed_set(settings, true);
 
-    return inspectorViewImpl->page();
+    return ewkView->page();
 }
 
 void WebInspectorProxy::platformOpen()

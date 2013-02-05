@@ -25,6 +25,6 @@
 #include <Evas.h>
 #include <WebKit2/WKBase.h>
 
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef, EwkView::ViewBehavior);
+EwkView* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef, EwkView::ViewBehavior);
 
 #endif // ewk_view_private_h

@@ -1,3 +1,110 @@
+2013-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][WK2] Introduce a WebView class as counterpart for WKViewRef
+        https://bugs.webkit.org/show_bug.cgi?id=107931
+
+        Reviewed by Anders Carlsson.
+
+        This is just one step of the new plan for the EFL API.
+
+        The plan is to move the public EFL-like API on top of the shared
+        WK2 C API, plus a few EFL extensions (WKView class mostly).
+
+        The EFL-like API can be seen as a convenience API which ties
+        well into EFL and which makes it easy to add web experiences
+        to existing and new EFL applications. It provides a smart object
+        like API and a Evas_Object based view.
+
+        For more advanced use cases, such as browser and runtime, it is
+        possible to use the WK* C API, which is gives more flexibility
+        while being more low level.
+
+        The idea is that the WKView class will not depend on Evas_Object
+        and X11 (future plan) unlike the current EFL-like API. This should
+        make it possible to use it for cases where none of these are
+        available.
+
+        This patch introduces the WebView class which serves as our
+        counterpart for the WKView class, and adds a few needed methods.
+
+        The EwkView owns the WebView class (and will be constructing it
+        in the near future when the EwkView class has been changed to
+        handle all smart object related code)
+
+        The clean up of the smart object related code as the proper
+        construction of EwkView and WebView will be done in follow-up
+        patches.
+
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        (WebKit):
+
+            The WKView API is not based on WebView and not Evas_Object*
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreate):
+        (WKViewCreateWithFixedLayout):
+        (WKViewInitialize):
+        (WKViewGetPage):
+        (WKViewSetThemePath):
+        (WKViewSuspendActiveDOMObjectsAndAnimations):
+        (WKViewResumeActiveDOMObjectsAndAnimations):
+        (WKViewGetEvasObject):
+        (WKViewCreateSnapshot):
+
+            Add a few new WKView EFL C methods, and update existing
+            methods to reflect that the WKViewRef is now a WebView*
+
+            The construction methods will be rewritten when the smart
+            object construction has been solved.
+
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/efl/WebView.cpp: Added.
+        (WebKit):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::initialize):
+        (WebKit::WebView::setThemePath):
+        (WebKit::WebView::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebView::resumeActiveDOMObjectsAndAnimations):
+        * UIProcess/efl/WebView.h: Added.
+        (WebKit):
+        (WebView):
+        (WebKit::WebView::pageRef):
+        (WebKit::WebView::evasObject):
+        (WebKit::WebView::page):
+        (WebKit::WebView::type):
+
+            Add a new WebKit::WebView class for EFL.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::~EwkView):
+        (EwkView::wkPage):
+        (EwkView::setThemePath):
+        (EwkView::createGLSurface):
+
+            Base methods on C API instead of internal API as much
+            as currently possible.
+
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (WebView):
+        (EwkView):
+        (EwkView::wkView):
+        (EwkView::page):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (createEwkView):
+        (ewk_view_base_add):
+        (ewk_view_smart_add):
+
+            Modify to return the EwkView class for now.
+
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
+            Updated due to changed API.
+
 2013-02-04  Anders Carlsson  <andersca@apple.com>
 
         Set up the storage manager as a connection queue
