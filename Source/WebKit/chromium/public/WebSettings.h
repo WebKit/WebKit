@@ -161,6 +161,7 @@ public:
     virtual void setTextAutosizingEnabled(bool) = 0;
     virtual void setTextAutosizingFontScaleFactor(float) = 0;
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded() = 0;
+    virtual void setThreadedHTMLParser(bool) = 0;
     virtual void setTouchDragDropEnabled(bool) = 0;
     virtual void setUnifiedTextCheckerEnabled(bool) = 0;
     virtual void setUnsafePluginPastingEnabled(bool) = 0;

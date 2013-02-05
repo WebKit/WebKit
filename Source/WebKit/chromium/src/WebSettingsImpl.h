@@ -158,6 +158,7 @@ public:
     virtual void setTextAutosizingFontScaleFactor(float);
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     virtual void setTouchDragDropEnabled(bool);
+    virtual void setThreadedHTMLParser(bool);
     virtual void setUnifiedTextCheckerEnabled(bool);
     virtual void setUnsafePluginPastingEnabled(bool);
     virtual void setUserStyleSheetLocation(const WebURL&);

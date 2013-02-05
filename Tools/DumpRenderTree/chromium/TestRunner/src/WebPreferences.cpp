@@ -122,6 +122,7 @@ void WebPreferences::reset()
     deferred2dCanvasEnabled = false;
     acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
+    threadedHTMLParser = false;
     perTilePaintingEnabled = false;
     acceleratedAnimationEnabled = false;
     deferredImageDecodingEnabled = false;
@@ -190,6 +191,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAcceleratedCompositingForOverflowScrollEnabled(acceleratedCompositingForOverflowScrollEnabled);
     settings->setFixedPositionCreatesStackingContext(acceleratedCompositingForFixedPositionEnabled);
     settings->setForceCompositingMode(forceCompositingMode);
+    settings->setThreadedHTMLParser(threadedHTMLParser);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
     settings->setDeferred2dCanvasEnabled(deferred2dCanvasEnabled);
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);

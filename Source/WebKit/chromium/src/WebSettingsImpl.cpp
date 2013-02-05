@@ -356,6 +356,13 @@ void WebSettingsImpl::setTouchDragDropEnabled(bool enabled)
     m_settings->setTouchDragDropEnabled(enabled);
 }
 
+void WebSettingsImpl::setThreadedHTMLParser(bool enabled)
+{
+#if ENABLE(THREADED_HTML_PARSER)
+    m_settings->setThreadedHTMLParser(enabled);
+#endif
+}
+
 void WebSettingsImpl::setOfflineWebApplicationCacheEnabled(bool enabled)
 {
     m_settings->setOfflineWebApplicationCacheEnabled(enabled);

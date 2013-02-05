@@ -67,6 +67,7 @@ static const char optionEnableAcceleratedOverflowScroll[] = "--enable-accelerate
 static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 static const char optionEnableDeferredImageDecoding[] = "--enable-deferred-image-decoding";
+static const char optionEnableThreadedHTMLParser[] = "--enable-threaded-html-parser";
 
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
@@ -134,6 +135,7 @@ int main(int argc, char* argv[])
     bool softwareCompositingEnabled = false;
     bool threadedCompositingEnabled = false;
     bool forceCompositingMode = false;
+    bool threadedHTMLParser = false;
     bool accelerated2DCanvasEnabled = false;
     bool deferred2DCanvasEnabled = false;
     bool acceleratedPaintingEnabled = false;
@@ -178,6 +180,8 @@ int main(int argc, char* argv[])
             threadedCompositingEnabled = true;
         else if (argument == optionForceCompositingMode)
             forceCompositingMode = true;
+        else if (argument == optionEnableThreadedHTMLParser)
+            threadedHTMLParser = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
         else if (argument == optionEnableDeferred2DCanvas)
@@ -233,6 +237,7 @@ int main(int argc, char* argv[])
         shell.setSoftwareCompositingEnabled(softwareCompositingEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
         shell.setForceCompositingMode(forceCompositingMode);
+        shell.setThreadedHTMLParser(threadedHTMLParser);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);
         shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);

@@ -115,6 +115,7 @@ TestShell::TestShell()
     , m_softwareCompositingEnabled(false)
     , m_threadedCompositingEnabled(false)
     , m_forceCompositingMode(false)
+    , m_threadedHTMLParser(false)
     , m_accelerated2dCanvasEnabled(false)
     , m_deferred2dCanvasEnabled(false)
     , m_acceleratedPaintingEnabled(false)
@@ -250,6 +251,7 @@ void TestShell::resetWebSettings(WebView& webView)
     m_prefs.perTilePaintingEnabled = m_perTilePaintingEnabled;
     m_prefs.acceleratedAnimationEnabled = m_acceleratedAnimationEnabled;
     m_prefs.deferredImageDecodingEnabled = m_deferredImageDecodingEnabled;
+    m_prefs.threadedHTMLParser = m_threadedHTMLParser;
     m_prefs.applyTo(&webView);
 }
 

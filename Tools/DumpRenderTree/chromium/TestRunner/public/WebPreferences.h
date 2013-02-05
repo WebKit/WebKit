@@ -91,6 +91,7 @@ struct WebPreferences {
     bool acceleratedCompositingForOverflowScrollEnabled;
     bool acceleratedCompositingEnabled;
     bool forceCompositingMode;
+    bool threadedHTMLParser;
     bool accelerated2dCanvasEnabled;
     bool deferred2dCanvasEnabled;
     bool acceleratedPaintingEnabled;
