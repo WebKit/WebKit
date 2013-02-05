@@ -436,6 +436,7 @@ void CoordinatedLayerTreeHost::checkCustomFilterProgramProxies(const FilterOpera
 
         if (!customFilterProgramProxy->client()) {
             customFilterProgramProxy->setClient(this);
+            m_customFilterPrograms.add(customFilterProgramProxy.get());
             m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateCustomFilterProgram(customFilterProgramProxy->id(), customOperation->validatedProgram()->validatedProgramInfo()));
         } else {
             // If the client was not disconnected then this coordinator must be the client for it.
