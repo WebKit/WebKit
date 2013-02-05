@@ -210,7 +210,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
     case WebGLExtension::WebGLCompressedTextureS3TCName:
         return toJS(exec, globalObject, static_cast<WebGLCompressedTextureS3TC*>(extension));
-    case WebGLExtension::WebKitWebGLDepthTextureName:
+    case WebGLExtension::WebGLDepthTextureName:
         return toJS(exec, globalObject, static_cast<WebGLDepthTexture*>(extension));
     }
     ASSERT_NOT_REACHED();

@@ -44,7 +44,7 @@ WebGLDepthTexture::~WebGLDepthTexture()
 
 WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
 {
-    return WebKitWebGLDepthTextureName;
+    return WebGLDepthTextureName;
 }
 
 PassOwnPtr<WebGLDepthTexture> WebGLDepthTexture::create(WebGLRenderingContext* context)

@@ -43,7 +43,7 @@ public:
         WebGLDebugRendererInfoName,
         WebGLDebugShadersName,
         WebGLCompressedTextureS3TCName,
-        WebKitWebGLDepthTextureName, // WEBKIT_ prefix until extension is official
+        WebGLDepthTextureName,
         OESElementIndexUintName,
     };
 

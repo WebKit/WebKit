@@ -2412,7 +2412,9 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::create(this);
         return m_webglCompressedTextureS3TC.get();
     }
-    if (equalIgnoringCase(name, "WEBKIT_WEBGL_depth_texture")
+    if ((equalIgnoringCase(name, "WEBGL_depth_texture")
+        // FIXME: remove this after a certain grace period.
+        || equalIgnoringCase(name, "WEBKIT_WEBGL_depth_texture"))
         && WebGLDepthTexture::supported(graphicsContext3D())) {
         if (!m_webglDepthTexture) {
             m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_depth_texture");

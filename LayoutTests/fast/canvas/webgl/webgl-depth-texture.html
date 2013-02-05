@@ -59,7 +59,7 @@ if (!gl) {
     runTestDisabled();
 
     // Query the extension and store globally so shouldBe can access it
-    ext = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_depth_texture");
+    ext = gl.getExtension("WEBGL_depth_texture");
     if (!ext) {
         testPassed("No WEBGL_depth_texture support -- this is legal");
         runSupportedTest(false);

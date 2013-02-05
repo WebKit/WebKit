@@ -208,9 +208,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
         extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), contextObject, isolate);
         referenceName = "webGLCompressedTextureS3TCName";
         break;
-    case WebGLExtension::WebKitWebGLDepthTextureName:
+    case WebGLExtension::WebGLDepthTextureName:
         extensionObject = toV8(static_cast<WebGLDepthTexture*>(extension), contextObject, isolate);
-        referenceName = "webKitWebGLDepthTextureName";
+        referenceName = "webGLDepthTextureName";
         break;
     }
     ASSERT(!extensionObject.IsEmpty());
