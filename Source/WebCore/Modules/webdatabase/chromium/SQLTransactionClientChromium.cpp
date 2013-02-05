@@ -34,6 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackend.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseObserver.h"
 #include "ScriptExecutionContext.h"
 
@@ -62,8 +63,9 @@ private:
 
 void SQLTransactionClient::didCommitWriteTransaction(DatabaseBackend* database)
 {
-    if (!database->scriptExecutionContext()->isContextThread()) {
-        database->scriptExecutionContext()->postTask(NotifyDatabaseChangedTask::create(database));
+    ScriptExecutionContext* scriptExecutionContext = database->databaseContext()->scriptExecutionContext();
+    if (!scriptExecutionContext->isContextThread()) {
+        scriptExecutionContext->postTask(NotifyDatabaseChangedTask::create(database));
         return;
     }
 
@@ -80,7 +82,7 @@ bool SQLTransactionClient::didExceedQuota(DatabaseBackend* database)
 {
     // Chromium does not allow users to manually change the quota for an origin (for now, at least).
     // Don't do anything.
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     return false;
 }
 

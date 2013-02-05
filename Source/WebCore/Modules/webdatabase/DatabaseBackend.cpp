@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,8 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseAuthorizer.h"
+#include "DatabaseBackendContext.h"
+#include "DatabaseBase.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
 #include "DatabaseTracker.h"
@@ -39,8 +42,6 @@
 #include "Logging.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
-#include "ScriptCallStack.h"
-#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -58,7 +59,7 @@
 // =======================================================
 // The DatabaseTracker maintains a list of databases that have been
 // "opened" so that the client can call interrupt or delete on every database
-// associated with a DatabaseContext.
+// associated with a DatabaseBackendContext.
 //
 // We will only call DatabaseTracker::addOpenDatabase() to add the database
 // to the tracker as opened when we've succeeded in opening the database,
@@ -73,7 +74,7 @@
 // The only databases instances not tracked by the tracker's open database
 // list are the ones that have not been added yet, or the ones that we
 // attempted an open on but failed to. Such instances only exist in the
-// DatabaseManager's factory methods for creating DatabaseBackends.
+// DatabaseServer's factory methods for creating DatabaseBackends.
 //
 // The factory methods will either call openAndVerifyVersion() or
 // performOpenAndVerify(). These methods will add the newly instantiated
@@ -204,10 +205,9 @@ const char* DatabaseBackend::databaseInfoTableName()
     return infoTableName;
 }
 
-DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
+DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion,
     const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
     : m_databaseContext(databaseContext)
-    , m_scriptExecutionContext(m_databaseContext->scriptExecutionContext())
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
@@ -217,8 +217,7 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, co
     , m_new(false)
     , m_isSyncDatabase(databaseType == SyncDatabase)
 {
-    ASSERT(m_databaseContext->scriptExecutionContext()->isContextThread());
-    m_contextThreadSecurityOrigin = m_scriptExecutionContext->securityOrigin()->isolatedCopy();
+    m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
 
     m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);
 
@@ -242,6 +241,15 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, co
 
 DatabaseBackend::~DatabaseBackend()
 {
+    // SQLite is "multi-thread safe", but each database handle can only be used
+    // on a single thread at a time.
+    //
+    // For DatabaseBackendAsync, we open the SQLite database on the DatabaseThread,
+    // and hence we should also close it on that same thread. This means that the
+    // SQLite database need to be closed by another mechanism (see
+    // DatabaseContext::stopDatabases()). By the time we get here, the SQLite
+    // database should have already been closed.
+
     ASSERT(!m_opened);
 }
 
@@ -427,11 +435,6 @@ bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, D
     return true;
 }
 
-ScriptExecutionContext* DatabaseBackend::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext.get();
-}
-
 SecurityOrigin* DatabaseBackend::securityOrigin() const
 {
     return m_contextThreadSecurityOrigin.get();
@@ -601,7 +604,7 @@ void DatabaseBackend::incrementalVacuumIfNeeded()
         int result = m_sqliteDatabase.runIncrementalVacuumCommand();
         reportVacuumDatabaseResult(result);
         if (result != SQLResultOk)
-            logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
+            m_frontend->logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
     }
 }
 
@@ -614,11 +617,6 @@ bool DatabaseBackend::isInterrupted()
 {
     MutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
-}
-
-void DatabaseBackend::logErrorMessage(const String& message)
-{
-    m_scriptExecutionContext->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);
 }
 
 #if PLATFORM(CHROMIUM)

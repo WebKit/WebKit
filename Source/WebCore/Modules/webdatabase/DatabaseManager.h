@@ -30,6 +30,7 @@
 
 #include "AbstractDatabaseServer.h"
 #include "DatabaseBasicTypes.h"
+#include "DatabaseDetails.h"
 #include "DatabaseError.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -40,6 +41,7 @@ namespace WebCore {
 
 class AbstractDatabaseServer;
 class Database;
+class DatabaseBackend;
 class DatabaseCallback;
 class DatabaseContext;
 class DatabaseManagerClient;
@@ -112,9 +114,6 @@ public:
 
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
-    bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
-
-    void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
 
 private:
@@ -124,6 +123,8 @@ private:
     // This gets a DatabaseContext for the specified ScriptExecutionContext if
     // it already exist previously. Otherwise, it returns 0.
     PassRefPtr<DatabaseContext> existingDatabaseContextFor(ScriptExecutionContext*);
+
+    static void logErrorMessage(ScriptExecutionContext*, const String& message);
 
     AbstractDatabaseServer* m_server;
     DatabaseManagerClient* m_client;

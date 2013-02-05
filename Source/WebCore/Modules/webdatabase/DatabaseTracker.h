@@ -45,7 +45,7 @@
 namespace WebCore {
 
 class DatabaseBackend;
-class ScriptExecutionContext;
+class DatabaseBackendContext;
 class SecurityOrigin;
 
 struct SecurityOriginHash;
@@ -70,7 +70,7 @@ public:
     // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
-    bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
+    bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize);
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
@@ -81,7 +81,7 @@ public:
     unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
     void databaseChanged(DatabaseBackend*);
 
-    void interruptAllDatabasesForContext(const ScriptExecutionContext*);
+    void interruptAllDatabasesForContext(const DatabaseBackendContext*);
 
 private:
     explicit DatabaseTracker(const String& databasePath);
@@ -122,7 +122,12 @@ private:
     unsigned long long quotaForOriginNoLock(SecurityOrigin* origin);
 
     String trackerDatabasePath() const;
-    void openTrackerDatabase(bool createIfDoesNotExist);
+
+    enum TrackerCreationAction {
+        DontCreateIfDoesNotExist,
+        CreateIfDoesNotExist
+    };
+    void openTrackerDatabase(TrackerCreationAction);
 
     String originPath(SecurityOrigin*) const;
 
@@ -157,18 +162,18 @@ private:
     typedef HashSet<String> NameSet;
     HashMap<RefPtr<SecurityOrigin>, NameSet*, SecurityOriginHash> m_beingDeleted;
     HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> m_originsBeingDeleted;
-    bool canCreateDatabase(SecurityOrigin *origin, const String& name);
-    void recordCreatingDatabase(SecurityOrigin *origin, const String& name);
-    void doneCreatingDatabase(SecurityOrigin *origin, const String& name);
-    bool creatingDatabase(SecurityOrigin *origin, const String& name);
-    bool canDeleteDatabase(SecurityOrigin *origin, const String& name);
-    void recordDeletingDatabase(SecurityOrigin *origin, const String& name);
-    void doneDeletingDatabase(SecurityOrigin *origin, const String& name);
-    bool deletingDatabase(SecurityOrigin *origin, const String& name);
-    bool canDeleteOrigin(SecurityOrigin *origin);
-    bool deletingOrigin(SecurityOrigin *origin);
-    void recordDeletingOrigin(SecurityOrigin *origin);
-    void doneDeletingOrigin(SecurityOrigin *origin);
+    bool isDeletingDatabaseOrOriginFor(SecurityOrigin*, const String& name);
+    void recordCreatingDatabase(SecurityOrigin*, const String& name);
+    void doneCreatingDatabase(SecurityOrigin*, const String& name);
+    bool creatingDatabase(SecurityOrigin*, const String& name);
+    bool canDeleteDatabase(SecurityOrigin*, const String& name);
+    void recordDeletingDatabase(SecurityOrigin*, const String& name);
+    void doneDeletingDatabase(SecurityOrigin*, const String& name);
+    bool isDeletingDatabase(SecurityOrigin*, const String& name);
+    bool canDeleteOrigin(SecurityOrigin*);
+    bool isDeletingOrigin(SecurityOrigin*);
+    void recordDeletingOrigin(SecurityOrigin*);
+    void doneDeletingOrigin(SecurityOrigin*);
 
     static void scheduleForNotification();
     static void notifyDatabasesChanged(void*);

@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class Database;
+class DatabaseBackendContext;
 class DatabaseTaskSynchronizer;
 class DatabaseThread;
 class ScriptExecutionContext;
@@ -50,7 +51,7 @@ public:
     virtual void contextDestroyed();
     virtual void stop();
 
-    ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext; }
+    PassRefPtr<DatabaseBackendContext> backend();
     DatabaseThread* databaseThread();
 
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
@@ -72,6 +73,7 @@ private:
     bool m_isRegistered;
     bool m_hasRequestedTermination;
 
+    friend class DatabaseBackendContext;
     friend class DatabaseManager;
 };
 

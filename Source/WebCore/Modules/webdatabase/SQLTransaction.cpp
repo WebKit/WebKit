@@ -33,7 +33,7 @@
 
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
-#include "DatabaseContext.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"

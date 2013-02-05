@@ -36,6 +36,7 @@
 #include "CrossThreadCopier.h"
 #include "CrossThreadTask.h"
 #include "DatabaseBackend.h"
+#include "DatabaseBackendContext.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "WebCommonWorkerClient.h"
@@ -179,19 +180,19 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
 
 void DatabaseObserver::databaseOpened(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseOpened(WebDatabase(database));
 }
 
 void DatabaseObserver::databaseModified(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseModified(WebDatabase(database));
 }
 
 void DatabaseObserver::databaseClosed(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     WebDatabase::observer()->databaseClosed(WebDatabase(database));
 }
 

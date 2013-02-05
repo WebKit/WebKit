@@ -33,7 +33,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackend.h"
+#include "DatabaseBackendSync.h"
+#include "DatabaseBase.h"
 #include "DatabaseBasicTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +51,7 @@ class SQLTransactionSyncCallback;
 class SecurityOrigin;
 
 // Instances of this class should be created and used only on the worker's context thread.
-class DatabaseSync : public DatabaseBackend {
+class DatabaseSync : public DatabaseBase, public DatabaseBackendSync {
 public:
     virtual ~DatabaseSync();
 
@@ -73,8 +74,10 @@ public:
     }
 
 private:
-    DatabaseSync(PassRefPtr<DatabaseContext>, const String& name, const String& expectedVersion,
-                 const String& displayName, unsigned long estimatedSize);
+    DatabaseSync(PassRefPtr<DatabaseBackendContext>, const String& name,
+        const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
+    PassRefPtr<DatabaseBackendSync> backend();
+
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 
     bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
@@ -82,6 +85,7 @@ private:
     String m_lastErrorMessage;
 
     friend class DatabaseManager;
+    friend class DatabaseBackendSync; // FIXME: remove this when the backend has been split out.
 };
 
 } // namespace WebCore

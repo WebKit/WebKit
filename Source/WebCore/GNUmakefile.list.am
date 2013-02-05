@@ -2094,6 +2094,14 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.h \
 	Source/WebCore/Modules/webdatabase/DatabaseBackend.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseBackend.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendAsync.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendAsync.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendContext.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendContext.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendSync.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseBackendSync.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBase.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseBase.h \
 	Source/WebCore/Modules/webdatabase/DatabaseBasicTypes.h \
 	Source/WebCore/Modules/webdatabase/DatabaseCallback.h \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \

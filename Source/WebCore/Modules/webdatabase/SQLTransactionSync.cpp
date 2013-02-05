@@ -34,7 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseAuthorizer.h"
-#include "DatabaseContext.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseSync.h"
 #include "SQLException.h"
 #include "SQLResultSet.h"

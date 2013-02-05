@@ -25354,6 +25354,42 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendAsync.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendAsync.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendContext.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendContext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendSync.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendSync.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBasicTypes.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\DatabaseCallback.h"
 					>
 				</File>

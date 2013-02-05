@@ -28,6 +28,9 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBackendAsync.h"
+#include "DatabaseBackendContext.h"
+#include "DatabaseBackendSync.h"
 #include "DatabaseTracker.h"
 #include <wtf/UnusedParam.h>
 
@@ -141,14 +144,14 @@ void DatabaseServer::closeDatabasesImmediately(const String& originIdentifier, c
 }
 #endif // PLATFORM(CHROMIUM)
 
-void DatabaseServer::interruptAllDatabasesForContext(const ScriptExecutionContext* context)
+void DatabaseServer::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
 {
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
 }
 
-bool DatabaseServer::canEstablishDatabase(ScriptExecutionContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
+bool DatabaseServer::canEstablishDatabase(DatabaseBackendContext* backendContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    return DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize);
+    return DatabaseTracker::tracker().canEstablishDatabase(backendContext, name, displayName, estimatedSize);
 }
 
 void DatabaseServer::setDatabaseDetails(SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)

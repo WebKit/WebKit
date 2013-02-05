@@ -34,7 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackend.h"
-#include "DatabaseContext.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseManager.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -54,7 +54,7 @@ void SQLTransactionClient::didExecuteStatement(DatabaseBackend* database)
 
 bool SQLTransactionClient::didExceedQuota(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     unsigned long long currentQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
     database->databaseContext()->databaseExceededQuota(database->stringIdentifier(), database->details());
     unsigned long long newQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());

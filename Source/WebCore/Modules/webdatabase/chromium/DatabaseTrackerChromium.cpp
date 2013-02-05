@@ -34,6 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackend.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseObserver.h"
 #include "QuotaTracker.h"
 #include "ScriptExecutionContext.h"
@@ -56,8 +57,9 @@ DatabaseTracker::DatabaseTracker(const String&)
     SQLiteFileSystem::registerSQLiteVFS();
 }
 
-bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
+bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* databaseContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
+    ScriptExecutionContext* scriptExecutionContext = databaseContext->scriptExecutionContext();
     return DatabaseObserver::canEstablishDatabase(scriptExecutionContext, name, displayName, estimatedSize);
 }
 
@@ -148,22 +150,24 @@ void DatabaseTracker::removeOpenDatabase(DatabaseBackend* database)
         }
     }
 
-    if (!database->scriptExecutionContext()->isContextThread())
-        database->scriptExecutionContext()->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
+    ScriptExecutionContext* scriptExecutionContext = database->databaseContext()->scriptExecutionContext();
+    if (!scriptExecutionContext->isContextThread())
+        scriptExecutionContext->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
     else
         DatabaseObserver::databaseClosed(database);
 }
 
 void DatabaseTracker::prepareToOpenDatabase(DatabaseBackend* database)
 {
-    ASSERT(database->scriptExecutionContext()->isContextThread());
+    ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());
     DatabaseObserver::databaseOpened(database);
 }
 
 void DatabaseTracker::failedToOpenDatabase(DatabaseBackend* database)
 {
-    if (!database->scriptExecutionContext()->isContextThread())
-        database->scriptExecutionContext()->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
+    ScriptExecutionContext* scriptExecutionContext = database->databaseContext()->scriptExecutionContext();
+    if (!scriptExecutionContext->isContextThread())
+        scriptExecutionContext->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
     else
         DatabaseObserver::databaseClosed(database);
 }
@@ -178,7 +182,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackend*
     return databaseSize + spaceAvailable;
 }
 
-void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionContext* context)
+void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
 
@@ -194,7 +198,7 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
         DatabaseSet* databaseSet = dbNameMapIt->value;
         DatabaseSet::const_iterator end = databaseSet->end();
         for (DatabaseSet::const_iterator it = databaseSet->begin(); it != end; ++it) {
-            if ((*it)->scriptExecutionContext() == context)
+            if ((*it)->databaseContext() == context)
                 (*it)->interrupt();
         }
     }
@@ -242,7 +246,7 @@ void DatabaseTracker::closeDatabasesImmediately(const String& originIdentifier, 
     // the database in our collection when not on the context thread (which is always the case given
     // current usage).
     for (DatabaseSet::iterator it = databaseSet->begin(); it != databaseSet->end(); ++it)
-        (*it)->scriptExecutionContext()->postTask(CloseOneDatabaseImmediatelyTask::create(originIdentifier, name, *it));
+        (*it)->databaseContext()->scriptExecutionContext()->postTask(CloseOneDatabaseImmediatelyTask::create(originIdentifier, name, *it));
 }
 
 void DatabaseTracker::closeOneDatabaseImmediately(const String& originIdentifier, const String& name, DatabaseBackend* database)

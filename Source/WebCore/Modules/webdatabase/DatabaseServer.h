@@ -68,9 +68,9 @@ public:
     virtual void closeDatabasesImmediately(const String& originIdentifier, const String& name);
 #endif // PLATFORM(CHROMIUM)
 
-    virtual void interruptAllDatabasesForContext(const ScriptExecutionContext*);
+    virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*);
 
-    virtual bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
+    virtual bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize);
 
     virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);

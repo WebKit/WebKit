@@ -36,8 +36,10 @@
 namespace WebCore {
 
 class DatabaseBackend;
+class DatabaseBackendAsync;
+class DatabaseBackendContext;
+class DatabaseBackendSync;
 class DatabaseManagerClient;
-class ScriptExecutionContext;
 class SecurityOrigin;
 
 class AbstractDatabaseServer {
@@ -73,9 +75,9 @@ public:
     virtual void closeDatabasesImmediately(const String& originIdentifier, const String& name) = 0;
 #endif // PLATFORM(CHROMIUM)
 
-    virtual void interruptAllDatabasesForContext(const ScriptExecutionContext*) = 0;
+    virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*) = 0;
 
-    virtual bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize) = 0;
+    virtual bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize) = 0;
 
     virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize) = 0;
     virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*) = 0;

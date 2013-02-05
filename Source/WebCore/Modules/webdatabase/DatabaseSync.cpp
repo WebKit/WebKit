@@ -33,6 +33,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBackendContext.h"
+#include "DatabaseBackendSync.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
@@ -49,18 +51,22 @@
 
 namespace WebCore {
 
-DatabaseSync::DatabaseSync(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion,
-                           const String& displayName, unsigned long estimatedSize)
-    : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
+DatabaseSync::DatabaseSync(PassRefPtr<DatabaseBackendContext> databaseContext,
+    const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+    : DatabaseBase(databaseContext->scriptExecutionContext())
+    , DatabaseBackendSync(databaseContext, name, expectedVersion, displayName, estimatedSize)
 {
+    setFrontend(this);
 }
 
 DatabaseSync::~DatabaseSync()
 {
     ASSERT(m_scriptExecutionContext->isContextThread());
+}
 
-    if (opened())
-        closeDatabase();
+PassRefPtr<DatabaseBackendSync> DatabaseSync::backend()
+{
+    return this;
 }
 
 void DatabaseSync::changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback> changeVersionCallback, ExceptionCode& ec)

@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Database.h"
+#include "DatabaseBackendContext.h"
 #include "DatabaseManager.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
@@ -109,7 +110,7 @@ DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
 
     // For debug accounting only. We must do this before we register the
     // instance. The assertions assume this.
-    DatabaseManager::manager().didConstructDatabaseContext(); 
+    DatabaseManager::manager().didConstructDatabaseContext();
 
     DatabaseManager::manager().registerDatabaseContext(this);
 }
@@ -149,6 +150,12 @@ void DatabaseContext::contextDestroyed()
 void DatabaseContext::stop()
 {
     stopDatabases();
+}
+
+PassRefPtr<DatabaseBackendContext> DatabaseContext::backend()
+{
+    DatabaseBackendContext* backend = static_cast<DatabaseBackendContext*>(this);
+    return backend;
 }
 
 DatabaseThread* DatabaseContext::databaseThread()
