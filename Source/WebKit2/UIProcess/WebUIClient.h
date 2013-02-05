@@ -27,6 +27,7 @@
 #define WebUIClient_h
 
 #include "APIClient.h"
+#include "PluginModuleInfo.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResult.h"
@@ -122,7 +123,7 @@ public:
     bool hideColorPicker(WebPageProxy*);
 #endif
 
-    bool shouldInstantiatePlugin(WebPageProxy*, const String& identifier, const String& displayName);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, PluginModuleLoadPolicy currentPluginLoadPolicy);
 };
 
 } // namespace WebKit

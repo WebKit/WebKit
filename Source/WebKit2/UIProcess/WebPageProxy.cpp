@@ -1233,14 +1233,14 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
         return;
 
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
-    if (pluginLoadPolicy != PluginModuleLoadNormally)
-        return;
 
 #if PLATFORM(MAC)
-    pluginLoadPolicy = m_uiClient.shouldInstantiatePlugin(this, plugin.bundleIdentifier, plugin.info.name) ? PluginModuleLoadNormally : PluginModuleBlocked;
+    PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
+    pluginLoadPolicy = m_uiClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, currentPluginLoadPolicy);
+#endif
+
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
-#endif
 
     pluginPath = plugin.path;
 }

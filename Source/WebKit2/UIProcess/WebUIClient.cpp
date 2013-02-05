@@ -438,12 +438,42 @@ bool WebUIClient::hideColorPicker(WebPageProxy* page)
 }
 #endif
 
-bool WebUIClient::shouldInstantiatePlugin(WebPageProxy* page, const String& identifier, const String& displayName)
+static inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModuleLoadPolicy)
 {
-    if (!m_client.shouldInstantiatePlugin)
-        return true;
+    switch (pluginModuleLoadPolicy) {
+    case PluginModuleLoadNormally:
+        return kWKPluginLoadPolicyLoadNormally;
+    case PluginModuleBlocked:
+        return kWKPluginLoadPolicyBlocked;
+    case PluginModuleInactive:
+        return kWKPluginLoadPolicyInactive;
+    }
 
-    return m_client.shouldInstantiatePlugin(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), m_client.clientInfo);
+    ASSERT_NOT_REACHED();
+    return kWKPluginLoadPolicyBlocked;
+}
+
+static inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy pluginLoadPolicy)
+{
+    switch (pluginLoadPolicy) {
+    case kWKPluginLoadPolicyLoadNormally:
+        return PluginModuleLoadNormally;
+    case kWKPluginLoadPolicyBlocked:
+        return PluginModuleBlocked;
+    case kWKPluginLoadPolicyInactive:
+        return PluginModuleInactive;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PluginModuleBlocked;
+}
+
+PluginModuleLoadPolicy WebUIClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, PluginModuleLoadPolicy currentPluginLoadPolicy)
+{
+    if (!m_client.pluginLoadPolicy)
+        return currentPluginLoadPolicy;
+
+    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), toWKPluginLoadPolicy(currentPluginLoadPolicy), m_client.clientInfo));
 }
 
 } // namespace WebKit
