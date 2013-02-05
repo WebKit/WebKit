@@ -1,3 +1,20 @@
+2013-02-04  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Try to get WebKit building with enable_web_intents set to 0 on Windows too.
+        https://bugs.webkit.org/show_bug.cgi?id=108887
+
+        Reviewed by Kentaro Hara.
+
+        This is a follow-up to http://trac.webkit.org/changeset/141614. The
+        Mac and Linux linkers didn't complain about the reference to
+        WebIntent in that function for some reason (probably because it's
+        a dead function that's stripped).
+
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+
 2013-02-04  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: Make builder a real dashboardSpecificParameter.

@@ -419,12 +419,14 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
+#if ENABLE(WEB_INTENTS)
     // Expects one string argument for sending successful result, zero
     // arguments for sending a failure result.
     void sendWebIntentResponse(const CppArgumentList&, CppVariant*);
 
     // Cause the web intent to be delivered to this context.
     void deliverWebIntent(const CppArgumentList&, CppVariant*);
+#endif
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods forwarding to the WebTestDelegate

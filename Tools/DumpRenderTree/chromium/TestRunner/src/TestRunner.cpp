@@ -1744,6 +1744,7 @@ void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVa
     result->setNull();
 }
 
+#if ENABLE(WEB_INTENTS)
 void TestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
 {
     v8::HandleScope scope;
@@ -1785,6 +1786,7 @@ void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* 
 
     m_webView->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
 }
+#endif
 
 void TestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
 {
