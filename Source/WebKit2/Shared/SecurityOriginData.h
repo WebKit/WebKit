@@ -40,6 +40,8 @@ namespace WebKit {
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
 struct SecurityOriginData {
+    static SecurityOriginData fromSecurityOrigin(WebCore::SecurityOrigin*);
+
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, SecurityOriginData&);
 

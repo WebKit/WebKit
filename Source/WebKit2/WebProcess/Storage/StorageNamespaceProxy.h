@@ -38,6 +38,8 @@ public:
     static PassRefPtr<StorageNamespaceProxy> createSessionStorageNamespace(WebPage*);
     virtual ~StorageNamespaceProxy();
 
+    uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
+
 private:
     explicit StorageNamespaceProxy(WebPage*);
 

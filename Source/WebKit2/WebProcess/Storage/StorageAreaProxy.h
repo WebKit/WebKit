@@ -53,6 +53,8 @@ private:
     virtual void incrementAccessCount() OVERRIDE;
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;
+
+    uint64_t m_storageAreaID;
 };
 
 } // namespace WebKit

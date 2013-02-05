@@ -1,3 +1,33 @@
+2013-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Send message when creating and destroying StorageAreaProxy objects
+        https://bugs.webkit.org/show_bug.cgi?id=108874
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::fromSecurityOrigin):
+        * Shared/SecurityOriginData.h:
+        (SecurityOriginData):
+        Add helper function for creating a SecurityOriginData object given a WebCore::SecurityOrigin object.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::generateStorageAreaID):
+        New function to create a unique storage area ID.
+
+        (WebKit::StorageAreaProxy::StorageAreaProxy):
+        Send a CreateStorageArea message.
+        
+        (WebKit::StorageAreaProxy::~StorageAreaProxy):
+        Send a DestroyStorageArea message.
+
+        (WebKit::StorageAreaProxy::contains):
+        Remove this assertion for now, it fires too often.
+        
+        * WebProcess/Storage/StorageNamespaceProxy.h:
+        (WebKit::StorageNamespaceProxy::storageNamespaceID):
+        Add getter.
+
 2013-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Use C API inside EwkView

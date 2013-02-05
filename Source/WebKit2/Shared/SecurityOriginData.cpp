@@ -35,6 +35,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
+SecurityOriginData SecurityOriginData::fromSecurityOrigin(SecurityOrigin* securityOrigin)
+{
+    SecurityOriginData securityOriginData;
+
+    securityOriginData.protocol = securityOrigin->protocol();
+    securityOriginData.host = securityOrigin->host();
+    securityOriginData.port = securityOrigin->port();
+
+    return securityOriginData;
+}
+
 void SecurityOriginData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << protocol;
