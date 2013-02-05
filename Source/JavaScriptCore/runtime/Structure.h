@@ -196,7 +196,8 @@ namespace JSC {
                 return initialOutOfLineCapacity;
 
             ASSERT(outOfLineSize > initialOutOfLineCapacity);
-            return WTF::roundUpToPowerOf<outOfLineGrowthFactor>(outOfLineSize);
+            COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
+            return WTF::roundUpToPowerOfTwo(outOfLineSize);
         }
         unsigned outOfLineSize() const
         {

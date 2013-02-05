@@ -431,14 +431,8 @@ inline void doubleToInteger(double d, unsigned long long& value)
 
 namespace WTF {
 
-// Be careful, this might be super slow in a hot loop.
-template<size_t exponent> inline size_t roundUpToPowerOf(size_t v)
-{
-    return round(pow(static_cast<double>(exponent), ceil(log(static_cast<double>(v)) / log(static_cast<double>(exponent)))));
-}
-
 // From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-template<> inline size_t roundUpToPowerOf<2>(size_t v)
+inline uint32_t roundUpToPowerOfTwo(uint32_t v)
 {
     v--;
     v |= v >> 1;
@@ -446,9 +440,6 @@ template<> inline size_t roundUpToPowerOf<2>(size_t v)
     v |= v >> 4;
     v |= v >> 8;
     v |= v >> 16;
-#if defined(__LP64__) && __LP64__
-    v |= v >> 32;
-#endif
     v++;
     return v;
 }

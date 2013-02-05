@@ -1,3 +1,16 @@
+2013-02-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Structure::m_outOfLineCapacity is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=108206
+
+        Reviewed by Darin Adler.
+
+        Simplifying the utility functions that we use since we don't need a 
+        bunch of fancy templates for this one specific call site.
+
+        * runtime/Structure.h:
+        (JSC::Structure::outOfLineCapacity):
+
 2013-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: testapi.mm should use ARC
