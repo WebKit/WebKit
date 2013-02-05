@@ -50,7 +50,7 @@ do
 
     # This somewhat quirky sequence of steps seems to clear up all the broken
     # git situations we've gotten ourself into in the past.
-    git clean -f # Remove any left-over layout test results, added files, etc.
+    git clean -f -d # Remove any left-over layout test results, added files, etc.
     git rebase --abort # If we got killed during a git rebase, we need to clean up.
     git fetch origin # Avoid updating the working copy to a stale revision.
     git checkout origin/master -f
