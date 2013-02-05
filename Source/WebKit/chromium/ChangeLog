@@ -1,3 +1,10 @@
+2013-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r180583.  Requested by
+        "Mark Pilgrim" <pilgrim@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-04  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Add a signal for when the body is inserted in the document
