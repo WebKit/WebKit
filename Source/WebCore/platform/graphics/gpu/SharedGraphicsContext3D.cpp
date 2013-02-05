@@ -95,7 +95,6 @@ static PassRefPtr<GraphicsContext3D> getOrCreateContextForImplThread(ContextOper
 
 PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::getForImplThread()
 {
-    ASSERT(!isMainThread());
     return getOrCreateContextForImplThread(Get);
 }
 

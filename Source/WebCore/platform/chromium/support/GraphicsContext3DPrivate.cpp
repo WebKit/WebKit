@@ -71,7 +71,6 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
     if (m_grContext) {
         m_impl->setMemoryAllocationChangedCallbackCHROMIUM(0);
         m_grContext->contextDestroyed();
-        GrSafeUnref(m_grContext);
     }
 }
 
@@ -114,17 +113,33 @@ private:
     GrContext* m_context;
 };
 
+namespace {
+void bindWebGraphicsContext3DGLContextCallback(const GrGLInterface* interface)
+{
+    reinterpret_cast<WebKit::WebGraphicsContext3D*>(interface->fCallbackData)->makeContextCurrent();
+}
+}
+
 GrContext* GraphicsContext3DPrivate::grContext()
 {
-    if (!m_grContext) {
-        SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
-        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
-        if (m_grContext) {
-            m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
-            m_grContextMemoryAllocationCallbackAdapter = adoptPtr(new GrMemoryAllocationChangedCallbackAdapter(m_grContext));
-            m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_grContextMemoryAllocationCallbackAdapter.get());
-        }
-    }
+    if (m_grContext)
+        return m_grContext;
+
+    SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
+    if (!interface)
+        return 0;
+
+    interface->fCallback = bindWebGraphicsContext3DGLContextCallback;
+    interface->fCallbackData = reinterpret_cast<GrGLInterfaceCallbackData>(m_impl.get());
+
+    m_grContext.reset(GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get())));
+    if (!m_grContext)
+        return 0;
+
+    m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
+    m_grContextMemoryAllocationCallbackAdapter = adoptPtr(new GrMemoryAllocationChangedCallbackAdapter(m_grContext));
+    m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_grContextMemoryAllocationCallbackAdapter.get());
+
     return m_grContext;
 }
 

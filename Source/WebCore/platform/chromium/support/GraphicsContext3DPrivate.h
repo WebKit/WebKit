@@ -114,7 +114,7 @@ private:
     // used to resize the Canvas.
     SkBitmap m_resizingBitmap;
 
-    GrContext* m_grContext;
+    SkAutoTUnref<GrContext> m_grContext;
 };
 
 } // namespace WebCore

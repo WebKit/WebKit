@@ -1,3 +1,13 @@
+2013-02-05  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Provide compositor offscreen context through the WebLayerTreeViewClient interface
+        https://bugs.webkit.org/show_bug.cgi?id=107776
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * src/WebGraphicsContext3D.cpp: Removed.
+
 2013-02-05  Mark Lam  <mark.lam@apple.com>
 
         Introduced back-end database classes + a few small fixes.
