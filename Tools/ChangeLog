@@ -1,3 +1,23 @@
+2013-02-04  Julie Parent  <jparent@chromium.org>
+
+        Setting tests on flakiness dashboard should invalidate builder.
+        https://bugs.webkit.org/show_bug.cgi?id=108521
+
+        Reviewed by Dirk Pranke.
+        
+        When you move into a cross builder view, builder should not still be
+        set.  Currently, it is deleted from the internal state, but still shows
+        up in the url, causing the current state and the hash to not match.
+        
+        To see this in action, load the flakiness dashboard, select a builder,
+        and then click on an individual test, to get into individual test view.
+        The url will still have the builder you selected listed, even though it
+        is cleared in the UI.
+        
+        The fix is to consider 'tests' to be a parameter that invalidates builder.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2013-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Introduce a WebView class as counterpart for WKViewRef

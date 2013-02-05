@@ -263,6 +263,7 @@ g_defaultDashboardSpecificStateValues = {
 };
 
 DB_SPECIFIC_INVALIDATING_PARAMETERS = {
+    'tests' : 'builder',
     'testType': 'builder',
     'group': 'builder'
 };
