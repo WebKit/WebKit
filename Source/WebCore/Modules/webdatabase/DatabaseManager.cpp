@@ -220,6 +220,8 @@ ExceptionCode DatabaseManager::exceptionCodeForDatabaseError(DatabaseError error
 
 static void logOpenDatabaseError(ScriptExecutionContext* context, const String& name)
 {
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(name);
     LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(),
         context->securityOrigin()->toString().ascii().data());
 }
