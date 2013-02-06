@@ -39,12 +39,13 @@ using namespace WebKit;
 namespace WebTestRunner {
 
 WebTestInterfaces::WebTestInterfaces()
-    : m_interfaces(new TestInterfaces())
 {
+    m_interfaces = new TestInterfaces;
 }
 
 WebTestInterfaces::~WebTestInterfaces()
 {
+    delete m_interfaces;
 }
 
 void WebTestInterfaces::setWebView(WebView* webView)
@@ -84,7 +85,7 @@ WebTestRunner* WebTestInterfaces::testRunner()
 
 TestInterfaces* WebTestInterfaces::testInterfaces()
 {
-    return m_interfaces.get();
+    return m_interfaces;
 }
 
 }

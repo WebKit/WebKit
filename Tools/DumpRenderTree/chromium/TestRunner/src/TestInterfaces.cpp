@@ -45,13 +45,13 @@ using WebKit::WebView;
 namespace WebTestRunner {
 
 TestInterfaces::TestInterfaces()
-    : m_accessibilityController(new AccessibilityController())
-    , m_eventSender(new EventSender())
-    , m_gamepadController(new GamepadController())
-    , m_textInputController(new TextInputController())
-    , m_testRunner(new TestRunner())
-    , m_webView(0)
+    : m_webView(0)
 {
+    m_accessibilityController = adoptPtr(new AccessibilityController());
+    m_eventSender = adoptPtr(new EventSender());
+    m_gamepadController = adoptPtr(new GamepadController());
+    m_textInputController = adoptPtr(new TextInputController());
+    m_testRunner = adoptPtr(new TestRunner());
 }
 
 TestInterfaces::~TestInterfaces()
