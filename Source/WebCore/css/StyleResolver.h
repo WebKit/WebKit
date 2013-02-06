@@ -26,7 +26,6 @@
 #include "CSSRuleList.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
-#include "DocumentRuleSets.h"
 #include "InspectorCSSOMWrappers.h"
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
@@ -170,7 +169,6 @@ public:
     RenderStyle* rootElementStyle() const { return m_state.rootElementStyle; }
     Element* element() const { return m_state.element; }
     Document* document() const { return m_document; }
-    StyleScopeResolver* scopeResolver() const { return m_scopeResolver.get(); }
     const FontDescription& fontDescription() { return style()->fontDescription(); }
     const FontDescription& parentFontDescription() { return parentStyle()->fontDescription(); }
     void setFontDescription(const FontDescription& fontDescription) { m_state.fontDirty |= style()->setFontDescription(fontDescription); }
@@ -181,13 +179,10 @@ public:
     void setTextOrientation(TextOrientation textOrientation) { m_state.fontDirty |= style()->setTextOrientation(textOrientation); }
     bool hasParentNode() const { return m_state.parentNode; }
 
-    // FIXME: It could be better to call m_ruleSets.appendAuthorStyleSheets() directly after we factor StyleRsolver further.
-    // https://bugs.webkit.org/show_bug.cgi?id=108890
+    void resetAuthorStyle();
     void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >&);
 
-    DocumentRuleSets& ruleSets() { return m_ruleSets; }
-    const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
-
+private:
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
     StyleScopeResolver* ensureScopeResolver()
     {
@@ -206,9 +201,9 @@ public:
     }
 #endif
 
-private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
+    void collectFeatures();
     RenderStyle* locateSharedStyle();
     bool styleSharingCandidateMatchesRuleSet(RuleSet*);
     bool styleSharingCandidateMatchesHostRules();
@@ -276,9 +271,9 @@ public:
 
     bool checkRegionStyle(Element* regionElement);
 
-    bool usesSiblingRules() const { return !m_ruleSets.features().siblingRules.isEmpty(); }
-    bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
-    bool usesBeforeAfterRules() const { return m_ruleSets.features().usesBeforeAfterRules; }
+    bool usesSiblingRules() const { return !m_features.siblingRules.isEmpty(); }
+    bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
+    bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
 
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
@@ -417,7 +412,12 @@ private:
     bool isFirstPage(int pageIndex) const;
     String pageName(int pageIndex) const;
 
-    DocumentRuleSets m_ruleSets;
+    OwnPtr<RuleSet> m_authorStyle;
+    OwnPtr<RuleSet> m_userStyle;
+
+    RuleFeatureSet m_features;
+    OwnPtr<RuleSet> m_siblingRuleSet;
+    OwnPtr<RuleSet> m_uncommonAttributeRuleSet;
 
     typedef HashMap<AtomicStringImpl*, RefPtr<StyleRuleKeyframes> > KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
@@ -524,6 +524,8 @@ public:
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&, RuleSet& userStyle);
+
     void cacheBorderAndBackground();
 
 private:
@@ -601,19 +603,19 @@ private:
 inline bool StyleResolver::hasSelectorForAttribute(const AtomicString &attributeName) const
 {
     ASSERT(!attributeName.isEmpty());
-    return m_ruleSets.features().attrsInRules.contains(attributeName.impl());
+    return m_features.attrsInRules.contains(attributeName.impl());
 }
 
 inline bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const
 {
     ASSERT(!classValue.isEmpty());
-    return m_ruleSets.features().classesInRules.contains(classValue.impl());
+    return m_features.classesInRules.contains(classValue.impl());
 }
 
 inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
 {
     ASSERT(!idValue.isEmpty());
-    return m_ruleSets.features().idsInRules.contains(idValue.impl());
+    return m_features.idsInRules.contains(idValue.impl());
 }
 
 } // namespace WebCore
