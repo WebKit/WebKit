@@ -189,13 +189,14 @@ private:
 
 } // namespace
 
+// FIXME: This method should receive a ScriptState, from which we should retrieve an Isolate.
 PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title, HeapSnapshotProgress* control)
 {
     v8::HandleScope hs;
     ASSERT(control);
     ActivityControlAdapter adapter(control);
     GlobalObjectNameResolver resolver;
-    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(deprecatedV8String(title), v8::HeapSnapshot::kFull, &adapter, &resolver);
+    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title, v8::Isolate::GetCurrent()), v8::HeapSnapshot::kFull, &adapter, &resolver);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 
