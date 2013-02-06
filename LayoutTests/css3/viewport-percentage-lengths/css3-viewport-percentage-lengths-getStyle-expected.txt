@@ -1,4 +1,4 @@
-Test for Bug: 27160 - Implement vw/vh/vm (viewport sizes) from CSS 3 Values and Units
+Test for Bug: 27160/91440 - Implement vw/vh/vmin/vmax (viewport sizes) from CSS 3 Values and Units
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -83,6 +83,33 @@ PASS style.getPropertyValue("padding-left") is '12px'
 PASS style.getPropertyValue("padding-right") is '12px'
 PASS style.getPropertyValue("padding-top") is '12px'
 PASS style.getPropertyValue("padding-bottom") is '12px'
+
+Test for vmax
+PASS style.getPropertyValue("height") is '240px'
+PASS style.getPropertyValue("width") is '240px'
+PASS style.getPropertyValue("font-size") is '24px'
+PASS style.getPropertyValue("line-height") is '32px'
+PASS style.getPropertyValue("text-indent") is '2vmax'
+PASS style.getPropertyValue("margin-left") is '16px'
+PASS style.getPropertyValue("margin-right") is '16px'
+PASS style.getPropertyValue("margin-top") is '16px'
+PASS style.getPropertyValue("margin-bottom") is '16px'
+PASS style.getPropertyValue("border-top-left-radius") is '8px'
+PASS style.getPropertyValue("border-top-right-radius") is '8px'
+PASS style.getPropertyValue("border-bottom-left-radius") is '8px'
+PASS style.getPropertyValue("border-bottom-right-radius") is '8px'
+PASS style.getPropertyValue("min-height") is '10vmax'
+PASS style.getPropertyValue("min-width") is '10vmax'
+PASS style.getPropertyValue("max-height") is '60vmax'
+PASS style.getPropertyValue("max-width") is '60vmax'
+PASS style.getPropertyValue("top") is '80px'
+PASS style.getPropertyValue("bottom") is '80px'
+PASS style.getPropertyValue("left") is '80px'
+PASS style.getPropertyValue("right") is '80px'
+PASS style.getPropertyValue("padding-left") is '16px'
+PASS style.getPropertyValue("padding-right") is '16px'
+PASS style.getPropertyValue("padding-top") is '16px'
+PASS style.getPropertyValue("padding-bottom") is '16px'
 PASS successfullyParsed is true
 
 TEST COMPLETE

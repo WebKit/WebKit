@@ -38,7 +38,7 @@ enum LengthType {
     Intrinsic, MinIntrinsic,
     MinContent, MaxContent, FillAvailable, FitContent,
     Calculated,
-    ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin,
+    ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin, ViewportPercentageMax,
     Undefined
 };
 
@@ -265,7 +265,7 @@ public:
     bool isViewportPercentage() const
     {
         LengthType lengthType = type();
-        return lengthType >= ViewportPercentageWidth && lengthType <= ViewportPercentageMin;
+        return lengthType >= ViewportPercentageWidth && lengthType <= ViewportPercentageMax;
     }
     float viewportPercentageLength() const
     {

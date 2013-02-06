@@ -91,13 +91,14 @@ public:
         CSS_COUNTER = 23,
         CSS_RECT = 24,
         CSS_RGBCOLOR = 25,
-        // From CSS Values and Units. Viewport-percentage Lengths (vw/vh/vmin).
+        // From CSS Values and Units. Viewport-percentage Lengths (vw/vh/vmin/vmax).
         CSS_VW = 26,
         CSS_VH = 27,
         CSS_VMIN = 28,
-        CSS_DPPX = 29,
-        CSS_DPI = 30,
-        CSS_DPCM = 31,
+        CSS_VMAX = 29,
+        CSS_DPPX = 30,
+        CSS_DPI = 31,
+        CSS_DPCM = 32,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
 #if ENABLE(DASHBOARD_SUPPORT)
         CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
@@ -188,7 +189,7 @@ public:
 #if ENABLE(CSS_VARIABLES)
     bool isVariableName() const { return primitiveType() == CSS_VARIABLE_NAME; }
 #endif
-    bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMIN; }
+    bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMAX; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int identifier) { return adoptRef(new CSSPrimitiveValue(identifier)); }
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }

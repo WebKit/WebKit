@@ -111,6 +111,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     case CSSPrimitiveValue::CSS_VW:
     case CSSPrimitiveValue::CSS_VH:
     case CSSPrimitiveValue::CSS_VMIN:
+    case CSSPrimitiveValue::CSS_VMAX:
     case CSSPrimitiveValue::CSS_TURN:
     case CSSPrimitiveValue::CSS_REMS:
         return CSSPrimitiveValue::create(fValue, primitiveUnit);

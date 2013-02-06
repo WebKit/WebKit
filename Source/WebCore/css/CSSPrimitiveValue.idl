@@ -51,6 +51,7 @@
     const unsigned short CSS_VW         = 26;
     const unsigned short CSS_VH         = 27;
     const unsigned short CSS_VMIN       = 28;
+    const unsigned short CSS_VMAX       = 29;
     
     readonly attribute unsigned short primitiveType;
 

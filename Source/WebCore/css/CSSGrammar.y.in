@@ -61,7 +61,7 @@ static inline int cssyyerror(void*, const char*)
 
 %}
 
-%expect 65
+%expect 66
 
 %nonassoc LOWEST_PREC
 
@@ -169,6 +169,7 @@ static inline int cssyyerror(void*, const char*)
 %token <number> VW
 %token <number> VH
 %token <number> VMIN
+%token <number> VMAX
 %token <number> DPPX
 %token <number> DPI
 %token <number> DPCM
@@ -1711,6 +1712,7 @@ unary_term:
   | VW maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
   | VH maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }
   | VMIN maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }
+  | VMAX maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMAX; }
   | DPPX maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPPX; }
   | DPI maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPI; }
   | DPCM maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPCM; }
