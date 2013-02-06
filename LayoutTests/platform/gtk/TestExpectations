@@ -83,30 +83,30 @@ fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
 # Modal dialogs will not be supported in WebKit1. These expectations should eventually
 # be moved into WebKit1-specific TestExpectations file (once it's created).
-fast/animation/request-animation-frame-during-modal.html [ WontFix ]
-fast/events/show-modal-dialog-onblur-onfocus.html [ WontFix ]
-fast/events/scroll-event-during-modal-dialog.html [ WontFix ]
-fast/harness/show-modal-dialog.html [ WontFix ]
-http/tests/security/cross-frame-access-call.html [ WontFix ]
-http/tests/security/cross-frame-access-get.html [ WontFix ]
-inspector/console/console-long-eval-crash.html [ WontFix ]
+fast/animation/request-animation-frame-during-modal.html [ WontFix Failure ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ WontFix Timeout ]
+fast/events/scroll-event-during-modal-dialog.html [ WontFix Failure ]
+fast/harness/show-modal-dialog.html [ WontFix Timeout ]
+http/tests/security/cross-frame-access-call.html [ WontFix Failure ]
+http/tests/security/cross-frame-access-get.html [ WontFix Failure ]
+inspector/console/console-long-eval-crash.html [ WontFix Timeout ]
 
 # This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html [ WontFix ]
+fast/js/i18n-bindings-locale.html [ WontFix Failure ]
 
 # Ignored because we do not have OBJC bindings (via Chromium).
-editing/pasteboard/paste-RTFD.html [ WontFix ]
-editing/pasteboard/paste-TIFF.html [ WontFix ]
+editing/pasteboard/paste-RTFD.html [ WontFix Missing ]
+editing/pasteboard/paste-TIFF.html [ WontFix Missing ]
 
 # This test assumes we cannot play RTSP, but we can.
-media/unsupported-rtsp.html [ WontFix ]
+media/unsupported-rtsp.html [ WontFix Timeout ]
 
 # We have no need to support Dashboard compatibility mode. (via Chromium).
-fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
-http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
+fast/canvas/canvas-gradient-addStop-error.html [ WontFix Failure ]
+http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix Failure ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
-fast/css/draggable-region-parser.html [ WontFix ]
+Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 
 # ENABLE(TEMPLATE_ELEMENT) is disabled.
 webkit.org/b/103547 fast/dom/HTMLTemplateElement [ Skip ]
@@ -116,26 +116,26 @@ webkit.org/b/103547 fast/xpath/xpath-template-element.html [ Skip ]
 webkit.org/b/103547 fast/xsl/xslt-processor-template.html [ Skip ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ WontFix ]
-fast/css/apple-prefix.html [ WontFix ]
+inspector/styles/vendor-prefixes.html [ WontFix Failure ]
+fast/css/apple-prefix.html [ WontFix Failure ]
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow-unload-handler.html [ WontFix ]
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
+fast/dom/Window/slow-unload-handler.html [ WontFix Timeout ]
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout ]
 
 # Accessibility tests that should never be run for GTK due to be
 # written in a platform-specific way. They should either be moved to
 # the right platform or re-written in a more platform-agnostic way.
-webkit.org/b/98348 accessibility/aria-option-role.html [ WontFix ]
-webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix ]
-webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-attributes.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-detection.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-one-cell.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-sections.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-with-aria-role.html [ WontFix ]
-webkit.org/b/98348 accessibility/table-with-rules.html [ WontFix ]
-webkit.org/b/98348 accessibility/plugin.html [ WontFix ]
+webkit.org/b/98348 accessibility/aria-option-role.html [ WontFix Failure ]
+webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-attributes.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-detection.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-one-cell.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-sections.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-with-aria-role.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/table-with-rules.html [ WontFix Missing ]
+webkit.org/b/98348 accessibility/plugin.html [ WontFix Missing ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
@@ -148,29 +148,32 @@ webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ S
 webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
 
 # Deletion UI is a Mail-ism. We don't need to worry about this (via Chromium).
-editing/deleting/deletionUI-single-instance.html [ WontFix ]
-fast/dom/Element/id-in-deletebutton.html [ WontFix ]
+editing/deleting/deletionUI-single-instance.html [ WontFix Missing ]
+# This passes while it's marked as a WontFix - check it.
+fast/dom/Element/id-in-deletebutton.html [ WontFix Pass ]
 
 # WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
-fast/events/option-tab.html [ WontFix ]
+fast/events/option-tab.html [ WontFix Failure ]
 
 # These tests expect a TIFF decoder (via Chromium).
-fast/images/embed-image.html [ WontFix ]
-fast/images/object-image.html [ WontFix ]
+# These pass while they're marked as WontFix - check it.
+fast/images/embed-image.html [ WontFix Pass ]
+fast/images/object-image.html [ WontFix Pass ]
 
 # Mac Safari under certain circumstances automatically places
 # a caret in editable document even when none was requested programatically.
-editing/selection/designmode-no-caret.html [ WontFix ]
+editing/selection/designmode-no-caret.html [ WontFix Missing ]
 
 # These tests require loading a PDF as an image, which we do not support (via Chromium).
-fast/images/pdf-as-background.html [ WontFix ]
-fast/images/pdf-as-image-landscape.html [ WontFix ]
-fast/images/pdf-as-image.html [ WontFix ]
-fast/images/pdf-as-tiled-background.html [ WontFix ]
-fast/replaced/pdf-as-image.html [ WontFix ]
+fast/images/pdf-as-image-landscape.html [ WontFix Failure ]
+fast/replaced/pdf-as-image.html [ WontFix Failure ]
+# These pass while they're marked as WontFix - check it.
+fast/images/pdf-as-background.html [ WontFix Pass ]
+fast/images/pdf-as-image.html [ WontFix Pass ]
+fast/images/pdf-as-tiled-background.html [ WontFix Pass ]
 
 # Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
-http/tests/cookies/third-party-cookie-relaxing.html [ WontFix ]
+http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
 
 # WebKitGTK+ does not support webarchives (via Chromium).
 webarchive [ WontFix ]
@@ -179,17 +182,18 @@ svg/webarchive [ WontFix ]
 svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
 
 # This test is specific to QuickTime media engine.
-media/video-does-not-loop.html [ WontFix ]
+media/video-does-not-loop.html [ WontFix Timeout ]
 
 # Requires media engine closed caption support.
-media/media-captions.html [ WontFix ]
+media/media-captions.html [ WontFix Failure ]
 
 # Legacy full screen API tests are now obsolete.
-media/media-fullscreen-inline.html [ WontFix ]
-media/media-fullscreen-not-in-document.html [ WontFix ]
+# This passes while it's marked as a WontFix - check it.
+media/media-fullscreen-inline.html [ WontFix Pass ]
+media/media-fullscreen-not-in-document.html [ WontFix Timeout ]
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
-fast/parser/pre-html5-parser-quirks.html [ WontFix ]
+fast/parser/pre-html5-parser-quirks.html [ WontFix Failure ]
 
 # Features that we want eventually:
 # DeviceMotion and DeviceOrientation are not enabled by default.
