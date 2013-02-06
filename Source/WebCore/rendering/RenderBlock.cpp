@@ -5870,7 +5870,12 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     autoWrap = oldAutoWrap = styleToUse->autoWrap();
 
     InlineMinMaxIterator childIterator(this);
-    bool addedTextIndent = false; // Only gets added in once.
+
+    // Only gets added to the max preffered width once.
+    bool addedTextIndent = false;
+    // Signals the text indent was more negative than the min preferred width
+    bool hasRemainingNegativeTextIndent = false;
+
     LayoutUnit textIndent = minimumValueForLength(styleToUse->textIndent(), cw, view());
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
@@ -5976,7 +5981,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
                 // Add in text-indent.  This is added in only once.
                 LayoutUnit ti = 0;
-                if (!addedTextIndent) {
+                if (!addedTextIndent && !child->isFloating()) {
                     ti = textIndent;
                     childMin += ti.ceilToFloat();
                     childMax += ti.ceilToFloat();
@@ -6056,18 +6061,24 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
                 // Add in text-indent.  This is added in only once.
                 float ti = 0;
-                if (!addedTextIndent) {
+                if (!addedTextIndent || hasRemainingNegativeTextIndent) {
                     ti = textIndent.ceilToFloat();
-                    
                     childMin += ti;
-                    childMax += ti;
                     beginMin += ti;
-                    beginMax += ti;
                     
-                    if (childMin < 0)
-                        textIndent = childMin;
-                    else
+                    // It the text indent negative and larger than the child minimum, we re-use the remainder
+                    // in future minimum calculations, but using the negative value again on the maximum
+                    // will lead to under-counting the max pref width.
+                    if (!addedTextIndent) {
+                        childMax += ti;
+                        beginMax += ti;
                         addedTextIndent = true;
+                    }
+                    
+                    if (childMin < 0) {
+                        textIndent = childMin;
+                        hasRemainingNegativeTextIndent = true;
+                    }
                 }
                 
                 // If we have no breakable characters at all,
