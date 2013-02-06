@@ -113,6 +113,7 @@ my (
     $mutationObserversSupport,
     $netscapePluginAPISupport,
     $networkInfoSupport,
+    $nosniffSupport,
     $notificationsSupport,
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
@@ -360,6 +361,9 @@ my @features = (
 
     { option => "network-info", desc => "Toggle Network Info support",
       define => "ENABLE_NETWORK_INFO", default => (isEfl() || isBlackBerry()), value => \$networkInfoSupport },
+
+    { option => "nosniff", desc => "Toggle support for 'X-Content-Type-Options: nosniff'",
+      define => "ENABLE_NOSNIFF", default => 0, value => \$nosniffSupport },
 
     { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },

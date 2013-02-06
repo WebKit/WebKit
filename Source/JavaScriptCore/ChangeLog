@@ -1,3 +1,15 @@
+2013-02-06  Mike West  <mkwst@chromium.org>
+
+        Add an ENABLE_NOSNIFF feature flag.
+        https://bugs.webkit.org/show_bug.cgi?id=109029
+
+        Reviewed by Jochen Eisinger.
+
+        This new flag will control the behavior of 'X-Content-Type-Options: nosniff'
+        when processing script and other resource types.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         put_to_base should emit a Phantom for "value" across the ForceOSRExit
