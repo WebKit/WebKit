@@ -1988,12 +1988,7 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta), ScrollOffsetClamped);
 }
 
-void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
-{
-    scrollBy(delta, clamp, ShouldPropagateScroll);
-}
-
-bool RenderLayer::scrollBy(const IntSize& delta, ScrollOffsetClamping clamp, ScrollPropagation shouldPropagate)
+bool RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
 {
     if (delta.isZero())
         return false;
@@ -2006,15 +2001,12 @@ bool RenderLayer::scrollBy(const IntSize& delta, ScrollOffsetClamping clamp, Scr
         IntSize newScrollOffset = scrollOffset() + delta;
         scrollToOffset(newScrollOffset, clamp);
 
-        if (shouldPropagate == DontPropagateScroll)
-            return true;
-
         // If this layer can't do the scroll we ask the next layer up that can scroll to try
         IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
         bool didScroll = true;
         if (!remainingScrollOffset.isZero() && renderer()->parent()) {
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
-                didScroll = scrollableLayer->scrollBy(remainingScrollOffset, clamp, shouldPropagate);
+                didScroll = scrollableLayer->scrollByRecursively(remainingScrollOffset, clamp);
 
             Frame* frame = renderer()->frame();
             if (frame)

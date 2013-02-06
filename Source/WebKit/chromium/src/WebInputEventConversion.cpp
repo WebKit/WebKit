@@ -153,11 +153,6 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         m_deltaX = e.data.scrollUpdate.deltaX;
         m_deltaY = e.data.scrollUpdate.deltaY;
         break;
-    case WebInputEvent::GestureScrollUpdateWithoutPropagation:
-        m_type = PlatformEvent::GestureScrollUpdateWithoutPropagation;
-        m_deltaX = e.data.scrollUpdate.deltaX;
-        m_deltaY = e.data.scrollUpdate.deltaY;
-        break;
     case WebInputEvent::GestureTap:
         m_type = PlatformEvent::GestureTap;
         m_area = IntSize(e.data.tap.width, e.data.tap.height);

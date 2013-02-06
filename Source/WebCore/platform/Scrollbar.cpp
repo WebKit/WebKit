@@ -373,7 +373,6 @@ bool Scrollbar::gestureEvent(const PlatformGestureEvent& evt)
         }
         break;
     case PlatformEvent::GestureScrollUpdate:
-    case PlatformEvent::GestureScrollUpdateWithoutPropagation:
         if (m_pressedPart == ThumbPart) {
             m_scrollPos += HorizontalScrollbar ? evt.deltaX() : evt.deltaY();
             moveThumb(m_scrollPos, false);

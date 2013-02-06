@@ -108,7 +108,6 @@ public:
     void gestureScrollEnd(const CppArgumentList&, CppVariant*);
     void gestureScrollFirstPoint(const CppArgumentList&, CppVariant*);
     void gestureScrollUpdate(const CppArgumentList&, CppVariant*);
-    void gestureScrollUpdateWithoutPropagation(const CppArgumentList&, CppVariant*);
     void gestureTap(const CppArgumentList&, CppVariant*);
     void gestureTapDown(const CppArgumentList&, CppVariant*);
     void gestureTapCancel(const CppArgumentList&, CppVariant*);
