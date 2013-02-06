@@ -1,3 +1,19 @@
+2013-02-05  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] TiledCoreAnimationDrawingArea has one more layer in its CAContext when we're in the background
+        https://bugs.webkit.org/show_bug.cgi?id=108992
+        <rdar://problem/13087365>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea): Add storage for m_isInWindow.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateLayerHostingContext): Only set the root layer on our layer
+        hosting context if we're in the window when swapping out contexts.
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer): Update m_isInWindow, and set the root layer
+        of the layer hosting context (or unset it if we're out of the window).
+
 2013-02-05  Anders Carlsson  <andersca@apple.com>
 
         WebKit clients should be able to override loading of blocked plug-ins

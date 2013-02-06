@@ -117,6 +117,7 @@ private:
     mutable RetainPtr<CALayer> m_pageOverlayPlatformLayer;
 
     bool m_isPaintingSuspended;
+    bool m_hasRootCompositingLayer;
 
     WebCore::IntRect m_exposedRect;
 

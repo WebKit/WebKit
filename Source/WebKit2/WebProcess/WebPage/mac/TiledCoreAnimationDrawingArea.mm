@@ -446,7 +446,9 @@ void TiledCoreAnimationDrawingArea::updateLayerHostingContext()
 #endif
     }
 
-    m_layerHostingContext->setRootLayer(m_rootLayer.get());
+    if (m_hasRootCompositingLayer)
+        m_layerHostingContext->setRootLayer(m_rootLayer.get());
+
     if (colorSpace)
         m_layerHostingContext->setColorSpace(colorSpace.get());
 }
@@ -455,10 +457,16 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 {
     ASSERT(!m_layerTreeStateIsFrozen);
 
+    bool hadRootCompositingLayer = m_hasRootCompositingLayer;
+    m_hasRootCompositingLayer = !!layer;
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    m_rootLayer.get().sublayers = layer ? [NSArray arrayWithObject:layer] : [NSArray array];
+    m_rootLayer.get().sublayers = m_hasRootCompositingLayer ? [NSArray arrayWithObject:layer] : [NSArray array];
+
+    if (hadRootCompositingLayer != m_hasRootCompositingLayer)
+        m_layerHostingContext->setRootLayer(m_hasRootCompositingLayer ? m_rootLayer.get() : 0);
 
     if (m_pageOverlayLayer)
         [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
