@@ -313,14 +313,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             this._updateSelection(newSelectedIndex, false);
             event.consume(true);
             break;
-        case WebInspector.KeyboardShortcut.Keys.Home.code:
-            this._updateSelection(0, false);
-            event.consume(true);
-            break;
-        case WebInspector.KeyboardShortcut.Keys.End.code:
-            this._updateSelection(this._filteredItems.length - 1, true);
-            event.consume(true);
-            break;
         default:
             if (event.keyIdentifier !== "Shift" && event.keyIdentifier !== "Ctrl" && event.keyIdentifier !== "Meta" && event.keyIdentifier !== "Left" && event.keyIdentifier !== "Right")
                 this._scheduleFilter();
