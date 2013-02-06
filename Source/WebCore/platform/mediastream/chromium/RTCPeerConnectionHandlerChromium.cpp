@@ -35,7 +35,10 @@
 #include "RTCPeerConnectionHandlerChromium.h"
 
 #include "MediaConstraints.h"
+#include "MediaStreamComponent.h"
 #include "RTCConfiguration.h"
+#include "RTCDTMFSenderHandler.h"
+#include "RTCDTMFSenderHandlerChromium.h"
 #include "RTCDataChannelHandlerChromium.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCIceCandidateDescriptor.h"
@@ -47,7 +50,9 @@
 #include <public/Platform.h>
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStream.h>
+#include <public/WebMediaStreamTrack.h>
 #include <public/WebRTCConfiguration.h>
+#include <public/WebRTCDTMFSenderHandler.h>
 #include <public/WebRTCDataChannelHandler.h>
 #include <public/WebRTCICECandidate.h>
 #include <public/WebRTCSessionDescription.h>
@@ -156,6 +161,15 @@ PassOwnPtr<RTCDataChannelHandler> RTCPeerConnectionHandlerChromium::createDataCh
         return nullptr;
 
     return RTCDataChannelHandlerChromium::create(webHandler);
+}
+
+PassOwnPtr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerChromium::createDTMFSender(PassRefPtr<MediaStreamComponent> track)
+{
+    WebKit::WebRTCDTMFSenderHandler* webHandler = m_webHandler->createDTMFSender(track);
+    if (!webHandler)
+        return nullptr;
+
+    return RTCDTMFSenderHandlerChromium::create(webHandler);
 }
 
 void RTCPeerConnectionHandlerChromium::stop()

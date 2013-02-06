@@ -61,6 +61,7 @@ public:
     virtual void removeStream(const WebKit::WebMediaStream&) OVERRIDE;
     virtual void getStats(const WebKit::WebRTCStatsRequest&) OVERRIDE;
     virtual WebKit::WebRTCDataChannelHandler* createDataChannel(const WebKit::WebString& label, bool reliable) OVERRIDE;
+    virtual WebKit::WebRTCDTMFSenderHandler* createDTMFSender(const WebKit::WebMediaStreamTrack&) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // WebTask related methods

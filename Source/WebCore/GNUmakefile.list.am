@@ -631,6 +631,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRequestAnimationFrameCallback.h \
 	DerivedSources/WebCore/JSRGBColor.cpp \
 	DerivedSources/WebCore/JSRGBColor.h \
+	DerivedSources/WebCore/JSRTCDTMFSender.cpp \
+	DerivedSources/WebCore/JSRTCDTMFSender.h \
+	DerivedSources/WebCore/JSRTCDTMFToneChangeEvent.cpp \
+	DerivedSources/WebCore/JSRTCDTMFToneChangeEvent.h \
 	DerivedSources/WebCore/JSRTCDataChannel.cpp \
 	DerivedSources/WebCore/JSRTCDataChannel.h \
 	DerivedSources/WebCore/JSRTCDataChannelEvent.cpp \
@@ -1243,6 +1247,8 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
+	$(WebCore)/Modules/mediastream/RTCDTMFSender.idl \
+	$(WebCore)/Modules/mediastream/RTCDTMFToneChangeEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCDataChannel.idl \
 	$(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCErrorCallback.idl \
@@ -1937,6 +1943,10 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaErrorCallback.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \
+	Source/WebCore/Modules/mediastream/RTCDTMFSender.cpp \
+	Source/WebCore/Modules/mediastream/RTCDTMFSender.h \
+	Source/WebCore/Modules/mediastream/RTCDTMFToneChangeEvent.cpp \
+	Source/WebCore/Modules/mediastream/RTCDTMFToneChangeEvent.h \
 	Source/WebCore/Modules/mediastream/RTCDataChannel.cpp \
 	Source/WebCore/Modules/mediastream/RTCDataChannel.h \
 	Source/WebCore/Modules/mediastream/RTCDataChannelEvent.cpp \
@@ -5762,6 +5772,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/MediaStreamSourcesQueryClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
+	Source/WebCore/platform/mediastream/RTCDTMFSenderHandler.h \
+	Source/WebCore/platform/mediastream/RTCDTMFSenderHandlerClient.h \
 	Source/WebCore/platform/mediastream/RTCDataChannelHandler.h \
 	Source/WebCore/platform/mediastream/RTCDataChannelHandlerClient.h \
 	Source/WebCore/platform/mediastream/RTCIceCandidateDescriptor.cpp \

@@ -49,6 +49,7 @@ namespace WebCore {
 class MediaConstraints;
 class MediaStreamTrack;
 class RTCConfiguration;
+class RTCDTMFSender;
 class RTCDataChannel;
 class RTCErrorCallback;
 class RTCSessionDescription;
@@ -96,6 +97,8 @@ public:
 
     PassRefPtr<RTCDataChannel> createDataChannel(String label, const Dictionary& dataChannelDict, ExceptionCode&);
 
+    PassRefPtr<RTCDTMFSender> createDTMFSender(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+
     void close(ExceptionCode&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(negotiationneeded);
@@ -133,6 +136,7 @@ private:
     static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<RTCPeerConnection>*);
+    bool hasLocalStreamWithTrackId(const String& trackId);
 
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();

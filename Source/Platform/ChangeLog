@@ -1,3 +1,32 @@
+2013-02-06  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Implement DTMF support in RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=106782
+
+        Reviewed by Adam Barth.
+
+        The WebRTC specification have added support for DTMF:
+        http://dev.w3.org/2011/webrtc/editor/webrtc.html#peer-to-peer-dtmf
+
+        Implementation wise this is implemented using the same pattern as RTCDataChannel;
+        where a RTCDTMFSenderHandler is created by the UA through a new method on
+        RTCPeerConnectionHandler.
+
+        * Platform.gypi:
+        * chromium/public/WebMediaStreamTrack.h:
+        (WebMediaStreamTrack):
+        * chromium/public/WebRTCDTMFSenderHandler.h: Copied from Source/Platform/chromium/public/WebMediaStreamTrack.h.
+        (WebKit):
+        (WebRTCDTMFSenderHandler):
+        (WebKit::WebRTCDTMFSenderHandler::~WebRTCDTMFSenderHandler):
+        * chromium/public/WebRTCDTMFSenderHandlerClient.h: Copied from Source/Platform/chromium/public/WebMediaStreamTrack.h.
+        (WebKit):
+        (WebRTCDTMFSenderHandlerClient):
+        (WebKit::WebRTCDTMFSenderHandlerClient::~WebRTCDTMFSenderHandlerClient):
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebKit::WebRTCPeerConnectionHandler::createDTMFSender):
+
 2013-02-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Provide compositor offscreen context through the WebLayerTreeViewClient interface

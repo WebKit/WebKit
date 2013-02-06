@@ -43,6 +43,7 @@
 #include "MediaConstraintsImpl.h"
 #include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
+#include "RTCDTMFSender.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
 #include "RTCDataChannelHandler.h"
@@ -449,6 +450,40 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
         return 0;
     m_dataChannels.append(channel);
     return channel.release();
+}
+
+bool RTCPeerConnection::hasLocalStreamWithTrackId(const String& trackId)
+{
+    for (MediaStreamVector::iterator iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
+        if ((*iter)->getTrackById(trackId))
+            return true;
+    }
+    return false;
+}
+
+PassRefPtr<RTCDTMFSender> RTCPeerConnection::createDTMFSender(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
+{
+    if (m_signalingState == SignalingStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    if (!prpTrack) {
+        ec = TypeError;
+        return 0;
+    }
+
+    RefPtr<MediaStreamTrack> track = prpTrack;
+
+    if (!hasLocalStreamWithTrackId(track->id())) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    RefPtr<RTCDTMFSender> dtmfSender = RTCDTMFSender::create(scriptExecutionContext(), m_peerHandler.get(), track.release(), ec);
+    if (ec)
+        return 0;
+    return dtmfSender.release();
 }
 
 void RTCPeerConnection::close(ExceptionCode& ec)

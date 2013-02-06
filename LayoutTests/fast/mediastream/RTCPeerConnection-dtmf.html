@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests RTCDTMFSender.");
+
+var pc = null;
+var stream = null;
+var dtmfsender = null;
+
+function error() {
+    testFailed('Error callback called.');
+    finishJSTest();
+}
+
+var firstCall = true;
+
+function ontonechange(e) {
+    testPassed("ontonechange was called.");
+    event = e;
+    if (firstCall) {
+        shouldBeEqualToString('event.tone', "1");
+        firstCall = false;
+    } else {
+        shouldBeEqualToString('event.tone', "");
+        finishJSTest();
+    }
+}
+
+function pc_onicechange() {
+    if (pc.iceConnectionState === "completed") {
+        testPassed("pc is connected");
+        track = stream.getAudioTracks()[0];
+
+        shouldThrow('dtmfsender = pc.createDTMFSender(track);');
+        pc.addStream(stream);
+        shouldNotThrow('dtmfsender = pc.createDTMFSender(track);');
+        shouldBeTrue('dtmfsender.canInsertDTMF');
+
+        dtmfsender.ontonechange = ontonechange;
+        dtmfsender.insertDTMF("1");
+        shouldBeEqualToString('dtmfsender.toneBuffer', "1");
+    }
+}
+
+function gotStream(s) {
+    stream = s;
+    testPassed('Stream generated.');
+    shouldBe('stream.getAudioTracks().length', '1');
+    shouldBe('stream.getVideoTracks().length', '0');
+
+    pc = new webkitRTCPeerConnection(null, null);
+    pc.onicechange = pc_onicechange;
+}
+
+shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream, error);");
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

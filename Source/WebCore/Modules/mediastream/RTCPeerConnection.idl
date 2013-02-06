@@ -79,6 +79,9 @@
     RTCDataChannel createDataChannel(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, in [Optional] Dictionary options)
          raises(DOMException);
 
+    RTCDTMFSender createDTMFSender(in MediaStreamTrack track)
+         raises(DOMException);
+
     void close()
         raises(DOMException);
 

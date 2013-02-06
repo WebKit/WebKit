@@ -70,6 +70,7 @@ public:
     virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) OVERRIDE;
     virtual PassOwnPtr<RTCDataChannelHandler> createDataChannel(const String& label, bool reliable) OVERRIDE;
+    virtual PassOwnPtr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamComponent>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.

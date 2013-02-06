@@ -234,6 +234,7 @@ namespace WebCore {
     macro(negotiationneeded) \
     macro(datachannel) \
     macro(gatheringchange) \
+    macro(tonechange) \
     \
     macro(show) \
     \

@@ -34,6 +34,7 @@
 #include "MockWebRTCPeerConnectionHandler.h"
 
 #include "MockConstraints.h"
+#include "MockWebRTCDTMFSenderHandler.h"
 #include "MockWebRTCDataChannelHandler.h"
 #include "Task.h"
 #include <public/WebMediaConstraints.h>
@@ -291,6 +292,11 @@ WebRTCDataChannelHandler* MockWebRTCPeerConnectionHandler::createDataChannel(con
     postTask(new RemoteDataChannelTask(this, m_client));
 
     return new MockWebRTCDataChannelHandler(label, reliable);
+}
+
+WebRTCDTMFSenderHandler* MockWebRTCPeerConnectionHandler::createDTMFSender(const WebMediaStreamComponent& track)
+{
+    return new MockWebRTCDTMFSenderHandler(track);
 }
 
 void MockWebRTCPeerConnectionHandler::stop()

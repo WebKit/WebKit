@@ -102,6 +102,8 @@
             'chromium/public/WebPrivateOwnPtr.h',
             'chromium/public/WebPrivatePtr.h',
             'chromium/public/WebRTCConfiguration.h',
+            'chromium/public/WebRTCDTMFSenderHandler.h',
+            'chromium/public/WebRTCDTMFSenderHandlerClient.h',
             'chromium/public/WebRTCDataChannelHandler.h',
             'chromium/public/WebRTCDataChannelHandlerClient.h',
             'chromium/public/WebRTCICECandidate.h',

@@ -34,7 +34,9 @@
 namespace WebKit {
 class WebMediaConstraints;
 class WebMediaStream;
+class WebMediaStreamTrack;
 class WebRTCConfiguration;
+class WebRTCDTMFSenderHandler;
 class WebRTCDataChannelHandler;
 class WebRTCICECandidate;
 class WebRTCPeerConnectionHandlerClient;
@@ -63,6 +65,7 @@ public:
     // FIXME: Remove default implementation when clients have changed.
     virtual void getStats(const WebRTCStatsRequest&) { }
     virtual WebRTCDataChannelHandler* createDataChannel(const WebString& label, bool reliable) { return 0; }
+    virtual WebRTCDTMFSenderHandler* createDTMFSender(const WebMediaStreamTrack& track) { return 0; }
     virtual void stop() = 0;
 };
 
