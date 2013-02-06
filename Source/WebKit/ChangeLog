@@ -1,3 +1,10 @@
+2013-02-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed Visual Studio 2010 build correction.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Link export definitions out of date with ToT.  Corrected.
+
 2013-02-05  Roger Fong  <roger_fong@apple.com>
 
         Add a JavaScriptCore Export Generator project.
