@@ -102,7 +102,7 @@
 
 // Harden the pointers stored in the TCMalloc linked lists
 #if COMPILER(GCC)
-#define ENABLE_TCMALLOC_HARDENING 1
+#define ENABLE_TCMALLOC_HARDENING 0
 #endif
 
 // Use a background thread to periodically scavenge memory to release back to the system

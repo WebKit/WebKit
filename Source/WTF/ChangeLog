@@ -1,3 +1,11 @@
+2013-02-05  Oliver Hunt  <oliver@apple.com>
+
+        Disable TCMalloc hardening as it's breaking leaks.
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/FastMalloc.cpp:
+
 2013-02-05  Mark Lam  <mark.lam@apple.com>
 
         Rename ENUM_CLASS_BEGIN() macro to ENUM_CLASS(), and make DatabaseType a strong enum.
