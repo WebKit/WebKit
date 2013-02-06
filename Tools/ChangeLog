@@ -1,3 +1,19 @@
+2013-02-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r141995.
+        http://trac.webkit.org/changeset/141995
+        https://bugs.webkit.org/show_bug.cgi?id=109046
+
+        May allow me to roll out the real problem (Requested by
+        schenney on #webkit).
+
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::sendWebIntentResponse):
+        (WebTestRunner::TestRunner::deliverWebIntent):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::registerIntentService):
+        (WebTestRunner::WebTestProxyBase::dispatchIntent):
+
 2013-02-06  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] fix android build which doesn't support intents

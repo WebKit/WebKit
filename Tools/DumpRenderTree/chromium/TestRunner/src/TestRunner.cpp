@@ -1716,7 +1716,6 @@ void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVa
 
 void TestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
 {
-#ifndef ANDROID
     v8::HandleScope scope;
     v8::Local<v8::Context> ctx = m_webView->mainFrame()->mainWorldScriptContext();
     result->set(m_webView->mainFrame()->selectionAsMarkup().utf8());
@@ -1735,12 +1734,10 @@ void TestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVari
         request->postFailure(WebSerializedScriptValue::serialize(v8value));
     }
     result->setNull();
-#endif
 }
 
 void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
 {
-#ifndef ANDROID
     if (arguments.size() <  3)
         return;
 
@@ -1757,7 +1754,6 @@ void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* 
     WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
 
     m_webView->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
-#endif
 }
 
 void TestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
