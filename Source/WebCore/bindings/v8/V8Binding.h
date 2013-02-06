@@ -152,12 +152,6 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), handleType, isolate);
     }
 
-    // FIXME: All call sites of this method should use v8String().
-    inline v8::Handle<v8::String> deprecatedV8String(const String& string)
-    {
-        return v8String(string, v8::Isolate::GetCurrent());
-    }
-
     inline v8::Handle<v8::Value> v8StringOrNull(const String& string, v8::Isolate* isolate, ReturnHandleType handleType = ReturnLocalHandle)
     {
         ASSERT(isolate);
@@ -177,12 +171,6 @@ namespace WebCore {
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate)
     {
         return V8PerIsolateData::from(isolate)->integerCache()->v8Integer(value, isolate);
-    }
-
-    // FIXME: All call sites of this method should use v8Integer().
-    inline v8::Handle<v8::Integer> deprecatedV8Integer(int value)
-    {
-        return v8Integer(value, v8::Isolate::GetCurrent());
     }
 
     inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate)

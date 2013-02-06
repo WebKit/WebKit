@@ -44,15 +44,16 @@ namespace WebCore {
 // must not exceed the lifetime of the passed handle.
 class V8CustomXPathNSResolver : public XPathNSResolver {
 public:
-    static PassRefPtr<V8CustomXPathNSResolver> create(v8::Handle<v8::Object> resolver);
+    static PassRefPtr<V8CustomXPathNSResolver> create(v8::Handle<v8::Object> resolver, v8::Isolate*);
 
     virtual ~V8CustomXPathNSResolver();
     virtual String lookupNamespaceURI(const String& prefix);
 
 private:
-    explicit V8CustomXPathNSResolver(v8::Handle<v8::Object> resolver);
+    V8CustomXPathNSResolver(v8::Handle<v8::Object> resolver, v8::Isolate*);
 
     v8::Handle<v8::Object> m_resolver;  // Handle to resolver object.
+    v8::Isolate* m_isolate;
 };
 
 } // namespace WebCore
