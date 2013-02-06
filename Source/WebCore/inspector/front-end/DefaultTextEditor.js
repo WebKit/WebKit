@@ -415,22 +415,7 @@ WebInspector.DefaultTextEditor.prototype = {
 
         this._shortcuts = {};
 
-        var handleEnterKey = this._mainPanel.handleEnterKey.bind(this._mainPanel);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.None)] = handleEnterKey;
-
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = this._mainPanel.handleUndoRedo.bind(this._mainPanel, false);
         this._shortcuts[WebInspector.KeyboardShortcut.SelectAll] = this._handleSelectAll.bind(this);
-
-        var handleRedo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, true);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | modifiers.CtrlOrMeta)] = handleRedo;
-        if (!WebInspector.isMac())
-            this._shortcuts[WebInspector.KeyboardShortcut.makeKey("y", modifiers.CtrlOrMeta)] = handleRedo;
-
-        var handleTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, false);
-        var handleShiftTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, true);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
-
         this._wordMovementController._registerShortcuts(this._shortcuts);
     },
 
@@ -454,7 +439,7 @@ WebInspector.DefaultTextEditor.prototype = {
             e.consume(true);
             return;
         }
-        this._mainPanel.handleKeyDown(e);
+        this._mainPanel.handleKeyDown(shortcutKey, e);
     },
 
     _contextMenu: function(event)
@@ -1387,9 +1372,31 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 
     this._freeCachedElements();
     this.buildChunks();
+    this._registerShortcuts();
 }
 
 WebInspector.TextEditorMainPanel.prototype = {
+    _registerShortcuts: function()
+    {
+        var keys = WebInspector.KeyboardShortcut.Keys;
+        var modifiers = WebInspector.KeyboardShortcut.Modifiers;
+
+        this._shortcuts = {};
+
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.None)] = this._handleEnterKey.bind(this);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = this._handleUndoRedo.bind(this, false);
+
+        var handleRedo = this._handleUndoRedo.bind(this, true);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | modifiers.CtrlOrMeta)] = handleRedo;
+        if (!WebInspector.isMac())
+            this._shortcuts[WebInspector.KeyboardShortcut.makeKey("y", modifiers.CtrlOrMeta)] = handleRedo;
+
+        var handleTabKey = this._handleTabKeyPress.bind(this, false);
+        var handleShiftTabKey = this._handleTabKeyPress.bind(this, true);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
+    },
+
     /**
      * @param {string} regex
      * @param {string} cssClass
@@ -1668,7 +1675,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {boolean} redo
      * @return {boolean}
      */
-    handleUndoRedo: function(redo)
+    _handleUndoRedo: function(redo)
     {
         if (this.readOnly())
             return false;
@@ -1690,7 +1697,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {boolean} shiftKey
      * @return {boolean}
      */
-    handleTabKeyPress: function(shiftKey)
+    _handleTabKeyPress: function(shiftKey)
     {
         if (this.readOnly())
             return false;
@@ -1721,7 +1728,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         return true;
     },
 
-    handleEnterKey: function()
+    _handleEnterKey: function()
     {
         if (this.readOnly())
             return false;
@@ -2685,10 +2692,17 @@ WebInspector.TextEditorMainPanel.prototype = {
     },
 
     /**
+     * @param {number} shortcutKey
      * @param {Event} event
      */
-    handleKeyDown: function(event)
+    handleKeyDown: function(shortcutKey, event)
     {
+        var handler = this._shortcuts[shortcutKey];
+        if (handler && handler()) {
+            event.consume(true);
+            return;
+        }
+
         this._keyDownCode = event.keyCode;
     },
 

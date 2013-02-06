@@ -21,7 +21,7 @@ InspectorTest.commitSource = function(sourceFrame)
 
 InspectorTest.undoSourceEditing = function(sourceFrame)
 {
-    sourceFrame._textEditor._mainPanel.handleUndoRedo(false);
+    sourceFrame._textEditor._mainPanel._handleUndoRedo(false);
 }
 
 };
