@@ -140,7 +140,20 @@ String CaptionUserPreferencesMac::captionsWindowCSS() const
         windowColor = Color::transparent;
 
     CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);
-    return colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+
+    if (!opacity)
+        return windowStyle;
+
+    StringBuilder builder;
+    builder.append(windowStyle);
+    builder.append(getPropertyNameString(CSSPropertyPadding));
+    builder.append(": .2em");
+    if (behavior == kMACaptionAppearanceBehaviorUseValue)
+        builder.append(" !important");
+    builder.append(';');
+    
+    return builder.toString();
 }
 
 String CaptionUserPreferencesMac::captionsBackgroundCSS() const
@@ -157,7 +170,20 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
         backgroundColor = defaultBackgroundColor;
 
     CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, 0);
-    return colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+    String backgroundStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+
+    if (!opacity)
+        return backgroundStyle;
+    
+    StringBuilder builder;
+    builder.append(backgroundStyle);
+    builder.append(getPropertyNameString(CSSPropertyPadding));
+    builder.append(": 0px");
+    if (behavior == kMACaptionAppearanceBehaviorUseValue)
+        builder.append(" !important");
+    builder.append(';');
+    
+    return builder.toString();
 }
 
 Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const
@@ -194,8 +220,7 @@ String CaptionUserPreferencesMac::windowRoundedCornerRadiusCSS() const
 
     StringBuilder builder;
     builder.append(getPropertyNameString(CSSPropertyBorderRadius));
-    builder.append(':');
-    builder.append(String::format("%.02f", radius));
+    builder.append(String::format(":%.02fpx", radius));
     if (behavior == kMACaptionAppearanceBehaviorUseValue)
         builder.append(" !important");
     builder.append(';');

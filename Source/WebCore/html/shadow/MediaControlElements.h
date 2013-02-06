@@ -438,7 +438,7 @@ public:
     static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
 
     void updateDisplay();
-    void updateSizes();
+    void updateSizes(bool forceUpdate = false);
     void createSubtrees(Document*);
 
 private:

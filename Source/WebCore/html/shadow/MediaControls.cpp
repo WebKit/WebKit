@@ -407,6 +407,12 @@ void MediaControls::updateTextTrackDisplay()
 
     m_textDisplayContainer->updateDisplay();
 }
+    
+void MediaControls::textTrackPreferencesChanged()
+{
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->updateSizes(true);
+}
 #endif
 
 }

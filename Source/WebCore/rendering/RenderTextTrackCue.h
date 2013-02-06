@@ -54,8 +54,8 @@ private:
     bool initializeLayoutParameters(InlineFlowBox*&, LayoutUnit&, LayoutUnit&);
     void placeBoxInDefaultPosition(LayoutUnit, bool&);
     void repositionCueSnapToLinesSet();
-
     void repositionCueSnapToLinesNotSet();
+    void repositionGenericCue();
 
     TextTrackCue* m_cue;
     FloatPoint m_fallbackPosition;

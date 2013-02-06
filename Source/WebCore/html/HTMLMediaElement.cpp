@@ -4374,6 +4374,9 @@ void HTMLMediaElement::captionPreferencesChanged()
     if (!isVideo())
         return;
 
+    if (hasMediaControls())
+        mediaControls()->textTrackPreferencesChanged();
+    
     markCaptionAndSubtitleTracksAsUnconfigured();
 }
 

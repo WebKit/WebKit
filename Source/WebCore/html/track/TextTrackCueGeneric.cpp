@@ -66,23 +66,24 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     
     TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(getCue());
 
+    float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {
         setInlineStyleProperty(CSSPropertyBottom, "0");
         setInlineStyleProperty(CSSPropertyMarginBottom, 1.0, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(cue->position()), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSPrimitiveValue::CSS_PERCENTAGE);
+
+        if (cue->getWritingDirection() == TextTrackCue::Horizontal)
+            setInlineStyleProperty(CSSPropertyWidth, size, CSSPrimitiveValue::CSS_PERCENTAGE);
+        else
+            setInlineStyleProperty(CSSPropertyHeight, size,  CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
-    float size = static_cast<float>(cue->getCSSSize());
-    if (cue->getWritingDirection() == TextTrackCue::Horizontal) {
-        setInlineStyleProperty(CSSPropertyDirection, CSSValueLtr);
-        setInlineStyleProperty(CSSPropertyWidth, size, CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (cue->getWritingDirection() == TextTrackCue::Horizontal)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
-    } else {
+    else
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, size,  CSSPrimitiveValue::CSS_PERCENTAGE);
-    }
 
     if (cue->baseFontSizeRelativeToVideoHeight()) {
         double fontSize = videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100;
@@ -91,12 +92,12 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
     }
 
-    if (cue->getAlignment() == TextTrackCue::Start)
-        setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
+    if (cue->getAlignment() == TextTrackCue::Middle)
+        setInlineStyleProperty(CSSPropertyTextAlign, CSSValueCenter);
     else if (cue->getAlignment() == TextTrackCue::End)
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueEnd);
     else
-        setInlineStyleProperty(CSSPropertyTextAlign, CSSValueCenter);
+        setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
 
     setInlineStyleProperty(CSSPropertyWebkitWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
