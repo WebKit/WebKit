@@ -270,10 +270,10 @@ protected:
     void setParent(RenderObject* parent)
     {
         m_parent = parent;
-        if (parent && parent->inRenderFlowThread())
-            setInRenderFlowThread(true);
+        if (parent && parent->inRenderFlowThread() && !inRenderFlowThread())
+            setInRenderFlowThreadIncludingDescendants(true);
         else if (!parent && inRenderFlowThread())
-            setInRenderFlowThread(false);
+            setInRenderFlowThreadIncludingDescendants(false);
     }
     //////////////////////////////////////////
 private:
@@ -433,6 +433,8 @@ public:
 
     bool inRenderFlowThread() const { return m_bitfields.inRenderFlowThread(); }
     void setInRenderFlowThread(bool b = true) { m_bitfields.setInRenderFlowThread(b); }
+
+    void setInRenderFlowThreadIncludingDescendants(bool = true);
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
 

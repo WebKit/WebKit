@@ -278,6 +278,16 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
+void RenderObject::setInRenderFlowThreadIncludingDescendants(bool b)
+{
+    setInRenderFlowThread(b);
+
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        ASSERT(b != child->inRenderFlowThread());
+        child->setInRenderFlowThreadIncludingDescendants(b);
+    }
+}
+
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderObjectChildList* children = virtualChildren();
