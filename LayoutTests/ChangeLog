@@ -1,5 +1,13 @@
 2013-02-06  Lucas Forschler  <lforschler@apple.com>
 
+        <rdar://problem/12968605>
+        
+        Reviewed by Enrica Casucci.
+
+        * platform/mac-wk2/Skipped:
+
+2013-02-06  Lucas Forschler  <lforschler@apple.com>
+
         Update WK2 test results.
         <rdar://problem/12968040> Chopin test failure: http/tests/loading/remove-child-triggers-parser.html
         
