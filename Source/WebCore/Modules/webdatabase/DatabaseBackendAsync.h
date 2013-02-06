@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Database;
 class DatabaseServer;
 
 // FIXME: This implementation of DatabaseBackendAsync is only a place holder
@@ -47,6 +48,14 @@ protected:
 
     friend class DatabaseManager; // FIXME: remove this once we have isolated this to the backend.
     friend class DatabaseServer;
+
+private:
+    class DatabaseOpenTask;
+    class DatabaseCloseTask;
+    class DatabaseTransactionTask;
+    class DatabaseTableNamesTask;
+
+    friend class Database;
 };
 
 } // namespace WebCore

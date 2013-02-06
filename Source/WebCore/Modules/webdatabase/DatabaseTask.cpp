@@ -31,6 +31,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
+#include "DatabaseBackendAsync.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -59,7 +60,7 @@ void DatabaseTaskSynchronizer::taskCompleted()
     m_synchronousMutex.unlock();
 }
 
-DatabaseTask::DatabaseTask(Database* database, DatabaseTaskSynchronizer* synchronizer)
+DatabaseTask::DatabaseTask(DatabaseBackendAsync* database, DatabaseTaskSynchronizer* synchronizer)
     : m_database(database)
     , m_synchronizer(synchronizer)
 #if !LOG_DISABLED
@@ -98,7 +99,7 @@ void DatabaseTask::performTask()
 // *** DatabaseOpenTask ***
 // Opens the database file and verifies the version matches the expected version.
 
-Database::DatabaseOpenTask::DatabaseOpenTask(Database* database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, DatabaseError& error, String& errorMessage, bool& success)
+DatabaseBackendAsync::DatabaseOpenTask::DatabaseOpenTask(DatabaseBackendAsync* database, bool setVersionInNewDatabase, DatabaseTaskSynchronizer* synchronizer, DatabaseError& error, String& errorMessage, bool& success)
     : DatabaseTask(database, synchronizer)
     , m_setVersionInNewDatabase(setVersionInNewDatabase)
     , m_error(error)
@@ -108,7 +109,7 @@ Database::DatabaseOpenTask::DatabaseOpenTask(Database* database, bool setVersion
     ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
-void Database::DatabaseOpenTask::doPerformTask()
+void DatabaseBackendAsync::DatabaseOpenTask::doPerformTask()
 {
     String errorMessage;
     m_success = database()->performOpenAndVerify(m_setVersionInNewDatabase, m_error, errorMessage);
@@ -117,7 +118,7 @@ void Database::DatabaseOpenTask::doPerformTask()
 }
 
 #if !LOG_DISABLED
-const char* Database::DatabaseOpenTask::debugTaskName() const
+const char* DatabaseBackendAsync::DatabaseOpenTask::debugTaskName() const
 {
     return "DatabaseOpenTask";
 }
@@ -126,18 +127,18 @@ const char* Database::DatabaseOpenTask::debugTaskName() const
 // *** DatabaseCloseTask ***
 // Closes the database.
 
-Database::DatabaseCloseTask::DatabaseCloseTask(Database* database, DatabaseTaskSynchronizer* synchronizer)
+DatabaseBackendAsync::DatabaseCloseTask::DatabaseCloseTask(DatabaseBackendAsync* database, DatabaseTaskSynchronizer* synchronizer)
     : DatabaseTask(database, synchronizer)
 {
 }
 
-void Database::DatabaseCloseTask::doPerformTask()
+void DatabaseBackendAsync::DatabaseCloseTask::doPerformTask()
 {
-    database()->close();
+    Database::from(database())->close();
 }
 
 #if !LOG_DISABLED
-const char* Database::DatabaseCloseTask::debugTaskName() const
+const char* DatabaseBackendAsync::DatabaseCloseTask::debugTaskName() const
 {
     return "DatabaseCloseTask";
 }
@@ -146,20 +147,20 @@ const char* Database::DatabaseCloseTask::debugTaskName() const
 // *** DatabaseTransactionTask ***
 // Starts a transaction that will report its results via a callback.
 
-Database::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransaction> transaction)
-    : DatabaseTask(transaction->database(), 0)
+DatabaseBackendAsync::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransaction> transaction)
+    : DatabaseTask(Database::from(transaction->database()), 0)
     , m_transaction(transaction)
 {
 }
 
-void Database::DatabaseTransactionTask::doPerformTask()
+void DatabaseBackendAsync::DatabaseTransactionTask::doPerformTask()
 {
     if (m_transaction->performNextStep())
-        m_transaction->database()->inProgressTransactionCompleted();
+        Database::from(m_transaction->database())->inProgressTransactionCompleted();
 }
 
 #if !LOG_DISABLED
-const char* Database::DatabaseTransactionTask::debugTaskName() const
+const char* DatabaseBackendAsync::DatabaseTransactionTask::debugTaskName() const
 {
     return "DatabaseTransactionTask";
 }
@@ -168,20 +169,20 @@ const char* Database::DatabaseTransactionTask::debugTaskName() const
 // *** DatabaseTableNamesTask ***
 // Retrieves a list of all tables in the database - for WebInspector support.
 
-Database::DatabaseTableNamesTask::DatabaseTableNamesTask(Database* database, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
+DatabaseBackendAsync::DatabaseTableNamesTask::DatabaseTableNamesTask(DatabaseBackendAsync* database, DatabaseTaskSynchronizer* synchronizer, Vector<String>& names)
     : DatabaseTask(database, synchronizer)
     , m_tableNames(names)
 {
     ASSERT(synchronizer); // A task with output parameters is supposed to be synchronous.
 }
 
-void Database::DatabaseTableNamesTask::doPerformTask()
+void DatabaseBackendAsync::DatabaseTableNamesTask::doPerformTask()
 {
-    m_tableNames = database()->performGetTableNames();
+    m_tableNames = Database::from(database())->performGetTableNames();
 }
 
 #if !LOG_DISABLED
-const char* Database::DatabaseTableNamesTask::debugTaskName() const
+const char* DatabaseBackendAsync::DatabaseTableNamesTask::debugTaskName() const
 {
     return "DatabaseTableNamesTask";
 }

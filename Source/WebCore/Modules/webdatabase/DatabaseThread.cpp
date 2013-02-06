@@ -126,7 +126,7 @@ void DatabaseThread::databaseThread()
         openSetCopy.swap(m_openDatabaseSet);
         DatabaseSet::iterator end = openSetCopy.end();
         for (DatabaseSet::iterator it = openSetCopy.begin(); it != end; ++it)
-            (*it)->close();
+            Database::from((*it).get())->close();
     }
 
     // Detach the thread so its resources are no longer of any concern to anyone else
@@ -141,7 +141,7 @@ void DatabaseThread::databaseThread()
         cleanupSync->taskCompleted();
 }
 
-void DatabaseThread::recordDatabaseOpen(Database* database)
+void DatabaseThread::recordDatabaseOpen(DatabaseBackendAsync* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
@@ -149,7 +149,7 @@ void DatabaseThread::recordDatabaseOpen(Database* database)
     m_openDatabaseSet.add(database);
 }
 
-void DatabaseThread::recordDatabaseClosed(Database* database)
+void DatabaseThread::recordDatabaseClosed(DatabaseBackendAsync* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
@@ -171,13 +171,13 @@ void DatabaseThread::scheduleImmediateTask(PassOwnPtr<DatabaseTask> task)
 
 class SameDatabasePredicate {
 public:
-    SameDatabasePredicate(const Database* database) : m_database(database) { }
+    SameDatabasePredicate(const DatabaseBackendAsync* database) : m_database(database) { }
     bool operator()(DatabaseTask* task) const { return task->database() == m_database; }
 private:
-    const Database* m_database;
+    const DatabaseBackendAsync* m_database;
 };
 
-void DatabaseThread::unscheduleDatabaseTasks(Database* database)
+void DatabaseThread::unscheduleDatabaseTasks(DatabaseBackendAsync* database)
 {
     // Note that the thread loop is running, so some tasks for the database
     // may still be executed. This is unavoidable.

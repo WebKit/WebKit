@@ -63,6 +63,8 @@ public:
     void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
+    static Database* from(DatabaseBackendAsync*);
+
     Vector<String> tableNames();
 
     virtual SecurityOrigin* securityOrigin() const;
@@ -83,11 +85,6 @@ public:
     SQLTransactionCoordinator* transactionCoordinator() const;
 
 private:
-    class DatabaseOpenTask;
-    class DatabaseCloseTask;
-    class DatabaseTransactionTask;
-    class DatabaseTableNamesTask;
-
     Database(PassRefPtr<DatabaseBackendContext>, const String& name,
         const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
     PassRefPtr<DatabaseBackendAsync> backend();

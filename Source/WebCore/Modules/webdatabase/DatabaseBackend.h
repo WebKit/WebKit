@@ -131,6 +131,8 @@ protected:
     unsigned long m_estimatedSize;
     String m_filename;
 
+    DatabaseBase* m_frontend;
+
 #if !LOG_DISABLED || !ERROR_DISABLED
     String databaseDebugName() const { return m_contextThreadSecurityOrigin->toString() + "::" + m_name; }
 #endif
@@ -141,7 +143,6 @@ private:
     bool m_new;
     const bool m_isSyncDatabase;
 
-    DatabaseBase* m_frontend;
     SQLiteDatabase m_sqliteDatabase;
 
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;

@@ -116,6 +116,11 @@ Database::~Database()
     }
 }
 
+Database* Database::from(DatabaseBackendAsync* backend)
+{
+    return static_cast<Database*>(backend->m_frontend);
+}
+
 PassRefPtr<DatabaseBackendAsync> Database::backend()
 {
     return this;

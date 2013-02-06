@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class Database;
+class DatabaseBackendAsync;
 class DatabaseTask;
 class DatabaseTaskSynchronizer;
 class Document;
@@ -60,10 +60,10 @@ public:
 
     void scheduleTask(PassOwnPtr<DatabaseTask>);
     void scheduleImmediateTask(PassOwnPtr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
-    void unscheduleDatabaseTasks(Database*);
+    void unscheduleDatabaseTasks(DatabaseBackendAsync*);
 
-    void recordDatabaseOpen(Database*);
-    void recordDatabaseClosed(Database*);
+    void recordDatabaseOpen(DatabaseBackendAsync*);
+    void recordDatabaseClosed(DatabaseBackendAsync*);
     ThreadIdentifier getThreadID() { return m_threadID; }
 
     SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
@@ -82,7 +82,7 @@ private:
     MessageQueue<DatabaseTask> m_queue;
 
     // This set keeps track of the open databases that have been used on this thread.
-    typedef HashSet<RefPtr<Database> > DatabaseSet;
+    typedef HashSet<RefPtr<DatabaseBackendAsync> > DatabaseSet;
     DatabaseSet m_openDatabaseSet;
 
     OwnPtr<SQLTransactionClient> m_transactionClient;
