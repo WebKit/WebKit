@@ -45,10 +45,11 @@ class DatabaseBackendSync : public DatabaseBackend {
 public:
     virtual ~DatabaseBackendSync();
 
+    virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+
 protected:
     DatabaseBackendSync(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
-    friend class DatabaseManager; // FIXME: remove this once we have isolated this to the backend.
     friend class DatabaseServer;
 };
 

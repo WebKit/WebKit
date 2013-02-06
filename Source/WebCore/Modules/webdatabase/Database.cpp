@@ -66,6 +66,11 @@
 
 namespace WebCore {
 
+PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend> backend)
+{
+    return static_cast<Database*>(backend.get());
+}
+
 Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
     const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBase(databaseContext->scriptExecutionContext())
@@ -133,23 +138,6 @@ String Database::version() const
     return DatabaseBackend::version();
 }
 
-bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
-{
-    DatabaseTaskSynchronizer synchronizer;
-    if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
-        return false;
-
-#if PLATFORM(CHROMIUM)
-    DatabaseTracker::tracker().prepareToOpenDatabase(this);
-#endif
-    bool success = false;
-    OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
-    databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
-    synchronizer.waitForTaskCompletion();
-
-    return success;
-}
-
 void Database::markAsDeletedAndClose()
 {
     if (m_deleted || !databaseContext()->databaseThread())
@@ -202,18 +190,6 @@ void Database::closeImmediately()
 unsigned long long Database::maximumSize() const
 {
     return DatabaseManager::manager().getMaxSizeForDatabase(this);
-}
-
-bool Database::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
-{
-    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
-        if (databaseContext()->databaseThread())
-            databaseContext()->databaseThread()->recordDatabaseOpen(this);
-
-        return true;
-    }
-
-    return false;
 }
 
 void Database::changeVersion(const String& oldVersion, const String& newVersion,

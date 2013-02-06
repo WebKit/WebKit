@@ -51,6 +51,11 @@
 
 namespace WebCore {
 
+PassRefPtr<DatabaseSync> DatabaseSync::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend> backend)
+{
+    return static_cast<DatabaseSync*>(backend.get());
+}
+
 DatabaseSync::DatabaseSync(PassRefPtr<DatabaseBackendContext> databaseContext,
     const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBase(databaseContext->scriptExecutionContext())
@@ -152,14 +157,6 @@ void DatabaseSync::runTransaction(PassRefPtr<SQLTransactionSyncCallback> callbac
     }
 
     setLastErrorMessage("");
-}
-
-bool DatabaseSync::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
-{
-#if PLATFORM(CHROMIUM)
-    DatabaseTracker::tracker().prepareToOpenDatabase(this);
-#endif
-    return performOpenAndVerify(setVersionInNewDatabase, error, errorMessage);
 }
 
 void DatabaseSync::markAsDeletedAndClose()

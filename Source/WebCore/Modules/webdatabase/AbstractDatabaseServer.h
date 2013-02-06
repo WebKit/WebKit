@@ -28,7 +28,9 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
+#include "DatabaseError.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,9 +38,7 @@
 namespace WebCore {
 
 class DatabaseBackend;
-class DatabaseBackendAsync;
 class DatabaseBackendContext;
-class DatabaseBackendSync;
 class DatabaseManagerClient;
 class SecurityOrigin;
 
@@ -51,6 +51,13 @@ public:
     virtual void setDatabaseDirectoryPath(const String&) = 0;
 
     virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true) = 0;
+
+    enum OpenAttempt {
+        FirstTryToOpenDatabase,
+        RetryOpenDatabase
+    };
+
+    virtual PassRefPtr<DatabaseBackend> openDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt = FirstTryToOpenDatabase) = 0;
 
 #if !PLATFORM(CHROMIUM)
     virtual bool hasEntryForOrigin(SecurityOrigin*) = 0;
@@ -77,9 +84,6 @@ public:
 
     virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*) = 0;
 
-    virtual bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize) = 0;
-
-    virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize) = 0;
     virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*) = 0;
 
 protected:

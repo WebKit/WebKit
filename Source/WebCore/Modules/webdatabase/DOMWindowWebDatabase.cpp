@@ -48,13 +48,11 @@ PassRefPtr<Database> DOMWindowWebDatabase::openDatabase(DOMWindow* window, const
     RefPtr<Database> database = 0;
     DatabaseManager& dbManager = DatabaseManager::manager();
     DatabaseError error = DatabaseError::None;
-    if (dbManager.isAvailable() && window->document()->securityOrigin()->canAccessDatabase(window->document()->topOrigin()))
+    if (dbManager.isAvailable() && window->document()->securityOrigin()->canAccessDatabase(window->document()->topOrigin())) {
         database = dbManager.openDatabase(window->document(), name, version, displayName, estimatedSize, creationCallback, error);
-
-    ASSERT(error == DatabaseError::None || error == DatabaseError::CannotOpenDatabase);
-    if (error == DatabaseError::CannotOpenDatabase)
-        ec = INVALID_STATE_ERR;
-    if (!database && !ec)
+        ASSERT(database || error != DatabaseError::None);
+        ec = DatabaseManager::exceptionCodeForDatabaseError(error);
+    } else
         ec = SECURITY_ERR;
 
     return database;

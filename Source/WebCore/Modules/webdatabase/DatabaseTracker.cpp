@@ -142,47 +142,107 @@ void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
     }
 }
 
-bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
+bool DatabaseTracker::hasAdequateQuotaForOrigin(SecurityOrigin* origin, unsigned long estimatedSize, DatabaseError& err)
 {
-    SecurityOrigin* origin = context->securityOrigin();
-    unsigned long long requirement;
-    {
-        MutexLocker lockDatabase(m_databaseGuard);
-        Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
+    // Since we're imminently opening a database within this context's origin,
+    // make sure this origin is being tracked by the OriginQuotaManager
+    // by fetching its current usage now. Calling usageForOrigin() has the side
+    // effect of initiating tracking by the OriginQuotaManager if the origin is
+    // not already tracked.
+    unsigned long long usage = usageForOriginNoLock(origin);
 
-        if (isDeletingDatabaseOrOriginFor(origin, name))
-            return false;
-
-        recordCreatingDatabase(origin, name);
-
-        // Since we're imminently opening a database within this context's origin, make sure this origin is being tracked by the QuotaTracker
-        // by fetching its current usage now.
-        unsigned long long usage = usageForOriginNoLock(origin);
-
-        // If a database already exists, ignore the passed-in estimated size and say it's OK.
-        if (hasEntryForDatabase(origin, name))
-            return true;
-
-        // If the database will fit, allow its creation.
-        requirement = usage + max(1UL, estimatedSize);
-        if (requirement < usage) {
-            doneCreatingDatabase(origin, name);
-            return false; // If the estimated size is so big it causes an overflow, don't allow creation.
-        }
-        if (requirement <= quotaForOriginNoLock(origin))
-            return true;
+    // If the database will fit, allow its creation.
+    unsigned long long requirement = usage + max(1UL, estimatedSize);
+    if (requirement < usage) {
+        // The estimated size is so big it causes an overflow; don't allow creation.
+        err = DatabaseError::DatabaseSizeOverflowed;
+        return false;
     }
-
-    // Give the chrome client a chance to increase the quota.
-    // Drop all locks before calling out; we don't know what they'll do.
-    context->databaseExceededQuota(name, DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
-
-    MutexLocker lockDatabase(m_databaseGuard);
-
-    // If the database will fit now, allow its creation.
     if (requirement <= quotaForOriginNoLock(origin))
         return true;
 
+    err = DatabaseError::DatabaseSizeExceededQuota;
+    return false;
+}
+
+bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* context, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError& error)
+{
+    UNUSED_PARAM(displayName); // Chromium needs the displayName but we don't.
+    error = DatabaseError::None;
+
+    MutexLocker lockDatabase(m_databaseGuard);
+    Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
+    SecurityOrigin* origin = context->securityOrigin();
+
+    if (isDeletingDatabaseOrOriginFor(origin, name)) {
+        error = DatabaseError::DatabaseIsBeingDeleted;
+        return false;
+    }
+
+    recordCreatingDatabase(origin, name);
+
+    // If a database already exists, ignore the passed-in estimated size and say it's OK.
+    if (hasEntryForDatabase(origin, name))
+        return true;
+
+    if (hasAdequateQuotaForOrigin(origin, estimatedSize, error)) {
+        ASSERT(error == DatabaseError::None);
+        return true;
+    }
+
+    // If we get here, then we do not have enough quota for one of the
+    // following reasons as indicated by the set error:
+    //
+    // If the error is DatabaseSizeOverflowed, then this means the requested
+    // estimatedSize if so unreasonably large that it can cause an overflow in
+    // the usage budget computation. In that case, there's nothing more we can
+    // do, and there's no need for a retry. Hence, we should indicate that
+    // we're done with our attempt to create the database.
+    //
+    // If the error is DatabaseSizeExceededQuota, then we'll give the client
+    // a chance to update the quota and call retryCanEstablishDatabase() to try
+    // again. Hence, we don't call doneCreatingDatabase() yet in that case.
+
+    if (error == DatabaseError::DatabaseSizeOverflowed)
+        doneCreatingDatabase(origin, name);
+    else
+        ASSERT(error == DatabaseError::DatabaseSizeExceededQuota);
+
+    return false;
+}
+
+// Note: a thought about performance: hasAdequateQuotaForOrigin() was also
+// called in canEstablishDatabase(), and hence, we're repeating some work within
+// hasAdequateQuotaForOrigin(). However, retryCanEstablishDatabase() should only
+// be called in the rare even if canEstablishDatabase() fails. Since it is rare,
+// we should not bother optimizing it. It is more beneficial to keep
+// hasAdequateQuotaForOrigin() simple and correct (i.e. bug free), and just
+// re-use it. Also note that the path for opening a database involves IO, and
+// hence should not be a performance critical path anyway. 
+bool DatabaseTracker::retryCanEstablishDatabase(DatabaseBackendContext* context, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError& error)
+{
+    // Chromium needs the displayName in canEstablishDatabase(), but we don't.
+    // Though Chromium does not use retryCanEstablishDatabase(), we should
+    // keep the prototypes for canEstablishDatabase() and its retry function
+    // the same. Hence, we also have an unneeded displayName arg here.
+    UNUSED_PARAM(displayName);
+    error = DatabaseError::None;
+
+    MutexLocker lockDatabase(m_databaseGuard);
+    Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
+    SecurityOrigin* origin = context->securityOrigin();
+
+    // We have already eliminated other types of errors in canEstablishDatabase().
+    // The only reason we're in retryCanEstablishDatabase() is because we gave
+    // the client a chance to update the quota and are rechecking it here.
+    // If we fail this check, the only possible reason this time should be due
+    // to inadequate quota.
+    if (hasAdequateQuotaForOrigin(origin, estimatedSize, error)) {
+        ASSERT(error == DatabaseError::None);
+        return true;
+    }
+
+    ASSERT(error == DatabaseError::DatabaseSizeExceededQuota);
     doneCreatingDatabase(origin, name);
 
     return false;

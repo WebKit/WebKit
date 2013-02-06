@@ -28,6 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "AbstractDatabaseServer.h"
 #include "Database.h"
 #include "DatabaseBackend.h"
 #include "DatabaseBackendAsync.h"
@@ -200,39 +201,116 @@ void DatabaseManager::didDestructDatabaseContext()
 }
 #endif
 
+ExceptionCode DatabaseManager::exceptionCodeForDatabaseError(DatabaseError error)
+{
+    switch (error) {
+    case DatabaseError::None:
+        return 0;
+    case DatabaseError::DatabaseIsBeingDeleted:
+    case DatabaseError::DatabaseSizeExceededQuota:
+    case DatabaseError::DatabaseSizeOverflowed:
+    case DatabaseError::GenericSecurityError:
+        return SECURITY_ERR;
+    case DatabaseError::InvalidDatabaseState:
+        return INVALID_STATE_ERR;
+    }
+    ASSERT_NOT_REACHED();
+    return 0; // Make some older compilers happy.
+}
+
+static void logOpenDatabaseError(ScriptExecutionContext* context, const String& name)
+{
+    LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(),
+        context->securityOrigin()->toString().ascii().data());
+}
+
+PassRefPtr<DatabaseBackend> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context,
+    DatabaseType type, const String& name, const String& expectedVersion, const String& displayName,
+    unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+    ASSERT(error == DatabaseError::None);
+
+    RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
+    RefPtr<DatabaseBackendContext> backendContext = databaseContext->backend();
+
+    RefPtr<DatabaseBackend> backend = m_server->openDatabase(backendContext, type, name, expectedVersion,
+        displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+
+    if (!backend) {
+        ASSERT(error != DatabaseError::None);
+
+        switch (error) {
+        case DatabaseError::DatabaseIsBeingDeleted:
+        case DatabaseError::DatabaseSizeOverflowed:
+        case DatabaseError::GenericSecurityError:
+            logOpenDatabaseError(context, name);
+            return 0;
+
+        case DatabaseError::InvalidDatabaseState:
+            logErrorMessage(context, errorMessage);
+            return 0;
+
+        case DatabaseError::DatabaseSizeExceededQuota:
+            // Notify the client that we've exceeded the database quota.
+            // The client may want to increase the quota, and we'll give it
+            // one more try after if that is the case.
+            databaseContext->databaseExceededQuota(name,
+                DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
+
+            error = DatabaseError::None;
+
+            backend = m_server->openDatabase(backendContext, type, name, expectedVersion,
+                displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage,
+                AbstractDatabaseServer::RetryOpenDatabase);
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+        }
+
+        if (!backend) {
+            ASSERT(error != DatabaseError::None);
+
+            if (error == DatabaseError::InvalidDatabaseState) {
+                logErrorMessage(context, errorMessage);
+                return 0;
+            }
+
+            logOpenDatabaseError(context, name);
+            return 0;
+        }
+    }
+
+    return backend.release();
+}
+
 PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
     DatabaseError& error)
 {
     ScriptController::initializeThreading();
-    RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
-    RefPtr<DatabaseBackendContext> backendContext = databaseContext->backend();
     ASSERT(error == DatabaseError::None);
 
-    if (!m_server->canEstablishDatabase(backendContext.get(), name, displayName, estimatedSize)) {
-        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
-        return 0;
-    }
-
+    bool setVersionInNewDatabase = !creationCallback;
     String errorMessage;
-    RefPtr<Database> database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
-
-    if (!database->openAndVerifyVersion(!creationCallback, error, errorMessage)) {
-        logErrorMessage(context, errorMessage);
+    RefPtr<DatabaseBackend> backend = openDatabaseBackend(context, DatabaseType::Async, name,
+        expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+    if (!backend)
         return 0;
-    }
 
-    m_server->setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
+    RefPtr<Database> database = Database::create(context, backend);
+
+    RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
     databaseContext->setHasOpenDatabases();
-
     InspectorInstrumentation::didOpenDatabase(context, database, context->securityOrigin()->host(), name, expectedVersion);
 
-    if (database->isNew() && creationCallback.get()) {
+    if (backend->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->m_scriptExecutionContext->postTask(DatabaseCreationCallbackTask::create(database, creationCallback));
     }
 
+    ASSERT(database);
     return database.release();
 }
 
@@ -240,31 +318,24 @@ PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContex
     const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, DatabaseError& error)
 {
-    RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
-    RefPtr<DatabaseBackendContext> backendContext = databaseContext->backend();
     ASSERT(context->isContextThread());
     ASSERT(error == DatabaseError::None);
 
-    if (!m_server->canEstablishDatabase(backendContext.get(), name, displayName, estimatedSize)) {
-        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
-        return 0;
-    }
-
+    bool setVersionInNewDatabase = !creationCallback;
     String errorMessage;
-    RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(backendContext, name, expectedVersion, displayName, estimatedSize));
-
-    if (!database->openAndVerifyVersion(!creationCallback, error, errorMessage)) {
-        logErrorMessage(context, errorMessage);
+    RefPtr<DatabaseBackend> backend = openDatabaseBackend(context, DatabaseType::Sync, name,
+        expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+    if (!backend)
         return 0;
-    }
 
-    m_server->setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
+    RefPtr<DatabaseSync> database = DatabaseSync::create(context, backend);
 
-    if (database->isNew() && creationCallback.get()) {
+    if (backend->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Invoking the creation callback for database %p\n", database.get());
         creationCallback->handleEvent(database.get());
     }
 
+    ASSERT(database);
     return database.release();
 }
 

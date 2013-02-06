@@ -41,6 +41,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
+#include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,10 +58,19 @@ DatabaseTracker::DatabaseTracker(const String&)
     SQLiteFileSystem::registerSQLiteVFS();
 }
 
-bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* databaseContext, const String& name, const String& displayName, unsigned long estimatedSize)
+bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* databaseContext, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError& error)
 {
     ScriptExecutionContext* scriptExecutionContext = databaseContext->scriptExecutionContext();
-    return DatabaseObserver::canEstablishDatabase(scriptExecutionContext, name, displayName, estimatedSize);
+    bool success = DatabaseObserver::canEstablishDatabase(scriptExecutionContext, name, displayName, estimatedSize);
+    if (!success)
+        error = DatabaseError::GenericSecurityError;
+    return success;
+}
+
+bool DatabaseTracker::retryCanEstablishDatabase(DatabaseBackendContext*, const String&, const String&, unsigned long, DatabaseError&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void DatabaseTracker::setDatabaseDetails(SecurityOrigin*, const String&, const String&, unsigned long)

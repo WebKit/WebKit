@@ -31,6 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseError.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -70,7 +71,9 @@ public:
     // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
-    bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize);
+    bool canEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError&);
+    bool retryCanEstablishDatabase(DatabaseBackendContext*, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError&);
+
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
@@ -85,6 +88,8 @@ public:
 
 private:
     explicit DatabaseTracker(const String& databasePath);
+
+    bool hasAdequateQuotaForOrigin(SecurityOrigin*, unsigned long estimatedSize, DatabaseError&);
 
 #if !PLATFORM(CHROMIUM)
 public:

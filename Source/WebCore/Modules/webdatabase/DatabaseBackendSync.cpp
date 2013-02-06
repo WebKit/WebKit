@@ -29,6 +29,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackendContext.h"
+#include "DatabaseTracker.h"
 
 namespace WebCore {
 
@@ -49,6 +50,14 @@ DatabaseBackendSync::~DatabaseBackendSync()
     ASSERT(m_databaseContext->isContextThread());
     if (opened())
         closeDatabase();
+}
+
+bool DatabaseBackendSync::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+#if PLATFORM(CHROMIUM)
+    DatabaseTracker::tracker().prepareToOpenDatabase(this);
+#endif
+    return performOpenAndVerify(setVersionInNewDatabase, error, errorMessage);
 }
 
 } // namespace WebCore

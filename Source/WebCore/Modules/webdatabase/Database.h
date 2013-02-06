@@ -88,12 +88,10 @@ private:
     Database(PassRefPtr<DatabaseBackendContext>, const String& name,
         const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
     PassRefPtr<DatabaseBackendAsync> backend();
+    static PassRefPtr<Database> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend>);
 
     void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
                         PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
-
-    bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
-    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     void inProgressTransactionCompleted();
     void scheduleTransaction();
@@ -110,6 +108,7 @@ private:
     bool m_deleted;
 
     friend class DatabaseManager;
+    friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class DatabaseBackendAsync; // FIXME: remove this when the backend has been split out.
 };
 

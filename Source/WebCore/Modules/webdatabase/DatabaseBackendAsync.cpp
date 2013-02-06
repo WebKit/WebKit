@@ -29,6 +29,9 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackendContext.h"
+#include "DatabaseTask.h"
+#include "DatabaseThread.h"
+#include "DatabaseTracker.h"
 
 namespace WebCore {
 
@@ -37,6 +40,34 @@ DatabaseBackendAsync::DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext> da
 {
 }
 
+bool DatabaseBackendAsync::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+    DatabaseTaskSynchronizer synchronizer;
+    if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
+        return false;
+
+#if PLATFORM(CHROMIUM)
+    DatabaseTracker::tracker().prepareToOpenDatabase(this);
+#endif
+    bool success = false;
+    OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
+    databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
+    synchronizer.waitForTaskCompletion();
+
+    return success;
+}
+
+bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
+        if (databaseContext()->databaseThread())
+            databaseContext()->databaseThread()->recordDatabaseOpen(this);
+
+        return true;
+    }
+
+    return false;
+}
 
 } // namespace WebCore
 

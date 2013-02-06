@@ -314,7 +314,7 @@ bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, D
     DoneCreatingDatabaseOnExitCaller onExitCaller(this);
     ASSERT(errorMessage.isEmpty());
     ASSERT(error == DatabaseError::None); // Better not have any errors already.
-    error = DatabaseError::CannotOpenDatabase; // Presumed failure. We'll clear it if we succeed below.
+    error = DatabaseError::InvalidDatabaseState; // Presumed failure. We'll clear it if we succeed below.
 
     const int maxSqliteBusyWaitTime = 30000;
 

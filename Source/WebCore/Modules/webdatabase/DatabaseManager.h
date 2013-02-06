@@ -28,7 +28,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractDatabaseServer.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
@@ -80,6 +79,8 @@ public:
     void didDestructDatabaseContext() { }
 #endif
 
+    static ExceptionCode exceptionCodeForDatabaseError(DatabaseError);
+
     PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, DatabaseError&);
     PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, DatabaseError&);
 
@@ -123,6 +124,10 @@ private:
     // This gets a DatabaseContext for the specified ScriptExecutionContext if
     // it already exist previously. Otherwise, it returns 0.
     PassRefPtr<DatabaseContext> existingDatabaseContextFor(ScriptExecutionContext*);
+
+    PassRefPtr<DatabaseBackend> openDatabaseBackend(ScriptExecutionContext*,
+        DatabaseType, const String& name, const String& expectedVersion, const String& displayName,
+        unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     static void logErrorMessage(ScriptExecutionContext*, const String& message);
 

@@ -43,11 +43,11 @@ class DatabaseServer;
 // available. This should be replaced with the actual implementation later.
 
 class DatabaseBackendAsync : public DatabaseBackend {
-protected:
+public:
     DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
-    friend class DatabaseManager; // FIXME: remove this once we have isolated this to the backend.
-    friend class DatabaseServer;
+    virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
 private:
     class DatabaseOpenTask;

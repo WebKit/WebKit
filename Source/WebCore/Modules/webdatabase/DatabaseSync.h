@@ -77,15 +77,14 @@ private:
     DatabaseSync(PassRefPtr<DatabaseBackendContext>, const String& name,
         const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
     PassRefPtr<DatabaseBackendSync> backend();
+    static PassRefPtr<DatabaseSync> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend>);
 
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
-
-    bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     String m_lastErrorMessage;
 
     friend class DatabaseManager;
-    friend class DatabaseBackendSync; // FIXME: remove this when the backend has been split out.
+    friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
 };
 
 } // namespace WebCore

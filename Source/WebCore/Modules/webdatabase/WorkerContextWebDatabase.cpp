@@ -45,13 +45,11 @@ PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* conte
     DatabaseManager& dbManager = DatabaseManager::manager();
     RefPtr<Database> database;
     DatabaseError error = DatabaseError::None;
-    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin()))
+    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin())) {
         database = dbManager.openDatabase(context, name, version, displayName, estimatedSize, creationCallback, error);
-
-    ASSERT(error == DatabaseError::None || error == DatabaseError::CannotOpenDatabase);
-    if (error == DatabaseError::CannotOpenDatabase)
-        ec = INVALID_STATE_ERR;
-    if (!database && !ec)
+        ASSERT(database || error != DatabaseError::None);
+        ec = DatabaseManager::exceptionCodeForDatabaseError(error);
+    } else
         ec = SECURITY_ERR;
 
     return database.release();
@@ -62,13 +60,12 @@ PassRefPtr<DatabaseSync> WorkerContextWebDatabase::openDatabaseSync(WorkerContex
     DatabaseManager& dbManager = DatabaseManager::manager();
     RefPtr<DatabaseSync> database;
     DatabaseError error =  DatabaseError::None;
-    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin()))
+    if (dbManager.isAvailable() && context->securityOrigin()->canAccessDatabase(context->topOrigin())) {
         database = dbManager.openDatabaseSync(context, name, version, displayName, estimatedSize, creationCallback, error);
 
-    ASSERT(error == DatabaseError::None || error == DatabaseError::CannotOpenDatabase);
-    if (error == DatabaseError::CannotOpenDatabase)
-        ec = INVALID_STATE_ERR;
-    if (!database && !ec)
+        ASSERT(database || error != DatabaseError::None);
+        ec = DatabaseManager::exceptionCodeForDatabaseError(error);
+    } else
         ec = SECURITY_ERR;
 
     return database.release();
