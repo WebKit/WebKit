@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<input type="date" id="date1" value="2000-01-02">
+<script>
+description("Tests if calendar picker key bindings work as expected.");
+if (window.internals)
+    internals.setEnableMockPagePopup(true);
+var date1 = document.getElementById('date1');
+date1.offsetTop; // date1 needs to have non-empty bound rectangle.
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+var event = document.createEvent('KeyboardEvent');
+event.initKeyboardEvent('keydown', true, true, document.defaultView, 'F4');
+date1.dispatchEvent(event);
+shouldBeNonNull('document.getElementById("mock-page-popup")');
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
