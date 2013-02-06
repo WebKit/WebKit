@@ -199,6 +199,7 @@ EXPORTS
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
+        ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ
         ??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z
         ??1InspectorFrontendClientLocal@WebCore@@UAE@XZ
         ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
@@ -237,6 +238,7 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
+        ?completeURL@Document@WebCore@@QBE?AVKURL@2@ABVString@WTF@@@Z
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?pageNumberForElement@PrintContext@WebCore@@SAHPAVElement@2@ABVFloatSize@2@@Z
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
