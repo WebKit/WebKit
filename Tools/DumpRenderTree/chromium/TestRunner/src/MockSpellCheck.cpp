@@ -31,17 +31,13 @@
 #include "config.h"
 #include "MockSpellCheck.h"
 
-#include "TestCommon.h"
-#include <public/WebCString.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
-using namespace std;
 
-namespace WebTestRunner {
-
-namespace {
-
-void append(WebVector<WebString>* data, const WebString& item)
+static void append(WebVector<WebString>* data, const WebString& item)
 {
     WebVector<WebString> result(data->size() + 1);
     for (size_t i = 0; i < data->size(); ++i)
@@ -50,17 +46,17 @@ void append(WebVector<WebString>* data, const WebString& item)
     data->swap(result);
 }
 
-}
-
 MockSpellCheck::MockSpellCheck()
     : m_initialized(false) { }
 
 MockSpellCheck::~MockSpellCheck() { }
 
+static bool isNotASCIIAlpha(UChar ch) { return !isASCIIAlpha(ch); }
+
 bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset, int* misspelledLength)
 {
-    WEBKIT_ASSERT(misspelledOffset);
-    WEBKIT_ASSERT(misspelledLength);
+    ASSERT(misspelledOffset);
+    ASSERT(misspelledLength);
 
     // Initialize this spellchecker.
     initializeIfNeeded();
@@ -69,12 +65,12 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
     *misspelledOffset = 0;
     *misspelledLength = 0;
 
-    // Convert to a string16 because we store string16 instances in
+    // Convert to a String because we store String instances in
     // m_misspelledWords and WebString has no find().
-    string16 stringText = text;
+    String stringText(text.data(), text.length());
     int skippedLength = 0;
 
-    while (!stringText.empty()) {
+    while (!stringText.isEmpty()) {
         // Extract the first possible English word from the given string.
         // The given string may include non-ASCII characters or numbers. So, we
         // should filter out such characters before start looking up our
@@ -82,13 +78,12 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
         // (This is a simple version of our SpellCheckWordIterator class.)
         // If the given string doesn't include any ASCII characters, we can treat the
         // string as valid one.
-        string16::iterator firstChar = find_if(stringText.begin(), stringText.end(), isASCIIAlpha);
-        if (firstChar == stringText.end())
+        int wordOffset = stringText.find(isASCIIAlpha);
+        if (wordOffset == -1)
             return true;
-        int wordOffset = distance(stringText.begin(), firstChar);
         int maxWordLength = static_cast<int>(stringText.length()) - wordOffset;
         int wordLength;
-        string16 word;
+        String word;
 
         // Look up our misspelled-word table to check if the extracted word is a
         // known misspelled word, and return the offset and the length of the
@@ -97,7 +92,7 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
         // misspelled-word table.)
         for (size_t i = 0; i < m_misspelledWords.size(); ++i) {
             wordLength = static_cast<int>(m_misspelledWords.at(i).length()) > maxWordLength ? maxWordLength : static_cast<int>(m_misspelledWords.at(i).length());
-            word = stringText.substr(wordOffset, wordLength);
+            word = stringText.substring(wordOffset, wordLength);
             if (word == m_misspelledWords.at(i) && (static_cast<int>(stringText.length()) == wordOffset + wordLength || isNotASCIIAlpha(stringText[wordOffset + wordLength]))) {
                 *misspelledOffset = wordOffset + skippedLength;
                 *misspelledLength = wordLength;
@@ -108,14 +103,11 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
         if (*misspelledLength > 0)
             break;
 
-        string16::iterator lastChar = find_if(stringText.begin() + wordOffset, stringText.end(), isNotASCIIAlpha);
-        if (lastChar == stringText.end())
-            wordLength = static_cast<int>(stringText.length()) - wordOffset;
-        else
-            wordLength = distance(firstChar, lastChar);
+        int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
+        wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
 
-        WEBKIT_ASSERT(0 < wordOffset + wordLength);
-        stringText = stringText.substr(wordOffset + wordLength);
+        ASSERT(0 < wordOffset + wordLength);
+        stringText = stringText.substring(wordOffset + wordLength);
         skippedLength += wordOffset + wordLength;
     }
 
@@ -178,7 +170,7 @@ bool MockSpellCheck::initializeIfNeeded()
 
     m_misspelledWords.clear();
     for (size_t i = 0; i < arraysize(misspelledWords); ++i)
-        m_misspelledWords.push_back(string16(misspelledWords[i], misspelledWords[i] + strlen(misspelledWords[i])));
+        m_misspelledWords.append(String::fromUTF8(misspelledWords[i]));
 
     // Mark as initialized to prevent this object from being initialized twice
     // or more.
@@ -187,6 +179,4 @@ bool MockSpellCheck::initializeIfNeeded()
     // Since this MockSpellCheck class doesn't download dictionaries, this
     // function always returns false.
     return false;
-}
-
 }
