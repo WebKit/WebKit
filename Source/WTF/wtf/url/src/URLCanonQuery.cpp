@@ -35,8 +35,8 @@
 #include "RawURLBuffer.h"
 #include "URLCanonInternal.h"
 #include "URLCharacterTypes.h"
-#include "URLQueryCharsetConverter.h"
 #include <wtf/text/ASCIIFastPath.h>
+#include <wtf/url/api/URLQueryCharsetConverter.h>
 
 // Query canonicalization in IE
 // ----------------------------

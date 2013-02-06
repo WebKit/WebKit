@@ -33,8 +33,8 @@
 
 #if USE(WTFURL)
 
-#include "URLBuffer.h"
 #include <string.h>
+#include <wtf/url/api/URLBuffer.h>
 
 namespace WTF {
 

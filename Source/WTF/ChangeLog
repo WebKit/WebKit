@@ -1,3 +1,22 @@
+2013-02-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTFURL] Fix erroneous header inclusions in WTFURL code
+        https://bugs.webkit.org/show_bug.cgi?id=109040
+
+        Reviewed by Benjamin Poulain.
+
+        Include WTFURL API headers from files in Source/WTF/wtf/url/src
+        by specifying their relative path to Source/WTF. 
+
+        * GNUmakefile.am: The changes make it possible to compile the WTF library
+        without specifying both Source/WTF/wtf/url/api and Source/WTF/wtf/url/src
+        as inclusion directories in CPPFLAGS, so remove these two entries.
+        * wtf/url/src/RawURLBuffer.h:
+        * wtf/url/src/URLCanon.h: Include the URLParse.h header by specifying
+        only the base name as it's located in the same directory.
+        * wtf/url/src/URLCanonQuery.cpp:
+        * wtf/url/src/URLUtil.h:
+
 2013-02-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Call XSSAuditor's didBlockScript() for the threaded HTML parser

@@ -31,10 +31,10 @@
 #ifndef URLCanon_h
 #define URLCanon_h
 
+#include "URLParse.h"
 #include <stdlib.h>
 #include <wtf/unicode/Unicode.h>
 #include <wtf/url/api/URLBuffer.h>
-#include <wtf/url/src/URLParse.h>
 
 #if USE(WTFURL)
 

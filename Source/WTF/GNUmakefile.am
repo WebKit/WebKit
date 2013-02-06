@@ -35,6 +35,4 @@ libWTF_la_CPPFLAGS = \
 	$(global_cppflags) \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WTF \
-	-I$(srcdir)/Source/WTF/wtf \
-	-I$(srcdir)/Source/WTF/wtf/url/api \
-	-I$(srcdir)/Source/WTF/wtf/url/src
+	-I$(srcdir)/Source/WTF/wtf

@@ -32,10 +32,10 @@
 #ifndef URLUtil_h
 #define URLUtil_h
 
-#include "URLBuffer.h"
 #include "URLCanon.h"
 #include "URLParse.h"
 #include <wtf/unicode/Unicode.h>
+#include <wtf/url/api/URLBuffer.h>
 
 #if USE(WTFURL)
 
