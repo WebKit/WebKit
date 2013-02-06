@@ -63,16 +63,11 @@ public:
 #ifndef NDEBUG
     static void assertContextHasCorrectPrototype(v8::Handle<v8::Context>);
 #endif
-    // FIXME: Rename this method to getWorld().
     static DOMWrapperWorld* isolated(v8::Handle<v8::Context> context)
     {
 #ifndef NDEBUG
         assertContextHasCorrectPrototype(context);
 #endif
-        return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
-    }
-    static DOMWrapperWorld* getWorldWithoutContextCheck(v8::Handle<v8::Context> context)
-    {
         return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
     }
 
