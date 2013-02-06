@@ -53,7 +53,7 @@ namespace WebCore {
         static bool maybeDOMWrapper(v8::Handle<v8::Value>);
 #endif
 
-        static v8::Local<v8::Object> createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
+        static v8::Local<v8::Object> createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*, v8::Isolate*);
 
         template<typename T>
         static inline v8::Persistent<v8::Object> associateObjectWithWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate*);

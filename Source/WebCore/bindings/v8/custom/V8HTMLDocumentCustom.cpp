@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> wrapper, Node* impl)
+v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> wrapper, Node* impl, v8::Isolate* isolate)
 {
     DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, shadowTemplate, ());
     if (shadowTemplate.IsEmpty()) {
@@ -60,7 +60,7 @@ v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> w
         if (shadowTemplate.IsEmpty())
             return v8::Local<v8::Object>();
         shadowTemplate->SetClassName(v8::String::NewSymbol("HTMLDocument"));
-        shadowTemplate->Inherit(V8HTMLDocument::GetTemplate());
+        shadowTemplate->Inherit(V8HTMLDocument::GetTemplate(isolate));
         shadowTemplate->InstanceTemplate()->SetInternalFieldCount(V8HTMLDocument::internalFieldCount);
     }
 
