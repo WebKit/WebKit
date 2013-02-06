@@ -1,5 +1,14 @@
 2013-02-06  Lucas Forschler  <lforschler@apple.com>
 
+        Update WK2 test results.
+        <rdar://problem/12968040> Chopin test failure: http/tests/loading/remove-child-triggers-parser.html
+        
+        Reviewed by Jeffrey Pfau.
+
+        * platform/mac-wk2/http/tests/loading/remove-child-triggers-parser-expected.txt: Added.
+
+2013-02-06  Lucas Forschler  <lforschler@apple.com>
+
 	<rdar://problem/12967921>
 	Update test results.
 	
