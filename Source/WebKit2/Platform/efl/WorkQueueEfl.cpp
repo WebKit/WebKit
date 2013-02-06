@@ -79,8 +79,10 @@ void WorkQueue::performWork()
             m_workItemQueue.swap(workItemQueue);
         }
 
-        for (size_t i = 0; i < workItemQueue.size(); ++i)
+        for (size_t i = 0; i < workItemQueue.size(); ++i) {
             workItemQueue[i]();
+            deref();
+        }
     }
 }
 
@@ -162,6 +164,7 @@ void WorkQueue::performTimerWork()
 
         // If a timer work item expired, dispatch the function of the work item.
         timerWorkItems[i]->dispatch();
+        deref();
     }
 }
 
@@ -210,6 +213,8 @@ void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
 
 void WorkQueue::dispatch(const Function<void()>& function)
 {
+    ref();
+
     {
         MutexLocker locker(m_workItemQueueLock);
         m_workItemQueue.append(function);
@@ -227,6 +232,7 @@ void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double dela
     if (!timerWorkItem)
         return;
 
+    ref();
     insertTimerWorkItem(timerWorkItem.release());
     sendMessageToThread(wakupThreadMessage);
 }
