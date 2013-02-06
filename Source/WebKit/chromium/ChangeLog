@@ -1,3 +1,24 @@
+2013-02-06  Chris Hopman  <cjhopman@chromium.org>
+
+        [Chromium] WebWidget should expose a way to determine the start/end of the selection bounds
+        https://bugs.webkit.org/show_bug.cgi?id=108667
+
+        Reviewed by Darin Fisher.
+
+        WebWidget::selectionBounds() returns the anchor and focus of the
+        selection. This matches the arguments to WebFrame::selectRange().
+        Add WebWidget::isSelectionAnchorFirst so that a caller can convert the
+        anchor/focus to start/end.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::isSelectionAnchorFirst):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::isSelectionAnchorFirst):
+        (WebKit):
+        * src/WebViewImpl.h:
+        * tests/WebViewTest.cpp:
+
 2013-02-06  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Stub out SharedBuffer version of put()

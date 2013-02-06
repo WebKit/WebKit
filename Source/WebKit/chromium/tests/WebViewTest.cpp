@@ -456,6 +456,23 @@ TEST_F(WebViewTest, SetCompositionFromExistingText)
     webView->close();
 }
 
+TEST_F(WebViewTest, IsSelectionAnchorFirst)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("input_field_populated.html"));
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
+    WebFrame* frame = webView->mainFrame();
+
+    webView->setInitialFocus(false);
+    webView->setEditableSelectionOffsets(4, 10);
+    EXPECT_TRUE(webView->isSelectionAnchorFirst());
+    WebRect anchor;
+    WebRect focus;
+    webView->selectionBounds(anchor, focus);
+    frame->selectRange(WebPoint(focus.x, focus.y), WebPoint(anchor.x, anchor.y));
+    EXPECT_FALSE(webView->isSelectionAnchorFirst());
+    webView->close();
+}
+
 TEST_F(WebViewTest, ResetScrollAndScaleState)
 {
     URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("hello_world.html"));

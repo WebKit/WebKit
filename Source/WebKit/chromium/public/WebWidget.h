@@ -198,6 +198,10 @@ public:
     // If the selection range is empty, it returns false.
     virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const { return false; }
 
+    // Returns true if the selection range is nonempty and its anchor is first
+    // (i.e its anchor is its start).
+    virtual bool isSelectionAnchorFirst() const { return false; }
+
     // Fetch the current selection range of this WebWidget. If there is no
     // selection, it will output a 0-length range with the location at the
     // caret. Returns true and fills the out-paramters on success; returns false

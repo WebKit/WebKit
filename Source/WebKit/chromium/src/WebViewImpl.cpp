@@ -2418,6 +2418,17 @@ bool WebViewImpl::selectionTextDirection(WebTextDirection& start, WebTextDirecti
     return true;
 }
 
+bool WebViewImpl::isSelectionAnchorFirst() const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+    FrameSelection* selection = frame->selection();
+    if (!selection)
+        return false;
+    return selection->selection().isBaseFirst();
+}
+
 bool WebViewImpl::setEditableSelectionOffsets(int start, int end)
 {
     const Frame* focused = focusedWebCoreFrame();
