@@ -616,10 +616,16 @@ WebInspector.WorkspaceSettingsTab.prototype = {
 
     _addFileMappingClicked: function()
     {
-        if (!this._urlInputElement.value || !this._pathInputElement.value)
+        var url = this._urlInputElement.value;
+        var path = this._pathInputElement.value;
+        if (!url || !path)
             return;
         var mappingEntries = WebInspector.fileMapping.mappingEntries();
-        var mappingEntry = new WebInspector.FileMapping.Entry(this._urlInputElement.value, this._pathInputElement.value);
+        if (url[url.length - 1] !== "/")
+            url += "/";
+        if (path[path.length - 1] !== "/")
+            path += "/";
+        var mappingEntry = new WebInspector.FileMapping.Entry(url, path);
         mappingEntries.push(mappingEntry);
         WebInspector.fileMapping.setMappingEntries(mappingEntries);
         this._addMappingRow(mappingEntry);
