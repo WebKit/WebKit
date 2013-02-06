@@ -992,21 +992,6 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
    AC_SUBST([GSTREAMER_LIBS])
 fi
 
-# farstream-0.1 depends on gstreamer 0.10 currently. Disable
-# media_stream if gstreamer 1.0 build support is enabled.
-if test "$have_gstreamer" != "yes" || test "$GST_API_VERSION" = "1.0"; then
-   if test "$enable_media_stream" = "yes"; then
-      AC_MSG_WARN([Disabling Media Stream because no GStreamer 0.10 support is enabled])
-   fi
-   enable_media_stream=false
-fi
-if test "$enable_media_stream" = "yes"; then
-   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1],
-                     [have_farstream=yes], [enable_media_stream=false])
-   AC_SUBST([FARSTREAM_CFLAGS])
-   AC_SUBST([FARSTREAM_LIBS])
-fi
-
 acceleration_backend_description=$with_acceleration_backend
 if test "$with_acceleration_backend" = "clutter"; then
    PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)

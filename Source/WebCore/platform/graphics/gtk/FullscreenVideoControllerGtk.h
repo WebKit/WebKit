@@ -28,7 +28,7 @@ namespace WebCore {
 
 class FullscreenVideoControllerGtk : public FullscreenVideoControllerGStreamer {
 public:
-    FullscreenVideoControllerGtk(MediaPlayerPrivateGStreamer*);
+    FullscreenVideoControllerGtk(MediaPlayerPrivateGStreamerBase*);
 
     void gtkConfigure(GdkEventConfigure*);
 

@@ -1,3 +1,13 @@
+2013-02-06  Jonathon Jongsma  <jonathon.jongsma@collabora.com>
+
+        [GStreamer] MediaPlayer's code is not easily reusable by other GStreamer-based players
+        https://bugs.webkit.org/show_bug.cgi?id=100261
+
+        Reviewed by Philippe Normand
+
+        * configure.ac: removed farstream requirement for now since it's
+        not actually used yet and makes it more difficult to build and test
+
 2013-02-06  Mike West  <mkwst@chromium.org>
 
         Add an ENABLE_NOSNIFF feature flag.

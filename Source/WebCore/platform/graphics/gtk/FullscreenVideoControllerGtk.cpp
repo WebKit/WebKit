@@ -28,7 +28,7 @@
 #include "GStreamerGWorld.h"
 #include "GtkVersioning.h"
 #include "MediaPlayer.h"
-#include "MediaPlayerPrivateGStreamer.h"
+#include "MediaPlayerPrivateGStreamerBase.h"
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -124,7 +124,7 @@ static void volumeValueChanged(GtkScaleButton *button, gdouble value, Fullscreen
 }
 
 
-FullscreenVideoControllerGtk::FullscreenVideoControllerGtk(MediaPlayerPrivateGStreamer* player)
+FullscreenVideoControllerGtk::FullscreenVideoControllerGtk(MediaPlayerPrivateGStreamerBase* player)
     : FullscreenVideoControllerGStreamer(player)
     , m_hudTimeoutId(0)
     , m_progressBarUpdateId(0)

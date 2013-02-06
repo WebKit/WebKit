@@ -29,7 +29,7 @@
 
 #include "GStreamerGWorld.h"
 #include "MediaPlayer.h"
-#include "MediaPlayerPrivateGStreamer.h"
+#include "MediaPlayerPrivateGStreamerBase.h"
 #include <gst/gst.h>
 #include <wtf/text/CString.h>
 
@@ -48,7 +48,7 @@ void playerMuteChangedCallback(GObject *element, GParamSpec *pspec, FullscreenVi
     controller->muteChanged();
 }
 
-PassOwnPtr<FullscreenVideoControllerGStreamer> FullscreenVideoControllerGStreamer::create(MediaPlayerPrivateGStreamer* player)
+PassOwnPtr<FullscreenVideoControllerGStreamer> FullscreenVideoControllerGStreamer::create(MediaPlayerPrivateGStreamerBase* player)
 {
 #if PLATFORM(GTK)
    return adoptPtr(new FullscreenVideoControllerGtk(player));
@@ -57,7 +57,7 @@ PassOwnPtr<FullscreenVideoControllerGStreamer> FullscreenVideoControllerGStreame
 #endif
 }
 
-FullscreenVideoControllerGStreamer::FullscreenVideoControllerGStreamer(MediaPlayerPrivateGStreamer* player)
+FullscreenVideoControllerGStreamer::FullscreenVideoControllerGStreamer(MediaPlayerPrivateGStreamerBase* player)
     : m_player(player)
     , m_client(player->mediaPlayer()->mediaPlayerClient())
     , m_gstreamerGWorld(player->platformMedia().media.gstreamerGWorld)
