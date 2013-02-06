@@ -555,11 +555,14 @@ void WebTestProxyBase::didEndEditing()
 
 void WebTestProxyBase::registerIntentService(WebFrame*, const WebIntentServiceInfo& service)
 {
+#ifndef ANDROID
     m_delegate->printMessage(string("Registered Web Intent Service: action=") + service.action().utf8().data() + " type=" + service.type().utf8().data() + " title=" + service.title().utf8().data() + " url=" + service.url().spec().data() + " disposition=" + service.disposition().utf8().data() + "\n");
+#endif
 }
 
 void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& request)
 {
+#ifndef ANDROID
     m_delegate->printMessage(string("Received Web Intent: action=") + request.intent().action().utf8().data() + " type=" + request.intent().type().utf8().data() + "\n");
     WebMessagePortChannelArray* ports = request.intent().messagePortChannelsRelease();
     m_delegate->setCurrentWebIntentRequest(request);
@@ -582,6 +585,7 @@ void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& 
     WebVector<WebURL> suggestions = request.intent().suggestions();
     for (size_t i = 0; i < suggestions.size(); ++i)
         m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
+#endif
 }
 
 bool WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
