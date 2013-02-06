@@ -60,8 +60,6 @@ WebInspector.NavigatorView = function()
     this._uiSourceCodes = {};
     /** @type {Object.<string, WebInspector.NavigatorSourceTreeElement>} */
     this._scriptTreeElements = {};
-
-    WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
 }
 
 WebInspector.NavigatorView.Events = {
@@ -241,18 +239,6 @@ WebInspector.NavigatorView.prototype = {
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._uiSourceCodeFormattedChanged, this);
     },
 
-    _showScriptFoldersSettingChanged: function()
-    {
-        var uiSourceCodes = this._scriptsTree.scriptTreeElements();
-        this.reset();
-
-        for (var i = 0; i < uiSourceCodes.length; ++i)
-            this.addUISourceCode(uiSourceCodes[i]);
-
-        if (this._lastSelectedUISourceCode)
-            this.revealUISourceCode(this._lastSelectedUISourceCode);
-    },
-
     _fileRenamed: function(uiSourceCode, newTitle)
     {    
         var data = { uiSourceCode: uiSourceCode, name: newTitle };
@@ -363,9 +349,7 @@ WebInspector.NavigatorView.prototype = {
         if (this._folderTreeElements[folderIdentifier])
             return this._folderTreeElements[folderIdentifier];
 
-        var showScriptFolders = WebInspector.settings.showScriptFolders.get();
-
-        if ((!domain && !folderName) || !showScriptFolders)
+        if (!domain && !folderName)
             return this._scriptsTree;
 
         var parentFolderElement;

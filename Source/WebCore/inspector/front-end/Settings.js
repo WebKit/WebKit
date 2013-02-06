@@ -97,7 +97,6 @@ WebInspector.Settings = function()
     this.userAgent = this.createSetting("userAgent", "");
     this.deviceMetrics = this.createSetting("deviceMetrics", "");
     this.deviceFitWindow = this.createSetting("deviceFitWindow", false);
-    this.showScriptFolders = this.createSetting("showScriptFolders", true);
     this.emulateTouchEvents = this.createSetting("emulateTouchEvents", false);
     this.showPaintRects = this.createSetting("showPaintRects", false);
     this.continuousPainting = this.createSetting("continuousPainting", false);

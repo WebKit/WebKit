@@ -24,8 +24,6 @@ function test()
     function dumpScriptsList(noReveal)
     {
         InspectorTest.addResult("");
-        InspectorTest.addResult("WebInspector.settings.showScriptFolders = " + WebInspector.settings.showScriptFolders.get());
-
         InspectorTest.dumpScriptsNavigator(navigator);
         if (noReveal)
             return;
@@ -62,14 +60,6 @@ function test()
     for (var i = 0; i < extensions.length; ++i)
         addUISourceCode(extensions[i], true);
     addUISourceCode("*Non*URL*path", true);
-
-    try {
-        dumpScriptsList();
-        WebInspector.settings.showScriptFolders.set(false);
-        dumpScriptsList(true);
-    } finally {
-        WebInspector.settings.showScriptFolders.set(true);
-    }
     dumpScriptsList();
     InspectorTest.completeTest();
 }
