@@ -1,3 +1,16 @@
+2013-02-06  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out SharedBuffer version of put()
+        https://bugs.webkit.org/show_bug.cgi?id=108986
+
+        Reviewed by Darin Fisher.
+
+        This is part 1 of 3 to replace Vector<uint8_t> with SharedBuffer.
+
+        * public/WebIDBDatabase.h:
+        (WebKit):
+        (WebKit::WebIDBDatabase::put):
+
 2013-02-06  Stephen Chenney  <schenney@chromium.org>
 
         Add Skia code suppression flags to WebKit skia.gyp
