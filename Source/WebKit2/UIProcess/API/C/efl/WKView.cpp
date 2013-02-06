@@ -22,27 +22,29 @@
 
 #include "EwkView.h"
 #include "WKAPICast.h"
-#include "ewk_view_private.h"
+#include "ewk_context_private.h"
 #include <WebKit2/WKImageCairo.h>
 
 using namespace WebKit;
 
-WKViewRef WKViewCreate(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+static inline WKViewRef createWKView(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkView::ViewBehavior behavior)
 {
-    EwkView* ewkView = ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::LegacyBehavior);
-    if (!ewkView)
+    RefPtr<EwkContext> context = contextRef ? EwkContext::create(contextRef) : EwkContext::defaultContext();
+    Evas_Object* evasObject = EwkView::createEvasObject(canvas, context, pageGroupRef, behavior);
+    if (!evasObject)
         return 0;
 
-    return static_cast<WKViewRef>(WKRetain(ewkView->wkView()));
+    return static_cast<WKViewRef>(WKRetain(toEwkView(evasObject)->wkView()));
+}
+
+WKViewRef WKViewCreate(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+{
+    return createWKView(canvas, contextRef, pageGroupRef, EwkView::LegacyBehavior);
 }
 
 WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    EwkView* ewkView = ewk_view_base_add(canvas, contextRef, pageGroupRef, EwkView::DefaultBehavior);
-    if (!ewkView)
-        return 0;
-
-    return static_cast<WKViewRef>(WKRetain(ewkView->wkView()));
+    return createWKView(canvas, contextRef, pageGroupRef, EwkView::DefaultBehavior);
 }
 
 void WKViewInitialize(WKViewRef viewRef)
@@ -77,6 +79,6 @@ Evas_Object* WKViewGetEvasObject(WKViewRef viewRef)
 
 WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
 {
-    EwkView* ewkView = EwkView::fromEvasObject(toImpl(viewRef)->evasObject());
+    EwkView* ewkView = toEwkView(toImpl(viewRef)->evasObject());
     return WKImageCreateFromCairoSurface(ewkView->takeSnapshot().get(), 0 /* options */);
 }

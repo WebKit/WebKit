@@ -1,3 +1,121 @@
+2013-02-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Encapsulate Ewk View evas smart object code inside EwkView class
+        https://bugs.webkit.org/show_bug.cgi?id=108062
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The Ewk View implementation is encapsulated within EwkView class.
+        Besides multiple refactoring of Ewk View evas smart object code was made.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (createWKView): 
+
+            Aux function to share WKView creation implementation.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (smartDataChanged):
+        (defaultSmartClassInstance):
+        (toSmartData):
+        (EwkView::initSmartClassInterface):
+        (EwkView::toEvasObject):
+        (EwkView::smartData):
+
+            Renamed and moved here from ewk_view.
+
+        (EwkViewEventHandler):
+        (EwkViewEventHandler::subscribe):
+        (EwkViewEventHandler::unsubscribe):
+        (::handleEvent):
+
+            Added a new template class to encapsulate Ewk View Evas events handling.
+
+        (EwkView::EwkView):
+        (EwkView::~EwkView):
+
+            Constructor and desctructor are private.
+
+        (EwkView::createEvasObject):
+
+            Added factory function for ewk view evas objects creation.
+
+        (EwkView::handleEvasObjectAdd):
+        (EwkView::handleEvasObjectDelete):
+        (EwkView::handleEvasObjectResize):
+        (EwkView::handleEvasObjectMove):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::handleEvasObjectShow):
+        (EwkView::handleEvasObjectHide):
+        (EwkView::handleEvasObjectColorSet):
+
+            Evas_Smart_Class interface callbacks moved into the EwkView class.
+
+        (EwkView::handleEwkViewFocusIn):
+        (EwkView::handleEwkViewFocusOut):
+        (EwkView::handleEwkViewMouseWheel):
+        (EwkView::handleEwkViewMouseDown):
+        (EwkView::handleEwkViewMouseUp):
+        (EwkView::handleEwkViewMouseMove):
+        (EwkView::handleEwkViewKeyDown):
+        (EwkView::handleEwkViewKeyUp):
+
+            Ewk_View_Smart_Class interface callback moved into the EwkView class.
+
+        (EwkView::handleTouchDown):
+        (EwkView::handleTouchUp):
+        (EwkView::handleTouchMove):
+
+            Renamed.
+
+        (toEwkView): 
+
+            Aux function to get the EwkView instance fromevas object.
+
+        (isViewEvasObject):
+
+            Aux function to check that given evas object is ewk view.
+
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::evasObject):
+        (EwkView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_smart_class_set):
+        (ewk_view_smart_add):
+        (ewk_view_add_with_context):
+        (ewk_view_feed_touch_event):
+        (Ewk_Page_Contents_Context):
+
+        * UIProcess/API/efl/ewk_view_private.h: Removed.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreate):
+        (WKViewCreateWithFixedLayout):
+        (WKViewCreateSnapshot):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        (WebKit::ContextHistoryClientEfl::didPerformClientRedirect):
+        (WebKit::ContextHistoryClientEfl::didPerformServerRedirect):
+        (WebKit::ContextHistoryClientEfl::didUpdateHistoryTitle):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::processDidCrash):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didChangeBackForwardList):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::takeFocus):
+        (WebKit::PageUIClientEfl::focus):
+        (WebKit::PageUIClientEfl::unfocus):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+
+             Updated due to changes in EwkView interface.
+
 2013-02-05  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] TiledCoreAnimationDrawingArea has one more layer in its CAContext when we're in the background

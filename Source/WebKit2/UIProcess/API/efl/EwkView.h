@@ -99,7 +99,9 @@ typedef struct _Evas_GL_Surface Evas_GL_Surface;
 #endif
 
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
+typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 
+// EwkView object is owned by the evas object, obtained from EwkView::createEvasObject().
 class EwkView {
 public:
 
@@ -107,11 +109,15 @@ public:
         LegacyBehavior,
         DefaultBehavior
     };
-    EwkView(Evas_Object* view, PassRefPtr<EwkContext> context, WebKit::WebPageGroup* pageGroup, ViewBehavior);
-    ~EwkView();
 
-    static EwkView* fromEvasObject(const Evas_Object* view);
-    Evas_Object* view() { return m_evasObject; }
+    static Evas_Object* createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context,  WKPageGroupRef pageGroupRef = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
+    static Evas_Object* createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
+
+    static bool initSmartClassInterface(Ewk_View_Smart_Class&);
+
+    static const Evas_Object* toEvasObject(WKPageRef);
+
+    Evas_Object* evasObject() { return m_evasObject; }
 
     WKViewRef wkView() const { return toAPI(m_webView.get()); }
     WKPageRef wkPage() const;
@@ -153,11 +159,7 @@ public:
     void setCursor(const WebCore::Cursor& cursor);
     void setImageData(void* imageData, const WebCore::IntSize& size);
 
-    void update(const WebCore::IntRect& rect = WebCore::IntRect());
-
-    static void addToPageViewMap(EwkView* view);
-    static void removeFromPageViewMap(EwkView* view);
-    static const Evas_Object* viewFromPageViewMap(const WKPageRef);
+    void update(const WebCore::IntRect& rect = WebCore::IntRect());   
 
 #if ENABLE(FULLSCREEN_API)
     void enterFullScreen();
@@ -221,7 +223,11 @@ public:
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
 private:
-    inline Ewk_View_Smart_Data* smartData() const;
+    EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroup, ViewBehavior);
+    ~EwkView();
+
+    Ewk_View_Smart_Data* smartData() const;
+
     void displayTimerFired(WebCore::Timer<EwkView>*);
 
 #if USE(COORDINATED_GRAPHICS)
@@ -230,17 +236,35 @@ private:
 
     void informIconChange();
 
-    static void onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo);
-    static void onMouseUp(void* data, Evas*, Evas_Object*, void* eventInfo);
-    static void onMouseMove(void* data, Evas*, Evas_Object*, void* eventInfo);
+    // Evas_Smart_Class callback interface:
+    static void handleEvasObjectAdd(Evas_Object*);
+    static void handleEvasObjectDelete(Evas_Object*);
+    static void handleEvasObjectMove(Evas_Object*, Evas_Coord x, Evas_Coord y);
+    static void handleEvasObjectResize(Evas_Object*, Evas_Coord width, Evas_Coord height);
+    static void handleEvasObjectShow(Evas_Object*);
+    static void handleEvasObjectHide(Evas_Object*);
+    static void handleEvasObjectColorSet(Evas_Object*, int red, int green, int blue, int alpha);
+    static void handleEvasObjectCalculate(Evas_Object*);
+
+    // Ewk_View_Smart_Class callback interface:
+    static Eina_Bool handleEwkViewFocusIn(Ewk_View_Smart_Data* smartData);
+    static Eina_Bool handleEwkViewFocusOut(Ewk_View_Smart_Data* smartData);
+    static Eina_Bool handleEwkViewMouseWheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent);
+    static Eina_Bool handleEwkViewMouseDown(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Down* downEvent);
+    static Eina_Bool handleEwkViewMouseUp(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Up* upEvent);
+    static Eina_Bool handleEwkViewMouseMove(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Move* moveEvent);
+    static Eina_Bool handleEwkViewKeyDown(Ewk_View_Smart_Data* smartData, const Evas_Event_Key_Down* downEvent);
+    static Eina_Bool handleEwkViewKeyUp(Ewk_View_Smart_Data* smartData, const Evas_Event_Key_Up* upEvent);
+
 #if ENABLE(TOUCH_EVENTS)
     void feedTouchEvents(Ewk_Touch_Event_Type type);
-    static void onTouchDown(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
-    static void onTouchUp(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
-    static void onTouchMove(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
+    static void handleTouchDown(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleTouchUp(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void handleTouchMove(void* data, Evas*, Evas_Object*, void* eventInfo);
 #endif
-    static void onFaviconChanged(const char* pageURL, void* eventInfo);
+    static void handleFaviconChanged(const char* pageURL, void* eventInfo);
 
+private:
     // Note, initialization order matters.
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
@@ -287,6 +311,13 @@ private:
 #endif
     bool m_isHardwareAccelerated;
     bool m_setDrawsBackground;
+
+    static Evas_Smart_Class parentSmartClass;
 };
+
+EwkView* toEwkView(const Evas_Object*);
+EwkView* toEwkView(const Ewk_View_Smart_Data* smartData);
+
+bool isViewEvasObject(const Evas_Object* evasObject);
 
 #endif // EwkView_h

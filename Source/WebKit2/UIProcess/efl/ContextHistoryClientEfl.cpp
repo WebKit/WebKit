@@ -53,7 +53,7 @@ void ContextHistoryClientEfl::didNavigateWithNavigationData(WKContextRef, WKPage
         return;
 
     RefPtr<EwkNavigationData> navigationDataEwk = EwkNavigationData::create(navigationData);
-    historyClient->m_navigate(EwkView::viewFromPageViewMap(page), navigationDataEwk.get(), historyClient->m_userData);
+    historyClient->m_navigate(EwkView::toEvasObject(page), navigationDataEwk.get(), historyClient->m_userData);
 }
 
 void ContextHistoryClientEfl::didPerformClientRedirect(WKContextRef, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void* clientInfo)
@@ -66,7 +66,7 @@ void ContextHistoryClientEfl::didPerformClientRedirect(WKContextRef, WKPageRef p
     WKEinaSharedString sourceURLString(sourceURL);
     WKEinaSharedString destinationURLString(destinationURL);
 
-    historyClient->m_clientRedirect(EwkView::viewFromPageViewMap(page), sourceURLString, destinationURLString, historyClient->m_userData);
+    historyClient->m_clientRedirect(EwkView::toEvasObject(page), sourceURLString, destinationURLString, historyClient->m_userData);
 }
 
 void ContextHistoryClientEfl::didPerformServerRedirect(WKContextRef, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void* clientInfo)
@@ -79,7 +79,7 @@ void ContextHistoryClientEfl::didPerformServerRedirect(WKContextRef, WKPageRef p
     WKEinaSharedString sourceURLString(sourceURL);
     WKEinaSharedString destinationURLString(destinationURL);
 
-    historyClient->m_serverRedirect(EwkView::viewFromPageViewMap(page), sourceURLString, destinationURLString, historyClient->m_userData);
+    historyClient->m_serverRedirect(EwkView::toEvasObject(page), sourceURLString, destinationURLString, historyClient->m_userData);
 }
 
 void ContextHistoryClientEfl::didUpdateHistoryTitle(WKContextRef, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef, const void* clientInfo)
@@ -92,7 +92,7 @@ void ContextHistoryClientEfl::didUpdateHistoryTitle(WKContextRef, WKPageRef page
     WKEinaSharedString titleString(title);
     WKEinaSharedString stringURL(URL);
 
-    historyClient->m_titleUpdated(EwkView::viewFromPageViewMap(page), titleString, stringURL, historyClient->m_userData);
+    historyClient->m_titleUpdated(EwkView::toEvasObject(page), titleString, stringURL, historyClient->m_userData);
 }
 
 void ContextHistoryClientEfl::populateVisitedLinks(WKContextRef, const void* clientInfo)

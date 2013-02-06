@@ -118,7 +118,7 @@ bool PageClientBase::isViewInWindow()
 void PageClientBase::processDidCrash()
 {
     // Check if loading was ongoing, when web process crashed.
-    double loadProgress = ewk_view_load_progress_get(m_view->view());
+    double loadProgress = ewk_view_load_progress_get(m_view->evasObject());
     if (loadProgress >= 0 && loadProgress < 1) {
         loadProgress = 1;
         m_view->smartCallback<LoadProgress>().call(&loadProgress);
@@ -134,7 +134,7 @@ void PageClientBase::processDidCrash()
         WARN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
 
         // Display an error page
-        ewk_view_html_string_load(m_view->view(), "The web process has crashed.", 0, url.data());
+        ewk_view_html_string_load(m_view->evasObject(), "The web process has crashed.", 0, url.data());
     }
 }
 

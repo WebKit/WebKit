@@ -40,7 +40,7 @@ namespace WebKit {
 
 Evas_Object* WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientBase*>(m_pageClient)->view()->view();
+    return static_cast<PageClientBase*>(m_pageClient)->view()->evasObject();
 }
 
 String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAgent*/)

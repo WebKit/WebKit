@@ -57,7 +57,7 @@ void WebFullScreenManagerProxy::enterFullScreen()
         return;
 
     willEnterFullScreen();
-    EwkView::fromEvasObject(m_webView)->enterFullScreen();
+    toEwkView(m_webView)->enterFullScreen();
     didEnterFullScreen();
 }
 
@@ -68,7 +68,7 @@ void WebFullScreenManagerProxy::exitFullScreen()
 
 
     willExitFullScreen();
-    EwkView::fromEvasObject(m_webView)->exitFullScreen();
+    toEwkView(m_webView)->exitFullScreen();
     didExitFullScreen();
 }
 

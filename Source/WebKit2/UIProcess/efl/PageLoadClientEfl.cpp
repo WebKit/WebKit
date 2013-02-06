@@ -127,7 +127,7 @@ void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListIte
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
     ASSERT(view);
 
-    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(view->view());
+    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(view->evasObject());
     ASSERT(list);
     list->update(addedItem, removedItems);
 

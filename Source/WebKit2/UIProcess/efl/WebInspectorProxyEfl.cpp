@@ -30,9 +30,9 @@
 
 #include "EwkView.h"
 #include "WebProcessProxy.h"
+#include "ewk_context_private.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
-#include "ewk_view_private.h"
 #include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/text/CString.h>
@@ -94,17 +94,18 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     // Gracefully fall back to software if evas_gl engine is not available.
     if (!m_inspectorWindow)
 #endif
-        m_inspectorWindow = ecore_evas_new(0, 0, 0, initialWindowWidth, initialWindowHeight, 0);
+    m_inspectorWindow = ecore_evas_new(0, 0, 0, initialWindowWidth, initialWindowHeight, 0);
     if (!m_inspectorWindow)
         return 0;
 
     // FIXME: Refactor to use WKViewRef.
-    EwkView* ewkView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
-    if (!ewkView)
+    WKContextRef contextRef = toAPI(page()->process()->context());
+    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::create(contextRef), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
+    if (!m_inspectorView)
         return 0;
 
-    m_inspectorView = ewkView->view();
-
+    EwkView* ewkView = toEwkView(m_inspectorView);
+    ASSERT(ewkView);
     ewkView->setThemePath(TEST_THEME_DIR "/default.edj");
 
     Ewk_Settings* settings = ewkView->settings();

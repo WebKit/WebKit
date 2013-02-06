@@ -71,7 +71,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
 #if PLATFORM(EFL)
     // Update ewk_view with new backingStore image.
-    EwkView* view = EwkView::fromEvasObject(m_webPageProxy->viewWidget());
+    EwkView* view = toEwkView(m_webPageProxy->viewWidget());
     view->setImageData(cairo_image_surface_get_data(m_backingStore->cairoSurface()), m_size);
 #endif
 }
