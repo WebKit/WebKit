@@ -130,6 +130,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                 IdentifierStart = Letter | "_" | "$" | UnicodeEscapeSequence;
                 IdentifierPart = IdentifierStart | DecimalDigit;
                 Identifier = IdentifierStart IdentifierPart *;
+                Spaces = " "+;
 
                 DoubleStringContent = ([^\r\n\"\\] | UnicodeEscapeSequence | "\\" ['"\\bfnrtv])*;
                 SingleStringContent = ([^\r\n\'\\] | UnicodeEscapeSequence | "\\" ['"\\bfnrtv])*;
@@ -154,6 +155,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                 <COMMENT> CommentContent => COMMENT { this.tokenType = "javascript-comment"; return cursor; }
                 <COMMENT> CommentEnd => NODIV { this.tokenType = "javascript-comment"; return cursor; }
 
+                <DIV,NODIV> Spaces {this.tokenType = "whitespace"; return cursor; }
                 <DIV,NODIV> StringLiteral { this.tokenType = "javascript-string"; return cursor; }
                 <DIV,NODIV> DoubleStringStart => DSTRING { this.tokenType = "javascript-string"; return cursor; }
                 <DSTRING> DoubleStringContent => DSTRING { this.tokenType = "javascript-string"; return cursor; }

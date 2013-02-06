@@ -42,7 +42,7 @@ WebInspector.DOMSyntaxHighlighter.prototype = {
     {
         var span = document.createElement("span");
         span.className = "webkit-" + className;
-        if (this._stripExtraWhitespace)
+        if (this._stripExtraWhitespace && className !== "whitespace")
             content = content.replace(/^[\n\r]*/, "").replace(/\s*$/, "");
         span.appendChild(document.createTextNode(content));
         return span;

@@ -27,8 +27,10 @@ function test()
         for (var lineNumber = 0; lineNumber < textModel.linesCount; ++lineNumber) {
             var highlight = textModel.getAttribute(lineNumber, "highlight");
             for (var i = 0; i < highlight.ranges.length; ++i) {
-                const range = highlight.ranges[i];
-                const rangeLength = range.endColumn - range.startColumn + 1;
+                var range = highlight.ranges[i];
+                if (range.token === "whitespace")
+                    continue;
+                var rangeLength = range.endColumn - range.startColumn + 1;
                 if (rangeLength !== 10 || (range.startColumn % 11)) {
                     InspectorTest.addResult("ERROR: unexpected highlight result: i=" + range.startColumn + ", length=" + rangeLength);
                     break;

@@ -26,7 +26,7 @@ After highlighting all lines
 8 :  * line #7 : javascript-comment[0-10]
 9 :  * line #8 : javascript-comment[0-10]
 10 :  * var a = new A(); //*/ : javascript-comment[0-24]
-11 : some text : javascript-ident[0-4] javascript-ident[5-9]
+11 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
 12 :  :
 
 After changing text model, but before updating highlights
@@ -48,7 +48,7 @@ After changing text model, but before updating highlights
 16 :  * line #7 : javascript-comment[0-10]
 17 :  * line #8 : javascript-comment[0-10]
 18 :  * var a = new A(); //*/ : javascript-comment[0-24]
-19 : some text : javascript-ident[0-4] javascript-ident[5-9]
+19 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
 20 :  :
 
 After updating highlights
@@ -65,8 +65,8 @@ After updating highlights
 11 :  * line #7 : javascript-comment[0-10]
 12 :  * line #8 : javascript-comment[0-10]
 13 :  * var a = new A(); //*/ : javascript-comment[0-24]
-14 : some text : javascript-ident[0-4] javascript-ident[5-9]
-15 :  * line #6 : javascript-ident[3-7] javascript-number[9-10]
+14 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
+15 :  * line #6 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
 16 :  * line #7 : null
 17 :  * line #8 : null
 18 :  * var a = new A(); //*/ : null
@@ -87,18 +87,18 @@ After highlighting up to the end
 11 :  * line #7 : javascript-comment[0-10]
 12 :  * line #8 : javascript-comment[0-10]
 13 :  * var a = new A(); //*/ : javascript-comment[0-24]
-14 : some text : javascript-ident[0-4] javascript-ident[5-9]
-15 :  * line #6 : javascript-ident[3-7] javascript-number[9-10]
-16 :  * line #7 : javascript-ident[3-7] javascript-number[9-10]
-17 :  * line #8 : javascript-ident[3-7] javascript-number[9-10]
-18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] javascript-comment[20-24]
-19 : some text : javascript-ident[0-4] javascript-ident[5-9]
+14 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
+15 :  * line #6 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+16 :  * line #7 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+17 :  * line #8 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+18 :  * var a = new A(); //*/ : whitespace[0-1] whitespace[2-3] javascript-keyword[3-6] whitespace[6-7] javascript-ident[7-8] whitespace[8-9] whitespace[10-11] javascript-keyword[11-14] whitespace[14-15] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] whitespace[19-20] javascript-comment[20-24]
+19 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
 20 :  :
 
 After changing the first line, and updating the highlights for the first 5 lines
-1 : foo /* comment */ : javascript-ident[0-3] javascript-comment[4-17]
-2 :  * line #1 : javascript-ident[3-7] javascript-number[9-10]
-3 :  * line #2 : javascript-ident[3-7] javascript-number[9-10]
+1 : foo /* comment */ : javascript-ident[0-3] whitespace[3-4] javascript-comment[4-17]
+2 :  * line #1 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+3 :  * line #2 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
 4 : /** : javascript-comment[0-5]
 5 :  * line #1 : javascript-comment[0-10]
 6 :  * line #2 : javascript-comment[0-10]
@@ -109,16 +109,16 @@ After changing the first line, and updating the highlights for the first 5 lines
 11 :  * line #7 : javascript-comment[0-10]
 12 :  * line #8 : javascript-comment[0-10]
 13 :  * var a = new A(); //*/ : javascript-comment[0-24]
-14 : some text : javascript-ident[0-4] javascript-ident[5-9]
-15 :  * line #6 : javascript-ident[3-7] javascript-number[9-10]
-16 :  * line #7 : javascript-ident[3-7] javascript-number[9-10]
-17 :  * line #8 : javascript-ident[3-7] javascript-number[9-10]
-18 :  * var a = new A(); //*/ : javascript-keyword[3-6] javascript-ident[7-8] javascript-keyword[11-14] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] javascript-comment[20-24]
-19 : some text : javascript-ident[0-4] javascript-ident[5-9]
+14 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
+15 :  * line #6 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+16 :  * line #7 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+17 :  * line #8 : whitespace[0-1] whitespace[2-3] javascript-ident[3-7] whitespace[7-8] javascript-number[9-10]
+18 :  * var a = new A(); //*/ : whitespace[0-1] whitespace[2-3] javascript-keyword[3-6] whitespace[6-7] javascript-ident[7-8] whitespace[8-9] whitespace[10-11] javascript-keyword[11-14] whitespace[14-15] javascript-ident[15-16] brace-start[16-17] brace-end[17-18] whitespace[19-20] javascript-comment[20-24]
+19 : some text : javascript-ident[0-4] whitespace[4-5] javascript-ident[5-9]
 20 :  :
 
 Again change the first line, but update only first 2 lines (invalidate update for the lines below)
-1 : foo /* comment */ /* : javascript-ident[0-3] javascript-comment[4-17] javascript-comment[18-21]
+1 : foo /* comment */ /* : javascript-ident[0-3] whitespace[3-4] javascript-comment[4-17] whitespace[17-18] javascript-comment[18-21]
 2 :  * line #1 : javascript-comment[0-10]
 3 :  * line #2 : null
 4 : /** : null
