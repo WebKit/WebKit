@@ -165,8 +165,6 @@ private:
 
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    
-    virtual void childBecameNonInline(RenderObject* child);
 
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 

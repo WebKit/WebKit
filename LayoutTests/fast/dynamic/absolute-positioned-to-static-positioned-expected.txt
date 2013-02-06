@@ -1,0 +1,82 @@
+Testcase for Bug #91665.
+This testcase checks if an element is properly placed with respect to its previous sibling when its position changes from absolute to static for various combinations of display property toggeled between inline-block and block for both testElement and its previous sibling.
+
+Case 1: <Block Element><Positioned Block Element> To <Block Element><Block Element>
+
+PASS
+Case 2: <Block Element><Positioned Block Element> To <Block Element><Inline Element>
+
+PASS
+Case 3: <Block Element><Positioned Block Element> To <Inline Element><Block Element>
+
+PASS
+Case 4: <Block Element><Positioned Block Element> To <Inline Element><Inline Element>
+
+PASS
+Case 5: <Block Element><Positioned Inline Element> To <Block Element><Block Element>
+
+PASS
+Case 6: <Block Element><Positioned Block Element> To <Inline Element><Block Element>
+
+PASS
+Case 7: <Block Element><Positioned Inline Element> To <Inline Element><Inline Element>
+
+PASS
+Case 8: <Inline Element><Positioned Block Element> To <Block Element><Inline Element>
+
+PASS
+Case 9: <Inline Element><Positioned Block Element> To <Inline Element><Block Element>
+
+PASS
+Case 10: <Inline Element><Positioned Block Element> To <Inline Element><Inline Element>
+
+PASS
+Case 11: <Inline Element><Positioned Block Element> To <Block Element><Inline Element>
+
+PASS
+Case 12: <Inline Element><Positioned Inline Element> To <Inline Element><Block Element>
+
+PASS
+Case 13: <Inline Element><Positioned Inline Element> To <Inline Element><Inline Element>
+
+PASS
+Case 14: <Block Element><Positioned Table Element> To <Block Element><Table Element>
+
+PASS
+Case 15: <Block Element><Positioned Table Element> To <Block Element><Inline-Table Element>
+
+PASS
+Case 16: <Block Element><Positioned Table Element> To <Inline Element><Table Element>
+
+PASS
+Case 17: <Block Element><Positioned Table Element> To <Inline Element><Inline-Table Element>
+
+PASS
+Case 18: <Block Element><Positioned Inline-Table Element> To <Block Element><Inline-Table Element>
+
+PASS
+Case 19: <Block Element><Positioned Inline Element> To <Block Element><Table Element>
+
+PASS
+Case 20: <Block Element><Positioned Inline-Table Element> To <Inline Element><Inline-Table Element>
+
+PASS
+Case 21: <Inline Element><Positioned Table Element> To <Inline Element><Inline-Table Element>
+
+PASS
+Case 22: <Inline Element><Positioned Table Element> To <Inline Element><Table Element>
+
+PASS
+Case 23: <Inline Element><Positioned Block Element> To <Inline Element><Inline-Table Element>
+
+PASS
+Case 24: <Inline Element><Positioned Inline-Table Element> To <Block Element><Inline-Table Element>
+
+PASS
+Case 25: <Inline Element><Positioned Inline-Table Element> To <Inline Element><Table Element>
+
+PASS
+Case 26: <Inline Element><Positioned Inline-Table Element> To <Inline Element><Inline-Table Element>
+
+PASS
+

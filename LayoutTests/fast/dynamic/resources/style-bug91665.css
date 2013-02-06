@@ -1,0 +1,38 @@
+.box {
+  width:50px;
+  height:20px;
+  background:blue;
+}
+.wrapper {
+  position:relative;
+  line-height:1;
+}
+.testElement {
+  width:50px;
+  height:20px;
+  background:yellow;
+}
+.inline {
+  display:inline-block;
+}
+.block {
+  display:block;
+}
+.inline-table {
+  display:inline-table;
+}
+.table {
+  display:table;
+}
+.position-absolute {
+  position:absolute;
+}
+.position-static {
+  position:static;
+}
+.non-floating {
+  float:none;
+}
+.floating {
+  float:left;
+}

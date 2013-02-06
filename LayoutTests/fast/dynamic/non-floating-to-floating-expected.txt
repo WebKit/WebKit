@@ -1,0 +1,82 @@
+Testcase for Bug #91665. 
+This testcase checks if an element is properly placed with respect to its previous sibling when float:none changes to float:left for various combinations of display property toggeled between inline-block and block for both testElement and its previous sibling.
+
+Case 1: <Block Element><Block Element> To <Block Element><Floating Block Element>
+
+PASS
+Case 2: <Block Element><Block Element> To <Block Element><Floating Inline Element>
+
+PASS
+Case 3: <Block Element><Block Element> To <Inline Element><Floating Block Element>
+
+PASS
+Case 4: <Block Element><Block Element> To <Inline Element><Floating Inline Element>
+
+PASS
+Case 5: <Block Element><Inline Element> To <Block Element><Floating Block Element>
+
+PASS
+Case 6: <Block Element><Block Element> To <Inline Element><Floating Block Element>
+
+PASS
+Case 7: <Block Element><Inline Element> To <Inline Element><Floating Inline Element>
+
+PASS
+Case 8: <Inline Element><Block Element> To <Block Element><Floating Inline Element>
+
+PASS
+Case 9: <Inline Element><Block Element> To <Inline Element><Floating Block Element>
+
+PASS
+Case 10: <Inline Element><Block Element> To <Inline Element><Floating Inline Element>
+
+PASS
+Case 11: <Inline Element><Block Element> To <Block Element><Floating Inline Element>
+
+PASS
+Case 12: <Inline Element><Inline Element> To <Inline Element><Floating Block Element>
+
+PASS
+Case 13: <Inline Element><Inline Element> To <Inline Element><Floating Inline Element>
+
+PASS
+Case 14: <Block Element><Table Element> To <Block Element><Floating Table Element>
+
+PASS
+Case 15: <Block Element><Table Element> To <Block Element><Floating Inline-Table Element>
+
+PASS
+Case 16: <Block Element><Table Element> To <Inline Element><Floating Table Element>
+
+PASS
+Case 17: <Block Element><Table Element> To <Inline Element><Floating Inline-Table Element>
+
+PASS
+Case 18: <Block Element><Inline-Table Element> To <Block Element><Floating Inline-Table Element>
+
+PASS
+Case 19: <Block Element><Inline Element> To <Block Element><Floating Table Element>
+
+PASS
+Case 20: <Block Element><Inline-Table Element> To <Inline Element><Floating Inline-Table Element>
+
+PASS
+Case 21: <Inline Element><Table Element> To <Inline Element><Floating Inline-Table Element>
+
+PASS
+Case 22: <Inline Element><Table Element> To <Inline Element><Floating Table Element>
+
+PASS
+Case 23: <Inline Element><Block Element> To <Inline Element><Floating Inline-Table Element>
+
+PASS
+Case 24: <Inline Element><Inline-Table Element> To <Block Element><Floating Inline-Table Element>
+
+PASS
+Case 25: <Inline Element><Inline-Table Element> To <Inline Element><Floating Table Element>
+
+PASS
+Case 26: <Inline Element><Inline-Table Element> To <Inline Element><Floating Inline-Table Element>
+
+PASS
+

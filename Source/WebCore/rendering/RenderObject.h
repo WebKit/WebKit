@@ -244,11 +244,6 @@ public:
     // children.
     virtual RenderBlock* firstLineBlock() const;
 
-    // Called when an object that was floating or positioned becomes a normal flow object
-    // again.  We have to make sure the render tree updates as needed to accommodate the new
-    // normal flow object.
-    void handleDynamicFloatPositionChange();
-    
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual bool canHaveChildren() const { return virtualChildren(); }
@@ -1140,10 +1135,6 @@ private:
     void setPaintBackground(bool b) { m_bitfields.setPaintBackground(b); }
     void setIsDragging(bool b) { m_bitfields.setIsDragging(b); }
     void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
-
-private:
-    // Store state between styleWillChange and styleDidChange
-    static bool s_affectsParentBlock;
 };
 
 inline bool RenderObject::documentBeingDestroyed() const
