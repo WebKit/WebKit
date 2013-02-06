@@ -1429,6 +1429,47 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     return true;
 }
 
+static bool hasVisibleNonCompositingDescendant(RenderLayer* parent)
+{
+    if (Vector<RenderLayer*>* normalFlowList = parent->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
+            if (!curLayer->isComposited()
+                && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(curLayer)))
+                return true;
+        }
+    }
+
+    if (parent->isStackingContainer()) {
+        if (!parent->hasVisibleDescendant())
+            return false;
+
+        // Use the m_hasCompositingDescendant bit to optimize?
+        if (Vector<RenderLayer*>* negZOrderList = parent->negZOrderList()) {
+            size_t listSize = negZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = negZOrderList->at(i);
+                if (!curLayer->isComposited()
+                    && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(curLayer)))
+                    return true;
+            }
+        }
+
+        if (Vector<RenderLayer*>* posZOrderList = parent->posZOrderList()) {
+            size_t listSize = posZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = posZOrderList->at(i);
+                if (!curLayer->isComposited()
+                    && (curLayer->hasVisibleContent() || hasVisibleNonCompositingDescendant(curLayer)))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 // Conservative test for having no rendered children.
 bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
 {
@@ -1439,40 +1480,7 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
     LayerListMutationDetector mutationChecker(m_owningLayer);
 #endif
 
-    if (Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* curLayer = normalFlowList->at(i);
-            if (!curLayer->isComposited() && curLayer->hasVisibleContent())
-                return true;
-        }
-    }
-
-    if (m_owningLayer->isStackingContainer()) {
-        if (!m_owningLayer->hasVisibleDescendant())
-            return false;
-
-        // Use the m_hasCompositingDescendant bit to optimize?
-        if (Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList()) {
-            size_t listSize = negZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i) {
-                RenderLayer* curLayer = negZOrderList->at(i);
-                if (!curLayer->isComposited() && curLayer->hasVisibleContent())
-                    return true;
-            }
-        }
-
-        if (Vector<RenderLayer*>* posZOrderList = m_owningLayer->posZOrderList()) {
-            size_t listSize = posZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i) {
-                RenderLayer* curLayer = posZOrderList->at(i);
-                if (!curLayer->isComposited() && curLayer->hasVisibleContent())
-                    return true;
-            }
-        }
-    }
-
-    return false;
+    return hasVisibleNonCompositingDescendant(m_owningLayer);
 }
 
 bool RenderLayerBacking::containsPaintedContent() const
