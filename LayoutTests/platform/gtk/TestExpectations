@@ -339,6 +339,7 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no
 webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
 webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
 webkit.org/b/71849 transforms/3d [ Skip ]
+webkit.org/b/71849 webgl [ Skip ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 Bug(GTK) compositing/visible-rect [ Skip ]
