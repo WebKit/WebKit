@@ -1,3 +1,19 @@
+2013-02-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of unneeded writeable preferences.
+
+        Reviewed by Anders Carlsson.
+
+        com.apple.HIToolbox.plist and com.apple.WebProcess.plist were made writeable very
+        early in WebKit2 development, before we moved a lot of functionality to UI process.
+        They don't appear to be needed any more.
+
+        Note that we do not even need to allow reading for com.apple.WebProcess.plist -
+        it's read at process initialization before we enter the sandbox, and services
+        have a different plist anyway.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-02-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Assertion failure on MiniBrowser exit

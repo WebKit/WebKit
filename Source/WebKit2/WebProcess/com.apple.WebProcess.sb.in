@@ -51,6 +51,7 @@
        (literal "/Library/Preferences/.GlobalPreferences.plist")
        (home-literal "/Library/Preferences/.GlobalPreferences.plist")
        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
+       (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
        (home-regex #"/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
        (home-literal "/Library/Preferences/com.apple.ATS.plist")
        (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
@@ -96,11 +97,6 @@
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 (allow mach-lookup (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
-
-;; Writable preferences and temporary files
-(allow file*
-       (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
-       (home-regex #"/Library/Preferences/com\.apple\.WebProcess\."))
 
 ;; MediaAccessibility
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
