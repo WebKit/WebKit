@@ -575,9 +575,14 @@ bool DateTimeEditElement::isDisabled() const
     return m_editControlOwner && m_editControlOwner->isEditControlOwnerDisabled();
 }
 
-bool DateTimeEditElement::isFieldOwnerDisabledOrReadOnly() const
+bool DateTimeEditElement::isFieldOwnerDisabled() const
 {
-    return isDisabled() || isReadOnly();
+    return isDisabled();
+}
+
+bool DateTimeEditElement::isFieldOwnerReadOnly() const
+{
+    return isReadOnly();
 }
 
 bool DateTimeEditElement::isReadOnly() const
@@ -711,7 +716,7 @@ void DateTimeEditElement::stepUp()
 
 void DateTimeEditElement::updateUIState()
 {
-    if (isDisabled() || isReadOnly()) {
+    if (isDisabled()) {
         if (DateTimeFieldElement* field = focusedField())
             field->blur();
     }

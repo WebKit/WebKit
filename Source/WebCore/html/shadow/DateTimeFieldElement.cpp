@@ -63,9 +63,11 @@ void DateTimeFieldElement::defaultEventHandler(Event* event)
 
     if (event->isKeyboardEvent()) {
         KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
-        handleKeyboardEvent(keyboardEvent);
-        if (keyboardEvent->defaultHandled())
-            return;
+        if (!isDisabled() && !isFieldOwnerDisabled() && !isFieldOwnerReadOnly()) {
+            handleKeyboardEvent(keyboardEvent);
+            if (keyboardEvent->defaultHandled())
+                return;
+        }
         defaultKeyboardEventHandler(keyboardEvent);
         if (keyboardEvent->defaultHandled())
             return;
@@ -79,15 +81,10 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     if (keyboardEvent->type() != eventNames().keydownEvent)
         return;
 
-    const String& keyIdentifier = keyboardEvent->keyIdentifier();
-
-    if (keyIdentifier == "Down") {
-        if (keyboardEvent->getModifierState("Alt"))
-            return;
-        keyboardEvent->setDefaultHandled();
-        stepDown();
+    if (isDisabled() || isFieldOwnerDisabled())
         return;
-    }
+
+    const String& keyIdentifier = keyboardEvent->keyIdentifier();
 
     if (keyIdentifier == "Left") {
         if (!m_fieldOwner)
@@ -106,6 +103,17 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
         // but it doesn't work for shadow nodes. webkit.org/b/104650
         if (!localeForOwner().isRTL() && m_fieldOwner->focusOnNextField(*this))
             keyboardEvent->setDefaultHandled();
+        return;
+    }
+
+    if (isFieldOwnerReadOnly())
+        return;
+
+    if (keyIdentifier == "Down") {
+        if (keyboardEvent->getModifierState("Alt"))
+            return;
+        keyboardEvent->setDefaultHandled();
+        stepDown();
         return;
     }
 
@@ -155,11 +163,21 @@ bool DateTimeFieldElement::isDateTimeFieldElement() const
     return true;
 }
 
+bool DateTimeFieldElement::isFieldOwnerDisabled() const
+{
+    return m_fieldOwner && m_fieldOwner->isFieldOwnerDisabled();
+}
+
+bool DateTimeFieldElement::isFieldOwnerReadOnly() const
+{
+    return m_fieldOwner && m_fieldOwner->isFieldOwnerReadOnly();
+}
+
 bool DateTimeFieldElement::isFocusable() const
 {
     if (isDisabled())
         return false;
-    if (m_fieldOwner && m_fieldOwner->isFieldOwnerDisabledOrReadOnly())
+    if (isFieldOwnerDisabled())
         return false;
     return HTMLElement::isFocusable();
 }

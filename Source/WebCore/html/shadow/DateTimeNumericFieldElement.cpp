@@ -126,9 +126,7 @@ String DateTimeNumericFieldElement::formatValue(int value) const
 
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
 {
-    if (isDisabled())
-        return;
-
+    ASSERT(!isDisabled());
     if (keyboardEvent->type() != eventNames().keypressEvent)
         return;
 

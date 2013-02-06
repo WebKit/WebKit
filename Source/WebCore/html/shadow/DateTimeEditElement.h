@@ -138,7 +138,8 @@ private:
     virtual void fieldValueChanged() OVERRIDE FINAL;
     virtual bool focusOnNextField(const DateTimeFieldElement&) OVERRIDE FINAL;
     virtual bool focusOnPreviousField(const DateTimeFieldElement&) OVERRIDE FINAL;
-    virtual bool isFieldOwnerDisabledOrReadOnly() const OVERRIDE FINAL;
+    virtual bool isFieldOwnerDisabled() const OVERRIDE FINAL;
+    virtual bool isFieldOwnerReadOnly() const OVERRIDE FINAL;
     virtual AtomicString localeIdentifier() const OVERRIDE FINAL;
 
     Vector<DateTimeFieldElement*, maximumNumberOfFields> m_fields;

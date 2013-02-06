@@ -26,6 +26,11 @@ if (window.internals)
     internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
 var input = document.getElementById("input");
 
+function pseudoOfFocusedSubField(host)
+{
+    return internals.youngestShadowRoot(host).activeElement.getAttribute("pseudo")
+}
+
 function keyDown(key, modifiers)
 {
     if (!window.eventSender)
@@ -136,15 +141,30 @@ keyDown('\t');
 keyDown('\t');
 shouldBeEqualToString('document.activeElement.id', 'another');
 
-beginTest('Tab navigation should skip disabled/readonly inputs', '');
+beginTest('Tab navigation should skip disabled inputs', '');
 before.focus();
 input.disabled = true;
 keyDown('\t');
 shouldBeEqualToString('document.activeElement.id', 'another');
 input.disabled = false;
 
+beginTest('Tab navigation should not skip readonly inputs, but editing operations should be ignored.', '');
 before.focus();
+input.value = '01:01';
 input.readOnly = true;
+keyDown('\t');
+shouldBeEqualToString('document.activeElement.id', 'input');
+shouldBeEqualToString('pseudoOfFocusedSubField(input)', '-webkit-datetime-edit-hour-field');
+shouldBeEqualToString('keyDown("upArrow"); input.value', '01:01');
+shouldBeEqualToString('keyDown("downArrow"); input.value', '01:01');
+keyDown('rightArrow');
+shouldBeEqualToString('pseudoOfFocusedSubField(input)', '-webkit-datetime-edit-minute-field');
+shouldBeEqualToString('keyDown("3"); input.value', '01:01');
+keyDown('\t');
+shouldBeEqualToString('pseudoOfFocusedSubField(input)', '-webkit-datetime-edit-ampm-field');
+keyDown('leftArrow');
+shouldBeEqualToString('pseudoOfFocusedSubField(input)', '-webkit-datetime-edit-minute-field');
+keyDown('\t');
 keyDown('\t');
 shouldBeEqualToString('document.activeElement.id', 'another');
 input.readOnly = false;

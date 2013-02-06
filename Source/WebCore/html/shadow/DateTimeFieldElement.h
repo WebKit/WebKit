@@ -56,7 +56,8 @@ public:
         virtual void fieldValueChanged() = 0;
         virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
-        virtual bool isFieldOwnerDisabledOrReadOnly() const = 0;
+        virtual bool isFieldOwnerDisabled() const = 0;
+        virtual bool isFieldOwnerReadOnly() const = 0;
         virtual AtomicString localeIdentifier() const = 0;
     };
 
@@ -93,6 +94,8 @@ protected:
 private:
     void defaultKeyboardEventHandler(KeyboardEvent*);
     virtual bool isDateTimeFieldElement() const OVERRIDE;
+    bool isFieldOwnerDisabled() const;
+    bool isFieldOwnerReadOnly() const;
     virtual bool supportsFocus() const OVERRIDE FINAL;
 
     FieldOwner* m_fieldOwner;
