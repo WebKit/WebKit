@@ -72,7 +72,10 @@ HTMLFormControlElement::~HTMLFormControlElement()
 
 String HTMLFormControlElement::formEnctype() const
 {
-    return FormSubmission::Attributes::parseEncodingType(fastGetAttribute(formenctypeAttr));
+    const AtomicString& formEnctypeAttr = fastGetAttribute(formenctypeAttr);
+    if (formEnctypeAttr.isNull())
+        return emptyString();
+    return FormSubmission::Attributes::parseEncodingType(formEnctypeAttr);
 }
 
 void HTMLFormControlElement::setFormEnctype(const String& value)
