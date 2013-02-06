@@ -308,15 +308,6 @@ editing/pasteboard/drag-files-to-editable-element.html
 # https://bugs.webkit.org/show_bug.cgi?id=63806
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 
-# [WK2] New tests introduced in 100895 fail
-# https://bugs.webkit.org/show_bug.cgi?id=73913
-http/tests/security/referrer-policy-https-always.html
-http/tests/security/referrer-policy-https-origin.html
-http/tests/security/referrer-policy-redirect.html
-http/tests/security/referrer-policy-redirect-link.html
-http/tests/security/referrer-policy-https-never.html
-http/tests/security/referrer-policy-https-default.html
-
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
