@@ -1,3 +1,14 @@
+2013-02-06  Stephen Chenney  <schenney@chromium.org>
+
+        Add Skia code suppression flags to WebKit skia.gyp
+
+        Unreviewed.
+
+        This is step one in removing these flags. First we get them into
+        WebKit, then we can remove them from Chrome.
+
+        * skia_webkit.gyp:
+
 2013-02-06  Mike West  <mkwst@chromium.org>
 
         Add an ENABLE_NOSNIFF feature flag.
