@@ -121,7 +121,7 @@ fast/css/apple-prefix.html [ WontFix Failure ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix Timeout ]
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout ]
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
 
 # Accessibility tests that should never be run for GTK due to be
 # written in a platform-specific way. They should either be moved to
