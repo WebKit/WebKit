@@ -1,5 +1,14 @@
 2013-02-06  Lucas Forschler  <lforschler@apple.com>
 
+        We don't have the text-based repaint test harness on the branch.
+        <rdar://problem/12968804>
+        
+        Reviewed by Tim Horton.
+
+        * platform/mac/Skipped:
+
+2013-02-06  Lucas Forschler  <lforschler@apple.com>
+
         <rdar://problem/12968605>
         
         Reviewed by Enrica Casucci.
