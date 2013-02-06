@@ -58,6 +58,8 @@ private:
     void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
 
+    void dispatchMessageOnStorageManagerQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder*);
+
     RefPtr<WorkQueue> m_queue;
 };
 
