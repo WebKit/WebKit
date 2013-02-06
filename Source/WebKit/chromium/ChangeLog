@@ -1,3 +1,19 @@
+2013-02-06  Daniel Cheng  <dcheng@google.com>
+
+        [chromium] Remove "config.h" header from WebUnitTests.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=108966
+
+        Reviewed by Tony Chang.
+
+        This file includes headers from base/ in Chromium, and config.h
+        conflicts with base/logging.h. Rather than teaching certain files in
+        base/ not to #include base/logging.h, remove the config.h include
+        here. The ASSERT isn't really necessary, as attempting to run a null
+        test suite won't go very far anyway.
+
+        * tests/WebUnitTests.cpp:
+        (WebKit::RunAllUnitTests):
+
 2013-02-06  Terry Anderson  <tdanderson@chromium.org>
 
         Add support for gesture scroll events that do not propagate to enclosing scrollables

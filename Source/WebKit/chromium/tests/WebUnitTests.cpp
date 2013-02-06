@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "WebUnitTests.h"
 
+// FIXME: Can we move this to webkit/support and fix the layering violation?
 #include <base/test/test_suite.h>
 #include <gmock/gmock.h>
 
@@ -46,8 +46,6 @@ void InitTestSuite(int argc, char** argv)
 
 int RunAllUnitTests()
 {
-    ASSERT(testSuite);
-
     int result = testSuite->Run();
 
     return result;
