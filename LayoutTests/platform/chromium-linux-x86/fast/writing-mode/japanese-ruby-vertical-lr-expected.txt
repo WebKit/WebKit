@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 99x600
-  RenderBlock {HTML} at (0,0) size 99x600 [border: (10px solid #800000)]
-    RenderBody {BODY} at (18,18) size 63x564
+layer at (0,0) size 105x600
+  RenderBlock {HTML} at (0,0) size 105x600 [border: (10px solid #800000)]
+    RenderBody {BODY} at (18,18) size 69x564
       RenderText {#text} at (1,0) size 46x220
         text run at (1,0) width 220: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
-      RenderRuby (inline) {RUBY} at (0,0) size 40x200
-        RenderRubyRun (anonymous) at (3,220) size 40x80
-          RenderRubyText {RT} at (40,0) size 20x80
-            RenderText {#text} at (0,0) size 20x80
+      RenderRuby (inline) {RUBY} at (0,0) size 46x200
+        RenderRubyRun (anonymous) at (0,220) size 48x80
+          RenderRubyText {RT} at (47,0) size 23x80
+            RenderText {#text} at (0,0) size 22x80
               text run at (0,0) width 80: "\x{3053}\x{3046}\x{304B}\x{304F}"
-          RenderRubyBase (anonymous) at (0,0) size 40x80
-            RenderText {#text} at (0,0) size 40x80
-              text run at (0,0) width 80: "\x{653B}\x{6BBB}"
-        RenderRubyRun (anonymous) at (3,300) size 40x120
-          RenderRubyText {RT} at (40,0) size 20x120
-            RenderText {#text} at (0,10) size 20x100
+          RenderRubyBase (anonymous) at (0,0) size 48x80
+            RenderText {#text} at (1,0) size 46x80
+              text run at (1,0) width 80: "\x{653B}\x{6BBB}"
+        RenderRubyRun (anonymous) at (0,300) size 48x120
+          RenderRubyText {RT} at (47,0) size 23x120
+            RenderText {#text} at (0,10) size 22x100
               text run at (0,10) width 100: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}"
-          RenderRubyBase (anonymous) at (0,0) size 40x120
-            RenderText {#text} at (0,0) size 40x120
-              text run at (0,0) width 120: "\x{6A5F}\x{52D5}\x{968A}"
+          RenderRubyBase (anonymous) at (0,0) size 48x120
+            RenderText {#text} at (1,0) size 46x120
+              text run at (1,0) width 120: "\x{6A5F}\x{52D5}\x{968A}"
       RenderText {#text} at (0,0) size 0x0
