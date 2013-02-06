@@ -84,21 +84,21 @@ static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& du
     return success;
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
 {
     ASSERT_ARG(handle, !handle.m_handle);
     ASSERT_ARG(handle, !handle.m_size);
 
     uint64_t size;
-    if (!decoder->decode(size))
+    if (!decoder.decode(size))
         return false;
 
     uint64_t sourceHandle;
-    if (!decoder->decode(sourceHandle))
+    if (!decoder.decode(sourceHandle))
         return false;
 
     uint32_t sourcePID;
-    if (!decoder->decode(sourcePID))
+    if (!decoder.decode(sourcePID))
         return false;
 
     HANDLE duplicatedHandle;

@@ -67,7 +67,7 @@ void WorkQueue::handleCallback(void* context, BOOLEAN timerOrWaitFired)
     ASSERT_ARG(timerOrWaitFired, !timerOrWaitFired);
 
     WorkItemWin* item = static_cast<WorkItemWin*>(context);
-    WorkQueue* queue = item->queue();
+    RefPtr<WorkQueue> queue = item->queue();
 
     {
         MutexLocker lock(queue->m_workItemQueueLock);
@@ -133,23 +133,16 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 {
     ASSERT(m_isWorkThreadRegistered);
 
-    bool isValid = true;
-
     m_workItemQueueLock.lock();
 
-    while (isValid && !m_workItemQueue.isEmpty()) {
+    while (!m_workItemQueue.isEmpty()) {
         Vector<RefPtr<WorkItemWin> > workItemQueue;
         m_workItemQueue.swap(workItemQueue);
 
         // Allow more work to be scheduled while we're not using the queue directly.
         m_workItemQueueLock.unlock();
-        for (size_t i = 0; i < workItemQueue.size(); ++i) {
-            MutexLocker locker(m_isValidMutex);
-            isValid = m_isValid;
-            if (!isValid)
-                break;
+        for (size_t i = 0; i < workItemQueue.size(); ++i)
             workItemQueue[i]->function()();
-        }
         m_workItemQueueLock.lock();
     }
 

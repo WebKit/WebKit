@@ -1,3 +1,24 @@
+2013-02-06  Simon Hausmann  <simon.hausmann@digia.com>, Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [WK2][Win] Fix build after MessageID.h related changes and after r141619.
+        https://bugs.webkit.org/show_bug.cgi?id=108612
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::readEventHandler):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Platform/WorkQueue.h:
+        (WorkQueue::WorkItemWin::queue):
+        (WorkItemWin):
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::handleCallback):
+        (WorkQueue::performWorkOnRegisteredWorkThread):
+
 2013-02-06  Mike West  <mkwst@chromium.org>
 
         Add an ENABLE_NOSNIFF feature flag.

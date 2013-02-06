@@ -103,14 +103,14 @@ private:
         virtual ~WorkItemWin();
 
         Function<void()>& function() { return m_function; }
-        WorkQueue* queue() const { return m_queue; }
+        WorkQueue* queue() const { return m_queue.get(); }
 
     protected:
         WorkItemWin(const Function<void()>&, WorkQueue*);
 
     private:
         Function<void()> m_function;
-        WorkQueue* m_queue;
+        RefPtr<WorkQueue> m_queue;
     };
 
     class HandleWorkItem : public WorkItemWin {

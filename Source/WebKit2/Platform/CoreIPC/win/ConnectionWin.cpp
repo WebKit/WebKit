@@ -96,10 +96,10 @@ void Connection::platformInvalidate()
 
     m_isConnected = false;
 
-    m_connectionQueue.unregisterAndCloseHandle(m_readState.hEvent);
+    m_connectionQueue->unregisterAndCloseHandle(m_readState.hEvent);
     m_readState.hEvent = 0;
 
-    m_connectionQueue.unregisterAndCloseHandle(m_writeState.hEvent);
+    m_connectionQueue->unregisterAndCloseHandle(m_writeState.hEvent);
     m_writeState.hEvent = 0;
 
     ::CloseHandle(m_connectionPipe);
@@ -161,17 +161,8 @@ void Connection::readEventHandler()
         if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
 
-            // The messageID is encoded at the end of the buffer.
-            // Note that we assume here that the message is the same size as m_readBuffer. We can
-            // assume this because we always size m_readBuffer to exactly match the size of the message,
-            // either when receiving ERROR_MORE_DATA from ::GetOverlappedResult above or when
-            // ::PeekNamedPipe tells us the size below. We never set m_readBuffer to a size larger
-            // than the message.
-            ASSERT(m_readBuffer.size() >= sizeof(MessageID));
-            size_t realBufferSize = m_readBuffer.size() - sizeof(MessageID);
-
-            OwnPtr<MessageDecoder> decoder = MessageDecoder::create(DataReference(m_readBuffer.data(), realBufferSize));
-            processIncomingMessage(MessageID(), decoder.release());
+            OwnPtr<MessageDecoder> decoder = MessageDecoder::create(DataReference(m_readBuffer.data(), m_readBuffer.size()));
+            processIncomingMessage(decoder.release());
         }
 
         // Find out the size of the next message in the pipe (if there is one) so that we can read
@@ -260,11 +251,11 @@ bool Connection::open()
     m_isConnected = true;
 
     // Start listening for read and write state events.
-    m_connectionQueue.registerHandle(m_readState.hEvent, bind(&Connection::readEventHandler, this));
-    m_connectionQueue.registerHandle(m_writeState.hEvent, bind(&Connection::writeEventHandler, this));
+    m_connectionQueue->registerHandle(m_readState.hEvent, bind(&Connection::readEventHandler, this));
+    m_connectionQueue->registerHandle(m_writeState.hEvent, bind(&Connection::writeEventHandler, this));
 
     // Schedule a read.
-    m_connectionQueue.dispatch(bind(&Connection::readEventHandler, this));
+    m_connectionQueue->dispatch(bind(&Connection::readEventHandler, this));
 
     return true;
 }
@@ -277,7 +268,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingWriteEncoder;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
 {
     ASSERT(!m_pendingWriteEncoder);
 
