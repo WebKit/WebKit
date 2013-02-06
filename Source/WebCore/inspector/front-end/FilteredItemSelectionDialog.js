@@ -60,7 +60,6 @@ WebInspector.FilteredItemSelectionDialog = function(delegate)
     this._itemElementsContainer = this._viewportControl.element;
     this._itemElementsContainer.addStyleClass("container");
     this._itemElementsContainer.addStyleClass("monospace");
-    this._itemElementsContainer.addEventListener("mousemove", this._onMouseMove.bind(this), false);
     this._itemElementsContainer.addEventListener("click", this._onClick.bind(this), false);
     this.element.appendChild(this._itemElementsContainer);
 
@@ -113,8 +112,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     onEnter: function()
     {
-        if (typeof this._selectedIndexInFiltered !== "number")
-            return;
         this._delegate.selectItem(this._filteredItems[this._selectedIndexInFiltered], this._promptElement.value.trim());
     },
 
@@ -225,7 +222,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         var camelCaseScoringRegex = query ? this._createScoringRegex(query, ignoreCase, true) : null;
         var underscoreScoringRegex = query ? this._createScoringRegex(query, ignoreCase, false) : null;
 
-        var oldSelectedAbsoluteIndex = this._filteredItems[this._selectedIndexInFiltered];
+        var oldSelectedAbsoluteIndex = this._selectedIndexInFiltered ? this._filteredItems[this._selectedIndexInFiltered] : null;
         this._filteredItems = [];
         this._selectedIndexInFiltered = 0;
 
@@ -286,45 +283,48 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             }
         }
         this._viewportControl.refresh();
-        this._updateSelection(this._selectedIndexInFiltered);
+        this._updateSelection(this._selectedIndexInFiltered, false);
     },
 
     _onKeyDown: function(event)
     {
-        if (typeof this._selectedIndexInFiltered === "number") {
-            var newSelectedIndex = this._selectedIndexInFiltered;
+        var newSelectedIndex = this._selectedIndexInFiltered;
 
-            function updateSelection(makeLast)
-            {
-                this._viewportControl.scrollItemIntoView(newSelectedIndex, makeLast); 
-                this._updateSelection(newSelectedIndex);
-                event.consume(true);
-            }
-
-            switch (event.keyCode) {
-            case WebInspector.KeyboardShortcut.Keys.Down.code:
-                if (++newSelectedIndex >= this._filteredItems.length)
-                    newSelectedIndex = this._filteredItems.length - 1;
-                updateSelection.call(this, true);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.Up.code:
-                if (--newSelectedIndex < 0)
-                    newSelectedIndex = 0;
-                updateSelection.call(this, false);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.PageDown.code:
-                newSelectedIndex = Math.min(newSelectedIndex + this._viewportControl.rowsPerViewport(), this._filteredItems.length - 1);
-                updateSelection.call(this, true);
-                break;
-            case WebInspector.KeyboardShortcut.Keys.PageUp.code:
-                newSelectedIndex = Math.max(newSelectedIndex - this._viewportControl.rowsPerViewport(), 0);
-                updateSelection.call(this, false);
-                break;
-            }
+        switch (event.keyCode) {
+        case WebInspector.KeyboardShortcut.Keys.Down.code:
+            if (++newSelectedIndex >= this._filteredItems.length)
+                newSelectedIndex = this._filteredItems.length - 1;
+            this._updateSelection(newSelectedIndex, true);
+            event.consume(true);
+            break;
+        case WebInspector.KeyboardShortcut.Keys.Up.code:
+            if (--newSelectedIndex < 0)
+                newSelectedIndex = 0;
+            this._updateSelection(newSelectedIndex, false);
+            event.consume(true);
+            break;
+        case WebInspector.KeyboardShortcut.Keys.PageDown.code:
+            newSelectedIndex = Math.min(newSelectedIndex + this._viewportControl.rowsPerViewport(), this._filteredItems.length - 1);
+            this._updateSelection(newSelectedIndex, true);
+            event.consume(true);
+            break;
+        case WebInspector.KeyboardShortcut.Keys.PageUp.code:
+            newSelectedIndex = Math.max(newSelectedIndex - this._viewportControl.rowsPerViewport(), 0);
+            this._updateSelection(newSelectedIndex, false);
+            event.consume(true);
+            break;
+        case WebInspector.KeyboardShortcut.Keys.Home.code:
+            this._updateSelection(0, false);
+            event.consume(true);
+            break;
+        case WebInspector.KeyboardShortcut.Keys.End.code:
+            this._updateSelection(this._filteredItems.length - 1, true);
+            event.consume(true);
+            break;
+        default:
+            if (event.keyIdentifier !== "Shift" && event.keyIdentifier !== "Ctrl" && event.keyIdentifier !== "Meta" && event.keyIdentifier !== "Left" && event.keyIdentifier !== "Right")
+                this._scheduleFilter();
         }
-
-        if (event.keyIdentifier !== "Shift" && event.keyIdentifier !== "Ctrl" && event.keyIdentifier !== "Meta" && event.keyIdentifier !== "Left" && event.keyIdentifier !== "Right")
-            this._scheduleFilter();
     },
 
     _scheduleFilter: function()
@@ -336,18 +336,18 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     /**
      * @param {number} index  
+     * @param {boolean} makeLast
      */
-    _updateSelection: function(index)
+    _updateSelection: function(index, makeLast)
     { 
         var element = this._viewportControl.renderedElementAt(this._selectedIndexInFiltered);
         if (element)
             element.removeStyleClass("selected");
+        this._viewportControl.scrollItemIntoView(index, makeLast);
         this._selectedIndexInFiltered = index;
-        element = this._viewportControl.renderedElementAt(index); 
+        element = this._viewportControl.renderedElementAt(index);
         if (element)
             element.addStyleClass("selected");
-        else
-            this._viewportControl.refresh();
     },
 
     _onClick: function(event)
@@ -357,18 +357,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             return;
         this._delegate.selectItem(itemElement._index, this._promptElement.value.trim());
         WebInspector.Dialog.hide();
-    },
-
-    _onMouseMove: function(event)
-    {
-        if (event.pageX === this._lastMouseX && event.pageY === this._lastMouseY)
-            return;
-        this._lastMouseX = event.pageX;
-        this._lastMouseY = event.pageY;
-        var itemElement = event.target.enclosingNodeOrSelfWithClass("filtered-item-list-dialog-item");
-        if (!itemElement)
-            return;
-        this._updateSelection(itemElement._filteredIndex);
     },
 
     /**
