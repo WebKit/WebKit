@@ -1432,6 +1432,11 @@ webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-horizontal.ht
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
+# WebGL Tests
+# -----------------------------------------------------------------
+crbug.com/174268 webgl/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip ]
+
+# -----------------------------------------------------------------
 # Other failures
 # -----------------------------------------------------------------
 
