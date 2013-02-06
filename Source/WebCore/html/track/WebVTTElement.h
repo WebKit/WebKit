@@ -56,6 +56,8 @@ public:
     void setIsPastNode(bool value) { m_isPastNode = value; }
 
     virtual bool isWebVTTElement() const OVERRIDE { return true; }
+    AtomicString language() const { return m_language; }
+    void setLanguage(AtomicString value) { m_language = value; }
 
     static const QualifiedName& voiceAttributeName()
     {
@@ -76,6 +78,7 @@ private:
     unsigned m_isPastNode : 1;
     unsigned m_webVTTNodeType : 4;
     
+    AtomicString m_language;
 };
 
 inline WebVTTElement* toWebVTTElement(Node* node)

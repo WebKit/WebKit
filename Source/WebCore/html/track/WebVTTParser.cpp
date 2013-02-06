@@ -396,12 +396,12 @@ void WebVTTParser::constructTreeFromToken(Document* document)
 
             if (child->webVTTNodeType() == WebVTTNodeTypeVoice)
                 child->setAttribute(WebVTTElement::voiceAttributeName(), AtomicString(m_token.annotation().data(), m_token.annotation().size()));
-            else if (child->webVTTNodeType() == WebVTTNodeTypeLanguage)
+            else if (child->webVTTNodeType() == WebVTTNodeTypeLanguage) {
                 m_languageStack.append(AtomicString(m_token.annotation().data(), m_token.annotation().size()));
-
-            if (!m_languageStack.isEmpty())
                 child->setAttribute(WebVTTElement::langAttributeName(), m_languageStack.last());
-
+            }
+            if (!m_languageStack.isEmpty())
+                child->setLanguage(m_languageStack.last());
             m_currentNode->parserAppendChild(child);
             m_currentNode = child;
         }

@@ -81,7 +81,9 @@ PassRefPtr<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Documen
 
 PassRefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren()
 {
-    return create(static_cast<WebVTTNodeType>(m_webVTTNodeType), document());
+    RefPtr<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), document());
+    clone->setLanguage(m_language);
+    return clone;
 }
 
 PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document* document)
@@ -93,6 +95,7 @@ PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document* doc
     case WebVTTNodeTypeVoice:
         htmlElement = HTMLElement::create(HTMLNames::spanTag, document);
         htmlElement.get()->setAttribute(HTMLNames::titleAttr, getAttribute(voiceAttributeName()));
+        htmlElement.get()->setAttribute(HTMLNames::langAttr, getAttribute(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
         htmlElement = HTMLElement::create(HTMLNames::iTag, document);
@@ -113,7 +116,6 @@ PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document* doc
         ASSERT_NOT_REACHED();
     }
 
-    htmlElement.get()->setAttribute(HTMLNames::langAttr, getAttribute(langAttributeName()));
     htmlElement.get()->setAttribute(HTMLNames::classAttr, getAttribute(HTMLNames::classAttr));
     return htmlElement;
 }

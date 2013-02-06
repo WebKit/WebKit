@@ -822,7 +822,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
                 AtomicString value;
 #if ENABLE(VIDEO_TRACK)
                 if (element->isWebVTTElement())
-                    value = element->getAttribute(langAttr);
+                    value = toWebVTTElement(element)->language();
                 else
 #endif
                     value = element->computeInheritedLanguage();

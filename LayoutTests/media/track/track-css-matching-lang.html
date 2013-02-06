@@ -9,19 +9,17 @@
 
         <style>
         ::cue(:lang(ru)) { color: lime; }
-        ::cue(:lang(en)) { color: purple; }
-        ::cue(c[lang="ru"]) { color: red; }
-        ::cue(c[lang="en"]) { color: green; }
+        ::cue(lang[lang="en"]) { color: purple; }
+        ::cue(c[lang="ru"]) { color: red; } /* Shouldn't work, no attribute 'lang' for 'c'. */
         </style>
 
         <script>
 
         var cueNode;
         var seekedCount = 0;
-        var seekTimes = [0.1, 0.6];
+        var seekTimes = [0.1];
 
-        var info = [["rgb(0, 128, 0)", "rgb(255, 0, 0)", "rgb(0, 128, 0)"],
-                    ["rgb(128, 0, 128)", "rgb(0, 255, 0)", "rgb(128, 0, 128)"]];
+        var info = [["rgb(128, 0, 128)", "rgb(0, 255, 0)", "rgb(128, 0, 128)"]];
 
         function seeked()
         {
@@ -45,7 +43,7 @@
 
         function loaded()
         {
-            consoleWrite("Test that cues are being matched properly by the lang attribute.");
+            consoleWrite("Test that cues are being matched properly by the lang attribute and :lang() pseudo class.");
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
             video.id = "testvideo";
