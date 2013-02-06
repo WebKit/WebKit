@@ -1,3 +1,16 @@
+2013-02-05  Paweł Forysiuk  <tuxator@o2.pl>
+
+        Building with MinGW compiler dies with gtest errors
+        https://bugs.webkit.org/show_bug.cgi?id=108470
+
+        Reviewed by Martin Robinson.
+
+        Variable Libraries_libgtest_la_CXXFLAGS blindly assumes that
+        pthreads will always be enabled. Make using pthreads for gtest
+        conditional on the build target.
+
+        * gtest/GNUmakefile.am: Set Libraries_libgtest_la_CXXFLAGS accordingly to the build target.
+
 2013-01-23  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style to CRLF on Windows .sln files.

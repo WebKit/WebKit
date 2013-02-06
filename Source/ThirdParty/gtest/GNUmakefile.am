@@ -36,9 +36,13 @@ Libraries_libgtest_la_CPPFLAGS = \
 	-I$(srcdir)/Source/ThirdParty/gtest \
 	-I$(srcdir)/Source/ThirdParty/gtest/include
 
+if TARGET_WIN32
+Libraries_libgtest_la_CXXFLAGS = -DGTEST_HAS_PTHREAD=0
+else
 Libraries_libgtest_la_CXXFLAGS = -DGTEST_HAS_PTHREAD=1
 Libraries_libgtest_la_LIBADD = \
 	-lpthread
+endif
 
 # gtest source files that we don't compile directly.  They are
 # #included by gtest-all.cc.
