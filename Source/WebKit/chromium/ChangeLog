@@ -1,3 +1,13 @@
+2013-02-05  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Explicitly destroy the WebMediaPlayer in WebMediaPlayerClientImpl's destructor
+        https://bugs.webkit.org/show_bug.cgi?id=108989
+
+        Reviewed by Kent Tamura.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+
 2013-02-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Reduce usage of deprecatedString() and deprecatedInteger()

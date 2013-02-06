@@ -100,12 +100,21 @@ WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
     if (m_webMediaPlayer)
         m_webMediaPlayer->setStreamTextureClient(0);
 #endif
-    if (m_helperPlugin)
-        closeHelperPlugin();
+
 #if USE(ACCELERATED_COMPOSITING)
     if (m_videoLayer)
         GraphicsLayerChromium::unregisterContentsLayer(m_videoLayer->layer());
 #endif
+
+    // Explicitly destroy the WebMediaPlayer to allow verification of tear down.
+    m_webMediaPlayer.clear();
+
+    // FIXME(ddorwin): Uncomment the ASSERT and remove the closeHelperPlugin()
+    // call after fixing http://crbug.com/173755.
+    // Ensure the m_webMediaPlayer destroyed any WebHelperPlugin used.
+    // ASSERT(!m_helperPlugin);
+    if (m_helperPlugin)
+        closeHelperPlugin();
 }
 
 void WebMediaPlayerClientImpl::networkStateChanged()
