@@ -1,3 +1,19 @@
+2013-02-06  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Check for a valid range object before using it
+        https://bugs.webkit.org/show_bug.cgi?id=109058
+
+        Reviewed by Rob Buis.
+
+        PR291394
+        Crash occurs if makeRange returns null, since we are using this value without checking
+        its validity. We had an assert before which I'm replacing with just a check for null.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::getRangeForSpellCheckWithFineGranularity):
+
 2013-02-05  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Scrolling performance drops doing page load

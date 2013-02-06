@@ -129,13 +129,17 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
 PassRefPtr<Range> SpellingHandler::getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition)
 {
     SpellingLog(Platform::LogLevelWarn, "SpellingHandler::getRangeForSpellCheckWithFineGranularity");
-    ASSERT(makeRange(startPosition, endOfCurrentWord));
     VisiblePosition endOfCurrentWord = endOfWord(startPosition);
+    RefPtr<Range> currentRange;
 
     // Keep iterating until one of our cases is hit, or we've incremented the starting position right to the end.
     while (startPosition != endPosition) {
+        currentRange = makeRange(startPosition, endOfCurrentWord);
+        if (!currentRange)
+            return 0;
+
         // Check the text length within this range.
-        if (makeRange(startPosition, endOfCurrentWord)->text().length() >= MaxSpellCheckingStringLength) {
+        if (currentRange->text().length() >= MaxSpellCheckingStringLength) {
             // If this is not the first word, return a Range with end boundary set to the previous word.
             if (startOfWord(endOfCurrentWord, LeftWordIfOnBoundary) != startPosition && !DOMSupport::isEmptyRangeOrAllSpaces(startPosition, endOfCurrentWord)) {
                 // When a series of whitespace follows a word, previousWordPosition will jump passed all of them, and using LeftWordIfOnBoundary brings us to
