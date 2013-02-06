@@ -1,0 +1,28 @@
+<html aria-label="Test">
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+    <p role="button" id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test checks that the <html> element is not the AX tree (ever), even when it has an aria attribute. ");
+
+            var startElement = accessibilityController.accessibleElementById("description");
+            debug("The start element should be a button.");
+            shouldBe("startElement.role", "'AXRole: AXButton'");
+
+            debug("\nThe parent should be the web area.");
+            shouldBe("startElement.parentElement().role", "'AXRole: AXWebArea'");
+        } else {
+            debug("This test requires accessibilityController.")
+        }
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body> 
+</html>
