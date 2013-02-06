@@ -1,3 +1,19 @@
+2013-02-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        put_to_base should emit a Phantom for "value" across the ForceOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=108998
+
+        Reviewed by Oliver Hunt.
+
+        Otherwise, the OSR exit compiler could clobber it, which would lead to badness.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites): Build fixes for when DFG debug logging is enabled.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Added extra Phantoms for the "value" field where needed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Ditto.
+
 2013-02-05  Michael Saboff  <msaboff@apple.com>
 
         Crash at JSC::call when loading www.gap.com with JSVALUE32_64 Enabled

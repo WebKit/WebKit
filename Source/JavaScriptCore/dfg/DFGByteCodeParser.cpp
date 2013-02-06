@@ -2999,6 +2999,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case PutToBaseOperation::Uninitialised:
                 addToGraph(ForceOSRExit);
                 addToGraph(Phantom, get(base));
+                addToGraph(Phantom, get(value));
                 break;
 
             case PutToBaseOperation::GlobalVariablePutChecked: {
@@ -3028,6 +3029,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (!putToBase->m_structure) {
                     addToGraph(ForceOSRExit);
                     addToGraph(Phantom, get(base));
+                    addToGraph(Phantom, get(value));
                     NEXT_OPCODE(op_put_to_base);
                 }
                 Node* baseNode = get(base);
