@@ -1,3 +1,9 @@
+2013-02-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed. Update my email address in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake] Don't warn unused cmake variables which aren't used by cmake ports
