@@ -1472,6 +1472,10 @@ webkit.org/b/107962 webkit.org/b/108380 http/tests/cache/iframe-304-crash.html [
 
 webkit.org/b/108747 inspector-protocol/page/javascriptDialogEvents.html [ Failure ]
 
+webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ Failure ]
+webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Failure ]
+webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
