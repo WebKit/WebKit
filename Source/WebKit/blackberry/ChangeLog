@@ -1,3 +1,44 @@
+2013-02-06  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Refactor renderContents() for cleaner code.
+        https://bugs.webkit.org/show_bug.cgi?id=109059
+        RIM PR 280374
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        The fact that we've got two renderContents() implementations
+        in BackingStore.cpp, one of which was tailored to just
+        being called from drawContents(), is a major annoyance.
+
+        With this patch, the regular renderContents() is modified
+        in a way so that drawContents() can make use of it as well.
+        This includes an API change for both functions which makes
+        it more flexible and enables further cleanups and improvements
+        to accuracy. The second, unloved renderContents() is removed.
+
+        The user-visible changes are improved (float) accuracy for
+        render offsets, clipping to exactly the dstRect that has
+        been specified, and the changed public drawContents() API.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStore::drawContents):
+        * Api/BackingStore.h:
+        (Platform):
+        (Graphics):
+        * Api/BackingStore_p.h:
+        (WebCore):
+        (BackingStorePrivate):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        (BlackBerry::WebKit::SurfacePool::destroyPlatformGraphicsContext):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2013-02-06  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Check range before use in parseBlockForSpellChecking

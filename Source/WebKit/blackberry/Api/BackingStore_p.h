@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class IntRect;
+class FloatPoint;
 class FloatRect;
 class LayerRenderer;
 class TransformationMatrix;
@@ -305,8 +306,7 @@ public:
     static Platform::IntSize tileSize();
 
     // This takes transformed contents coordinates.
-    void renderContents(BlackBerry::Platform::Graphics::Buffer*, const Platform::IntPoint& surfaceOffset, const Platform::IntRect& contentsRect) const;
-    void renderContents(Platform::Graphics::Drawable* /*drawable*/, const Platform::IntRect& /*contentsRect*/, const Platform::IntSize& /*destinationSize*/) const;
+    bool renderContents(BlackBerry::Platform::Graphics::Buffer*, const BlackBerry::Platform::IntRect& dstRect, double scale, const BlackBerry::Platform::FloatPoint& documentScrollPosition) const;
 
     void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, BlackBerry::Platform::Graphics::BlendMode, unsigned char globalAlpha);
     void fillWindow(Platform::Graphics::FillPattern, const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);
