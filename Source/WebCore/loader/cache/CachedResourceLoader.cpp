@@ -479,10 +479,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         }
     }
 
-#if PLATFORM(CHROMIUM) || PLATFORM(MAC)
+#if PLATFORM(CHROMIUM)
     // FIXME: Temporarily leave main resource caching disabled for chromium, see https://bugs.webkit.org/show_bug.cgi?id=107962
     // Ensure main resources aren't preloaded, and other main resource loads are removed from cache to prevent reuse.
-    // FIXME: Temporarily leave main resource caching disabled on Mac port per webkit.org/b/108380 until we track down the root cause.
     if (type == CachedResource::MainResource) {
         ASSERT(policy != Use);
         ASSERT(policy != Revalidate);
