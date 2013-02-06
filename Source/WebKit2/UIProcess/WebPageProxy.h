@@ -1012,7 +1012,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, uint32_t& pluginLoadPolicy);
+    void getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy);
 #endif
 
     PageClient* m_pageClient;

@@ -468,12 +468,12 @@ static inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy
     return PluginModuleBlocked;
 }
 
-PluginModuleLoadPolicy WebUIClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, PluginModuleLoadPolicy currentPluginLoadPolicy)
+PluginModuleLoadPolicy WebUIClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy)
 {
     if (!m_client.pluginLoadPolicy)
         return currentPluginLoadPolicy;
 
-    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), toWKPluginLoadPolicy(currentPluginLoadPolicy), m_client.clientInfo));
+    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), toURLRef(documentURLString.impl()), toWKPluginLoadPolicy(currentPluginLoadPolicy), m_client.clientInfo));
 }
 
 } // namespace WebKit

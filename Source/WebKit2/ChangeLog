@@ -1,3 +1,25 @@
+2013-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Pass the document source URL to the pluginLoadPolicy callback
+        https://bugs.webkit.org/show_bug.cgi?id=109084
+        <rdar://problem/13154516>
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::pluginLoadPolicy):
+        * UIProcess/WebUIClient.h:
+        (WebUIClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+
 2013-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of unneeded writeable preferences.

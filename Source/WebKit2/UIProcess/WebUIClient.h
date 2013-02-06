@@ -123,7 +123,7 @@ public:
     bool hideColorPicker(WebPageProxy*);
 #endif
 
-    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, PluginModuleLoadPolicy currentPluginLoadPolicy);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
 };
 
 } // namespace WebKit
