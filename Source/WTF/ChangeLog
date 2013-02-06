@@ -1,3 +1,20 @@
+2013-02-05  Mark Lam  <mark.lam@apple.com>
+
+        Fix EnumClass so that it can be used with switch statements.
+        https://bugs.webkit.org/show_bug.cgi?id=109004.
+
+        Reviewed by Sam Weinig.
+
+        * wtf/EnumClass.h:
+        (WTF::EnumClass::operator==):
+        (WTF::EnumClass::operator!=):
+        (WTF::EnumClass::operator<):
+        (WTF::EnumClass::operator<=):
+        (WTF::EnumClass::operator>):
+        (WTF::EnumClass::operator>=):
+        (EnumClass):
+        (WTF::EnumClass::operator Value):
+
 2013-02-05  Oliver Hunt  <oliver@apple.com>
 
         Disable TCMalloc hardening as it's breaking leaks.

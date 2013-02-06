@@ -54,6 +54,7 @@ namespace WTF {
 // Otherwise, it will use the EnumClass template below.
 
 #if COMPILER_SUPPORTS(CXX_STRONG_ENUMS)
+
 #define ENUM_CLASS(__enumName) \
     enum class __enumName
 
@@ -99,6 +100,15 @@ public:
     ALWAYS_INLINE bool operator<=(const EnumClass other) { return m_value <= other.m_value; }
     ALWAYS_INLINE bool operator>(const EnumClass other) { return m_value > other.m_value; }
     ALWAYS_INLINE bool operator>=(const EnumClass other) { return m_value >= other.m_value; }
+
+    ALWAYS_INLINE bool operator==(const Value value) { return m_value == value; }
+    ALWAYS_INLINE bool operator!=(const Value value) { return m_value != value; }
+    ALWAYS_INLINE bool operator<(const Value value) { return m_value < value; }
+    ALWAYS_INLINE bool operator<=(const Value value) { return m_value <= value; }
+    ALWAYS_INLINE bool operator>(const Value value) { return m_value > value; }
+    ALWAYS_INLINE bool operator>=(const Value value) { return m_value >= value; }
+
+    ALWAYS_INLINE operator Value() { return m_value; }
 
 private:
     Value m_value;
