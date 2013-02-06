@@ -1,5 +1,21 @@
 2013-02-06  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Check range before use in parseBlockForSpellChecking
+        https://bugs.webkit.org/show_bug.cgi?id=109080
+
+        Reviewed by Yong Li.
+
+        PR291394
+        This was missed during patch webkit/5aea04f6ea625827. Since getRangeForSpellCheckWithFineGranularity
+        now returns null values, we need a check here before using the range object here as well.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+
+2013-02-06  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Check for a valid range object before using it
         https://bugs.webkit.org/show_bug.cgi?id=109058
 

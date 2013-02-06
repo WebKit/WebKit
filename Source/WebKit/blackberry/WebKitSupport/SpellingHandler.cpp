@@ -116,6 +116,8 @@ void SpellingHandler::parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>
 
     // Iterate through words from the start of the line to the end.
     rangeForSpellChecking = getRangeForSpellCheckWithFineGranularity(m_startOfCurrentLine, m_endOfCurrentLine);
+    if (!rangeForSpellChecking)
+        return;
 
     m_startOfCurrentLine = VisiblePosition(rangeForSpellChecking->endPosition());
     m_endOfCurrentLine = endOfLine(m_startOfCurrentLine);
