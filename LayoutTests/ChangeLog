@@ -1,3 +1,12 @@
+2013-02-06  Lucas Forschler  <lforschler@apple.com>
+
+	<rdar://problem/12967921>
+	Update test results.
+	
+	Reviewed by Enrica Casucci.
+
+    * editing/pasteboard/paste-noscript-xhtml-expected.txt:
+
 2013-01-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r122305
