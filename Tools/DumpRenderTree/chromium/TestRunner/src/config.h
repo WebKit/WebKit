@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,45 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestInterfaces_h
-#define WebTestInterfaces_h
+#ifndef config_h
+#define config_h
 
-#include "WebTestCommon.h"
-#include <memory>
+#define USE(feature) (defined WTF_USE_##feature && WTF_USE_##feature)
 
-namespace WebKit {
-class WebFrame;
-class WebView;
-}
-
-namespace WebTestRunner {
-
-class TestInterfaces;
-class WebTestDelegate;
-class WebTestRunner;
-
-class WEBTESTRUNNER_EXPORT WebTestInterfaces {
-public:
-    WebTestInterfaces();
-    ~WebTestInterfaces();
-
-    void setWebView(WebKit::WebView*);
-    void setDelegate(WebTestDelegate*);
-    void bindTo(WebKit::WebFrame*);
-    void resetAll();
-    void setTestIsRunning(bool);
-
-    WebKit::WebView* webView() const;
-    WebTestRunner* testRunner();
-
-#if WEBTESTRUNNER_IMPLEMENTATION
-    TestInterfaces* testInterfaces();
-#endif
-
-private:
-    std::auto_ptr<TestInterfaces> m_interfaces;
-};
-
-}
-
-#endif // WebTestInterfaces_h
+#endif // config_h

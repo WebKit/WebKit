@@ -34,7 +34,6 @@
 #include "CppBoundClass.h"
 #include "WebAccessibilityObject.h"
 #include <vector>
-#include <wtf/Vector.h>
 
 namespace WebTestRunner {
 
@@ -168,7 +167,7 @@ public:
     AccessibilityUIElement* createRoot(const WebKit::WebAccessibilityObject&);
 
 private:
-    typedef Vector<AccessibilityUIElement*> ElementList;
+    typedef std::vector<AccessibilityUIElement*> ElementList;
     ElementList m_elements;
 };
 

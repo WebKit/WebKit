@@ -34,6 +34,7 @@
 #include "AccessibilityControllerChromium.h"
 #include "EventSender.h"
 #include "SpellCheckClient.h"
+#include "TestCommon.h"
 #include "TestInterfaces.h"
 #include "TestPlugin.h"
 #include "TestRunner.h"
@@ -58,7 +59,6 @@
 #include <public/WebURLError.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
-#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 using namespace std;
@@ -212,7 +212,7 @@ string urlSuitableForTestResult(const string& url)
 
     size_t pos = url.rfind('/');
     if (pos == string::npos) {
-#if OS(WINDOWS)
+#ifdef WIN32
         pos = url.rfind('\\');
         if (pos == string::npos)
             pos = 0;
@@ -267,7 +267,6 @@ WebTestProxyBase::WebTestProxyBase()
 
 WebTestProxyBase::~WebTestProxyBase()
 {
-    delete m_spellcheck;
 }
 
 void WebTestProxyBase::setInterfaces(WebTestInterfaces* interfaces)
@@ -290,7 +289,7 @@ void WebTestProxyBase::reset()
 
 WebSpellCheckClient* WebTestProxyBase::spellCheckClient() const
 {
-    return m_spellcheck;
+    return m_spellcheck.get();
 }
 
 void WebTestProxyBase::setPaintRect(const WebRect& rect)
@@ -556,14 +555,11 @@ void WebTestProxyBase::didEndEditing()
 
 void WebTestProxyBase::registerIntentService(WebFrame*, const WebIntentServiceInfo& service)
 {
-#if ENABLE(WEB_INTENTS)
     m_delegate->printMessage(string("Registered Web Intent Service: action=") + service.action().utf8().data() + " type=" + service.type().utf8().data() + " title=" + service.title().utf8().data() + " url=" + service.url().spec().data() + " disposition=" + service.disposition().utf8().data() + "\n");
-#endif
 }
 
 void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& request)
 {
-#if ENABLE(WEB_INTENTS)
     m_delegate->printMessage(string("Received Web Intent: action=") + request.intent().action().utf8().data() + " type=" + request.intent().type().utf8().data() + "\n");
     WebMessagePortChannelArray* ports = request.intent().messagePortChannelsRelease();
     m_delegate->setCurrentWebIntentRequest(request);
@@ -586,7 +582,6 @@ void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& 
     WebVector<WebURL> suggestions = request.intent().suggestions();
     for (size_t i = 0; i < suggestions.size(); ++i)
         m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
-#endif
 }
 
 bool WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
@@ -778,7 +773,7 @@ void WebTestProxyBase::didDetectXSS(WebFrame*, const WebURL&, bool)
 void WebTestProxyBase::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebKit::WebURLRequest& request)
 {
     if (m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
-        ASSERT(m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end());
+        WEBKIT_ASSERT(m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end());
         m_resourceIdentifierMap[identifier] = descriptionSuitableForTestResult(request.url().spec());
     }
 }

@@ -31,20 +31,22 @@
 #include "config.h"
 #include "MockGrammarCheck.h"
 
+#include "Platform/chromium/public/WebCString.h"
 #include "Platform/chromium/public/WebString.h"
+#include "TestCommon.h"
 #include "WebTextCheckingResult.h"
-
-#include <wtf/ASCIICType.h>
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include <algorithm>
 
 using namespace WebKit;
+using namespace std;
 
-bool MockGrammarCheck::checkGrammarOfString(const WebString& text, Vector<WebTextCheckingResult>* results)
+namespace WebTestRunner {
+
+bool MockGrammarCheck::checkGrammarOfString(const WebString& text, vector<WebTextCheckingResult>* results)
 {
-    ASSERT(results);
-    WTF::String stringText(text.data(), text.length());
-    if (stringText.find(isASCIIAlpha) == static_cast<size_t>(-1))
+    WEBKIT_ASSERT(results);
+    string16 stringText = text;
+    if (find_if(stringText.begin(), stringText.end(), isASCIIAlpha) == stringText.end())
         return true;
 
     // Find matching grammatical errors from known ones. This function has to
@@ -69,10 +71,13 @@ bool MockGrammarCheck::checkGrammarOfString(const WebString& text, Vector<WebTex
     };
     for (size_t i = 0; i < ARRAYSIZE_UNSAFE(grammarErrors); ++i) {
         int offset = 0;
-        while ((offset = stringText.find(grammarErrors[i].text, offset)) != -1) {
-            results->append(WebTextCheckingResult(WebTextCheckingTypeGrammar, offset + grammarErrors[i].location, grammarErrors[i].length));
+        string16 error(grammarErrors[i].text, grammarErrors[i].text + strlen(grammarErrors[i].text));
+        while ((offset = stringText.find(error, offset)) != string16::npos) {
+            results->push_back(WebTextCheckingResult(WebTextCheckingTypeGrammar, offset + grammarErrors[i].location, grammarErrors[i].length));
             offset += grammarErrors[i].length;
         }
     }
     return false;
+}
+
 }

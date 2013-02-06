@@ -31,8 +31,7 @@
 #ifndef MockGrammarCheck_h
 #define MockGrammarCheck_h
 
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <vector>
 
 namespace WebKit {
 
@@ -41,6 +40,8 @@ struct WebTextCheckingResult;
 
 }
 
+namespace WebTestRunner {
+
 // A mock implementation of a grammar-checker used for WebKit tests. This class
 // only implements the minimal functionarities required by WebKit tests, i.e.
 // this class just compares the given string with known grammar mistakes in
@@ -48,7 +49,9 @@ struct WebTextCheckingResult;
 // for webkit tests, this class is not suitable for any other usages.
 class MockGrammarCheck {
 public:
-    static bool checkGrammarOfString(const WebKit::WebString&, Vector<WebKit::WebTextCheckingResult>*);
+    static bool checkGrammarOfString(const WebKit::WebString&, std::vector<WebKit::WebTextCheckingResult>*);
 };
+
+}
 
 #endif // MockSpellCheck_h
