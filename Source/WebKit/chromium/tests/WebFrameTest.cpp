@@ -36,10 +36,13 @@
 #include "Frame.h"
 #include "FrameTestHelpers.h"
 #include "FrameView.h"
+#include "PlatformContextSkia.h"
 #include "Range.h"
 #include "RenderView.h"
 #include "ResourceError.h"
 #include "Settings.h"
+#include "SkBitmap.h"
+#include "SkCanvas.h"
 #include "URLTestHelpers.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
@@ -69,6 +72,12 @@ using WebCore::Range;
 using WebKit::URLTestHelpers::toKURL;
 
 namespace {
+
+#define EXPECT_EQ_RECT(a, b) \
+    EXPECT_EQ(a.x(), b.x()); \
+    EXPECT_EQ(a.y(), b.y()); \
+    EXPECT_EQ(a.width(), b.width()); \
+    EXPECT_EQ(a.height(), b.height());
 
 class WebFrameTest : public testing::Test {
 public:
@@ -448,6 +457,49 @@ TEST_F(WebFrameTest, pageScaleFactorDoesNotApplyCssTransform)
     EXPECT_EQ(980, webViewImpl->mainFrameImpl()->frameView()->contentsSize().width());
 }
 #endif
+
+TEST_F(WebFrameTest, pageScaleFactorScalesPaintClip)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 50;
+    int viewportHeight = 50;
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+
+    // Set <1 page scale so that the clip rect should be larger than
+    // the viewport size as passed into resize().
+    webViewImpl->setPageScaleFactor(0.5, WebPoint());
+
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 200, 200);
+    bitmap.allocPixels();
+    bitmap.eraseColor(0);
+    SkCanvas canvas(bitmap);
+
+    WebCore::PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    WebCore::GraphicsContext context(&platformContext);
+
+    EXPECT_EQ_RECT(WebCore::IntRect(0, 0, 0, 0), platformContext.opaqueRegion().asRect());
+
+    WebCore::FrameView* view = webViewImpl->mainFrameImpl()->frameView();
+    WebCore::IntRect paintRect(0, 0, 200, 200);
+    view->paint(&context, paintRect);
+
+    int viewportWidthMinusScrollbar = 50 - (view->verticalScrollbar()->isOverlayScrollbar() ? 0 : 15);
+    int viewportHeightMinusScrollbar = 50 - (view->horizontalScrollbar()->isOverlayScrollbar() ? 0 : 15);
+    WebCore::IntRect clippedRect(0, 0, viewportWidthMinusScrollbar * 2, viewportHeightMinusScrollbar * 2);
+    EXPECT_EQ_RECT(clippedRect, platformContext.opaqueRegion().asRect());
+}
 
 TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
 {
