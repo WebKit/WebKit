@@ -107,9 +107,9 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     NetworkManager::instance()->setDefersLoading(this, defersLoading);
 }
 
-bool ResourceHandle::start(NetworkingContext* context)
+bool ResourceHandle::start()
 {
-    if (!context || !context->isValid())
+    if (!d->m_context || !d->m_context->isValid())
         return false;
 
     // FIXME: clean up use of Frame now that we have NetworkingContext (see RIM Bug #1515)
@@ -156,7 +156,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     bool defersLoading = false;
     bool shouldContentSniff = false;
 
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, defersLoading, shouldContentSniff));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &syncLoader, defersLoading, shouldContentSniff));
     NetworkManager::instance()->startJob(playerId, handle, frame, defersLoading);
 
     const double syncLoadTimeOut = 60; // seconds

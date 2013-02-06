@@ -59,7 +59,7 @@ void SyncNetworkResourceLoader::start()
     Vector<char> data;
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode());
+    RefPtr<RemoteNetworkingContext> networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode(), shouldClearReferrerOnHTTPSToHTTPRedirect());
 
     consumeSandboxExtensions();
 

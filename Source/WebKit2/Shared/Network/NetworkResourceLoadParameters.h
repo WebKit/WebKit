@@ -45,7 +45,7 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadParameters {
 public:
     NetworkResourceLoadParameters();
-    NetworkResourceLoadParameters(ResourceLoadIdentifier, uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode);
+    NetworkResourceLoadParameters(ResourceLoadIdentifier, uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, WebCore::StoredCredentials, bool inPrivateBrowsingMode, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
@@ -60,6 +60,7 @@ public:
     WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
     WebCore::StoredCredentials allowStoredCredentials() const { return m_allowStoredCredentials; }
     bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
+    bool shouldClearReferrerOnHTTPSToHTTPRedirect() const { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 
 private:
     ResourceLoadIdentifier m_identifier;
@@ -72,6 +73,7 @@ private:
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
     bool m_inPrivateBrowsingMode;
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 };
 
 } // namespace WebKit

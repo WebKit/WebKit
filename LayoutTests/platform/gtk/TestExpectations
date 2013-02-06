@@ -1245,9 +1245,6 @@ webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 # Started failing after it was added in r116473
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
-# Started failing after it was added in r116563
-webkit.org/b/86061 http/tests/security/referrer-policy-redirect-link.html [ Failure ]
-
 webkit.org/b/85308 [ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # IETC namespace failures

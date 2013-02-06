@@ -218,19 +218,19 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 
 }
 
-bool ResourceHandle::start(NetworkingContext* context)
+bool ResourceHandle::start()
 {
-    if (!context)
+    if (!d->m_context)
         return false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // If NetworkingContext is invalid then we are no longer attached to a Page,
     // this must be an attempted load from an unload event handler, so let's just block it.
-    if (!context->isValid())
+    if (!d->m_context->isValid())
         return false;
 
-    d->m_storageSession = context->storageSession().platformSession();
+    d->m_storageSession = d->m_context->storageSession().platformSession();
 
     ASSERT(!d->m_proxy);
     d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
@@ -238,16 +238,16 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
-    d->m_needsSiteSpecificQuirks = context->needsSiteSpecificQuirks();
+    d->m_needsSiteSpecificQuirks = d->m_context->needsSiteSpecificQuirks();
 
     createNSURLConnection(
         d->m_proxy.get(),
         shouldUseCredentialStorage,
-        shouldRelaxThirdPartyCookiePolicy(context, firstRequest().url()),
-        d->m_shouldContentSniff || context->localFileContentSniffingEnabled());
+        shouldRelaxThirdPartyCookiePolicy(d->m_context.get(), firstRequest().url()),
+        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled());
 
     bool scheduled = false;
-    if (SchedulePairHashSet* scheduledPairs = context->scheduledRunLoopPairs()) {
+    if (SchedulePairHashSet* scheduledPairs = d->m_context->scheduledRunLoopPairs()) {
         SchedulePairHashSet::iterator end = scheduledPairs->end();
         for (SchedulePairHashSet::iterator it = scheduledPairs->begin(); it != end; ++it) {
             if (NSRunLoop *runLoop = (*it)->nsRunLoop()) {
@@ -257,7 +257,7 @@ bool ResourceHandle::start(NetworkingContext* context)
         }
     }
 
-    if (NSOperationQueue *operationQueue = context->scheduledOperationQueue()) {
+    if (NSOperationQueue *operationQueue = d->m_context->scheduledOperationQueue()) {
         ASSERT(!scheduled);
         [connection() setDelegateQueue:operationQueue];
         scheduled = true;
@@ -381,7 +381,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     OwnPtr<WebCoreSynchronousLoaderClient> client = WebCoreSynchronousLoaderClient::create();
     client->setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
 
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
 
     handle->d->m_storageSession = context->storageSession().platformSession();
 
@@ -668,7 +668,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     ResourceRequest request = newRequest;
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     m_handle->willSendRequest(request, redirectResponse);

@@ -42,10 +42,16 @@ static OwnPtr<NetworkStorageSession>& privateBrowsingStorageSession()
     return session;
 }
 
-RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled)
+bool RemoteNetworkingContext::shouldClearReferrerOnHTTPSToHTTPRedirect() const
+{
+    return m_shouldClearReferrerOnHTTPSToHTTPRedirect;
+}
+
+RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     : m_needsSiteSpecificQuirks(needsSiteSpecificQuirks)
     , m_localFileContentSniffingEnabled(localFileContentSniffingEnabled)
     , m_privateBrowsingEnabled(privateBrowsingEnabled)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
 }
 

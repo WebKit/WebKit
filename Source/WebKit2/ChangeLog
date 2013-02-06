@@ -1,3 +1,45 @@
+2013-02-06  Marja Hölttä  <marja@chromium.org>
+
+        Take referrer policy into account when clearing the referrer header
+        https://bugs.webkit.org/show_bug.cgi?id=86000
+
+        Reviewed by Alexey Proskuryakov.
+
+        The referrer should only be cleared when doing a https -> http redirect,
+        if the policy is "default". Otherwise the referrer should be left intact.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader):
+        * NetworkProcess/SchedulableLoader.h:
+        (WebKit::SchedulableLoader::shouldClearReferrerOnHTTPSToHTTPRedirect):
+        (SchedulableLoader):
+        * NetworkProcess/SyncNetworkResourceLoader.cpp:
+        (WebKit::SyncNetworkResourceLoader::start):
+        * NetworkProcess/mac/RemoteNetworkingContext.h:
+        (WebKit::RemoteNetworkingContext::create):
+        (RemoteNetworkingContext):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::shouldClearReferrerOnHTTPSToHTTPRedirect):
+        (WebKit):
+        (WebKit::RemoteNetworkingContext::RemoteNetworkingContext):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::shouldClearReferrerOnHTTPSToHTTPRedirect):
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleSubresourceLoad):
+        (WebKit::WebResourceLoadScheduler::schedulePluginStreamLoad):
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        (WebResourceLoadScheduler):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+
 2013-02-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Encapsulate Ewk View evas smart object code inside EwkView class

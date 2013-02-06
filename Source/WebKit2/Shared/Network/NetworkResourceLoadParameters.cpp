@@ -45,10 +45,11 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , m_contentSniffingPolicy(SniffContent)
     , m_allowStoredCredentials(DoNotAllowStoredCredentials)
     , m_inPrivateBrowsingMode(false)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(true)
 {
 }
 
-NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentifier identifier, uint64_t webPageID, uint64_t webFrameID, const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
+NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentifier identifier, uint64_t webPageID, uint64_t webFrameID, const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     : m_identifier(identifier)
     , m_webPageID(webPageID)
     , m_webFrameID(webFrameID)
@@ -57,6 +58,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentif
     , m_contentSniffingPolicy(contentSniffingPolicy)
     , m_allowStoredCredentials(allowStoredCredentials)
     , m_inPrivateBrowsingMode(inPrivateBrowsingMode)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
 }
 
@@ -103,6 +105,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encodeEnum(m_contentSniffingPolicy);
     encoder.encodeEnum(m_allowStoredCredentials);
     encoder.encode(m_inPrivateBrowsingMode);
+    encoder.encode(m_shouldClearReferrerOnHTTPSToHTTPRedirect);
 }
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
@@ -146,6 +149,8 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, Ne
     if (!decoder.decodeEnum(result.m_allowStoredCredentials))
         return false;
     if (!decoder.decode(result.m_inPrivateBrowsingMode))
+        return false;
+    if (!decoder.decode(result.m_shouldClearReferrerOnHTTPSToHTTPRedirect))
         return false;
 
     return true;

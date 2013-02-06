@@ -65,6 +65,8 @@ public:
 
     virtual bool isValid() const { return true; }
 
+    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const = 0;
+
 #if PLATFORM(CHROMIUM)
     // FIXME: Wrap WebCookieJar into a NetworkStorageSession to make the code cross-platform.
     virtual WebKit::WebCookieJar* cookieJar() const = 0;

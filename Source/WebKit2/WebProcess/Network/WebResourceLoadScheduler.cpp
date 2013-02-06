@@ -37,10 +37,12 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
+#include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/Settings.h>
@@ -67,7 +69,7 @@ PassRefPtr<SubresourceLoader> WebResourceLoadScheduler::scheduleSubresourceLoad(
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
-        scheduleLoad(loader.get(), priority);
+        scheduleLoad(loader.get(), priority, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
     return loader.release();
 }
 
@@ -75,11 +77,11 @@ PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginS
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), ResourceLoadPriorityLow);
+        scheduleLoad(loader.get(), ResourceLoadPriorityLow, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
     return loader.release();
 }
 
-void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
+void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     ASSERT(resourceLoader);
     ASSERT(priority != ResourceLoadPriorityUnresolved);
@@ -105,7 +107,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(resourceLoader->frameLoader()->client())->webFrame();
     WebPage* webPage = webFrame->page();
 
-    NetworkResourceLoadParameters loadParameters(identifier, webPage->pageID(), webFrame->frameID(), resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled);
+    NetworkResourceLoadParameters loadParameters(identifier, webPage->pageID(), webFrame->frameID(), resourceLoader->request(), priority, contentSniffingPolicy, allowStoredCredentials, privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect);
     if (!WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.

@@ -468,7 +468,7 @@ static void doRedirect(ResourceHandle* handle)
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!newURL.protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+    if (!newURL.protocolIs("https") && protocolIs(request.httpReferrer(), "https") && handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     d->m_user = newURL.user();
@@ -1018,7 +1018,7 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
     return true;
 }
 
-bool ResourceHandle::start(NetworkingContext* context)
+bool ResourceHandle::start()
 {
     ASSERT(!d->m_soupMessage);
 
@@ -1027,11 +1027,8 @@ bool ResourceHandle::start(NetworkingContext* context)
     // If the frame is not null but the page is null this must be an attempted
     // load from an unload handler, so let's just block it.
     // If both the frame and the page are not null the context is valid.
-    if (context && !context->isValid())
+    if (d->m_context && !d->m_context->isValid())
         return false;
-
-    // Used to set the keep track of custom SoupSessions for ports that support it (EFL).
-    d->m_context = context;
 
     // Only allow the POST and GET methods for non-HTTP requests.
     const ResourceRequest& request = firstRequest();
@@ -1048,7 +1045,7 @@ bool ResourceHandle::start(NetworkingContext* context)
         return true;
     }
 
-    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), context);
+    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), d->m_context.get());
 
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading)

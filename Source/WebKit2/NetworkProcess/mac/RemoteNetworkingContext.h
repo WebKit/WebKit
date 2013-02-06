@@ -32,9 +32,9 @@ namespace WebKit {
 
 class RemoteNetworkingContext : public WebCore::NetworkingContext {
 public:
-    static PassRefPtr<RemoteNetworkingContext> create(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled)
+    static PassRefPtr<RemoteNetworkingContext> create(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(new RemoteNetworkingContext(needsSiteSpecificQuirks, localFileContentSniffingEnabled, privateBrowsingEnabled));
+        return adoptRef(new RemoteNetworkingContext(needsSiteSpecificQuirks, localFileContentSniffingEnabled, privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
     virtual ~RemoteNetworkingContext();
 
@@ -44,8 +44,10 @@ public:
 
     static WebCore::NetworkStorageSession& privateBrowsingSession(); // Can only be called when the session exists.
 
+    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const OVERRIDE;
+
 private:
-    RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled);
+    RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled, bool m_shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     virtual bool isValid() const OVERRIDE;
 
@@ -58,6 +60,7 @@ private:
     bool m_needsSiteSpecificQuirks;
     bool m_localFileContentSniffingEnabled;
     bool m_privateBrowsingEnabled;
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 };
 
 }

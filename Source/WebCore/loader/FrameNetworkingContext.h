@@ -20,8 +20,10 @@
 #ifndef FrameNetworkingContext_h
 #define FrameNetworkingContext_h
 
+#include "Document.h"
 #include "Frame.h"
 #include "NetworkingContext.h"
+#include "ReferrerPolicy.h"
 
 namespace WebCore {
 
@@ -30,6 +32,11 @@ public:
     void invalidate()
     {
         m_frame = 0;
+    }
+
+    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const
+    {
+        return m_frame->document()->referrerPolicy() == ReferrerPolicyDefault;
     }
 
 protected:

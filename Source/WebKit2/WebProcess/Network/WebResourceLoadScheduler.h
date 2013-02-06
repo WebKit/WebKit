@@ -63,7 +63,7 @@ public:
     void networkProcessCrashed();
 
 private:
-    void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
+    void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader*);
     void internallyFailedLoadTimerFired();
     

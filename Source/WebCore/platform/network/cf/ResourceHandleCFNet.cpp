@@ -184,7 +184,7 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
         request = cfRequest;
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
 
     handle->willSendRequest(request, cfRedirectResponse);
@@ -496,21 +496,21 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), connectionProperties.get()));
 }
 
-bool ResourceHandle::start(NetworkingContext* context)
+bool ResourceHandle::start()
 {
-    if (!context)
+    if (!d->m_context)
         return false;
 
     // If NetworkingContext is invalid then we are no longer attached to a Page,
     // this must be an attempted load from an unload handler, so let's just block it.
-    if (!context->isValid())
+    if (!d->m_context->isValid())
         return false;
 
-    d->m_storageSession = context->storageSession().platformSession();
+    d->m_storageSession = d->m_context->storageSession().platformSession();
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
-    createCFURLConnection(shouldUseCredentialStorage, shouldRelaxThirdPartyCookiePolicy(context, firstRequest().url()), d->m_shouldContentSniff);
+    createCFURLConnection(shouldUseCredentialStorage, shouldRelaxThirdPartyCookiePolicy(d->m_context.get(), firstRequest().url()), d->m_shouldContentSniff);
 
 #if PLATFORM(WIN)
     CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
@@ -739,7 +739,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     OwnPtr<WebCoreSynchronousLoaderClient> client = WebCoreSynchronousLoaderClient::create(response, error);
     client->setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
 
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
 
     handle->d->m_storageSession = context->storageSession().platformSession();
 
@@ -924,4 +924,3 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
 #endif
 
 } // namespace WebCore
-

@@ -53,8 +53,8 @@ void ResourceHandle::registerBuiltinConstructor(const AtomicString& protocol, Re
     builtinResourceHandleConstructorMap().add(protocol, constructor);
 }
 
-ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
-    : d(adoptPtr(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()))))
+ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+    : d(adoptPtr(new ResourceHandleInternal(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()))))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -74,12 +74,12 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, co
     if (protocolMapItem != builtinResourceHandleConstructorMap().end())
         return protocolMapItem->value(request, client);
 
-    RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff)));
+    RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(context, request, client, defersLoading, shouldContentSniff)));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle.release();
 
-    if (newHandle->start(context))
+    if (newHandle->start())
         return newHandle.release();
 
     return 0;
@@ -126,6 +126,11 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
 ResourceRequest& ResourceHandle::firstRequest()
 {
     return d->m_firstRequest;
+}
+
+NetworkingContext* ResourceHandle::context() const
+{
+    return d->m_context.get();
 }
 
 const String& ResourceHandle::lastHTTPMethod() const

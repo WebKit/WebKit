@@ -199,6 +199,8 @@ public:
 
     void fireFailure(Timer<ResourceHandle>*);
 
+    NetworkingContext* context() const;
+
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
 
@@ -214,7 +216,7 @@ public:
     static void registerBuiltinConstructor(const AtomicString& protocol, BuiltinConstructor);
 
 protected:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
 
 private:
     enum FailureType {
@@ -227,7 +229,7 @@ private:
 
     void scheduleFailure(FailureType);
 
-    bool start(NetworkingContext*);
+    bool start();
 
     virtual void refAuthenticationClient() { ref(); }
     virtual void derefAuthenticationClient() { deref(); }

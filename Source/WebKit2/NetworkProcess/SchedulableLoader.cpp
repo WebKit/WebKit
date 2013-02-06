@@ -40,6 +40,7 @@ SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parame
     , m_allowStoredCredentials(parameters.allowStoredCredentials())
     , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode())
     , m_connection(connection)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect())
 {
     for (size_t i = 0, count = parameters.requestBodySandboxExtensions().size(); i < count; ++i) {
         if (RefPtr<SandboxExtension> extension = SandboxExtension::create(parameters.requestBodySandboxExtensions()[i]))

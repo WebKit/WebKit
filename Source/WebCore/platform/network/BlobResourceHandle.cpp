@@ -40,7 +40,6 @@
 #include "FileSystem.h"
 #include "HTTPParsers.h"
 #include "KURL.h"
-#include "NetworkingContext.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
@@ -142,7 +141,7 @@ void BlobResourceHandle::loadResourceSynchronously(PassRefPtr<BlobStorageData> b
 }
 
 BlobResourceHandle::BlobResourceHandle(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async)
-    : ResourceHandle(request, client, false, false)
+    : ResourceHandle(0, request, client, false, false)
     , m_blobData(blobData)
     , m_async(async)
     , m_errorCode(0)
@@ -636,4 +635,3 @@ void BlobResourceHandle::notifyFinish()
 } // namespace WebCore
 
 #endif // ENABLE(BLOB)
-

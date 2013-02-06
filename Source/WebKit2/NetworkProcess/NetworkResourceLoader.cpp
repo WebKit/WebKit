@@ -78,7 +78,7 @@ void NetworkResourceLoader::start()
     ref();
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    m_networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode());
+    m_networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode(), shouldClearReferrerOnHTTPSToHTTPRedirect());
 
     consumeSandboxExtensions();
 

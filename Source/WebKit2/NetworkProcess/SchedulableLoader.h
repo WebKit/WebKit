@@ -65,6 +65,8 @@ protected:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
+    bool shouldClearReferrerOnHTTPSToHTTPRedirect() const { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
+
 private:
     ResourceLoadIdentifier m_identifier;
     uint64_t m_webPageID;
@@ -81,6 +83,8 @@ private:
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
     RefPtr<HostRecord> m_hostRecord;
+
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 };
 
 } // namespace WebKit
