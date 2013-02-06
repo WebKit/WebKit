@@ -102,7 +102,7 @@ EXPORTS
     ?callHostFunctionAsConstructor@JSC@@YI_JPAVExecState@1@@Z
     ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
     ?callOnMainThreadAndWait@WTF@@YAXP6AXPAX@Z0@Z
-    ?callReportObjectInfo@MemoryInstrumentation@WTF@@CAXPAVMemoryObjectInfo@2@PBXPBDI@Z
+    ?callReportObjectInfo@MemoryClassInfo@WTF@@SAXPAVMemoryObjectInfo@2@PBXPBD2I@Z
     ?cancelCallOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
     ?canShrink@StringBuilder@WTF@@QBE_NXZ
     ?capacity@Heap@JSC@@QAEIXZ
@@ -265,7 +265,7 @@ EXPORTS
     ?indefiniteTime@MediaTime@WTF@@SAABV12@XZ 
     ?init@AtomicString@WTF@@SAXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
-    ?init@MemoryClassInfo@WTF@@AAEXPBXPBDI@Z
+    ?init@MemoryClassInfo@WTF@@AAEXPBXPBD1I@Z
     ?initialize@double_conversion@WTF@@YAXXZ
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ

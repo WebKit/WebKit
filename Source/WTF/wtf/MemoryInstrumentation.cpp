@@ -59,11 +59,6 @@ MemoryObjectType MemoryInstrumentation::getObjectType(MemoryObjectInfo* objectIn
     return objectInfo->objectType();
 }
 
-void MemoryInstrumentation::callReportObjectInfo(MemoryObjectInfo* memoryObjectInfo, const void* pointer, MemoryObjectType objectType, size_t objectSize)
-{
-    memoryObjectInfo->reportObjectInfo(pointer, objectType, objectSize);
-}
-
 void MemoryInstrumentation::reportLinkToBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* className, const char* edgeName)
 {
     MemoryObjectInfo memoryObjectInfo(this, ownerObjectType, 0);
@@ -121,9 +116,63 @@ void MemoryInstrumentation::WrapperBase::processRootObjectRef(MemoryInstrumentat
     memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
 }
 
-void MemoryClassInfo::init(const void* objectAddress, MemoryObjectType objectType, size_t actualSize)
+#if COMPILER(MSVC)
+static const char* className(const char* functionName, char* buffer, const int maxLength)
 {
-    m_memoryObjectInfo->reportObjectInfo(objectAddress, objectType, actualSize);
+    // MSVC generates names like this: 'WTF::FN<class WebCore::SharedBuffer>::fn'
+    static const char prefix[] = "WTF::FN<";
+    ASSERT(!strncmp(functionName, prefix, sizeof(prefix) - 1));
+    const char* begin = strchr(functionName, ' ');
+    if (!begin) { // Fallback.
+        strncpy(buffer, functionName, maxLength);
+        buffer[maxLength - 1] = 0;
+        return buffer;
+    }
+    const char* end = strrchr(begin, '>');
+    ASSERT(end);
+    int length = end - begin;
+    length = length < maxLength ? length : maxLength - 1;
+    memcpy(buffer, begin, length);
+    buffer[length] = 0;
+    return buffer;
+}
+#else
+static const char* className(const char* functionName, char* buffer, const int maxLength)
+{
+#if COMPILER(CLANG)
+    static const char prefix[] = "[T =";
+#elif COMPILER(GCC)
+    static const char prefix[] = "[with T =";
+#else
+    static const char prefix[] = "T =";
+#endif
+    const char* begin = strstr(functionName, prefix);
+    if (!begin) { // Fallback.
+        strncpy(buffer, functionName, maxLength);
+        buffer[maxLength - 1] = 0;
+        return buffer;
+    }
+    begin += sizeof(prefix);
+    const char* end = strchr(begin, ']');
+    ASSERT(end);
+    int length = end - begin;
+    length = length < maxLength ? length : maxLength - 1;
+    memcpy(buffer, begin, length);
+    buffer[length] = 0;
+    return buffer;
+}
+#endif
+
+void MemoryClassInfo::callReportObjectInfo(MemoryObjectInfo* memoryObjectInfo, const void* objectAddress, const char* stringWithClassName, MemoryObjectType objectType, size_t actualSize)
+{
+    memoryObjectInfo->reportObjectInfo(objectAddress, objectType, actualSize);
+    char buffer[256];
+    memoryObjectInfo->setClassName(className(stringWithClassName, buffer, sizeof(buffer)));
+}
+
+void MemoryClassInfo::init(const void* objectAddress, const char* stringWithClassName, MemoryObjectType objectType, size_t actualSize)
+{
+    callReportObjectInfo(m_memoryObjectInfo, objectAddress, stringWithClassName, objectType, actualSize);
     m_memoryInstrumentation = m_memoryObjectInfo->memoryInstrumentation();
     m_objectType = m_memoryObjectInfo->objectType();
     m_skipMembers = !m_memoryObjectInfo->firstVisit();

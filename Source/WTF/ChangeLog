@@ -1,3 +1,41 @@
+2013-02-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: assign class name to the heap graph node automatically
+        https://bugs.webkit.org/show_bug.cgi?id=107262
+
+        Reviewed by Yury Semikhatsky.
+
+        We need a way to calculate class name for a pointer automatically.
+        Otherwise we need to write className manually in all the instrumentation methods.
+        And for all reported but not instrumented classes.
+
+        C++ can do that for us with help of typeid but unfortunatelly it requires rtti.
+        There is another way to do that. C++ preprocessor provides a define which has a function name.
+
+        For g++ and clang it is __PRETTY_FUNCTION__.
+        For MSVC it is __FUNCTION__.
+        The content of the string is a function signature.
+        We can use it because it has the name of the template argument.
+        The format is sligthly different. That's why I made two different parsers.
+        One for MSVC the other for GCC, Clang etc.
+        The other problem is the resulting binary size.
+        I made very simple function that does the only thing, returns the smallest possible function signature.
+        Unfortunatelly MSVC doesn't generate template argument name for functions.
+        It does this only for classes.
+
+        * wtf/MemoryInstrumentation.cpp:
+        (WTF):
+        (WTF::className):
+        (WTF::MemoryClassInfo::callReportObjectInfo):
+        (WTF::MemoryClassInfo::init):
+        * wtf/MemoryInstrumentation.h:
+        (WTF):
+        (WTF::FN::fn):
+        (WTF::fn):
+        (WTF::MemoryClassInfo::MemoryClassInfo):
+        (MemoryClassInfo):
+        (WTF::::reportObjectMemoryUsage):
+
 2013-02-05  Mark Lam  <mark.lam@apple.com>
 
         Fix EnumClass so that it can be used with switch statements.
