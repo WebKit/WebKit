@@ -161,15 +161,6 @@ WebInspector.NavigatorView.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {boolean}
-     */
-    isScriptSourceAdded: function(uiSourceCode)
-    {
-        return !!this._uiSourceCodes[uiSourceCode.uri()];
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
      */
     revealUISourceCode: function(uiSourceCode)
     {

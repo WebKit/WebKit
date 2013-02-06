@@ -83,7 +83,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _addScriptSnippet: function(snippet)
     {
-        var uiSourceCode = this._workspaceProvider.addFile(snippet.name, snippet.name, new WebInspector.SnippetContentProvider(snippet), true, false, true);
+        var uiSourceCode = this._workspaceProvider.addFile(snippet.name, snippet.name, new WebInspector.SnippetContentProvider(snippet), true);
         var scriptFile = new WebInspector.SnippetScriptFile(this, uiSourceCode);
         uiSourceCode.setScriptFile(scriptFile);
         this._snippetIdForUISourceCode.put(uiSourceCode, snippet.id);

@@ -55,9 +55,8 @@ WebInspector.WorkspaceController.prototype = {
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
  * @param {boolean=} isContentScript
- * @param {boolean=} isSnippet
  */
-WebInspector.FileDescriptor = function(uri, originURL, url, contentType, isEditable, isContentScript, isSnippet)
+WebInspector.FileDescriptor = function(uri, originURL, url, contentType, isEditable, isContentScript)
 {
     this.uri = uri;
     this.originURL = originURL;
@@ -65,7 +64,6 @@ WebInspector.FileDescriptor = function(uri, originURL, url, contentType, isEdita
     this.contentType = contentType;
     this.isEditable = isEditable;
     this.isContentScript = isContentScript || false;
-    this.isSnippet = isSnippet || false;
 }
 
 /**
@@ -167,7 +165,6 @@ WebInspector.Project.prototype = {
         }
         uiSourceCode = new WebInspector.UISourceCode(this._workspace, fileDescriptor.uri, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
-        uiSourceCode.isSnippet = fileDescriptor.isSnippet;
         this._uiSourceCodesForURI[uiSourceCode.uri()] = uiSourceCode;
         this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
