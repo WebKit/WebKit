@@ -18,7 +18,6 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webkitGetGamepads() is OK
-navigator.webkitStartActivity() threw err TypeError: Not enough arguments
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
@@ -37,5 +36,4 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webkitGetGamepads() is OK
-navigator.webkitStartActivity() threw err TypeError: Not enough arguments
 
