@@ -158,6 +158,10 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 inspector/profiler/webgl
 
+webkit.org/b/108901 webgl/conformance/attribs/gl-vertex-attrib-render.html
+webkit.org/b/108901 webgl/conformance/attribs/gl-vertexattribpointer-offsets.html
+webkit.org/b/108901 webgl/conformance/misc/delayed-drawing.html
+
 # ENABLE(LINK_PREFETCH) is disabled.
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
