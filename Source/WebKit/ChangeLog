@@ -1,3 +1,9 @@
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Get rid of redundant exports in export definitions file.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-02-05  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed Visual Studio 2010 build correction.

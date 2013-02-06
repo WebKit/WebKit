@@ -1,3 +1,9 @@
+2013-02-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Get rid of redundant exports in export definitions file.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Copy some resource files for VS2010 solution.
