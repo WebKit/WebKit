@@ -974,6 +974,11 @@ void RenderBox::clearContainingBlockOverrideSize()
 {
     if (gOverrideContainingBlockLogicalWidthMap)
         gOverrideContainingBlockLogicalWidthMap->remove(this);
+    clearOverrideContainingBlockContentLogicalHeight();
+}
+
+void RenderBox::clearOverrideContainingBlockContentLogicalHeight()
+{
     if (gOverrideContainingBlockLogicalHeightMap)
         gOverrideContainingBlockLogicalHeightMap->remove(this);
 }

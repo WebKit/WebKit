@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridFixedContent {
+    -webkit-grid-columns: 50px minmax(-webkit-min-content, 50px) minmax(-webkit-max-content, 50px) minmax(50px, -webkit-min-content);
+    -webkit-grid-rows: 70px minmax(-webkit-max-content, 70px) minmax(50px, -webkit-min-content) minmax(65px, -webkit-max-content);
+}
+
+/* This rule makes sure the container is smaller than any grid items to avoid distributing any extra logical space to them. */
+.constrainedContainer {
+    width: 10px;
+    height: 10px;
+}
+
+.sizedToGridArea {
+    font: 10px/1 Ahem;
+    /* Make us fit our grid area. */
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<script>
+function testPosition(gridElementID, position, size)
+{
+    gridItem = document.getElementById(gridElementID).firstChild;
+    gridItem.style.webkitGridColumn = position.column;
+    gridItem.style.webkitGridRow = position.row;
+    gridItem.setAttribute("data-expected-width", size.width);
+    gridItem.setAttribute("data-expected-height", size.height);
+    checkLayout("#" + gridElementID);
+}
+
+function updateImplicitGridColumn()
+{
+    var gridItem = document.getElementById("constrainedGrid").firstChild;
+    testPosition("constrainedGrid", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGrid", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '30' });
+    testPosition("constrainedGrid", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGrid", { 'column': '1', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGrid", { 'column': '1', 'row': '5' }, { 'width': '50', 'height': '30' });
+
+    testPosition("constrainedGrid", { 'column': '2', 'row': '1' }, { 'width': '40', 'height': '70' });
+    testPosition("constrainedGrid", { 'column': '2', 'row': '2' }, { 'width': '40', 'height': '30' });
+    testPosition("constrainedGrid", { 'column': '2', 'row': '3' }, { 'width': '40', 'height': '50' });
+    testPosition("constrainedGrid", { 'column': '2', 'row': '4' }, { 'width': '40', 'height': '65' });
+    testPosition("constrainedGrid", { 'column': '2', 'row': '5' }, { 'width': '40', 'height': '30' });
+
+    testPosition("constrainedGrid", { 'column': '3', 'row': '1' }, { 'width': '140', 'height': '70' });
+    testPosition("constrainedGrid", { 'column': '3', 'row': '2' }, { 'width': '140', 'height': '10' });
+    testPosition("constrainedGrid", { 'column': '3', 'row': '3' }, { 'width': '140', 'height': '50' });
+    testPosition("constrainedGrid", { 'column': '3', 'row': '4' }, { 'width': '140', 'height': '65' });
+    testPosition("constrainedGrid", { 'column': '3', 'row': '5' }, { 'width': '140', 'height': '10' });
+
+    testPosition("constrainedGrid", { 'column': '4', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("constrainedGrid", { 'column': '4', 'row': '2' }, { 'width': '50', 'height': '30' });
+    testPosition("constrainedGrid", { 'column': '4', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("constrainedGrid", { 'column': '4', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("constrainedGrid", { 'column': '4', 'row': '5' }, { 'width': '50', 'height': '30' });
+
+    testPosition("constrainedGrid", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
+
+    gridItem = document.getElementById("unconstrainedGrid").firstChild;
+    testPosition("unconstrainedGrid", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '2', 'row': '1' }, { 'width': '60', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '3', 'row': '1' }, { 'width': '130', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '4', 'row': '1' }, { 'width': '60', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '5', 'row': '1' }, { 'width': '130', 'height': '70' });
+
+    testPosition("unconstrainedGrid", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '2', 'row': '2' }, { 'width': '60', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '3', 'row': '2' }, { 'width': '130', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '4', 'row': '2' }, { 'width': '60', 'height': '70' });
+    testPosition("unconstrainedGrid", { 'column': '5', 'row': '2' }, { 'width': '130', 'height': '70' });
+
+    testPosition("unconstrainedGrid", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
+    testPosition("unconstrainedGrid", { 'column': '2', 'row': '3' }, { 'width': '60', 'height': '50' });
+    testPosition("unconstrainedGrid", { 'column': '3', 'row': '3' }, { 'width': '130', 'height': '50' });
+    testPosition("unconstrainedGrid", { 'column': '4', 'row': '3' }, { 'width': '60', 'height': '50' });
+    testPosition("unconstrainedGrid", { 'column': '5', 'row': '3' }, { 'width': '130', 'height': '50' });
+
+    testPosition("unconstrainedGrid", { 'column': '1', 'row': '4' }, { 'width': '50', 'height': '65' });
+    testPosition("unconstrainedGrid", { 'column': '2', 'row': '4' }, { 'width': '60', 'height': '65' });
+    testPosition("unconstrainedGrid", { 'column': '3', 'row': '4' }, { 'width': '130', 'height': '65' });
+    testPosition("unconstrainedGrid", { 'column': '4', 'row': '4' }, { 'width': '60', 'height': '65' });
+    testPosition("unconstrainedGrid", { 'column': '5', 'row': '4' }, { 'width': '130', 'height': '65' });
+
+    testPosition("unconstrainedGrid", { 'column': '10', 'row': '15' }, { 'width': '130', 'height': '10' });
+}
+window.addEventListener("load", updateImplicitGridColumn, false);
+</script>
+<body>
+
+<p>This test checks that we properly recompute our grid tracks' sizes when a grid item changes its -webkit-grid-row or -webkit-grid-column.</p>
+
+<div class="constrainedContainer">
+    <div class="grid gridFixedContent" id="constrainedGrid"><div class="sizedToGridArea">XXXX XXXX XXXX</div></div>
+</div>
+
+<!-- Allow the extra logical space distribution to occur. -->
+<div style="width: 1000px; height: 1000px">
+    <div class="grid gridFixedContent" id="unconstrainedGrid"><div class="sizedToGridArea">XXXXXX XXXXXX</div></div>
+</div>
+
+</body>
+</html>

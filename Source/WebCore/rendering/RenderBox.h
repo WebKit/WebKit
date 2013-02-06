@@ -321,6 +321,7 @@ public:
     void setOverrideContainingBlockContentLogicalWidth(LayoutUnit);
     void setOverrideContainingBlockContentLogicalHeight(LayoutUnit);
     void clearContainingBlockOverrideSize();
+    void clearOverrideContainingBlockContentLogicalHeight();
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const;
     

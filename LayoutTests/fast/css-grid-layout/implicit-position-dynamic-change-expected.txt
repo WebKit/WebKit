@@ -1,0 +1,46 @@
+This test checks that we properly recompute our grid tracks' sizes when a grid item changes its -webkit-grid-row or -webkit-grid-column.
+
+XXXX XXXX XXXX
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+XXXXXX XXXXXX
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

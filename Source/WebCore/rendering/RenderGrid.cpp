@@ -303,6 +303,7 @@ LayoutUnit RenderGrid::minContentForChild(RenderBox* child, TrackSizingDirection
     if (child->needsLayout()) {
         size_t columnTrack = resolveGridPosition(ForColumns, child);
         child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+        child->clearOverrideContainingBlockContentLogicalHeight();
         child->layout();
     }
     return child->logicalHeight();
@@ -324,6 +325,7 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox* child, TrackSizingDirection
     if (child->needsLayout()) {
         size_t columnTrack = resolveGridPosition(ForColumns, child);
         child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+        child->clearOverrideContainingBlockContentLogicalHeight();
         child->layout();
     }
     return child->logicalHeight();
