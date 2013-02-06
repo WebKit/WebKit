@@ -1027,7 +1027,7 @@ String textTrackOffText()
 
 String textTrackNoLabelText()
 {
-    return WEB_UI_STRING("No label", "Menu item label for a closed captions track that has no other name");
+    return WEB_UI_STRING("Unknown", "Menu item label for a closed captions track that has no other name");
 }
 #endif
 

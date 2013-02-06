@@ -244,49 +244,42 @@ video::-webkit-media-controls-closed-captions-container {
     -webkit-appearance: media-closed-captions-container;
     position: absolute;
     display: block;
+    right: 38px;
     bottom: 29px;
-    margin-left: -155px;
-    z-index: 2;
-    width: 200px;
-    height: 250px;
     background-color: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgb(66, 66, 66);
-    border-radius: 8px;
+    border: 3px solid rgba(128, 128, 128, 0.75);
+    border-radius: 10px;
     cursor: default;
+    z-index: 2;
 }
 
 video::-webkit-media-controls-closed-captions-track-list {
-    -webkit-appearance: media-closed-captions-track-list;
-    position: absolute;
     display: block;
-    top: 5px;
-    left: 5px;
-    width: 190px;
-    height: 240px;
+    max-width: 250px;
+    max-height: 250px;
     overflow-x: hidden;
     overflow-y: scroll;
     text-align: left;
-    font-family: "Helvetica Bold", "Helvetica";
-    font-weight: bold;
-    font-size: 9pt;
+    font-family: "Helvetica Bold", Helvetica;
+    font-size: 10pt;
     -webkit-user-select: none;
 }
 
 video::-webkit-media-controls-closed-captions-track-list h3 {
     margin: 0;
-    color: #bbb;
+    color: #757575;
     text-shadow: 0 1px 0 black;
-    padding-left: 4px;
+    padding-left: 23px;
     padding-top: 4px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #555;
-    font-size: 9pt;
+    font-weight: bold;
+    font-size: 10pt;
 }
 
 video::-webkit-media-controls-closed-captions-track-list ul {
     list-style-type: none;
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     padding: 0;
+    font-weight: bold;
 }
 
 video::-webkit-media-controls-closed-captions-track-list li {
@@ -294,35 +287,34 @@ video::-webkit-media-controls-closed-captions-track-list li {
     background-image: none;
     text-shadow: 0 1px 0 black;
     margin: 0;
-    padding-left: 24px;
-    padding-right: 10px;
-    padding-top: 0.35em;
-    padding-bottom: 0.3em;
-    width: 190px;
-    height: 2.0em;
-    border-bottom: 1px solid #555;
+    padding-left: 37px;
+    padding-right: 35px;
+    padding-top: 0.15em;
+    padding-bottom: 0.2em;
     box-sizing: border-box;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    -webkit-text-overflow: ellipsis;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
 }
 
 video::-webkit-media-controls-closed-captions-track-list li:hover {
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgb(79, 112, 245)), color-stop(1, rgb(28, 66, 245)));
-    border-bottom: 1px solid rgb(28, 66, 245);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4f70f6), color-stop(1, #1a44f3));
+    border-top: 1px solid #4667ea;
+    border-bottom: 1px solid #0336e5;
 }
 
 video::-webkit-media-controls-closed-captions-track-list li.selected {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><path fill="white" d="M9.079,130.709l24.282-24.567l48.849,48.992L228.47,8.873l24.424,24.282L82.209,203.84L9.079,130.709z"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="#a3a3a3" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
     background-repeat: no-repeat;
-    background-position: 0.5em 0.5em;
+    background-position: 17px 0.25em;
     background-size: 1.1em 1.1em;
 }
 
 video::-webkit-media-controls-closed-captions-track-list li.selected:hover {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><path fill="white" d="M9.079,130.709l24.282-24.567l48.849,48.992L228.47,8.873l24.424,24.282L82.209,203.84L9.079,130.709z"/></svg>'), -webkit-gradient(linear, left top, left bottom, color-stop(0, rgb(79, 112, 245)), color-stop(1, rgb(28, 66, 245)));
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>'), -webkit-gradient(linear, left top, left bottom, color-stop(0, #4f70f6), color-stop(1, #1a44f3));
     background-repeat: no-repeat, repeat;
-    background-position: 0.5em 0.5em, top left;
+    background-position: 17px 0.25em, top left;
     background-size: 1.1em 1.1em, 100% 100%;
 }

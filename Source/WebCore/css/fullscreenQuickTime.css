@@ -169,6 +169,9 @@ video:-webkit-full-screen::-webkit-media-controls-status-display {
 
 video:-webkit-full-screen::-webkit-media-controls-closed-captions-container {
     bottom: 64px;
-    margin-left: 205px;
+    right: 38px;
 }
 
+video:-webkit-full-screen::-webkit-media-controls-closed-captions-track-list {
+    max-height: 500px;
+}
