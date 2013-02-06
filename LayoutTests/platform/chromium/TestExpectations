@@ -4013,9 +4013,6 @@ webkit.org/b/102166 [ MountainLion ] fast/css/text-indent-first-line-006.html [ 
 webkit.org/b/99749 [ MountainLion ] fast/repaint/positioned-document-element.html [ ImageOnlyFailure ]
 webkit.org/b/96430 [ MountainLion ] fast/text/fallback-traits-fixup.html [ Failure ]
 webkit.org/b/99749 [ MountainLion ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
-webkit.org/b/99749 [ MountainLion ] fast/writing-mode/japanese-lr-text.html [ Failure ]
-webkit.org/b/99749 [ MountainLion ] fast/writing-mode/japanese-rl-selection.html [ Failure ]
-webkit.org/b/99749 [ MountainLion ] fast/writing-mode/japanese-rl-text.html [ Failure ]
 
 webkit.org/b/101897 [ MountainLion ] fast/regions/region-style-inline-background-color.html [ ImageOnlyFailure ]
 
