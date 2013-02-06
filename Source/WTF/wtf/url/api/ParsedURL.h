@@ -49,6 +49,7 @@ public:
     WTF_EXPORT_PRIVATE explicit ParsedURL(const ParsedURL& base, const String& relative, URLQueryCharsetConverter*);
 
     WTF_EXPORT_PRIVATE ParsedURL isolatedCopy() const;
+    bool isSafeToSendToAnotherThread() const { return m_spec.isSafeToSendToAnotherThread(); }
 
     bool isValid() const { return !m_spec.string().isNull(); }
 

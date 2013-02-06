@@ -227,6 +227,7 @@ public:
 #endif
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
+    bool isSafeToSendToAnotherThread() const;
 
 private:
     void invalidate();

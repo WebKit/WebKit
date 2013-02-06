@@ -72,6 +72,7 @@ public:
     }
 
     bool isNull() const { return !m_buffer; }
+    bool isSafeToSendToAnotherThread() const;
 
     CStringBuffer* buffer() const { return m_buffer.get(); }
 

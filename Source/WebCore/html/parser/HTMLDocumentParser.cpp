@@ -300,7 +300,7 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 {
     ASSERT(shouldUseThreading());
 
-    // didReceiveTokensFromBackgroundParser can cause this parser to be detached from the Document,
+    // This method can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
@@ -314,8 +314,10 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     for (Vector<CompactHTMLToken>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
         ASSERT(!isWaitingForScripts());
 
-        // FIXME: Call m_xssAuditorDelegate.didBlockScript() with DidBlockScriptRequest from the CompactHTMLToken.
         m_textPosition = it->textPosition();
+
+        if (XSSInfo* xssInfo = it->xssInfo())
+            m_xssAuditorDelegate.didBlockScript(*xssInfo);
         constructTreeFromCompactHTMLToken(*it);
 
         if (isStopped())
@@ -376,8 +378,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            if (OwnPtr<DidBlockScriptRequest> request = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder(), m_tokenizer->shouldAllowCDATA())))
-                m_xssAuditorDelegate.didBlockScript(request.release());
+            if (OwnPtr<XSSInfo> xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder(), m_tokenizer->shouldAllowCDATA())))
+                m_xssAuditorDelegate.didBlockScript(*xssInfo);
         }
 
         constructTreeFromHTMLToken(token());

@@ -39,6 +39,7 @@ public:
     URLString() { }
 
     const String& string() const { return m_string;}
+    bool isSafeToSendToAnotherThread() const { return m_string.isSafeToSendToAnotherThread(); }
 
 #ifndef NDEBUG
     WTF_EXPORT_PRIVATE void print() const;
