@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-ENUM_CLASS_BEGIN(DatabaseError) {
+ENUM_CLASS(DatabaseError) {
     None = 0,
     CannotOpenDatabase,
     DatabaseIsBeingDeleted,

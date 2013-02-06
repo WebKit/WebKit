@@ -98,11 +98,6 @@ protected:
     friend class SQLTransactionSync;
     friend class SQLTransaction;
 
-    enum DatabaseType {
-        AsyncDatabase,
-        SyncDatabase
-    };
-
     DatabaseBackend(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion,
         const String& displayName, unsigned long estimatedSize, DatabaseType);
 

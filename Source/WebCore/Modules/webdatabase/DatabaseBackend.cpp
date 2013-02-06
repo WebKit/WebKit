@@ -215,7 +215,7 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseCont
     , m_guid(0)
     , m_opened(false)
     , m_new(false)
-    , m_isSyncDatabase(databaseType == SyncDatabase)
+    , m_isSyncDatabase(databaseType == DatabaseType::Sync)
 {
     m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
 

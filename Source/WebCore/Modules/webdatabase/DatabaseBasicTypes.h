@@ -28,10 +28,17 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include <wtf/EnumClass.h>
+
 namespace WebCore {
 
 typedef int DatabaseGuid;
 typedef int ExceptionCode;
+
+ENUM_CLASS(DatabaseType) {
+    Async,
+    Sync
+} ENUM_CLASS_END(DatabaseType);
 
 } // namespace WebCore
 

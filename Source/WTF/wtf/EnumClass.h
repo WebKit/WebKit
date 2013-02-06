@@ -43,7 +43,7 @@ namespace WTF {
 //
 // ... write this:
 //
-//     ENUM_CLASS_BEGIN(MyEnums) {
+//     ENUM_CLASS(MyEnums) {
 //         Value1,
 //         Value2,
 //         ...
@@ -54,7 +54,7 @@ namespace WTF {
 // Otherwise, it will use the EnumClass template below.
 
 #if COMPILER_SUPPORTS(CXX_STRONG_ENUMS)
-#define ENUM_CLASS_BEGIN(__enumName) \
+#define ENUM_CLASS(__enumName) \
     enum class __enumName
 
 #define ENUM_CLASS_END(__enumName)
@@ -104,7 +104,7 @@ private:
     Value m_value;
 };
 
-#define ENUM_CLASS_BEGIN(__enumName) \
+#define ENUM_CLASS(__enumName) \
     struct __enumName ## Definition { \
         enum Enums
 
