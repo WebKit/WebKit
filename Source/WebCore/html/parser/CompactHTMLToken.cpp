@@ -89,13 +89,16 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
 }
 
 CompactHTMLToken::CompactHTMLToken(const CompactHTMLToken& other)
-    : m_type(other.type())
-    , m_isAll8BitData(other.isAll8BitData())
-    , m_doctypeForcesQuirks(other.doctypeForcesQuirks())
-    , m_textPosition(other.textPosition())
+    : m_type(other.m_type)
+    , m_selfClosing(other.m_selfClosing)
+    , m_isAll8BitData(other.m_isAll8BitData)
+    , m_doctypeForcesQuirks(other.m_doctypeForcesQuirks)
+    , m_data(other.m_data)
+    , m_attributes(other.m_attributes)
+    , m_textPosition(other.m_textPosition)
 {
-    if (other.xssInfo())
-        m_xssInfo = adoptPtr(new XSSInfo(*other.xssInfo()));
+    if (other.m_xssInfo)
+        m_xssInfo = adoptPtr(new XSSInfo(*other.m_xssInfo));
 }
 
 bool CompactHTMLToken::isSafeToSendToAnotherThread() const
