@@ -293,6 +293,7 @@ EventSender::EventSender()
     bindMethod("gestureScrollEnd", &EventSender::gestureScrollEnd);
     bindMethod("gestureScrollFirstPoint", &EventSender::gestureScrollFirstPoint);
     bindMethod("gestureScrollUpdate", &EventSender::gestureScrollUpdate);
+    bindMethod("gestureScrollUpdateWithoutPropagation", &EventSender::gestureScrollUpdateWithoutPropagation);
     bindMethod("gestureTap", &EventSender::gestureTap);
     bindMethod("gestureTapDown", &EventSender::gestureTapDown);
     bindMethod("gestureTapCancel", &EventSender::gestureTapCancel);
@@ -1137,6 +1138,12 @@ void EventSender::gestureScrollUpdate(const CppArgumentList& arguments, CppVaria
     gestureEvent(WebInputEvent::GestureScrollUpdate, arguments);
 }
 
+void EventSender::gestureScrollUpdateWithoutPropagation(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureScrollUpdateWithoutPropagation, arguments);
+}
+
 void EventSender::gestureTap(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1195,6 +1202,7 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     switch (type) {
     case WebInputEvent::GestureScrollUpdate:
+    case WebInputEvent::GestureScrollUpdateWithoutPropagation:
         event.data.scrollUpdate.deltaX = static_cast<float>(arguments[0].toDouble());
         event.data.scrollUpdate.deltaY = static_cast<float>(arguments[1].toDouble());
         event.x = m_currentGestureLocation.x;

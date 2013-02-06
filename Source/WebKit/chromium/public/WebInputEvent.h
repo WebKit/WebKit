@@ -115,6 +115,7 @@ public:
         GestureScrollBegin,
         GestureScrollEnd,
         GestureScrollUpdate,
+        GestureScrollUpdateWithoutPropagation,
         GestureFlingStart,
         GestureFlingCancel,
         GestureTap,
@@ -222,6 +223,7 @@ public:
         return type == GestureScrollBegin
             || type == GestureScrollEnd
             || type == GestureScrollUpdate
+            || type == GestureScrollUpdateWithoutPropagation
             || type == GestureFlingStart
             || type == GestureFlingCancel
             || type == GesturePinchBegin
