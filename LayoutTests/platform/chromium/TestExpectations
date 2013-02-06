@@ -936,6 +936,9 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 # Chromium disabled MATHML
 crbug.com/22554 mathml [ Skip ]
 
+# Chromium disabled web intents
+crbug.com/173194 webintents [ Skip ]
+
 # Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 # -----------------------------------------------------------------
