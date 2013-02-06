@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,45 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestInterfaces_h
-#define WebTestInterfaces_h
+#ifndef WebTestCommon_h
+#define WebTestCommon_h
 
-#include "WebTestCommon.h"
-#include <memory>
+// -----------------------------------------------------------------------------
+// Default configuration
 
-namespace WebKit {
-class WebFrame;
-class WebView;
-}
-
-namespace WebTestRunner {
-
-class TestInterfaces;
-class WebTestDelegate;
-class WebTestRunner;
-
-class WEBTESTRUNNER_EXPORT WebTestInterfaces {
-public:
-    WebTestInterfaces();
-    ~WebTestInterfaces();
-
-    void setWebView(WebKit::WebView*);
-    void setDelegate(WebTestDelegate*);
-    void bindTo(WebKit::WebFrame*);
-    void resetAll();
-    void setTestIsRunning(bool);
-
-    WebKit::WebView* webView() const;
-    WebTestRunner* testRunner();
-
-#if WEBTESTRUNNER_IMPLEMENTATION
-    TestInterfaces* testInterfaces();
+#if !defined(WEBTESTRUNNER_IMPLEMENTATION)
+#define WEBTESTRUNNER_IMPLEMENTATION 0
 #endif
 
-private:
-    std::auto_ptr<TestInterfaces> m_interfaces;
-};
+// -----------------------------------------------------------------------------
+// Exported symbols need to be annotated with WEBTESTRUNNER_EXPORT
 
-}
+#if defined(WEBTESTRUNNER_DLL)
 
-#endif // WebTestInterfaces_h
+#if defined(WIN32)
+#if WEBTESTRUNNER_IMPLEMENTATION
+#define WEBTESTRUNNER_EXPORT __declspec(dllexport)
+#else
+#define WEBTESTRUNNER_EXPORT __declspec(dllimport)
+#endif
+
+#else // defined(WIN32)
+
+#if WEBTESTRUNNER_IMPLEMENTATION
+#define WEBTESTRUNNER_EXPORT __attribute__((visibility("default")))
+#else
+#define WEBTESTRUNNER_EXPORT
+#endif
+
+#endif
+
+#else // defined(WEBTESTRUNNER_DLL)
+
+#define WEBTESTRUNNER_EXPORT
+
+#endif
+
+#endif // WebTestCommon_h

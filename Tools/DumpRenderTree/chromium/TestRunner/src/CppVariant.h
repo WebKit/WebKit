@@ -44,7 +44,7 @@
 
 #include "WebBindings.h"
 #include <string>
-#include <wtf/Vector.h>
+#include <vector>
 
 namespace WebTestRunner {
 
@@ -120,7 +120,7 @@ public:
     bool toBoolean() const;
     // Returns a vector of strings for the specified argument. This is useful
     // for converting a JavaScript array of strings into a vector of strings.
-    Vector<std::string> toStringVector() const;
+    std::vector<std::string> toStringVector() const;
 
     // Invoke method of the given name on an object with the supplied arguments.
     // The first argument should be the object on which the method is to be
