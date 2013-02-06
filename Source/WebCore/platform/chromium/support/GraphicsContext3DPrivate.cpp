@@ -132,7 +132,7 @@ GrContext* GraphicsContext3DPrivate::grContext()
     interface->fCallback = bindWebGraphicsContext3DGLContextCallback;
     interface->fCallbackData = reinterpret_cast<GrGLInterfaceCallbackData>(m_impl.get());
 
-    m_grContext.reset(GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get())));
+    m_grContext.reset(GrContext::Create(kOpenGL_GrBackend, reinterpret_cast<GrBackendContext>(interface.get())));
     if (!m_grContext)
         return 0;
 
