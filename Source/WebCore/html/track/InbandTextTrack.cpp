@@ -94,6 +94,14 @@ void InbandTextTrack::setMode(const AtomicString& mode)
         ASSERT_NOT_REACHED();
 }
 
+bool InbandTextTrack::isClosedCaptions() const
+{
+    if (!m_private)
+        return false;
+
+    return m_private->isClosedCaptions();
+}
+
 size_t InbandTextTrack::inbandTrackIndex()
 {
     ASSERT(m_private);

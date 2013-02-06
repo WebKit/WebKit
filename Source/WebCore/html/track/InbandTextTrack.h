@@ -45,6 +45,7 @@ public:
     static PassRefPtr<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
     virtual ~InbandTextTrack();
 
+    virtual bool isClosedCaptions() const OVERRIDE;
     virtual void setMode(const AtomicString&) OVERRIDE;
     size_t inbandTrackIndex();
 

@@ -48,6 +48,7 @@ public:
     ~InbandTextTrackPrivateAVFObjC() { }
 
     virtual InbandTextTrackPrivate::Kind kind() const OVERRIDE;
+    virtual bool isClosedCaptions() const OVERRIDE;
     virtual AtomicString label() const OVERRIDE;
     virtual AtomicString language() const OVERRIDE;
     virtual bool isDefault() const OVERRIDE;

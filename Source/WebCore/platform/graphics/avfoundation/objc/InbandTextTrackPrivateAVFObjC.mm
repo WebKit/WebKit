@@ -111,6 +111,14 @@ InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
     return Captions;
 }
 
+bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
+{
+    if (!m_mediaSelectionOption)
+        return false;
+    
+    return [[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeClosedCaption];
+}
+
 AtomicString InbandTextTrackPrivateAVFObjC::label() const
 {
     if (!m_mediaSelectionOption)

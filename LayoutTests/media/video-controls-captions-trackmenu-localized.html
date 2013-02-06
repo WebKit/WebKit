@@ -26,7 +26,7 @@
                 return;
             }
 
-            logConsole("Heading should be labelled 'Subtitles'");
+            consoleWrite("Heading should be labelled 'Subtitles'");
             testExpected("trackListSection.textContent", "Subtitles");
 
             var captionsEntries = trackListElement.querySelectorAll("li");
@@ -36,18 +36,28 @@
             }
 
             item = captionsEntries[0];
-            logConsole("First item in captions menu should be labelled 'Off'");
+            consoleWrite("<br>First item in captions menu should be labelled 'Off'");
             testExpected("item.textContent", "Off");
+
             item = captionsEntries[1];
-            logConsole("Second item in captions menu should be labelled 'No label'");
+            consoleWrite("<br>Second item in captions menu should be labelled 'English CC'");
+            testExpected("item.textContent", "English CC");
+
+            item = captionsEntries[2];
+            consoleWrite("<br>Third item in captions menu should be labelled 'No label'");
             testExpected("item.textContent", "No label");
+
+            item = captionsEntries[3];
+            consoleWrite("<br>Fourth item in captions menu should be labelled 'No label'");
+            testExpected("item.textContent", "No label");
+
             endTest();
         }
 
         function start()
         {
             findMediaElement();
-            video.src = findMediaFile('video', 'content/test');
+            video.src = 'content/counting-captioned.mov';
             waitForEvent('canplaythrough', function () { startTrackMenuTest(testMenuHeaders); });
         }
         </script>

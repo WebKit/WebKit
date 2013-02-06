@@ -4,8 +4,19 @@ EVENT(canplaythrough)
 
 *** Set the user language preference.
 RUN(internals.setUserPreferredLanguages(['en']))
+Heading should be labelled 'Subtitles'
 EXPECTED (trackListSection.textContent == 'Subtitles') OK
+
+First item in captions menu should be labelled 'Off'
 EXPECTED (item.textContent == 'Off') OK
+
+Second item in captions menu should be labelled 'English CC'
+EXPECTED (item.textContent == 'English CC') OK
+
+Third item in captions menu should be labelled 'No label'
+EXPECTED (item.textContent == 'No label') OK
+
+Fourth item in captions menu should be labelled 'No label'
 EXPECTED (item.textContent == 'No label') OK
 END OF TEST
 
