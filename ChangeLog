@@ -1,3 +1,14 @@
+2013-02-07  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK][AC] Clutter required version up to 1.12
+        https://bugs.webkit.org/show_bug.cgi?id=109037
+
+        Reviewed by Martin Robinson.
+
+        The clutter requried version is changed to 1.12.
+
+        * configure.ac:
+
 2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [Autotools] Remove uses of Automake FARSTREAM_(CFLAGS|LIBS) variables, USE_FARSTREAM conditional

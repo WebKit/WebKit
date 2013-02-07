@@ -124,7 +124,7 @@ static gboolean idleDestroy(gpointer data)
         graphicsLayerActorRemoveAll(GRAPHICS_LAYER_ACTOR(actor.get()));
 
     if (parent)
-        clutter_container_remove_actor(CLUTTER_CONTAINER(parent), actor.get());
+        clutter_actor_remove_child(parent, actor.get());
 
     // FIXME: we should assert that the actor's ref count is 1 here, but some
     // of them are getting here with 2!
@@ -531,7 +531,7 @@ void GraphicsLayerClutter::updateSublayerList()
             ClutterActor* layerActor = CLUTTER_ACTOR(newSublayers[i].get());
             ClutterActor* parentActor = clutter_actor_get_parent(layerActor);
             if (parentActor)
-                clutter_container_remove_actor(CLUTTER_CONTAINER(parentActor), layerActor);
+                clutter_actor_remove_child(parentActor, layerActor);
         }
     }
 

@@ -427,10 +427,8 @@ void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor* layer, float x, float 
     priv->anchorZ = z;
 
     ClutterActor* actor = CLUTTER_ACTOR(layer);
-
-    float width, height;
-    clutter_actor_get_size(actor, &width, &height);
-    clutter_actor_set_anchor_point(actor, width * priv->anchorX, height * priv->anchorY);
+    clutter_actor_set_pivot_point(actor, x, y);
+    clutter_actor_set_pivot_point_z(actor, z);
 }
 
 void graphicsLayerActorGetAnchorPoint(GraphicsLayerActor* layer, float* x, float* y, float* z)
