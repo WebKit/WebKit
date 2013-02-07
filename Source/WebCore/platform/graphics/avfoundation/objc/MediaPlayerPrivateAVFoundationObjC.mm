@@ -905,6 +905,8 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         return;
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    const NSTimeInterval legibleOutputAdvanceInterval = 2;
+
     if (m_avPlayerItem && !m_legibleOutput) {
         m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
         [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
@@ -914,7 +916,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
 
         [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
-        [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:NSTimeIntervalSince1970];
+        [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
         [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
         [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
     }
