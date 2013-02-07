@@ -760,7 +760,7 @@ CalendarPicker.prototype.handleClear = function() {
 CalendarPicker.prototype.fixWindowSize = function() {
     var yearMonthRightElement = this._element.getElementsByClassName(ClassNames.YearMonthButtonRight)[0];
     var daysAreaElement = this._element.getElementsByClassName(ClassNames.DaysArea)[0];
-    var todayClearArea = this._element.getElementsByClassName(ClassNames.TodayClearArea)[0];
+    var clearButton = this._element.getElementsByClassName(ClassNames.ClearButton)[0];
     var headers = daysAreaElement.getElementsByClassName(ClassNames.DayLabel);
     var maxCellWidth = 0;
     for (var i = 1; i < headers.length; ++i) {
@@ -779,11 +779,11 @@ CalendarPicker.prototype.fixWindowSize = function() {
         var startOffset = this._element.offsetLeft + this._element.offsetWidth;
         yearMonthEnd = startOffset - yearMonthRightElement.offsetLeft;
         daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
-        todayClearAreaEnd = startOffset - todayClearArea.offsetLeft;
+        todayClearAreaEnd = startOffset - clearButton.offsetLeft;
     } else {
         yearMonthEnd = yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth;
         daysAreaEnd = daysAreaElement.offsetLeft + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
-        todayClearAreaEnd = todayClearArea.offsetLeft + todayClearArea.offsetWidth;
+        todayClearAreaEnd = clearButton.offsetLeft + clearButton.offsetWidth;
     }
     var maxEnd = Math.max(yearMonthEnd, daysAreaEnd, todayClearAreaEnd);
     var MainPadding = 10; // FIXME: Fix name.
@@ -794,7 +794,6 @@ CalendarPicker.prototype.fixWindowSize = function() {
     this._element.style.width = "auto";
     daysAreaElement.style.width = "100%";
     daysAreaElement.style.tableLayout = "fixed";
-    todayClearArea.style.display = "block";
     this._element.getElementsByClassName(ClassNames.YearMonthUpper)[0].style.display = "-webkit-box";
     this._element.getElementsByClassName(ClassNames.MonthSelectorBox)[0].style.display = "block";
     resizeWindow(desiredBodyWidth, elementHeight);

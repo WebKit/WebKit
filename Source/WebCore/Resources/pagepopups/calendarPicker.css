@@ -274,8 +274,3 @@ body {
 .today-clear-area .today-button {
     margin-right: 8px;
 }
-
-.today-clear-area {
-    display: inline-block;
-    /* display: block is added in the JS code. */
-}
