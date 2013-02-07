@@ -74,6 +74,9 @@ webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ]
 webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
+
+# Rebaseline required after https://webkit.org/b/95772
+webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

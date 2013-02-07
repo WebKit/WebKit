@@ -181,10 +181,16 @@ static bool isEmptyInline(RenderObject* object)
     if (!object->isRenderInline())
         return false;
 
-    if (!object->firstChild())
-        return true;
+    for (RenderObject* curr = object->firstChild(); curr; curr = curr->nextSibling()) {
+        if (curr->isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (curr->isText() && toRenderText(curr)->isAllCollapsibleWhitespace())
+            continue;
 
-    return object->firstChild()->isText() && (object->firstChild() == object->lastChild()) && toRenderText(object->firstChild())->isAllCollapsibleWhitespace();
+        if (!isEmptyInline(curr))
+            return false;
+    }
+    return true;
 }
 
 // FIXME: This function is misleadingly named. It has little to do with bidi.

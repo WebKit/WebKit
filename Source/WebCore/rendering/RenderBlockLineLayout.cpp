@@ -1616,10 +1616,12 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                         lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
                 }
             }
+        }
 
-            for (size_t i = 0; i < lineBreaker.positionedObjects().size(); ++i)
-                setStaticPositions(this, lineBreaker.positionedObjects()[i]);
+        for (size_t i = 0; i < lineBreaker.positionedObjects().size(); ++i)
+            setStaticPositions(this, lineBreaker.positionedObjects()[i]);
 
+        if (!layoutState.lineInfo().isEmpty()) {
             layoutState.lineInfo().setFirstLine(false);
             newLine(lineBreaker.clear());
         }
