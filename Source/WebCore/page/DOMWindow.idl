@@ -335,6 +335,7 @@
     attribute WebKitCSSTransformValueConstructor WebKitCSSTransformValue;
 
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
+    attribute WebKitCSSFilterRuleConstructor WebKitCSSFilterRule;
     attribute WebKitCSSMixFunctionValueConstructor WebKitCSSMixFunctionValue;
 #endif
 
