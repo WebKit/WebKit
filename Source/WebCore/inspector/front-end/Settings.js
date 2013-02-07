@@ -214,7 +214,7 @@ WebInspector.ExperimentsSettings = function()
     this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
     this.showOverridesInDrawer = this._createExperiment("showOverridesInDrawer", "Show Overrides in drawer");
     this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");
-    this.elementsPanelSingleColumn = this._createExperiment("elementsPanelSingleColumn", "Split Elements sidebar horizontally when it is too narrow");
+    this.horizontalPanelSplit = this._createExperiment("horizontalPanelSplit", "Allow horizontal split in Elements and Sources panels");
 
     this._cleanUpSetting();
 }

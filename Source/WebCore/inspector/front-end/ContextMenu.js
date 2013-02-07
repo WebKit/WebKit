@@ -200,8 +200,8 @@ WebInspector.ContextMenu.prototype = {
         if (menuObject.length) {
             WebInspector._contextMenu = this;
             InspectorFrontendHost.showContextMenu(this._event, menuObject);
+            this._event.consume();
         }
-        this._event.consume();
     },
 
     showSoftMenu: function()

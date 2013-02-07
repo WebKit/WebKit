@@ -799,10 +799,25 @@ WebInspector.ComputedStyleSidebarPane = function()
 }
 
 WebInspector.ComputedStyleSidebarPane.prototype = {
+    wasShown: function()
+    {
+        WebInspector.SidebarPane.prototype.wasShown.call(this);
+        if (!this._hasFreshContent)
+            this.prepareContent();
+    },
 
+    /**
+     * @param {function()=} callback
+     */
     prepareContent: function(callback)
     {
-        this._stylesSidebarPane._refreshUpdate(null, true, callback);
+        function wrappedCallback() {
+            this._hasFreshContent = true;
+            if (callback)
+                callback();
+            delete this._hasFreshContent;
+        }
+        this._stylesSidebarPane._refreshUpdate(null, true, wrappedCallback.bind(this));
     },
 
     __proto__: WebInspector.SidebarPane.prototype

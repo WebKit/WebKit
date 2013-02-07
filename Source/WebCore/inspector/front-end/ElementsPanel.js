@@ -52,7 +52,6 @@ WebInspector.ElementsPanel = function()
     const initialSidebarHeight = 325;
     const minimumContentHeightPercent = 34;
     this.createSidebarView(this.element, WebInspector.SidebarView.SidebarPosition.End, initialSidebarWidth, initialSidebarHeight);
-    this.splitView.setAutoOrientation(WebInspector.experimentsSettings.elementsPanelSingleColumn.isEnabled());
     this.splitView.setMinimumSidebarWidth(Preferences.minElementsSidebarWidth);
     this.splitView.setMinimumMainWidthPercent(minimumContentWidthPercent);
     this.splitView.setMinimumSidebarHeight(Preferences.minElementsSidebarHeight);
@@ -83,7 +82,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle, this._setPseudoClassForNodeId.bind(this));
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
-    this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
+    this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane.createProxy(this);
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
     this.sidebarPanes.styles.setShowCallback(this.updateStyles.bind(this, false));
@@ -91,16 +90,16 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.properties.setShowCallback(this.updateProperties.bind(this));
     this.sidebarPanes.eventListeners.setShowCallback(this.updateEventListeners.bind(this));
 
-    this.sidebarPanes.styles.expand();
-
     this.sidebarPanes.styles.addEventListener("style edited", this._stylesPaneEdited, this);
     this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
 
-    this.sidebarPaneView = new WebInspector.SidebarPaneStack();
+    this.sidebarPaneView = new WebInspector.SidebarPaneGroup();
     for (var pane in this.sidebarPanes)
         this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
-    this.sidebarPaneView.show(this.sidebarElement);
+    this.sidebarPaneView.attachToPanel(this);
+
+    this.sidebarPanes.styles.expand();
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
@@ -255,7 +254,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
 
-        this.sidebarPanes.domBreakpoints.restoreBreakpoints();
+        WebInspector.domBreakpointsSidebarPane.restoreBreakpoints();
 
         /**
          * @this {WebInspector.ElementsPanel}
@@ -351,6 +350,8 @@ WebInspector.ElementsPanel.prototype = {
         contextMenu.appendSeparator();
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), WebInspector.settings.domWordWrap.get());
 
+        this.sidebarPaneView.populateContextMenu(contextMenu);
+
         contextMenu.show();
     },
 
@@ -389,7 +390,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         // Add debbuging-related actions
         contextMenu.appendSeparator();
-        var pane = this.sidebarPanes.domBreakpoints;
+        var pane = WebInspector.domBreakpointsSidebarPane;
         pane.populateNodeContextMenu(node, contextMenu);
     },
 
@@ -969,6 +970,9 @@ WebInspector.ElementsPanel.prototype = {
         collapse(selectedCrumb, true);
     },
 
+    /**
+     * @param {boolean=} forceUpdate
+     */
     updateStyles: function(forceUpdate)
     {
         var stylesSidebarPane = this.sidebarPanes.styles;

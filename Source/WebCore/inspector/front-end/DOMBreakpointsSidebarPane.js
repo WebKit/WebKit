@@ -325,7 +325,87 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
         }
     },
 
+    /**
+     * @param {WebInspector.Panel} panel
+     */
+    createProxy: function(panel)
+    {
+        var proxy = new WebInspector.DOMBreakpointsSidebarPane.Proxy(this, panel);
+        if (!this._proxies)
+            this._proxies = [];
+        this._proxies.push(proxy);
+        return proxy;
+    },
+
+    onContentReady: function()
+    {
+        for (var i = 0; i != this._proxies.length; i++)
+            this._proxies[i].onContentReady();
+    },
+
     __proto__: WebInspector.NativeBreakpointsSidebarPane.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.SidebarPane}
+ * @param {WebInspector.DOMBreakpointsSidebarPane} pane
+ * @param {WebInspector.Panel} panel
+ */
+WebInspector.DOMBreakpointsSidebarPane.Proxy = function(pane, panel)
+{
+    WebInspector.View._assert(!pane.titleElement.firstChild);
+
+    WebInspector.SidebarPane.call(this, pane.title());
+
+    this._wrappedPane = pane;
+    this._panel = panel;
+
+    this.bodyElement.removeSelf();
+    this.bodyElement = this._wrappedPane.bodyElement;
+}
+
+WebInspector.DOMBreakpointsSidebarPane.Proxy.prototype = {
+    expanded: function()
+    {
+        return this._wrappedPane.expanded();
+    },
+
+    expand: function()
+    {
+        this._wrappedPane.expand();
+    },
+
+    collapse: function()
+    {
+        this._wrappedPane.collapse();
+    },
+
+    onContentReady: function()
+    {
+        if (!this._panel.isShowing())
+            return;
+
+        this._reattachBody();
+        WebInspector.SidebarPane.prototype.onContentReady.call(this);
+    },
+
+    wasShown: function()
+    {
+        WebInspector.SidebarPane.prototype.wasShown.call(this);
+        this._reattachBody();
+    },
+
+    _reattachBody: function()
+    {
+        if (this.bodyElement.parentNode == this.element)
+            return;
+
+        this.bodyElement.removeSelf();
+        this.element.appendChild(this.bodyElement);
+    },
+
+    __proto__: WebInspector.SidebarPane.prototype
 }
 
 /**
