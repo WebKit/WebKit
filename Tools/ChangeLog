@@ -1,3 +1,15 @@
+2013-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        git.svn_revision doesn't fetch the same revision as svn.svn_revision
+        https://bugs.webkit.org/show_bug.cgi?id=108684
+
+        Reviewed by Dirk Pranke.
+
+        Always call git log on the checkout root.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.svn_revision):
+
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Patch for testing Win EWS bots.
