@@ -31,9 +31,6 @@
 #ifndef WebTestInterfaces_h
 #define WebTestInterfaces_h
 
-#include "WebTestCommon.h"
-#include <memory>
-
 namespace WebKit {
 class WebFrame;
 class WebView;
@@ -45,7 +42,7 @@ class TestInterfaces;
 class WebTestDelegate;
 class WebTestRunner;
 
-class WEBTESTRUNNER_EXPORT WebTestInterfaces {
+class WebTestInterfaces {
 public:
     WebTestInterfaces();
     ~WebTestInterfaces();
@@ -64,7 +61,7 @@ public:
 #endif
 
 private:
-    std::auto_ptr<TestInterfaces> m_interfaces;
+    TestInterfaces* m_interfaces;
 };
 
 }
