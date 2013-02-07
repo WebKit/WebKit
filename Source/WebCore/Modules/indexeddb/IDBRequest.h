@@ -44,9 +44,6 @@
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
 #include "ScriptWrappable.h"
-#if USE(V8)
-#include "WorldContextHandle.h"
-#endif
 
 namespace WebCore {
 
