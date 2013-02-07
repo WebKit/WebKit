@@ -52,7 +52,6 @@ public:
     static void collectGarbage();
 
     static Node* opaqueRootForGC(Node*, v8::Isolate*);
-    static void didCreateWrapperForNode(Node*);
 
 private:
     static Vector<Node*>* m_edenNodes;

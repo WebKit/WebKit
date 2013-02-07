@@ -164,13 +164,6 @@ private:
         object->setWrapper(wrapper);
         wrapper.MakeWeak(isolate, object, weakCallback);
     }
-    static void setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
-    {
-        ASSERT(object->wrapper().IsEmpty());
-        object->setWrapper(wrapper);
-        V8GCController::didCreateWrapperForNode(object);
-        wrapper.MakeWeak(isolate, static_cast<ScriptWrappable*>(object), weakCallback);
-    }
 
     static void weakCallback(v8::Isolate*, v8::Persistent<v8::Value>, void* context);
 
