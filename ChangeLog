@@ -1,3 +1,16 @@
+2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [CoordinatedGraphics] Use ScrollingCoordinator to track fixed layers
+        https://bugs.webkit.org/show_bug.cgi?id=108990
+
+        Reviewed by Noam Rosenthal.
+
+        Add a new test that allow us to remove the fixed positioning of a layer but still keeping
+        it compositing. Coordinated Graphics had a bug where the CoordinatedSceneGraph would still
+        count this layer as fixed position.
+
+        * ManualTests/remove-fixed-position-but-keep-compositing.html: Added.
+
 2013-02-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix after r141196 for 32 bits autotools.

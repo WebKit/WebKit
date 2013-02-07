@@ -1,3 +1,22 @@
+2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [CoordinatedGraphics] Use ScrollingCoordinator to track fixed layers
+        https://bugs.webkit.org/show_bug.cgi?id=108990
+
+        Reviewed by Noam Rosenthal.
+        Signed off for WebKit2 by Simon Fraser.
+
+        WebCore keeps ScrollingCoordinator up-to-date about whether layers are fixed or not, so we
+        don't need to traverse the tree every frame to get this information.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp: remove
+        syncFixedLayers() and its helper functions. Those were used to identify the fixed layers
+        and are not needed anymore.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl): enable the scrolling coordinator usage for
+        Coordinated Graphics.
+
 2013-02-07  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] Fold QtWebPageLoadClient into QQuickWebViewPrivate and move to C API.

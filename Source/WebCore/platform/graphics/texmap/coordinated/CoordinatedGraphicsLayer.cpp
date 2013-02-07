@@ -464,6 +464,15 @@ CoordinatedLayerID CoordinatedGraphicsLayer::id() const
     return m_id;
 }
 
+void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
+{
+    if (m_fixedToViewport == isFixed)
+        return;
+
+    m_fixedToViewport = isFixed;
+    didChangeLayerState();
+}
+
 void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
     if (!m_coordinator->isFlushingLayerChanges()) {
@@ -477,8 +486,6 @@ void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 
     if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
         replica->flushCompositingStateForThisLayerOnly();
-
-    m_coordinator->syncFixedLayers();
 
     flushCompositingStateForThisLayerOnly();
 

@@ -105,7 +105,6 @@ public:
 #endif
     virtual void setLayerRepaintCount(WebCore::CoordinatedLayerID, int) OVERRIDE;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
-    virtual void syncFixedLayers();
 
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
 

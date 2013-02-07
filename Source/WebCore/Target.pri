@@ -4066,6 +4066,7 @@ enable?(CANVAS_PROXY) {
 
 use?(3D_GRAPHICS) {
     HEADERS += \
+        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h \
         platform/graphics/cpu/arm/GraphicsContext3DNEON.h \
         platform/graphics/ANGLEWebKitBridge.h \
         platform/graphics/Extensions3D.h \
@@ -4090,6 +4091,7 @@ use?(3D_GRAPHICS) {
         platform/graphics/texmap/coordinated/UpdateAtlas.h
 
     SOURCES += \
+        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp \
         platform/graphics/ANGLEWebKitBridge.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \
