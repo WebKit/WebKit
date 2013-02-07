@@ -65,7 +65,7 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     else
         select->add(newOption, static_cast<HTMLOptionElement*>(item(index)), ec);
 
-    ASSERT(ec == 0);
+    ASSERT(!ec);
 }
 
 void HTMLOptionsCollection::remove(int index)

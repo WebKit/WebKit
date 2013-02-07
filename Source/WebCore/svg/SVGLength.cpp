@@ -27,6 +27,7 @@
 #include "CSSHelper.h"
 #include "CSSPrimitiveValue.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -132,9 +133,7 @@ SVGLength::SVGLength(const SVGLengthContext& context, float value, SVGLengthMode
     : m_valueInSpecifiedUnits(0)
     , m_unit(storeUnit(mode, unitType))
 {
-    ExceptionCode ec = 0;
-    setValue(value, context, ec);
-    ASSERT(!ec);
+    setValue(value, context, ASSERT_NO_EXCEPTION);
 }
 
 SVGLength::SVGLength(const SVGLength& other)

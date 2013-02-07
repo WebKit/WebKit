@@ -95,11 +95,8 @@ PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthW
 PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
 {
     DEFINE_STATIC_LOCAL(SVGLength, defaultTextLength, (LengthModeOther));
-    if (m_specifiedTextLength == defaultTextLength) {
-        ExceptionCode ec = 0;
-        m_textLength.value.newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength(), ec);
-        ASSERT(!ec);
-    }
+    if (m_specifiedTextLength == defaultTextLength)
+        m_textLength.value.newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength(), ASSERT_NO_EXCEPTION);
 
     m_textLength.shouldSynchronize = true;
     return static_pointer_cast<SVGAnimatedLength>(lookupOrCreateTextLengthWrapper(this));

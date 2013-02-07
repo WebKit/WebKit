@@ -350,12 +350,9 @@ int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& p
     Position indexPosition = pos.deepEquivalent().parentAnchoredEquivalent();
     if (enclosingTextFormControl(indexPosition) != this)
         return 0;
-    ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(indexPosition.document());
-    range->setStart(innerTextElement(), 0, ec);
-    ASSERT(!ec);
-    range->setEnd(indexPosition.containerNode(), indexPosition.offsetInContainerNode(), ec);
-    ASSERT(!ec);
+    range->setStart(innerTextElement(), 0, ASSERT_NO_EXCEPTION);
+    range->setEnd(indexPosition.containerNode(), indexPosition.offsetInContainerNode(), ASSERT_NO_EXCEPTION);
     return TextIterator::rangeLength(range.get());
 }
 
@@ -539,14 +536,10 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
         if (textIsChanged && document() && renderer() && AXObjectCache::accessibilityEnabled())
             document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
 
-        ExceptionCode ec = 0;
-        innerTextElement()->setInnerText(value, ec);
-        ASSERT(!ec);
+        innerTextElement()->setInnerText(value, ASSERT_NO_EXCEPTION);
 
-        if (value.endsWith('\n') || value.endsWith('\r')) {
-            innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
-            ASSERT(!ec);
-        }
+        if (value.endsWith('\n') || value.endsWith('\r'))
+            innerTextElement()->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
     }
 
     setFormControlValueMatchesRenderer(true);

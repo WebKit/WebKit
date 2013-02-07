@@ -546,11 +546,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
             rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, *it), docCookiesList);
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
-                ExceptionCode ec = 0;
-                stringCookiesList.append(document->cookie(ec));
+                //
                 // Exceptions are thrown by cookie() in sandboxed frames. That won't happen here
                 // because "document" is the document of the main frame of the page.
-                ASSERT(!ec);
+                stringCookiesList.append(document->cookie(ASSERT_NO_EXCEPTION));
             } else {
                 int cookiesSize = docCookiesList.size();
                 for (int i = 0; i < cookiesSize; i++) {

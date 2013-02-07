@@ -181,9 +181,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
 
     // Give the root a chance to change the text.
     RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
-    ExceptionCode ec = 0;
-    editableRoot->dispatchEvent(evt, ec);
-    ASSERT(ec == 0);
+    editableRoot->dispatchEvent(evt, ASSERT_NO_EXCEPTION);
     if (text != evt->text() || !editableRoot->rendererIsRichlyEditable()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
@@ -234,9 +232,7 @@ void ReplacementFragment::removeNode(PassRefPtr<Node> node)
     if (!parent)
         return;
     
-    ExceptionCode ec = 0;
-    parent->removeChild(node.get(), ec);
-    ASSERT(ec == 0);
+    parent->removeChild(node.get(), ASSERT_NO_EXCEPTION);
 }
 
 void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
@@ -248,23 +244,15 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     if (!parent)
         return;
         
-    ExceptionCode ec = 0;
-    parent->insertBefore(node, refNode, ec);
-    ASSERT(ec == 0);
+    parent->insertBefore(node, refNode, ASSERT_NO_EXCEPTION);
 }
 
 PassRefPtr<StyledElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootEditableElement)
 {
     RefPtr<StyledElement> holder = createDefaultParagraphElement(m_document.get());
-    
-    ExceptionCode ec = 0;
 
-    holder->appendChild(m_fragment, ec);
-    ASSERT(ec == 0);
-
-    rootEditableElement->appendChild(holder.get(), ec);
-    ASSERT(ec == 0);
-
+    holder->appendChild(m_fragment, ASSERT_NO_EXCEPTION);
+    rootEditableElement->appendChild(holder.get(), ASSERT_NO_EXCEPTION);
     m_document->updateLayoutIgnorePendingStylesheets();
 
     return holder.release();
@@ -275,12 +263,9 @@ void ReplacementFragment::restoreAndRemoveTestRenderingNodesToFragment(StyledEle
     if (!holder)
         return;
     
-    ExceptionCode ec = 0;
     while (RefPtr<Node> node = holder->firstChild()) {
-        holder->removeChild(node.get(), ec);
-        ASSERT(ec == 0);
-        m_fragment->appendChild(node.get(), ec);
-        ASSERT(ec == 0);
+        holder->removeChild(node.get(), ASSERT_NO_EXCEPTION);
+        m_fragment->appendChild(node.get(), ASSERT_NO_EXCEPTION);
     }
 
     removeNode(holder);
@@ -1318,9 +1303,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     }
 
     while (RefPtr<Node> listItem = listElement->firstChild()) {
-        ExceptionCode ec = 0;
-        listElement->removeChild(listItem.get(), ec);
-        ASSERT(!ec);
+        listElement->removeChild(listItem.get(), ASSERT_NO_EXCEPTION);
         if (isStart || isMiddle) {
             insertNodeBefore(listItem, lastNode);
             insertedNodes.respondToNodeInsertion(listItem.get());

@@ -108,12 +108,10 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
     oldParent->removeDetachedChildren();
 
     for (unsigned i = 0; i < children.size(); ++i) {
-        ExceptionCode ec = 0;
         if (children[i]->attached())
             children[i]->detach();
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> child = document()->adoptNode(children[i].release(), ec);
-        ASSERT(!ec);
+        RefPtr<Node> child = document()->adoptNode(children[i].release(), ASSERT_NO_EXCEPTION);
         parserAppendChild(child.get());
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).

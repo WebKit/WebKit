@@ -155,10 +155,8 @@ static HTMLElement* enclosingDeletableElement(const VisibleSelection& selection)
     if (!range)
         return 0;
 
-    ExceptionCode ec = 0;
-    Node* container = range->commonAncestorContainer(ec);
+    Node* container = range->commonAncestorContainer(ASSERT_NO_EXCEPTION);
     ASSERT(container);
-    ASSERT(ec == 0);
 
     // The enclosingNodeOfType function only works on nodes that are editable
     // (which is strange, given its name).
@@ -234,7 +232,7 @@ void DeleteButtonController::createDeletionUI()
 
     ExceptionCode ec = 0;
     container->appendChild(outline.get(), ec);
-    ASSERT(ec == 0);
+    ASSERT(!ec);
     if (ec)
         return;
 
@@ -266,7 +264,7 @@ void DeleteButtonController::createDeletionUI()
     button->setCachedImage(new CachedImage(buttonImage.get()));
 
     container->appendChild(button.get(), ec);
-    ASSERT(ec == 0);
+    ASSERT(!ec);
     if (ec)
         return;
 
@@ -300,7 +298,7 @@ void DeleteButtonController::show(HTMLElement* element)
 
     ExceptionCode ec = 0;
     m_target->appendChild(m_containerElement.get(), ec);
-    ASSERT(ec == 0);
+    ASSERT(!ec);
     if (ec) {
         hide();
         return;

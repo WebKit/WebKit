@@ -438,12 +438,9 @@ void DOMSelection::deleteFromDocument()
     if (!selectedRange)
         return;
 
-    ExceptionCode ec = 0;
-    selectedRange->deleteContents(ec);
-    ASSERT(!ec);
+    selectedRange->deleteContents(ASSERT_NO_EXCEPTION);
 
-    setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(), selectedRange->startContainer(), selectedRange->startOffset(), ec);
-    ASSERT(!ec);
+    setBaseAndExtent(selectedRange->startContainer(ASSERT_NO_EXCEPTION), selectedRange->startOffset(), selectedRange->startContainer(), selectedRange->startOffset(), ASSERT_NO_EXCEPTION);
 }
 
 bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
