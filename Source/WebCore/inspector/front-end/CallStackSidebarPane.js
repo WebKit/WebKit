@@ -40,6 +40,7 @@ WebInspector.CallStackSidebarPane.prototype = {
     update: function(callFrames)
     {
         this.bodyElement.removeChildren();
+        delete this._statusMessageElement;
         this.placards = [];
 
         if (!callFrames) {
