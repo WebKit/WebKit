@@ -50,7 +50,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/page/animation \
     $$SOURCE_DIR/page/qt \
     $$SOURCE_DIR/page/scrolling \
-    $$SOURCE_DIR/page/scrolling/coordinatedgraphics \
     $$SOURCE_DIR/platform \
     $$SOURCE_DIR/platform/animation \
     $$SOURCE_DIR/platform/audio \
@@ -64,7 +63,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/platform/graphics/qt \
     $$SOURCE_DIR/platform/graphics/surfaces \
     $$SOURCE_DIR/platform/graphics/texmap \
-    $$SOURCE_DIR/platform/graphics/texmap/coordinated \
     $$SOURCE_DIR/platform/graphics/transforms \
     $$SOURCE_DIR/platform/image-decoders \
     $$SOURCE_DIR/platform/image-decoders/bmp \

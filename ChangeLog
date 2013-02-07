@@ -1,3 +1,15 @@
+2013-02-07  Gavin Peters  <gavinp@chromium.org>
+
+        Unreviewed, rolling out r142112.
+        http://trac.webkit.org/changeset/142112
+        https://bugs.webkit.org/show_bug.cgi?id=108990
+
+        The new test scrollingcoordinator/non-fast-scrollable-region-transformed- iframe.html crashes on Lion.
+
+        See http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=scrollingcoordinator%2Fnon-fast-scrollable-region-transformed-iframe.html
+
+        * ManualTests/remove-fixed-position-but-keep-compositing.html: Removed.
+
 2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] configure.ac requires a cleanup

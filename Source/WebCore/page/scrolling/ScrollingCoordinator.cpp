@@ -52,10 +52,6 @@
 #include "ScrollingCoordinatorChromium.h"
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
-#include "ScrollingCoordinatorCoordinatedGraphics.h"
-#endif
-
 namespace WebCore {
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
@@ -66,10 +62,6 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 #if PLATFORM(CHROMIUM)
     return adoptRef(new ScrollingCoordinatorChromium(page));
-#endif
-
-#if USE(COORDINATED_GRAPHICS)
-    return adoptRef(new ScrollingCoordinatorCoordinatedGraphics(page));
 #endif
 
     return adoptRef(new ScrollingCoordinator(page));

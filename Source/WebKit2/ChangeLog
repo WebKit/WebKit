@@ -1,3 +1,22 @@
+2013-02-07  Gavin Peters  <gavinp@chromium.org>
+
+        Unreviewed, rolling out r142112.
+        http://trac.webkit.org/changeset/142112
+        https://bugs.webkit.org/show_bug.cgi?id=108990
+
+        The new test scrollingcoordinator/non-fast-scrollable-region-transformed- iframe.html crashes on Lion.
+
+        See http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=scrollingcoordinator%2Fnon-fast-scrollable-region-transformed-iframe.html
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::updateOffsetFromViewportForSelf):
+        (WebKit):
+        (WebKit::updateOffsetFromViewportForLayer):
+        (WebKit::CoordinatedLayerTreeHost::syncFixedLayers):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+
 2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [CoordinatedGraphics] Use ScrollingCoordinator to track fixed layers

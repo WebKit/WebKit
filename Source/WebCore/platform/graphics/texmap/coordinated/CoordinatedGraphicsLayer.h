@@ -72,6 +72,7 @@ public:
     virtual void setLayerAnimations(CoordinatedLayerID, const GraphicsLayerAnimations&) = 0;
 
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
+    virtual void syncFixedLayers() = 0;
     virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, IntPoint&) = 0;
 };
 
@@ -136,7 +137,7 @@ public:
 
     CoordinatedLayerID id() const;
 
-    void setFixedToViewport(bool isFixed);
+    void setFixedToViewport(bool isFixed) { m_fixedToViewport = isFixed; }
 
     IntRect coverRect() const { return m_mainBackingStore ? m_mainBackingStore->mapToContents(m_mainBackingStore->coverRect()) : IntRect(); }
 
