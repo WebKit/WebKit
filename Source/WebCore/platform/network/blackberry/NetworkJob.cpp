@@ -1036,4 +1036,9 @@ void NetworkJob::updateCurrentWebChallenge(const AuthenticationChallenge& challe
     }
 }
 
+const BlackBerry::Platform::String NetworkJob::mimeType() const
+{
+    return m_response.mimeType();
+}
+
 } // namespace WebCore

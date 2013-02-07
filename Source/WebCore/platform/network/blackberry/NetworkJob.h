@@ -91,6 +91,7 @@ public:
     virtual void notifyClose(int status);
     void handleNotifyClose(int status);
     virtual int status() const { return m_extendedStatusCode; }
+    virtual const BlackBerry::Platform::String mimeType() const;
 
     virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
