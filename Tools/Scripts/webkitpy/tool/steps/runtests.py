@@ -103,7 +103,7 @@ class RunTests(AbstractStep):
             if sys.platform != "cygwin":
                 args.append("--quiet")
                 args.append("--skip-failing-tests")
-            else
+            else:
                 args.append("--no-build");
 
         if self._options.quiet:

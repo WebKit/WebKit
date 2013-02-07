@@ -1,5 +1,12 @@
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Fix syntax error in runtests.py.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
         Temporary fix for Win EWS bots.
         Don't build DRT since it has already been built in the build step.
 
