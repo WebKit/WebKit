@@ -184,7 +184,7 @@ static VisiblePosition visiblePositionForPointIgnoringClipping(const Frame& fram
     return visiblePos;
 }
 
-static unsigned short directionOfPointRelativeToRect(const WebCore::IntPoint& point, const WebCore::IntRect& rect, const bool useTopPadding = true, const bool useBottomPadding = true)
+static unsigned directionOfPointRelativeToRect(const WebCore::IntPoint& point, const WebCore::IntRect& rect, const bool useTopPadding = true, const bool useBottomPadding = true)
 {
     ASSERT(!rect.contains(point));
 
@@ -265,7 +265,7 @@ void SelectionHandler::setCaretPosition(const WebCore::IntPoint& position)
     if (RenderObject* focusedRenderer = focusedFrame->document()->focusedNode()->renderer()) {
         WebCore::IntRect nodeOutlineBounds(focusedRenderer->absoluteOutlineBounds());
         if (!nodeOutlineBounds.contains(relativePoint)) {
-            if (unsigned short character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
+            if (unsigned character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
                 m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character));
 
             // Send the selection changed in case this does not trigger a selection change to
@@ -293,7 +293,7 @@ void SelectionHandler::inputHandlerDidFinishProcessingChange()
 }
 
 // This function makes sure we are not reducing the selection to a caret selection.
-static bool shouldExtendSelectionInDirection(const VisibleSelection& selection, unsigned short character)
+static bool shouldExtendSelectionInDirection(const VisibleSelection& selection, unsigned character)
 {
     FrameSelection tempSelection;
     tempSelection.setSelection(selection);
@@ -327,7 +327,7 @@ static int clamp(const int min, const int value, const int max)
     return value < min ? min : std::min(value, max);
 }
 
-static VisiblePosition directionalVisiblePositionAtExtentOfBox(Frame* frame, const WebCore::IntRect& boundingBox, unsigned short direction, const WebCore::IntPoint& basePoint)
+static VisiblePosition directionalVisiblePositionAtExtentOfBox(Frame* frame, const WebCore::IntRect& boundingBox, unsigned direction, const WebCore::IntPoint& basePoint)
 {
     ASSERT(frame);
 
@@ -365,7 +365,7 @@ static bool pointIsOutsideOfBoundingBoxInDirection(unsigned direction, const Web
     return false;
 }
 
-unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, VisibleSelection& newSelection)
+unsigned SelectionHandler::extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, VisibleSelection& newSelection)
 {
     Frame* focusedFrame = m_webPage->focusedOrMainFrame();
     if (!focusedFrame->document()->focusedNode() || !focusedFrame->document()->focusedNode()->renderer())
@@ -381,7 +381,7 @@ unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHand
 
     // Start handle is outside of the field. Treat it as the changed handle and move
     // relative to the start caret rect.
-    unsigned short character = directionOfPointRelativeToRect(selectionPoint, caretRect, isStartHandle /* useTopPadding */, !isStartHandle /* useBottomPadding */);
+    unsigned character = directionOfPointRelativeToRect(selectionPoint, caretRect, isStartHandle /* useTopPadding */, !isStartHandle /* useBottomPadding */);
 
     // Prevent incorrect movement, handles can only extend the selection this way
     // to prevent inversion of the handles.
@@ -439,7 +439,7 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     if (startIsOutsideOfField && endIsOutsideOfField)
         return false;
 
-    unsigned short character = 0;
+    unsigned character = 0;
     if (startIsOutsideOfField) {
         character = extendSelectionToFieldBoundary(true /* isStartHandle */, relativeStart, newSelection);
         if (character) {

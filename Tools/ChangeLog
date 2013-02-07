@@ -1,3 +1,16 @@
+2013-02-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] CHHW - Characters that are using 32 bits encoding get trunked to 16bits
+        https://bugs.webkit.org/show_bug.cgi?id=109126
+        PR 292540
+
+        Reviewed by Yong Li.
+
+        Change char code to 4 bytes.
+
+        * DumpRenderTree/blackberry/EventSender.cpp:
+        (keyDownCallback):
+
 2013-02-07  Gavin Peters  <gavinp@chromium.org>
 
         Unreviewed, rolling out r142090.

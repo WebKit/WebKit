@@ -4272,7 +4272,7 @@ void WebPage::setForcedTextEncoding(const BlackBerry::Platform::String& encoding
         return d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
 }
 
-static void handleScrolling(unsigned short character, WebPagePrivate* scroller)
+static void handleScrolling(unsigned character, WebPagePrivate* scroller)
 {
     const int scrollFactor = 20;
     int dx = 0, dy = 0;

@@ -121,7 +121,7 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
 
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
     ASSERT(!*exception);
-    short charCode = 0;
+    unsigned charCode = 0;
     bool needsShiftKeyModifier = false;
     if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
         charCode = KEYCODE_LEFT;

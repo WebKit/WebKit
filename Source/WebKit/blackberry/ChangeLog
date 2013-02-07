@@ -1,3 +1,30 @@
+2013-02-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] CHHW - Characters that are using 32 bits encoding get trunked to 16bits
+        https://bugs.webkit.org/show_bug.cgi?id=109126
+        PR 292540
+
+        Reviewed by Yong Li.
+        Internally reviewed by Mike Fenton.
+
+        Key char is UTF32 encoded, should be 4 bytes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::handleScrolling):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::directionOfPointRelativeToRect):
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+        (BlackBerry::WebKit::shouldExtendSelectionInDirection):
+        (BlackBerry::WebKit::directionalVisiblePositionAtExtentOfBox):
+        (BlackBerry::WebKit::SelectionHandler::extendSelectionToFieldBoundary):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-02-07  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Reader Mode: Opening two links quickly from reader mode causes browser bad state

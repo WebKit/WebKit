@@ -85,7 +85,7 @@ private:
                                       , const WebCore::IntPoint& relativeEnd);
     WebCore::Node* DOMContainerNodeForVisiblePosition(const WebCore::VisiblePosition&) const;
     bool shouldUpdateSelectionOrCaretForPoint(const WebCore::IntPoint&, const WebCore::IntRect&, bool startCaret = true) const;
-    unsigned short extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);
+    unsigned extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);
     WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
     bool inputNodeOverridesTouch() const;

@@ -238,7 +238,7 @@ private:
     int32_t m_processingTransactionId;
 
     bool m_shouldNotifyWebView;
-    unsigned short m_expectedKeyUpChar;
+    unsigned m_expectedKeyUpChar;
 
     imf_sp_text_t m_spellCheckingOptionsRequest;
     WebCore::IntSize m_screenOffset;

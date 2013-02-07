@@ -138,7 +138,7 @@ namespace WebCore {
         static void getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey);
 
 #if PLATFORM(BLACKBERRY)
-        unsigned short unmodifiedCharacter() const { return m_unmodifiedCharacter; }
+        unsigned unmodifiedCharacter() const { return m_unmodifiedCharacter; }
 #endif
 
 #if PLATFORM(MAC)
@@ -192,7 +192,7 @@ namespace WebCore {
         bool m_isSystemKey;
 
 #if PLATFORM(BLACKBERRY)
-        unsigned short m_unmodifiedCharacter;
+        unsigned m_unmodifiedCharacter;
 #endif
 
 #if PLATFORM(MAC)
