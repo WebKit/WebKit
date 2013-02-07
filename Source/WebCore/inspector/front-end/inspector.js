@@ -441,7 +441,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
     this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);
-    new WebInspector.NetworkUISourceCodeProvider(this.workspace, this.networkWorkspaceProvider);
+    new WebInspector.NetworkUISourceCodeProvider(this.networkWorkspaceProvider);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 

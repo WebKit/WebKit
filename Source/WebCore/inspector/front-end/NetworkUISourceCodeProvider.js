@@ -30,12 +30,10 @@
 
 /**
  * @constructor
- * @param {WebInspector.Workspace} workspace
  * @param {WebInspector.SimpleWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.NetworkUISourceCodeProvider = function(workspace, networkWorkspaceProvider)
+WebInspector.NetworkUISourceCodeProvider = function(networkWorkspaceProvider)
 {
-    this._workspace = workspace;
     this._networkWorkspaceProvider = networkWorkspaceProvider;
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
