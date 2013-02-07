@@ -51,7 +51,7 @@ INCLUDEPATH += \
 
 CONFIG -= warn_on
 
-*-g++*: QMAKE_CXXFLAGS = \
+!compiling_thirdparty_code:*-g++*: QMAKE_CXXFLAGS = \
     -Wall \
     -Wextra \
     -Wreturn-type \

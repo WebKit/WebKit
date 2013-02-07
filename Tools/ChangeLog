@@ -1,3 +1,32 @@
+2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Compile WTF tests of TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=108935
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add initial stubs and files for building at least the WTF tests.
+        The WK2 tests need more platform code, in particular PlatformWebView
+        and injected bundle support.
+
+        * TestWebKitAPI/TestWebKitAPI.pri: Added.
+        * TestWebKitAPI/TestWebKitAPI.pro: Added.
+        * TestWebKitAPI/Tests/WTF/WTF.pro: Added.
+        * TestWebKitAPI/qt/InjectedBundleControllerQt.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * TestWebKitAPI/qt/PlatformUtilitiesQt.cpp: Added.
+        (Util):
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::sleep):
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::createURLForResource):
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        * TestWebKitAPI/qt/main.cpp: Added.
+        (main):
+        * Tools.pro:
+        * qmake/mkspecs/features/default_post.prf:
+
 2013-02-06  Roger Fong  <roger_fong@apple.com>
 
         VS2010 WinLauncher project, property sheets and resources.

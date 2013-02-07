@@ -20,6 +20,13 @@ build?(webkit2) {
         have?(QTQUICK): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
         SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro
     }
+
+    !production_build {
+        # Only tested on Linux so far.
+        linux* {
+            SUBDIRS += TestWebKitAPI
+        }
+    }
 }
 
 build?(imagediff): SUBDIRS += ImageDiff/ImageDiff.pro

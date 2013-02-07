@@ -1,3 +1,14 @@
+2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Compile WTF tests of TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=108935
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add qmake build system .pro file for building gtest as static library.
+
+        * gtest/gtest.pro: Added.
+
 2013-02-05  Paweł Forysiuk  <tuxator@o2.pl>
 
         Building with MinGW compiler dies with gtest errors
