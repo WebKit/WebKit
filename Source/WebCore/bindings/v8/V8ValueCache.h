@@ -71,7 +71,7 @@ public:
 private:
     v8::Handle<v8::String> v8ExternalStringSlow(StringImpl*, ReturnHandleType, v8::Isolate*);
 
-    HashMap<StringImpl*, v8::String*> m_stringCache;
+    HashMap<StringImpl*, v8::Persistent<v8::String> > m_stringCache;
     v8::Persistent<v8::String> m_lastV8String;
     // Note: RefPtr is a must as we cache by StringImpl* equality, not identity
     // hence lastStringImpl might be not a key of the cache (in sense of identity)
