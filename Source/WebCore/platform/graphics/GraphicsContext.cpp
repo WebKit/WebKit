@@ -450,29 +450,24 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, p, IntRect(IntPoint(), image->size()), op, shouldRespectImageOrientation);
+    drawImage(image, styleColorSpace, FloatRect(IntRect(p, image->size())), FloatRect(FloatPoint(), FloatSize(image->size())), op, shouldRespectImageOrientation);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, r, IntRect(IntPoint(), image->size()), op, shouldRespectImageOrientation, useLowQualityScale);
+    drawImage(image, styleColorSpace, FloatRect(r), FloatRect(FloatPoint(), FloatSize(image->size())), op, shouldRespectImageOrientation, useLowQualityScale);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
-    drawImage(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op, shouldRespectImageOrientation);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
-{
-    drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, shouldRespectImageOrientation, useLowQualityScale);
+    drawImage(image, styleColorSpace, FloatRect(IntRect(dest, srcRect.size())), FloatRect(srcRect), op, shouldRespectImageOrientation);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation, bool useLowQualityScale)
 {
-    drawImage(image, styleColorSpace, FloatRect(dest), src, op, BlendModeNormal, shouldRespectImageOrientation, useLowQualityScale);
+    drawImage(image, styleColorSpace, dest, src, op, BlendModeNormal, shouldRespectImageOrientation, useLowQualityScale);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest)
@@ -543,24 +538,24 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, p, IntRect(IntPoint(), image->logicalSize()), op, blendMode);
+    drawImageBuffer(image, styleColorSpace, FloatRect(IntRect(p, image->logicalSize())), FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, r, IntRect(IntPoint(), image->logicalSize()), op, blendMode, useLowQualityScale);
+    drawImageBuffer(image, styleColorSpace, FloatRect(r), FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode, useLowQualityScale);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, BlendMode blendMode)
 {
-    drawImageBuffer(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op, blendMode);
+    drawImageBuffer(image, styleColorSpace, FloatRect(IntRect(dest, srcRect.size())), FloatRect(srcRect), op, blendMode);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
-    drawImageBuffer(image, styleColorSpace, FloatRect(dest), srcRect, op, blendMode, useLowQualityScale);
+    drawImageBuffer(image, styleColorSpace, FloatRect(dest), FloatRect(srcRect), op, blendMode, useLowQualityScale);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest)
