@@ -1,5 +1,12 @@
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Another temporary EWS bot fix. It'll totally work this time.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Fix syntax error in runtests.py.
 
         * Scripts/webkitpy/tool/steps/runtests.py:
