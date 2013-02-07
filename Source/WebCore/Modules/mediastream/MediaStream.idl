@@ -30,6 +30,7 @@
     Constructor(in MediaStreamTrack[] tracks),
     ConstructorParameters=0,
     CallWith=ScriptExecutionContext,
+    V8SkipVTableValidation
 ] interface MediaStream {
     // DEPRECATED
     readonly attribute DOMString label;
