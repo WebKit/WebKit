@@ -271,9 +271,13 @@ Node.prototype.enclosingNodeOrSelfWithNodeName = function(nodeName)
     return this.enclosingNodeOrSelfWithNodeNameInArray([nodeName]);
 }
 
-Node.prototype.enclosingNodeOrSelfWithClass = function(className)
+/**
+ * @param {string} className
+ * @param {Element=} stayWithin
+ */
+Node.prototype.enclosingNodeOrSelfWithClass = function(className, stayWithin)
 {
-    for (var node = this; node && node !== this.ownerDocument; node = node.parentNode)
+    for (var node = this; node && node !== stayWithin && node !== this.ownerDocument; node = node.parentNode)
         if (node.nodeType === Node.ELEMENT_NODE && node.hasStyleClass(className))
             return node;
     return null;

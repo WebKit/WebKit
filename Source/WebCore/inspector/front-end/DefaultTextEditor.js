@@ -2068,6 +2068,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         // Selection may be outside of the editor.
         if (!this._container.isAncestor(selection.anchorNode) || !this._container.isAncestor(selection.focusNode))
             return null;
+        // Selection may be inside one of decorations.
+        if (selection.focusNode.enclosingNodeOrSelfWithClass("webkit-line-decorations", this._container))
+            return null;
         var start = this._selectionToPosition(selection.anchorNode, selection.anchorOffset, lastUndamagedLineRow);
         var end = selection.isCollapsed ? start : this._selectionToPosition(selection.focusNode, selection.focusOffset, lastUndamagedLineRow);
         return new WebInspector.TextRange(start.line, start.column, end.line, end.column);
