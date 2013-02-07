@@ -44,6 +44,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/page/scrolling"
+    "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
@@ -1820,6 +1821,7 @@ set(WebCore_SOURCES
 
     page/scrolling/ScrollingConstraints.cpp
     page/scrolling/ScrollingCoordinator.cpp
+    page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
 
     platform/Arena.cpp
     platform/AsyncFileSystem.cpp

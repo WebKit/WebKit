@@ -469,54 +469,6 @@ void CoordinatedLayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
     scheduleLayerFlush();
 }
 
-static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
-{
-    // These conditions must match the conditions in RenderLayerCompositor::requiresCompositingForPosition.
-    RenderLayerBacking* backing = renderLayer->backing();
-    if (!backing)
-        return;
-
-    RenderStyle* style = renderLayer->renderer()->style();
-    if (!style)
-        return;
-
-    if (!renderLayer->renderer()->isOutOfFlowPositioned() || renderLayer->renderer()->style()->position() != FixedPosition)
-        return;
-
-    if (!renderLayer->renderer()->container()->isRenderView())
-        return;
-
-    if (!renderLayer->isStackingContainer())
-        return;
-
-    CoordinatedGraphicsLayer* graphicsLayer = toCoordinatedGraphicsLayer(backing->graphicsLayer());
-    graphicsLayer->setFixedToViewport(true);
-}
-
-static void updateOffsetFromViewportForLayer(RenderLayer* renderLayer)
-{
-    updateOffsetFromViewportForSelf(renderLayer);
-
-    if (renderLayer->firstChild())
-        updateOffsetFromViewportForLayer(renderLayer->firstChild());
-    if (renderLayer->nextSibling())
-        updateOffsetFromViewportForLayer(renderLayer->nextSibling());
-}
-
-void CoordinatedLayerTreeHost::syncFixedLayers()
-{
-    if (!m_webPage->corePage()->settings() || !m_webPage->corePage()->settings()->acceleratedCompositingForFixedPositionEnabled())
-        return;
-
-    if (!m_webPage->mainFrame()->view()->hasViewportConstrainedObjects())
-        return;
-
-    RenderLayer* rootRenderLayer = m_webPage->mainFrame()->contentRenderer()->compositor()->rootRenderLayer();
-    ASSERT(rootRenderLayer);
-    if (rootRenderLayer->firstChild())
-        updateOffsetFromViewportForLayer(rootRenderLayer->firstChild());
-}
-
 void CoordinatedLayerTreeHost::lockAnimations()
 {
     m_animationsLocked = true;

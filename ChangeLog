@@ -1,5 +1,16 @@
 2013-02-07  Gavin Peters  <gavinp@chromium.org>
 
+        Unreviewed, rolling out r142141.
+        http://trac.webkit.org/changeset/142141
+        https://bugs.webkit.org/show_bug.cgi?id=108990
+
+        Reland r142112, will update Chromium expectations and create a
+        Chromium bug instead for the crash.
+
+        * ManualTests/remove-fixed-position-but-keep-compositing.html: Added.
+
+2013-02-07  Gavin Peters  <gavinp@chromium.org>
+
         Unreviewed, rolling out r142112.
         http://trac.webkit.org/changeset/142112
         https://bugs.webkit.org/show_bug.cgi?id=108990
