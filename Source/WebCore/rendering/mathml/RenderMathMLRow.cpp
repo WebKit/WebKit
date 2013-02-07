@@ -56,9 +56,8 @@ void RenderMathMLRow::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty() && needsLayout());
 
 #ifndef NDEBUG
-    // FIXME: Remove the setNeedsLayoutIsForbidden calls once mathml stops modifying the render tree here.
-    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
-    setNeedsLayoutIsForbidden(false);
+    // FIXME: Remove this once mathml stops modifying the render tree here.
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
 #endif
 
     computeChildrenPreferredLogicalHeights();
@@ -83,10 +82,6 @@ void RenderMathMLRow::computePreferredLogicalWidths()
                 renderMo->stretchToHeight(stretchLogicalHeight);
         }
     }
-
-#ifndef NDEBUG
-    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
-#endif
 
     RenderMathMLBlock::computePreferredLogicalWidths();
     

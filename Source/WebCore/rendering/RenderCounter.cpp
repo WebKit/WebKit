@@ -525,15 +525,10 @@ void RenderCounter::computePreferredLogicalWidths(float lead)
     // the render tree then. When that's done, we also won't need to override
     // computePreferredLogicalWidths at all.
     // https://bugs.webkit.org/show_bug.cgi?id=104829
-    bool oldSetNeedsLayoutIsForbidden = isSetNeedsLayoutForbidden();
-    setNeedsLayoutIsForbidden(false);
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
 #endif
 
     setTextInternal(originalText());
-
-#ifndef NDEBUG
-    setNeedsLayoutIsForbidden(oldSetNeedsLayoutIsForbidden);
-#endif
 
     RenderText::computePreferredLogicalWidths(lead);
 }

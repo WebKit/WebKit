@@ -94,11 +94,11 @@ using namespace HTMLNames;
 #ifndef NDEBUG
 static void* baseOfRenderObjectBeingDeleted;
 
-RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject)
+RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject, bool isForbidden)
     : m_renderObject(renderObject)
     , m_preexistingForbidden(m_renderObject->isSetNeedsLayoutForbidden())
 {
-    m_renderObject->setNeedsLayoutIsForbidden(true);
+    m_renderObject->setNeedsLayoutIsForbidden(isForbidden);
 }
 
 RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
@@ -654,6 +654,7 @@ static inline bool objectIsRelayoutBoundary(const RenderObject* object)
 void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
 {
     ASSERT(!scheduleRelayout || !newRoot);
+    ASSERT(!isSetNeedsLayoutForbidden());
 
     RenderObject* object = container();
     RenderObject* last = this;
@@ -661,6 +662,11 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
 
     while (object) {
+#ifndef NDEBUG
+        // FIXME: Remove this once we remove the special cases for counters, quotes and mathml
+        // calling setNeedsLayout during preferred width computation.
+        SetLayoutNeededForbiddenScope layoutForbiddenScope(object, isSetNeedsLayoutForbidden());
+#endif
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
         RenderObject* container = object->container();

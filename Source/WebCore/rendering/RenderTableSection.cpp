@@ -263,7 +263,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 int RenderTableSection::calcRowLogicalHeight()
 {
 #ifndef NDEBUG
-    setNeedsLayoutIsForbidden(true);
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(this);
 #endif
 
     ASSERT(!needsLayout());
@@ -338,10 +338,6 @@ int RenderTableSection::calcRowLogicalHeight()
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
         m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r]);
     }
-
-#ifndef NDEBUG
-    setNeedsLayoutIsForbidden(false);
-#endif
 
     ASSERT(!needsLayout());
 
@@ -492,7 +488,7 @@ int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeigh
 void RenderTableSection::layoutRows()
 {
 #ifndef NDEBUG
-    setNeedsLayoutIsForbidden(true);
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(this);
 #endif
 
     ASSERT(!needsLayout());
@@ -637,10 +633,6 @@ void RenderTableSection::layoutRows()
             }
         }
     }
-
-#ifndef NDEBUG
-    setNeedsLayoutIsForbidden(false);
-#endif
 
     ASSERT(!needsLayout());
 
