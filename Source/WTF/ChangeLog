@@ -1,3 +1,17 @@
+2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Fix build without 3D_GRAPHICS
+        https://bugs.webkit.org/show_bug.cgi?id=109194
+
+        Reviewed by Noam Rosenthal.
+
+        Now that Coordinated Graphics was moved to WebCore, we need to explicitly enable
+        it when we have 3D_GRAPHICS. This dependency was implicitly by the fact that
+        3D_GRAPHICS is a dependency of WebKit2 and Coordinated Graphics was only
+        available there. This should fix build for Qt SH4 Linux.
+
+        * wtf/Platform.h:
+
 2013-02-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTFURL] Fix erroneous header inclusions in WTFURL code

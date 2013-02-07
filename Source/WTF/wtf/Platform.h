@@ -1077,7 +1077,7 @@
 #endif
 
 /* Compositing on the UI-process in WebKit2 */
-#if PLATFORM(QT)
+#if USE(3D_GRAPHICS) && PLATFORM(QT)
 #define WTF_USE_COORDINATED_GRAPHICS 1
 #endif
 
