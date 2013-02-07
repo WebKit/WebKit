@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011, 2012 Collabora Ltd.
+ * Copyright (C) 2011, 2012, 2013 Collabora Ltd.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,16 +30,65 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerClutter.h"
 
+#include "Animation.h"
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsLayerActor.h"
 #include "GraphicsLayerFactory.h"
 #include "NotImplemented.h"
 #include "RefPtrCairo.h"
+#include "RotateTransformOperation.h"
+#include "ScaleTransformOperation.h"
 #include "TransformState.h"
+#include "TranslateTransformOperation.h"
+#include <limits.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+using namespace std;
+
 namespace WebCore {
+
+// If we send a duration of 0 to ClutterTimeline, then it will fail to set the duration. 
+// So send a very small value instead.
+static const float cAnimationAlmostZeroDuration = 1e-3f;
+
+static String propertyIdToString(AnimatedPropertyID property)
+{
+    switch (property) {
+    case AnimatedPropertyWebkitTransform:
+        return "transform";
+    case AnimatedPropertyOpacity:
+        return "opacity";
+    case AnimatedPropertyBackgroundColor:
+        return "backgroundColor";
+    case AnimatedPropertyWebkitFilter:
+        ASSERT_NOT_REACHED();
+    case AnimatedPropertyInvalid:
+        ASSERT_NOT_REACHED();
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index)
+{
+    return animationName + '_' + String::number(property) + '_' + String::number(index);
+}
+
+static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
+{
+    if (anim->timingFunction()->isStepsTimingFunction())
+        return true;
+
+    for (unsigned i = 0; i < valueList.size(); ++i) {
+        const TimingFunction* timingFunction = valueList.at(i)->timingFunction();
+        if (timingFunction && timingFunction->isStepsTimingFunction())
+            return true;
+    }
+
+    return false;
+}
 
 // This is the hook for WebCore compositor to know that the webKit clutter port implements
 // compositing with GraphicsLayerClutter.
@@ -154,7 +203,7 @@ void GraphicsLayerClutter::setAnchorPoint(const FloatPoint3D& point)
 
 void GraphicsLayerClutter::setOpacity(float opacity)
 {
-    float clampedOpacity = std::max(0.0f, std::min(opacity, 1.0f));
+    float clampedOpacity = max(0.0f, min(opacity, 1.0f));
     if (clampedOpacity == m_opacity)
         return;
 
@@ -280,6 +329,58 @@ void GraphicsLayerClutter::updateOpacityOnLayer()
     clutter_actor_set_opacity(CLUTTER_ACTOR(primaryLayer()), static_cast<guint8>(roundf(m_opacity * 255)));
 }
 
+void GraphicsLayerClutter::updateAnimations()
+{
+    if (m_animationsToProcess.size()) {
+        AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
+        for (AnimationsToProcessMap::const_iterator it = m_animationsToProcess.begin(); it != end; ++it) {
+            const String& currAnimationName = it->key;
+            AnimationsMap::iterator animationIt = m_runningAnimations.find(currAnimationName);
+            if (animationIt == m_runningAnimations.end())
+                continue;
+
+            const AnimationProcessingAction& processingInfo = it->value;
+            const Vector<LayerPropertyAnimation>& animations = animationIt->value;
+            for (size_t i = 0; i < animations.size(); ++i) {
+                const LayerPropertyAnimation& currAnimation = animations[i];
+                switch (processingInfo.action) {
+                case Remove:
+                    removeClutterAnimationFromLayer(currAnimation.m_property, currAnimationName, currAnimation.m_index);
+                    break;
+                case Pause:
+                    pauseClutterAnimationOnLayer(currAnimation.m_property, currAnimationName, currAnimation.m_index, processingInfo.timeOffset);
+                    break;
+                }
+            }
+
+            if (processingInfo.action == Remove)
+                m_runningAnimations.remove(currAnimationName);
+        }
+
+        m_animationsToProcess.clear();
+    }
+
+    size_t numAnimations;
+    if ((numAnimations = m_uncomittedAnimations.size())) {
+        for (size_t i = 0; i < numAnimations; ++i) {
+            const LayerPropertyAnimation& pendingAnimation = m_uncomittedAnimations[i];
+            setAnimationOnLayer(pendingAnimation.m_animation.get(), pendingAnimation.m_property, pendingAnimation.m_name, pendingAnimation.m_index, pendingAnimation.m_timeOffset);
+
+            AnimationsMap::iterator it = m_runningAnimations.find(pendingAnimation.m_name);
+            if (it == m_runningAnimations.end()) {
+                Vector<LayerPropertyAnimation> animations;
+                animations.append(pendingAnimation);
+                m_runningAnimations.add(pendingAnimation.m_name, animations);
+            } else {
+                Vector<LayerPropertyAnimation>& animations = it->value;
+                animations.append(pendingAnimation);
+            }
+        }
+
+        m_uncomittedAnimations.clear();
+    }
+}
+
 FloatPoint GraphicsLayerClutter::computePositionRelativeToBase(float& pageScale) const
 {
     pageScale = 1;
@@ -386,6 +487,9 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
 
     if (m_uncommittedChanges & OpacityChanged)
         updateOpacityOnLayer();
+
+    if (m_uncommittedChanges & AnimationChanged)
+        updateAnimations();
 }
 
 void GraphicsLayerClutter::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
@@ -458,10 +562,205 @@ void GraphicsLayerClutter::updateLayerDrawsContent(float pageScaleFactor, const 
     updateDebugIndicators();
 }
 
+void GraphicsLayerClutter::setupAnimation(PlatformClutterAnimation* propertyAnim, const Animation* anim, bool additive)
+{
+    double duration = anim->duration();
+    if (duration <= 0)
+        duration = cAnimationAlmostZeroDuration;
+
+    float repeatCount = anim->iterationCount();
+    if (repeatCount == Animation::IterationCountInfinite)
+        repeatCount = numeric_limits<float>::max();
+    else if (anim->direction() == Animation::AnimationDirectionAlternate || anim->direction() == Animation::AnimationDirectionAlternateReverse)
+        repeatCount /= 2;
+
+    PlatformClutterAnimation::FillModeType fillMode = PlatformClutterAnimation::NoFillMode;
+    switch (anim->fillMode()) {
+    case AnimationFillModeNone:
+        fillMode = PlatformClutterAnimation::Forwards; // Use "forwards" rather than "removed" because the style system will remove the animation when it is finished. This avoids a flash.
+        break;
+    case AnimationFillModeBackwards:
+        fillMode = PlatformClutterAnimation::Both; // Use "both" rather than "backwards" because the style system will remove the animation when it is finished. This avoids a flash.
+        break;
+    case AnimationFillModeForwards:
+        fillMode = PlatformClutterAnimation::Forwards;
+        break;
+    case AnimationFillModeBoth:
+        fillMode = PlatformClutterAnimation::Both;
+        break;
+    }
+
+    propertyAnim->setDuration(duration);
+    propertyAnim->setRepeatCount(repeatCount);
+    propertyAnim->setAutoreverses(anim->direction() == Animation::AnimationDirectionAlternate || anim->direction() == Animation::AnimationDirectionAlternateReverse);
+    propertyAnim->setRemovedOnCompletion(false);
+    propertyAnim->setAdditive(additive);
+    propertyAnim->setFillMode(fillMode);
+}
+
+const TimingFunction* GraphicsLayerClutter::timingFunctionForAnimationValue(const AnimationValue* animValue, const Animation* anim)
+{
+    if (animValue->timingFunction())
+        return animValue->timingFunction();
+    if (anim->isTimingFunctionSet())
+        return anim->timingFunction().get();
+
+    return CubicBezierTimingFunction::defaultTimingFunction();
+}
+
+PassRefPtr<PlatformClutterAnimation> GraphicsLayerClutter::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
+{
+    RefPtr<PlatformClutterAnimation> basicAnim = PlatformClutterAnimation::create(PlatformClutterAnimation::Basic, keyPath);
+    setupAnimation(basicAnim.get(), anim, additive);
+    return basicAnim;
+}
+
+PassRefPtr<PlatformClutterAnimation>GraphicsLayerClutter::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
+{
+    notImplemented();
+    return 0;
+}
+
+bool GraphicsLayerClutter::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
+{
+    notImplemented();
+    return false;
+}
+
+bool GraphicsLayerClutter::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
+{
+    notImplemented();
+    return false;
+}
+
+bool GraphicsLayerClutter::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset, const IntSize& boxSize)
+{
+    notImplemented();
+    return false;
+}
+
+bool GraphicsLayerClutter::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
+{
+    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform);
+
+    bool isKeyframe = valueList.size() > 2;
+    bool valuesOK;
+
+    bool additive = false;
+    int animationIndex = 0;
+
+    RefPtr<PlatformClutterAnimation> clutterAnimation;
+
+    if (isKeyframe) {
+        clutterAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), additive);
+        valuesOK = setAnimationKeyframes(valueList, animation, clutterAnimation.get());
+    } else {
+        clutterAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), additive);
+        valuesOK = setAnimationEndpoints(valueList, animation, clutterAnimation.get());
+    }
+
+    if (!valuesOK)
+        return false;
+
+    m_uncomittedAnimations.append(LayerPropertyAnimation(clutterAnimation, animationName, valueList.property(), animationIndex, timeOffset));
+
+    return true;
+}
+
+bool GraphicsLayerClutter::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
+{
+    ASSERT(!animationName.isEmpty());
+
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+        return false;
+
+    // FIXME: ClutterTimeline seems to support steps timing function. So we need to improve here.
+    // See http://developer.gnome.org/clutter/stable/ClutterTimeline.html#ClutterAnimationMode
+    if (animationHasStepsTimingFunction(valueList, anim))
+        return false;
+
+    bool createdAnimations = false;
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
+        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
+    else
+        createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
+
+    if (createdAnimations)
+        noteLayerPropertyChanged(AnimationChanged);
+
+    return createdAnimations;
+}
+
+bool GraphicsLayerClutter::removeClutterAnimationFromLayer(AnimatedPropertyID property, const String& animationName, int index)
+{
+    notImplemented();
+    return false;
+}
+
+void GraphicsLayerClutter::pauseClutterAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
+{
+    notImplemented();
+}
+
+void GraphicsLayerClutter::setAnimationOnLayer(PlatformClutterAnimation* clutterAnim, AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
+{
+    GraphicsLayerActor* layer = animatedLayer(property);
+
+    if (timeOffset)
+        clutterAnim->setBeginTime(g_get_real_time() - timeOffset);
+
+    String animationID = animationIdentifier(animationName, property, index);
+
+    PlatformClutterAnimation* existingAnimation = graphicsLayerActorGetAnimationForKey(layer, animationID);
+    if (existingAnimation)
+        existingAnimation->removeAnimationForKey(layer, animationID);
+
+    clutterAnim->addAnimationForKey(layer, animationID);
+}
+
+bool GraphicsLayerClutter::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* basicAnim)
+{
+    bool forwards = animation->directionIsForwards();
+
+    unsigned fromIndex = !forwards;
+    unsigned toIndex = forwards;
+
+    switch (valueList.property()) {
+    case AnimatedPropertyOpacity: {
+        basicAnim->setFromValue(static_cast<const FloatAnimationValue*>(valueList.at(fromIndex))->value());
+        basicAnim->setToValue(static_cast<const FloatAnimationValue*>(valueList.at(toIndex))->value());
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED(); // we don't animate color yet
+        break;
+    }
+
+    // This codepath is used for 2-keyframe animations, so we still need to look in the start
+    // for a timing function. Even in the reversing animation case, the first keyframe provides the timing function.
+    const TimingFunction* timingFunction = timingFunctionForAnimationValue(valueList.at(0), animation);
+    if (timingFunction)
+        basicAnim->setTimingFunction(timingFunction, !forwards);
+
+    return true;
+}
+
+bool GraphicsLayerClutter::setAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* keyframeAnim)
+{
+    notImplemented();
+    return false;
+}
+
 GraphicsLayerActor* GraphicsLayerClutter::layerForSuperlayer() const
 {
     return m_layer.get();
 }
+
+GraphicsLayerActor* GraphicsLayerClutter::animatedLayer(AnimatedPropertyID property) const
+{
+    return primaryLayer();
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

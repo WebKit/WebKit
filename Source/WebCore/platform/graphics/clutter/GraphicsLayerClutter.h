@@ -34,6 +34,7 @@
 #include "GraphicsLayerClient.h"
 #include "Image.h"
 #include "ImageSource.h"
+#include "PlatformClutterAnimation.h"
 #include "PlatformClutterLayerClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -78,6 +79,8 @@ public:
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
 
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& animationName, double timeOffset);
+
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
 
@@ -95,6 +98,27 @@ private:
 
     GraphicsLayerActor* primaryLayer() const { return m_layer.get(); }
     GraphicsLayerActor* layerForSuperlayer() const;
+    GraphicsLayerActor* animatedLayer(AnimatedPropertyID) const;
+
+    PassRefPtr<PlatformClutterAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
+    PassRefPtr<PlatformClutterAnimation> createKeyframeAnimation(const Animation*, const String&, bool additive);
+    void setupAnimation(PlatformClutterAnimation*, const Animation*, bool additive);
+
+    const TimingFunction* timingFunctionForAnimationValue(const AnimationValue*, const Animation*);
+
+    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*);
+    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*);
+
+    void setAnimationOnLayer(PlatformClutterAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
+    bool removeClutterAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index);
+    void pauseClutterAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, double timeOffset);
+
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset, const IntSize& boxSize);
+
+    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
+
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,
@@ -133,12 +157,52 @@ private:
     void updateTransform();
     void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
 
+    void updateAnimations();
+
     void repaintLayerDirtyRects();
 
     GRefPtr<GraphicsLayerActor> m_layer;
 
     Vector<FloatRect> m_dirtyRects;
     LayerChangeFlags m_uncommittedChanges;
+
+    // This represents the animation of a single property. There may be multiple transform animations for
+    // a single transition or keyframe animation, so index is used to distinguish these.
+    struct LayerPropertyAnimation {
+        LayerPropertyAnimation(PassRefPtr<PlatformClutterAnimation> caAnimation, const String& animationName, AnimatedPropertyID property, int index, double timeOffset)
+        : m_animation(caAnimation)
+        , m_name(animationName)
+        , m_property(property)
+        , m_index(index)
+        , m_timeOffset(timeOffset)
+        { }
+
+        RefPtr<PlatformClutterAnimation> m_animation;
+        String m_name;
+        AnimatedPropertyID m_property;
+        int m_index;
+        double m_timeOffset;
+    };
+
+    // Uncommitted transitions and animations.
+    Vector<LayerPropertyAnimation> m_uncomittedAnimations;
+
+    enum Action { Remove, Pause };
+    struct AnimationProcessingAction {
+        AnimationProcessingAction(Action action = Remove, double timeOffset = 0)
+            : action(action)
+            , timeOffset(timeOffset)
+        {
+        }
+        Action action;
+        double timeOffset; // only used for pause
+    };
+    typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
+    AnimationsToProcessMap m_animationsToProcess;
+
+    // Map of animation names to their associated lists of property animations, so we can remove/pause them.
+    typedef HashMap<String, Vector<LayerPropertyAnimation> > AnimationsMap;
+    AnimationsMap m_runningAnimations;
 };
 
 } // namespace WebCore

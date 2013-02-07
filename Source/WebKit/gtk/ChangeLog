@@ -1,3 +1,15 @@
+2013-02-07  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK][AC] Implement opacity animation with clutter ac backend
+        https://bugs.webkit.org/show_bug.cgi?id=108961
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add AnimationTrigger for ac compositing.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::allowedCompositingTriggers):
+
 2013-02-05  Martin Robinson  <mrobinson@igalia.com>
 
         Update the NEWS and configuration in preparation for 1.11.5.

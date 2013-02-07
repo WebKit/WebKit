@@ -28,6 +28,7 @@
 #include "PlatformClutterLayerClient.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -556,6 +557,11 @@ void graphicsLayerActorSetDrawsContent(GraphicsLayerActor* layer, gboolean draws
 gboolean graphicsLayerActorGetDrawsContent(GraphicsLayerActor* layer)
 {
     return layer->priv->drawsContent;
+}
+
+WebCore::PlatformClutterAnimation* graphicsLayerActorGetAnimationForKey(GraphicsLayerActor* layer, const String key)
+{
+    return static_cast<WebCore::PlatformClutterAnimation*>(g_object_get_data(G_OBJECT(layer), key.utf8().data()));
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -6454,6 +6454,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerActor.h \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.cpp \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.h \
+	Source/WebCore/platform/graphics/clutter/PlatformClutterAnimation.cpp \
+	Source/WebCore/platform/graphics/clutter/PlatformClutterAnimation.h \
 	Source/WebCore/platform/graphics/clutter/TransformationMatrixClutter.cpp
 endif  # END USE_CLUTTER
 

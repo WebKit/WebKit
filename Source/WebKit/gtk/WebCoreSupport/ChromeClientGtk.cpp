@@ -1070,7 +1070,7 @@ ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers()
         return false;
 #if USE(CLUTTER)
     // Currently, we only support CSS 3D Transforms.
-    return ThreeDTransformTrigger;
+    return ThreeDTransformTrigger | AnimationTrigger;
 #else
     return AllTriggers;
 #endif

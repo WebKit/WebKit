@@ -96,6 +96,8 @@ void graphicsLayerActorSetSublayers(GraphicsLayerActor*, WebCore::GraphicsLayerA
 gboolean graphicsLayerActorGetDrawsContent(GraphicsLayerActor*);
 void graphicsLayerActorSetDrawsContent(GraphicsLayerActor*, gboolean drawsContent);
 
+WebCore::PlatformClutterAnimation* graphicsLayerActorGetAnimationForKey(GraphicsLayerActor*, const String);
+
 G_END_DECLS
 
 #endif // USE(ACCELERATED_COMPOSITING)
