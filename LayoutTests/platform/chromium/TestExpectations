@@ -4231,6 +4231,12 @@ webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/month-picker-ap
 webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure Pass ]
 webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
 
+# Rebaseline after currentPath
+webkit.org/b/108246 fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/108246 platform/chromium/virtual/gpu/fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/108246 fast/canvas/canvas-currentPath-crash.html [ Failure ]
+webkit.org/b/108246 platform/chromium/virtual/gpu/fast/canvas/canvas-currentPath-crash.html [ Failure ]
+
 # Broken by Skia flag changes in r139445
 crbug.com/169550 [ Debug ] fast/lists/big-list-marker.html [ Crash ]
 crbug.com/169550 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-decoding.html [ Crash ]

@@ -867,6 +867,8 @@ PassRefPtr<DOMPath> CanvasRenderingContext2D::currentPath()
 
 void CanvasRenderingContext2D::setCurrentPath(DOMPath* path)
 {
+    if (!path)
+        return;
     m_path = path->path();
 }
 #endif
