@@ -2637,11 +2637,11 @@ bool EventHandler::passGestureEventToWidgetIfPossible(const PlatformGestureEvent
     return false;
 }
 
-static const Node* closestScrollableNodeInDocumentIfPossibleOrSelfIfNotScrollable(const Node* node)
+static const Node* closestScrollableNodeCandidate(const Node* node)
 {
     for (const Node* scrollableNode = node; scrollableNode; scrollableNode = scrollableNode->parentNode()) {
         if (scrollableNode->isDocumentNode())
-            break;
+            return scrollableNode;
         RenderObject* renderer = scrollableNode->renderer();
         if (renderer && renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())
             return scrollableNode;
@@ -2698,7 +2698,7 @@ bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gesture
 
     // Otherwise if this is the correct view for the event, find the closest scrollable
     // ancestor of the targeted node and scroll the layer that contains this node's renderer.
-    node = closestScrollableNodeInDocumentIfPossibleOrSelfIfNotScrollable(node);
+    node = closestScrollableNodeCandidate(node);
     if (!node)
         return false;
 

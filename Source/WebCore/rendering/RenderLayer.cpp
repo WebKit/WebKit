@@ -2026,7 +2026,8 @@ bool RenderLayer::scrollBy(const IntSize& delta, ScrollOffsetClamping clamp, Scr
         // have an overflow clip. Which means that it is a document node that can be scrolled.
         FrameView* view = renderer()->view()->frameView();
         IntPoint scrollPositionBefore = view->scrollPosition();
-        view->scrollBy(delta);
+        if (view->isScrollable())
+            view->scrollBy(delta);
         IntPoint scrollPositionAfter = view->scrollPosition();
         return scrollPositionBefore != scrollPositionAfter;
 

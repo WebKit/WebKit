@@ -1,0 +1,19 @@
+
+This tests that non-scrollable iframes cannot be scrolled with touch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+first gesture
+PASS touchtarget.contentDocument.body.scrollTop is 0
+PASS touchtarget.contentDocument.body.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+second gesture
+PASS touchtarget.contentDocument.body.scrollTop is 0
+PASS touchtarget.contentDocument.body.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+PASS scrollEventsOccurred is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

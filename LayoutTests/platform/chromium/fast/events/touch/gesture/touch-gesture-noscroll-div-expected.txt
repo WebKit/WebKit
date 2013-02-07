@@ -1,0 +1,18 @@
+This tests that a non-scrollable div cannot be scrolled with touch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+first gesture
+PASS movingdiv.scrollTop is 0
+PASS movingdiv.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+second gesture
+PASS movingdiv.scrollTop is 0
+PASS movingdiv.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+PASS scrollEventsOccurred is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
