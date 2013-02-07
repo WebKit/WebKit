@@ -22,8 +22,8 @@
 #define Page_h
 
 #include "FeatureObserver.h"
-#include "FrameLoaderTypes.h"
 #include "FindOptions.h"
+#include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "PageVisibilityState.h"
@@ -47,450 +47,455 @@
 #endif
 
 namespace JSC {
-    class Debugger;
+class Debugger;
 }
 
 namespace WebCore {
 
-    class AlternativeTextClient;
-    class BackForwardController;
-    class BackForwardList;
-    class Chrome;
-    class ChromeClient;
-    class ClientRectList;
+class AlternativeTextClient;
+class BackForwardController;
+class BackForwardList;
+class Chrome;
+class ChromeClient;
+class ClientRectList;
+class ContextMenuClient;
+class ContextMenuController;
+class Document;
+class DragCaretController;
+class DragClient;
+class DragController;
+class EditorClient;
+class FocusController;
+class Frame;
+class FrameSelection;
+class HaltablePlugin;
+class HistoryItem;
+class InspectorClient;
+class InspectorController;
+class MediaCanStartListener;
+class Node;
+class PageGroup;
+class PlugInClient;
+class PluginData;
+class PluginViewBase;
+class PointerLockController;
+class ProgressTracker;
+class Range;
+class RenderObject;
+class RenderTheme;
+class VisibleSelection;
+class ScrollableArea;
+class ScrollingCoordinator;
+class Settings;
+class StorageNamespace;
+class ValidationMessageClient;
+
+typedef uint64_t LinkHash;
+
+enum FindDirection { FindDirectionForward, FindDirectionBackward };
+
+float deviceScaleFactor(Frame*);
+
+struct ArenaSize {
+    ArenaSize(size_t treeSize, size_t allocated)
+        : treeSize(treeSize)
+        , allocated(allocated)
+    {
+    }
+    size_t treeSize;
+    size_t allocated;
+};
+
+class Page : public Supplementable<Page> {
+    WTF_MAKE_NONCOPYABLE(Page);
+    friend class Settings;
+public:
+    static void scheduleForcedStyleRecalcForAllPages();
+
+    // It is up to the platform to ensure that non-null clients are provided where required.
+    struct PageClients {
+        WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        PageClients();
+        ~PageClients();
+
+        AlternativeTextClient* alternativeTextClient;
+        ChromeClient* chromeClient;
 #if ENABLE(CONTEXT_MENUS)
-    class ContextMenuClient;
-    class ContextMenuController;
+        ContextMenuClient* contextMenuClient;
 #endif
-    class Document;
-    class DragCaretController;
-    class DragClient;
-    class DragController;
-    class EditorClient;
-    class FocusController;
-    class Frame;
-    class FrameSelection;
-    class HaltablePlugin;
-    class HistoryItem;
-    class InspectorClient;
-    class InspectorController;
-    class MediaCanStartListener;
-    class Node;
-    class PageGroup;
-    class PlugInClient;
-    class PluginData;
-    class PluginViewBase;
-    class PointerLockController;
-    class ProgressTracker;
-    class Range;
-    class RenderObject;
-    class RenderTheme;
-    class VisibleSelection;
-    class ScrollableArea;
-    class ScrollingCoordinator;
-    class Settings;
-    class StorageNamespace;
-    class ValidationMessageClient;
-
-    typedef uint64_t LinkHash;
-
-    enum FindDirection { FindDirectionForward, FindDirectionBackward };
-
-    float deviceScaleFactor(Frame*);
-
-    struct ArenaSize {
-        ArenaSize(size_t treeSize, size_t allocated)
-            : treeSize(treeSize)
-            , allocated(allocated)
-        {
-        }
-        size_t treeSize;
-        size_t allocated;
+        EditorClient* editorClient;
+        DragClient* dragClient;
+        InspectorClient* inspectorClient;
+        PlugInClient* plugInClient;
+        RefPtr<BackForwardList> backForwardClient;
+        ValidationMessageClient* validationMessageClient;
     };
 
-    class Page : public Supplementable<Page> {
-        WTF_MAKE_NONCOPYABLE(Page);
-        friend class Settings;
-    public:
-        static void scheduleForcedStyleRecalcForAllPages();
+    explicit Page(PageClients&);
+    ~Page();
 
-        // It is up to the platform to ensure that non-null clients are provided where required.
-        struct PageClients {
-            WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
-        public:
-            PageClients();
-            ~PageClients();
+    ArenaSize renderTreeSize() const;
 
-            AlternativeTextClient* alternativeTextClient;
-            ChromeClient* chromeClient;
-#if ENABLE(CONTEXT_MENUS)
-            ContextMenuClient* contextMenuClient;
-#endif
-            EditorClient* editorClient;
-            DragClient* dragClient;
-            InspectorClient* inspectorClient;
-            PlugInClient* plugInClient;
-            RefPtr<BackForwardList> backForwardClient;
-            ValidationMessageClient* validationMessageClient;
-        };
+    void setNeedsRecalcStyleInAllFrames();
 
-        explicit Page(PageClients&);
-        ~Page();
+    RenderTheme* theme() const { return m_theme.get(); }
 
-        ArenaSize renderTreeSize() const;
+    ViewportArguments viewportArguments() const;
 
-        void setNeedsRecalcStyleInAllFrames();
+    static void refreshPlugins(bool reload);
+    PluginData* pluginData() const;
 
-        RenderTheme* theme() const { return m_theme.get(); };
+    void setCanStartMedia(bool);
+    bool canStartMedia() const { return m_canStartMedia; }
 
-        ViewportArguments viewportArguments() const;
+    EditorClient* editorClient() const { return m_editorClient; }
+    PlugInClient* plugInClient() const { return m_plugInClient; }
 
-        static void refreshPlugins(bool reload);
-        PluginData* pluginData() const;
+    void setMainFrame(PassRefPtr<Frame>);
+    Frame* mainFrame() const { return m_mainFrame.get(); }
 
-        void setCanStartMedia(bool);
-        bool canStartMedia() const { return m_canStartMedia; }
+    bool openedByDOM() const;
+    void setOpenedByDOM();
 
-        EditorClient* editorClient() const { return m_editorClient; }
-        PlugInClient* plugInClient() const { return m_plugInClient; }
+    // DEPRECATED. Use backForward() instead of the following 6 functions.
+    BackForwardList* backForwardList() const;
+    bool goBack();
+    bool goForward();
+    bool canGoBackOrForward(int distance) const;
+    void goBackOrForward(int distance);
+    int getHistoryLength();
 
-        void setMainFrame(PassRefPtr<Frame>);
-        Frame* mainFrame() const { return m_mainFrame.get(); }
+    void goToItem(HistoryItem*, FrameLoadType);
 
-        bool openedByDOM() const;
-        void setOpenedByDOM();
+    void setGroupName(const String&);
+    const String& groupName() const;
 
-        // DEPRECATED. Use backForward() instead of the following 6 functions.
-        BackForwardList* backForwardList() const;
-        bool goBack();
-        bool goForward();
-        bool canGoBackOrForward(int distance) const;
-        void goBackOrForward(int distance);
-        int getHistoryLength();
+    PageGroup& group();
+    PageGroup* groupPtr() { return m_group; } // can return 0
 
-        void goToItem(HistoryItem*, FrameLoadType);
+    void incrementSubframeCount() { ++m_subframeCount; }
+    void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
+    int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
 
-        void setGroupName(const String&);
-        const String& groupName() const;
-
-        PageGroup& group() { if (!m_group) initGroup(); return *m_group; }
-        PageGroup* groupPtr() { return m_group; } // can return 0
-
-        void incrementSubframeCount() { ++m_subframeCount; }
-        void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
-        int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
-
-        Chrome* chrome() const { return m_chrome.get(); }
-        DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
+    Chrome* chrome() const { return m_chrome.get(); }
+    DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
-        DragController* dragController() const { return m_dragController.get(); }
+    DragController* dragController() const { return m_dragController.get(); }
 #endif
-        FocusController* focusController() const { return m_focusController.get(); }
+    FocusController* focusController() const { return m_focusController.get(); }
 #if ENABLE(CONTEXT_MENUS)
-        ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
+    ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
 #endif
 #if ENABLE(INSPECTOR)
-        InspectorController* inspectorController() const { return m_inspectorController.get(); }
+    InspectorController* inspectorController() const { return m_inspectorController.get(); }
 #endif
 #if ENABLE(POINTER_LOCK)
-        PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
+    PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
 #endif
-        ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
+    ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
 
-        ScrollingCoordinator* scrollingCoordinator();
+    ScrollingCoordinator* scrollingCoordinator();
 
-        String scrollingStateTreeAsText();
-        String mainThreadScrollingReasonsAsText();
-        PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
+    String scrollingStateTreeAsText();
+    String mainThreadScrollingReasonsAsText();
+    PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
 
-        Settings* settings() const { return m_settings.get(); }
-        ProgressTracker* progress() const { return m_progress.get(); }
-        BackForwardController* backForward() const { return m_backForwardController.get(); }
+    Settings* settings() const { return m_settings.get(); }
+    ProgressTracker* progress() const { return m_progress.get(); }
+    BackForwardController* backForward() const { return m_backForwardController.get(); }
 
-        FeatureObserver* featureObserver() { return &m_featureObserver; }
+    FeatureObserver* featureObserver() { return &m_featureObserver; }
 
-        enum ViewMode {
-            ViewModeInvalid,
-            ViewModeWindowed,
-            ViewModeFloating,
-            ViewModeFullscreen,
-            ViewModeMaximized,
-            ViewModeMinimized
-        };
-        static ViewMode stringToViewMode(const String&);
+    enum ViewMode {
+        ViewModeInvalid,
+        ViewModeWindowed,
+        ViewModeFloating,
+        ViewModeFullscreen,
+        ViewModeMaximized,
+        ViewModeMinimized
+    };
+    static ViewMode stringToViewMode(const String&);
 
-        ViewMode viewMode() const { return m_viewMode; }
-        void setViewMode(ViewMode);
-        
-        void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
-        bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
+    ViewMode viewMode() const { return m_viewMode; }
+    void setViewMode(ViewMode);
 
-        bool findString(const String&, FindOptions);
-        // FIXME: Switch callers over to the FindOptions version and retire this one.
-        bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
+    void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
+    bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
-        PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+    bool findString(const String&, FindOptions);
+    // FIXME: Switch callers over to the FindOptions version and retire this one.
+    bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
 
-        unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned);
-        // FIXME: Switch callers over to the FindOptions version and retire this one.
-        unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
-        void unmarkAllTextMatches();
+    PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
 
-        // find all the Ranges for the matching text.
-        // Upon return, indexForSelection will be one of the following:
-        // 0 if there is no user selection
-        // the index of the first range after the user selection
-        // NoMatchBeforeUserSelection if there is no matching text after the user selection.
-        enum { NoMatchBeforeUserSelection = -1 };
-        void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range> >*, int& indexForSelection);
+    unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned);
+    // FIXME: Switch callers over to the FindOptions version and retire this one.
+    unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
+    void unmarkAllTextMatches();
+
+    // find all the Ranges for the matching text.
+    // Upon return, indexForSelection will be one of the following:
+    // 0 if there is no user selection
+    // the index of the first range after the user selection
+    // NoMatchBeforeUserSelection if there is no matching text after the user selection.
+    enum { NoMatchBeforeUserSelection = -1 };
+    void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range> >*, int& indexForSelection);
 #if PLATFORM(MAC)
-        void addSchedulePair(PassRefPtr<SchedulePair>);
-        void removeSchedulePair(PassRefPtr<SchedulePair>);
-        SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
+    void addSchedulePair(PassRefPtr<SchedulePair>);
+    void removeSchedulePair(PassRefPtr<SchedulePair>);
+    SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
 
-        OwnPtr<SchedulePairHashSet> m_scheduledRunLoopPairs;
+    OwnPtr<SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
-        const VisibleSelection& selection() const;
+    const VisibleSelection& selection() const;
 
-        void setDefersLoading(bool);
-        bool defersLoading() const { return m_defersLoading; }
-        
-        void clearUndoRedoOperations();
+    void setDefersLoading(bool);
+    bool defersLoading() const { return m_defersLoading; }
 
-        bool inLowQualityImageInterpolationMode() const;
-        void setInLowQualityImageInterpolationMode(bool = true);
+    void clearUndoRedoOperations();
 
-        float mediaVolume() const { return m_mediaVolume; }
-        void setMediaVolume(float volume);
+    bool inLowQualityImageInterpolationMode() const;
+    void setInLowQualityImageInterpolationMode(bool = true);
 
-        void setPageScaleFactor(float scale, const IntPoint& origin);
-        float pageScaleFactor() const { return m_pageScaleFactor; }
+    float mediaVolume() const { return m_mediaVolume; }
+    void setMediaVolume(float);
 
-        float deviceScaleFactor() const { return m_deviceScaleFactor; }
-        void setDeviceScaleFactor(float);
+    void setPageScaleFactor(float scale, const IntPoint& origin);
+    float pageScaleFactor() const { return m_pageScaleFactor; }
 
-        bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
-        void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+    void setDeviceScaleFactor(float);
 
-        // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
-        // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
-        // FrameViews in the page cache, but FrameView::pagination() only affects the current
-        // FrameView. 
-        const Pagination& pagination() const { return m_pagination; }
-        void setPagination(const Pagination&);
+    bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
+    void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
 
-        unsigned pageCount() const;
+    // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
+    // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
+    // FrameViews in the page cache, but FrameView::pagination() only affects the current
+    // FrameView.
+    const Pagination& pagination() const { return m_pagination; }
+    void setPagination(const Pagination&);
 
-        // Notifications when the Page starts and stops being presented via a native window.
-        void didMoveOnscreen();
-        void willMoveOffscreen();
-        bool isOnscreen() const { return m_isOnscreen; }
+    unsigned pageCount() const;
 
-        void windowScreenDidChange(PlatformDisplayID);
-        
-        void suspendScriptedAnimations();
-        void resumeScriptedAnimations();
-        bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
-        
-        void userStyleSheetLocationChanged();
-        const String& userStyleSheet() const;
+    // Notifications when the Page starts and stops being presented via a native window.
+    void didMoveOnscreen();
+    void willMoveOffscreen();
+    bool isOnscreen() const { return m_isOnscreen; }
 
-        void dnsPrefetchingStateChanged();
-        void storageBlockingStateChanged();
-        void privateBrowsingStateChanged();
+    void windowScreenDidChange(PlatformDisplayID);
 
-        static void setDebuggerForAllPages(JSC::Debugger*);
-        void setDebugger(JSC::Debugger*);
-        JSC::Debugger* debugger() const { return m_debugger; }
+    void suspendScriptedAnimations();
+    void resumeScriptedAnimations();
+    bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
-        static void removeAllVisitedLinks();
+    void userStyleSheetLocationChanged();
+    const String& userStyleSheet() const;
 
-        static void allVisitedStateChanged(PageGroup*);
-        static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
+    void dnsPrefetchingStateChanged();
+    void storageBlockingStateChanged();
+    void privateBrowsingStateChanged();
 
-        StorageNamespace* sessionStorage(bool optionalCreate = true);
-        void setSessionStorage(PassRefPtr<StorageNamespace>);
+    static void setDebuggerForAllPages(JSC::Debugger*);
+    void setDebugger(JSC::Debugger*);
+    JSC::Debugger* debugger() const { return m_debugger; }
 
-        void setCustomHTMLTokenizerTimeDelay(double);
-        bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
-        double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
+    static void removeAllVisitedLinks();
 
-        void setCustomHTMLTokenizerChunkSize(int);
-        bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }
-        int customHTMLTokenizerChunkSize() const { ASSERT(m_customHTMLTokenizerChunkSize != -1); return m_customHTMLTokenizerChunkSize; }
+    static void allVisitedStateChanged(PageGroup*);
+    static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
 
-        void setMemoryCacheClientCallsEnabled(bool);
-        bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
+    StorageNamespace* sessionStorage(bool optionalCreate = true);
+    void setSessionStorage(PassRefPtr<StorageNamespace>);
 
-        // Don't allow more than a certain number of frames in a page.
-        // This seems like a reasonable upper bound, and otherwise mutually
-        // recursive frameset pages can quickly bring the program to its knees
-        // with exponential growth in the number of frames.
-        static const int maxNumberOfFrames = 1000;
+    void setCustomHTMLTokenizerTimeDelay(double);
+    bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
+    double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
 
-        void setEditable(bool isEditable) { m_isEditable = isEditable; }
-        bool isEditable() { return m_isEditable; }
+    void setCustomHTMLTokenizerChunkSize(int);
+    bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }
+    int customHTMLTokenizerChunkSize() const { ASSERT(m_customHTMLTokenizerChunkSize != -1); return m_customHTMLTokenizerChunkSize; }
+
+    void setMemoryCacheClientCallsEnabled(bool);
+    bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
+
+    // Don't allow more than a certain number of frames in a page.
+    // This seems like a reasonable upper bound, and otherwise mutually
+    // recursive frameset pages can quickly bring the program to its knees
+    // with exponential growth in the number of frames.
+    static const int maxNumberOfFrames = 1000;
+
+    void setEditable(bool isEditable) { m_isEditable = isEditable; }
+    bool isEditable() { return m_isEditable; }
 
 #if ENABLE(PAGE_VISIBILITY_API)
-        PageVisibilityState visibilityState() const;
+    PageVisibilityState visibilityState() const;
 #endif
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        void setVisibilityState(PageVisibilityState, bool);
+    void setVisibilityState(PageVisibilityState, bool);
 #endif
 
-        PlatformDisplayID displayID() const { return m_displayID; }
+    PlatformDisplayID displayID() const { return m_displayID; }
 
-        void addLayoutMilestones(LayoutMilestones);
-        LayoutMilestones layoutMilestones() const { return m_layoutMilestones; }
+    void addLayoutMilestones(LayoutMilestones);
+    LayoutMilestones layoutMilestones() const { return m_layoutMilestones; }
 
-        bool isCountingRelevantRepaintedObjects() const;
-        void startCountingRelevantRepaintedObjects();
-        void resetRelevantPaintedObjectCounter();
-        void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
-        void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
+    bool isCountingRelevantRepaintedObjects() const;
+    void startCountingRelevantRepaintedObjects();
+    void resetRelevantPaintedObjectCounter();
+    void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
+    void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
 
-        void suspendActiveDOMObjectsAndAnimations();
-        void resumeActiveDOMObjectsAndAnimations();
+    void suspendActiveDOMObjectsAndAnimations();
+    void resumeActiveDOMObjectsAndAnimations();
 #ifndef NDEBUG
-        void setIsPainting(bool painting) { m_isPainting = painting; }
-        bool isPainting() const { return m_isPainting; }
+    void setIsPainting(bool painting) { m_isPainting = painting; }
+    bool isPainting() const { return m_isPainting; }
 #endif
 
-        AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient; }
+    AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient; }
 
-        bool hasSeenPlugin(const String& serviceType) const;
-        bool hasSeenAnyPlugin() const;
-        void sawPlugin(const String& serviceType);
-        void resetSeenPlugins();
+    bool hasSeenPlugin(const String& serviceType) const;
+    bool hasSeenAnyPlugin() const;
+    void sawPlugin(const String& serviceType);
+    void resetSeenPlugins();
 
-        bool hasSeenMediaEngine(const String& engineName) const;
-        bool hasSeenAnyMediaEngine() const;
-        void sawMediaEngine(const String& engineName);
-        void resetSeenMediaEngines();
+    bool hasSeenMediaEngine(const String& engineName) const;
+    bool hasSeenAnyMediaEngine() const;
+    void sawMediaEngine(const String& engineName);
+    void resetSeenMediaEngines();
 
-        void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
-    private:
-        void initGroup();
+private:
+    void initGroup();
 
 #if ASSERT_DISABLED
-        void checkSubframeCountConsistency() const { }
+    void checkSubframeCountConsistency() const { }
 #else
-        void checkSubframeCountConsistency() const;
+    void checkSubframeCountConsistency() const;
 #endif
 
-        MediaCanStartListener* takeAnyMediaCanStartListener();
+    MediaCanStartListener* takeAnyMediaCanStartListener();
 
-        void setMinimumTimerInterval(double);
-        double minimumTimerInterval() const;
+    void setMinimumTimerInterval(double);
+    double minimumTimerInterval() const;
 
-        void setTimerAlignmentInterval(double);
-        double timerAlignmentInterval() const;
+    void setTimerAlignmentInterval(double);
+    double timerAlignmentInterval() const;
 
-        void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
+    void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
 
-        OwnPtr<Chrome> m_chrome;
-        OwnPtr<DragCaretController> m_dragCaretController;
+    OwnPtr<Chrome> m_chrome;
+    OwnPtr<DragCaretController> m_dragCaretController;
 
 #if ENABLE(DRAG_SUPPORT)
-        OwnPtr<DragController> m_dragController;
+    OwnPtr<DragController> m_dragController;
 #endif
-        OwnPtr<FocusController> m_focusController;
+    OwnPtr<FocusController> m_focusController;
 #if ENABLE(CONTEXT_MENUS)
-        OwnPtr<ContextMenuController> m_contextMenuController;
+    OwnPtr<ContextMenuController> m_contextMenuController;
 #endif
 #if ENABLE(INSPECTOR)
-        OwnPtr<InspectorController> m_inspectorController;
+    OwnPtr<InspectorController> m_inspectorController;
 #endif
 #if ENABLE(POINTER_LOCK)
-        OwnPtr<PointerLockController> m_pointerLockController;
+    OwnPtr<PointerLockController> m_pointerLockController;
 #endif
-        RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+    RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
-        OwnPtr<Settings> m_settings;
-        OwnPtr<ProgressTracker> m_progress;
-        
-        OwnPtr<BackForwardController> m_backForwardController;
-        RefPtr<Frame> m_mainFrame;
+    OwnPtr<Settings> m_settings;
+    OwnPtr<ProgressTracker> m_progress;
 
-        mutable RefPtr<PluginData> m_pluginData;
+    OwnPtr<BackForwardController> m_backForwardController;
+    RefPtr<Frame> m_mainFrame;
 
-        RefPtr<RenderTheme> m_theme;
+    mutable RefPtr<PluginData> m_pluginData;
 
-        EditorClient* m_editorClient;
-        PlugInClient* m_plugInClient;
-        ValidationMessageClient* m_validationMessageClient;
+    RefPtr<RenderTheme> m_theme;
 
-        FeatureObserver m_featureObserver;
+    EditorClient* m_editorClient;
+    PlugInClient* m_plugInClient;
+    ValidationMessageClient* m_validationMessageClient;
 
-        int m_subframeCount;
-        String m_groupName;
-        bool m_openedByDOM;
+    FeatureObserver m_featureObserver;
 
-        bool m_tabKeyCyclesThroughElements;
-        bool m_defersLoading;
-        unsigned m_defersLoadingCallCount;
+    int m_subframeCount;
+    String m_groupName;
+    bool m_openedByDOM;
 
-        bool m_inLowQualityInterpolationMode;
-        bool m_cookieEnabled;
-        bool m_areMemoryCacheClientCallsEnabled;
-        float m_mediaVolume;
+    bool m_tabKeyCyclesThroughElements;
+    bool m_defersLoading;
+    unsigned m_defersLoadingCallCount;
 
-        float m_pageScaleFactor;
-        float m_deviceScaleFactor;
+    bool m_inLowQualityInterpolationMode;
+    bool m_cookieEnabled;
+    bool m_areMemoryCacheClientCallsEnabled;
+    float m_mediaVolume;
 
-        bool m_suppressScrollbarAnimations;
+    float m_pageScaleFactor;
+    float m_deviceScaleFactor;
 
-        Pagination m_pagination;
+    bool m_suppressScrollbarAnimations;
 
-        String m_userStyleSheetPath;
-        mutable String m_userStyleSheet;
-        mutable bool m_didLoadUserStyleSheet;
-        mutable time_t m_userStyleSheetModificationTime;
+    Pagination m_pagination;
 
-        OwnPtr<PageGroup> m_singlePageGroup;
-        PageGroup* m_group;
+    String m_userStyleSheetPath;
+    mutable String m_userStyleSheet;
+    mutable bool m_didLoadUserStyleSheet;
+    mutable time_t m_userStyleSheetModificationTime;
 
-        JSC::Debugger* m_debugger;
+    OwnPtr<PageGroup> m_singlePageGroup;
+    PageGroup* m_group;
 
-        double m_customHTMLTokenizerTimeDelay;
-        int m_customHTMLTokenizerChunkSize;
+    JSC::Debugger* m_debugger;
 
-        bool m_canStartMedia;
+    double m_customHTMLTokenizerTimeDelay;
+    int m_customHTMLTokenizerChunkSize;
 
-        RefPtr<StorageNamespace> m_sessionStorage;
+    bool m_canStartMedia;
 
-        ViewMode m_viewMode;
+    RefPtr<StorageNamespace> m_sessionStorage;
 
-        double m_minimumTimerInterval;
+    ViewMode m_viewMode;
 
-        double m_timerAlignmentInterval;
+    double m_minimumTimerInterval;
 
-        bool m_isEditable;
-        bool m_isOnscreen;
+    double m_timerAlignmentInterval;
+
+    bool m_isEditable;
+    bool m_isOnscreen;
 
 #if ENABLE(PAGE_VISIBILITY_API)
-        PageVisibilityState m_visibilityState;
+    PageVisibilityState m_visibilityState;
 #endif
-        PlatformDisplayID m_displayID;
+    PlatformDisplayID m_displayID;
 
-        LayoutMilestones m_layoutMilestones;
+    LayoutMilestones m_layoutMilestones;
 
-        HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
-        Region m_relevantPaintedRegion;
-        Region m_relevantUnpaintedRegion;
-        bool m_isCountingRelevantRepaintedObjects;
+    HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
+    Region m_relevantPaintedRegion;
+    Region m_relevantUnpaintedRegion;
+    bool m_isCountingRelevantRepaintedObjects;
 #ifndef NDEBUG
-        bool m_isPainting;
+    bool m_isPainting;
 #endif
-        AlternativeTextClient* m_alternativeTextClient;
+    AlternativeTextClient* m_alternativeTextClient;
 
-        bool m_scriptedAnimationsSuspended;
+    bool m_scriptedAnimationsSuspended;
 
-        HashSet<String> m_seenPlugins;
-        HashSet<String> m_seenMediaEngines;
-    };
+    HashSet<String> m_seenPlugins;
+    HashSet<String> m_seenMediaEngines;
+};
+
+inline PageGroup& Page::group()
+{
+    if (!m_group)
+        initGroup();
+    return *m_group;
+}
 
 } // namespace WebCore
     
