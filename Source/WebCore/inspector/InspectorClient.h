@@ -73,6 +73,9 @@ public:
     virtual bool overridesShowPaintRects() { return false; }
     virtual void setShowPaintRects(bool) { }
 
+    virtual bool canShowDebugBorders() { return false; }
+    virtual void setShowDebugBorders(bool) { }
+
     virtual bool canShowFPSCounter() { return false; }
     virtual void setShowFPSCounter(bool) { }
 

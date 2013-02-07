@@ -109,6 +109,8 @@ public:
     virtual void canOverrideDeviceMetrics(ErrorString*, bool*);
     virtual void setDeviceMetricsOverride(ErrorString*, int width, int height, double fontScaleFactor, bool fitWindow);
     virtual void setShowPaintRects(ErrorString*, bool show);
+    virtual void canShowDebugBorders(ErrorString*, bool*);
+    virtual void setShowDebugBorders(ErrorString*, bool show);
     virtual void canShowFPSCounter(ErrorString*, bool*);
     virtual void setShowFPSCounter(ErrorString*, bool show);
     virtual void canContinuouslyPaint(ErrorString*, bool*);

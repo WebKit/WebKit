@@ -311,6 +311,7 @@ public:
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
     virtual WebViewBenchmarkSupport* benchmarkSupport();
     virtual void setShowPaintRects(bool);
+    virtual void setShowDebugBorders(bool);
     virtual void setShowFPSCounter(bool);
     virtual void setContinuousPaintingEnabled(bool);
 
@@ -896,6 +897,7 @@ private:
 
     bool m_showFPSCounter;
     bool m_showPaintRects;
+    bool m_showDebugBorders;
     bool m_continuousPaintingEnabled;
 };
 

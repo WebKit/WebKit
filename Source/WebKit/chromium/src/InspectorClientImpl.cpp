@@ -163,6 +163,16 @@ void InspectorClientImpl::setShowPaintRects(bool show)
     m_inspectedWebView->setShowPaintRects(show);
 }
 
+bool InspectorClientImpl::canShowDebugBorders()
+{
+    return true;
+}
+
+void InspectorClientImpl::setShowDebugBorders(bool show)
+{
+    m_inspectedWebView->setShowDebugBorders(show);
+}
+
 bool InspectorClientImpl::canShowFPSCounter()
 {
     if (m_inspectedWebView->page())

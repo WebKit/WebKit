@@ -184,6 +184,9 @@ public:
     // Toggles the paint rects in the HUD layer
     virtual void setShowPaintRects(bool) { }
 
+    // Toggles the debug borders on layers
+    virtual void setShowDebugBorders(bool) { }
+
     // Toggles continuous painting
     virtual void setContinuousPaintingEnabled(bool) { }
 

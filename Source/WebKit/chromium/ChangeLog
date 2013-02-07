@@ -1,3 +1,27 @@
+2013-02-07  Eberhard Graether  <egraether@google.com>
+
+        Web Inspector: Add settings checkbox for composited layer borders
+        https://bugs.webkit.org/show_bug.cgi?id=109096
+
+        Reviewed by Pavel Feldman.
+
+        This change adds a checkbox to show composited layer borders to the WebInspector's
+        rendering settings and plumbs the setting to Chromium's WebLayerTreeView. The setting
+        is visible if InspectorClient::canShowDebugBorders() returns true.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::canShowDebugBorders):
+        (WebKit):
+        (WebKit::InspectorClientImpl::setShowDebugBorders):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setShowDebugBorders):
+        (WebKit):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2013-02-07  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.  Rolled DEPS.

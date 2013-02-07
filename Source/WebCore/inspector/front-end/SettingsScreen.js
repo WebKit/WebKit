@@ -292,6 +292,10 @@ WebInspector.GenericSettingsTab = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show paint rectangles"), WebInspector.settings.showPaintRects));
     WebInspector.settings.showPaintRects.addChangeListener(this._showPaintRectsChanged, this);
 
+    if (Capabilities.canShowDebugBorders) {
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show composited layer borders"), WebInspector.settings.showDebugBorders));
+        WebInspector.settings.showDebugBorders.addChangeListener(this._showDebugBordersChanged, this);
+    }
     if (Capabilities.canShowFPSCounter) {
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show FPS meter"), WebInspector.settings.showFPSCounter));
         WebInspector.settings.showFPSCounter.addChangeListener(this._showFPSCounterChanged, this);
@@ -340,6 +344,11 @@ WebInspector.GenericSettingsTab.prototype = {
     _showPaintRectsChanged: function()
     {
         PageAgent.setShowPaintRects(WebInspector.settings.showPaintRects.get());
+    },
+
+    _showDebugBordersChanged: function()
+    {
+        PageAgent.setShowDebugBorders(WebInspector.settings.showDebugBorders.get());
     },
 
     _showFPSCounterChanged: function()

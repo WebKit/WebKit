@@ -95,6 +95,7 @@ static const char pageAgentFitWindow[] = "pageAgentFitWindow";
 static const char pageAgentShowFPSCounter[] = "pageAgentShowFPSCounter";
 static const char pageAgentContinuousPaintingEnabled[] = "pageAgentContinuousPaintingEnabled";
 static const char pageAgentShowPaintRects[] = "pageAgentShowPaintRects";
+static const char pageAgentShowDebugBorders[] = "pageAgentShowDebugBorders";
 #if ENABLE(TOUCH_EVENTS)
 static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
 #endif
@@ -363,6 +364,8 @@ void InspectorPageAgent::restore()
         setScriptExecutionDisabled(0, scriptExecutionDisabled);
         bool showPaintRects = m_state->getBoolean(PageAgentState::pageAgentShowPaintRects);
         setShowPaintRects(0, showPaintRects);
+        bool showDebugBorders = m_state->getBoolean(PageAgentState::pageAgentShowDebugBorders);
+        setShowDebugBorders(0, showDebugBorders);
         bool showFPSCounter = m_state->getBoolean(PageAgentState::pageAgentShowFPSCounter);
         setShowFPSCounter(0, showFPSCounter);
         String emulatedMedia = m_state->getString(PageAgentState::pageAgentEmulatedMedia);
@@ -402,6 +405,7 @@ void InspectorPageAgent::disable(ErrorString*)
 
     setScriptExecutionDisabled(0, false);
     setShowPaintRects(0, false);
+    setShowDebugBorders(0, false);
     setShowFPSCounter(0, false);
     setEmulatedMedia(0, "");
     setContinuousPaintingEnabled(0, false);
@@ -736,6 +740,19 @@ void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
     m_client->setShowPaintRects(show);
 
     if (!show && mainFrame() && mainFrame()->view())
+        mainFrame()->view()->invalidate();
+}
+
+void InspectorPageAgent::canShowDebugBorders(ErrorString*, bool* outParam)
+{
+    *outParam = m_client->canShowDebugBorders();
+}
+
+void InspectorPageAgent::setShowDebugBorders(ErrorString*, bool show)
+{
+    m_state->setBoolean(PageAgentState::pageAgentShowDebugBorders, show);
+    m_client->setShowDebugBorders(show);
+    if (mainFrame() && mainFrame()->view())
         mainFrame()->view()->invalidate();
 }
 

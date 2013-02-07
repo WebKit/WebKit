@@ -60,6 +60,7 @@ var Capabilities = {
     timelineCanMonitorMainThread: false,
     canOverrideGeolocation: false,
     canOverrideDeviceOrientation: false,
+    canShowDebugBorders: false,
     canShowFPSCounter: false,
     canContinuouslyPaint: false
 }
@@ -100,6 +101,7 @@ WebInspector.Settings = function()
     this.emulateTouchEvents = this.createSetting("emulateTouchEvents", false);
     this.showPaintRects = this.createSetting("showPaintRects", false);
     this.continuousPainting = this.createSetting("continuousPainting", false);
+    this.showDebugBorders = this.createSetting("showDebugBorders", false);
     this.showFPSCounter = this.createSetting("showFPSCounter", false);
     this.showShadowDOM = this.createSetting("showShadowDOM", false);
     this.zoomLevel = this.createSetting("zoomLevel", 0);

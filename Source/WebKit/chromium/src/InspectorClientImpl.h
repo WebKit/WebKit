@@ -76,6 +76,9 @@ public:
     virtual bool overridesShowPaintRects();
     virtual void setShowPaintRects(bool);
 
+    virtual bool canShowDebugBorders();
+    virtual void setShowDebugBorders(bool);
+
     virtual bool canShowFPSCounter();
     virtual void setShowFPSCounter(bool);
 

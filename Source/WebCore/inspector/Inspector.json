@@ -375,6 +375,22 @@
                 "hidden": true
             },
             {
+                "name": "canShowDebugBorders",
+                "description": "Tells if backend supports debug borders on layers",
+                "returns": [
+                    { "name": "show", "type": "boolean", "description": "True if the debug borders can be shown" }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "setShowDebugBorders",
+                "description": "Requests that backend shows debug borders on layers",
+                "parameters": [
+                    { "name": "show", "type": "boolean", "description": "True for showing debug borders" }
+                ],
+                "hidden": true
+            },
+            {
                 "name": "canShowFPSCounter",
                 "description": "Tells if backend supports a FPS counter display",
                 "returns": [
