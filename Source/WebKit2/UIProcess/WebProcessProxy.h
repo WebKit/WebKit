@@ -71,10 +71,6 @@ public:
         return static_cast<WebProcessProxy*>(ChildProcessProxy::fromConnection(connection));
     }
 
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
-    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
-
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
     WebContext* context() const { return m_context.get(); }
@@ -189,8 +185,6 @@ private:
     ResponsivenessTimer m_responsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
-
     RefPtr<WebContext> m_context;
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.

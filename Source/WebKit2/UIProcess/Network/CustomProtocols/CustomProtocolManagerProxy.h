@@ -51,10 +51,10 @@ public:
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);
 
+private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
-private:
     ChildProcessProxy* m_childProcessProxy;
 
 #if PLATFORM(MAC)

@@ -87,6 +87,31 @@ bool ChildProcessProxy::sendMessage(PassOwnPtr<CoreIPC::MessageEncoder> encoder,
     return connection()->sendMessage(encoder, messageSendFlags);
 }
 
+void ChildProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
+}
+
+void ChildProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
+}
+
+void ChildProcessProxy::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
+}
+
+bool ChildProcessProxy::dispatchMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+{
+    return m_messageReceiverMap.dispatchMessage(connection, decoder);
+}
+
+bool ChildProcessProxy::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+{
+    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
+}
+
 bool ChildProcessProxy::isLaunching() const
 {
     if (m_processLauncher)

@@ -1,3 +1,45 @@
+2013-02-03  Sam Weinig  <sam@webkit.org>
+
+        Make CustomProtocolManagerProxy a MessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=108787
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::addMessageReceiver):
+        (WebKit::ChildProcessProxy::removeMessageReceiver):
+        (WebKit::ChildProcessProxy::dispatchMessage):
+        (WebKit::ChildProcessProxy::dispatchSyncMessage):
+        * Shared/ChildProcessProxy.h:
+        Sink the MessageReceiverMap down into the ChildProcessProxy.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::DownloadProxyMap):
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        (WebKit::DownloadProxyMap::processDidClose):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        Pass the ChildProcessProxy rather than the MessageReceiverMap to the constructor.
+
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        Convert to a MessageReceiver.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didReceiveSyncMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        (WebKit::WebProcessProxy::createDownloadProxy):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        Remove direct chaining to CustomProtocolManagerProxy.
+
 2013-02-06  Enrica Casucci  <enrica@apple.com>
 
         ASSERT(!m_findPageOverlay) in FindController.cpp after r140769.

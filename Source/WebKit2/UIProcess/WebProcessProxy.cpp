@@ -167,21 +167,6 @@ void WebProcessProxy::disconnect()
     m_context->disconnectProcess(this);
 }
 
-void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
-{
-    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
-}
-
-void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
-{
-    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
-}
-
-void WebProcessProxy::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
-{
-    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
-}
-
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 {
     return globalPageMap().get(pageID);
@@ -405,7 +390,7 @@ void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProces
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_messageReceiverMap.dispatchMessage(connection, decoder))
+    if (dispatchMessage(connection, decoder))
         return;
 
     if (m_context->dispatchMessage(connection, decoder))
@@ -415,16 +400,6 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         didReceiveWebProcessProxyMessage(connection, decoder);
         return;
     }
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-    if (decoder.messageReceiverName() == Messages::CustomProtocolManagerProxy::messageReceiverName()) {
-#if ENABLE(NETWORK_PROCESS)
-        ASSERT(!context()->usesNetworkProcess());
-#endif
-        m_customProtocolManagerProxy.didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
 
     uint64_t pageID = decoder.destinationID();
     if (!pageID)
@@ -439,7 +414,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
 
     if (m_context->dispatchSyncMessage(connection, decoder, replyEncoder))
@@ -608,7 +583,6 @@ void WebProcessProxy::updateTextCheckerState()
         send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
 }
 
-
 DownloadProxy* WebProcessProxy::createDownloadProxy()
 {
 #if ENABLE(NETWORK_PROCESS)
@@ -616,7 +590,7 @@ DownloadProxy* WebProcessProxy::createDownloadProxy()
 #endif
 
     if (!m_downloadProxyMap)
-        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(m_messageReceiverMap));
+        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(this));
 
     return m_downloadProxyMap->createDownloadProxy(m_context.get());
 }

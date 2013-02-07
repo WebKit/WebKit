@@ -87,7 +87,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
 DownloadProxy* NetworkProcessProxy::createDownloadProxy()
 {
     if (!m_downloadProxyMap)
-        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(m_messageReceiverMap));
+        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(this));
 
     return m_downloadProxyMap->createDownloadProxy(m_webContext);
 }
@@ -111,25 +111,18 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
 
 void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_messageReceiverMap.dispatchMessage(connection, decoder))
+    if (dispatchMessage(connection, decoder))
         return;
 
     if (m_webContext->dispatchMessage(connection, decoder))
         return;
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-    if (decoder.messageReceiverName() == Messages::CustomProtocolManagerProxy::messageReceiverName()) {
-        m_customProtocolManagerProxy.didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
 
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
 void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
 
     ASSERT_NOT_REACHED();

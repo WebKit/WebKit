@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DownloadProxyMap.h"
 
+#include "ChildProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "MessageReceiverMap.h"
@@ -33,8 +34,8 @@
 
 namespace WebKit {
 
-DownloadProxyMap::DownloadProxyMap(CoreIPC::MessageReceiverMap& messageReceiverMap)
-    : m_messageReceiverMap(messageReceiverMap)
+DownloadProxyMap::DownloadProxyMap(ChildProcessProxy* process)
+    : m_process(process)
 {
 }
 
@@ -48,7 +49,7 @@ DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, webContext);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
-    m_messageReceiverMap.addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy.get());
+    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy.get());
 
     return downloadProxy.get();
 }
@@ -60,7 +61,7 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
     downloadProxy->invalidate();
     m_downloads.remove(downloadProxy->downloadID());
 
-    m_messageReceiverMap.removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
+    m_process->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
 }
 
 void DownloadProxyMap::processDidClose()
@@ -72,6 +73,7 @@ void DownloadProxyMap::processDidClose()
     }
 
     m_downloads.clear();
+    m_process = nullptr;
 }
 
 } // namespace WebKit

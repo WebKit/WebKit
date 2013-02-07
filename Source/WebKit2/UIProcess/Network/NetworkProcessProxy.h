@@ -29,8 +29,6 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "ChildProcessProxy.h"
-#include "Connection.h"
-#include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
@@ -90,7 +88,6 @@ private:
     unsigned m_numPendingConnectionRequests;
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> > m_pendingConnectionReplies;
 
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
     OwnPtr<DownloadProxyMap> m_downloadProxyMap;
 
 #if ENABLE(CUSTOM_PROTOCOLS)

@@ -27,6 +27,7 @@
 #define ChildProcessProxy_h
 
 #include "Connection.h"
+#include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 
 namespace WebKit {
@@ -53,6 +54,10 @@ public:
         return m_connection.get();
     }
 
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
+    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
+
     bool isValid() const { return m_connection; }
     bool isLaunching() const;
     bool canSendMessage() const { return isValid() || isLaunching(); }
@@ -65,6 +70,9 @@ protected:
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) OVERRIDE;
 
+    bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
     virtual void connectionWillOpen(CoreIPC::Connection*);
@@ -75,6 +83,7 @@ private:
     Vector<std::pair<OwnPtr<CoreIPC::MessageEncoder>, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<CoreIPC::Connection> m_connection;
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 };
 
 template<typename T>
