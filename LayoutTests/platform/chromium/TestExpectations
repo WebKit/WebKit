@@ -1476,6 +1476,8 @@ crbug.com/174466 webgl/conformance/canvas/to-data-url-test.html [ Crash ]
 crbug.com/174466 webgl/conformance/context/context-attribute-preserve-drawing-buffer.html [ Failure ]
 crbug.com/174466 webgl/conformance/context/context-creation-and-destruction.html [ Skip ]
 
+webkit.org/b/108901 webgl/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+
 # -----------------------------------------------------------------
 # Other failures
 # -----------------------------------------------------------------
