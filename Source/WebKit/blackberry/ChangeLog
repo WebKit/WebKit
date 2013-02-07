@@ -1,3 +1,58 @@
+2013-02-07  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Fix all flicker caused by empty/incomplete geometries.
+        https://bugs.webkit.org/show_bug.cgi?id=108951
+        RIM PR 286925
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        The main idea for this patch is that whenever we adopt
+        a new backingstore geometry that doesn't contain any
+        rendered tiles, or VisibleZoom render jobs that need more
+        tiles to be rendered to be considered complete, we'll then
+        suspend blitting until there is valid content to show.
+
+        This main idea is codified as checks for empty buffers
+        in adoptAsFrontState(), and checks for the current state
+        of the render queue after rendering content in render().
+        However, as BackingStore objects with disabled surface pools
+        or pure use of accelerated compositing also swap geometries
+        in some circumstances, the use of suspend counters grows
+        increasingly fragile.
+
+        To make this patch more resilient against regressions,
+        the current suspend counter is complemented with several
+        explicit conditions for suspending screen updates,
+        and both subsequently combined into a single cached
+        boolean value telling the UI thread whether or not to
+        suspend. In the future, other suspend calls can be
+        migrated to this "state machine" design as well,
+        potentially phasing out the suspend counter altogether.
+
+        The immediate result is that there will be no flashing
+        of background color between page loads or after discarding
+        tiles on scale changes until the content has been rendered.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::updateSuspendScreenUpdateState):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::adoptAsFrontState):
+        (BlackBerry::WebKit::BackingStorePrivate::setCurrentBackingStoreOwner):
+        (BlackBerry::WebKit::BackingStore::releaseOwnedBackingStoreMemory):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setVisible):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorDrawsRootLayer):
+
 2013-02-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] CHHW - Characters that are using 32 bits encoding get trunked to 16bits

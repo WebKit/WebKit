@@ -203,11 +203,14 @@ bool BackingStoreGeometry::isTileCorrespondingToBuffer(TileIndex index, TileBuff
 }
 
 BackingStorePrivate::BackingStorePrivate()
-    : m_suspendScreenUpdates(0)
+    : m_suspendScreenUpdateCounterWebKitThread(0)
     , m_suspendBackingStoreUpdates(0)
     , m_resumeOperation(BackingStore::None)
+    , m_suspendScreenUpdatesWebKitThread(true)
+    , m_suspendScreenUpdatesUserInterfaceThread(true)
     , m_suspendRenderJobs(false)
     , m_suspendRegularRenderJobs(false)
+    , m_tileMatrixContainsUsefulContent(false)
     , m_tileMatrixNeedsUpdate(false)
     , m_isScrollingOrZooming(false)
     , m_webPage(0)
@@ -284,6 +287,12 @@ bool BackingStorePrivate::isOpenGLCompositing() const
 
 void BackingStorePrivate::suspendBackingStoreUpdates()
 {
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    // We still use atomic values here because the UI thread can use it in
+    // setScrollingOrZooming() (through shouldPerformRegularRenderJobs()).
+    // FIXME: Once that one respects thread boundaries properly, switch to
+    // regular increment/decrement operations.
     if (atomic_add_value(&m_suspendBackingStoreUpdates, 0)) {
         BBLOG(Platform::LogLevelInfo,
             "Backingstore already suspended, increasing suspend counter.");
@@ -294,7 +303,9 @@ void BackingStorePrivate::suspendBackingStoreUpdates()
 
 void BackingStorePrivate::suspendScreenUpdates()
 {
-    if (m_suspendScreenUpdates) {
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    if (m_suspendScreenUpdateCounterWebKitThread) {
         BBLOG(Platform::LogLevelInfo,
             "Screen already suspended, increasing suspend counter.");
     }
@@ -302,13 +313,14 @@ void BackingStorePrivate::suspendScreenUpdates()
     // Make sure the user interface thread gets the message before we proceed
     // because blitVisibleContents() can be called from the user interface
     // thread and it must honor this flag.
-    ++m_suspendScreenUpdates;
-
-    BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+    ++m_suspendScreenUpdateCounterWebKitThread;
+    updateSuspendScreenUpdateState();
 }
 
 void BackingStorePrivate::resumeBackingStoreUpdates()
 {
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
     unsigned currentValue = atomic_add_value(&m_suspendBackingStoreUpdates, 0);
     ASSERT(currentValue >= 1);
     if (currentValue < 1) {
@@ -330,9 +342,10 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
 
 void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperation op)
 {
-    ASSERT(m_suspendScreenUpdates);
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+    ASSERT(m_suspendScreenUpdateCounterWebKitThread);
 
-    if (!m_suspendScreenUpdates) {
+    if (!m_suspendScreenUpdateCounterWebKitThread) {
         Platform::logAlways(Platform::LogLevelCritical,
             "Call mismatch: Screen hasn't been suspended, therefore won't resume!");
         return;
@@ -343,10 +356,10 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
         || (m_resumeOperation == BackingStore::None && op == BackingStore::Blit))
         m_resumeOperation = op;
 
-    if (m_suspendScreenUpdates >= 2) { // we're still suspended
+    if (m_suspendScreenUpdateCounterWebKitThread >= 2) { // we're still suspended
         BBLOG(Platform::LogLevelInfo,
             "Screen and backingstore still suspended, decreasing suspend counter.");
-        --m_suspendScreenUpdates;
+        --m_suspendScreenUpdateCounterWebKitThread;
         return;
     }
 
@@ -358,8 +371,8 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
         if (isOpenGLCompositing() && !isActive()) {
             m_webPage->d->setCompositorDrawsRootLayer(true);
             m_webPage->d->setNeedsOneShotDrawingSynchronization();
-            --m_suspendScreenUpdates;
-            BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+            --m_suspendScreenUpdateCounterWebKitThread;
+            updateSuspendScreenUpdateState();
             return;
         }
 
@@ -396,8 +409,8 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
     // Make sure the user interface thread gets the message before we proceed
     // because blitVisibleContents() can be called from the user interface
     // thread and it must honor this flag.
-    --m_suspendScreenUpdates;
-    BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+    --m_suspendScreenUpdateCounterWebKitThread;
+    updateSuspendScreenUpdateState();
 
     if (op == BackingStore::None)
         return;
@@ -413,6 +426,28 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
     if ((op == BackingStore::Blit || op == BackingStore::RenderAndBlit) && !shouldDirectRenderingToWindow())
         blitVisibleContents();
 #endif
+}
+
+void BackingStorePrivate::updateSuspendScreenUpdateState()
+{
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    bool isBackingStoreUsable = isActive() && m_tileMatrixContainsUsefulContent
+        && (m_suspendBackingStoreUpdates || !m_renderQueue->hasCurrentVisibleZoomJob()); // Backingstore is not usable while we're waiting for an ("atomic") zoom job to finish.
+
+    bool shouldSuspend = m_suspendScreenUpdateCounterWebKitThread
+        || !m_webPage->isVisible()
+        || (!isBackingStoreUsable && !m_webPage->d->compositorDrawsRootLayer() && !shouldDirectRenderingToWindow());
+
+    if (m_suspendScreenUpdatesWebKitThread == shouldSuspend)
+        return;
+
+    m_suspendScreenUpdatesWebKitThread = shouldSuspend;
+
+    // FIXME: If we change the backingstore to dispatch geometries, this
+    //   assignment should be moved to a dispatched setter function instead.
+    m_suspendScreenUpdatesUserInterfaceThread = shouldSuspend;
+    BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
 }
 
 void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
@@ -1135,11 +1170,14 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
         newTileMap.set(index, backBuffer);
     }
 
-    newGeometry->setTileMap(newTileMap);
-    adoptAsFrontState(newGeometry);
-
     // Let the render queue know that the tile contents are up to date now.
     m_renderQueue->clear(renderedTiles, frontState(), RenderQueue::DontClearCompletedJobs);
+
+    // If we couldn't render all requested jobs, suspend blitting until we do.
+    updateSuspendScreenUpdateState();
+
+    newGeometry->setTileMap(newTileMap);
+    adoptAsFrontState(newGeometry);
 
 #if DEBUG_BACKINGSTORE
     Platform::logAlways(Platform::LogLevelInfo,
@@ -1227,17 +1265,17 @@ void BackingStorePrivate::blitVisibleContents(bool force)
         return;
     }
 
-    if (!m_webPage->isVisible() || m_suspendScreenUpdates) {
-        // Avoid client going into busy loop while blit is impossible.
-        if (force)
-            m_hasBlitJobs = false;
-        return;
-    }
-
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
         BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(
             BlackBerry::Platform::createMethodCallMessage(
                 &BackingStorePrivate::blitVisibleContents, this, force));
+        return;
+    }
+
+    if (m_suspendScreenUpdatesUserInterfaceThread) {
+        // Avoid client going into busy loop while blit is impossible.
+        if (force)
+            m_hasBlitJobs = false;
         return;
     }
 
@@ -2226,13 +2264,22 @@ BackingStoreGeometry* BackingStorePrivate::frontState() const
 
 void BackingStorePrivate::adoptAsFrontState(BackingStoreGeometry* newFrontState)
 {
+    bool hasValidBuffers = false;
+
     // Remember the buffers we'll use in the new front state for comparison.
     WTF::Vector<TileBuffer*> newTileBuffers;
     TileMap newTileMap = newFrontState->tileMap();
     TileMap::const_iterator end = newTileMap.end();
     for (TileMap::const_iterator it = newTileMap.begin(); it != end; ++it) {
-        if (it->value)
+        if (it->value) {
+            hasValidBuffers = true;
             newTileBuffers.append(it->value);
+        }
+    }
+
+    if (!hasValidBuffers) {
+        m_tileMatrixContainsUsefulContent = false;
+        updateSuspendScreenUpdateState();
     }
 
     unsigned newFront = reinterpret_cast<unsigned>(newFrontState);
@@ -2241,8 +2288,13 @@ void BackingStorePrivate::adoptAsFrontState(BackingStoreGeometry* newFrontState)
     // Atomic change.
     _smp_xchg(&m_frontState, newFront);
 
-    // Wait until the user interface thread won't access the old front state anymore.
-    BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+    if (hasValidBuffers) {
+        m_tileMatrixContainsUsefulContent = true;
+        updateSuspendScreenUpdateState(); // includes syncToCurrentMessage(), so we can use it instead
+    } else {
+        // Wait until the user interface thread won't access the old front state anymore.
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+    }
 
     // Reclaim unused old tile buffers as back buffers.
     TileMap oldTileMap = oldFrontState->tileMap();
@@ -2296,6 +2348,7 @@ void BackingStorePrivate::setCurrentBackingStoreOwner(WebPage* webPage)
         BackingStorePrivate::s_currentBackingStoreOwner->d->m_backingStore->d->resetTiles();
 
     BackingStorePrivate::s_currentBackingStoreOwner = webPage;
+    webPage->backingStore()->d->updateSuspendScreenUpdateState(); // depends on isActive()
 }
 
 bool BackingStorePrivate::isActive() const
@@ -2412,8 +2465,13 @@ void BackingStore::acquireBackingStoreMemory()
 
 void BackingStore::releaseOwnedBackingStoreMemory()
 {
-    if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
+    if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage) {
+        // Call resetTiles() (hopefully) after suspendScreenUpdates()
+        // so we will not cause checkerboard to be shown before suspending.
+        // This causes the tiles in use to be given back to the SurfacePool.
+        d->resetTiles();
         SurfacePool::globalSurfacePool()->releaseBuffers();
+    }
 }
 
 bool BackingStore::hasBlitJobs() const

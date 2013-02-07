@@ -129,8 +129,6 @@ public:
     // BlackBerry::Platform::Graphics::Window::GLES2Usage.
     bool isOpenGLCompositing() const;
 
-    bool isSuspended() const { return m_suspendBackingStoreUpdates; }
-
     // Suspends all backingstore updates so that rendering to the backingstore is disabled.
     void suspendBackingStoreUpdates();
 
@@ -142,6 +140,9 @@ public:
 
     // Resumes all screen updates so that 'blitVisibleContents' is enabled.
     void resumeScreenUpdates(BackingStore::ResumeUpdateOperation);
+
+    // Update m_suspendScreenUpdates*Thread based on a number of conditions.
+    void updateSuspendScreenUpdateState();
 
     // The functions repaint(), slowScroll(), scroll(), scrollingStartedHelper() are
     // called from outside WebKit and within WebKit via ChromeClientBlackBerry.
@@ -342,12 +343,15 @@ public:
 
     static WebPage* s_currentBackingStoreOwner;
 
-    unsigned m_suspendScreenUpdates;
+    unsigned m_suspendScreenUpdateCounterWebKitThread;
     unsigned m_suspendBackingStoreUpdates;
     BackingStore::ResumeUpdateOperation m_resumeOperation;
 
+    bool m_suspendScreenUpdatesWebKitThread;
+    bool m_suspendScreenUpdatesUserInterfaceThread;
     bool m_suspendRenderJobs;
     bool m_suspendRegularRenderJobs;
+    bool m_tileMatrixContainsUsefulContent;
     bool m_tileMatrixNeedsUpdate;
     bool m_isScrollingOrZooming;
     WebPage* m_webPage;
