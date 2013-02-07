@@ -785,7 +785,6 @@ have?(QTQUICK) {
         UIProcess/qt/QtDialogRunner.h \
         UIProcess/qt/QtDownloadManager.h \
         UIProcess/qt/QtPageClient.h \
-        UIProcess/qt/QtWebPageLoadClient.h \
         UIProcess/qt/QtWebPagePolicyClient.h \
         UIProcess/qt/QtWebPageSGNode.h \
         UIProcess/qt/QtWebPageUIClient.h \
@@ -812,7 +811,6 @@ have?(QTQUICK) {
         UIProcess/qt/QtDialogRunner.cpp \
         UIProcess/qt/QtDownloadManager.cpp \
         UIProcess/qt/QtPageClient.cpp \
-        UIProcess/qt/QtWebPageLoadClient.cpp \
         UIProcess/qt/QtWebPagePolicyClient.cpp \
         UIProcess/qt/QtWebPageSGNode.cpp \
         UIProcess/qt/QtWebPageEventHandler.cpp \

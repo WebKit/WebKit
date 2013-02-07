@@ -51,7 +51,6 @@ class PlatformWebView;
 namespace WebKit {
 struct QtRefCountedNetworkRequestData;
 class PageViewportControllerClientQt;
-class QtWebPageLoadClient;
 class QtWebPageFindClient;
 class QtWebPagePolicyClient;
 class QtWebPageUIClient;
@@ -221,7 +220,6 @@ private:
 
     friend class QWebKitTest;
     friend class WebKit::PageViewportControllerClientQt;
-    friend class WebKit::QtWebPageLoadClient;
     friend class WebKit::QtWebPageFindClient;
     friend class WebKit::QtWebPagePolicyClient;
     friend class WebKit::QtWebPageUIClient;

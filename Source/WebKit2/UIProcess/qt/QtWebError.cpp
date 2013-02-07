@@ -57,7 +57,7 @@ int QtWebError::errorCode() const
 
 QString QtWebError::url() const
 {
-    return toImpl(error.get())->failingURL();
+    return WKStringCopyQString(WKURLCopyString(WKErrorCopyFailingURL(error.get())));
 }
 
 QString QtWebError::description() const

@@ -1,3 +1,45 @@
+2013-02-07  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] Fold QtWebPageLoadClient into QQuickWebViewPrivate and move to C API.
+        https://bugs.webkit.org/show_bug.cgi?id=108473
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        This patch removes the QtWebPageLoadClient and moves the functionality into the
+        QQuickWebViewPrivate as most callback methods are calling the private webview
+        indirectly anyway.
+
+        The patch also moves as much of the functionality to the C API as is possible with
+        the current C API.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::didStartProvisionalLoadForFrame):
+        (QQuickWebViewPrivate::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (QQuickWebViewPrivate::didFailLoad):
+        (QQuickWebViewPrivate::didCommitLoadForFrame):
+        (QQuickWebViewPrivate::didFinishLoadForFrame):
+        (QQuickWebViewPrivate::didSameDocumentNavigationForFrame):
+        (QQuickWebViewPrivate::didReceiveTitleForFrame):
+        (QQuickWebViewPrivate::didStartProgress):
+        (QQuickWebViewPrivate::didChangeProgress):
+        (QQuickWebViewPrivate::didFinishProgress):
+        (QQuickWebViewPrivate::didChangeBackForwardList):
+        (QQuickWebViewPrivate::setTransparentBackground):
+        (QQuickWebViewPrivate::transparentBackground):
+        (QQuickWebViewPrivate::loadProgressDidChange):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebKit):
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtWebError.cpp:
+        (WebKit::QtWebError::url):
+        * UIProcess/qt/QtWebPageLoadClient.cpp: Removed.
+        * UIProcess/qt/QtWebPageLoadClient.h: Removed.
+
 2013-02-05  Eunmi Lee  <eunmi15.lee@samsung.com> and Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.

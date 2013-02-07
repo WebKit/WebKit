@@ -44,7 +44,6 @@ class QtDialogRunner;
 class PageViewportControllerClientQt;
 class QtWebContext;
 class QtWebError;
-class QtWebPageLoadClient;
 class QtWebPagePolicyClient;
 class WebPageProxy;
 }
@@ -73,16 +72,7 @@ public:
 
     virtual void onComponentComplete() { }
 
-    virtual void provisionalLoadDidStart(const WTF::String& url);
-    virtual void didReceiveServerRedirectForProvisionalLoad(const WTF::String& url);
-    virtual void loadDidCommit();
-    virtual void didSameDocumentNavigation();
-    virtual void titleDidChange();
     virtual void loadProgressDidChange(int loadProgress);
-    virtual void backForwardListDidChange();
-    virtual void loadDidSucceed();
-    virtual void loadDidStop();
-    virtual void loadDidFail(const WebKit::QtWebError& error);
     virtual void handleMouseEvent(QMouseEvent*);
 
     static void didFindString(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
@@ -160,6 +150,19 @@ protected:
         QPointF adjust(const QPointF&);
     };
 
+    // WKPageLoadClient callbacks.
+    static void didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didFailLoad(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef userData, const void* clientInfo);
+    static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef userData, const void* clientInfo);
+    static void didReceiveTitleForFrame(WKPageRef, WKStringRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didStartProgress(WKPageRef, const void* clientInfo);
+    static void didChangeProgress(WKPageRef, const void* clientInfo);
+    static void didFinishProgress(WKPageRef, const void* clientInfo);
+    static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo);
+
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
@@ -171,7 +174,6 @@ protected:
     OwnPtr<QWebNavigationHistory> navigationHistory;
     OwnPtr<QWebPreferences> preferences;
 
-    QScopedPointer<WebKit::QtWebPageLoadClient> pageLoadClient;
     QScopedPointer<WebKit::QtWebPagePolicyClient> pagePolicyClient;
     QScopedPointer<WebKit::QtWebPageUIClient> pageUIClient;
 
