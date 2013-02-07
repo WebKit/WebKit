@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PageViewportControllerClientEfl.h"
 
-#if USE(TILED_BACKING_STORE)
-
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "EwkView.h"
 #include "PageViewportController.h"
@@ -71,7 +69,7 @@ void PageViewportControllerClientEfl::updateViewportSize()
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
     drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(contentsSize);
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
@@ -99,7 +97,7 @@ void PageViewportControllerClientEfl::didResumeContent()
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageViewportControllerClientEfl::didChangeViewportAttributes()
@@ -112,5 +110,3 @@ void PageViewportControllerClientEfl::setController(PageViewportController* cont
 }
 
 } // namespace WebKit
-#endif // USE(TILED_BACKING_STORE)
-

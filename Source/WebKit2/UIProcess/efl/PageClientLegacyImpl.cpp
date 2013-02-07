@@ -44,14 +44,12 @@ PageClientLegacyImpl::PageClientLegacyImpl(EwkView* view)
 
 void PageClientLegacyImpl::didCommitLoad()
 {
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageClientLegacyImpl::updateViewportSize()
 {
-#if USE(TILED_BACKING_STORE)
     m_view->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_view->pagePosition()), m_view->size()), FloatPoint());
-#endif
 }
 
 FloatRect PageClientLegacyImpl::convertToDeviceSpace(const FloatRect& viewRect)
@@ -68,35 +66,31 @@ FloatRect PageClientLegacyImpl::convertToUserSpace(const FloatRect& viewRect)
 
 void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
 {
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
-#if USE(TILED_BACKING_STORE)
     m_view->page()->drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(FloatSize(size.width(), size.height()));
-    m_view->update();
-#endif
+    m_view->scheduleUpdateDisplay();
 
     m_view->smartCallback<ContentsSizeChanged>().call(size);
 }
 
-#if USE(TILED_BACKING_STORE)
 void PageClientLegacyImpl::pageDidRequestScroll(const IntPoint& position)
 {
     m_view->setPagePosition(FloatPoint(position));
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageClientLegacyImpl::didRenderFrame(const WebCore::IntSize&, const WebCore::IntRect&)
 {
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageClientLegacyImpl::pageTransitionViewportReady()
 {
-    m_view->update();
+    m_view->scheduleUpdateDisplay();
 }
-#endif
 
 } // namespace WebKit

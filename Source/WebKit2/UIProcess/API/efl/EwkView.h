@@ -21,6 +21,8 @@
 #ifndef EwkView_h
 #define EwkView_h
 
+#include "EvasGLContext.h"
+#include "EvasGLSurface.h"
 #include "EwkViewCallbacks.h"
 #include "ImmutableDictionary.h"
 #include "RefPtrEfl.h"
@@ -45,10 +47,6 @@
 #include "ewk_touch.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "EvasGLContext.h"
-#include "EvasGLSurface.h"
-#endif
 
 #include "WebContext.h"
 #include "WebPageGroup.h"
@@ -80,9 +78,7 @@ class AffineTransform;
 class Color;
 class Cursor;
 class IntSize;
-#if USE(COORDINATED_GRAPHICS)
 class CoordinatedGraphicsScene;
-#endif
 }
 
 class EwkContext;
@@ -93,10 +89,8 @@ class EwkPopupMenu;
 class EwkSettings;
 class EwkWindowFeatures;
 
-#if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL_Context Evas_GL_Context;
 typedef struct _Evas_GL_Surface Evas_GL_Surface;
-#endif
 
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
@@ -159,7 +153,7 @@ public:
     void setCursor(const WebCore::Cursor& cursor);
     void setImageData(void* imageData, const WebCore::IntSize& size);
 
-    void update(const WebCore::IntRect& rect = WebCore::IntRect());   
+    void scheduleUpdateDisplay();
 
 #if ENABLE(FULLSCREEN_API)
     void enterFullScreen();
@@ -169,12 +163,10 @@ public:
     WKRect windowGeometry() const;
     void setWindowGeometry(const WKRect&);
 
-#if USE(ACCELERATED_COMPOSITING)
     bool createGLSurface(const WebCore::IntSize& viewSize);
     bool enterAcceleratedCompositingMode();
     bool exitAcceleratedCompositingMode();
     void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
-#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void requestColorPicker(WKColorPickerResultListenerRef listener, const WebCore::Color&);
@@ -204,7 +196,6 @@ public:
 
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
-#if USE(TILED_BACKING_STORE)
     WebKit::PageClientBase* pageClient() { return m_pageClient.get(); }
 
     void setPageScaleFactor(float scaleFactor) { m_pageScaleFactor = scaleFactor; }
@@ -212,7 +203,6 @@ public:
 
     void setPagePosition(const WebCore::FloatPoint& position) { m_pagePosition = position; }
     const WebCore::FloatPoint pagePosition() const { return m_pagePosition; }
-#endif
 
     // FIXME: needs refactoring (split callback invoke)
     void informURLChange();
@@ -229,9 +219,7 @@ private:
 
     void displayTimerFired(WebCore::Timer<EwkView>*);
 
-#if USE(COORDINATED_GRAPHICS)
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
-#endif
 
     void informIconChange();
 
@@ -267,12 +255,10 @@ private:
     // Note, initialization order matters.
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
-#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
     bool m_pendingSurfaceResize;
-#endif
     OwnPtr<WebKit::PageClientBase> m_pageClient;
     RefPtr<WebKit::WebView> m_webView;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
@@ -285,10 +271,8 @@ private:
     OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif
     OwnPtr<EwkBackForwardList> m_backForwardList;
-#if USE(TILED_BACKING_STORE)
     float m_pageScaleFactor;
     WebCore::FloatPoint m_pagePosition;
-#endif
     OwnPtr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
     const void* m_cursorIdentifier; // This is an address, do not free it.

@@ -26,7 +26,6 @@
 #ifndef EvasGLSurface_h
 #define EvasGLSurface_h
 
-#if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
 #include <WebCore/IntSize.h>
 #include <wtf/PassOwnPtr.h>
@@ -54,7 +53,7 @@ public:
     }
     ~EvasGLSurface();
 
-    inline Evas_GL_Surface* surface() const { return m_surface; }
+    Evas_GL_Surface* surface() { return m_surface; }
 
 private:
     EvasGLSurface(Evas_GL* evasGL, Evas_GL_Surface* passSurface);
@@ -64,7 +63,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // EvasGLSurface_h

@@ -1,3 +1,78 @@
+2013-02-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Removal of non coordinated graphics code path from WK2 EFL
+        https://bugs.webkit.org/show_bug.cgi?id=109165
+
+        Reviewed by Anders Carlsson.
+
+        Removed non coordinated graphics code path from WK2 EFL as it was not used by
+        anyone and caused a lot of preprocessor macros in the code making it less readable.
+
+        * UIProcess/API/efl/EvasGLContext.cpp:
+        * UIProcess/API/efl/EvasGLContext.h:
+        (WebKit::EvasGLContext::context):
+        * UIProcess/API/efl/EvasGLSurface.cpp:
+        * UIProcess/API/efl/EvasGLSurface.h:
+        (WebKit::EvasGLSurface::surface):
+
+            Removed also 'inline' and 'const' keywords from functions declaration,
+            as both EvasGLContext::context() and EvasGLSurface::surface()
+            are defined inside their classes and return mutable pointer.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::transformFromScene):
+        (EwkView::transformToScreen):
+        (EwkView::coordinatedGraphicsScene):
+        (EwkView::displayTimerFired):
+        (EwkView::scheduleUpdateDisplay): Renamed from EwkView::update().
+        (EwkView::exitAcceleratedCompositingMode):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::takeSnapshot):
+        * UIProcess/API/efl/EwkView.h:
+        (WebCore):
+        (EwkView):
+        * UIProcess/API/efl/SnapshotImageGL.cpp:
+        (getImageSurfaceFromFrameBuffer):
+        * UIProcess/API/efl/SnapshotImageGL.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::setViewNeedsDisplay):
+        (WebKit::PageClientBase::updateAcceleratedCompositingMode):
+        * UIProcess/efl/PageClientBase.h:
+        (PageClientBase):
+        * UIProcess/efl/PageClientDefaultImpl.cpp:
+        (WebKit::PageClientDefaultImpl::didCommitLoad):
+        (WebKit::PageClientDefaultImpl::updateViewportSize):
+        (WebKit::PageClientDefaultImpl::didChangeViewportProperties):
+        (WebKit::PageClientDefaultImpl::didChangeContentsSize):
+        (WebKit::PageClientDefaultImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientDefaultImpl.h:
+        (PageClientDefaultImpl):
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::didCommitLoad):
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+        (WebKit::PageClientLegacyImpl::didChangeViewportProperties):
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        (WebKit::PageClientLegacyImpl::pageDidRequestScroll):
+        (WebKit::PageClientLegacyImpl::didRenderFrame):
+        (WebKit::PageClientLegacyImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientLegacyImpl.h:
+        (PageClientLegacyImpl):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.h:
+        (PageLoadClientEfl):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+
 2013-02-06  Sam Weinig  <sam@webkit.org>
 
         Make WebPageProxy and sub-objects MessageReceivers

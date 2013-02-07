@@ -29,6 +29,8 @@
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
+#include "PageViewportController.h"
+#include "PageViewportControllerClientEfl.h"
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
 #include "WKFindOptions.h"
@@ -55,11 +57,6 @@
 
 #if ENABLE(INSPECTOR)
 #include "WebInspectorProxy.h"
-#endif
-
-#if USE(TILED_BACKING_STORE)
-#include "PageViewportController.h"
-#include "PageViewportControllerClientEfl.h"
 #endif
 
 using namespace WebKit;

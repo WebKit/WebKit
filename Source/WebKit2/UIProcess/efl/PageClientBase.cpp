@@ -73,9 +73,9 @@ PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
     return drawingArea.release();
 }
 
-void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect& rect)
+void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect&)
 {
-    m_view->update(rect);
+    m_view->scheduleUpdateDisplay();
 }
 
 void PageClientBase::displayView()
@@ -235,7 +235,6 @@ void PageClientBase::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
     notImplemented();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void PageClientBase::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     m_view->enterAcceleratedCompositingMode();
@@ -250,7 +249,6 @@ void PageClientBase::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientBase::didCommitLoadForMainFrame(bool)
 {

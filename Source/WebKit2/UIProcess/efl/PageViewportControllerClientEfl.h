@@ -26,8 +26,6 @@
 #ifndef PageViewportControllerClientEfl_h
 #define PageViewportControllerClientEfl_h
 
-#if USE(TILED_BACKING_STORE)
-
 #include "EwkView.h"
 #include "PageClientBase.h"
 #include "PageViewportControllerClient.h"
@@ -70,7 +68,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif
 
 #endif // PageViewportControllerClientEfl_h

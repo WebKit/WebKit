@@ -64,6 +64,7 @@
 #include <Ecore_Evas.h>
 #include <Ecore_X.h>
 #include <Edje.h>
+#include <Evas_GL.h>
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/Cursor.h>
@@ -76,10 +77,6 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-#include <Evas_GL.h>
 #endif
 
 using namespace EwkViewCallbacks;
@@ -226,9 +223,7 @@ void EwkViewEventHandler<EVAS_CALLBACK_HIDE>::handleEvent(void* data, Evas*, Eva
 EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroup, ViewBehavior behavior)
     : m_evasObject(evasObject)
     , m_context(context)
-#if USE(ACCELERATED_COMPOSITING)
     , m_pendingSurfaceResize(false)
-#endif
     , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))
     , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), m_pageClient.get(), toImpl(pageGroup), evasObject)))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
@@ -241,9 +236,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
     , m_vibrationClient(VibrationClientEfl::create(this))
 #endif
     , m_backForwardList(EwkBackForwardList::create(WKPageGetBackForwardList(wkPage())))
-#if USE(TILED_BACKING_STORE)
     , m_pageScaleFactor(1)
-#endif
     , m_settings(EwkSettings::create(this))
     , m_cursorIdentifier(0)
     , m_mouseEventsEnabled(false)
@@ -452,12 +445,10 @@ AffineTransform EwkView::transformFromScene() const
 {
     AffineTransform transform;
 
-#if USE(TILED_BACKING_STORE)
     // Note that we apply both page and device scale factors.
     transform.scale(1 / pageScaleFactor());
     transform.scale(1 / deviceScaleFactor());
     transform.translate(pagePosition().x(), pagePosition().y());
-#endif
 
     Ewk_View_Smart_Data* sd = smartData();
     transform.translate(-sd->view.x, -sd->view.y);
@@ -483,12 +474,10 @@ AffineTransform EwkView::transformToScreen() const
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
 
     Ecore_X_Window window;
-#if USE(ACCELERATED_COMPOSITING)
     window = ecore_evas_gl_x11_window_get(ecoreEvas);
     // Fallback to software mode if necessary.
     if (!window)
-#endif
-    window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
+        window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
 
     int x, y; // x, y are relative to parent (in a reparenting window manager).
     while (window) {
@@ -505,7 +494,6 @@ AffineTransform EwkView::transformToScreen() const
     return transform;
 }
 
-#if USE(COORDINATED_GRAPHICS)
 CoordinatedGraphicsScene* EwkView::coordinatedGraphicsScene()
 {
     DrawingAreaProxy* drawingArea = page()->drawingArea();
@@ -518,7 +506,6 @@ CoordinatedGraphicsScene* EwkView::coordinatedGraphicsScene()
 
     return coordinatedLayerTreeHostProxy->coordinatedGraphicsScene();
 }
-#endif
 
 inline Ewk_View_Smart_Data* EwkView::smartData() const
 {
@@ -527,7 +514,6 @@ inline Ewk_View_Smart_Data* EwkView::smartData() const
 
 void EwkView::displayTimerFired(Timer<EwkView>*)
 {
-#if USE(COORDINATED_GRAPHICS)
     Ewk_View_Smart_Data* sd = smartData();
 
     if (m_pendingSurfaceResize) {
@@ -567,29 +553,19 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         scene->paintToGraphicsContext(graphicsContext.get());
         evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());
     }
-#endif
 }
 
-void EwkView::update(const IntRect& rect)
+void EwkView::scheduleUpdateDisplay()
 {
-    Ewk_View_Smart_Data* sd = smartData();
-#if USE(COORDINATED_GRAPHICS)
     // Coordinated graphices needs to schedule an full update, not
     // repainting of a region. Update in the event loop.
-    UNUSED_PARAM(rect);
-
+    Ewk_View_Smart_Data* sd = smartData();
     // Guard for zero sized viewport.
     if (!(sd->view.w && sd->view.h))
         return;
 
     if (!m_displayTimer.isActive())
         m_displayTimer.startOneShot(0);
-#else
-    if (!sd->image)
-        return;
-
-    evas_object_image_data_update_add(sd->image, rect.x(), rect.y(), rect.width(), rect.height());
-#endif
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -788,7 +764,6 @@ void EwkView::informIconChange()
     smartCallback<IconChanged>().call();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 bool EwkView::createGLSurface(const IntSize& viewSize)
 {
     if (!m_isHardwareAccelerated)
@@ -862,7 +837,6 @@ bool EwkView::exitAcceleratedCompositingMode()
 {
     return true;
 }
-#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 /**
@@ -1195,12 +1169,8 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         if (view->page()->drawingArea())
             view->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
 
-#if USE(ACCELERATED_COMPOSITING)
         view->setNeedsSurfaceResize();
-#endif
-#if USE(TILED_BACKING_STORE)
         view->pageClient()->updateViewportSize();
-#endif
     }
 }
 
@@ -1365,15 +1335,12 @@ PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
         ecore_main_loop_iterate();
 
     Ewk_View_Smart_Data* sd = smartData();
-#if USE(ACCELERATED_COMPOSITING)
     if (!m_isHardwareAccelerated) {
-#endif
         RefPtr<cairo_surface_t> snapshot = createSurfaceForImage(sd->image);
         // Resume all animations.
         WKViewResumeActiveDOMObjectsAndAnimations(wkView());
 
         return snapshot.release();
-#if USE(ACCELERATED_COMPOSITING)
     }
 
     RefPtr<cairo_surface_t> snapshot = getImageSurfaceFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
@@ -1381,7 +1348,6 @@ PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
     WKViewResumeActiveDOMObjectsAndAnimations(wkView());
 
     return snapshot.release();
-#endif
 }
 
 Evas_Smart_Class EwkView::parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;

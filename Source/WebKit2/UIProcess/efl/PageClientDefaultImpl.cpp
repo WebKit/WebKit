@@ -26,14 +26,11 @@
 
 #include "config.h"
 #include "PageClientDefaultImpl.h"
+#include "PageViewportController.h"
+#include "PageViewportControllerClientEfl.h"
 
 #include "EwkView.h"
 #include "ewk_view.h"
-
-#if USE(TILED_BACKING_STORE)
-#include "PageViewportController.h"
-#include "PageViewportControllerClientEfl.h"
-#endif
 
 using namespace WebCore;
 using namespace EwkViewCallbacks;
@@ -47,21 +44,17 @@ PageClientDefaultImpl::PageClientDefaultImpl(EwkView* view)
 
 void PageClientDefaultImpl::didCommitLoad()
 {
-#if USE(TILED_BACKING_STORE)
     ASSERT(m_pageViewportController);
     m_pageViewportController->didCommitLoad();
-#endif
 }
 
 void PageClientDefaultImpl::updateViewportSize()
 {
-#if USE(TILED_BACKING_STORE)
     if (!m_pageViewportControllerClient) {
         m_pageViewportControllerClient = PageViewportControllerClientEfl::create(m_view);
         m_pageViewportController = adoptPtr(new PageViewportController(m_view->page(), m_pageViewportControllerClient.get()));
     }
     m_pageViewportControllerClient->updateViewportSize();
-#endif
 }
 
 FloatRect PageClientDefaultImpl::convertToDeviceSpace(const FloatRect& userRect)
@@ -80,25 +73,17 @@ FloatRect PageClientDefaultImpl::convertToUserSpace(const FloatRect& deviceRect)
 
 void PageClientDefaultImpl::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
-#if USE(TILED_BACKING_STORE)
     ASSERT(m_pageViewportController);
     m_pageViewportController->didChangeViewportAttributes(attr);
-#else
-    UNUSED_PARAM(attr);
-#endif
 }
 
 void PageClientDefaultImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
-#if USE(TILED_BACKING_STORE)
     ASSERT(m_pageViewportController);
     m_pageViewportController->didChangeContentsSize(size);
-#endif
-
     m_view->smartCallback<ContentsSizeChanged>().call(size);
 }
 
-#if USE(TILED_BACKING_STORE)
 void PageClientDefaultImpl::pageDidRequestScroll(const IntPoint& position)
 {
     ASSERT(m_pageViewportController);
@@ -116,6 +101,5 @@ void PageClientDefaultImpl::pageTransitionViewportReady()
     ASSERT(m_pageViewportController);
     m_pageViewportController->pageTransitionViewportReady();
 }
-#endif
 
 } // namespace WebKit

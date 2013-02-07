@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SnapshotImageGL.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -57,5 +56,3 @@ PassRefPtr<cairo_surface_t> getImageSurfaceFromFrameBuffer(int x, int y, int wid
     cairo_surface_mark_dirty(newSurface.get());
     return newSurface;
 }
-
-#endif

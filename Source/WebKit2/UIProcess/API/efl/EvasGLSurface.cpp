@@ -26,8 +26,6 @@
 #include "config.h"
 #include "EvasGLSurface.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 namespace WebKit {
 
 EvasGLSurface::EvasGLSurface(Evas_GL* evasGL, Evas_GL_Surface* passSurface)
@@ -44,5 +42,3 @@ EvasGLSurface::~EvasGLSurface()
 }
 
 } // namespace WebKit
-
-#endif // USE(ACCELERATED_COMPOSITING)

@@ -94,11 +94,9 @@ protected:
 #endif
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool, bool);
-#if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
-#endif
 
     virtual void didCommitLoadForMainFrame(bool);
     virtual void didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&);
@@ -109,11 +107,9 @@ protected:
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
-#if USE(TILED_BACKING_STORE)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) = 0;
     virtual void pageTransitionViewportReady() = 0;
-#endif
 
 protected:
     EwkView* m_view;
