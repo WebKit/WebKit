@@ -86,7 +86,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
-    this.sidebarPanes.styles.setShowCallback(this.updateStyles.bind(this));
+    this.sidebarPanes.styles.setShowCallback(this.updateStyles.bind(this, false));
     this.sidebarPanes.metrics.setShowCallback(this.updateMetrics.bind(this));
     this.sidebarPanes.properties.setShowCallback(this.updateProperties.bind(this));
     this.sidebarPanes.eventListeners.setShowCallback(this.updateEventListeners.bind(this));

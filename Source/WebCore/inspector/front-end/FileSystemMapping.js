@@ -49,7 +49,7 @@ WebInspector.FileSystemMapping.prototype = {
     /**
      * @param {string} fileSystemPath
      * @param {string} filePath
-     * @return {string}
+     * @return {?string}
      */
     uriForFile: function(fileSystemPath, filePath) { },
 
@@ -120,7 +120,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
 
     /**
      * @param {string} fileSystemPath
-     * @return {?string}
+     * @return {string}
      */
     addFileSystemMapping: function(fileSystemPath)
     {
@@ -198,7 +198,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
         this._cachedURIPrefixes = this._cachedURIPrefixes || {};
         if (this._cachedURIPrefixes.hasOwnProperty(pathPrefix))
             return this._cachedURIPrefixes[pathPrefix];
-        var uriPrefix;
+        var uriPrefix = null;
         for (var id in this._fileSystemPaths) {
             var fileSystemPath = this._fileSystemPaths[id];
             if (pathPrefix.startsWith(fileSystemPath + "/")) {

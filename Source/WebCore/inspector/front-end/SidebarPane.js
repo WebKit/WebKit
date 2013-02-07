@@ -51,7 +51,7 @@ WebInspector.SidebarPane.prototype = {
     },
 
     /**
-     * @param {function} callback
+     * @param {function()} callback
      */
     prepareContent: function(callback)
     {
@@ -72,7 +72,7 @@ WebInspector.SidebarPane.prototype = {
     },
 
     /**
-     * @param {function} callback
+     * @param {function()} callback
      * @return {boolean}
      */
     setExpandCallback: function(callback)
@@ -84,7 +84,7 @@ WebInspector.SidebarPane.prototype = {
     },
 
     /**
-     * @param {function} callback
+     * @param {function()} callback
      */
     setShowCallback: function(callback)
     {

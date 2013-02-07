@@ -156,7 +156,8 @@ WebInspector.IsolatedFileSystemModel.prototype = {
     _fileSystemRemoved: function(fileSystemPath)
     {
         var fileSystemId = this._fileSystemMapping.fileSystemId(fileSystemPath);
-        this._workspace.removeProject(fileSystemId);
+        if (fileSystemId)
+            this._workspace.removeProject(fileSystemId);
         this._fileSystemMapping.removeFileSystemMapping(fileSystemPath);
         delete this._fileSystems[fileSystemPath];
         if (this._removeFileSystemCallback) {
