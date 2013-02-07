@@ -76,10 +76,10 @@ bool ClipboardEfl::setData(const String&, const String&)
     return false;
 }
 
-ListHashSet<String> ClipboardEfl::types() const
+Vector<String> ClipboardEfl::types() const
 {
     notImplemented();
-    return ListHashSet<String>();
+    return Vector<String>();
 }
 
 PassRefPtr<FileList> ClipboardEfl::files() const
