@@ -32,6 +32,7 @@
 #define ScriptWrappable_h
 
 #include "WebCoreMemoryInstrumentation.h"
+#include "WrapperTypeInfo.h"
 #include <v8.h>
 
 namespace WebCore {
@@ -40,28 +41,18 @@ class ScriptWrappable {
 public:
     ScriptWrappable() { }
 
-    v8::Persistent<v8::Object> wrapper() const
+    v8::Handle<v8::Object> wrapper() const
     {
-        return v8::Persistent<v8::Object>(maskOrUnmaskPointer(*m_maskedWrapper));
+        return v8::Handle<v8::Object>(maskOrUnmaskPointer(*m_maskedWrapper));
     }
 
-    void setWrapper(v8::Persistent<v8::Object> wrapper)
+    void setWrapper(v8::Handle<v8::Object> wrapper, v8::Isolate* isolate, const WrapperConfiguration& configuration)
     {
-        m_maskedWrapper = maskOrUnmaskPointer(*wrapper);
-    }
-
-    void clearWrapper()
-    {
-        ASSERT(!m_maskedWrapper.IsEmpty());
-        m_maskedWrapper.Clear();
-    }
-
-    void disposeWrapper()
-    {
-        ASSERT(!m_maskedWrapper.IsEmpty());
-        m_maskedWrapper = wrapper();
-        m_maskedWrapper.Dispose();
-        m_maskedWrapper.Clear();
+        ASSERT(m_maskedWrapper.IsEmpty());
+        v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(wrapper);
+        configuration.configureWrapper(persistent, isolate);
+        persistent.MakeWeak(isolate, this, weakCallback);
+        m_maskedWrapper = maskOrUnmaskPointer(*persistent);
     }
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -71,6 +62,14 @@ public:
     }
 
 private:
+    inline void disposeWrapper(v8::Persistent<v8::Value> value)
+    {
+        ASSERT(!m_maskedWrapper.IsEmpty());
+        ASSERT(*value == maskOrUnmaskPointer(*m_maskedWrapper));
+        value.Dispose();
+        m_maskedWrapper.Clear();
+    }
+
     v8::Persistent<v8::Object> m_maskedWrapper;
 
     static inline v8::Object* maskOrUnmaskPointer(const v8::Object* object)
@@ -78,6 +77,25 @@ private:
         const uintptr_t objectPointer = reinterpret_cast<uintptr_t>(object);
         const uintptr_t randomMask = ~(reinterpret_cast<uintptr_t>(&WebCoreMemoryTypes::DOM) >> 13); // Entropy via ASLR.
         return reinterpret_cast<v8::Object*>((objectPointer ^ randomMask) & (!objectPointer - 1)); // Preserve null without branching.
+    }
+
+    static void weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void* context)
+    {
+        ScriptWrappable* key = static_cast<ScriptWrappable*>(context);
+        ASSERT(value->IsObject());
+        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+        ASSERT(key->wrapper() == wrapper);
+        key->disposeWrapper(value);
+
+        // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
+        void* object = toNative(wrapper);
+        WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
+        ASSERT(info->derefObjectFunction);
+
+        // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
+        // inside key->deref(), which causes Node destructions. We should
+        // make Node destructions incremental.
+        info->derefObject(object);
     }
 };
 

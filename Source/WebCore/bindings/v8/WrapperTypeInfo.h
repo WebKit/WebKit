@@ -38,6 +38,7 @@ namespace WebCore {
     class ActiveDOMObject;
     class DOMDataStore;
     class EventTarget;
+    class Node;
 
     static const int v8DOMWrapperTypeIndex = 0;
     static const int v8DOMWrapperObjectIndex = 1;
@@ -141,6 +142,34 @@ namespace WebCore {
         return static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     }
 
+    struct WrapperConfiguration {
+
+        enum Lifetime {
+            Dependent, Independent
+        };
+
+        void configureWrapper(v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate) const
+        {
+            wrapper.SetWrapperClassId(classId);
+            if (lifetime == Independent)
+                wrapper.MarkIndependent(isolate);
+        }
+
+        const uint16_t classId;
+        const Lifetime lifetime;
+    };
+
+    inline WrapperConfiguration buildWrapperConfiguration(void*, WrapperConfiguration::Lifetime lifetime)
+    {
+        WrapperConfiguration configuration = {v8DOMObjectClassId, lifetime};
+        return configuration;
+    }
+
+    inline WrapperConfiguration buildWrapperConfiguration(Node*, WrapperConfiguration::Lifetime lifetime)
+    {
+        WrapperConfiguration configuration = {v8DOMNodeClassId, lifetime};
+        return configuration;
+    }
 }
 
 #endif // WrapperTypeInfo_h

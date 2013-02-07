@@ -50,17 +50,19 @@ public:
     {
     }
 
-    v8::Persistent<v8::Object> get(KeyType* key)
+    v8::Handle<v8::Object> get(KeyType* key)
     {
         return m_map.get(key);
     }
 
-    void set(KeyType* key, v8::Persistent<v8::Object> wrapper)
+    void set(KeyType* key, v8::Handle<v8::Object> wrapper, const WrapperConfiguration& configuration)
     {
         ASSERT(!m_map.contains(key));
         ASSERT(static_cast<KeyType*>(toNative(wrapper)) == key);
-        wrapper.MakeWeak(m_isolate, this, m_callback);
-        m_map.set(key, wrapper);
+        v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(m_isolate, wrapper);
+        configuration.configureWrapper(persistent, m_isolate);
+        persistent.MakeWeak(m_isolate, this, m_callback);
+        m_map.set(key, persistent);
     }
 
     void clear()
@@ -81,12 +83,15 @@ public:
         info.ignoreMember(m_callback);
     }
 
-    void remove(KeyType* key, v8::Persistent<v8::Object> wrapper)
+    void removeAndDispose(KeyType* key, v8::Handle<v8::Object> value, v8::Isolate* isolate)
     {
+        v8::Persistent<v8::Object> wrapper(*value);
         typename MapType::iterator it = m_map.find(key);
         ASSERT(it != m_map.end());
         ASSERT(it->value == wrapper);
         m_map.remove(it);
+        wrapper.Dispose(isolate);
+        value.Clear();
     }
 
 private:
@@ -98,10 +103,7 @@ private:
         WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
         ASSERT(type->derefObjectFunction);
         KeyType* key = static_cast<KeyType*>(toNative(wrapper));
-
-        map->remove(key, wrapper);
-        wrapper.Dispose();
-        wrapper.Clear();
+        map->removeAndDispose(key, wrapper, isolate);
         type->derefObject(key);
     }
 

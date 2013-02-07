@@ -402,9 +402,7 @@ static void weakNPObjectCallback(v8::Isolate* isolate, v8::Persistent<v8::Value>
 
     // Must remove from our map before calling _NPN_ReleaseObject(). _NPN_ReleaseObject can
     // call forgetV8ObjectForNPObject, which uses the table as well.
-    staticNPObjectMap().remove(npObject, wrapper);
-    wrapper.Dispose();
-    wrapper.Clear();
+    staticNPObjectMap().removeAndDispose(npObject, wrapper, isolate);
 
     if (_NPN_IsAlive(npObject))
         _NPN_ReleaseObject(npObject);
@@ -448,27 +446,24 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
         return value;
 
     V8DOMWrapper::setNativeInfo(value, npObjectTypeInfo(), object);
-    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(value);
-    V8DOMWrapper::setWrapperClass(object, wrapperHandle);
 
     // KJS retains the object as part of its wrapper (see Bindings::CInstance).
     _NPN_RetainObject(object);
     _NPN_RegisterObject(object, root);
 
-    staticNPObjectMap().set(object, wrapperHandle);
-    ASSERT(V8DOMWrapper::maybeDOMWrapper(wrapperHandle));
+    WrapperConfiguration configuration = buildWrapperConfiguration(object, WrapperConfiguration::Dependent);
+    staticNPObjectMap().set(object, value, configuration);
+    ASSERT(V8DOMWrapper::maybeDOMWrapper(value));
     return value;
 }
 
 void forgetV8ObjectForNPObject(NPObject* object)
 {
-    v8::Persistent<v8::Object> wrapper = staticNPObjectMap().get(object);
+    v8::Handle<v8::Object> wrapper = staticNPObjectMap().get(object);
     if (!wrapper.IsEmpty()) {
         v8::HandleScope scope;
         V8DOMWrapper::clearNativeInfo(wrapper, npObjectTypeInfo());
-        staticNPObjectMap().remove(object, wrapper);
-        wrapper.Dispose();
-        wrapper.Clear();
+        staticNPObjectMap().removeAndDispose(object, wrapper, v8::Isolate::GetCurrent());
         _NPN_ReleaseObject(object);
     }
 }

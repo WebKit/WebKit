@@ -80,24 +80,4 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_wrapperMap, "wrapperMap");
 }
 
-void DOMDataStore::weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void* context)
-{
-    ScriptWrappable* key = static_cast<ScriptWrappable*>(context);
-    ASSERT(value->IsObject());
-    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-    ASSERT(key->wrapper() == wrapper);
-    // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
-    void* object = toNative(wrapper);
-    WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
-    ASSERT(info->derefObjectFunction);
-
-    key->clearWrapper();
-    value.Dispose();
-    value.Clear();
-    // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
-    // inside key->deref(), which causes Node destructions. We should
-    // make Node destructions incremental.
-    info->derefObject(object);
-}
-
 } // namespace WebCore
