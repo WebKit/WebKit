@@ -34,89 +34,89 @@ typedef HINSTANCE HMODULE;
 
 namespace WebCore {
 
-    struct ThemeData {
-        ThemeData() : m_part(0), m_state(0), m_classicState(0) {}
+struct ThemeData {
+    ThemeData() : m_part(0), m_state(0), m_classicState(0) { }
 
-        unsigned m_part;
-        unsigned m_state;
-        unsigned m_classicState;
-    };
+    unsigned m_part;
+    unsigned m_state;
+    unsigned m_classicState;
+};
 
-    class RenderThemeChromiumWin : public RenderThemeChromiumSkia {
-    public:
-        static PassRefPtr<RenderTheme> create();
+class RenderThemeChromiumWin : public RenderThemeChromiumSkia {
+public:
+    static PassRefPtr<RenderTheme> create();
 
-        // A method asking if the theme is able to draw the focus ring.
-        virtual bool supportsFocusRing(const RenderStyle*) const;
+    // A method asking if the theme is able to draw the focus ring.
+    virtual bool supportsFocusRing(const RenderStyle*) const OVERRIDE;
 
-        // The platform selection color.
-        virtual Color platformActiveSelectionBackgroundColor() const;
-        virtual Color platformInactiveSelectionBackgroundColor() const;
-        virtual Color platformActiveSelectionForegroundColor() const;
-        virtual Color platformInactiveSelectionForegroundColor() const;
-        virtual Color platformActiveTextSearchHighlightColor() const;
-        virtual Color platformInactiveTextSearchHighlightColor() const;
+    // The platform selection color.
+    virtual Color platformActiveSelectionBackgroundColor() const OVERRIDE;
+    virtual Color platformInactiveSelectionBackgroundColor() const OVERRIDE;
+    virtual Color platformActiveSelectionForegroundColor() const OVERRIDE;
+    virtual Color platformInactiveSelectionForegroundColor() const OVERRIDE;
+    virtual Color platformActiveTextSearchHighlightColor() const OVERRIDE;
+    virtual Color platformInactiveTextSearchHighlightColor() const OVERRIDE;
 
-        virtual Color systemColor(int cssValueId) const;
+    virtual Color systemColor(int cssValueId) const OVERRIDE;
 
 #if ENABLE(DATALIST_ELEMENT)
-        virtual IntSize sliderTickSize() const OVERRIDE;
-        virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+    virtual IntSize sliderTickSize() const OVERRIDE;
+    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
 #endif
-        virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const OVERRIDE;
 
-        // Various paint functions.
-        virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    // Various paint functions.
+    virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 
-        // MenuList refers to an unstyled menulist (meaning a menulist without
-        // background-color or border set) and MenuListButton refers to a styled
-        // menulist (a menulist with background-color or border set). They have
-        // this distinction to support showing aqua style themes whenever they
-        // possibly can, which is something we don't want to replicate.
-        //
-        // In short, we either go down the MenuList code path or the MenuListButton
-        // codepath. We never go down both. And in both cases, they render the
-        // entire menulist.
-        virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    // MenuList refers to an unstyled menulist (meaning a menulist without
+    // background-color or border set) and MenuListButton refers to a styled
+    // menulist (a menulist with background-color or border set). They have
+    // this distinction to support showing aqua style themes whenever they
+    // possibly can, which is something we don't want to replicate.
+    //
+    // In short, we either go down the MenuList code path or the MenuListButton
+    // codepath. We never go down both. And in both cases, they render the
+    // entire menulist.
+    virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 
-        virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 
 #if ENABLE(PROGRESS_ELEMENT)
-        virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
-        virtual double animationDurationForProgressBar(RenderProgress*) const;
-        virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const OVERRIDE;
+    virtual double animationDurationForProgressBar(RenderProgress*) const OVERRIDE;
+    virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 #endif
 
-        virtual bool shouldOpenPickerWithF4Key() const OVERRIDE;
+    virtual bool shouldOpenPickerWithF4Key() const OVERRIDE;
 
-    protected:
-        virtual double caretBlinkIntervalInternal() const;
+protected:
+    virtual double caretBlinkIntervalInternal() const OVERRIDE;
 
-    private:
-        enum ControlSubPart {
-            None,
-            SpinButtonDown,
-            SpinButtonUp,
-        };
-
-        RenderThemeChromiumWin() { }
-        virtual ~RenderThemeChromiumWin() { }
-
-        unsigned determineState(RenderObject*, ControlSubPart = None);
-        unsigned determineSliderThumbState(RenderObject*);
-        unsigned determineClassicState(RenderObject*, ControlSubPart = None);
-
-        ThemeData getThemeData(RenderObject*, ControlSubPart = None);
-
-        bool paintTextFieldInternal(RenderObject*, const PaintInfo&, const IntRect&, bool);
+private:
+    enum ControlSubPart {
+        None,
+        SpinButtonDown,
+        SpinButtonUp,
     };
+
+    RenderThemeChromiumWin() { }
+    virtual ~RenderThemeChromiumWin() { }
+
+    unsigned determineState(RenderObject*, ControlSubPart = None);
+    unsigned determineSliderThumbState(RenderObject*);
+    unsigned determineClassicState(RenderObject*, ControlSubPart = None);
+
+    ThemeData getThemeData(RenderObject*, ControlSubPart = None);
+
+    bool paintTextFieldInternal(RenderObject*, const PaintInfo&, const IntRect&, bool);
+};
 
 } // namespace WebCore
 
